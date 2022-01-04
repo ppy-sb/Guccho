@@ -15,7 +15,7 @@
         </div>
         <div class="ml-3">
           <p class="font-medium text-white">
-            Varkaria
+            <HoverUsercard :user="user" :href="'/user/' + user.player_id" />
           </p>
         </div>
       </div>
