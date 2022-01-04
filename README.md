@@ -21,4 +21,4 @@ Requirements
 
 The team (guweb-nuxt)
 ------
-- [Varkaria](https://github.com/Varkaria) | Frontend, Backend?
+- [Varkaria](https://github.com/Varkaria)
