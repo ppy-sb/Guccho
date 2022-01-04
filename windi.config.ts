@@ -1,11 +1,16 @@
 import { defineConfig } from '@windicss/plugin-utils'
 
 export default defineConfig({
-  /**
-   * Write windi classes in html attributes.
-   * @see https://windicss.org/features/attributify.html
-   */
-  attributify: true,
+  extract: {
+    include: [
+      "./node_modules/tv-*/dist/tv-*.umd.min.js",
+      "./components/**/*.{js,vue,ts}",
+      "./layouts/**/*.vue",
+      "./pages/**/*.vue",
+      "./plugins/**/*.{js,ts}",
+      "./nuxt.config.{js,ts}",
+    ]
+  },
   theme: {
     extend: {
       colors: {
