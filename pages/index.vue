@@ -13,20 +13,19 @@ export default {
   methods: {
     doAnimation () {
       const tl = this.$anime.timeline({
-        easing: 'easeOutQuint'
+        easing: 'easeOutQuint',
+        duration: 665
       })
 
       tl.add({
-        targets: '.title-section',
+        targets: '.content',
         opacity: [0, 1],
-        translateY: [25, 0],
-        duration: 700
+        translateY: [25, 0]
       }).add({
         targets: '.mascot',
         opacity: [0, 1],
-        translateY: [25, 0],
-        duration: 775
-      })
+        translateY: [25, 0]
+      }, '-=300')
     }
   }
 }
