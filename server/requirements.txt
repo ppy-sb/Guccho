@@ -1,0 +1,5 @@
+fastapi==0.70.0
+cmyui==1.9.3
+uvicorn[standard]
+databases
+starlette

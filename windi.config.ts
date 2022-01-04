@@ -4,10 +4,10 @@ export default defineConfig({
   extract: {
     include: [
       "./node_modules/tv-*/dist/tv-*.umd.min.js",
-      "./components/**/*.{js,vue,ts}",
-      "./layouts/**/*.vue",
-      "./pages/**/*.vue",
-      "./plugins/**/*.{js,ts}",
+      "./client/components/**/*.{js,vue,ts}",
+      "./client/layouts/**/*.vue",
+      "./client/pages/**/*.vue",
+      "./client/plugins/**/*.{js,ts}",
       "./nuxt.config.{js,ts}",
     ]
   },
