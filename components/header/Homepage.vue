@@ -6,7 +6,7 @@
       class="container text-left text-white my-auto flex items-center justify-between"
     >
       <div class="content">
-        <div class="mb-6 title-section">
+        <div class="mb-6">
           <h1 class="text-4xl text-center sm:text-left mb-2 font-bold">
             GUWEB
           </h1>
