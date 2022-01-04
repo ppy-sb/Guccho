@@ -51,7 +51,21 @@ export default {
     // https://go.nuxtjs.dev/pwa
     '@nuxtjs/pwa',
     // https://go.nuxtjs.dev/content
-    '@nuxt/content'
+    '@nuxt/content',
+    ['nuxt-tailvue', {
+      all: true,
+      toast: {
+        defaultProps: {
+          timeout: 10,
+          progress: true,
+          classToast: 'bg-gray-700',
+          classTitle: 'text-gray-100',
+          classMessage: 'text-gray-200',
+          classClose: 'text-gray-300',
+          classTimeout: 'bg-gray-800'
+        }
+      }
+    }]
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios

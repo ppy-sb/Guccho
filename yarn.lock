@@ -7115,6 +7115,16 @@ nuxt-animejs@^1.2.2:
   dependencies:
     animejs "^3.2.1"
 
+nuxt-tailvue@^1.0.95:
+  version "1.0.95"
+  resolved "https://registry.yarnpkg.com/nuxt-tailvue/-/nuxt-tailvue-1.0.95.tgz#88b31463dac2dba9e21328d5733806aac274f006"
+  integrity sha512-8DVluxBJak/X2QZ8WpiJSbEwkKbhVF2x8OURKWhfYuXsj5cDlXE4LhnZfr/Otj6KdcTCEVGnQt96lqE+WQG02A==
+  dependencies:
+    tv-button latest
+    tv-icon latest
+    tv-modal latest
+    tv-toast latest
+
 nuxt-windicss@^2.2.2:
   version "2.2.2"
   resolved "https://registry.yarnpkg.com/nuxt-windicss/-/nuxt-windicss-2.2.2.tgz#22c1129376b4f33366dbb4f8abc82f2cd7a67fea"
@@ -9827,6 +9837,36 @@ tty-browserify@0.0.0:
   version "0.0.0"
   resolved "https://registry.yarnpkg.com/tty-browserify/-/tty-browserify-0.0.0.tgz#a157ba402da24e9bf957f9aa69d524eed42901a6"
   integrity sha1-oVe6QC2iTpv5V/mqadUk7tQpAaY=
+
+tv-button@^1.0.7:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/tv-button/-/tv-button-1.2.2.tgz#6392cd88fae4a879e3c68d3b08604f24dcb5c6fe"
+  integrity sha512-hiOPIBuMt7ID6BcqG1umWWpLlnOJVnyZPzNHiWXrtGhoIECGf+z96ub7o07zer+C7iZg+Ei0TWt8xB0zQVbL4A==
+
+tv-button@latest:
+  version "2.0.7"
+  resolved "https://registry.yarnpkg.com/tv-button/-/tv-button-2.0.7.tgz#108f4d521959d5b2a5df67bfabd4670544419451"
+  integrity sha512-qd5zCM2yKbY/5AkHOSX7OWqa/bQcKZMXU8cPTAf0xdKYPuiMH618luSw5Ope4vZMj7j3fCcLwumfCp+lUkWq/g==
+
+tv-icon@^1.0.1, tv-icon@latest:
+  version "1.0.24"
+  resolved "https://registry.yarnpkg.com/tv-icon/-/tv-icon-1.0.24.tgz#c952c8ac9277f1ace7bc128229d3b81a27306787"
+  integrity sha512-2tAaWWmGrjjwEPJjMBVAZBXvWuA2jpoYmCu5ipbaLVE0v9ve3gnT0EBjb8LtJn7f4BjySkcFlOqWPg0hzVN46Q==
+
+tv-modal@latest:
+  version "1.0.24"
+  resolved "https://registry.yarnpkg.com/tv-modal/-/tv-modal-1.0.24.tgz#dce88d4c197909856e1fa376fb63439b4c7686bd"
+  integrity sha512-4DA2f9XpB9GP3+XsH1e1rBQcvMI6CJkC5rTeCVgfhZz2NMUtTlz0mO71VJlB8KYzWSi4QoYOBtqBk2TLZ+fewQ==
+  dependencies:
+    tv-button "^1.0.7"
+    tv-icon "^1.0.1"
+
+tv-toast@latest:
+  version "1.2.30"
+  resolved "https://registry.yarnpkg.com/tv-toast/-/tv-toast-1.2.30.tgz#f1a79d5b11908e7b7ed46dffbe20ce4c16c33563"
+  integrity sha512-giirzodNpV2NN9AVku3eSS2/kDO17iepDDTJoTLrasBnQx//6mUi9/fS6dksfRn7Mjn1P2AvDLsgFqhSBtbFEg==
+  dependencies:
+    tv-icon "^1.0.1"
 
 type-check@^0.4.0, type-check@~0.4.0:
   version "0.4.0"

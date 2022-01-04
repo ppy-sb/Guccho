@@ -108,10 +108,12 @@ export default {
         })
         .then((response) => {
           this.result = response.data.leaderboard
-          console.log(this.result)
         })
         .catch((error) => {
-          console.log(error)
+          this.$toast.show({
+            type: 'danger',
+            message: error
+          })
         })
         .finally(() => {
           this.fetching = false
