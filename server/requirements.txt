@@ -1,5 +1,10 @@
 fastapi==0.70.0
 cmyui==1.9.3
 uvicorn[standard]
-databases
+databases[mysql]
 starlette
+python-jose[cryptography]
+bcrypt
+hashlib
+cmyui
+python-multipart
