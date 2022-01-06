@@ -91,6 +91,10 @@ export default {
             {
               name: 'Relax',
               icon: 'rx'
+            },
+            {
+              name: 'Autopilot',
+              icon: 'ap'
             }
           ]
         },
@@ -132,11 +136,19 @@ export default {
     forbiddenMode (mode) {
       if (this.leaderboard.mods.selected.icon === 'rx' && mode === 'mania') {
         return true
+      } else if (this.leaderboard.mods.selected.icon === 'ap' && mode !== 'osu') {
+        return true
+      } else {
+        return false
       }
     },
     forbiddenMods (mods) {
       if (this.leaderboard.mode.selected.icon === 'mania' && mods === 'rx') {
         return true
+      } else if (this.leaderboard.mode.selected.icon !== 'osu' && mods === 'ap') {
+        return true
+      } else {
+        return false
       }
     }
   }

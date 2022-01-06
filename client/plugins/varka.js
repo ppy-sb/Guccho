@@ -8,7 +8,7 @@ export default ({ app }, inject) => {
       case 'osu|rx': return 4
       case 'taiko|rx': return 5
       case 'catch|rx': return 6
-      case 'osu|ap': return 8
+      case 'osu|ap': return 7
       default: return -1
     }
   })
