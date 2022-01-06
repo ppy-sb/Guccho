@@ -41,4 +41,27 @@ export default ({ app }, inject) => {
   }
   inject('scoreFormat', scoreFormat)
   inject('addCommas', addCommas)
+
+  const forbiddenMode = (mods, mode) => {
+    if (mods === 'rx' && mode === 'mania') {
+      return true
+    } else if (mods === 'ap' && mode !== 'osu') {
+      return true
+    } else {
+      return false
+    }
+  }
+
+  const forbiddenMods = (mode, mods) => {
+    if (mode === 'mania' && mods === 'rx') {
+      return true
+    } else if (mode !== 'osu' && mods === 'ap') {
+      return true
+    } else {
+      return false
+    }
+  }
+
+  inject('forbiddenMode', forbiddenMode)
+  inject('forbiddenMods', forbiddenMods)
 }
