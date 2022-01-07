@@ -1,17 +1,19 @@
 #!/usr/bin/env python3.9
-import uvicorn
 import config
+import uvicorn
 from fastapi import FastAPI
-from routers import auth
-from objects.database import db
 from fastapi.middleware.cors import CORSMiddleware
+from objects.database import db
+from routers import auth
 
 app = FastAPI()
+
 
 @app.on_event("startup")
 async def startup_event():
     await db.connect()
-    print("Connected to database")
+    print("Connected to database")  # XXX: perpahs use cmyui logger? ~lenforiee
+
 
 app.include_router(auth.router, prefix="/v1/auth")
 
@@ -25,4 +27,4 @@ app.add_middleware(
 )
 
 if __name__ == "__main__":
-  uvicorn.run(app, host="127.0.0.1", port=config.API_PORT, log_level="info")
+    uvicorn.run(app, host="127.0.0.1", port=config.API_PORT, log_level="info")

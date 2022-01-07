@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 
-__all__ = ('cache')
-
-from typing import TYPE_CHECKING
+__all__ = "cache"
 
 cache = {
-    'bcrypt': {}
+  "bcrypt": {}
 }
