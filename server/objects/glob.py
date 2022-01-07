@@ -2,4 +2,6 @@
 
 __all__ = "cache"
 
-cache = {"bcrypt": {}}
+cache = {
+  "bcrypt": {}
+}

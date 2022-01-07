@@ -18,8 +18,7 @@ async def login_for_access_token(request: Request):
     """Handles authenticating and creating token for user."""
 
     form_data = await request.json()
-    user = await u.authenticate_user(form_data["username"],
-                                     form_data["password"])
+    user = await u.authenticate_user(form_data["username"], form_data["password"])
 
     if not user:
         raise HTTPException(

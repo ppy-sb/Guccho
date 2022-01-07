@@ -5,8 +5,7 @@ config = Config("../.env")
 
 API_PORT: int = config("API_PORT", cast=int, default=3001)
 
-DB_DSN: str = config("DB_DSN",
-                     default="mysql://user:pass@localhost:3306/database")
+DB_DSN: str = config("DB_DSN", default="mysql://user:pass@localhost:3306/database")
 
 TOKEN_SECRET: str = config("TOKEN_SECRET", default="secret")
 
