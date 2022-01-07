@@ -13,12 +13,15 @@ from objects.database import db
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
+
 class Token(BaseModel):
     access_token: str
     token_type: str
 
+
 class TokenData(BaseModel):
     name: Optional[str] = None
+
 
 class User(BaseModel):
     id: int
@@ -27,6 +30,7 @@ class User(BaseModel):
     email: Optional[str]
     priv: int
 
+
 class UserInDB(User):
     pw_bcrypt: str
 
@@ -34,16 +38,16 @@ class UserInDB(User):
 def verify_password(plain_password: str, encrypted_password: str):
     """Verifies user password and cache it."""
 
-    bcrypt_cache = glob.cache['bcrypt']
+    bcrypt_cache = glob.cache["bcrypt"]
     pw_bcrypt = encrypted_password.encode()
     pw_md5 = hashlib.md5(plain_password.encode()).hexdigest().encode()
 
     # check credentials (password) against db
     # intentionally slow, will cache to speed up
     if pw_bcrypt in bcrypt_cache:
-        if pw_md5 != bcrypt_cache[pw_bcrypt]: # ~0.1ms
+        if pw_md5 != bcrypt_cache[pw_bcrypt]:  # ~0.1ms
             return False
-    else: # ~200ms
+    else:  # ~200ms
         if not bcrypt.checkpw(pw_md5, pw_bcrypt):
             return False
 
@@ -70,7 +74,7 @@ async def get_user(name: str = None, userid: str = None):
         query.append("id = :id OR")
         args["id"] = userid
 
-    if not args: # We failed query building.
+    if not args:  # We failed query building.
         return None
 
     query_join = " ".join(query)
@@ -80,7 +84,7 @@ async def get_user(name: str = None, userid: str = None):
         return None
 
     user = UserInDB(**res)
-    #print(user)
+    # print(user)
     return user
 
 
@@ -91,7 +95,7 @@ async def authenticate_user(name: str, password: str):
     if not user:
         return False
 
-    #print(verify_password(password, user.pw_bcrypt))
+    # print(verify_password(password, user.pw_bcrypt))
     if not verify_password(password, user.pw_bcrypt):
         return False
 

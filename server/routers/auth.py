@@ -14,12 +14,13 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
+
 @router.post("/token", response_model=u.Token)
 async def login_for_access_token(request: Request):
     """Handles authenticating and creating token for user."""
 
     form_data = await request.json()
-    user = await u.authenticate_user(form_data['username'], form_data['password'])
+    user = await u.authenticate_user(form_data["username"], form_data["password"])
 
     if not user:
         raise HTTPException(
@@ -34,6 +35,7 @@ async def login_for_access_token(request: Request):
     )
 
     return {"access_token": access_token, "token_type": "bearer"}
+
 
 @router.get("/user/me/", response_model=u.User)
 async def read_users_me(current_user: u.User = Depends(u.get_current_user)):

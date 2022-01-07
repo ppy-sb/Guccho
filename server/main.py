@@ -8,10 +8,12 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
+
 @app.on_event("startup")
 async def startup_event():
     await db.connect()
-    print("Connected to database") # XXX: perpahs use cmyui logger? ~lenforiee
+    print("Connected to database")  # XXX: perpahs use cmyui logger? ~lenforiee
+
 
 app.include_router(auth.router, prefix="/v1/auth")
 
@@ -25,4 +27,4 @@ app.add_middleware(
 )
 
 if __name__ == "__main__":
-  uvicorn.run(app, host="127.0.0.1", port=config.API_PORT, log_level="info")
+    uvicorn.run(app, host="127.0.0.1", port=config.API_PORT, log_level="info")
