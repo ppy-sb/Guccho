@@ -1,5 +1,6 @@
 import hashlib
 import bcrypt
+import config
 from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime, timedelta
@@ -9,9 +10,6 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from objects import varka, glob
 from objects.database import db
-
-SECRET_KEY = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
-ALGORITHM = "HS256"
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
@@ -23,9 +21,10 @@ class TokenData(BaseModel):
     name: Optional[str] = None
 
 class User(BaseModel):
+    id: int
     name: str
     safe_name: str
-    email: Optional[str] = None
+    email: Optional[str]
     priv: int
 
 class UserInDB(User):
@@ -69,6 +68,7 @@ async def get_user(name: str = None, userid: str = None):
         return None
 
     user = UserInDB(**res)
+    print(user)
     return user
 
 async def authenticate_user(name: str, password: str):
@@ -88,7 +88,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     else:
         expire = datetime.utcnow() + timedelta(minutes=15)
     to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    encoded_jwt = jwt.encode(to_encode, config.TOKEN_SECRET, algorithm="HS256")
     return encoded_jwt
 
 
@@ -99,7 +99,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(token, config.TOKEN_SECRET, algorithms=["HS256"])
         name: str = payload.get("sub")
         if name is None:
             raise credentials_exception
