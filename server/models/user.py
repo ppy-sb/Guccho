@@ -64,11 +64,11 @@ async def get_user(name: str = None, userid: str = None):
     # Small query builder.
     if name:
         query.append("safe_name = :safe_name OR")
-        args.update({"safe_name": varka.toSafeName(name)})
+        args["safe_name"] = varka.toSafeName(name)
 
     if userid:
         query.append("id = :id OR")
-        args.update({"id": userid})
+        args["id"] = userid
 
     if not args: # We failed query building.
         return None
@@ -107,7 +107,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     else:
         expire = datetime.utcnow() + timedelta(minutes=15)
 
-    to_encode.update({"exp": expire})
+    to_encode["exp"] = expire
     encoded_jwt = jwt.encode(to_encode, config.TOKEN_SECRET, algorithm="HS256")
 
     return encoded_jwt
