@@ -1,10 +1,10 @@
 #!/usr/bin/env python3.9
-import uvicorn
 import config
+import uvicorn
 from fastapi import FastAPI
-from routers import auth
-from objects.database import db
 from fastapi.middleware.cors import CORSMiddleware
+from objects.database import db
+from routers import auth
 
 app = FastAPI()
 

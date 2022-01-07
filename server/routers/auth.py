@@ -1,8 +1,6 @@
-from fastapi import APIRouter
 from datetime import timedelta
 
-from fastapi import Depends, HTTPException, status, Request
-from fastapi.responses import JSONResponse
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from models import user as u
 
 # to get a string like this run:
@@ -20,7 +18,8 @@ async def login_for_access_token(request: Request):
     """Handles authenticating and creating token for user."""
 
     form_data = await request.json()
-    user = await u.authenticate_user(form_data["username"], form_data["password"])
+    user = await u.authenticate_user(form_data["username"],
+                                     form_data["password"])
 
     if not user:
         raise HTTPException(
