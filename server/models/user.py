@@ -76,7 +76,7 @@ async def get_user(name: str = None, userid: str = None):
     query_join = " ".join(query)
     res = await db.fetch_one(query_join[:-3], args)
 
-    if res is None:
+    if not res:
         return None
 
     user = UserInDB(**res)
@@ -132,7 +132,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         raise credentials_exception
 
     user = await get_user(name=token_data.name)
-    if user is None:
+    if not user:
         raise credentials_exception
 
     return user
