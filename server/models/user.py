@@ -66,7 +66,7 @@ async def get_user(name: str = None, userid: str = None):
         query.append("safe_name = :safe_name OR")
         args.update({"safe_name": varka.toSafeName(name)})
 
-    if user_id:
+    if userid:
         query.append("id = :id OR")
         args.update({"id": userid})
 
