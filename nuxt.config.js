@@ -91,6 +91,29 @@ export default {
     defaultColorTheme: parseInt(process.env.COLOR_THEME_DEFAULT) || 200
   },
 
+  auth: {
+    strategies: {
+      local: {
+        token: {
+          property: 'access_token',
+          global: true,
+          required: true,
+          maxAge: 60 * 60,
+          type: 'Bearer'
+        },
+        user: {
+          property: '',
+          autoFetch: true
+        },
+        endpoints: {
+          login: { url: 'http://localhost:3001/v1/auth/token', method: 'post' },
+          logout: false,
+          user: { url: 'http://localhost:3001/v1/auth/user/me', method: 'get' }
+        }
+      }
+    }
+  },
+
   // Content module configuration: https://go.nuxtjs.dev/config-content
   content: {},
 

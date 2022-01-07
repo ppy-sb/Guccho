@@ -9,7 +9,7 @@
         <div id="app" class="flex flex-col flex-1 w-full overflow-y-auto bg-dark-5">
           <NavbarDefault />
           <div class="flex-grow">
-            <div id="main">
+            <div class="h-full">
               <Nuxt />
             </div>
           </div>
