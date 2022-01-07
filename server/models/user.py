@@ -54,16 +54,25 @@ async def get_user(name: str = None, userid: str = None):
     if not name and userid:
         return None
 
-    query = ['SELECT * FROM `users`']
+    query = ["SELECT * FROM users"]
+    args = {}
 
+    # Small query builder.
     if name:
-        query.append(f" WHERE `safe_name`='{varka.toSafeName(name)}'")
-    elif userid:
-        query.append(f" WHERE `userid`='{id}'")
+        query.append("WHERE safe_name = :safe_name OR")
+        args.update({"safe_name": varka.toSafeName(name)})
 
-    print(''.join(query))
+    if user_id:
+        query.append("WHERE id = :id OR")
+        args.update({"id": userid})
 
-    res = await db.fetch_one(''.join(query))
+    if not args: # We failed query building.
+        return None
+
+    query_join = " ".join(query)
+    res = await db.fetch_one(query_join[:-3], args)
+
+    res = await db.fetch_one(query, args)
     if res is None:
         return None
 

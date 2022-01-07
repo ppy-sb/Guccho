@@ -11,7 +11,7 @@ app = FastAPI()
 @app.on_event("startup")
 async def startup_event():
     await db.connect()
-    print("Connected to database")
+    print("Connected to database") # XXX: perpahs use cmyui logger? ~lenforiee
 
 app.include_router(auth.router, prefix="/v1/auth")
 
