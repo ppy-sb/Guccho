@@ -47,33 +47,107 @@
               >
                 <a
                   href="#"
-                  class="px-3 py-2 text-sm font-medium text-white rounded-md"
+                  class="px-3 py-2 text-sm font-medium text-white rounded-md hover:bg-black transition-all hover:bg-opacity-20 hover:backdrop-blur-lg"
                   aria-current="page"
                 >{{ item.name }}</a>
               </nuxt-link>
             </div>
           </div>
         </div>
-      </div>
-    </div>
+        <div v-click-outside="closeMenu" class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+          <div class="ml-3 relative">
+            <div>
+              <button
+                id="user-menu-button"
+                type="button"
+                class="flex text-sm rounded-full transition-all items-center gap-2 text-white"
+                aria-expanded="false"
+                aria-haspopup="true"
+                @click="toggleMenu"
+              >
+                <span class="sr-only">Open user menu</span>
+                <template v-if="$auth.loggedIn">
+                  <img class="h-8 w-8 rounded-full" :src="`https://a.${baseURL}/${$auth.user.id}`">
+                  <h1 class="font-semibold">
+                    Hi {{ $auth.user.name }}
+                  </h1>
+                </template>
+                <template v-else>
+                  <img class="h-8 w-8 rounded-full" :src="`https://a.${baseURL}/0`">
+                </template>
+              </button>
+            </div>
 
-    <div v-show="isMobileOpen" id="mobile-menu" class="sm:hidden">
-      <div class="px-2 pt-2 pb-3 space-y-1">
-        <a
-          v-for="(item, index) in menuItems.main"
-          :key="index"
-          href="#"
-          class="block px-3 py-2 text-base font-medium text-white rounded-md"
-          aria-current="page"
-        >{{ item.name }}</a>
+            <transition
+              enter-active-class="transition-all duration-100 transform ease-out"
+              enter-class="opacity-0 -translate-y-2"
+              enter-to-class="opacity-100"
+              leave-active-class="transition-all duration-100 transform ease-in"
+              leave-class="opacity-100"
+              leave-to-class="opacity-0 -translate-y-2"
+            >
+              <div
+                v-show="isMenuOpen"
+                class="origin-top-right absolute right-0 mt-2 w-[10rem] rounded-md shadow-lg py-1 bg-hsl-b3 ring-1 ring-black ring-opacity-5 focus:outline-none"
+                role="menu"
+                aria-orientation="vertical"
+                aria-labelledby="user-menu-button"
+                tabindex="-1"
+              >
+                <template v-if="!$auth.loggedIn">
+                  <nuxt-link
+                    v-for="(m, index) in menuItems.guest"
+                    :key="index"
+                    :to="m.url"
+                    class="block px-4 py-2 text-sm text-white hover:border-l-2 transition-all font-semibold border-hsl-h2"
+                    role="menuitem"
+                    tabindex="-1"
+                    @click.native="closeMenu"
+                  >
+                    {{ m.name }}
+                  </nuxt-link>
+                </template>
+                <template v-else>
+                  <nuxt-link
+                    v-for="(m, index) in menuItems.user"
+                    :key="index"
+                    :to="m.url"
+                    class="block px-4 py-2 text-sm text-white hover:border-l-2 transition-all font-semibold border-hsl-h2"
+                    role="menuitem"
+                    tabindex="-1"
+                    @click.native="closeMenu"
+                  >
+                    {{ m.name }}
+                  </nuxt-link>
+                </template>
+              </div>
+            </transition>
+          </div>
+        </div>
+      </div>
+
+      <div v-show="isMobileOpen" id="mobile-menu" class="sm:hidden">
+        <div class="px-2 pt-2 pb-3 space-y-1">
+          <a
+            v-for="(item, index) in menuItems.main"
+            :key="index"
+            href="#"
+            class="block px-3 py-2 text-base font-medium text-white rounded-md"
+            aria-current="page"
+          >{{ item.name }}</a>
+        </div>
       </div>
     </div>
   </nav>
 </template>
 
 <script>
+import vClickOutside from 'v-click-outside'
 export default {
   name: 'NavbarDefault',
+  directives: {
+    clickOutside: vClickOutside.directive
+  },
   data () {
     return {
       isMenuOpen: false,
@@ -86,16 +160,20 @@ export default {
         user: [
           { name: 'Profile', url: '/dashboard' },
           { name: 'Settings', url: '/dashboard' },
-          { name: 'Sign out', url: '/dashboard' }
+          { name: 'Sign out', url: '/auth/logout' }
         ],
         guest: [
           { name: 'Sign in', url: '/auth/login' },
           { name: 'Sign up', url: '/auth/register' }
         ]
-      }
+      },
+      baseURL: process.env.baseUrl
     }
   },
   methods: {
+    closeMenu () {
+      this.isMenuOpen = false
+    },
     toggleMenu () {
       this.isMenuOpen = !this.isMenuOpen
     },
