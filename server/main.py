@@ -1,5 +1,4 @@
 #!/usr/bin/env python3.9
-from logging import log
 import uvicorn
 import config
 from fastapi import FastAPI
