@@ -31,7 +31,9 @@ class UserInDB(User):
     pw_bcrypt: str
 
 
-def verify_password(plain_password, encrypted_password):
+def verify_password(plain_password: str, encrypted_password: str):
+    """Verifies user password and cache it."""
+
     bcrypt_cache = glob.cache['bcrypt']
     pw_bcrypt = encrypted_password.encode()
     pw_md5 = hashlib.md5(plain_password.encode()).hexdigest().encode()
@@ -51,7 +53,9 @@ def verify_password(plain_password, encrypted_password):
 
 
 async def get_user(name: str = None, userid: str = None):
-    if not name and userid:
+    """Builds an query and fetches user data."""
+
+    if not name and not userid:
         return None
 
     query = ["SELECT * FROM users"]
@@ -72,36 +76,46 @@ async def get_user(name: str = None, userid: str = None):
     query_join = " ".join(query)
     res = await db.fetch_one(query_join[:-3], args)
 
-    res = await db.fetch_one(query, args)
     if res is None:
         return None
 
     user = UserInDB(**res)
-    print(user)
+    #print(user)
     return user
 
+
 async def authenticate_user(name: str, password: str):
+    """Validates and verifies user password."""
+
     user = await get_user(name)
     if not user:
         return False
-    print(verify_password(password, user.pw_bcrypt))
+
+    #print(verify_password(password, user.pw_bcrypt))
     if not verify_password(password, user.pw_bcrypt):
         return False
+
     return user
 
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
+    """Creates an JWT token."""
     to_encode = data.copy()
+
     if expires_delta:
         expire = datetime.utcnow() + expires_delta
     else:
         expire = datetime.utcnow() + timedelta(minutes=15)
+
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, config.TOKEN_SECRET, algorithm="HS256")
+
     return encoded_jwt
 
 
 async def get_current_user(token: str = Depends(oauth2_scheme)):
+    """Gets user data from JWT token."""
+
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -109,13 +123,16 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
     )
     try:
         payload = jwt.decode(token, config.TOKEN_SECRET, algorithms=["HS256"])
-        name: str = payload.get("sub")
-        if name is None:
+        name = payload.get("sub")
+        if not name:
             raise credentials_exception
+
         token_data = TokenData(name=name)
     except JWTError:
         raise credentials_exception
+
     user = await get_user(name=token_data.name)
     if user is None:
         raise credentials_exception
+
     return user
