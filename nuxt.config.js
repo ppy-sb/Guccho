@@ -30,8 +30,8 @@ export default {
 
   publicRuntimeConfig: {
     version: {
-      api: '1.0.0',
-      front: '1.0.1'
+      api: '1.0.3',
+      front: '1.0.3'
     }
   },
 
