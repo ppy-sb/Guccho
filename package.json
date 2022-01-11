@@ -37,7 +37,7 @@
         "nuxt-animejs": "^1.2.2",
         "nuxt-tailvue": "^1.0.95",
         "nuxt-windicss": "^2.2.2",
-        "sequelize": "^6.12.5",
+        "sequelize": "^6.13.0",
         "v-click-outside": "^3.1.2",
         "v-tooltip": "^3.0.0-beta.11"
     }
