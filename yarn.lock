@@ -10482,10 +10482,10 @@ v-click-outside@^3.1.2:
   resolved "https://registry.yarnpkg.com/v-click-outside/-/v-click-outside-3.1.2.tgz#1dbaa14bf09a21bd16f23a38f03bfa3988f71281"
   integrity sha512-gMdRqfRE6m6XU6SiFi3dyBlFB2MWogiXpof8Aa3LQysrl9pzTndqp/iEaAphLoadaQUFnQ0ec6fLLaxr7LiY6A==
 
-v-tooltip@^3.0.0-beta.11:
-  version "3.0.0-beta.11"
-  resolved "https://registry.yarnpkg.com/v-tooltip/-/v-tooltip-3.0.0-beta.11.tgz#fd9f7cf204fdf12c48551650e514b25998350c47"
-  integrity sha512-kksAU5YhURuv84qrbPOHQ5RHYQOAv10dYzVxuRElu73DdGwQfd0pTKix9RHOaP6XgBPpviFfTB1aspB5lLIzAA==
+v-tooltip@^4.0.0-beta.0:
+  version "4.0.0-beta.0"
+  resolved "https://registry.yarnpkg.com/v-tooltip/-/v-tooltip-4.0.0-beta.0.tgz#8ef873e6ce5643c0b1feb250cc2c7d89dbc2aa8d"
+  integrity sha512-I0X7ggjr8W0DsJG4qmtOl+rpHzvC1pa0DyjVC7sRzSG4cBDEhy97oYR1eo38RSblZ0nWE8Hhxcv/1JFF1k0Kig==
   dependencies:
     "@popperjs/core" "^2.11.0"
     vue-resize "^1.0.0"
