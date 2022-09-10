@@ -1,7 +1,7 @@
 <template>
   <div class="h-header bg-hsl-h3">
-    <div class="container sm:grid items-center grid-cols-2 text-center text-white">
-      <HeaderSimpleTitlewithsub
+    <div class="container sm:grid items-start grid-cols-2 text-center text-white">
+      <HeaderSimpleTitleWithSub
         title="Leaderboard"
         :subtitle="`${leaderboard.mode.selected.name} - ${leaderboard.mods.selected.name}`"
         class="text-left"
@@ -12,12 +12,12 @@
           <a
             v-for="(m, index) in leaderboard.mode.list"
             :key="index"
-            class="h-mode"
+            class="h-mode mx-2"
             :class="{ '!opacity-80 pointer-events-none': leaderboard.mode.selected.name === m.name,
                       '!opacity-20 pointer-events-none': $forbiddenMode(leaderboard.mods.selected.icon, m.icon) }"
             @click="changeValue('mode', index)"
           >
-            <img :src="require(`~/assets/icons/mode/${m.icon}.svg`)">
+            <img :src="`assets/icons/mode/${m.icon}.svg`">
           </a>
         </div>
         <div class="flex justify-center sm:justify-end">
@@ -96,8 +96,8 @@ export default {
       this.$emit('input', this.leaderboard)
     },
     initLeaderboard () {
-      this.leaderboard.mode.list = this.$store.state.mode.list
-      this.leaderboard.mods.list = this.$store.state.mods.list
+      this.leaderboard.mode.list = this.$config.mode
+      this.leaderboard.mods.list = this.$config.mods
       this.leaderboard.mode.selected = this.leaderboard.mode.list[0]
       this.leaderboard.mods.selected = this.leaderboard.mods.list[0]
       this.leaderboard.sort.selected = this.leaderboard.sort.list[0]

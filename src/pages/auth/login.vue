@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-full flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
     <div class="max-w-md w-full space-y-8 bg-hsl-b5 p-6 rounded-lg relative overflow-hidden">
-      <FetchOverlay :fetching="fetching" />
+      <fetch-overlay :fetching="fetching" />
 
       <div>
         <h2 class="text-center text-3xl text-gray-200">
@@ -74,31 +74,31 @@ export default {
   },
   methods: {
     async userLogin () {
-      try {
-        this.error = null
-        this.fetching = true
-        await this.$auth.loginWith('local', { data: this.login })
-        this.$router.push('/')
-        this.$toast.show({
-          type: 'success',
-          message: 'You have been logged in!'
-        })
-      } catch (err) {
-        const response = err.response
-        if (response.data) {
-          this.error = response.data.detail
-        } else {
-          this.error = response.statusText
-        }
-      } finally {
-        this.fetching = false
-      }
+      // try {
+      //   this.error = null
+      //   this.fetching = true
+      //   await this.$auth.loginWith('local', { data: this.login })
+      //   this.$router.push('/')
+      //   this.$toast.show({
+      //     type: 'success',
+      //     message: 'You have been logged in!'
+      //   })
+      // } catch (err) {
+      //   const response = err.response
+      //   if (response.data) {
+      //     this.error = response.data.detail
+      //   } else {
+      //     this.error = response.statusText
+      //   }
+      // } finally {
+      //   this.fetching = false
+      // }
     }
   }
 }
 </script>
 
-<style>
+<style lang="postcss">
 .auth-input {
   @apply appearance-none rounded-md bg-hsl-b6 relative block w-full px-3 py-4 placeholder-white placeholder-opacity-25 text-gray-200 font-semibold rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm
 }

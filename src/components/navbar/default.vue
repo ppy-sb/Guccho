@@ -34,7 +34,7 @@
           <div class="flex items-center flex-shrink-0">
             <nuxt-link to="/">
               <h1 class="text-xl font-bold text-white">
-                guweb
+                {{ $config.title }}
               </h1>
             </nuxt-link>
           </div>
@@ -43,13 +43,10 @@
               <nuxt-link
                 v-for="(item, index) in menuItems.main"
                 :key="index"
-                :to="item.url"
+                :to="item.route || item.url"
+                class="px-3 py-2 text-sm font-medium text-white rounded-md hover:bg-black transition-all hover:bg-opacity-20 hover:backdrop-blur-lg"
               >
-                <a
-                  href="#"
-                  class="px-3 py-2 text-sm font-medium text-white rounded-md hover:bg-black transition-all hover:bg-opacity-20 hover:backdrop-blur-lg"
-                  aria-current="page"
-                >{{ item.name }}</a>
+                {{ item.name }}
               </nuxt-link>
             </div>
           </div>
@@ -66,15 +63,15 @@
                 @click="toggleMenu"
               >
                 <span class="sr-only">Open user menu</span>
-                <template v-if="$auth.loggedIn">
-                  <img class="h-8 w-8 rounded-full" :src="`https://a.${baseURL}/${$auth.user.id}`">
+                <!-- <template v-if="$auth.loggedIn">
+                  <img class="h-8 w-8 rounded-full" :src="`https://a.${$config.baseUrl}/${$auth.user.id}`">
                   <h1 class="font-semibold">
                     Hi {{ $auth.user.name }}
                   </h1>
                 </template>
                 <template v-else>
-                  <img class="h-8 w-8 rounded-full" :src="`https://a.${baseURL}/0`">
-                </template>
+                  <img class="h-8 w-8 rounded-full" :src="`https://a.${$config.baseUrl}/0`">
+                </template> -->
               </button>
             </div>
 
@@ -94,7 +91,7 @@
                 aria-labelledby="user-menu-button"
                 tabindex="-1"
               >
-                <template v-if="!$auth.loggedIn">
+                <!-- <template v-if="!$auth.loggedIn">
                   <nuxt-link
                     v-for="(m, index) in menuItems.guest"
                     :key="index"
@@ -119,7 +116,7 @@
                   >
                     {{ m.name }}
                   </nuxt-link>
-                </template>
+                </template> -->
               </div>
             </transition>
           </div>
@@ -154,8 +151,18 @@ export default {
       isMobileOpen: false,
       menuItems: {
         main: [
-          { name: 'Home', url: '/' },
-          { name: 'Leaderboard', url: '/leaderboard' }
+          {
+            name: 'Home',
+            route: {
+              name: 'index'
+            }
+          },
+          {
+            name: 'Leaderboard',
+            route: {
+              name: 'leaderboard'
+            }
+          }
         ],
         user: [
           { name: 'Profile', url: '/dashboard' },
@@ -166,8 +173,7 @@ export default {
           { name: 'Sign in', url: '/auth/login' },
           { name: 'Sign up', url: '/auth/register' }
         ]
-      },
-      baseURL: process.env.baseUrl
+      }
     }
   },
   methods: {

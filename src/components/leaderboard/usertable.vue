@@ -15,7 +15,7 @@
         </div>
         <div class="ml-3">
           <p class="font-medium text-white">
-            <HoverUsercard :user="user" :href="'/user/' + user.player_id" />
+            <user-card :user="user" :href="'/user/' + user.player_id" />
           </p>
         </div>
       </div>
@@ -42,7 +42,7 @@
 
 <script>
 export default {
-  name: 'LeaderboadUserTable',
+  name: 'UserTable',
   props: {
     user: {
       type: Object,

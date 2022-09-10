@@ -1,12 +1,12 @@
 <template>
   <div id="leaderboard">
-    <HeaderLeaderboard v-model.lazy="selection" @input="fetchLeaderboard" />
+    <header-leaderboard v-model.lazy="selection" @input="fetchLeaderboard" />
 
     <div class="container">
       <div
         class="bg-hsl-b5 lg:rounded-md relative overflow-hidden mx-auto mt-4 box"
       >
-        <FetchOverlay :fetching="fetching" />
+        <fetch-overlay :fetching="fetching" />
         <div class="px-8 py-4">
           <div class="relative overflow-x-auto">
             <template v-if="result.length !== 0">
@@ -29,7 +29,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <LeaderboardUsertable v-for="(u, index) in result" :key="index" :user="u" :place="index+1" :sort="selection.sort" />
+                  <leaderboard-user-table v-for="(u, index) in result" :key="index" :user="u" :place="index+1" :sort="selection.sort" />
                 </tbody>
               </table>
             </template>
@@ -62,29 +62,30 @@ export default {
     }
   },
   mounted () {
-    this.$store.commit('changeThemeHue', 80)
+    // this.$store.commit('changeThemeHue', 80)
   },
   methods: {
     fetchLeaderboard () {
       this.fetching = true
-      this.$axios
-        .get(`https://api.${process.env.baseUrl}/get_leaderboard`, {
-          params: {
-            mode: this.$modeToGulag(this.selection.mode.selected.icon, this.selection.mods.selected.icon)
-          }
-        })
-        .then((response) => {
-          this.result = response.data.leaderboard
-        })
-        .catch((error) => {
-          this.$toast.show({
-            type: 'danger',
-            message: error
-          })
-        })
-        .finally(() => {
-          this.fetching = false
-        })
+      // TODO: migrate to useFetch
+      // this.$axios
+      //   .get(`https://api.${'1'}/get_leaderboard`, {
+      //     params: {
+      //       mode: this.$modeToGulag(this.selection.mode.selected.icon, this.selection.mods.selected.icon)
+      //     }
+      //   })
+      //   .then((response) => {
+      //     this.result = response.data.leaderboard
+      //   })
+      //   .catch((error) => {
+      //     this.$toast.show({
+      //       type: 'danger',
+      //       message: error
+      //     })
+      //   })
+      //   .finally(() => {
+      //     this.fetching = false
+      //   })
     }
   }
 }
