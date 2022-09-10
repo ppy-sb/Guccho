@@ -2,7 +2,7 @@
 export default {
   name: 'LogoutPage',
   mounted () {
-    this.$auth.logout()
+    // this.$auth.logout()
     this.$router.push('/')
     this.$toast.show({
       type: 'success',

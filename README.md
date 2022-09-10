@@ -1,9 +1,57 @@
+# Nuxt 3 Minimal Starter
+
+Look at the [nuxt 3 documentation](https://v3.nuxtjs.org) to learn more.
+
+## Setup
+
+Make sure to install the dependencies:
+
+```bash
+# yarn
+yarn install
+
+# npm
+npm install
+
+# pnpm
+pnpm install --shamefully-hoist
+```
+
+## Development Server
+
+Start the development server on http://localhost:3000
+
+```bash
+npm run dev
+```
+
+## Production
+
+Build the application for production:
+
+```bash
+npm run build
+```
+
+Locally preview production build:
+
+```bash
+npm run preview
+```
+
+Checkout the [deployment documentation](https://v3.nuxtjs.org/guide/deploy/presets) for more information.
+
+
 Table of Contents
 ==================
+- [Nuxt 3 Minimal Starter](#nuxt-3-minimal-starter)
+  - [Setup](#setup)
+  - [Development Server](#development-server)
+  - [Production](#production)
 - [Table of Contents](#table-of-contents)
   - [What is guweb-nuxt?](#what-is-guweb-nuxt)
   - [Requirements](#requirements)
-  - [The team](#the-team)
+  - [The team (guweb-nuxt)](#the-team-guweb-nuxt)
 
 What is guweb-nuxt?
 ------
@@ -22,3 +70,10 @@ Requirements
 The team (guweb-nuxt)
 ------
 - [Varkaria](https://github.com/Varkaria)
+
+
+Plan: deprecate Python api server and use Nuxt 3 only.
+
+phase 1: migrate to nuxt 3 with typescript support
+phase 2: define tRPC schema for both frontend and backend
+phase 3: migrate legacy python server to nuxt 3 api.

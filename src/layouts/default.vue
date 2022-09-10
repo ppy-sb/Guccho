@@ -5,17 +5,18 @@
       enter-class="opacity-0"
       enter-to-class="opacity-100"
     >
-      <div v-show="!isLoading" class="flex flex-col h-screen overflow-y-hidden bg-hsl-b6" :style="`--base-h: ${$store.state.theme_hue}`">
+      <div v-show="!isLoading" class="flex flex-col h-screen overflow-y-hidden bg-hsl-b6">
         <div id="app" class="flex flex-col flex-1 w-full overflow-y-auto bg-dark-5">
           <NavbarDefault />
           <div class="flex-grow">
             <div class="h-full">
-              <Nuxt />
+              <!-- <Nuxt /> -->
+              <slot />
             </div>
           </div>
           <footer class="py-4 text-center bottom-1 bg-hsl-b5">
             <h1 class="text-sm font-semibold text-white">
-              © 2022 Varkaria
+              © {{ new Date().getFullYear() }} ppy-sb | Varkaria
             </h1>
             <h2 class="text-sm font-semibold font-bold text-white">
               <span class="text-green-400">API</span> {{ $config.version.api }}
@@ -71,9 +72,9 @@ export default {
   },
   watch: {
     $route () {
-      if (this.$store.state.theme_hue !== process.env.defaultColorTheme) {
-        return this.$store.commit('changeThemeHue', process.env.defaultColorTheme)
-      }
+      // if (this.$store.state.theme_hue !== process.env.defaultColorTheme) {
+      //   return this.$store.commit('changeThemeHue', process.env.defaultColorTheme)
+      // }
     }
   },
   mounted () {

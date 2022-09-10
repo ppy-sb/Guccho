@@ -1,4 +1,6 @@
 import { defineNuxtConfig } from 'nuxt'
+
+import postcss from './postcss.config'
 export default defineNuxtConfig({
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
   ssr: true,
@@ -25,52 +27,89 @@ export default defineNuxtConfig({
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
     '~/plugins/varka.js',
-    '~/plugins/tooltip.js',
     '~/plugins/click-outside.js'
   ],
 
   publicRuntimeConfig: {
+    baseUrl: 'dev.ppy.sb',
     version: {
       api: '1.0.3',
       front: '1.0.3'
-    }
+    },
+    title: 'guweb',
+    mode: [
+      {
+        name: 'Standard',
+        icon: 'osu'
+      },
+      {
+        name: 'Taiko',
+        icon: 'taiko'
+      },
+      {
+        name: 'Catch',
+        icon: 'catch'
+      },
+      {
+        name: 'Mania',
+        icon: 'mania'
+      }
+    ],
+    mods: [
+      {
+        name: 'Vanilla',
+        icon: 'vn'
+      },
+      {
+        name: 'Relax',
+        icon: 'rx'
+      },
+      {
+        name: 'Autopilot',
+        icon: 'ap'
+      }
+    ]
   },
 
   // Auto import components: https://go.nuxtjs.dev/config-components
-  components: true,
+  components: {
+    global: true,
+    dirs: ['~/components']
+  },
 
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
   buildModules: [
+    'floating-vue/nuxt',
     // https://go.nuxtjs.dev/eslint
     '@nuxtjs/eslint-module',
-    // https://windicss.org/
-    'nuxt-windicss',
-    // https://animejs.com/
-    'nuxt-animejs'
+    // // https://windicss.org/
+    'nuxt-windicss'
+    // // https://animejs.com/
+    // 'nuxt-animejs'
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
-    // https://go.nuxtjs.dev/axios
-    '@nuxtjs/axios',
     // https://go.nuxtjs.dev/pwa
-    '@nuxtjs/pwa',
+    // '@nuxtjs/pwa',
     // https://go.nuxtjs.dev/content
-    '@nuxt/content',
-    '@nuxtjs/auth-next', ['nuxt-tailvue', {
-      all: true,
-      toast: {
-        defaultProps: {
-          timeout: 10,
-          progress: true,
-          classToast: 'bg-gray-700',
-          classTitle: 'text-gray-100',
-          classMessage: 'text-gray-200',
-          classClose: 'text-gray-300',
-          classTimeout: 'bg-gray-800'
-        }
-      }
-    }]
+    // '@nuxt/content',
+    // '@nuxtjs/auth-next',
+    // ['nuxt-tailvue', {
+    //   all: true,
+    //   toast: {
+    //     defaultProps: {
+    //       timeout: 10,
+    //       progress: true,
+    //       classToast: 'bg-gray-700',
+    //       classTitle: 'text-gray-100',
+    //       classMessage: 'text-gray-200',
+    //       classClose: 'text-gray-300',
+    //       classTimeout: 'bg-gray-800'
+    //     }
+    //   }
+    // }],
+    '@pinia/nuxt'
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
@@ -118,5 +157,6 @@ export default defineNuxtConfig({
   content: {},
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
-  build: {}
+  build: {},
+  postcss
 })

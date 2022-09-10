@@ -11,7 +11,7 @@
         <div v-if="user">
           <div class="flex gap-2 items-center">
             <img
-              :src="`https://a.${baseUrl}/${user.player_id}`"
+              :src="`https://a.${$config.baseUrl}/${user.player_id}`"
               alt=""
               class="w-16 h-16 rounded-lg"
             >
@@ -31,8 +31,9 @@
 </template>
 
 <script>
+// const runtimeConfig = useRuntimeConfig()
 export default {
-  name: 'HoverUserCard',
+  name: 'UserCard',
   props: {
     user: {
       type: Object,
@@ -47,8 +48,7 @@ export default {
   data () {
     return {
       user_status: null,
-      fetching: true,
-      baseUrl: process.env.baseUrl
+      fetching: true
     }
   }
 }
