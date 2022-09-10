@@ -1,12 +1,13 @@
-export default {
+import { defineNuxtConfig } from 'nuxt'
+export default defineNuxtConfig({
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
-  ssr: false,
+  ssr: true,
 
-  srcDir: 'client/',
+  srcDir: 'src/',
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    title: 'guweb-nuxy',
+    title: 'guweb-nuxt',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
@@ -56,8 +57,7 @@ export default {
     '@nuxtjs/pwa',
     // https://go.nuxtjs.dev/content
     '@nuxt/content',
-    '@nuxtjs/auth-next',
-    ['nuxt-tailvue', {
+    '@nuxtjs/auth-next', ['nuxt-tailvue', {
       all: true,
       toast: {
         defaultProps: {
@@ -118,6 +118,5 @@ export default {
   content: {},
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
-  build: {
-  }
-}
+  build: {}
+})

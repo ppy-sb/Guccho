@@ -8,7 +8,7 @@
           Login
         </h2>
       </div>
-      <form class="mt-8 space-y-12" @submit.prevent="userLogin" autocomplete="off">
+      <form class="mt-8 space-y-12" autocomplete="off" @submit.prevent="userLogin">
         <div class="shadow-sm space-y-2">
           <div>
             <label for="user" class="sr-only">Username</label>
