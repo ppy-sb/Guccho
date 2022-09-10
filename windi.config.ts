@@ -3,12 +3,12 @@ import { defineConfig } from '@windicss/plugin-utils'
 export default defineConfig({
   extract: {
     include: [
-      "./node_modules/tv-*/dist/tv-*.umd.min.js",
-      "./client/components/**/*.{js,vue,ts}",
-      "./client/layouts/**/*.vue",
-      "./client/pages/**/*.vue",
-      "./client/plugins/**/*.{js,ts}",
-      "./nuxt.config.{js,ts}",
+      './node_modules/tv-*/dist/tv-*.umd.min.js',
+      './src/components/**/*.{js,vue,ts}',
+      './src/layouts/**/*.vue',
+      './src/pages/**/*.vue',
+      './src/plugins/**/*.{js,ts}',
+      './nuxt.config.{js,ts}'
     ]
   },
   theme: {
