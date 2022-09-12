@@ -1,9 +1,9 @@
 <template>
   <div
-    class="h-[42rem] bg-hsl-h3 flex items-center"
+    class="h-full flex items-center"
   >
     <div
-      class="container text-left text-white my-auto flex items-center justify-between"
+      class="container w-max text-left text-white my-auto flex items-center justify-between"
     >
       <div class="content">
         <div class="mb-6">

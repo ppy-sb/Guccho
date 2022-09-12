@@ -81,7 +81,7 @@ export default defineNuxtConfig({
   buildModules: [
     'floating-vue/nuxt',
     // https://go.nuxtjs.dev/eslint
-    '@nuxtjs/eslint-module',
+    // '@nuxtjs/eslint-module',
     // // https://windicss.org/
     'nuxt-windicss'
     // // https://animejs.com/

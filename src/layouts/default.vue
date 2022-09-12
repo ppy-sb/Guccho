@@ -5,7 +5,7 @@
       enter-class="opacity-0"
       enter-to-class="opacity-100"
     >
-      <div v-show="!isLoading" class="flex flex-col h-screen overflow-y-hidden bg-hsl-b6">
+      <div v-show="!isLoading" class="flex flex-col h-screen overflow-y-hidden bg-hsl-b4">
         <div id="app" class="flex flex-col flex-1 w-full overflow-y-auto bg-dark-5">
           <NavbarDefault />
           <div class="flex-grow">
@@ -16,7 +16,7 @@
           </div>
           <footer class="py-4 text-center bottom-1 bg-hsl-b5">
             <h1 class="text-sm font-semibold text-white">
-              © {{ new Date().getFullYear() }} ppy-sb | Varkaria
+              © {{ new Date().getFullYear() }} ppy.sb | Varkaria
             </h1>
             <h2 class="text-sm font-semibold font-bold text-white">
               <span class="text-green-400">API</span> {{ $config.version.api }}
