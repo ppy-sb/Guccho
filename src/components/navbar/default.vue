@@ -1,5 +1,5 @@
 <template>
-  <nav class="z-20 w-full transition-all lg:fixed bg-hsl-h2 lg:bg-transparent">
+  <nav class="z-20 w-full transition-all md:fixed bg-hsl-h3 md:bg-transparent">
     <div class="px-2 mx-auto max-w-7xl sm:px-6 lg:px-8">
       <div class="relative flex items-center justify-between h-16">
         <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">

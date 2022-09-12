@@ -9,10 +9,7 @@
         <div id="app" class="flex flex-col flex-1 w-full overflow-y-auto bg-dark-5">
           <NavbarDefault />
           <div class="flex-grow">
-            <div class="h-full">
-              <!-- <Nuxt /> -->
-              <slot />
-            </div>
+            <slot />
           </div>
           <footer class="py-4 text-center bottom-1 bg-hsl-b5">
             <h1 class="text-sm font-semibold text-white">
