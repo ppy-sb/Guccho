@@ -1,10 +1,10 @@
 <template>
-  <div id="leaderboard">
+  <div class="leaderboard h-full">
     <header-leaderboard v-model.lazy="selection" @input="fetchLeaderboard" />
 
-    <div class="container">
+    <div class="container !p-0 h-100 content">
       <div
-        class="bg-hsl-b5 lg:rounded-md relative overflow-hidden mx-auto mt-4 box"
+        class="bg-hsl-b5 relative overflow-hidden mx-auto box xl:rounded-lg"
       >
         <fetch-overlay :fetching="fetching" />
         <div class="px-8 py-4">
@@ -24,7 +24,7 @@
                       Accuracy
                     </th>
                     <th class="px-4 text-center text-xs opacity-60 font-medium">
-                      Playcount
+                      Play Count
                     </th>
                   </tr>
                 </thead>
@@ -34,12 +34,12 @@
               </table>
             </template>
             <template v-else>
-              <div class="text-white h-full mt-5">
+              <div class="text-white min-h-full mt-5">
                 <h1 class="text-center text-xl font-semibold">
-                  no one play this mode yet
+                  no one played this mode yet
                 </h1>
                 <h2 class="text-center font-semibold opacity-60 text-sm">
-                  Maybe you are the first one? try play it.
+                  Maybe you are the first one? Go for it.
                 </h2>
               </div>
             </template>
@@ -91,11 +91,13 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="postcss">
 .box {
   min-height: 8rem;
 }
-
+.content {
+  margin-top: -3rem;
+}
 </style>
 
 <style>

@@ -1,9 +1,9 @@
 html {
-  background: hsl(0, 0%, 10%);
+  --base-h: 210;
 }
 
 .container {
-  @apply px-0 mx-auto max-w-7xl sm:px-6 lg:px-8;
+  @apply mx-auto max-w-7xl px-2;
 }
 
 .page-enter-active {
