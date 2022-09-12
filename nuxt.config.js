@@ -79,36 +79,21 @@ export default defineNuxtConfig({
 
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
   buildModules: [
-    'floating-vue/nuxt',
+    'floating-vue/nuxt'
     // https://go.nuxtjs.dev/eslint
     // '@nuxtjs/eslint-module',
-    // // https://windicss.org/
-    'nuxt-windicss'
     // // https://animejs.com/
     // 'nuxt-animejs'
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
+    '@nuxtjs/tailwindcss',
     // https://go.nuxtjs.dev/pwa
     // '@nuxtjs/pwa',
     // https://go.nuxtjs.dev/content
     // '@nuxt/content',
     // '@nuxtjs/auth-next',
-    // ['nuxt-tailvue', {
-    //   all: true,
-    //   toast: {
-    //     defaultProps: {
-    //       timeout: 10,
-    //       progress: true,
-    //       classToast: 'bg-gray-700',
-    //       classTitle: 'text-gray-100',
-    //       classMessage: 'text-gray-200',
-    //       classClose: 'text-gray-300',
-    //       classTimeout: 'bg-gray-800'
-    //     }
-    //   }
-    // }],
     '@pinia/nuxt'
   ],
 

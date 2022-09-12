@@ -122,8 +122,8 @@ export default {
   transition: 0.5s ease;
   @apply pb-2;
   @screen md {
-    @apply pt-13 pb-16
-
+    padding-top: 3rem;
+    padding-bottom: 4rem
   }
 }
 </style>
