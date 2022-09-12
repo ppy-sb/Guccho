@@ -28,9 +28,10 @@
     "vue": "^3.2.39"
   },
   "devDependencies": {
-    "@babel/eslint-parser": "^7.16.3",
     "@nuxtjs/eslint-config-typescript": "^11.0.0",
     "@nuxtjs/eslint-module": "^3.1.0",
+    "@typescript-eslint/eslint-plugin": "^5.36.2",
+    "@typescript-eslint/parser": "^5.36.2",
     "eslint": "^8.7.0",
     "express": "^4.17.2",
     "mysql2": "^2.3.3",

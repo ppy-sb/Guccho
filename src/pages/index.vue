@@ -13,24 +13,26 @@
           <h2 class="h-sub font-semibold text-md text-center sm:text-left">
             We are an osu! private server built from the ground up with many
             unique features not seen elsewhere - for more information, check out
-            gulag and guweb on GitHub - we're fully open source!
+            gulag and {{ $config.title }} on GitHub - we're fully open source!
           </h2>
         </div>
 
         <div class="gap-2 flex">
-          <button
+          <nuxt-link
+            :to="{name: 'auth-login'}"
             type="button"
             class="d-button"
           >
             Login
-          </button>
+          </nuxt-link>
 
-          <button
+          <nuxt-link
+            :to="{name: 'auth-register'}"
             type="button"
             class="d-button"
           >
             Register
-          </button>
+          </nuxt-link>
         </div>
       </div>
       <div class="mascot hidden lg:block">
