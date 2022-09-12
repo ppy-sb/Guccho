@@ -4,13 +4,18 @@ module.exports = {
     browser: true,
     node: true
   },
-  parser: '@typescript-eslint/parser',
+  parserOptions: {
+    ecmaVersion: 13,
+    parser: '@typescript-eslint/parser',
+    sourceType: 'module'
+  },
   extends: [
+    'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
     '@nuxtjs',
     '@nuxtjs/eslint-config-typescript'
   ],
-  plugins: ['@typescript-eslint'],
+  plugins: ['vue', '@typescript-eslint'],
   // add your custom rules here
   rules: {}
 }
