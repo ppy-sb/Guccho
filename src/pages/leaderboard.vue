@@ -36,10 +36,10 @@
             <template v-else>
               <div class="text-white min-h-full mt-5">
                 <h1 class="text-center text-xl font-semibold">
-                  no one played this mode yet
+                  No one played this mode yet.
                 </h1>
                 <h2 class="text-center font-semibold opacity-60 text-sm">
-                  Maybe you are the first one? Go for it.
+                  Maybe you will be the first one? Go for it.
                 </h2>
               </div>
             </template>
@@ -96,7 +96,9 @@ export default {
   min-height: 8rem;
 }
 .content {
-  margin-top: -3rem;
+  @screen md {
+    margin-top: -3rem;
+  }
 }
 </style>
 

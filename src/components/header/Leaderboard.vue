@@ -1,7 +1,7 @@
 <template>
   <div class="h-header bg-hsl-h2">
     <div class="container sm:flex sm:w-full mt-2 items-center justify-between text-center text-white">
-      <HeaderSimpleTitleWithSub
+      <header-simple-title-with-sub
         title="Leaderboard"
         :subtitle="`${leaderboard.mode.selected.name} - ${leaderboard.mods.selected.name}`"
         class="text-left"
@@ -66,7 +66,7 @@ export default {
           selected: Object,
           list: [
             {
-              name: 'Perfomance',
+              name: 'Performance',
               icon: 'pp'
             },
             {
@@ -120,10 +120,10 @@ export default {
   display: flex;
   align-items: center;
   transition: 0.5s ease;
-}
-@media only screen and (min-width: 1024px) {
-  .h-header {
+  @apply pb-2;
+  @screen md {
     @apply pt-13 pb-16
+
   }
 }
 </style>
