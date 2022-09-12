@@ -22,42 +22,42 @@ export default defineNuxtPlugin(() => {
           url += i !== flag.length - 1 ? '-' : '.svg'
         }
         return url
-      }
-    },
-    scoreFormat: (score) => {
-      if (score > 1000 * 1000) {
-        if (score > 1000 * 1000 * 1000) { return `${addCommas((score / 1000000000).toFixed(2))} billion` }
-        return `${addCommas((score / 1000000).toFixed(2))} million`
-      }
-      return addCommas(score)
-    },
-    addCommas: (nStr) => {
-      nStr += ''
-      const x = nStr.split('.')
-      let x1 = x[0]
-      const x2 = x.length > 1 ? '.' + x[1] : ''
-      const rgx = /(\d+)(\d{3})/
-      while (rgx.test(x1)) {
-        x1 = x1.replace(rgx, '$1' + ',' + '$2')
-      }
-      return x1 + x2
-    },
-    forbiddenMode: (mods, mode) => {
-      if (mods === 'rx' && mode === 'mania') {
-        return true
-      } else if (mods === 'ap' && mode !== 'osu') {
-        return true
-      } else {
-        return false
-      }
-    },
-    forbiddenMods: (mode, mods) => {
-      if (mode === 'mania' && mods === 'rx') {
-        return true
-      } else if (mode !== 'osu' && mods === 'ap') {
-        return true
-      } else {
-        return false
+      },
+      scoreFormat: (score) => {
+        if (score > 1000 * 1000) {
+          if (score > 1000 * 1000 * 1000) { return `${addCommas((score / 1000000000).toFixed(2))} billion` }
+          return `${addCommas((score / 1000000).toFixed(2))} million`
+        }
+        return addCommas(score)
+      },
+      addCommas: (nStr) => {
+        nStr += ''
+        const x = nStr.split('.')
+        let x1 = x[0]
+        const x2 = x.length > 1 ? '.' + x[1] : ''
+        const rgx = /(\d+)(\d{3})/
+        while (rgx.test(x1)) {
+          x1 = x1.replace(rgx, '$1' + ',' + '$2')
+        }
+        return x1 + x2
+      },
+      forbiddenMode: (mods, mode) => {
+        if (mods === 'rx' && mode === 'mania') {
+          return true
+        } else if (mods === 'ap' && mode !== 'osu') {
+          return true
+        } else {
+          return false
+        }
+      },
+      forbiddenMods: (mode, mods) => {
+        if (mode === 'mania' && mods === 'rx') {
+          return true
+        } else if (mode !== 'osu' && mods === 'ap') {
+          return true
+        } else {
+          return false
+        }
       }
     }
   }
