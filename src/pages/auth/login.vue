@@ -11,20 +11,20 @@
       <form class="mt-8 space-y-12" autocomplete="off" @submit.prevent="userLogin">
         <div class="shadow-sm space-y-2">
           <div>
-            <label for="user" class="sr-only">Username</label>
+            <label for="user" class="sr-only">User / Email</label>
             <h1 v-if="error" class="auth-error-text">
               {{ error }}
             </h1>
             <input
               id="user"
-              v-model="login.username"
+              v-model="login.user"
               name="user"
               type="user"
               autocomplete="off"
               required
               class="auth-input"
               :class="{ 'auth-error-input': error }"
-              placeholder="Username"
+              placeholder="User"
             >
           </div>
           <div>
@@ -65,7 +65,7 @@ export default {
   data () {
     return {
       login: {
-        username: '',
+        user: '',
         password: ''
       },
       fetching: false,
