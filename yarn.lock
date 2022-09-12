@@ -677,7 +677,7 @@
 
 "@nuxtjs/eslint-config-typescript@^11.0.0":
   version "11.0.0"
-  resolved "https://registry.npmjs.org/@nuxtjs/eslint-config-typescript/-/eslint-config-typescript-11.0.0.tgz"
+  resolved "https://registry.yarnpkg.com/@nuxtjs/eslint-config-typescript/-/eslint-config-typescript-11.0.0.tgz#748a0cc063a5cf93ec52dc2d5a2ed94309cacb5b"
   integrity sha512-hmFjGtXT524ql8eTbK8BaRkamcXB6Z8YOW8nSQhosTP6oBw9WtOFUeWr7holyE278UhOmx+wDFG90BnyM9D+UA==
   dependencies:
     "@nuxtjs/eslint-config" "^11.0.0"
@@ -1241,7 +1241,7 @@
 
 "@typescript-eslint/eslint-plugin@^5.36.1", "@typescript-eslint/eslint-plugin@^5.36.2":
   version "5.36.2"
-  resolved "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-5.36.2.tgz"
+  resolved "https://registry.yarnpkg.com/@typescript-eslint/eslint-plugin/-/eslint-plugin-5.36.2.tgz#6df092a20e0f9ec748b27f293a12cb39d0c1fe4d"
   integrity sha512-OwwR8LRwSnI98tdc2z7mJYgY60gf7I9ZfGjN5EjCwwns9bdTuQfAXcsjSB2wSQ/TVNYSGKf4kzVXbNGaZvwiXw==
   dependencies:
     "@typescript-eslint/scope-manager" "5.36.2"
@@ -1256,7 +1256,7 @@
 
 "@typescript-eslint/parser@^5.36.1", "@typescript-eslint/parser@^5.36.2":
   version "5.36.2"
-  resolved "https://registry.npmjs.org/@typescript-eslint/parser/-/parser-5.36.2.tgz"
+  resolved "https://registry.yarnpkg.com/@typescript-eslint/parser/-/parser-5.36.2.tgz#3ddf323d3ac85a25295a55fcb9c7a49ab4680ddd"
   integrity sha512-qS/Kb0yzy8sR0idFspI9Z6+t7mqk/oRjnAYfewG+VN73opAUvmYL3oPIMmgOX6CnQS6gmVIXGshlb5RY/R22pA==
   dependencies:
     "@typescript-eslint/scope-manager" "5.36.2"
@@ -5479,7 +5479,7 @@ nuxt-animejs@^1.2.2:
 
 nuxt-tailvue@^1.0.95:
   version "1.0.95"
-  resolved "https://registry.npmjs.org/nuxt-tailvue/-/nuxt-tailvue-1.0.95.tgz"
+  resolved "https://registry.yarnpkg.com/nuxt-tailvue/-/nuxt-tailvue-1.0.95.tgz#88b31463dac2dba9e21328d5733806aac274f006"
   integrity sha512-8DVluxBJak/X2QZ8WpiJSbEwkKbhVF2x8OURKWhfYuXsj5cDlXE4LhnZfr/Otj6KdcTCEVGnQt96lqE+WQG02A==
   dependencies:
     tv-button latest
