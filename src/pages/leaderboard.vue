@@ -4,7 +4,7 @@
 
     <div class="container !p-0 h-100 content">
       <div
-        class="bg-hsl-b5 relative overflow-hidden mx-auto box xl:rounded-lg"
+        class="bg-alabaster-800 relative overflow-hidden mx-auto box xl:rounded-lg"
       >
         <fetch-overlay :fetching="fetching" />
         <div class="px-8 py-4">

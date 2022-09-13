@@ -1,5 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 html {
-  --base-h: 210;
+  @apply bg-ebony-clay-900;
 }
 
 .container {

@@ -1,17 +1,17 @@
 <template>
-  <div v-show="!isLoading">
+  <div v-show="!isLoading" data-theme="dracula">
     <transition
       enter-active-class="transition duration-200 ease-out delay-200"
       enter-class="opacity-0"
       enter-to-class="opacity-100"
     >
-      <div v-show="!isLoading" class="flex flex-col h-screen overflow-y-hidden bg-hsl-b4">
+      <div v-show="!isLoading" class="flex flex-col h-screen overflow-y-hidden bg-ebony-clay-900">
         <div id="app" class="flex flex-col flex-1 w-full overflow-y-auto bg-dark-5">
           <NavbarDefault />
           <div class="flex-grow">
             <slot />
           </div>
-          <footer class="py-4 text-center bottom-1 bg-hsl-b5">
+          <footer class="py-4 text-center bottom-1 bg-ebony-clay-800">
             <h1 class="text-sm font-semibold text-white">
               © {{ new Date().getFullYear() }} ppy.sb | Varkaria
             </h1>

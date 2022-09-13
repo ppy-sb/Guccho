@@ -20,16 +20,14 @@
         <div class="gap-2 flex">
           <nuxt-link
             :to="{name: 'auth-login'}"
-            type="button"
-            class="d-button"
+            class="btn btn-primary w-64 rounded-full"
           >
             Login
           </nuxt-link>
 
           <nuxt-link
             :to="{name: 'auth-register'}"
-            type="button"
-            class="d-button"
+            class="btn"
           >
             Register
           </nuxt-link>
@@ -53,7 +51,7 @@ export default {
   max-width: 32rem;
 }
 
-.d-button {
-  @apply inline-flex justify-center w-full px-6 py-2 text-base font-medium text-white border border-transparent rounded-md shadow-md bg-hsl-h2 hover:bg-hsl-l4 focus:outline-none sm:w-auto sm:text-sm;
-}
+/* .d-button {
+  @apply inline-flex justify-center w-full px-6 py-2 text-base font-medium text-white border border-transparent rounded-md shadow-md bg-mulberry-700 hover:bg-mulberry-700 focus:outline-none sm:w-auto sm:text-sm;
+} */
 </style>

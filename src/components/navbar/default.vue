@@ -1,5 +1,5 @@
 <template>
-  <nav class="z-20 w-full transition-all md:fixed bg-hsl-h3 md:bg-transparent">
+  <nav class="z-20 w-full transition-all md:fixed bg-mulberry-700 md:bg-transparent">
     <div class="px-2 mx-auto max-w-7xl sm:px-6 lg:px-8">
       <div class="relative flex items-center justify-between h-16">
         <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
@@ -85,7 +85,7 @@
             >
               <div
                 v-show="isMenuOpen"
-                class="origin-top-right absolute right-0 mt-2 w-[10rem] rounded-md shadow-lg py-1 bg-hsl-b3 ring-1 ring-black ring-opacity-5 focus:outline-none"
+                class="origin-top-right absolute right-0 mt-2 w-[10rem] rounded-md shadow-lg py-1 bg-mulberry-700 ring-1 ring-black ring-opacity-5 focus:outline-none"
                 role="menu"
                 aria-orientation="vertical"
                 aria-labelledby="user-menu-button"
