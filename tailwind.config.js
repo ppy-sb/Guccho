@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-env node */
 /** @type {import('tailwindcss').Config} */
 const palette = {
   alabaster: {
@@ -12,19 +14,6 @@ const palette = {
     700: '#655D5D',
     800: '#484242',
     900: '#2A2727'
-  },
-  'wine-berry': {
-    DEFAULT: '#C35A71',
-    50: '#F4E1E5',
-    100: '#EFD2D8',
-    200: '#E4B4BF',
-    300: '#D996A5',
-    400: '#CE788B',
-    500: '#C35A71',
-    600: '#A83D55',
-    700: '#7F2E40',
-    800: '#561F2B',
-    900: '#2D1017'
   },
   'pigeon-post': {
     DEFAULT: '#B3B2DC',
@@ -53,17 +42,17 @@ const palette = {
     900: '#471A05'
   },
   mulberry: {
-    DEFAULT: '#C059A1',
-    50: '#F3DEEC',
-    100: '#EDCFE4',
-    200: '#E2B2D3',
-    300: '#D694C3',
-    400: '#CB77B2',
-    500: '#C059A1',
-    600: '#A33E85',
-    700: '#7A2E64',
-    800: '#521F42',
-    900: '#291021'
+    DEFAULT: '#CF4483',
+    50: '#F5D6E4',
+    100: '#F0C6D9',
+    200: '#E8A6C4',
+    300: '#E085AE',
+    400: '#D76598',
+    500: '#CF4483',
+    600: '#AE2D67',
+    700: '#82214D',
+    800: '#551632',
+    900: '#290A18'
   },
   'ebony-clay': {
     DEFAULT: '#202231',
@@ -96,5 +85,15 @@ module.exports = {
   },
   plugins: [require('daisyui')],
   daisyui: {
+    themes: [
+      {
+        guweb: {
+          ...require('daisyui/src/colors/themes')['[data-theme=dracula]'],
+          primary: palette.mulberry[500]
+          // secondary: palette['wine-berry'][500]
+          // secondary: palette['pigeon-post'][500]
+        }
+      }
+    ]
   }
 }

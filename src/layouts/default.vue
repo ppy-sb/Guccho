@@ -1,5 +1,5 @@
 <template>
-  <div v-show="!isLoading" data-theme="dracula">
+  <div v-show="!isLoading" data-theme="guweb">
     <transition
       enter-active-class="transition duration-200 ease-out delay-200"
       enter-class="opacity-0"

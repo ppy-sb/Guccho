@@ -81,7 +81,7 @@ const userRegisterAction = async () => {
 }
 
 .auth-button {
-  @apply relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-mulberry-700 hover:bg-mulberry-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-mulberry-700
+  @apply relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-mulberry-800 hover:bg-mulberry-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-mulberry-700
 }
 
 .auth-error-text {

@@ -1,9 +1,9 @@
 <template>
   <div class="titlesub">
-    <h1 class="text-3xl font-bold text-center sm:text-left">
+    <h1 v-if="title" class="text-3xl font-bold text-center sm:text-left">
       {{ title }}
     </h1>
-    <h2 class="text-lg font-semibold opacity-40 text-center sm:text-left">
+    <h2 v-if="subtitle" class="text-lg font-semibold opacity-40 text-center sm:text-left">
       {{ subtitle }}
     </h2>
   </div>
@@ -15,11 +15,11 @@ export default {
   props: {
     title: {
       type: String,
-      default: 'Leaderboard'
+      default: undefined
     },
     subtitle: {
       type: String,
-      default: 'Standard'
+      default: undefined
     }
   }
 }
