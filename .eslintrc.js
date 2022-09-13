@@ -18,6 +18,7 @@ module.exports = {
   plugins: ['vue', '@typescript-eslint'],
   // add your custom rules here
   rules: {
-    'vue/multi-word-component-names': ['off']
+    'vue/multi-word-component-names': ['off'],
+    'vue/no-v-for-template-key': ['off']
   }
 }

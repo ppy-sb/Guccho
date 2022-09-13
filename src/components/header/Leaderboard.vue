@@ -1,5 +1,5 @@
 <template>
-  <div class="h-header bg-hsl-h2">
+  <div class="h-header bg-mulberry-700">
     <div class="container sm:flex sm:w-full mt-2 items-center justify-between text-center text-white">
       <header-simple-title-with-sub
         title="Leaderboard"
