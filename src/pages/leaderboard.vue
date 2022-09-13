@@ -1,15 +1,20 @@
 <template>
-  <div class="leaderboard h-full">
+  <div class="leaderboard h-full flex flex-col">
     <header-leaderboard v-model.lazy="selection" @input="fetchLeaderboard" />
 
-    <div class="container !p-0 h-100 content">
-      <div
-        class="bg-alabaster-800 relative overflow-hidden mx-auto box xl:rounded-lg"
-      >
-        <fetch-overlay :fetching="fetching" />
-        <div class="px-8 py-4">
-          <div class="relative overflow-x-auto">
-            <template v-if="result.length !== 0">
+    <div
+      class="container grow flex"
+      :class="{
+        content: result.length
+      }"
+    >
+      <template v-if="result.length !== 0">
+        <div
+          class="relative overflow-hidden mx-auto xl:rounded-lg"
+        >
+          <fetch-overlay :fetching="fetching" />
+          <div class="px-8 py-4">
+            <div class="relative overflow-x-auto">
               <table
                 class="table text-sm whitespace-nowrap border-separate"
               >
@@ -32,20 +37,20 @@
                   <leaderboard-user-table v-for="(u, index) in result" :key="index" :user="u" :place="index+1" :sort="selection.sort" />
                 </tbody>
               </table>
-            </template>
-            <template v-else>
-              <div class="text-white min-h-full mt-5">
-                <h1 class="text-center text-xl font-semibold">
-                  No one played this mode yet.
-                </h1>
-                <h2 class="text-center font-semibold opacity-60 text-sm">
-                  Maybe you will be the first one? Go for it.
-                </h2>
-              </div>
-            </template>
+            </div>
           </div>
         </div>
-      </div>
+      </template>
+      <template v-else>
+        <div class="text-white grow my-auto pb-10">
+          <h1 class="text-center text-xl font-semibold">
+            No one played this mode yet.
+          </h1>
+          <h2 class="text-center font-semibold opacity-60 text-sm">
+            Maybe you will be the first one? Go for it.
+          </h2>
+        </div>
+      </template>
     </div>
   </div>
 </template>
@@ -92,9 +97,6 @@ export default {
 </script>
 
 <style scoped lang="postcss">
-.box {
-  min-height: 8rem;
-}
 .content {
   @screen md {
     margin-top: -3rem;

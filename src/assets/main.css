@@ -1,14 +1,14 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 html {
   @apply bg-ebony-clay-900;
 }
 
-.container {
-  @apply mx-auto max-w-7xl px-2;
+.width-sizer {
+  @apply max-w-7xl px-2 sm:px-6 lg:px-8;
 }
+
+/* .container {
+  @apply width-sizer mx-auto;
+} */
 
 .page-enter-active {
   transition: all 0.2s cubic-bezier(0.165, 0.84, 0.44, 1);

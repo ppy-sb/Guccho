@@ -1,5 +1,5 @@
 <template>
-  <tr class="bg-mulberry-700 rounded-md text-white font-medium">
+  <tr class="bg-mulberry-800 rounded-md text-white font-medium">
     <td class="px-4 font-bold py-3">
       <p class="text-white">
         #{{ place }}

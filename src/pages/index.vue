@@ -3,7 +3,7 @@
     class="h-full flex items-center"
   >
     <div
-      class="container w-max text-left text-white my-auto flex items-center justify-between"
+      class="container mx-auto w-max text-left text-white my-auto flex items-center justify-between"
     >
       <div class="content">
         <div class="mb-6">
@@ -20,14 +20,14 @@
         <div class="gap-2 flex">
           <nuxt-link
             :to="{name: 'auth-login'}"
-            class="btn btn-primary w-64 rounded-full"
+            class="btn btn-primary"
           >
             Login
           </nuxt-link>
 
           <nuxt-link
             :to="{name: 'auth-register'}"
-            class="btn"
+            class="btn btn-accent"
           >
             Register
           </nuxt-link>
@@ -51,7 +51,9 @@ export default {
   max-width: 32rem;
 }
 
-/* .d-button {
-  @apply inline-flex justify-center w-full px-6 py-2 text-base font-medium text-white border border-transparent rounded-md shadow-md bg-mulberry-700 hover:bg-mulberry-700 focus:outline-none sm:w-auto sm:text-sm;
+/* a.btn {
+  @apply inline-flex justify-center w-full px-6 py-2 text-base font-medium
+  text-white border border-transparent rounded-md shadow-md
+  focus:outline-none w-auto
 } */
 </style>

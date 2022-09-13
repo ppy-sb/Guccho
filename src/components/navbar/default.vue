@@ -1,6 +1,6 @@
 <template>
-  <nav class="z-20 w-full transition-all md:fixed bg-mulberry-700 md:bg-transparent">
-    <div class="px-2 mx-auto max-w-7xl sm:px-6 lg:px-8">
+  <nav class="z-20 w-full transition-all md:fixed bg-mulberry-800 md:bg-transparent">
+    <div class="mx-auto container">
       <div class="relative flex items-center justify-between h-16">
         <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
           <button
@@ -85,7 +85,7 @@
             >
               <div
                 v-show="isMenuOpen"
-                class="origin-top-right absolute right-0 mt-2 w-[10rem] rounded-md shadow-lg py-1 bg-mulberry-700 ring-1 ring-black ring-opacity-5 focus:outline-none"
+                class="origin-top-right absolute right-0 mt-2 w-[10rem] rounded-md shadow-lg py-1 bg-mulberry-800 ring-1 ring-black ring-opacity-5 focus:outline-none"
                 role="menu"
                 aria-orientation="vertical"
                 aria-labelledby="user-menu-button"
@@ -125,13 +125,15 @@
 
       <div v-show="isMobileOpen" id="mobile-menu" class="sm:hidden">
         <div class="px-2 pt-2 pb-3 space-y-1">
-          <a
+          <nuxt-link
             v-for="(item, index) in menuItems.main"
             :key="index"
-            href="#"
+            :to="item.route || item.url"
             class="block px-3 py-2 text-base font-medium text-white rounded-md"
             aria-current="page"
-          >{{ item.name }}</a>
+          >
+            {{ item.name }}
+          </nuxt-link>
         </div>
       </div>
     </div>

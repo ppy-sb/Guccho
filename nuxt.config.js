@@ -22,7 +22,10 @@ export default defineNuxtConfig({
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
-  css: ['~/assets/main.css'],
+  css: [
+    '~/assets/main.css',
+    '~/assets/daisyui.scss'
+  ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
@@ -137,6 +140,11 @@ export default defineNuxtConfig({
       }
     }
   },
-
-  postcss
+  postcss,
+  vue: {
+    config: {
+      productionTip: true,
+      devtools: false
+    }
+  }
 })
