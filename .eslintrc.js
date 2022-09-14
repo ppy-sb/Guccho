@@ -11,14 +11,13 @@ module.exports = {
   },
   extends: [
     'eslint:recommended',
+    'plugin:vue/essential',
     'plugin:@typescript-eslint/recommended',
-    '@nuxtjs',
     '@nuxtjs/eslint-config-typescript'
   ],
   plugins: ['vue', '@typescript-eslint'],
   // add your custom rules here
   rules: {
-    'vue/multi-word-component-names': ['off'],
-    'vue/no-v-for-template-key': ['off']
+    'vue/multi-word-component-names': ['off']
   }
 }
