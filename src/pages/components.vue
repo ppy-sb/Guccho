@@ -8,7 +8,7 @@
         button
       </div>
       <div
-        class="flex justify-center"
+        class="flex flex-wrap justify-center"
       >
         <button
           v-for="variant in variants"
@@ -16,7 +16,7 @@
           class="btn m-2"
           :class="`btn-${variant}`"
         >
-          button
+          {{ variant }}
         </button>
       </div>
     </div>
