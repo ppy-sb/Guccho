@@ -6,7 +6,7 @@ export type { User } from './user'
 export type { Beatmap } from './beatmap'
 
 export interface BusinessModel<Id> {
-  getUserById(id: Id, secrets: boolean): User<Id, typeof secrets extends true ? true : false> | null
+  getUserById(id: Id, secrets?: boolean): User<Id, typeof secrets extends true ? true : false> | null
   searchUsers(query: Partial<User<Id, true>>, secrets?: boolean): User<Id, typeof secrets extends true ? true : false>[]
 
   getBeatmapById<ForeignId>
