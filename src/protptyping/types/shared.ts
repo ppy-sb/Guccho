@@ -1,6 +1,6 @@
 
 // generic types
-export type Identifier = string
+export type Identifier = unknown
 
 export type Mode = 'osu' | 'taiko' | 'fruits' | 'mania'
 export type Ruleset = 'standard' | 'relax' | 'autopilot'

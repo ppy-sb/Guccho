@@ -1,5 +1,3 @@
-import type { Identifier } from './shared'
-
 export type UnknownSource = 'unknown'
 export type LocalSource = 'local'
 export type ForeignSource = 'bancho' | 'private-server'
@@ -18,7 +16,7 @@ export enum RankingStatusEnum {
 
 export type RankingStatus = keyof typeof RankingStatusEnum
 
-export interface Beatmap<Source extends BeatmapSource, Status extends RankingStatusEnum, LocalId extends Identifier = Identifier, ForeignId extends Identifier = Identifier> {
+export interface Beatmap<Source extends BeatmapSource, Status extends RankingStatusEnum, LocalId, ForeignId> {
   id: Source extends UnknownSource ?
       Status extends RankingStatusEnum.unsubmitted | RankingStatusEnum.unranked ?
       never :
