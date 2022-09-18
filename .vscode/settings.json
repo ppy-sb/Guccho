@@ -1,5 +1,6 @@
 {
   "cSpell.words": [
+    "Beatmap",
     "daisyui",
     "guweb",
     "leaderboard",
@@ -9,8 +10,11 @@
     "pinia",
     "pippi",
     "postcss",
+    "Ruleset",
     "taiko",
     "tailwindcss",
+    "unranked",
+    "unsubmitted",
     "varka",
     "Varkaria",
     "windicss"

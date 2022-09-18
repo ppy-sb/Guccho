@@ -3,7 +3,7 @@
     <header-leaderboard v-model.lazy="selection" @input="fetchLeaderboard" />
 
     <div
-      class="container grow flex"
+      class="container mx-auto grow flex"
       :class="{
         content: result.length
       }"

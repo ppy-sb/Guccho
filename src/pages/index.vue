@@ -36,6 +36,9 @@
       <div class="mascot hidden lg:block">
         <img src="~/assets/mascot/pippi.png" alt="Pippi Mascot" m="l-auto">
       </div>
+      <dv-button type="secondary">
+        test
+      </dv-button>
     </div>
   </div>
 </template>

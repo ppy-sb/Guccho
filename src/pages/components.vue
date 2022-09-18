@@ -2,7 +2,6 @@
   <div>
     <header-default class="!pb-2" title="components playground" />
     <!-- still don't understand why css got purged. so here's the monkey patch -->
-    <!-- btn-primary btn-secondary btn-accent btn-neutral btn-info btn-success btn-warning btn-error -->
     <div class="container mx-auto">
       <div class="text-3xl font-bold text-center sm:text-left">
         button
