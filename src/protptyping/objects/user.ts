@@ -187,8 +187,13 @@ export const sampleUserWithSecrets: User<string, true> = {
   }
 }
 
-const demoUserList = new Map<string, User<string, true>>([[sampleUserWithSecrets.id, sampleUserWithSecrets]])
+const demoUserList = new Map<string, User<string, true> | User<string, false>>([[sampleUserWithSecrets.id, sampleUserWithSecrets]])
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const getUserById: BusinessModel<string>['getUserById'] = (id, secrets = false) => {
-  return demoUserList.get(id)
+const getUserById: BusinessModel<string>['getUserById'] = (id, secrets) => {
+  const result = demoUserList.get(id)
+  if ('secrets' in result) {
+    if (secrets) { return result } else { return null }
+  } else if (secrets) { return null } else { return result }
 }
+
+getUserById('xxxxxyyyy', false)
