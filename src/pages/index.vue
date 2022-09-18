@@ -18,27 +18,24 @@
         </div>
 
         <div class="gap-2 flex">
-          <nuxt-link
+          <t-nuxt-link-button
             :to="{name: 'auth-login'}"
-            class="btn btn-primary"
+            variant="primary"
           >
             Login
-          </nuxt-link>
+          </t-nuxt-link-button>
 
-          <nuxt-link
+          <t-nuxt-link-button
             :to="{name: 'auth-register'}"
-            class="btn btn-accent"
+            variant="secondary"
           >
             Register
-          </nuxt-link>
+          </t-nuxt-link-button>
         </div>
       </div>
       <div class="mascot hidden lg:block">
         <img src="~/assets/mascot/pippi.png" alt="Pippi Mascot" m="l-auto">
       </div>
-      <dv-button type="secondary">
-        test
-      </dv-button>
     </div>
   </div>
 </template>
