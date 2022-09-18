@@ -78,6 +78,11 @@ module.exports = {
     './src/App.{js,ts,vue}',
     './src/app.{js,ts,vue}'
   ],
+  safelist: [
+    {
+      pattern: /btn-.+/
+    }
+  ],
   theme: {
     extend: {
       colors: palette
