@@ -1,4 +1,4 @@
-import type { User } from '../types/user'
+import type { User, BusinessModel } from '../types/tree'
 export const sampleUserWithSecrets: User<string, true> = {
   id: 'xxxxxyyyy',
   ingameId: 9999,
@@ -187,4 +187,8 @@ export const sampleUserWithSecrets: User<string, true> = {
   }
 }
 
-// const sampleUserWithoutSecrets: User= sampleUserWithSecrets
+const demoUserList = new Map<string, User<string, true>>([[sampleUserWithSecrets.id, sampleUserWithSecrets]])
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const getUserById: BusinessModel<string>['getUserById'] = (id, secrets = false) => {
+  return demoUserList.get(id)
+}

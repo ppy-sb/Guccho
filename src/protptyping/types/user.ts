@@ -69,7 +69,7 @@ export interface UserContact {
 export interface UserPreferences {
   allowPrivateMessage: boolean
 }
-export interface BaseUser<Id extends Identifier = Identifier> {
+export interface BaseUser<Id> {
   id: Id
   ingameId: number
   name: string
@@ -80,12 +80,12 @@ export interface UserSecrets {
   password: string
 }
 
-export type UserFriend<ID extends Identifier = Identifier> = BaseUser<ID>
+export type UserFriend<Id> = BaseUser<Id>
 
 export interface User<
-  ID extends Identifier = Identifier,
+  Id,
   Secret extends boolean = false
-> extends BaseUser<ID>,
+> extends BaseUser<Id>,
   UserContact {
   statistics: {
     [M in Mode]: OmitNever<{
@@ -103,7 +103,7 @@ export interface User<
   reachable: boolean
   status: UserActivityStatus
 
-  friends: UserFriend[]
+  friends: UserFriend<Id>[]
 
   preferences: UserPreferences
 
