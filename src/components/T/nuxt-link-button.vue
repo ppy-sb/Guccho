@@ -2,8 +2,11 @@
   <nuxt-link
     :to="props.to"
     class="btn"
+    :class="[
+      `btn-${variant}`
+    ]"
   >
-    Register
+    <slot />
   </nuxt-link>
 </template>
 
@@ -14,6 +17,10 @@ const props = defineProps({
     default: () => ({
       name: ''
     })
+  },
+  variant: {
+    type: String,
+    default: 'neutral'
   }
 })
 </script>
