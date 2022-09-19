@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type {
-  Identifier,
+  VisibilityScope,
   RankingSystem,
   ScoreRankingSystem,
   Mode,
@@ -15,12 +15,12 @@ import type {
 export enum UserOfflineStatus {
   OFFLINE = 'offline',
 }
-export type UserOnlineStatus = 'playing' | 'idle' | 'modding' | 'multiplaying';
-export type UserWebsiteStatus = 'website-online';
+export type UserOnlineStatus = 'playing' | 'idle' | 'modding' | 'multiplaying'
+export type UserWebsiteStatus = 'website-online'
 export type UserActivityStatus =
   | UserOfflineStatus
   | UserOnlineStatus
-  | UserWebsiteStatus;
+  | UserWebsiteStatus
 
 export enum UserPrivilege {
   banned = 1 << 0,
@@ -33,16 +33,16 @@ export enum UserPrivilege {
   superuser = 1 << 7,
 }
 
-export type UserPrivilegeString = keyof typeof UserPrivilege;
+export type UserPrivilegeString = keyof typeof UserPrivilege
 
 export interface UserStatus {
-  activity: UserActivityStatus;
-  privilege: UserPrivilege;
-  roles: UserPrivilegeString[];
+  activity: UserActivityStatus
+  privilege: UserPrivilege
+  roles: UserPrivilegeString[]
 }
 
 export interface BaseRank {
-  rank: number;
+  rank: number
 
   // TODO: Score
   // bests: Score[]
@@ -51,78 +51,94 @@ export interface BaseRank {
 }
 
 export interface PPRank extends BaseRank {
-  performance: number;
+  performance: number
 }
 export interface ScoreRank extends BaseRank {
-  score: number;
+  score: number
 }
 
 export type Rank<System extends RankingSystem> =
-  System extends ScoreRankingSystem ? ScoreRank : PPRank;
-export interface UserModeRulesetStatistics {
+  System extends ScoreRankingSystem ? ScoreRank : PPRank
+export interface UserModeRulesetStatistics<AvailableRankingSystem extends RankingSystem = RankingSystem> {
   // achievements: Achievement[]
-  ranking: {
-    [P in RankingSystem]: Rank<P>;
-  };
+  ranking: OmitNever<{
+    [P in RankingSystem]: P extends AvailableRankingSystem ? Rank<P> : never
+  }>
 }
 
 export interface UserHistoricalName {
-  from: Date;
-  to: Date;
-  name: string;
+  from: Date
+  to: Date
+  name: string
+  visibility: VisibilityScope
 }
 
-export interface UserContact {
-  email: string;
-  oldNames: UserHistoricalName[];
-}
 export interface UserPreferences {
-  allowPrivateMessage: boolean;
+  allowPrivateMessage: boolean
+  visibility: {
+    email: VisibilityScope
+    oldNamesDefault: VisibilityScope
+  }
 }
 export interface BaseUser<Id> {
-  id: Id;
-  ingameId: number;
-  name: string;
-  safeName: string;
+  id: Id
+  ingameId: number
+  name: string
+  safeName: string
+
+  email: string
+  oldNames: UserHistoricalName[]
 }
 
 export interface UserSecrets {
-  password: string;
+  password: string
 }
 
-export type UserFriend<Id> = BaseUser<Id>;
+export type UserFriend<Id> = BaseUser<Id>
 
-interface UserWithoutSecrets<Id> extends BaseUser<Id>, UserContact {
-  statistics: {
-    [M in Mode]: OmitNever<{
-      [R in Ruleset]: M extends StandardAvailable
+export interface UserModel<Id, IncludeSecrets extends boolean, IncludeMode extends Mode, IncludeRuleset extends Ruleset, Ranking extends RankingSystem> extends BaseUser<Id> {
+  statistics: OmitNever<{
+    [M in Mode]: M extends IncludeMode ? OmitNever<{
+      [R in Ruleset]:
+        R extends IncludeRuleset
+
+        ? M extends StandardAvailable
         ? R extends 'standard'
-          ? UserModeRulesetStatistics
-          : M extends RelaxAvailable
-          ? R extends 'relax'
-            ? UserModeRulesetStatistics
-            : M extends AutopilotAvailable
-            ? R extends 'autopilot'
-              ? UserModeRulesetStatistics
-              : never
-            : never
-          : never
-        : never;
-    }>;
-  };
+        ? UserModeRulesetStatistics<Ranking>
 
-  reachable: boolean;
-  status: UserActivityStatus;
+        : M extends RelaxAvailable
+        ? R extends 'relax'
+        ? UserModeRulesetStatistics<Ranking>
 
-  friends: UserFriend<Id>[];
+        : M extends AutopilotAvailable
+        ? R extends 'autopilot'
+        ? UserModeRulesetStatistics<Ranking>
 
-  preferences: UserPreferences;
+        : never
+        : never
+        : never
+        : never
+
+      : never
+    }>
+    : never
+  }>
+
+  reachable: boolean
+  status: UserActivityStatus
+
+  friends: UserFriend<Id>[]
+
+  preferences: UserPreferences
+
+  secrets: IncludeSecrets extends true ? UserSecrets : never
+  _includeSecrets: IncludeSecrets extends true ? true : false
 }
 
-interface UserWithSecrets<Id> extends UserWithoutSecrets<Id> {
-  secrets: UserSecrets;
-}
-
-export type User<Id, Secret extends boolean = false> = Secret extends true
-  ? UserWithSecrets<Id>
-  : UserWithoutSecrets<Id>;
+export type User<
+  Id,
+  Secret extends boolean = false,
+  IncludeMode extends Mode = Mode,
+  IncludeRuleset extends Ruleset = Ruleset,
+  Ranks extends RankingSystem = RankingSystem
+> = OmitNever<UserModel<Id, Secret, IncludeMode, IncludeRuleset, Ranks>>

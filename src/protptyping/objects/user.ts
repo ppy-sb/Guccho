@@ -1,5 +1,6 @@
-import type { User, BusinessModel } from '../types/tree'
+import type { User } from '../types/tree'
 export const sampleUserWithSecrets: User<string, true> = {
+  _includeSecrets: true,
   id: 'xxxxxyyyy',
   ingameId: 9999,
   name: 'testUser',
@@ -10,7 +11,11 @@ export const sampleUserWithSecrets: User<string, true> = {
   status: 'idle',
   friends: [],
   preferences: {
-    allowPrivateMessage: true
+    allowPrivateMessage: true,
+    visibility: {
+      email: 'public',
+      oldNamesDefault: 'public'
+    }
   },
   secrets: {
     password: ''
@@ -188,12 +193,15 @@ export const sampleUserWithSecrets: User<string, true> = {
 }
 
 const demoUserList = new Map<string, User<string, true> | User<string, false>>([[sampleUserWithSecrets.id, sampleUserWithSecrets]])
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const getUserById: BusinessModel<string>['getUserById'] = (id, secrets) => {
+
+const getUserById = <IncludeSecrets extends boolean = false>(id: string, secrets: IncludeSecrets): User<typeof id, typeof secrets extends true ? true : false> => {
   const result = demoUserList.get(id)
-  if ('secrets' in result) {
-    if (secrets) { return result } else { return null }
-  } else if (secrets) { return null } else { return result }
+  if (secrets && result._includeSecrets === true) {
+    return result
+  } else if (!secrets && !result._includeSecrets) {
+    return result
+  } else { return null }
 }
 
-getUserById('xxxxxyyyy', false)
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const user = getUserById('1', false)
