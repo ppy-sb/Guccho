@@ -13,7 +13,8 @@
     "lint": "yarn lint:js",
     "lintfix": "yarn lint:js --fix",
     "backend": "python3.9 server/main.py",
-    "backend2": "python server/main.py"
+    "backend2": "python server/main.py",
+    "ts-node": "ts-node"
   },
   "dependencies": {
     "@nuxt/content": "^1.15.1",
