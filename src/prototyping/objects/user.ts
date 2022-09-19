@@ -1,6 +1,5 @@
 import type { User } from '../types/tree'
 export const sampleUserWithSecrets: User<string, true> = {
-  _includeSecrets: true,
   id: 'xxxxxyyyy',
   ingameId: 9999,
   name: 'testUser',
@@ -194,14 +193,13 @@ export const sampleUserWithSecrets: User<string, true> = {
 
 const demoUserList = new Map<string, User<string, true> | User<string, false>>([[sampleUserWithSecrets.id, sampleUserWithSecrets]])
 
-const getUserById = <IncludeSecrets extends boolean = false>(id: string, secrets: IncludeSecrets): User<typeof id, typeof secrets extends true ? true : false> => {
-  const result = demoUserList.get(id)
-  if (secrets && result._includeSecrets === true) {
+export const getUserById = <HasSecret extends boolean = false>(id: string, secrets: HasSecret): User<typeof id, HasSecret> => {
+  const result = demoUserList.get(id) // 它为什么不觉得undefined 也会出现
+  if (secrets && 'secrets' in result) {
     return result
-  } else if (!secrets && !result._includeSecrets) {
+  } else if (!secrets && !('secrets' in result)) {
     return result
   } else { return null }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const user = getUserById('1', false)
+export const demoUser = sampleUserWithSecrets

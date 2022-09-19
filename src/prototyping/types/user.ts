@@ -132,7 +132,6 @@ export interface UserModel<Id, IncludeSecrets extends boolean, IncludeMode exten
   preferences: UserPreferences
 
   secrets: IncludeSecrets extends true ? UserSecrets : never
-  _includeSecrets: IncludeSecrets extends true ? true : false
 }
 
 export type User<
