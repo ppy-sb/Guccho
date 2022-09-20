@@ -84,26 +84,28 @@
       </div>
     </section>
     <section class="container mx-auto mt-4">
-      <div class="flex justify-between xl:px-8">
-        <div class="flex gap-10">
-          <client-only>
-            <dl>
-              <dt class="text-3xl">
-                Global Rank:
-              </dt>
-              <dd class="text-5xl flex justify-end">
-                <Roller :char-set="chars" :value="`#${Intl.NumberFormat().format(currentRankingSystem.rank)}`" />
-              </dd>
-            </dl>
-            <dl>
-              <dt class="text-3xl">
-                Country Rank:
-              </dt>
-              <dd class="text-5xl flex justify-end">
-                <Roller :char-set="chars" :value="`#${Intl.NumberFormat().format(currentRankingSystem.countryRank)}`" />
-              </dd>
-            </dl>
-          </client-only>
+      <div class="flex justify-center xl:px-8">
+        <div class="flex flex-col">
+          <dl>
+            <dt class="text-xl text-right">
+              Global Rank:
+            </dt>
+            <dd class="text-5xl flex justify-end">
+              <client-only>
+                <Roller :char-set="chars" :value="update ? `#${Intl.NumberFormat().format(currentRankingSystem.rank)}` : ' '" />
+              </client-only>
+            </dd>
+          </dl>
+          <dl>
+            <dt class="text-xl text-right">
+              Country Rank:
+            </dt>
+            <dd class="text-5xl flex justify-end">
+              <client-only>
+                <Roller :char-set="chars" :value="update ? `#${Intl.NumberFormat().format(currentRankingSystem.countryRank)}`: ' '" />
+              </client-only>
+            </dd>
+          </dl>
         </div>
       </div>
     </section>
@@ -120,13 +122,20 @@ import { Roller } from 'vue-roller'
 import 'vue-roller/dist/style.css'
 import 'vue3-json-viewer/dist/index.css'
 import { demoUser as user } from '@/prototyping/objects/user'
-const chars = [' ', ...[...Array(10).keys()].map(String), ',', '#']
+const chars = [' ', ...[...Array(10).keys()].map(String), ',', '#', 'N', '/', 'A']
 const tab = ref('ppv2')
 const selectedMode = ref('osu')
 const selectedRuleset = ref('standard')
 const currentStatistic = computed(
   () => user.statistics[selectedMode.value][selectedRuleset.value]
 )
+// weird bug: roller-item can not find out the correct size
+// TODO: investigate this
+const update = ref(0)
+setTimeout(() => {
+  update.value += 1
+}, 300)
+
 const currentRankingSystem = computed(() => currentStatistic.value?.ranking?.[tab.value])
 const { rankingSystem } = useRuntimeConfig()
 </script>
