@@ -43,8 +43,10 @@ export interface UserStatus {
 
 export interface BaseRank {
   rank: number
-
   rankGraph: number[]
+
+  countryRank: number,
+  // countryRankGraph: number[]
 
   // TODO: Score
   // bests: Score[]
@@ -92,6 +94,8 @@ export interface BaseUser<Id> {
 
   email: string
   oldNames: UserHistoricalName[]
+
+  flag: string,
 }
 
 export interface UserSecrets {
