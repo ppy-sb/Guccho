@@ -59,7 +59,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { ref } from 'vue'
 // import { userRegister } from '@/mock/index'
 const credential = ref({

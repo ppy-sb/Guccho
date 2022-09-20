@@ -2,8 +2,8 @@ import type { User } from '../types/tree'
 export const sampleUserWithSecrets: User<string, true> = {
   id: 'xxxxxyyyy',
   ingameId: 9999,
-  name: 'testUser',
-  safeName: 'test-user',
+  name: 'ppy.sb',
+  safeName: 'ppy-sb',
   oldNames: [],
   email: 'user@example.com',
   reachable: true,
@@ -25,19 +25,27 @@ export const sampleUserWithSecrets: User<string, true> = {
         ranking: {
           ppv2: {
             rank: 1,
-            performance: 100
+            rankGraph: [1],
+            performance: 100,
+            performanceGraph: [0, 100]
           },
           ppv1: {
             rank: 1,
-            performance: 100
+            rankGraph: [1],
+            performance: 100,
+            performanceGraph: [0, 100]
           },
           totalScores: {
             rank: 1,
-            score: 1_000_000_000
+            rankGraph: [1],
+            score: 1_000_000_000,
+            scoreGraph: [0, 200_000_000, 800_000_000, 1_000_000_000]
           },
           rankedScores: {
             rank: 1,
-            score: 10_000_000
+            rankGraph: [1],
+            score: 1_000_000_000,
+            scoreGraph: [0, 200_000_000, 800_000_000, 1_000_000_000]
           }
         }
       },
@@ -45,19 +53,27 @@ export const sampleUserWithSecrets: User<string, true> = {
         ranking: {
           ppv2: {
             rank: 1,
-            performance: 100
+            rankGraph: [1],
+            performance: 100,
+            performanceGraph: [0, 100]
           },
           ppv1: {
             rank: 1,
-            performance: 100
+            rankGraph: [1],
+            performance: 100,
+            performanceGraph: [0, 100]
           },
           totalScores: {
             rank: 1,
-            score: 1_000_000_000
+            rankGraph: [1],
+            score: 1_000_000_000,
+            scoreGraph: [0, 200_000_000, 800_000_000, 1_000_000_000]
           },
           rankedScores: {
             rank: 1,
-            score: 10_000_000
+            rankGraph: [1],
+            score: 1_000_000_000,
+            scoreGraph: [0, 200_000_000, 800_000_000, 1_000_000_000]
           }
         }
       },
@@ -65,19 +81,27 @@ export const sampleUserWithSecrets: User<string, true> = {
         ranking: {
           ppv2: {
             rank: 1,
-            performance: 100
+            rankGraph: [1],
+            performance: 100,
+            performanceGraph: [0, 100]
           },
           ppv1: {
             rank: 1,
-            performance: 100
+            rankGraph: [1],
+            performance: 100,
+            performanceGraph: [0, 100]
           },
           totalScores: {
             rank: 1,
-            score: 1_000_000_000
+            rankGraph: [1],
+            score: 1_000_000_000,
+            scoreGraph: [0, 200_000_000, 800_000_000, 1_000_000_000]
           },
           rankedScores: {
             rank: 1,
-            score: 10_000_000
+            rankGraph: [1],
+            score: 1_000_000_000,
+            scoreGraph: [0, 200_000_000, 800_000_000, 1_000_000_000]
           }
         }
       }
@@ -87,19 +111,27 @@ export const sampleUserWithSecrets: User<string, true> = {
         ranking: {
           ppv2: {
             rank: 1,
-            performance: 100
+            rankGraph: [1],
+            performance: 100,
+            performanceGraph: [0, 100]
           },
           ppv1: {
             rank: 1,
-            performance: 100
+            rankGraph: [1],
+            performance: 100,
+            performanceGraph: [0, 100]
           },
           totalScores: {
             rank: 1,
-            score: 1_000_000_000
+            rankGraph: [1],
+            score: 1_000_000_000,
+            scoreGraph: [0, 200_000_000, 800_000_000, 1_000_000_000]
           },
           rankedScores: {
             rank: 1,
-            score: 10_000_000
+            rankGraph: [1],
+            score: 1_000_000_000,
+            scoreGraph: [0, 200_000_000, 800_000_000, 1_000_000_000]
           }
         }
       },
@@ -107,19 +139,27 @@ export const sampleUserWithSecrets: User<string, true> = {
         ranking: {
           ppv2: {
             rank: 1,
-            performance: 100
+            rankGraph: [1],
+            performance: 100,
+            performanceGraph: [0, 100]
           },
           ppv1: {
             rank: 1,
-            performance: 100
+            rankGraph: [1],
+            performance: 100,
+            performanceGraph: [0, 100]
           },
           totalScores: {
             rank: 1,
-            score: 1_000_000_000
+            rankGraph: [1],
+            score: 1_000_000_000,
+            scoreGraph: [0, 200_000_000, 800_000_000, 1_000_000_000]
           },
           rankedScores: {
             rank: 1,
-            score: 10_000_000
+            rankGraph: [1],
+            score: 1_000_000_000,
+            scoreGraph: [0, 200_000_000, 800_000_000, 1_000_000_000]
           }
         }
       }
@@ -129,19 +169,27 @@ export const sampleUserWithSecrets: User<string, true> = {
         ranking: {
           ppv2: {
             rank: 1,
-            performance: 100
+            rankGraph: [1],
+            performance: 100,
+            performanceGraph: [0, 100]
           },
           ppv1: {
             rank: 1,
-            performance: 100
+            rankGraph: [1],
+            performance: 100,
+            performanceGraph: [0, 100]
           },
           totalScores: {
             rank: 1,
-            score: 1_000_000_000
+            rankGraph: [1],
+            score: 1_000_000_000,
+            scoreGraph: [0, 200_000_000, 800_000_000, 1_000_000_000]
           },
           rankedScores: {
             rank: 1,
-            score: 10_000_000
+            rankGraph: [1],
+            score: 1_000_000_000,
+            scoreGraph: [0, 200_000_000, 800_000_000, 1_000_000_000]
           }
         }
       },
@@ -149,19 +197,27 @@ export const sampleUserWithSecrets: User<string, true> = {
         ranking: {
           ppv2: {
             rank: 1,
-            performance: 100
+            rankGraph: [1],
+            performance: 100,
+            performanceGraph: [0, 100]
           },
           ppv1: {
             rank: 1,
-            performance: 100
+            rankGraph: [1],
+            performance: 100,
+            performanceGraph: [0, 100]
           },
           totalScores: {
             rank: 1,
-            score: 1_000_000_000
+            rankGraph: [1],
+            score: 1_000_000_000,
+            scoreGraph: [0, 200_000_000, 800_000_000, 1_000_000_000]
           },
           rankedScores: {
             rank: 1,
-            score: 10_000_000
+            rankGraph: [1],
+            score: 1_000_000_000,
+            scoreGraph: [0, 200_000_000, 800_000_000, 1_000_000_000]
           }
         }
       }
@@ -171,19 +227,27 @@ export const sampleUserWithSecrets: User<string, true> = {
         ranking: {
           ppv2: {
             rank: 1,
-            performance: 100
+            rankGraph: [1],
+            performance: 100,
+            performanceGraph: [0, 100]
           },
           ppv1: {
             rank: 1,
-            performance: 100
+            rankGraph: [1],
+            performance: 100,
+            performanceGraph: [0, 100]
           },
           totalScores: {
             rank: 1,
-            score: 1_000_000_000
+            rankGraph: [1],
+            score: 1_000_000_000,
+            scoreGraph: [0, 200_000_000, 800_000_000, 1_000_000_000]
           },
           rankedScores: {
             rank: 1,
-            score: 10_000_000
+            rankGraph: [1],
+            score: 1_000_000_000,
+            scoreGraph: [0, 200_000_000, 800_000_000, 1_000_000_000]
           }
         }
       }
