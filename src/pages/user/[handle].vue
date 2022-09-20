@@ -1,7 +1,7 @@
 <template>
   <div>
     <section
-      class="md:container mx-auto !mt-20 flex flex-col items-center md:flex-row md:items-end gap-5"
+      class="md:container mx-auto mt-5 md:mt-20 flex flex-col items-center md:flex-row md:items-end gap-5"
     >
       <!-- Logo -->
       <div class="z-10">
