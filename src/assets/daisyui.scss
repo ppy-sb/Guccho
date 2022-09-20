@@ -2,6 +2,18 @@
   @apply shadow-md
 }
 
-// .dv-tab.tab-active {
-//   background-color: theme();
-// }
+.dv-tab.tab-active {
+  // background-color: theme('bg-ebony-clay-500');
+  // @apply bg-ebony-clay-500
+
+  @apply [--tab-bg:theme('colors.ebony-clay.700')]
+
+  
+}
+.dv-tab.tab-active::before,
+.dv-tab.tab-active::after
+ {
+  // background-color: theme('bg-ebony-clay-500');
+  // color: theme('colors.ebony-clay.500')
+  
+}

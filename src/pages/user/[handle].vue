@@ -61,6 +61,3 @@ const tab = ref('1')
 const selectedMode = ref('osu')
 const selectedRuleset = ref('standard')
 </script>
-
-<style scoped>
-</style>
