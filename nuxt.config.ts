@@ -41,7 +41,7 @@ export default defineNuxtConfig({
       api: '1.0.3',
       front: '1.0.3'
     },
-    title: 'guweb',
+    title: 'guweb@next',
     mode: [
       {
         name: 'Osu',
