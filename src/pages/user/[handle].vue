@@ -6,8 +6,16 @@
         <img class="mask mask-squircle" src="https://via.placeholder.com/300.png">
       </div>
       <!-- info -->
-      <div class="pt-4 md: p-0 w-full md:w-100 bg-ebony-clay-700 md:bg-transparent md:grow">
-        <div class="container mx-auto flex gap-1 items-end justify-between md:pb-2 md:flex">
+      <div class="pt-4 flex flex-col md:p-0 w-full md:w-100 bg-ebony-clay-700 md:bg-transparent md:grow">
+        <div class="order-3 md:order-1 container mx-auto flex md:justify-end sm:justify-start gap-3 pb-4 md:pb-0 px-4 md:px-0">
+          <dv-button size="sm">
+            add as friend
+          </dv-button>
+          <dv-button size="sm">
+            send message
+          </dv-button>
+        </div>
+        <div class="sm:order-2 container mx-auto sm:flex sm:gap-1 sm:items-end sm:justify-between md:pb-2">
           <div>
             <div>
               <h1 class="text-5xl text-center md:text-left">
@@ -21,30 +29,24 @@
           </div>
           <c-mode-switcher class="self-end" />
         </div>
-        <div class="text-center md:text-left text-ebony-clay-500 bg-ebony-clay-800 px-2 md:rounded md:pl-20 md:-ml-20 md:-mr-1">
-          currently offline fhdsuioafhdsauiof hdsauiofh dsauiof hdsuiof hsdaiuf hdsauifo asdhf iuoasdhiu
+        <div class="user-status order-3">
+          currently offline.
         </div>
       </div>
     </section>
     <section class="pt-4">
       <div class="container mx-auto">
-        <dv-tabs v-model:value="tab" type="lifted" size="lg">
-          <dv-tab
+        <t-tabs v-model="tab" variant="bordered">
+          <t-tab
             v-for="(stats, key) of user.statistics[selectedMode][selectedRuleset].ranking"
             :key="`user-tab-${key}`"
-            :name="`user-tab-${key}`"
-            :title="key"
-          />
-          <!-- <dv-tab name="1" title="dv-tab 1">
-            Content 1
-          </dv-tab>
-          <dv-tab name="2" title="dv-tab 2">
-            Content 2
-          </dv-tab>
-          <dv-tab name="3" title="dv-tab 3">
-            Content 3
-          </dv-tab> -->
-        </dv-tabs>
+            class="md:tab-lg"
+            :value="`user-tab-${key}`"
+          >
+            {{ rankingSystem[key] }}
+          </t-tab>
+          <t-tab disabled class="grow" />
+        </t-tabs>
       </div>
     </section>
     <div class="pt-20">
@@ -54,10 +56,18 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { ref } from 'vue'
+<script setup>
 import { demoUser as user } from '@/prototyping/objects/user'
 const tab = ref('1')
 const selectedMode = ref('osu')
 const selectedRuleset = ref('standard')
+const { rankingSystem } = useRuntimeConfig()
 </script>
+
+<style scoped lang="postcss">
+.user-status {
+  @apply text-center text-ebony-clay-400 bg-ebony-clay-800 px-2;
+  @apply md:text-left md:rounded md:-mr-1;
+  @apply md:[margin-left:-7em] md:[padding-left:7em]
+}
+</style>

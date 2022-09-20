@@ -44,6 +44,8 @@ export interface UserStatus {
 export interface BaseRank {
   rank: number
 
+  rankGraph: number[]
+
   // TODO: Score
   // bests: Score[]
   // tops: Score[]
@@ -52,9 +54,11 @@ export interface BaseRank {
 
 export interface PPRank extends BaseRank {
   performance: number
+  performanceGraph: number[]
 }
 export interface ScoreRank extends BaseRank {
   score: number
+  scoreGraph: number[]
 }
 
 export type Rank<System extends RankingSystem> =

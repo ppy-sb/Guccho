@@ -84,9 +84,6 @@ module.exports = {
     },
     {
       pattern: /btn.+/
-    },
-    {
-      pattern: /dv-.+/
     }
   ],
   theme: {

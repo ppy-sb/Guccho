@@ -1,4 +1,5 @@
 import { defineNuxtConfig } from 'nuxt'
+import { rankingSystem } from './src/prototyping/objects/ranking-system-names'
 
 import postcss from './postcss.config'
 export default defineNuxtConfig({
@@ -72,7 +73,8 @@ export default defineNuxtConfig({
         name: 'Autopilot',
         icon: 'ap'
       }
-    ]
+    ],
+    rankingSystem
   },
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -115,8 +117,7 @@ export default defineNuxtConfig({
   },
 
   env: {
-    baseUrl: process.env.BASE_URL || 'localhost',
-    defaultColorTheme: parseInt(process.env.COLOR_THEME_DEFAULT) || 200
+    baseUrl: process.env.BASE_URL || 'localhost'
   },
 
   auth: {
