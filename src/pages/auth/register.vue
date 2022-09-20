@@ -4,7 +4,7 @@
       <fetch-overlay :fetching="fetching" />
 
       <div>
-        <h2 class="text-center text-3xl text-gray-200">
+        <h2 class="text-center text-3xl text-ebony-clay-200">
           Sign Up
         </h2>
       </div>
@@ -61,7 +61,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { userRegister } from '@/mock/index'
+// import { userRegister } from '@/mock/index'
 const credential = ref({
   user: '',
   password: ''
@@ -69,15 +69,15 @@ const credential = ref({
 const error = ref('')
 const fetching = ref(false)
 
-const userRegisterAction = async () => {
+const userRegisterAction = () => {
   fetching.value = true
-  const data = await userRegister()
+  // const data = await userRegister()
 }
 </script>
 
 <style lang="postcss" scoped>
 .auth-input {
-  @apply appearance-none rounded-md bg-ebony-clay-900 relative block w-full px-3 py-4 placeholder-white placeholder-opacity-25 text-gray-200 font-semibold rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm
+  @apply appearance-none rounded-md bg-ebony-clay-900 relative block w-full px-3 py-4 placeholder-white placeholder-opacity-25 text-ebony-clay-200 font-semibold rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm
 }
 
 .auth-button {

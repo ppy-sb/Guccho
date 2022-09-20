@@ -1,3 +1,6 @@
 export default {
-  syntax: 'postcss-scss'
+  syntax: 'postcss-scss',
+  plugins: {
+    tailwindcss: {}
+  }
 }

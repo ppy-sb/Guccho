@@ -4,7 +4,7 @@
       <fetch-overlay :fetching="fetching" />
 
       <div>
-        <h2 class="text-center text-3xl text-gray-200">
+        <h2 class="text-center text-3xl text-ebony-clay-200">
           Login
         </h2>
       </div>

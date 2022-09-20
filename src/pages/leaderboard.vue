@@ -18,7 +18,7 @@
               <table
                 class="table text-sm whitespace-nowrap border-separate"
               >
-                <thead class="text-gray-200">
+                <thead class="text-ebony-clay-200">
                   <tr class="font-light text-sm">
                     <th />
                     <th class="w-full" />

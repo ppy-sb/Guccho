@@ -80,7 +80,13 @@ module.exports = {
   ],
   safelist: [
     {
-      pattern: /btn-.+/
+      pattern: /tab.+/
+    },
+    {
+      pattern: /btn.+/
+    },
+    {
+      pattern: /dv-.+/
     }
   ],
   theme: {
@@ -94,7 +100,8 @@ module.exports = {
       {
         guweb: {
           ...require('daisyui/src/colors/themes')['[data-theme=dracula]'],
-          primary: palette.mulberry[500]
+          primary: palette.mulberry[500],
+          neutral: palette['ebony-clay'][500]
           // secondary: palette['wine-berry'][500]
           // secondary: palette['pigeon-post'][500]
         }
