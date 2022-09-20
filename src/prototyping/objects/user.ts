@@ -5,6 +5,7 @@ export const sampleUserWithSecrets: User<string, true> = {
   name: 'ppy.sb',
   safeName: 'ppy-sb',
   oldNames: [],
+  flag: 'us',
   email: 'user@example.com',
   reachable: true,
   status: 'idle',
@@ -24,26 +25,34 @@ export const sampleUserWithSecrets: User<string, true> = {
       standard: {
         ranking: {
           ppv2: {
-            rank: 1,
+            rank: 1000,
             rankGraph: [1],
+            countryRank: 10,
+            // countryRankGraph: [1],
             performance: 100,
             performanceGraph: [0, 100]
           },
           ppv1: {
             rank: 1,
             rankGraph: [1],
+            countryRank: 1,
+            // countryRankGraph: [1],
             performance: 100,
             performanceGraph: [0, 100]
           },
           totalScores: {
             rank: 1,
             rankGraph: [1],
+            countryRank: 1,
+            // countryRankGraph: [1],
             score: 1_000_000_000,
             scoreGraph: [0, 200_000_000, 800_000_000, 1_000_000_000]
           },
           rankedScores: {
             rank: 1,
             rankGraph: [1],
+            countryRank: 1,
+            // countryRankGraph: [1],
             score: 1_000_000_000,
             scoreGraph: [0, 200_000_000, 800_000_000, 1_000_000_000]
           }
@@ -54,24 +63,32 @@ export const sampleUserWithSecrets: User<string, true> = {
           ppv2: {
             rank: 1,
             rankGraph: [1],
+            countryRank: 1,
+            // countryRankGraph: [1],
             performance: 100,
             performanceGraph: [0, 100]
           },
           ppv1: {
             rank: 1,
             rankGraph: [1],
+            countryRank: 1,
+            // countryRankGraph: [1],
             performance: 100,
             performanceGraph: [0, 100]
           },
           totalScores: {
             rank: 1,
             rankGraph: [1],
+            countryRank: 1,
+            // countryRankGraph: [1],
             score: 1_000_000_000,
             scoreGraph: [0, 200_000_000, 800_000_000, 1_000_000_000]
           },
           rankedScores: {
             rank: 1,
             rankGraph: [1],
+            countryRank: 1,
+            // countryRankGraph: [1],
             score: 1_000_000_000,
             scoreGraph: [0, 200_000_000, 800_000_000, 1_000_000_000]
           }
@@ -82,24 +99,32 @@ export const sampleUserWithSecrets: User<string, true> = {
           ppv2: {
             rank: 1,
             rankGraph: [1],
+            countryRank: 1,
+            // countryRankGraph: [1],
             performance: 100,
             performanceGraph: [0, 100]
           },
           ppv1: {
             rank: 1,
             rankGraph: [1],
+            countryRank: 1,
+            // countryRankGraph: [1],
             performance: 100,
             performanceGraph: [0, 100]
           },
           totalScores: {
             rank: 1,
             rankGraph: [1],
+            countryRank: 1,
+            // countryRankGraph: [1],
             score: 1_000_000_000,
             scoreGraph: [0, 200_000_000, 800_000_000, 1_000_000_000]
           },
           rankedScores: {
             rank: 1,
             rankGraph: [1],
+            countryRank: 1,
+            // countryRankGraph: [1],
             score: 1_000_000_000,
             scoreGraph: [0, 200_000_000, 800_000_000, 1_000_000_000]
           }
@@ -112,24 +137,32 @@ export const sampleUserWithSecrets: User<string, true> = {
           ppv2: {
             rank: 1,
             rankGraph: [1],
+            countryRank: 1,
+            // countryRankGraph: [1],
             performance: 100,
             performanceGraph: [0, 100]
           },
           ppv1: {
             rank: 1,
             rankGraph: [1],
+            countryRank: 1,
+            // countryRankGraph: [1],
             performance: 100,
             performanceGraph: [0, 100]
           },
           totalScores: {
             rank: 1,
             rankGraph: [1],
+            countryRank: 1,
+            // countryRankGraph: [1],
             score: 1_000_000_000,
             scoreGraph: [0, 200_000_000, 800_000_000, 1_000_000_000]
           },
           rankedScores: {
             rank: 1,
             rankGraph: [1],
+            countryRank: 1,
+            // countryRankGraph: [1],
             score: 1_000_000_000,
             scoreGraph: [0, 200_000_000, 800_000_000, 1_000_000_000]
           }
@@ -140,24 +173,32 @@ export const sampleUserWithSecrets: User<string, true> = {
           ppv2: {
             rank: 1,
             rankGraph: [1],
+            countryRank: 1,
+            // countryRankGraph: [1],
             performance: 100,
             performanceGraph: [0, 100]
           },
           ppv1: {
             rank: 1,
             rankGraph: [1],
+            countryRank: 1,
+            // countryRankGraph: [1],
             performance: 100,
             performanceGraph: [0, 100]
           },
           totalScores: {
             rank: 1,
             rankGraph: [1],
+            countryRank: 1,
+            // countryRankGraph: [1],
             score: 1_000_000_000,
             scoreGraph: [0, 200_000_000, 800_000_000, 1_000_000_000]
           },
           rankedScores: {
             rank: 1,
             rankGraph: [1],
+            countryRank: 1,
+            // countryRankGraph: [1],
             score: 1_000_000_000,
             scoreGraph: [0, 200_000_000, 800_000_000, 1_000_000_000]
           }
@@ -170,24 +211,32 @@ export const sampleUserWithSecrets: User<string, true> = {
           ppv2: {
             rank: 1,
             rankGraph: [1],
+            countryRank: 1,
+            // countryRankGraph: [1],
             performance: 100,
             performanceGraph: [0, 100]
           },
           ppv1: {
             rank: 1,
             rankGraph: [1],
+            countryRank: 1,
+            // countryRankGraph: [1],
             performance: 100,
             performanceGraph: [0, 100]
           },
           totalScores: {
             rank: 1,
             rankGraph: [1],
+            countryRank: 1,
+            // countryRankGraph: [1],
             score: 1_000_000_000,
             scoreGraph: [0, 200_000_000, 800_000_000, 1_000_000_000]
           },
           rankedScores: {
             rank: 1,
             rankGraph: [1],
+            countryRank: 1,
+            // countryRankGraph: [1],
             score: 1_000_000_000,
             scoreGraph: [0, 200_000_000, 800_000_000, 1_000_000_000]
           }
@@ -198,24 +247,32 @@ export const sampleUserWithSecrets: User<string, true> = {
           ppv2: {
             rank: 1,
             rankGraph: [1],
+            countryRank: 1,
+            // countryRankGraph: [1],
             performance: 100,
             performanceGraph: [0, 100]
           },
           ppv1: {
             rank: 1,
             rankGraph: [1],
+            countryRank: 1,
+            // countryRankGraph: [1],
             performance: 100,
             performanceGraph: [0, 100]
           },
           totalScores: {
             rank: 1,
             rankGraph: [1],
+            countryRank: 1,
+            // countryRankGraph: [1],
             score: 1_000_000_000,
             scoreGraph: [0, 200_000_000, 800_000_000, 1_000_000_000]
           },
           rankedScores: {
             rank: 1,
             rankGraph: [1],
+            countryRank: 1,
+            // countryRankGraph: [1],
             score: 1_000_000_000,
             scoreGraph: [0, 200_000_000, 800_000_000, 1_000_000_000]
           }
@@ -228,24 +285,32 @@ export const sampleUserWithSecrets: User<string, true> = {
           ppv2: {
             rank: 1,
             rankGraph: [1],
+            countryRank: 1,
+            // countryRankGraph: [1],
             performance: 100,
             performanceGraph: [0, 100]
           },
           ppv1: {
             rank: 1,
             rankGraph: [1],
+            countryRank: 1,
+            // countryRankGraph: [1],
             performance: 100,
             performanceGraph: [0, 100]
           },
           totalScores: {
             rank: 1,
             rankGraph: [1],
+            countryRank: 1,
+            // countryRankGraph: [1],
             score: 1_000_000_000,
             scoreGraph: [0, 200_000_000, 800_000_000, 1_000_000_000]
           },
           rankedScores: {
             rank: 1,
             rankGraph: [1],
+            countryRank: 1,
+            // countryRankGraph: [1],
             score: 1_000_000_000,
             scoreGraph: [0, 200_000_000, 800_000_000, 1_000_000_000]
           }

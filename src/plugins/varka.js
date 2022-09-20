@@ -24,22 +24,24 @@ export default defineNuxtPlugin(() => {
         return url
       },
       scoreFormat: (score) => {
-        if (score > 1000 * 1000) {
-          if (score > 1000 * 1000 * 1000) { return `${addCommas((score / 1000000000).toFixed(2))} billion` }
-          return `${addCommas((score / 1000000).toFixed(2))} million`
-        }
-        return addCommas(score)
+        return Intl.NumberFormat(undefined, { notation: 'compact' }).format(score)
+        // if (score > 1000 * 1000) {
+        //   if (score > 1000 * 1000 * 1000) { return `${addCommas((score / 1000000000).toFixed(2))} billion` }
+        //   return `${addCommas((score / 1000000).toFixed(2))} million`
+        // }
+        // return addCommas(score)
       },
       addCommas: (nStr) => {
-        nStr += ''
-        const x = nStr.split('.')
-        let x1 = x[0]
-        const x2 = x.length > 1 ? '.' + x[1] : ''
-        const rgx = /(\d+)(\d{3})/
-        while (rgx.test(x1)) {
-          x1 = x1.replace(rgx, '$1' + ',' + '$2')
-        }
-        return x1 + x2
+        return Intl.NumberFormat().format(nStr)
+        // nStr += ''
+        // const x = nStr.split('.')
+        // let x1 = x[0]
+        // const x2 = x.length > 1 ? '.' + x[1] : ''
+        // const rgx = /(\d+)(\d{3})/
+        // while (rgx.test(x1)) {
+        //   x1 = x1.replace(rgx, '$1' + ',' + '$2')
+        // }
+        // return x1 + x2
       },
       forbiddenMode: (mods, mode) => {
         if (mods === 'rx' && mode === 'mania') {
