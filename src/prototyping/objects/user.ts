@@ -3,7 +3,7 @@ export const sampleUserWithSecrets: User<string, true> = {
   id: 'xxxxxyyyy',
   ingameId: 9999,
   name: 'testUser',
-  safeName: 'testUser',
+  safeName: 'test-user',
   oldNames: [],
   email: 'user@example.com',
   reachable: true,
@@ -193,13 +193,25 @@ export const sampleUserWithSecrets: User<string, true> = {
 
 const demoUserList = new Map<string, User<string, true> | User<string, false>>([[sampleUserWithSecrets.id, sampleUserWithSecrets]])
 
-export const getUserById = <HasSecret extends boolean = false>(id: string, secrets: HasSecret): User<typeof id, HasSecret> => {
-  const result = demoUserList.get(id) // 它为什么不觉得undefined 也会出现
-  if (secrets && 'secrets' in result) {
-    return result
-  } else if (!secrets && !('secrets' in result)) {
-    return result
-  } else { return null }
+export const getUserById = <HasSecret extends boolean = false>(id: string, secrets: HasSecret): User<typeof id, HasSecret> | void => {
+  const result = demoUserList.get(id)
+  if (!result) { return undefined }
+  if ('secrets' in result) {
+    if (secrets) { return result } else {
+      return undefined
+    }
+  } else if (!secrets) { return result } else {
+    const _result = {
+      ...result,
+      secret: undefined
+    }
+    return _result
+  }
+  // if (secrets && 'secrets' in result) {
+  //   return result
+  // } else if (!secrets && !('secrets' in result)) {
+  //   return result
+  // } else { return undefined }
 }
 
 export const demoUser = sampleUserWithSecrets

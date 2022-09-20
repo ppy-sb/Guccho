@@ -6,7 +6,7 @@
       enter-to-class="opacity-100"
     >
       <div v-show="!isLoading" class="flex flex-col h-screen overflow-y-hidden bg-ebony-clay-900">
-        <div id="app" class="flex flex-col flex-1 w-full overflow-y-auto bg-dark-5">
+        <div id="app" class="flex flex-col flex-1 w-full overflow-auto bg-dark-5">
           <NavbarDefault />
           <div class="flex-grow">
             <slot />

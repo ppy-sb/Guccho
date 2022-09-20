@@ -43,7 +43,7 @@ export default defineNuxtConfig({
     title: 'guweb',
     mode: [
       {
-        name: 'Standard',
+        name: 'Osu',
         icon: 'osu'
       },
       {
@@ -61,7 +61,7 @@ export default defineNuxtConfig({
     ],
     mods: [
       {
-        name: 'Vanilla',
+        name: 'Standard(Vanilla)',
         icon: 'vn'
       },
       {
