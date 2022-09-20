@@ -134,7 +134,7 @@ const currentStatistic = computed(
 const update = ref(0)
 setTimeout(() => {
   update.value += 1
-}, 300)
+}, 240)
 
 const currentRankingSystem = computed(() => currentStatistic.value?.ranking?.[tab.value])
 const { rankingSystem } = useRuntimeConfig()
