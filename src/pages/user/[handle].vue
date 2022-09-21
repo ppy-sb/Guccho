@@ -178,9 +178,9 @@
           </div>
           <div data-atropos-offset="5" class="absolute w-full h-full top-0">
             <dl class="flex w-full h-full">
-              <div class="w-2/5" />
+              <div class="w-3/5" />
               <div class="flex flex-col">
-                <div class="h-1/4" />
+                <div class="h-1/3" />
                 <dt class="text-xl self-end">
                   Country Rank:
                 </dt>
