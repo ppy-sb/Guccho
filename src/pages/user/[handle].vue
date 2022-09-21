@@ -161,22 +161,33 @@
               radius: 0,
             }"
           />
-          <div class="flex gap-8 h-full w-full absolute top-0 left-0 justify-center items-center">
-            <dl data-atropos-offset="50" class="z-30">
-              <dt class="text-xl text-center">
-                Global Rank:
-              </dt>
-              <dd class="text-5xl flex justify-end">
-                <Roller :char-set="chars" :value="update ? `#${Intl.NumberFormat().format(currentRankingSystem.rank)}` : ' '" />
-              </dd>
+
+          <div data-atropos-offset="12" class="z-30 absolute w-full h-full top-0">
+            <dl class="flex w-full h-full">
+              <div class="w-1/4" />
+              <div class="flex flex-col">
+                <div class="h-1/5" />
+                <dt class="text-xl self-end">
+                  Global Rank:
+                </dt>
+                <dd class="text-5xl self-end">
+                  <Roller :char-set="chars" :value="update ? `#${Intl.NumberFormat().format(currentRankingSystem.rank)}` : ' '" />
+                </dd>
+              </div>
             </dl>
-            <dl data-atropos-offset="20">
-              <dt class="text-lg text-center">
-                Country Rank:
-              </dt>
-              <dd class="text-3xl flex justify-end">
-                <Roller :char-set="chars" :value="update ? `#${Intl.NumberFormat().format(currentRankingSystem.countryRank)}`: ' '" />
-              </dd>
+          </div>
+          <div data-atropos-offset="5" class="absolute w-full h-full top-0">
+            <dl class="flex w-full h-full">
+              <div class="w-1/2" />
+              <div class="flex flex-col">
+                <div class="h-1/4" />
+                <dt class="text-xl self-end">
+                  Country Rank:
+                </dt>
+                <dd class="text-3xl ml-20">
+                  <Roller :char-set="chars" :value="update ? `#${Intl.NumberFormat().format(currentRankingSystem.countryRank)}`: ' '" />
+                </dd>
+              </div>
             </dl>
           </div>
         </atropos>
