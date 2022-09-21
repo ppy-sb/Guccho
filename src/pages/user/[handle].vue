@@ -125,9 +125,9 @@
             }"
           />
           <LineChart
-            data-atropos-offset="7"
+            data-atropos-offset="10"
             :chart-data="globalRank"
-            style="height: 340px; max-width: 117% !important; top: 20px; left: -8.5%; right: -8.5%"
+            style="height: 340px; max-width: 130% !important; top: 20px; left: -15%; right: -15%"
             class="!absolute z-20"
             :options="{
               animations: {
@@ -178,7 +178,7 @@
           </div>
           <div data-atropos-offset="5" class="absolute w-full h-full top-0">
             <dl class="flex w-full h-full">
-              <div class="w-1/2" />
+              <div class="w-2/5" />
               <div class="flex flex-col">
                 <div class="h-1/4" />
                 <dt class="text-xl self-end">
