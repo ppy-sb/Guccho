@@ -77,3 +77,8 @@ Plan: deprecate Python api server and use Nuxt 3 only.
 phase 1: migrate to nuxt 3 with typescript support
 phase 2: define tRPC schema for both frontend and backend
 phase 3: migrate legacy python server to nuxt 3 api.
+
+
+todo: search 'TODO' in repo.
+
+markdown for userpage
