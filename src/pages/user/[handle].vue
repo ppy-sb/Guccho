@@ -94,74 +94,14 @@
               :chart-data="countryRank"
               style="max-width: 106% !important; height: 320px; top: 10px; left: -3%; right: -3% "
               class="!absolute -z-10"
-              :options="{
-                animations: {
-                  y: {
-                    easing: 'easeInOutElastic',
-                    from: (ctx) => {
-                      if (ctx.type === 'data') {
-                        if (ctx.mode === 'default' && !ctx.dropped) {
-                          ctx.dropped = true;
-                          return 0;
-                        }
-                      }
-                    }
-                  }
-                },
-                plugins: {
-                  legend: {
-                    display: false
-                  }
-                },
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                  yAxes: {
-                    display: false
-                  },
-                  x: {
-                    display: false
-                  }
-                },
-                radius: 0,
-              }"
+              :options="userpageLineChartOptions"
             />
             <LineChart
               data-atropos-offset="3"
               :chart-data="globalRank"
               style="height: 340px; max-width: 112% !important; top: 20px; left: -6%; right: -6%"
               class="!absolute z-20"
-              :options="{
-                animations: {
-                  y: {
-                    easing: 'easeInOutElastic',
-                    from: (ctx) => {
-                      if (ctx.type === 'data') {
-                        if (ctx.mode === 'default' && !ctx.dropped) {
-                          ctx.dropped = true;
-                          return 0;
-                        }
-                      }
-                    }
-                  }
-                },
-                plugins: {
-                  legend: {
-                    display: false
-                  }
-                },
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                  yAxes: {
-                    display: false
-                  },
-                  x: {
-                    display: false
-                  }
-                },
-                radius: 0,
-              }"
+              :options="userpageLineChartOptions"
             />
             <div data-atropos-offset="5" class="z-30 absolute w-full h-full top-0">
               <dl class="flex w-full h-full">
@@ -209,9 +149,10 @@
 import { JsonViewer } from 'vue3-json-viewer'
 
 import { LineChart } from 'vue-chart-3'
-import Atropos from 'atropos/vue'
+import { Atropos } from 'atropos/vue'
 import { demoUser as user } from '@/prototyping/objects/user'
 import { hsvRaw } from '~/palette'
+import { userpageLineChartOptions } from '~/common/shared'
 
 const chars = [' ', ...[...Array(10).keys()].map(String), ',', '#', 'N', '/', 'A']
 const tab = ref('ppv2')
