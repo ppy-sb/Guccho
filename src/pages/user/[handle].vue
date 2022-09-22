@@ -83,114 +83,116 @@
     </section>
     <client-only>
       <section class="container mx-auto mt-4">
-        <atropos
-          style="height: 300px"
-        >
-          <div data-atropos-offset="0" class="relative bg-ebony-clay-700 w-full h-full -z-20" />
-          <LineChart
-            data-atropos-offset="-6"
-            :chart-data="countryRank"
-            style="max-width: 114% !important; height: 320px; top: 10px; left: -7%; right: -7%"
-            class="!absolute -z-10"
-            :options="{
-              animations: {
-                y: {
-                  easing: 'easeInOutElastic',
-                  from: (ctx) => {
-                    if (ctx.type === 'data') {
-                      if (ctx.mode === 'default' && !ctx.dropped) {
-                        ctx.dropped = true;
-                        return 0;
+        <div class="atropos-wrap">
+          <atropos
+            class="my-atropos"
+            shadow-offset="-3"
+          >
+            <div data-atropos-offset="0" class="relative atropos-bg w-full h-full" />
+            <LineChart
+              data-atropos-offset="-3"
+              :chart-data="countryRank"
+              style="max-width: 106% !important; height: 320px; top: 10px; left: -3%; right: -3% "
+              class="!absolute -z-10"
+              :options="{
+                animations: {
+                  y: {
+                    easing: 'easeInOutElastic',
+                    from: (ctx) => {
+                      if (ctx.type === 'data') {
+                        if (ctx.mode === 'default' && !ctx.dropped) {
+                          ctx.dropped = true;
+                          return 0;
+                        }
                       }
                     }
                   }
-                }
-              },
-              plugins: {
-                legend: {
-                  display: false
-                }
-              },
-              responsive: true,
-              maintainAspectRatio: false,
-              scales: {
-                yAxes: {
-                  display: false
                 },
-                x: {
-                  display: false
-                }
-              },
-              radius: 0,
-            }"
-          />
-          <LineChart
-            data-atropos-offset="10"
-            :chart-data="globalRank"
-            style="height: 340px; max-width: 130% !important; top: 20px; left: -15%; right: -15%"
-            class="!absolute z-20"
-            :options="{
-              animations: {
-                y: {
-                  easing: 'easeInOutElastic',
-                  from: (ctx) => {
-                    if (ctx.type === 'data') {
-                      if (ctx.mode === 'default' && !ctx.dropped) {
-                        ctx.dropped = true;
-                        return 0;
+                plugins: {
+                  legend: {
+                    display: false
+                  }
+                },
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                  yAxes: {
+                    display: false
+                  },
+                  x: {
+                    display: false
+                  }
+                },
+                radius: 0,
+              }"
+            />
+            <LineChart
+              data-atropos-offset="5"
+              :chart-data="globalRank"
+              style="height: 340px; max-width: 112% !important; top: 20px; left: -6%; right: -6%"
+              class="!absolute z-20"
+              :options="{
+                animations: {
+                  y: {
+                    easing: 'easeInOutElastic',
+                    from: (ctx) => {
+                      if (ctx.type === 'data') {
+                        if (ctx.mode === 'default' && !ctx.dropped) {
+                          ctx.dropped = true;
+                          return 0;
+                        }
                       }
                     }
                   }
-                }
-              },
-              plugins: {
-                legend: {
-                  display: false
-                }
-              },
-              responsive: true,
-              maintainAspectRatio: false,
-              scales: {
-                yAxes: {
-                  display: false
                 },
-                x: {
-                  display: false
-                }
-              },
-              radius: 0,
-            }"
-          />
-
-          <div data-atropos-offset="12" class="z-30 absolute w-full h-full top-0">
-            <dl class="flex w-full h-full">
-              <div class="w-1/4" />
-              <div class="flex flex-col">
-                <div class="h-1/5" />
-                <dt class="text-xl self-end">
-                  Global Rank:
-                </dt>
-                <dd class="text-5xl self-end">
-                  <Roller :char-set="chars" :value="update ? `#${Intl.NumberFormat().format(currentRankingSystem.rank)}` : ' '" />
-                </dd>
-              </div>
-            </dl>
-          </div>
-          <div data-atropos-offset="5" class="absolute w-full h-full top-0">
-            <dl class="flex w-full h-full">
-              <div class="w-3/5" />
-              <div class="flex flex-col">
-                <div class="h-1/3" />
-                <dt class="text-xl self-end">
-                  Country Rank:
-                </dt>
-                <dd class="text-3xl ml-20">
-                  <Roller :char-set="chars" :value="update ? `#${Intl.NumberFormat().format(currentRankingSystem.countryRank)}`: ' '" />
-                </dd>
-              </div>
-            </dl>
-          </div>
-        </atropos>
+                plugins: {
+                  legend: {
+                    display: false
+                  }
+                },
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                  yAxes: {
+                    display: false
+                  },
+                  x: {
+                    display: false
+                  }
+                },
+                radius: 0,
+              }"
+            />
+            <div data-atropos-offset="7" class="z-30 absolute w-full h-full top-0">
+              <dl class="flex w-full h-full">
+                <div class="w-1/4" />
+                <div class="flex flex-col">
+                  <div class="h-1/5" />
+                  <dt class="text-xl self-end">
+                    Global Rank:
+                  </dt>
+                  <dd class="text-5xl self-end">
+                    <Roller :char-set="chars" :value="update ? `#${Intl.NumberFormat().format(currentRankingSystem.rank)}` : ' '" />
+                  </dd>
+                </div>
+              </dl>
+            </div>
+            <div data-atropos-offset="0" class="absolute w-full h-full top-0">
+              <dl class="flex w-full h-full">
+                <div class="w-3/5" />
+                <div class="flex flex-col">
+                  <div class="h-1/3" />
+                  <dt class="text-xl self-end">
+                    Country Rank:
+                  </dt>
+                  <dd class="text-3xl ml-20">
+                    <Roller :char-set="chars" :value="update ? `#${Intl.NumberFormat().format(currentRankingSystem.countryRank)}`: ' '" />
+                  </dd>
+                </div>
+              </dl>
+            </div>
+          </atropos>
+        </div>
       </section>
     </client-only>
     <div class="pt-20">
@@ -231,7 +233,7 @@ const { rankingSystem } = useRuntimeConfig()
 
 const hsl = ([h, s, l], a) => `hsl(${h} ${s}% ${l}% / ${a}%)`
 const gRankFill = hsl(hsvRaw.mulberry[500], 20)
-const cRankFill = hsl(hsvRaw['ebony-clay'][500], 50)
+const cRankFill = hsl(hsvRaw['ebony-clay'][500], 60)
 
 const globalRank = {
   labels: ['Paris', 'Nîmes', 'Toulon', 'Perpignan', 'Autre'],
@@ -275,10 +277,29 @@ const countryRank = {
 @import 'atropos/scss';
 </style>
 <style lang="postcss">
-.atropos-inner {
-  @apply rounded-3xl overflow-hidden !important
+.atropos-wrap {
+  @apply overflow-hidden sm:overflow-visible
 }
-.atropos-shadow {
-  opacity: 0.8;
+
+.my-atropos {
+  height: 300px;
+  @apply overflow-hidden -m-8;
+  @apply sm:overflow-visible sm:m-0;
+
+  .atropos-bg {
+    @apply rounded-3xl backdrop-blur-2xl
+  }
+
+  .atropos-inner {
+    @apply sm:rounded-3xl sm:overflow-hidden !important
+  }
+  .atropos-shadow {
+    @apply rounded-3xl bg-mulberry-300 !important;
+    /* width: 102%; */
+    /* height: 102%; */
+    /* left: -1%; */
+    /* top: -1%; */
+    filter: blur(40px) saturate(0.7) opacity(0.2) !important
+  }
 }
 </style>
