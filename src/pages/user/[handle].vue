@@ -12,7 +12,7 @@
         class="pt-4 flex flex-col md:p-0 w-full md:w-100 bg-ebony-clay-700 md:bg-transparent md:grow"
       >
         <div
-          class="order-3 md:order-1 container mx-auto flex md:justify-end sm:justify-center gap-3 pb-4 md:pb-0"
+          class="order-3 md:order-1 container mx-auto flex justify-around md:justify-end gap-3 pb-4 md:pb-0"
         >
           <dv-button size="sm" type="primary">
             add as friend
