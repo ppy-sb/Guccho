@@ -33,7 +33,8 @@
     "vue": "^3.2.39",
     "vue-chart-3": "^3.1.8",
     "vue-roller": "^2.0.3",
-    "vue3-json-viewer": "^2.2.2"
+    "vue3-json-viewer": "^2.2.2",
+    "vue3-markdown-it": "^1.0.10"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config-typescript": "^11.0.0",
