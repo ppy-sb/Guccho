@@ -166,6 +166,12 @@ export default {
             }
           },
           {
+            name: 'playground',
+            route: {
+              name: 'components'
+            }
+          },
+          {
             name: 'test user page',
             route: {
               name: 'user-handle',
