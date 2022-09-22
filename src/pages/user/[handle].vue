@@ -127,7 +127,7 @@
               }"
             />
             <LineChart
-              data-atropos-offset="5"
+              data-atropos-offset="3"
               :chart-data="globalRank"
               style="height: 340px; max-width: 112% !important; top: 20px; left: -6%; right: -6%"
               class="!absolute z-20"
@@ -163,7 +163,7 @@
                 radius: 0,
               }"
             />
-            <div data-atropos-offset="7" class="z-30 absolute w-full h-full top-0">
+            <div data-atropos-offset="5" class="z-30 absolute w-full h-full top-0">
               <dl class="flex w-full h-full">
                 <div class="w-1/4" />
                 <div class="flex flex-col">
