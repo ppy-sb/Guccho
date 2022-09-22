@@ -240,7 +240,7 @@ const globalRank = {
   datasets: [
     {
       data: [100, 40, 60, 70, 5],
-      tension: 0.3,
+      tension: 0.2,
       backgroundColor: gRankFill,
       borderColor: '#C5CAE9',
       fill: true
@@ -252,7 +252,7 @@ const countryRank = {
   datasets: [
     {
       data: [20, 4, 5, 22, 1],
-      tension: 0.3,
+      tension: 0.2,
       backgroundColor: cRankFill,
       borderColor: '#C5CAE9',
       fill: true
