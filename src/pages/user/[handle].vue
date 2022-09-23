@@ -81,60 +81,7 @@
         <t-tab disabled class="f-tab grow p-0 m-0" />
       </t-tabs>
     </section>
-    <client-only>
-      <section class="container mx-auto mt-4">
-        <div class="atropos-wrap">
-          <atropos
-            class="my-atropos"
-            shadow-offset="-3"
-          >
-            <div data-atropos-offset="0" class="relative atropos-bg w-full h-full" />
-            <LineChart
-              data-atropos-offset="-3"
-              :chart-data="countryRank"
-              style="max-width: 106% !important; height: 320px; top: 10px; left: -3%; right: -3% "
-              class="!absolute -z-10"
-              :options="userpageLineChartOptions"
-            />
-            <LineChart
-              data-atropos-offset="3"
-              :chart-data="globalRank"
-              style="height: 340px; max-width: 112% !important; top: 20px; left: -6%; right: -6%"
-              class="!absolute z-20"
-              :options="userpageLineChartOptions"
-            />
-            <div data-atropos-offset="5" class="z-30 absolute w-full h-full top-0">
-              <dl class="flex w-full h-full">
-                <div class="w-1/4" />
-                <div class="flex flex-col">
-                  <div class="h-1/5" />
-                  <dt class="text-xl self-end">
-                    Global Rank:
-                  </dt>
-                  <dd class="text-5xl self-end">
-                    <Roller :char-set="chars" :value="update ? `#${Intl.NumberFormat().format(currentRankingSystem.rank)}` : ' '" />
-                  </dd>
-                </div>
-              </dl>
-            </div>
-            <div data-atropos-offset="0" class="absolute w-full h-full top-0">
-              <dl class="flex w-full h-full">
-                <div class="w-3/5" />
-                <div class="flex flex-col">
-                  <div class="h-1/3" />
-                  <dt class="text-xl self-end">
-                    Country Rank:
-                  </dt>
-                  <dd class="text-3xl ml-20">
-                    <Roller :char-set="chars" :value="update ? `#${Intl.NumberFormat().format(currentRankingSystem.countryRank)}`: ' '" />
-                  </dd>
-                </div>
-              </dl>
-            </div>
-          </atropos>
-        </div>
-      </section>
-    </client-only>
+    <userpage-rank-chart />
     <div class="pt-20">
       <json-viewer
         :value="user"
@@ -148,58 +95,22 @@
 <script setup>
 import { JsonViewer } from 'vue3-json-viewer'
 
-import { LineChart } from 'vue-chart-3'
-import { Atropos } from 'atropos/vue'
 import { demoUser as user } from '@/prototyping/objects/user'
-import { hsvRaw } from '~/palette'
-import { userpageLineChartOptions } from '~/common/shared'
 
-const chars = [' ', ...[...Array(10).keys()].map(String), ',', '#', 'N', '/', 'A']
 const tab = ref('ppv2')
 const selectedMode = ref('osu')
 const selectedRuleset = ref('standard')
 const currentStatistic = computed(
   () => user.statistics[selectedMode.value][selectedRuleset.value]
 )
-// weird bug: roller-item can not find out the correct size
-// TODO: investigate this
-const update = ref(0)
-
-setTimeout(() => {
-  update.value = 1
-}, 250)
 
 const currentRankingSystem = computed(() => currentStatistic.value?.ranking?.[tab.value])
 const { rankingSystem } = useRuntimeConfig()
-
-const hsl = ([h, s, l], a) => `hsl(${h} ${s}% ${l}% / ${a}%)`
-const gRankFill = hsl(hsvRaw.mulberry[500], 20)
-const cRankFill = hsl(hsvRaw['ebony-clay'][500], 60)
-
-const globalRank = {
-  labels: ['Paris', 'Nîmes', 'Toulon', 'Perpignan', 'Autre'],
-  datasets: [
-    {
-      data: [100, 40, 60, 70, 5],
-      tension: 0.2,
-      backgroundColor: gRankFill,
-      borderColor: '#C5CAE9',
-      fill: true
-    }
-  ]
-}
-const countryRank = {
-  labels: ['Paris', 'Nîmes', 'Toulon', 'Perpignan', 'Autre'],
-  datasets: [
-    {
-      data: [20, 4, 5, 22, 1],
-      tension: 0.2,
-      backgroundColor: cRankFill,
-      borderColor: '#C5CAE9',
-      fill: true
-    }
-  ]
-}
+provide('user', user)
+provide('mode', selectedMode)
+provide('ruleset', selectedRuleset)
+provide('selectedStatistics', currentStatistic)
+provide('selectedRankingSystem', currentRankingSystem)
 </script>
 
 <style scoped lang="postcss">
@@ -215,32 +126,4 @@ const countryRank = {
 
 <style lang="scss">
 @import 'vue3-json-viewer/dist/index.css';
-@import 'atropos/scss';
-</style>
-<style lang="postcss">
-.atropos-wrap {
-  @apply overflow-hidden sm:overflow-visible
-}
-
-.my-atropos {
-  height: 300px;
-  @apply overflow-hidden -m-8;
-  @apply sm:overflow-visible sm:m-0;
-
-  .atropos-bg {
-    @apply rounded-3xl backdrop-blur-2xl
-  }
-
-  .atropos-inner {
-    @apply sm:rounded-3xl sm:overflow-hidden !important
-  }
-  .atropos-shadow {
-    @apply rounded-3xl bg-mulberry-300 !important;
-    /* width: 102%; */
-    /* height: 102%; */
-    /* left: -1%; */
-    /* top: -1%; */
-    filter: blur(40px) saturate(0.7) opacity(0.2) !important
-  }
-}
 </style>
