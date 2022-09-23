@@ -8,12 +8,12 @@
       <div class="content">
         <div class="mb-6">
           <h1 class="text-4xl text-center sm:text-left mb-2 font-bold">
-            {{ $config.title.toUpperCase() }}
+            {{ config.title.toUpperCase() }}
           </h1>
           <h2 class="h-sub font-semibold text-md text-center sm:text-left">
             We are an osu! private server built from the ground up with many
             unique features not seen elsewhere - for more information, check out
-            gulag and {{ $config.title }} on GitHub - we're fully open source!
+            gulag and {{ config.title }} on GitHub - we're fully open source!
           </h2>
         </div>
 
@@ -40,10 +40,10 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'Index'
-}
+<script setup lang="ts">
+import { useAppConfig } from '#app'
+
+const config = useAppConfig()
 </script>
 
 <style lang="postcss">

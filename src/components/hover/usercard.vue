@@ -11,7 +11,7 @@
         <div v-if="user">
           <div class="flex gap-2 items-center">
             <img
-              :src="`https://a.${$config.baseUrl}/${user.player_id}`"
+              :src="`https://a.${config.baseUrl}/${user.player_id}`"
               alt=""
               class="w-16 h-16 rounded-lg"
             >
@@ -30,26 +30,23 @@
   </VTooltip>
 </template>
 
-<script>
-// const runtimeConfig = useRuntimeConfig()
-export default {
-  name: 'UserCard',
-  props: {
-    user: {
-      type: Object,
-      required: true
-    },
-    href: {
-      type: String,
-      required: false,
-      default: '/'
-    }
+<script setup>
+import { useAppConfig } from 'nuxt/app'
+
+// const runtimeConfig = useAppConfig()
+const config = useAppConfig()
+const props = defineProps({
+  user: {
+    type: Object,
+    required: true
   },
-  data () {
-    return {
-      user_status: null,
-      fetching: true
-    }
+  href: {
+    type: String,
+    required: false,
+    default: '/'
   }
-}
+})
+
+const user_status = ref(null)
+const fetching = ref(true)
 </script>

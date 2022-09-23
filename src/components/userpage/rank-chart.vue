@@ -77,7 +77,7 @@ setTimeout(() => {
   update.value = 1
 }, 250)
 // const user = inject('user')
-const currentRankingSystem = inject('selectedRankingSystem')
+const currentRankingSystem = inject('selectedRankingSystemData')
 /* mock */
 const globalRank = {
   labels: ['Paris', 'Nîmes', 'Toulon', 'Perpignan', 'Autre'],

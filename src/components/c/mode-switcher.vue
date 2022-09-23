@@ -28,7 +28,7 @@
         {{ m.name }}
       </a>
     </div>
-    <div v-if="showSort" class="flex justify-center gap-3 md:gap-3 lg:gap-3">
+    <div v-if="props.showSort" class="flex justify-center gap-3 md:gap-3 lg:gap-3">
       <a
         v-for="(s, index) in leaderboard.sort.list"
         :key="index"
@@ -42,69 +42,65 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'LeaderboardHeader',
-  props: {
-    showSort: {
-      type: Boolean,
-      default: false
-    }
+<script setup>
+const config = useAppConfig()
+const emit = defineEmits(['input'])
+const props = defineProps({
+  showSort: {
+    type: Boolean,
+    default: false
+  }
+})
+const leaderboard = {
+  mode: {
+    selected: undefined,
+    list: []
   },
-  data () {
-    return {
-      leaderboard: {
-        mode: {
-          selected: undefined,
-          list: []
-        },
-        mod: {
-          selected: undefined,
-          list: []
-        },
-        sort: {
-          selected: undefined,
-          list: [
-            {
-              name: 'Performance',
-              icon: 'pp'
-            },
-            {
-              name: 'Accuracy',
-              icon: 'acc'
-            },
-            {
-              name: 'Total Score',
-              icon: 'tscore'
-            },
-            {
-              name: 'Ranked score',
-              icon: 'rscore'
-            }
-          ]
-        }
+  mod: {
+    selected: undefined,
+    list: []
+  },
+  sort: {
+    selected: undefined,
+    list: [
+      {
+        name: 'Performance',
+        icon: 'pp'
+      },
+      {
+        name: 'Accuracy',
+        icon: 'acc'
+      },
+      {
+        name: 'Total Score',
+        icon: 'tscore'
+      },
+      {
+        name: 'Ranked score',
+        icon: 'rscore'
       }
-    }
-  },
-  mounted () {
-    this.initLeaderboard()
-    this.$emit('input', this.leaderboard)
-  },
-  methods: {
-    changeValue (type, index) {
-      this.leaderboard[`${type}`].selected = this.leaderboard[`${type}`].list[`${index}`]
-      this.$emit('input', this.leaderboard)
-    },
-    initLeaderboard () {
-      this.leaderboard.mode.list = this.$config.public.mode
-      this.leaderboard.mod.list = this.$config.public.mods
-      this.leaderboard.mode.selected = this.leaderboard.mode.list[0]
-      this.leaderboard.mod.selected = this.leaderboard.mod.list[0]
-      this.leaderboard.sort.selected = this.leaderboard.sort.list[0]
-    }
+    ]
   }
 }
+
+const changeValue = (type, index) => {
+  leaderboard[`${type}`].selected = leaderboard[`${type}`].list[`${index}`]
+  emit('input', leaderboard)
+}
+
+const initLeaderboard = () => {
+  leaderboard.mode.list = config.mode
+  leaderboard.mod.list = config.mods
+  leaderboard.mode.selected = leaderboard.mode.list[0]
+  leaderboard.mod.selected = leaderboard.mod.list[0]
+  leaderboard.sort.selected = leaderboard.sort.list[0]
+}
+
+onMounted(() => {
+  initLeaderboard()
+})
 </script>
+
 <style lang="postcss" scoped>
 .h-mode {
   @apply py-0 my-4 transition duration-200 ease-in-out font-semibold opacity-50 cursor-pointer;

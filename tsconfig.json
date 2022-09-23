@@ -8,13 +8,13 @@
   "compilerOptions": {
     "strictNullChecks": true,
     "allowJs": true,
-    "baseUrl": ".",
-    "paths": {
-      "~/*": ["./src/*"],
-      "@/*": ["./src/*"],
-      "~~/*": ["./src/*"],
-      "@@/*": ["./src/*"]
-    }
+    "baseUrl": "."
+    // "paths": {
+    //   "~/*": ["./src/*"],
+    //   "@/*": ["./src/*"],
+    //   "~~/*": ["./src/*"],
+    //   "@@/*": ["./src/*"]
+    // }
   },
   "exclude": ["node_modules", ".nuxt", "dist"]
 }
