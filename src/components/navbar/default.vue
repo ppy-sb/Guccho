@@ -34,7 +34,7 @@
           <div class="flex items-center flex-shrink-0">
             <nuxt-link to="/">
               <h1 class="text-xl font-bold text-white">
-                {{ $config.title }}
+                {{ config.title }}
               </h1>
             </nuxt-link>
           </div>
@@ -64,13 +64,13 @@
               >
                 <span class="sr-only">Open user menu</span>
                 <!-- <template v-if="$auth.loggedIn">
-                  <img class="h-8 w-8 rounded-full" :src="`https://a.${$config.baseUrl}/${$auth.user.id}`">
+                  <img class="h-8 w-8 rounded-full" :src="`https://a.${config.baseUrl}/${$auth.user.id}`">
                   <h1 class="font-semibold">
                     Hi {{ $auth.user.name }}
                   </h1>
                 </template>
                 <template v-else>
-                  <img class="h-8 w-8 rounded-full" :src="`https://a.${$config.baseUrl}/0`">
+                  <img class="h-8 w-8 rounded-full" :src="`https://a.${config.baseUrl}/0`">
                 </template> -->
               </button>
             </div>
@@ -141,11 +141,18 @@
 </template>
 
 <script>
+import { useAppConfig } from 'nuxt/app'
 import vClickOutside from 'v-click-outside'
 export default {
   name: 'NavbarDefault',
   directives: {
     clickOutside: vClickOutside.directive
+  },
+  setup () {
+    const config = useAppConfig()
+    return {
+      config
+    }
   },
   data () {
     return {

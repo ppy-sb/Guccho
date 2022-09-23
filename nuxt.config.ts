@@ -1,5 +1,4 @@
-import { defineNuxtConfig } from 'nuxt'
-import { rankingSystem } from './src/prototyping/objects/ranking-system-names'
+import { defineNuxtConfig } from 'nuxt/config'
 
 import postcss from './postcss.config'
 export default defineNuxtConfig({
@@ -28,47 +27,7 @@ export default defineNuxtConfig({
     '~/assets/daisyui.scss'
   ],
 
-  publicRuntimeConfig: {
-    baseUrl: 'dev.ppy.sb',
-    version: {
-      api: '1.0.3',
-      front: '1.0.3'
-    },
-    title: 'guweb@next',
-    mode: [
-      {
-        name: 'Osu',
-        icon: 'osu'
-      },
-      {
-        name: 'Taiko',
-        icon: 'taiko'
-      },
-      {
-        name: 'Catch',
-        icon: 'catch'
-      },
-      {
-        name: 'Mania',
-        icon: 'mania'
-      }
-    ],
-    mods: [
-      {
-        name: 'Standard(Vanilla)',
-        icon: 'vn'
-      },
-      {
-        name: 'Relax',
-        icon: 'rx'
-      },
-      {
-        name: 'Autopilot',
-        icon: 'ap'
-      }
-    ],
-    rankingSystem
-  },
+  publicRuntimeConfig: {},
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: {
@@ -141,5 +100,8 @@ export default defineNuxtConfig({
       productionTip: true,
       devtools: false
     }
+  },
+  typescript: {
+    strict: true
   }
 })

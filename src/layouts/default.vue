@@ -12,8 +12,8 @@
               © {{ new Date().getFullYear() }} ppy.sb | Varkaria
             </h1>
             <h2 class="text-sm font-semibold font-bold text-white">
-              <span class="text-green-400">API</span> {{ $config.version.api }}
-              <span class="text-yellow-400">FRONT</span> {{ $config.version.front }}
+              <span class="text-green-400">API</span> {{ config.version.api }}
+              <span class="text-yellow-400">FRONT</span> {{ config.version.front }}
             </h2>
           </footer>
         </div>
@@ -55,24 +55,14 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'DefaultLayout',
-  data () {
-    return {
-      isLoading: true
-    }
-  },
-  watch: {
-    $route () {
-      // if (this.$store.state.theme_hue !== process.env.defaultColorTheme) {
-      //   return this.$store.commit('changeThemeHue', process.env.defaultColorTheme)
-      // }
-    }
-  },
-  mounted () {
-    this.isLoading = false
-  }
-  // ...
-}
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import { useAppConfig } from '#app'
+
+const isLoading = ref(true)
+
+const config = useAppConfig()
+onMounted(() => {
+  isLoading.value = false
+})
 </script>
