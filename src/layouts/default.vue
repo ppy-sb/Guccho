@@ -1,22 +1,24 @@
 <template>
   <div v-show="!isLoading" data-theme="guweb">
-    <div v-show="!isLoading" class="flex flex-col h-screen overflow-y-hidden bg-ebony-clay-900">
-      <div class="flex flex-col flex-1 w-full overflow-auto">
-        <NavbarDefault />
-        <div class="flex-grow">
-          <slot />
+    <t-modal-container teleport-id="app-modal-portal">
+      <div v-show="!isLoading" class="flex flex-col h-screen overflow-y-hidden bg-ebony-clay-900">
+        <div class="flex flex-col flex-1 w-full overflow-auto">
+          <NavbarDefault />
+          <div class="flex-grow">
+            <slot />
+          </div>
+          <footer class="py-4 text-center bottom-1 bg-ebony-clay-800">
+            <h1 class="text-sm font-semibold text-white">
+              © {{ new Date().getFullYear() }} ppy.sb | Varkaria
+            </h1>
+            <h2 class="text-sm font-semibold font-bold text-white">
+              <span class="text-green-400">API</span> {{ $config.version.api }}
+              <span class="text-yellow-400">FRONT</span> {{ $config.version.front }}
+            </h2>
+          </footer>
         </div>
-        <footer class="py-4 text-center bottom-1 bg-ebony-clay-800">
-          <h1 class="text-sm font-semibold text-white">
-            © {{ new Date().getFullYear() }} ppy.sb | Varkaria
-          </h1>
-          <h2 class="text-sm font-semibold font-bold text-white">
-            <span class="text-green-400">API</span> {{ $config.version.api }}
-            <span class="text-yellow-400">FRONT</span> {{ $config.version.front }}
-          </h2>
-        </footer>
       </div>
-    </div>
+    </t-modal-container>
 
     <transition
       leave-active-class="transition ease-in duration-200"
