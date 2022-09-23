@@ -1,7 +1,7 @@
 <template>
   <div>
     <userpage-head />
-
+    <userpage-ranking-system-switcher />
     <userpage-rank-chart />
     <div class="pt-20">
       <userpage-json-viewer />
@@ -25,7 +25,7 @@ const currentStatistic = computed(
 )
 
 const currentRankingSystem = computed(() => currentStatistic.value?.ranking?.[tab.value])
-// const { rankingSystem } = useAppConfig()
+
 provide('user', user)
 provide('mode', selectedMode)
 provide('ruleset', selectedRuleset)
@@ -33,14 +33,3 @@ provide('rankingSystem', tab)
 provide('selectedStatisticsData', currentStatistic)
 provide('selectedRankingSystemData', currentRankingSystem)
 </script>
-
-<style scoped lang="postcss">
-.user-status {
-  @apply text-center text-ebony-clay-400 bg-ebony-clay-800 px-2;
-  @apply md:text-left md:rounded md:-mr-1;
-  @apply md:[margin-left:-7em] md:[padding-left:7em];
-}
-.f-tab {
-  @apply tab-sm sm:tab-sm md:tab-lg;
-}
-</style>

@@ -51,7 +51,7 @@ const props = defineProps({
     default: false
   }
 })
-const leaderboard = {
+const leaderboard = ref({
   mode: {
     selected: undefined,
     list: []
@@ -81,19 +81,19 @@ const leaderboard = {
       }
     ]
   }
-}
+})
 
 const changeValue = (type, index) => {
-  leaderboard[`${type}`].selected = leaderboard[`${type}`].list[`${index}`]
-  emit('input', leaderboard)
+  leaderboard.value[`${type}`].selected = leaderboard.value[`${type}`].list[`${index}`]
+  emit('input', leaderboard.value)
 }
 
 const initLeaderboard = () => {
-  leaderboard.mode.list = config.mode
-  leaderboard.mod.list = config.mods
-  leaderboard.mode.selected = leaderboard.mode.list[0]
-  leaderboard.mod.selected = leaderboard.mod.list[0]
-  leaderboard.sort.selected = leaderboard.sort.list[0]
+  leaderboard.value.mode.list = config.mode
+  leaderboard.value.mod.list = config.mods
+  leaderboard.value.mode.selected = leaderboard.value.mode.list[0]
+  leaderboard.value.mod.selected = leaderboard.value.mod.list[0]
+  leaderboard.value.sort.selected = leaderboard.value.sort.list[0]
 }
 
 onMounted(() => {

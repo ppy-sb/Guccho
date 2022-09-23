@@ -48,3 +48,11 @@
 <script setup>
 const user = inject('user')
 </script>
+
+<style scoped lang="postcss">
+.user-status {
+  @apply text-center text-ebony-clay-400 bg-ebony-clay-800 px-2;
+  @apply md:text-left md:rounded md:-mr-1;
+  @apply md:[margin-left:-7em] md:[padding-left:7em];
+}
+</style>

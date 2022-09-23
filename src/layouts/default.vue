@@ -60,7 +60,6 @@ import { ref, onMounted } from 'vue'
 import { useAppConfig } from '#app'
 
 const isLoading = ref(true)
-
 const config = useAppConfig()
 onMounted(() => {
   isLoading.value = false
