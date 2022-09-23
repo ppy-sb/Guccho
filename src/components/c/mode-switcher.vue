@@ -94,6 +94,7 @@ const initLeaderboard = () => {
   leaderboard.value.mode.selected = leaderboard.value.mode.list[0]
   leaderboard.value.mod.selected = leaderboard.value.mod.list[0]
   leaderboard.value.sort.selected = leaderboard.value.sort.list[0]
+  emit('input', leaderboard.value)
 }
 
 onMounted(() => {
