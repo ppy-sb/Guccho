@@ -39,9 +39,15 @@
 </template>
 
 <script setup>
-const currentStatistic = inject()
+import { useAppConfig } from 'nuxt/app'
+
+const tab = inject('rankingSystem')
+const currentStatistic = inject('selectedStatisticsData')
+const { rankingSystem } = useAppConfig()
 </script>
 
-<style lang="scss" scoped>
-
+<style lang="postcss" scoped>
+.f-tab {
+  @apply tab-sm sm:tab-sm md:tab-lg;
+}
 </style>
