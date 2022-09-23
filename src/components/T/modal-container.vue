@@ -5,9 +5,9 @@
       init: stat === 0,
       in: stat === 1,
       out: stat === 2,
-      l1: hasL2 === 0,
-      l2: hasL2 === 1,
-      'l2-out': hasL2 === 2
+      l1: l2Status === 0,
+      l2: l2Status === 1,
+      'l2-out': l2Status === 2
     }"
   >
     <div class="zoom-modal-background">
@@ -37,11 +37,11 @@ const content = ref()
 const wrapper = ref()
 
 const stat = ref(0)
-const hasL2 = ref(0)
+const l2Status = ref(0)
 
 /* polyfill js until :has got better supports */
 const l2 = (value = false) => {
-  hasL2.value = value
+  l2Status.value = value
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -74,39 +74,51 @@ onMounted(() => {
       return
     }
     stat.value = 0
-    if (!outterL2) { hasL2.value = 0 }
+    if (!outterL2) { l2Status.value = 0 }
   })
 })
 </script>
 
 <style lang="scss">
-.zoom-modal-background {
-  position: fixed;
-  width: 100vw;
-  height: 100vh;
-  // background-color: transparent;
-  top: 0;
-  left: 0;
-  z-index: -50;
-}
-
-.zoom-modal-wrapper {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  margin: auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .zoom-modal-container {
   &.init {
     .zoom-modal {
       filter: opacity(0);
     }
+  }
+
+  // .zoom-modal {
+  //   position: absolute;
+  //   top: 0;
+  //   left: 0;
+  //   right: 0;
+  //   bottom: 0;
+  //   width: 100vw;
+  //   height: 100vh;
+  // }
+
+  .zoom-modal-background {
+    position: fixed;
+    // width: 100vw;
+    // height: 100vh;
+    // background-color: transparent;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    z-index: -50;
+  }
+
+  .zoom-modal-wrapper {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    // margin: auto;
+    // display: flex;
+    // align-items: center;
+    // justify-content: center;
   }
 
   & .zoom-modal-container {
@@ -116,10 +128,10 @@ onMounted(() => {
       right: 0;
       top: 0;
       bottom: 0;
-      margin: auto;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      // margin: auto;
+      // display: flex;
+      // align-items: center;
+      // justify-content: center;
     }
 
     img {
@@ -141,7 +153,7 @@ onMounted(() => {
     // background: rgba(0, 0, 0, .7);
     z-index: 1;
 
-    >.zoom-modal-wrapper>.zoom-modal.l1 {
+    >.zoom-modal-wrapper>.zoom-modal {
       animation: zoomIn 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
     }
   }
@@ -249,14 +261,14 @@ onMounted(() => {
   }
 
   100% {
-    transform: scale(0.8);
+    transform: scale(0.81);
     filter: blur(32px) opacity(0) saturate(0);
   }
 }
 
 @keyframes zoomInContentL2 {
   0% {
-    transform: scale(0.8);
+    transform: scale(0.81);
     filter: blur(32px) opacity(0) saturate(0);
   }
 

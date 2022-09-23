@@ -4,22 +4,20 @@
     <client-only>
       <teleport to="#app-modal-portal">
         <t-modal-container ref="inner">
-          <div class="card bg-base-100 shadow-xl">
-            <div class="card-body">
-              <dv-button @click="openModal2">
-                open modal 2
-              </dv-button>
-              <dv-button @click="closeModal">
-                close modal
-              </dv-button>
-            </div>
-          </div>
+          <t-modal>
+            <dv-button @click="openModal2">
+              open modal 2
+            </dv-button>
+            <dv-button @click="closeModal">
+              close modal
+            </dv-button>
+          </t-modal>
           <template #modal>
-            <div class="card bg-base-100 shadow-xl">
+            <div class="card glass bg-ebony-clay-800 shadow-xl">
               <figure><img src="https://placeimg.com/400/225/arch" alt="Shoes"></figure>
               <div class="card-body">
                 <h2 class="card-title">
-                  Modal
+                  Multi layer Modal
                 </h2>
                 <p>hell yeah?</p>
                 <div class="card-actions justify-end">
