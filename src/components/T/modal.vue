@@ -1,6 +1,6 @@
 <template>
   <div class="zoom-modal-content">
-    <div class="card bg-ebony-clay-800">
+    <div class="card bg-ebony-clay-800 shadow-xl">
       <div class="card-body">
         <slot />
       </div>

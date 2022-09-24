@@ -17,6 +17,11 @@
     "ts-node": "ts-node"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.2.0",
+    "@fortawesome/free-brands-svg-icons": "^6.2.0",
+    "@fortawesome/free-regular-svg-icons": "^6.2.0",
+    "@fortawesome/free-solid-svg-icons": "^6.2.0",
+    "@fortawesome/vue-fontawesome": "^3.0.1",
     "@nuxt/content": "^1.15.1",
     "@nuxtjs/auth-next": "5.0.0-1642152945.3bb6b5f",
     "@nuxtjs/pwa": "^3.3.5",

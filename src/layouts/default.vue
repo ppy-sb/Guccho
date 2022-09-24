@@ -1,6 +1,6 @@
 <template>
   <div v-show="!isLoading" data-theme="guweb">
-    <t-modal-container teleport-id="app-modal-portal">
+    <t-modal-container :teleport-id="config.appModalTeleportTargetId">
       <div v-show="!isLoading" class="flex flex-col h-screen overflow-y-hidden bg-ebony-clay-900">
         <div class="flex flex-col flex-1 w-full overflow-auto">
           <NavbarDefault />
