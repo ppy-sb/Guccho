@@ -1,7 +1,7 @@
 <template>
   <div>
     <header-default class="!pb-2" title="components playground" />
-    <teleport to="#app-modal-portal">
+    <t-modal-page>
       <t-modal-wrapper ref="wrapper1" v-slot="{ closeModal }">
         <t-modal-container>
           <template #default>
@@ -76,7 +76,7 @@
           </template>
         </t-modal-container>
       </t-modal-wrapper>
-    </teleport>
+    </t-modal-page>
     <section class="container mx-auto">
       <div class="flex gap-2">
         <dv-button @click="nested1">

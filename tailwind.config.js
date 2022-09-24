@@ -2,7 +2,6 @@
 /* eslint-env node */
 /** @type {import('tailwindcss').Config} */
 import { palette } from './src/palette'
-console.log(palette)
 module.exports = {
   content: [
     './src/components/**/*.{vue,js}',

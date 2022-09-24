@@ -1,5 +1,6 @@
-import { rankingSystem } from './prototyping/objects/ranking-system-names'
 import { defineAppConfig } from '#app'
+
+import { rankingSystem } from '~/prototyping/objects/ranking-system-names'
 export default defineAppConfig({
   baseUrl: 'dev.ppy.sb',
   version: {
@@ -39,5 +40,6 @@ export default defineAppConfig({
       icon: 'ap'
     }
   ],
-  rankingSystem
+  rankingSystem,
+  appModalTeleportTargetId: 'app-modal-portal'
 })
