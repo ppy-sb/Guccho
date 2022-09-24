@@ -36,7 +36,7 @@
             <div class="pb-2" />
           </div>
         </div>
-        <c-mode-switcher class="self-end" />
+        <app-mode-switcher class="self-end" />
       </div>
       <div class="user-status order-3">
         currently offline.

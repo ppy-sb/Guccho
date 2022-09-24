@@ -11,17 +11,13 @@
     }"
   >
     <div class="zoom-modal-background">
-      <div ref="wrapper" class="zoom-modal-wrapper">
-        <div class="zoom-modal">
-          <slot name="modal">
-            <div :id="props.teleportId" />
-          </slot>
-        </div>
-      </div>
+      <slot name="modal" v-bind="{openModal, closeModal}">
+        <div v-if="props.teleportId" :id="props.teleportId" />
+      </slot>
     </div>
 
     <div ref="content" class="content position-relative">
-      <slot />
+      <slot v-bind="{openModal, closeModal}" />
     </div>
   </div>
 </template>
@@ -30,7 +26,7 @@
 const props = defineProps({
   teleportId: {
     type: [String, Number],
-    default: '_zoom-portal'
+    default: undefined
   }
 })
 const content = ref()
@@ -44,15 +40,13 @@ const l2 = (value = false) => {
   l2Status.value = value
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-// const top = Symbol('top')
-const outterL2 = inject('openL2')
+const outerL2 = inject('openL2', undefined)
 const openModal = () => {
-  if (outterL2) { outterL2(1) }
+  if (outerL2) { outerL2(1) }
   stat.value = 1
 }
 const closeModal = () => {
-  if (outterL2) { outterL2(2) }
+  if (outerL2) { outerL2(2) }
   stat.value = 2
 }
 defineExpose({
@@ -61,12 +55,13 @@ defineExpose({
 })
 provide('openModal', openModal)
 provide('closeModal', closeModal)
+provide('stat', stat)
+provide('l2Stat', l2Status)
 provide('openL2', l2)
 
 // events
 onMounted(() => {
   content.value.addEventListener('animationend', (e) => {
-    console.log(e)
     if (e.animationName !== 'zoomInContent') {
       return
     }
@@ -74,7 +69,7 @@ onMounted(() => {
       return
     }
     stat.value = 0
-    if (!outterL2) { l2Status.value = 0 }
+    if (!outerL2) { l2Status.value = 0 }
   })
 })
 </script>
@@ -108,42 +103,6 @@ onMounted(() => {
     right: 0;
     z-index: -50;
   }
-
-  .zoom-modal-wrapper {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    // margin: auto;
-    // display: flex;
-    // align-items: center;
-    // justify-content: center;
-  }
-
-  & .zoom-modal-container {
-    .zoom-modal-wrapper {
-      position: fixed;
-      left: 0;
-      right: 0;
-      top: 0;
-      bottom: 0;
-      // margin: auto;
-      // display: flex;
-      // align-items: center;
-      // justify-content: center;
-    }
-
-    img {
-      pointer-events: none;
-    }
-
-    &.in {
-      img {
-        pointer-events: all;
-      }
-    }
-  }
 }
 
 .in {
@@ -153,9 +112,9 @@ onMounted(() => {
     // background: rgba(0, 0, 0, .7);
     z-index: 1;
 
-    >.zoom-modal-wrapper>.zoom-modal {
-      animation: zoomIn 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
-    }
+    // >.zoom-modal-wrapper>.zoom-modal {
+    //   animation: zoomIn 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+    // }
   }
 
   /* too new */
@@ -191,7 +150,6 @@ onMounted(() => {
 
   >.content {
     z-index: 1;
-
   }
 }
 
@@ -199,9 +157,9 @@ onMounted(() => {
   .zoom-modal-background {
     z-index: 0;
 
-    >.zoom-modal-wrapper>.zoom-modal {
-      animation: zoomOut 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
-    }
+    // >.zoom-modal-wrapper>.zoom-modal {
+    //   animation: zoomOut 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+    // }
   }
 
   >.content {

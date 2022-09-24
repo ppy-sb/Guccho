@@ -3,7 +3,7 @@
     title="Leaderboard"
     :subtitle="`${selectedMode} - ${selectedMod} | ${sortBy}`"
   >
-    <c-mode-switcher :show-sort="true" @input="updateTitle" />
+    <app-mode-switcher :show-sort="true" @input="updateTitle" />
   </header-simple-title-with-sub>
 </template>
 
