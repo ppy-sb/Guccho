@@ -6,7 +6,7 @@
         <t-modal-container>
           <template #default>
             <t-modal>
-              modal 1 menu
+              <dv-card-title>modal 1 menu</dv-card-title>
               <dv-button @click="openInner1">
                 open inner
               </dv-button>
@@ -17,19 +17,21 @@
           </template>
           <template #modal>
             <t-modal-wrapper ref="inner1" v-slot="{ closeModal: closeModal2 }">
-              <div class="card glass bg-ebony-clay-800 shadow-xl">
-                <figure>
-                  <img src="https://placeimg.com/400/225/arch" alt="Shoes">
-                </figure>
-                <div class="card-body">
-                  <h2 class="card-title">
-                    Inner Modal 1
-                  </h2>
-                  <p>hell yeah?</p>
-                  <div class="card-actions justify-end">
-                    <button class="btn btn-primary" @click="closeModal2">
-                      close me
-                    </button>
+              <div class="flex justify-center items-center h-screen">
+                <div class="card glass shadow-xl">
+                  <figure>
+                    <img src="https://placeimg.com/400/225/arch" alt="Shoes">
+                  </figure>
+                  <div class="card-body">
+                    <h2 class="card-title">
+                      Inner Modal 1
+                    </h2>
+                    <p>hell yeah?</p>
+                    <div class="card-actions justify-end">
+                      <button class="btn btn-primary" @click="closeModal2">
+                        close me
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -41,7 +43,7 @@
         <t-modal-container>
           <template #default>
             <t-modal>
-              modal 2 menu
+              <dv-card-title>modal 2 menu</dv-card-title>
               <dv-button @click="openInner2">
                 open inner
               </dv-button>
@@ -52,19 +54,21 @@
           </template>
           <template #modal>
             <t-modal-wrapper ref="inner2" v-slot="{ closeModal: closeModal2 }">
-              <div class="card glass bg-ebony-clay-800 shadow-xl">
-                <figure>
-                  <img src="https://placeimg.com/400/225/arch" alt="Shoes">
-                </figure>
-                <div class="card-body">
-                  <h2 class="card-title">
-                    Inner Modal 2
-                  </h2>
-                  <p>hell yeah?</p>
-                  <div class="card-actions justify-end">
-                    <button class="btn btn-primary" @click="closeModal2">
-                      close me
-                    </button>
+              <div class="container mx-auto">
+                <div class="card bg-ebony-clay-800 shadow-xl">
+                  <figure>
+                    <img src="https://placeimg.com/400/225/arch" alt="Shoes">
+                  </figure>
+                  <div class="card-body">
+                    <h2 class="card-title">
+                      Inner Modal 2
+                    </h2>
+                    <p>hell yeah?</p>
+                    <div class="card-actions justify-end">
+                      <button class="btn btn-primary" @click="closeModal2">
+                        close me
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -73,12 +77,16 @@
         </t-modal-container>
       </t-modal-wrapper>
     </teleport>
-    <dv-button @click="nested1">
-      modal 1
-    </dv-button>
-    <dv-button @click="nested2">
-      modal 3
-    </dv-button>
+    <section class="container mx-auto">
+      <div class="flex gap-2">
+        <dv-button @click="nested1">
+          nested modal 1
+        </dv-button>
+        <dv-button @click="nested2">
+          nested modal 2
+        </dv-button>
+      </div>
+    </section>
   </div>
 </template>
 

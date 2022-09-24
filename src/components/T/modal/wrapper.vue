@@ -68,16 +68,16 @@ defineExpose({
 </style>
 <style lang="scss" scoped>
 .zoom-modal-wrapper {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  // position: fixed;
+  // position: absolute;
   // left: 0;
   // right: 0;
   // top: 0;
   // bottom: 0;
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
 
   &.init {
     visibility: hidden;
@@ -85,12 +85,6 @@ defineExpose({
     pointer-events: none;
 
   }
-
-  // margin: auto;
-  // display: flex;
-  // align-items: center;
-  // justify-content: center;
-
   &.in {
     z-index: 50;
 
