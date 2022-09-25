@@ -1,10 +1,10 @@
 <template>
   <div v-show="!isLoading">
     <t-modal-container :teleport-id="config.appModalTeleportTargetId">
-      <div v-show="!isLoading" class="flex flex-col h-screen overflow-y-hidden   bg-kimberly-50 dark:bg-kimberly-800">
-        <div class="flex flex-col flex-1 w-full overflow-auto">
+      <div v-show="!isLoading" class="flex flex-col min-h-screen overflow-y-hidden bg-kimberly-50 dark:bg-kimberly-800">
+        <div class="flex flex-col overflow-auto min-h-screen">
           <NavbarDefault />
-          <div class="flex-grow">
+          <div class="flex-grow flex flex-col">
             <slot />
           </div>
           <footer class="py-4 text-center bottom-1 bg-kimberly-200 dark:bg-kimberly-900">

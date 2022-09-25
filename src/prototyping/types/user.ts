@@ -49,7 +49,6 @@ export interface BaseRank {
   // countryRankGraph: number[]
 
   // TODO: Score
-  // bests: Score[]
   // tops: Score[]
   // recent: Score[]
 }
@@ -57,6 +56,9 @@ export interface BaseRank {
 export interface PPRank extends BaseRank {
   performance: number
   performanceGraph: number[]
+
+  // TODO: BP
+  // bests: Score[]
 }
 export interface ScoreRank extends BaseRank {
   score: number

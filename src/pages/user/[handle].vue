@@ -2,10 +2,8 @@
   <div>
     <userpage-head />
     <userpage-ranking-system-switcher />
-    <userpage-rank-chart v-if="currentRankingSystem" />
-    <div class="pt-20">
-      <userpage-json-viewer />
-    </div>
+    <userpage-rank-chart v-if="currentRankingSystem" class="mt-8" />
+    <userpage-json-viewer />
   </div>
 </template>
 

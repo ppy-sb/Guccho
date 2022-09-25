@@ -1,16 +1,13 @@
 <template>
   <client-only>
-    <section class="container mx-auto mt-4">
+    <section class="container content-padding mx-auto" v-bind="$attrs">
       <div class="atropos-wrap">
-        <atropos
-          class="my-atropos"
-          :shadow-offset="-3"
-        >
+        <atropos class="my-atropos" :shadow-offset="-3">
           <div data-atropos-offset="0" class="relative atropos-bg w-full h-full" />
           <LineChart
             data-atropos-offset="-3"
             :chart-data="countryRank"
-            style="max-width: 106% !important; height: 320px; top: 10px; left: -3%; right: -3% "
+            style="max-width: 106% !important; height: 320px; top: 10px; left: -3%; right: -3%"
             class="!absolute"
             :options="userpageLineChartOptions"
           />
@@ -30,7 +27,10 @@
                   Global Rank:
                 </dt>
                 <dd class="text-5xl self-end">
-                  <Roller :char-set="chars" :value="update ? `#${Intl.NumberFormat().format(currentRankingSystem.rank)}` : ' '" />
+                  <Roller
+                    :char-set="chars"
+                    :value="update ? `#${Intl.NumberFormat().format(currentRankingSystem.rank)}` : ' '"
+                  />
                 </dd>
               </div>
             </dl>
@@ -44,7 +44,10 @@
                   Country Rank:
                 </dt>
                 <dd class="text-3xl ml-20">
-                  <Roller :char-set="chars" :value="update ? `#${Intl.NumberFormat().format(currentRankingSystem.countryRank)}`: ' '" />
+                  <Roller
+                    :char-set="chars"
+                    :value="update ? `#${Intl.NumberFormat().format(currentRankingSystem.countryRank)}`: ' '"
+                  />
                 </dd>
               </div>
             </dl>
@@ -109,13 +112,18 @@ const countryRank = {
 
 <style lang="postcss">
 .atropos-wrap {
-  @apply overflow-hidden sm:overflow-visible
+  @apply relative overflow-hidden sm:overflow-visible;
+  height: 300px;
 }
 
 .my-atropos {
+  position: absolute;
+  left: -999px;
+  right: -999px;
+  width: 100%;
   height: 300px;
   @apply overflow-hidden -m-8;
-  @apply sm:overflow-visible sm:m-0;
+  @apply sm:overflow-visible sm:mx-auto;
 
   .atropos-bg {
     @apply rounded-3xl backdrop-blur-2xl
@@ -124,6 +132,7 @@ const countryRank = {
   .atropos-inner {
     @apply sm:rounded-3xl sm:overflow-hidden !important
   }
+
   .atropos-shadow {
     @apply rounded-3xl bg-wewak-300 !important;
     /* width: 102%; */

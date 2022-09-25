@@ -1,6 +1,6 @@
 <template>
   <nav class="z-20 w-full transition-all md:fixed bg-mulberry-300 dark:bg-mulberry-800 md:bg-transparent">
-    <div class="mx-auto container">
+    <div class="mx-auto container content-padding">
       <div class="relative flex items-center justify-between h-16">
         <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
           <button
