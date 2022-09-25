@@ -30,10 +30,16 @@
               </label>
             </div>
             <div im-just-a-spacer />
-            <dv-button class="grow" @click="closeModal">
-              Save
+            <dv-button class="grow" :loading="uploading === 1" :type="uploading === 2 && 'success'" @click="saveAvatar">
+              {{ uploading === 0 ? 'Save' : uploading === 1 ? 'Uploading' : uploading === 2 ? 'done' : '' }}
             </dv-button>
-            <dv-button class="grow" @click="closeModal">
+            <dv-button
+              class="grow"
+              @click="() => {
+                closeModal()
+                uploading = 0
+              }"
+            >
               close
             </dv-button>
           </div>
@@ -119,6 +125,18 @@ import { demoUser } from '~~/src/prototyping/objects/user'
 const unchanged = demoUser
 const user = reactive({ ...demoUser })
 const changeAvatar = ref(null)
+
+const uploading = ref(0)
+const saveAvatar = () => {
+  uploading.value = 1
+  setTimeout(() => {
+    uploading.value = 2
+
+    // setTimeout(() => {
+    //   changeAvatar.value.closeModal()
+    // }, 700)
+  }, 1000)
+}
 
 </script>
 
