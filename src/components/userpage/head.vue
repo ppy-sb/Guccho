@@ -1,6 +1,6 @@
 <template>
   <section
-    class="md:container content-padding mx-auto mt-5 md:mt-20 flex flex-col items-center md:flex-row md:items-end gap-5 drop-shadow-xl"
+    class="md:container custom-container mx-auto mt-5 md:mt-20 flex flex-col items-center md:flex-row md:items-end gap-5 "
   >
     <!-- Logo -->
     <div>
@@ -51,7 +51,7 @@ const user = inject('user')
 
 <style scoped lang="postcss">
 .user-status {
-  @apply text-center text-kimberly-600 dark:text-kimberly-400 bg-kimberly-100 dark:bg-kimberly-800 px-2;
+  @apply text-center text-kimberly-600 dark:text-kimberly-400 bg-kimberly-100 dark:bg-kimberly-700 px-2;
   @apply md:text-left md:rounded;
   @apply md:[margin-left:-7em] md:[padding-left:7em];
 }

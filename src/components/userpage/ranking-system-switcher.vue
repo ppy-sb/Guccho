@@ -1,5 +1,5 @@
 <template>
-  <section class="container pt-4 mx-auto drop-shadow-lg">
+  <section class="container pt-4 mx-auto ">
     <t-tabs v-slot="{select}" v-model="tab" variant="bordered">
       <t-tab disabled class="f-tab grow p-0 m-0" />
       <t-tab class="f-tab" value="Timeline">
@@ -27,10 +27,10 @@
           </div>
           <ul
             tabindex="0"
-            class="dropdown-content menu p-2 shadow bg-base-100 rounded-box rounded-3xl w-52"
+            class="dropdown-content menu p-2 shadow bg-base-100 rounded-box rounded-3xl w-52 z-50"
           >
             <li v-for="(stats, key) of dropdown" :key="`user-tab-${key}`">
-              <a @click="select(key)">{{ rankingSystem[key].name }}</a>
+              <a class="z-50" @click="select(key)">{{ rankingSystem[key].name }}</a>
             </li>
 
             <li><a>Acc Only(v2)</a></li>

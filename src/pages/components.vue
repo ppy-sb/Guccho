@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="custom-container">
     <header-default class="!pb-2" title="components playground" />
     <t-modal-page>
       <t-modal-wrapper ref="wrapper1" v-slot="{ closeModal }">
