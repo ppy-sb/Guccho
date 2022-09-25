@@ -1,10 +1,10 @@
 <template>
   <div class="min-h-full flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full space-y-8 bg-ebony-clay-900 p-6 rounded-lg relative overflow-hidden">
+    <div class="max-w-md w-full space-y-8   bg-kimberly-50 dark:bg-kimberly-800 p-6 rounded-lg relative overflow-hidden">
       <fetch-overlay :fetching="fetching" />
 
       <div>
-        <h2 class="text-center text-3xl text-ebony-clay-200">
+        <h2 class="text-center text-3xl text-kimberly-200">
           Login
         </h2>
       </div>

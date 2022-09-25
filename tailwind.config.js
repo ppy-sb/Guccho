@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-env node */
 /** @type {import('tailwindcss').Config} */
-import { palette } from './src/palette'
+import { palette, hex } from './src/palette'
+const themes = require('daisyui/src/colors/themes')
 module.exports = {
   content: [
     './src/components/**/*.{vue,js}',
@@ -26,14 +27,29 @@ module.exports = {
   },
   plugins: [require('daisyui')],
   daisyui: {
+    darkMode: 'class',
+    darkTheme: 'guweb-dark',
     themes: [
       {
-        guweb: {
-          ...require('daisyui/src/colors/themes')['[data-theme=dracula]'],
-          primary: palette.mulberry[500],
-          neutral: palette['ebony-clay'][500]
-          // secondary: palette['wine-berry'][500]
-          // secondary: palette['pigeon-post'][500]
+        'guweb-light': {
+          ...themes['[data-theme=cupcake]'],
+          primary: palette.wewak[300],
+          secondary: themes['[data-theme=cupcake]'].primary,
+          neutral: palette.kimberly[200],
+          'base-100': palette.kimberly[100],
+          'base-content': palette.kimberly[900]
+        }
+      },
+      {
+        'guweb-dark': {
+          ...themes['[data-theme=dracula]'],
+          primary: palette.wewak[500],
+          neutral: palette.kimberly[500],
+          'base-100': palette.kimberly[900],
+          'base-content': palette.kimberly[100],
+          '--rounded-btn': '1.9rem',
+          '--tab-border': '2px',
+          '--tab-radius': '.5rem'
         }
       }
     ]

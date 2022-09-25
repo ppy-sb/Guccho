@@ -1,17 +1,17 @@
 <template>
-  <div v-show="!isLoading" data-theme="guweb">
+  <div v-show="!isLoading">
     <t-modal-container :teleport-id="config.appModalTeleportTargetId">
-      <div v-show="!isLoading" class="flex flex-col h-screen overflow-y-hidden bg-ebony-clay-900">
+      <div v-show="!isLoading" class="flex flex-col h-screen overflow-y-hidden   bg-kimberly-50 dark:bg-kimberly-800">
         <div class="flex flex-col flex-1 w-full overflow-auto">
           <NavbarDefault />
           <div class="flex-grow">
             <slot />
           </div>
-          <footer class="py-4 text-center bottom-1 bg-ebony-clay-800">
-            <h1 class="text-sm font-semibold text-white">
+          <footer class="py-4 text-center bottom-1 bg-kimberly-200 dark:bg-kimberly-900">
+            <h1 class="text-sm font-semibold text-kimberly-900 dark:text-kimberly-100">
               © {{ new Date().getFullYear() }} ppy.sb | Varkaria
             </h1>
-            <h2 class="text-sm font-semibold font-bold text-white">
+            <h2 class="text-sm font-semibold font-bold text-kimberly-900 dark:text-kimberly-100">
               <span class="text-green-400">API</span> {{ config.version.api }}
               <span class="text-yellow-400">FRONT</span> {{ config.version.front }}
             </h2>
@@ -31,7 +31,7 @@
         class="absolute top-0 flex items-center justify-center w-screen h-screen z-60"
       >
         <svg
-          class="w-12 h-12 text-white animate-spin"
+          class="w-12 h-12 text-kimberly-900 dark:text-kimberly-100 animate-spin"
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
@@ -64,4 +64,6 @@ const config = useAppConfig()
 onMounted(() => {
   isLoading.value = false
 })
+const colorMode = useColorMode()
+
 </script>

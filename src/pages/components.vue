@@ -55,7 +55,7 @@
           <template #modal>
             <t-modal-wrapper ref="inner2" v-slot="{ closeModal: closeModal2 }">
               <div class="container mx-auto">
-                <div class="card bg-ebony-clay-800 shadow-xl">
+                <div class="card bg-kimberly-200 dark:bg-kimberly-800 shadow-xl">
                   <figure>
                     <img src="https://placeimg.com/400/225/arch" alt="Shoes">
                   </figure>

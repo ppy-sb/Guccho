@@ -9,7 +9,7 @@
                 <div class="flex flex-col justify-center items-center pt-5 pb-6 px-3">
                   <svg
                     aria-hidden="true"
-                    class="mb-3 w-10 h-10 text-ebony-clay-400"
+                    class="mb-3 w-10 h-10 text-kimberly-600 dark:text-kimberly-400"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -22,9 +22,9 @@
                       d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
                     />
                   </svg>
-                  <p class="mb-2 text-sm text-ebony-clay-500 dark:text-ebony-clay-400"><span class="font-semibold">Click to
+                  <p class="mb-2 text-sm text-kimberly-500 dark:text-kimberly-600 dark:text-kimberly-400"><span class="font-semibold">Click to
                     upload</span> or drag and drop</p>
-                  <p class="text-xs text-ebony-clay-500 dark:text-ebony-clay-400">SVG, PNG, JPG or GIF (MAX. 800x400px)</p>
+                  <p class="text-xs text-kimberly-500 dark:text-kimberly-600 dark:text-kimberly-400">SVG, PNG, JPG or GIF (MAX. 800x400px)</p>
                 </div>
                 <input id="dropzone-file" type="file" class="hidden">
               </label>
@@ -50,7 +50,7 @@
     <form action="#" method="POST">
       <div class="flex gap-8 flex-col flex-wrap md:flex-row">
         <div
-          class="grow overflow-hidden xl:max-w-2xl flex gap-4 justify-center md:justify-start items-end bg-ebony-clay-800 sm:rounded-3xl p-4 shadow-3xl lg:[max-width:50%]"
+          class="grow overflow-hidden xl:max-w-2xl flex gap-4 justify-center md:justify-start items-end bg-kimberly-200 dark:bg-kimberly-800 sm:rounded-3xl p-4 shadow-3xl lg:[max-width:50%]"
         >
           <div class="relative mask mask-squircle z-10 hoverable w-100">
             <button class="btn btn-primary no-animation absolute z-20 top-0 w-full h-full" type="button" @click="changeAvatar.openModal">
@@ -62,7 +62,7 @@
             <h1 class="text-5xl text-left">
               {{ user.name }}
             </h1>
-            <h2 class="text-3xl text-left underline decoration-sky-500 text-ebony-clay-300">
+            <h2 class="text-3xl text-left underline decoration-sky-500 text-kimberly-600 dark:text-kimberly-300">
               @{{ user.safeName }}
             </h2>
             <div class="pb-4" />
@@ -169,8 +169,8 @@ const saveAvatar = () => {
 </style>
 <style lang="postcss">
 .dropzone {
-  @apply flex flex-col justify-center items-center w-full h-64 bg-ebony-clay-100 rounded-lg border-2 border-ebony-clay-300 border-dashed cursor-pointer;
-  @apply dark:hover:bg-ebony-clay-800 dark:bg-ebony-clay-700 hover:bg-ebony-clay-100 dark:border-ebony-clay-600 dark:hover:border-ebony-clay-500 dark:hover:bg-ebony-clay-600;
+  @apply flex flex-col justify-center items-center w-full h-64 bg-kimberly-50 rounded-lg border-2 border-kimberly-300 border-dashed cursor-pointer;
+  @apply dark:hover:bg-kimberly-200 dark:bg-kimberly-800 dark:bg-kimberly-300 dark:bg-kimberly-700 hover:bg-kimberly-50 dark:border-kimberly-600 dark:hover:border-kimberly-500 dark:hover:bg-kimberly-600;
   @apply hover:shadow-lg;
   @apply transition-shadow transition-colors;
 }

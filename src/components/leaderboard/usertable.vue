@@ -1,7 +1,7 @@
 <template>
-  <tr class="bg-mulberry-800 rounded-md text-white font-medium">
+  <tr class="bg-wewak-300 dark:bg-wewak-800 rounded-md text-kimberly-900 dark:text-kimberly-100 font-medium">
     <td class="px-4 font-bold py-3">
-      <p class="text-white">
+      <p class="text-kimberly-900 dark:text-kimberly-100">
         #{{ place }}
       </p>
     </td>
@@ -14,7 +14,7 @@
           >
         </div>
         <div class="ml-3">
-          <p class="font-medium text-white">
+          <p class="font-medium text-kimberly-900 dark:text-kimberly-100">
             <user-card :user="user" :href="'/user/' + user.player_id" />
           </p>
         </div>

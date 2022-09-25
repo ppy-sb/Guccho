@@ -3,7 +3,7 @@
     class="h-full flex items-center"
   >
     <div
-      class="container mx-auto w-max text-left text-white my-auto flex items-center justify-between"
+      class="container mx-auto w-max text-left text-kimberly-900 dark:text-kimberly-100 my-auto flex items-center justify-between"
     >
       <div class="content">
         <div class="mb-6">
@@ -53,7 +53,7 @@ const config = useAppConfig()
 
 /* a.btn {
   @apply inline-flex justify-center w-full px-6 py-2 text-base font-medium
-  text-white border border-transparent rounded-md shadow-md
+  text-kimberly-900 dark:text-kimberly-100 border border-transparent rounded-md shadow-md
   focus:outline-none w-auto
 } */
 </style>

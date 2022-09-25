@@ -1,10 +1,10 @@
 <template>
   <div class="min-h-full flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full space-y-8 bg-ebony-clay-900 p-6 rounded-lg relative overflow-hidden">
+    <div class="max-w-md w-full space-y-8   bg-kimberly-50 dark:bg-kimberly-800 p-6 rounded-lg relative overflow-hidden">
       <fetch-overlay :fetching="fetching" />
 
       <div>
-        <h2 class="text-center text-3xl text-ebony-clay-200">
+        <h2 class="text-center text-3xl text-kimberly-200">
           Sign Up
         </h2>
       </div>
@@ -77,11 +77,11 @@ const userRegisterAction = () => {
 
 <style lang="postcss" scoped>
 .auth-input {
-  @apply appearance-none rounded-md bg-ebony-clay-900 relative block w-full px-3 py-4 placeholder-white placeholder-opacity-25 text-ebony-clay-200 font-semibold rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm
+  @apply appearance-none rounded-md   bg-kimberly-50 dark:bg-kimberly-800 relative block w-full px-3 py-4 placeholder-white placeholder-opacity-25 text-kimberly-200 font-semibold rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm
 }
 
 .auth-button {
-  @apply relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-mulberry-800 hover:bg-mulberry-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-mulberry-700
+  @apply relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-kimberly-900 dark:text-kimberly-100 bg-wewak-300 dark:bg-wewak-800 hover:bg-wewak-300 dark:bg-wewak-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-wewak-700
 }
 
 .auth-error-text {
