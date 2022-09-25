@@ -64,8 +64,8 @@ import { userpageLineChartOptions } from '~/common/shared'
 
 import { hsvRaw } from '~/palette'
 const hsl = ([h, s, l], a) => `hsl(${h} ${s}% ${l}% / ${a}%)`
-const gRankFill = hsl(hsvRaw.mulberry[500], 20)
-const cRankFill = hsl(hsvRaw['ebony-clay'][500], 60)
+const gRankFill = hsl(hsvRaw.wewak[500], 20)
+const cRankFill = hsl(hsvRaw.kimberly[500], 30)
 
 const chars = [' ', ...[...Array(10).keys()].map(String), ',', '#', 'N', '/', 'A']
 
@@ -73,9 +73,11 @@ const chars = [' ', ...[...Array(10).keys()].map(String), ',', '#', 'N', '/', 'A
 // TODO: investigate this
 const update = ref(0)
 
-setTimeout(() => {
-  update.value = 1
-}, 250)
+onMounted(() => {
+  setTimeout(() => {
+    update.value = 1
+  }, 100)
+})
 // const user = inject('user')
 const currentRankingSystem = inject('selectedRankingSystemData')
 /* mock */
@@ -123,7 +125,7 @@ const countryRank = {
     @apply sm:rounded-3xl sm:overflow-hidden !important
   }
   .atropos-shadow {
-    @apply rounded-3xl bg-mulberry-300 !important;
+    @apply rounded-3xl bg-wewak-300 !important;
     /* width: 102%; */
     /* height: 102%; */
     /* left: -1%; */

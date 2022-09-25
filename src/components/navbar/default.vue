@@ -1,11 +1,11 @@
 <template>
-  <nav class="z-20 w-full transition-all md:fixed bg-mulberry-800 md:bg-transparent">
+  <nav class="z-20 w-full transition-all md:fixed bg-mulberry-300 dark:bg-mulberry-800 md:bg-transparent">
     <div class="mx-auto container">
       <div class="relative flex items-center justify-between h-16">
         <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
           <button
             type="button"
-            class="inline-flex items-center justify-center p-2 text-ebony-clay-400 rounded-md hover:text-white hover:bg-ebony-clay-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+            class="inline-flex items-center justify-center p-2 text-kimberly-600 dark:text-kimberly-400 rounded-md hover:text-black dark:hover:text-kimberly-900 dark:text-kimberly-100 hover:bg-kimberly-300 dark:bg-kimberly-700 dark-hover:bg-kimberly-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
             aria-controls="mobile-menu"
             aria-expanded="false"
             @click="toggleMenuResponsive"
@@ -33,7 +33,7 @@
         >
           <div class="flex items-center flex-shrink-0">
             <nuxt-link to="/">
-              <h1 class="text-xl font-bold text-white">
+              <h1 class="text-xl font-bold text-kimberly-900 dark:text-kimberly-100">
                 {{ config.title }}
               </h1>
             </nuxt-link>
@@ -44,7 +44,7 @@
                 v-for="(item, index) in menuItems.main"
                 :key="index"
                 :to="item.route || item.url"
-                class="px-3 py-2 text-sm font-medium text-white rounded-md hover:bg-black transition-all hover:bg-opacity-20 hover:backdrop-blur-lg"
+                class="px-3 py-2 text-sm font-medium text-kimberly-900 dark:text-kimberly-100 rounded-md hover:bg-black transition-all hover:bg-opacity-20 hover:backdrop-blur-lg"
               >
                 {{ item.name }}
               </nuxt-link>
@@ -57,7 +57,7 @@
               <button
                 id="user-menu-button"
                 type="button"
-                class="flex text-sm rounded-full transition-all items-center gap-2 text-white"
+                class="flex text-sm rounded-full transition-all items-center gap-2 text-kimberly-900 dark:text-kimberly-100"
                 aria-expanded="false"
                 aria-haspopup="true"
                 @click="toggleMenu"
@@ -85,7 +85,7 @@
             >
               <div
                 v-show="isMenuOpen"
-                class="origin-top-right absolute right-0 mt-2 w-[10rem] rounded-md shadow-lg py-1 bg-mulberry-800 ring-1 ring-black ring-opacity-5 focus:outline-none"
+                class="origin-top-right absolute right-0 mt-2 w-[10rem] rounded-md shadow-lg py-1 bg-mulberry-300 dark:bg-mulberry-800 ring-1 ring-black ring-opacity-5 focus:outline-none"
                 role="menu"
                 aria-orientation="vertical"
                 aria-labelledby="user-menu-button"
@@ -96,7 +96,7 @@
                     v-for="(m, index) in menuItems.guest"
                     :key="index"
                     :to="m.url"
-                    class="block px-4 py-2 text-sm text-white hover:border-l-2 transition-all font-semibold border-hsl-h2"
+                    class="block px-4 py-2 text-sm text-kimberly-900 dark:text-kimberly-100 hover:border-l-2 transition-all font-semibold border-hsl-h2"
                     role="menuitem"
                     tabindex="-1"
                     @click.native="closeMenu"
@@ -109,7 +109,7 @@
                     v-for="(m, index) in menuItems.user"
                     :key="index"
                     :to="m.url"
-                    class="block px-4 py-2 text-sm text-white hover:border-l-2 transition-all font-semibold border-hsl-h2"
+                    class="block px-4 py-2 text-sm text-kimberly-900 dark:text-kimberly-100 hover:border-l-2 transition-all font-semibold border-hsl-h2"
                     role="menuitem"
                     tabindex="-1"
                     @click.native="closeMenu"
@@ -129,7 +129,7 @@
             v-for="(item, index) in menuItems.main"
             :key="index"
             :to="item.route || item.url"
-            class="block px-3 py-2 text-base font-medium text-white rounded-md"
+            class="block px-3 py-2 text-base font-medium text-kimberly-900 dark:text-kimberly-100 rounded-md"
             aria-current="page"
           >
             {{ item.name }}

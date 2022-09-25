@@ -3,17 +3,17 @@
 }
 
 .dv-tab.tab-active {
-  // background-color: theme('bg-ebony-clay-500');
-  // @apply bg-ebony-clay-500
+  // background-color: theme('bg-kimberly-500');
+  // @apply bg-kimberly-500
 
-  @apply [--tab-bg:theme('colors.ebony-clay.700')]
+  @apply [--tab-bg:theme('colors.kimberly.700')]
 
   
 }
 .dv-tab.tab-active::before,
 .dv-tab.tab-active::after
  {
-  // background-color: theme('bg-ebony-clay-500');
-  // color: theme('colors.ebony-clay.500')
+  // background-color: theme('bg-kimberly-500');
+  // color: theme('colors.kimberly.500')
   
 }

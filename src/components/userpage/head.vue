@@ -8,7 +8,7 @@
     </div>
     <!-- info -->
     <div
-      class="pt-4 flex flex-col md:p-0 w-full md:w-100 bg-ebony-clay-700 md:bg-transparent md:grow"
+      class="pt-4 flex flex-col md:p-0 w-full md:w-100 bg-kimberly-300 dark:bg-kimberly-700 md:bg-transparent md:grow"
     >
       <div
         class="order-3 md:order-1 container mx-auto flex justify-around md:justify-end gap-3 pb-4 md:pb-0"
@@ -29,7 +29,7 @@
               {{ user.name }}
             </h1>
             <h2
-              class="text-3xl text-center md:text-left underline decoration-sky-500 text-ebony-clay-300"
+              class="text-3xl text-center md:text-left underline decoration-sky-500 text-kimberly-600 dark:text-kimberly-300"
             >
               @{{ user.safeName }}
             </h2>
@@ -51,7 +51,7 @@ const user = inject('user')
 
 <style scoped lang="postcss">
 .user-status {
-  @apply text-center text-ebony-clay-400 bg-ebony-clay-800 px-2;
+  @apply text-center text-kimberly-600 dark:text-kimberly-400 bg-kimberly-100 dark:bg-kimberly-800 px-2;
   @apply md:text-left md:rounded md:-mr-1;
   @apply md:[margin-left:-7em] md:[padding-left:7em];
 }

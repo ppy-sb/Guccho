@@ -28,6 +28,10 @@ export default defineNuxtConfig({
     '@fortawesome/fontawesome-svg-core/styles.css'
   ],
 
+  colorMode: {
+    classSuffix: ''
+  },
+
   publicRuntimeConfig: {},
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -53,7 +57,8 @@ export default defineNuxtConfig({
     // https://go.nuxtjs.dev/content
     // '@nuxt/content',
     // '@nuxtjs/auth-next',
-    '@pinia/nuxt'
+    '@pinia/nuxt',
+    '@nuxtjs/color-mode'
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios

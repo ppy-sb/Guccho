@@ -1,5 +1,5 @@
 html {
-  @apply bg-ebony-clay-900;
+  @apply bg-kimberly-50 dark:bg-kimberly-800;
 }
 
 .width-sizer {
@@ -7,9 +7,9 @@ html {
 }
 
 .h-header {
-  @apply sm:flex mt-2 items-center justify-between text-center text-white;
-  /* @apply sm:flex sm:w-full mt-2 items-center justify-between text-center text-white ; */
-  transition: 0.5s ease;
+  @apply sm:flex mt-2 items-center justify-between text-center text-kimberly-900 dark:text-kimberly-100;
+  /* @apply sm:flex sm:w-full mt-2 items-center justify-between text-center text-kimberly-900 dark:text-kimberly-100 ; */
+  transition: 0.3s ease;
   @apply pb-2;
 
   @apply md:pt-20;
@@ -18,7 +18,7 @@ html {
   @apply width-sizer mx-auto;
 } */
 
-.page-enter-active {
+/* .page-enter-active {
   transition: all 0.2s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 .page-leave-active {
@@ -29,7 +29,7 @@ html {
   transform: translateY(-1.5vh);
   opacity: 0;
   filter: blur(1px);
-}
+} */
 
 *::-webkit-scrollbar {
   width: 12px;

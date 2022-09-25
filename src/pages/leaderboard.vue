@@ -18,7 +18,7 @@
               <table
                 class="table text-sm whitespace-nowrap border-separate"
               >
-                <thead class="text-ebony-clay-200">
+                <thead class="text-kimberly-200">
                   <tr class="font-light text-sm">
                     <th />
                     <th class="w-full" />
@@ -42,7 +42,7 @@
         </div>
       </template>
       <template v-else>
-        <div class="text-white grow my-auto pb-10">
+        <div class="text-kimberly-900 dark:text-kimberly-100 grow my-auto pb-10">
           <h1 class="text-center text-xl font-semibold">
             No one played this mode yet.
           </h1>

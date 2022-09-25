@@ -2,7 +2,7 @@
   <div>
     <userpage-head />
     <userpage-ranking-system-switcher />
-    <userpage-rank-chart />
+    <userpage-rank-chart v-if="currentRankingSystem" />
     <div class="pt-20">
       <userpage-json-viewer />
     </div>

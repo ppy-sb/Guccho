@@ -22,7 +22,7 @@
           </div>
           <ul
             tabindex="0"
-            class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52"
+            class="dropdown-content menu p-2 shadow bg-base-100 rounded-box rounded-3xl w-52"
           >
             <template v-for="(stats, key) of currentStatistic.ranking">
               <li v-if="rankingSystem[key].show === 'dropdown'" :key="`user-tab-${key}`">

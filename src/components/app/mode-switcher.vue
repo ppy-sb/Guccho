@@ -11,7 +11,7 @@
         }"
         @click="changeValue('mode', index)"
       >
-        <img :src="`/assets/icons/mode/${m.icon}.svg`">
+        <img :src="`/assets/icons/mode/${m.icon}.svg`" class="color-theme-light-invert">
       </a>
     </div>
     <div class="flex justify-around gap-4 md:gap-2 lg:gap-4">
@@ -110,5 +110,9 @@ onMounted(() => {
   & img {
     @apply w-7 h-7;
   }
+}
+
+.light .color-theme-light-invert {
+  filter: invert(100%)
 }
 </style>

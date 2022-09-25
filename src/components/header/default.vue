@@ -1,6 +1,6 @@
 <template>
   <div class="h-header">
-    <div class="container py-3 mx-auto sm:flex sm:w-full items-center justify-between text-center text-white">
+    <div class="container py-3 mx-auto sm:flex sm:w-full items-center justify-between text-center text-kimberly-900 dark:text-kimberly-100">
       <slot>
         <header-simple-title-with-sub
           v-bind="props"
