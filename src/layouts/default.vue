@@ -1,7 +1,7 @@
 <template>
   <div v-show="!isLoading">
     <t-modal-container :teleport-id="config.appModalTeleportTargetId">
-      <div v-show="!isLoading" class="flex flex-col min-h-screen overflow-y-hidden bg-kimberly-50 dark:bg-kimberly-800">
+      <div v-show="!isLoading" class="flex flex-col min-h-screen overflow-y-hidden bg-kimberly-50 dark:bg-kimberly-800 drop-shadow-xl">
         <div class="flex flex-col overflow-auto min-h-screen">
           <NavbarDefault />
           <div class="flex-grow flex flex-col">
