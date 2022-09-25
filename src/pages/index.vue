@@ -34,7 +34,7 @@
         </div>
       </div>
       <div class="mascot hidden lg:block">
-        <img src="~/assets/mascot/pippi.png" alt="Pippi Mascot" m="l-auto">
+        <img src="~/assets/mascot/riru.png" style="max-height:1000px" alt="riru Mascot" m="l-auto">
       </div>
     </div>
   </div>
