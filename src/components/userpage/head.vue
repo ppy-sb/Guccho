@@ -1,10 +1,10 @@
 <template>
   <section
-    class="md:container content-padding mx-auto mt-5 md:mt-20 flex flex-col items-center md:flex-row md:items-end gap-5"
+    class="md:container content-padding mx-auto mt-5 md:mt-20 flex flex-col items-center md:flex-row md:items-end gap-5 drop-shadow-xl"
   >
     <!-- Logo -->
     <div>
-      <img class="mask mask-squircle" src="~/assets/images/1.png" width="300">
+      <img src="~/assets/images/1.png" class="mask mask-squircle" width="300">
     </div>
     <!-- info -->
     <div

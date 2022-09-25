@@ -1,6 +1,6 @@
 <template>
   <div
-    class="grow flex items-center"
+    class="grow flex items-center drop-shadow-xl"
   >
     <div
       class="container mx-auto w-max text-left text-kimberly-900 dark:text-kimberly-100 my-auto flex items-center justify-between"

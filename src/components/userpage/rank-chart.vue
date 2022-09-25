@@ -1,6 +1,6 @@
 <template>
   <client-only>
-    <section class="container content-padding mx-auto" v-bind="$attrs">
+    <section class="container content-padding mx-auto drop-shadow-2xl" v-bind="$attrs">
       <div class="atropos-wrap">
         <atropos class="my-atropos" :shadow-offset="-3">
           <div data-atropos-offset="0" class="relative atropos-bg w-full h-full" />
@@ -117,10 +117,10 @@ const countryRank = {
 }
 
 .my-atropos {
-  position: absolute;
+  /* position: absolute;
   left: -999px;
   right: -999px;
-  width: 100%;
+  width: 100%; */
   height: 300px;
   @apply overflow-hidden -m-8;
   @apply sm:overflow-visible sm:mx-auto;
