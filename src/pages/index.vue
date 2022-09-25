@@ -1,6 +1,6 @@
 <template>
   <div
-    class="h-full flex items-center"
+    class="grow flex items-center"
   >
     <div
       class="container mx-auto w-max text-left text-kimberly-900 dark:text-kimberly-100 my-auto flex items-center justify-between"

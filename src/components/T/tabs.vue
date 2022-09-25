@@ -20,13 +20,14 @@ if (props.variant !== 'boxed') {
 const size = computed(() => props.size)
 const current = computed(() => props.modelValue)
 const disabled = Symbol('disabled tab')
+const select = value => emit('update:modelValue', value)
 provide('size', size)
 provide('current', current)
-provide('select', value => emit('update:modelValue', value))
+provide('select', select)
 provide('disabled', disabled)
 </script>
 <template>
   <div class="tabs" :class="[props.variant === 'boxed' && 'tabs-boxed']">
-    <slot v-bind="{ disabled }" />
+    <slot v-bind="{ disabled, select }" />
   </div>
 </template>
