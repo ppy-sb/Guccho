@@ -1,6 +1,6 @@
 <template>
   <client-only>
-    <section class="container content-padding mx-auto drop-shadow-2xl" v-bind="$attrs">
+    <section class="container custom-container mx-auto" v-bind="$attrs">
       <div class="atropos-wrap">
         <atropos class="my-atropos" :shadow-offset="-3">
           <div data-atropos-offset="0" class="relative atropos-bg w-full h-full" />
@@ -8,17 +8,17 @@
             data-atropos-offset="-3"
             :chart-data="countryRank"
             style="max-width: 106% !important; height: 320px; top: 10px; left: -3%; right: -3%"
-            class="!absolute"
+            class="!absolute -z-20"
             :options="userpageLineChartOptions"
           />
           <LineChart
             data-atropos-offset="3"
             :chart-data="globalRank"
             style="height: 340px; max-width: 112% !important; top: 20px; left: -6%; right: -6%"
-            class="!absolute z-20"
+            class="!absolute -z-10"
             :options="userpageLineChartOptions"
           />
-          <div data-atropos-offset="5" class="z-30 absolute w-full h-full top-0">
+          <div data-atropos-offset="5" class="absolute w-full h-full top-0">
             <dl class="flex w-full h-full">
               <div class="w-1/4" />
               <div class="flex flex-col">
@@ -126,7 +126,7 @@ const countryRank = {
   @apply sm:overflow-visible sm:mx-auto;
 
   .atropos-bg {
-    @apply rounded-3xl backdrop-blur-2xl
+    @apply rounded-3xl
   }
 
   .atropos-inner {

@@ -18,8 +18,8 @@ html {
   @apply width-sizer mx-auto;
 } */
 
-.content-padding {
-  @apply md:px-4;
+.custom-container {
+  @apply md:px-4 drop-shadow-xl;
 }
 
 /* .page-enter-active {

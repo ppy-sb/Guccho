@@ -1,9 +1,9 @@
 <template>
   <div
-    class="grow flex items-center drop-shadow-xl"
+    class="grow flex items-center "
   >
     <div
-      class="container mx-auto w-max text-left text-kimberly-900 dark:text-kimberly-100 my-auto flex items-center justify-between"
+      class="container custom-container mx-auto w-max text-left text-kimberly-900 dark:text-kimberly-100 my-auto flex items-center justify-between"
     >
       <div class="content">
         <div class="mb-6">

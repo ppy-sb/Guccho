@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <div class="flex flex-col justify-stretch">
     <userpage-head />
-    <userpage-ranking-system-switcher />
-    <userpage-rank-chart v-if="currentRankingSystem" class="mt-8" />
+    <userpage-ranking-system-switcher class="z-10" />
+    <userpage-rank-chart v-if="currentRankingSystem" />
     <userpage-json-viewer />
   </div>
 </template>
