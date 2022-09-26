@@ -7,17 +7,17 @@
       out: stat === 2,
       l1: l2Status === 0,
       l2: l2Status === 1,
-      'l2-out': l2Status === 2
+      'l2-out': l2Status === 2,
     }"
   >
     <div class="zoom-modal-background">
-      <slot name="modal" v-bind="{openModal, closeModal}">
+      <slot name="modal" v-bind="{ openModal, closeModal }">
         <div v-if="props.teleportId" :id="props.teleportId" />
       </slot>
     </div>
 
     <div ref="content" class="content position-relative">
-      <slot v-bind="{openModal, closeModal}" />
+      <slot v-bind="{ openModal, closeModal }" />
     </div>
   </div>
 </template>
@@ -41,11 +41,15 @@ const l2 = (value = false) => {
 
 const outerL2 = inject('openL2', undefined)
 const openModal = () => {
-  if (outerL2) { outerL2(1) }
+  if (outerL2) {
+    outerL2(1)
+  }
   stat.value = 1
 }
 const closeModal = () => {
-  if (outerL2) { outerL2(2) }
+  if (outerL2) {
+    outerL2(2)
+  }
   stat.value = 2
 }
 defineExpose({
@@ -68,7 +72,9 @@ onMounted(() => {
       return
     }
     stat.value = 0
-    if (!outerL2) { l2Status.value = 0 }
+    if (!outerL2) {
+      l2Status.value = 0
+    }
   })
 })
 </script>
@@ -82,6 +88,7 @@ onMounted(() => {
   }
 
   .zoom-modal-background {
+    @apply bg-kimberly-300/10 dark:bg-kimberly-900/10;
     position: fixed;
     top: 0;
     left: 0;
@@ -94,26 +101,24 @@ onMounted(() => {
 .in {
   z-index: 0;
 
-  >.zoom-modal-background {
+  > .zoom-modal-background {
     // background: rgba(0, 0, 0, .1);
     z-index: 1;
-
   }
 
-  &.l1>.content {
+  &.l1 > .content {
     animation: zoomOutContent 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
   }
 
-  &.l2>.content {
+  &.l2 > .content {
     animation: zoomOutContentL2 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards !important;
   }
 
-  &.l2-out>.content {
+  &.l2-out > .content {
     animation: zoomInContentL2 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
-
   }
 
-  >.content {
+  > .content {
     z-index: 1;
   }
 }
@@ -121,13 +126,11 @@ onMounted(() => {
 .out {
   .zoom-modal-background {
     z-index: 0;
-
   }
 
-  >.content {
+  > .content {
     animation: zoomInContent 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
   }
-
 }
 
 @keyframes zoomOutContent {
