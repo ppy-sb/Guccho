@@ -50,7 +50,7 @@
     <form action="#" method="POST">
       <div class="flex gap-8 flex-col flex-wrap md:flex-row">
         <div
-          class="grow overflow-hidden xl:max-w-2xl flex gap-4 justify-center md:justify-start items-end bg-kimberly-200 dark:bg-kimberly-800 sm:rounded-3xl p-4 shadow-3xl lg:[max-width:50%]"
+          class="grow overflow-hidden xl:max-w-2xl flex gap-4 justify-center md:justify-start items-end bg-kimberly-200 dark:bg-kimberly-700 sm:rounded-3xl p-4 shadow-3xl lg:[max-width:50%]"
         >
           <div class="relative mask mask-squircle z-10 hoverable w-100">
             <button class="btn btn-primary no-animation absolute z-20 top-0 w-full h-full" type="button" @click="changeAvatar.openModal">
