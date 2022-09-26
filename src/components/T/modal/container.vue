@@ -79,7 +79,7 @@ onMounted(() => {
 })
 </script>
 
-<style lang="scss">
+<style lang="postcss">
 .zoom-modal-container {
   &.init {
     .zoom-modal {

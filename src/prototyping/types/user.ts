@@ -8,7 +8,8 @@ import type {
   AutopilotAvailable,
   RelaxAvailable,
   StandardAvailable,
-  OmitNever
+  OmitNever,
+  Awaitable
 } from './shared'
 // server types
 // export type UserOfflineStatus = 'offline'
@@ -151,3 +152,24 @@ export type User<
   IncludeRuleset extends Ruleset = Ruleset,
   Ranks extends RankingSystem = RankingSystem
 > = OmitNever<UserModel<Id, Secret, IncludeMode, IncludeRuleset, Ranks>>
+
+type APIOf<T, keys extends keyof T = never> = OmitNever<{
+  [k in keyof T]: T[k] extends string | number ? k extends keys ? never : T[k] : never
+}> & {
+    fetch: OmitNever<{
+    [k in keys]: k extends keyof T ? () => Awaitable<T[k]> : never
+  }>
+}
+
+// const api: APIOf<User<unknown>, 'preferences'> = {
+//   name: 'hi',
+//   fetch: {
+//     preferences: () => Promise.resolve({
+//       allowPrivateMessage: false,
+//       visibility: {
+//         email: 'public',
+//         oldNamesDefault: 'public'
+//       }
+//     })
+//   }
+// }

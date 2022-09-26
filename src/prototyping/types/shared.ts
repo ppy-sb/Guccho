@@ -14,3 +14,4 @@ export type VisibilityScope = 'nobody' | 'friends' | 'public'
 
 // utils
 export type OmitNever<T> = { [K in keyof T as T[K] extends never ? never : K]: T[K] }
+export type Awaitable<T> = T | Promise<T>
