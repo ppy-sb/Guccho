@@ -1,5 +1,5 @@
 <template>
-  <section class="container mx-auto">
+  <section class="container custom-container mx-auto">
     <t-modal-page>
       <t-modal-wrapper ref="changeAvatar" v-slot="{ closeModal }">
         <t-modal class="max-w-3xl">
