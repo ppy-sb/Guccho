@@ -1,19 +1,25 @@
+$variants: primary, secondary, accent, neutral, base-100, info, success, warning,
+  error;
+
 .btn {
-  @apply shadow-md
+  @apply shadow-md;
+
+  @each $variant in $variants {
+    &.btn-#{$variant} {
+      @apply shadow-#{$variant}/40;
+    }
+  }
 }
 
 .dv-tab.tab-active {
   // background-color: theme('bg-kimberly-500');
   // @apply bg-kimberly-500
 
-  @apply [--tab-bg:theme('colors.kimberly.700')]
-
-  
+  @apply [--tab-bg:theme('colors.kimberly.700')];
 }
+
 .dv-tab.tab-active::before,
-.dv-tab.tab-active::after
- {
+.dv-tab.tab-active::after {
   // background-color: theme('bg-kimberly-500');
   // color: theme('colors.kimberly.500')
-  
 }

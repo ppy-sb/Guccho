@@ -1,9 +1,9 @@
 <template>
   <div class="flex flex-col justify-stretch">
-    <userpage-head />
-    <userpage-ranking-system-switcher class="z-10" />
-    <userpage-rank-chart v-if="currentRankingSystem" />
-    <userpage-json-viewer />
+    <userpage-head class="!drop-shadow-xl" />
+    <userpage-ranking-system-switcher class="z-10 !drop-shadow-xl" />
+    <userpage-rank-chart v-if="currentRankingSystem" class="!drop-shadow-xl" />
+    <userpage-json-viewer class="!drop-shadow-xl" />
   </div>
 </template>
 

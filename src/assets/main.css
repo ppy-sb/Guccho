@@ -19,7 +19,7 @@ html {
 } */
 
 .custom-container {
-  @apply md:px-4 drop-shadow-xl;
+  @apply md:px-4 drop-shadow-lg;
 }
 
 /* .page-enter-active {
