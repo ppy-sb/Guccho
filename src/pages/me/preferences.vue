@@ -22,9 +22,9 @@
                       d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
                     />
                   </svg>
-                  <p class="mb-2 text-sm text-kimberly-500 dark:text-kimberly-600 dark:text-kimberly-400"><span class="font-semibold">Click to
+                  <p class="mb-2 text-sm text-kimberly-500 dark:text-kimberly-300"><span class="font-semibold">Click to
                     upload</span> or drag and drop</p>
-                  <p class="text-xs text-kimberly-500 dark:text-kimberly-600 dark:text-kimberly-400">SVG, PNG, JPG or GIF (MAX. 800x400px)</p>
+                  <p class="text-xs text-kimberly-500 dark:text-kimberly-300">SVG, PNG, JPG or GIF (MAX. 800x400px)</p>
                 </div>
                 <input id="dropzone-file" type="file" class="hidden">
               </label>
@@ -47,28 +47,34 @@
       </t-modal-wrapper>
     </t-modal-page>
     <header-default class="!pb-2 !pt-4" title="preferences" />
-    <form action="#" method="POST">
-      <div class="flex gap-8 flex-col flex-wrap md:flex-row">
-        <div
-          class="grow overflow-hidden xl:max-w-2xl flex gap-4 justify-center md:justify-start items-end bg-kimberly-200 dark:bg-kimberly-700 sm:rounded-3xl p-4 shadow-3xl lg:[max-width:50%]"
-        >
-          <div class="relative mask mask-squircle z-10 hoverable w-100">
-            <button class="btn btn-primary no-animation absolute z-20 top-0 w-full h-full" type="button" @click="changeAvatar.openModal">
-              change
-            </button>
-            <img src="~/assets/images/1.png" class="pointer-events-none " style="min-width: 150px; width: 150px;">
-          </div>
-          <div>
-            <h1 class="text-5xl text-left">
-              {{ user.name }}
-            </h1>
-            <h2 class="text-3xl text-left underline decoration-sky-500 text-kimberly-600 dark:text-kimberly-300">
-              @{{ user.safeName }}
-            </h2>
-            <div class="pb-4" />
+    <form action="#" method="POST" class="px-4">
+      <div class="flex flex-col flex-wrap md:flex-row">
+        <div class="grow xl:max-w-2xl w-full lg:[max-width:50%]">
+          <div
+            class="flex gap-4 justify-center md:justify-start items-end bg-kimberly-200/30 dark:bg-kimberly-700/40 sm:rounded-3xl shadow-md p-3 lg:mr-4 overflow-hidden"
+          >
+            <div class="relative mask mask-squircle z-10 hoverable w-100">
+              <button
+                class="btn btn-primary hover:bg-wewak-500/30 hover:active:border-wewak-500/30 no-animation absolute z-20 top-0 w-full h-full"
+                type="button"
+                @click="changeAvatar.openModal"
+              >
+                change
+              </button>
+              <img src="~/assets/images/1.png" class="pointer-events-none " style="min-width: 150px; width: 150px;">
+            </div>
+            <div>
+              <h1 class="text-5xl text-left">
+                {{ user.name }}
+              </h1>
+              <h2 class="text-3xl text-left underline decoration-sky-500 text-kimberly-600 dark:text-kimberly-300">
+                @{{ user.safeName }}
+              </h2>
+              <div class="pb-4" />
+            </div>
           </div>
         </div>
-        <div class="grow lg:[max-width:50%]">
+        <div class="grow lg:[max-width:50%] mt-4 lg:mt-0 lg:ml-4">
           <div>
             <label class="label">
               <span class="label-text pl-3">Username</span>
@@ -84,25 +90,29 @@
                   'input-ghost': unchanged.name === user.name
                 }"
               >
-              <button class="btn" type="button" @click="user.name = unchanged.name">
-                reset
+              <button
+                class="btn"
+                type="button"
+                :disabled="unchanged.name === user.name"
+                @click="user.name = unchanged.name"
+              >
+                cancel
               </button>
             </div>
           </div>
           <div>
             <label class="label">
-              <span class="label-text pl-3">link</span>
+              <span class="label-text pl-3">Link (safe name)</span>
             </label>
             <div class="flex gap-4">
               <input
                 v-model="user.safeName"
                 type="text"
-                placeholder="Type here"
                 class="input grow"
                 disabled
                 :class="{
                   'input-bordered input-primary': unchanged.safeName !== user.safeName,
-                  'input-ghost': unchanged.safeName === user.safeName
+                  '!input-ghost border-none': unchanged.safeName === user.safeName
                 }"
               >
               <button class="btn btn-warning" type="button">
@@ -110,12 +120,110 @@
               </button>
             </div>
           </div>
+          <div>
+            <label class="label">
+              <span class="label-text pl-3">Email</span>
+            </label>
+            <div class="flex gap-4">
+              <input
+                v-model="user.email"
+                type="email"
+                placeholder="abc@123.com"
+                class="input grow"
+                :class="{
+                  'input-bordered input-primary': unchanged.email !== user.email,
+                  'input-ghost': unchanged.email === user.email
+                }"
+              >
+              <button
+                class="btn"
+                type="button"
+                :disabled="unchanged.email === user.email"
+                @click="user.email = unchanged.email"
+              >
+                cancel
+              </button>
+            </div>
+          </div>
+          <div>
+            <div class="flex gap-4 items-end">
+              <div class="grow">
+                <label class="label">
+                  <span class="label-text pl-3">Password</span>
+                </label>
+                <input
+                  v-model="user.secrets.password"
+                  type="password"
+                  placeholder="Type here"
+                  class="input w-full"
+                  :class="{
+                    'input-bordered input-primary': unchanged.secrets.password !== user.secrets.password,
+                    'input-ghost': unchanged.secrets.password === user.secrets.password
+                  }"
+                >
+                <label class="label">
+                  <span class="label-text pl-3">Repeat Password</span>
+                </label>
+                <input
+                  v-model="repeatPassword"
+                  type="password"
+                  placeholder="Type here"
+                  class="input w-full"
+                  :class="{
+                    'input-bordered input-primary': unchanged.secrets.password !== repeatPassword,
+                    'input-ghost': unchanged.secrets.password === repeatPassword
+                  }"
+                >
+              </div>
+              <button
+                class="btn"
+                type="button"
+                :disabled="unchanged.secrets.password === repeatPassword && unchanged.secrets.password === user.secrets.password"
+                @click="() => {
+                  user.secrets.password = unchanged.secrets.password
+                  repeatPassword = unchanged.secrets.password
+                }"
+              >
+                cancel
+              </button>
+            </div>
+          </div>
+          <div>
+            <label class="label">
+              <span class="label-text pl-3">API Key</span>
+            </label>
+            <div class="flex gap-4">
+              <input
+                v-model="user.secrets.apiKey"
+                type="text"
+                placeholder="Your API Key"
+                class="input grow"
+                disabled
+                :class="{
+                  'input-bordered input-primary': unchanged.secrets.apiKey !== user.secrets.apiKey,
+                  '!input-ghost border-none': unchanged.secrets.apiKey === user.secrets.apiKey
+                }"
+              >
+              <button v-if="!user.secrets.apiKey" class="btn btn-primary" type="button">
+                Request one
+              </button>
+              <button v-else class="btn btn-secondary" type="button">
+                request a new one
+              </button>
+            </div>
+          </div>
         </div>
       </div>
-      <!-- <label class="label">
-        <span class="label-text pl-3">What is your name?</span>
-      </label>
-      <input v-model="user.name" type="text" placeholder="Type here" class="input input-ghost w-full max-w-xs"> -->
+      <div class="mx-auto max-w-7xl">
+        <label class="label">
+          <span class="label-text pl-3">BIO</span>
+        </label>
+        <div class="mt-1 card bg-kimberly-200/40 rounded-3xl">
+          <div class="card-body rounded-3xl" role="textbox" aria-multiline="true" contenteditable="plaintext-only">
+            welcome to my userpage!
+          </div>
+        </div>
+      </div>
     </form>
   </section>
 </template>
@@ -123,8 +231,9 @@
 <script setup>
 import { demoUser } from '~~/src/prototyping/objects/user'
 const unchanged = demoUser
-const user = reactive({ ...demoUser })
+const user = reactive({ ...demoUser, secrets: { ...unchanged.secrets } })
 const changeAvatar = ref(null)
+const repeatPassword = ref(unchanged.secrets.password)
 
 const uploading = ref(0)
 const saveAvatar = () => {
@@ -146,11 +255,8 @@ const saveAvatar = () => {
   img,
   .btn {
     transition: opacity 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    overflow: hidden;
   }
-
-  // img {
-  //   opacity: 1;
-  // }
 
   .btn {
     opacity: 0;
@@ -162,9 +268,13 @@ const saveAvatar = () => {
     // }
 
     .btn {
-      opacity: 0.8;
+      opacity: 1;
     }
   }
+}
+
+.label-text {
+  @apply font-semibold
 }
 </style>
 <style lang="postcss">

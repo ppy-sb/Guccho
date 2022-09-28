@@ -57,6 +57,7 @@ export const hex = {
     DEFAULT: '#7277A1',
     50: '#EEEFF4',
     100: '#E0E1EA',
+    150: '#CED0DE',
     200: '#C5C7D8',
     300: '#A9ACC6',
     400: '#8E91B3',

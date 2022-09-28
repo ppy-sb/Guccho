@@ -1,4 +1,6 @@
 import type { User } from '../types/tree'
+import { UserAPI } from '../types/user'
+import { MockUser } from './user'
 export const sampleUserWithSecrets: User<string, true> = {
   id: 'xxxxxyyyy',
   ingameId: 9999,
@@ -18,7 +20,8 @@ export const sampleUserWithSecrets: User<string, true> = {
     }
   },
   secrets: {
-    password: ''
+    password: '123456788',
+    apiKey: 'aaaaa-bbbbb'
   },
   statistics: {
     osu: {
@@ -320,27 +323,34 @@ export const sampleUserWithSecrets: User<string, true> = {
   }
 }
 
-const demoUserList = new Map<string, User<string, true> | User<string, false>>([[sampleUserWithSecrets.id, sampleUserWithSecrets]])
+// class MockUser implements UserAPI<string> {
+//   _data: Partial<User<string>>
+//   _danger: boolean
+//   _fetchable: Array<keyof User<string, typeof _danger extends true ? true : false>>
+//   constructor (data: Partial<User<string, true>>, secrets: boolean = false, fetchable: Array<keyof typeof data> = ['preferences', 'secrets']) {
+//     this._danger = secrets
+//     this._data = data
+//     this._fetchable = fetchable
+//   }
+// }
 
-export const getUserById = <HasSecret extends boolean = false>(id: string, secrets: HasSecret): User<typeof id, HasSecret> | void => {
-  const result = demoUserList.get(id)
-  if (!result) { return undefined }
-  if ('secrets' in result) {
-    if (secrets) { return result } else {
-      return undefined
+export class MockAPI {
+  static getById<HasSecret extends boolean = false> (id: string, secrets: HasSecret): User<typeof id, HasSecret> | void {
+  // const result = demoUserList.get(id)
+    const result = sampleUserWithSecrets
+    if (!result) { return undefined }
+    if ('secrets' in result) {
+      if (secrets) { return result } else {
+        return undefined
+      }
+    } else if (!secrets) { return result } else {
+      const _result = {
+        ...result,
+        secret: undefined
+      }
+      return _result
     }
-  } else if (!secrets) { return result } else {
-    const _result = {
-      ...result,
-      secret: undefined
-    }
-    return _result
   }
-  // if (secrets && 'secrets' in result) {
-  //   return result
-  // } else if (!secrets && !('secrets' in result)) {
-  //   return result
-  // } else { return undefined }
 }
 
 export const demoUser = sampleUserWithSecrets

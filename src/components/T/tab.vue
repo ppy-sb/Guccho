@@ -16,7 +16,7 @@
 <script setup>
 const props = defineProps({
   value: {
-    type: [String, Number, Symbol],
+    type: [String, Number, Symbol, Array, Object],
     default: () => Symbol('tab')
   },
   disabled: {

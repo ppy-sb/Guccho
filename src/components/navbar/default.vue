@@ -1,5 +1,6 @@
 <template>
-  <nav class="z-20 w-full transition-all md:fixed bg-wewak-300 dark:bg-wewak-800 md:bg-transparent md:drop-shadow-lg">
+  <!-- bg-wewak-300 dark:bg-wewak-800 md:bg-transparent -->
+  <nav class="z-20 w-full transition-all md:fixed md:drop-shadow-lg">
     <div class="mx-auto container lg:px-2">
       <div class="relative flex items-center justify-between h-16">
         <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
@@ -31,20 +32,18 @@
         <div
           class="flex items-center justify-center flex-1 sm:items-stretch sm:justify-start"
         >
-          <div class="flex items-center flex-shrink-0">
-            <nuxt-link to="/">
-              <h1 class="text-xl font-bold text-kimberly-900 dark:text-kimberly-100">
-                {{ config.title }}
-              </h1>
-            </nuxt-link>
-          </div>
+          <nuxt-link to="/">
+            <h1 class="text-xl font-bold text-kimberly-900 dark:text-kimberly-100 gw-navbar-item px-2 py-1">
+              {{ config.title }}
+            </h1>
+          </nuxt-link>
           <div class="hidden sm:block sm:ml-6">
             <div class="flex space-x-2">
               <nuxt-link
                 v-for="(item, index) in menuItems.main"
                 :key="index"
                 :to="item.route || item.url"
-                class="px-3 py-2 text-sm font-medium text-kimberly-900 dark:text-kimberly-100 rounded-md hover:bg-wewak-500 transition-all hover:bg-opacity-20 hover:backdrop-blur-lg"
+                class="px-3 py-2 text-sm font-medium gw-navbar-item"
               >
                 {{ item.name }}
               </nuxt-link>
@@ -173,18 +172,30 @@ export default {
             }
           },
           {
-            name: 'playground',
+            name: 'components',
             route: {
               name: 'components'
             }
           },
+          // {
+          //   name: 'playground',
+          //   route: {
+          //     name: 'components'
+          //   }
+          // },
           {
-            name: 'test user page',
+            name: 'user page',
             route: {
               name: 'user-handle',
               params: {
                 handle: 1
               }
+            }
+          },
+          {
+            name: 'user preferences',
+            route: {
+              name: 'me-preferences'
             }
           }
         ],
@@ -214,7 +225,7 @@ export default {
 }
 </script>
 
-<style lang="postcss">
+<style lang="postcss" scoped>
 .isopen path {
   transition: 0.2s;
   d: path("M6 18L18 6M6 6l12 12");
@@ -223,7 +234,10 @@ export default {
   @apply inline-flex items-center justify-center p-2 ml-2 rounded-md;
   /* @apply text-kimberly-600 dark:text-kimberly-400; */
   /* @apply hover:text-black dark:hover:text-kimberly-900; */
-  @apply hover:bg-wewak-300 dark:hover:bg-wewak-700;
+  @apply hover:bg-wewak-300/80 hover:text-white;
   @apply focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white;
+}
+.gw-navbar-item {
+  @apply text-kimberly-900 dark:text-kimberly-100 rounded-full hover:bg-wewak-300/80 hover:text-white transition-all hover:backdrop-blur-xl
 }
 </style>
