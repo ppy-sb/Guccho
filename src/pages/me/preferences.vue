@@ -1,3 +1,31 @@
+
+<script setup>
+import { demoUser } from '~~/src/prototyping/objects/user'
+const unchanged = demoUser
+const bioEditorMode = ref('preview')
+const user = reactive({ ...demoUser, secrets: { ...unchanged.secrets } })
+const changeAvatar = ref(null)
+const repeatPassword = ref(unchanged.secrets.password)
+
+const bio = ref('')
+const editBio = (e) => {
+  bio.value = e.target.innerText
+
+  console.log(bio.value)
+}
+const uploading = ref(0)
+const saveAvatar = () => {
+  uploading.value = 1
+  setTimeout(() => {
+    uploading.value = 2
+
+    // setTimeout(() => {
+    //   changeAvatar.value.closeModal()
+    // }, 700)
+  }, 1000)
+}
+</script>
+
 <template>
   <section class="container custom-container mx-auto">
     <t-modal-page>
@@ -219,35 +247,34 @@
           <span class="label-text pl-3">BIO</span>
         </label>
         <div class="mt-1 card bg-kimberly-200/40 rounded-3xl">
-          <div class="card-body rounded-3xl" role="textbox" aria-multiline="true" contenteditable="plaintext-only">
-            welcome to my userpage!
+          <t-tabs v-model="bioEditorMode" variant="bordered">
+            <t-tab class="grow" disabled />
+            <t-tab class="lg:tab-lg" value="edit">
+              edit
+            </t-tab>
+            <t-tab class="lg:tab-lg" value="preview">
+              preview
+            </t-tab>
+            <t-tab class="grow" disabled />
+          </t-tabs>
+          <div
+            v-if="bioEditorMode === 'edit'"
+            class="card-body rounded-none rounded-bl-3xl rounded-br-3xl"
+            role="textbox"
+            aria-multiline="true"
+            contenteditable="plaintext-only"
+            @input="editBio"
+          >
+            {{ bio }}
+          </div>
+          <div v-else class="card-body prose">
+            <Markdown :source="bio" />
           </div>
         </div>
       </div>
     </form>
   </section>
 </template>
-
-<script setup>
-import { demoUser } from '~~/src/prototyping/objects/user'
-const unchanged = demoUser
-const user = reactive({ ...demoUser, secrets: { ...unchanged.secrets } })
-const changeAvatar = ref(null)
-const repeatPassword = ref(unchanged.secrets.password)
-
-const uploading = ref(0)
-const saveAvatar = () => {
-  uploading.value = 1
-  setTimeout(() => {
-    uploading.value = 2
-
-    // setTimeout(() => {
-    //   changeAvatar.value.closeModal()
-    // }, 700)
-  }, 1000)
-}
-
-</script>
 
 <style lang="scss" scoped>
 .hoverable {

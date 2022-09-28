@@ -31,7 +31,7 @@ definePageMeta({
             'tab-active': currentRoute.path === root.path
           }"
           :value="currentRoute"
-          @click="$router.push(root)"
+          @click="navigateTo(root)"
         >
           Index
         </t-tab>
@@ -42,7 +42,7 @@ definePageMeta({
             'tab-active': $route.name === route.name
           }"
           class="tab-lg"
-          @click="$router.push(route)"
+          @click="navigateTo(route)"
         >
           {{ route.name }}
         </t-tab>

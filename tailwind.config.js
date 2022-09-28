@@ -25,7 +25,10 @@ module.exports = {
       colors: palette
     }
   },
-  plugins: [require('daisyui')],
+  plugins: [
+    require('daisyui'),
+    require('@tailwindcss/typography')
+  ],
   daisyui: {
     darkMode: 'class',
     darkTheme: 'guweb-dark',
