@@ -51,7 +51,7 @@ const user = inject('user')
 
 <style scoped lang="postcss">
 .user-status {
-  @apply text-center text-kimberly-600 dark:text-kimberly-400 bg-kimberly-100 dark:bg-kimberly-700 px-2;
+  @apply text-center text-kimberly-600 dark:text-kimberly-400 bg-kimberly-200/50 dark:bg-kimberly-700/50 px-2;
   @apply md:text-left md:rounded;
   @apply md:[margin-left:-7em] md:[padding-left:7em];
 }

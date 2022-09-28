@@ -1,13 +1,14 @@
 <template>
   <div v-show="!isLoading">
     <t-modal-container :teleport-id="config.appModalTeleportTargetId">
-      <div v-show="!isLoading" class="flex flex-col min-h-screen overflow-y-hidden bg-kimberly-50 dark:bg-kimberly-800 ">
+      <!-- bg-kimberly-50 dark:bg-kimberly-800 -->
+      <div v-show="!isLoading" class="flex flex-col min-h-screen overflow-y-hidden screen">
         <div class="flex flex-col overflow-auto min-h-screen">
           <NavbarDefault />
           <div class="flex-grow flex flex-col">
             <slot />
           </div>
-          <footer class="py-4 text-center bottom-1 bg-kimberly-200 dark:bg-kimberly-900">
+          <footer class="py-4 text-center bottom-1">
             <h1 class="text-sm font-semibold text-kimberly-900 dark:text-kimberly-100">
               © {{ new Date().getFullYear() }} ppy.sb | Varkaria
             </h1>
@@ -55,7 +56,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { ref, onMounted } from 'vue'
 import { useAppConfig } from '#app'
 
@@ -64,6 +65,13 @@ const config = useAppConfig()
 onMounted(() => {
   isLoading.value = false
 })
-const colorMode = useColorMode()
+// const colorMode = useColorMode()
 
 </script>
+
+<style lang="postcss">
+.screen {
+  @apply bg-gradient-to-b from-kimberly-50 to-kimberly-150 dark:from-kimberly-800 dark:to-kimberly-900
+}
+
+</style>

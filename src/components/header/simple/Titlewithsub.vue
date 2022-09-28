@@ -32,3 +32,14 @@ export default {
   }
 }
 </script>
+
+<style lang="postcss" scoped>
+.h-header {
+  @apply sm:flex mt-2 items-center justify-between text-center text-kimberly-900 dark:text-kimberly-100;
+  /* @apply sm:flex sm:w-full mt-2 items-center justify-between text-center text-kimberly-900 dark:text-kimberly-100 ; */
+  transition: 0.3s ease;
+  @apply pb-2;
+
+  @apply md:pt-20;
+}
+</style>

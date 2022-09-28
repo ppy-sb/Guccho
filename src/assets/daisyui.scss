@@ -2,11 +2,19 @@ $variants: primary, secondary, accent, neutral, base-100, info, success, warning
   error;
 
 .btn {
-  @apply shadow-md;
+  @apply shadow-lg;
+  @apply dark:shadow-md;
 
   @each $variant in $variants {
     &.btn-#{$variant} {
-      @apply shadow-#{$variant}/40;
+      @apply shadow-#{$variant}/40 dark:shadow-#{$variant}/20;
+    }
+  }
+}
+.input {
+  @each $variant in $variants {
+    &.btn-#{$variant} {
+      @apply shadow-#{$variant}/40 dark:shadow-#{$variant}/20;
     }
   }
 }

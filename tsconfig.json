@@ -6,6 +6,7 @@
     }
   },
   "compilerOptions": {
+    "noErrorTruncation": true,
     "strictNullChecks": true,
     "allowJs": true
     // "paths": {

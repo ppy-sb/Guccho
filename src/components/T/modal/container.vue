@@ -88,7 +88,7 @@ onMounted(() => {
   }
 
   .zoom-modal-background {
-    @apply bg-kimberly-300/10 dark:bg-kimberly-900/10;
+
     position: fixed;
     top: 0;
     left: 0;
