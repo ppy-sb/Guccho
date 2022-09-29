@@ -1,18 +1,15 @@
 
 <script setup>
+import { ref } from 'vue'
+
 import { demoUser } from '~~/src/prototyping/objects/user'
 const unchanged = demoUser
-const bioEditorMode = ref('preview')
 const user = reactive({ ...demoUser, secrets: { ...unchanged.secrets } })
 const changeAvatar = ref(null)
 const repeatPassword = ref(unchanged.secrets.password)
 
-const bio = ref('')
-const editBio = (e) => {
-  bio.value = e.target.innerText
+// const bio = ref('')
 
-  console.log(bio.value)
-}
 const uploading = ref(0)
 const saveAvatar = () => {
   uploading.value = 1
@@ -59,7 +56,7 @@ const saveAvatar = () => {
             </div>
             <div im-just-a-spacer />
             <dv-button class="grow" :loading="uploading === 1" :type="uploading === 2 && 'success'" @click="saveAvatar">
-              {{ uploading === 0 ? 'Save' : uploading === 1 ? 'Uploading' : uploading === 2 ? 'done' : '' }}
+              {{ uploading === 0 ? 'Save' :uploading === 1 ? 'Uploading' :uploading === 2 ? 'done' :'' }}
             </dv-button>
             <dv-button
               class="grow"
@@ -75,7 +72,7 @@ const saveAvatar = () => {
       </t-modal-wrapper>
     </t-modal-page>
     <header-default class="!pb-2 !pt-4" title="preferences" />
-    <form action="#" method="POST" class="px-4">
+    <form action="#" method="POST" class="md:px-4">
       <div class="flex flex-col flex-wrap md:flex-row">
         <div class="grow xl:max-w-2xl w-full lg:[max-width:50%]">
           <div
@@ -89,7 +86,7 @@ const saveAvatar = () => {
               >
                 change
               </button>
-              <img src="~/assets/images/1.png" class="pointer-events-none " style="min-width: 150px; width: 150px;">
+              <img src="~/assets/images/1.png" class="pointer-events-none " style="min-width:150px; width:150px;">
             </div>
             <div>
               <h1 class="text-5xl text-left">
@@ -114,10 +111,11 @@ const saveAvatar = () => {
                 placeholder="Username"
                 class="input grow"
                 :class="{
-                  'input-bordered input-primary': unchanged.name !== user.name,
-                  'input-ghost': unchanged.name === user.name
+                  'input-bordered input-primary':unchanged.name !== user.name,
+                  'input-ghost':unchanged.name === user.name
                 }"
               >
+
               <button
                 class="btn"
                 type="button"
@@ -139,8 +137,8 @@ const saveAvatar = () => {
                 class="input grow"
                 disabled
                 :class="{
-                  'input-bordered input-primary': unchanged.safeName !== user.safeName,
-                  '!input-ghost border-none': unchanged.safeName === user.safeName
+                  'input-bordered input-primary':unchanged.safeName !== user.safeName,
+                  '!input-ghost border-none':unchanged.safeName === user.safeName
                 }"
               >
               <button class="btn btn-warning" type="button">
@@ -159,8 +157,8 @@ const saveAvatar = () => {
                 placeholder="abc@123.com"
                 class="input grow"
                 :class="{
-                  'input-bordered input-primary': unchanged.email !== user.email,
-                  'input-ghost': unchanged.email === user.email
+                  'input-bordered input-primary':unchanged.email !== user.email,
+                  'input-ghost':unchanged.email === user.email
                 }"
               >
               <button
@@ -185,8 +183,8 @@ const saveAvatar = () => {
                   placeholder="Type here"
                   class="input w-full"
                   :class="{
-                    'input-bordered input-primary': unchanged.secrets.password !== user.secrets.password,
-                    'input-ghost': unchanged.secrets.password === user.secrets.password
+                    'input-bordered input-primary':unchanged.secrets.password !== user.secrets.password,
+                    'input-ghost':unchanged.secrets.password === user.secrets.password
                   }"
                 >
                 <label class="label">
@@ -198,8 +196,8 @@ const saveAvatar = () => {
                   placeholder="Type here"
                   class="input w-full"
                   :class="{
-                    'input-bordered input-primary': unchanged.secrets.password !== repeatPassword,
-                    'input-ghost': unchanged.secrets.password === repeatPassword
+                    'input-bordered input-primary':unchanged.secrets.password !== repeatPassword,
+                    'input-ghost':unchanged.secrets.password === repeatPassword
                   }"
                 >
               </div>
@@ -228,8 +226,8 @@ const saveAvatar = () => {
                 class="input grow"
                 disabled
                 :class="{
-                  'input-bordered input-primary': unchanged.secrets.apiKey !== user.secrets.apiKey,
-                  '!input-ghost border-none': unchanged.secrets.apiKey === user.secrets.apiKey
+                  'input-bordered input-primary':unchanged.secrets.apiKey !== user.secrets.apiKey,
+                  '!input-ghost border-none':unchanged.secrets.apiKey === user.secrets.apiKey
                 }"
               >
               <button v-if="!user.secrets.apiKey" class="btn btn-primary" type="button">
@@ -242,37 +240,12 @@ const saveAvatar = () => {
           </div>
         </div>
       </div>
-      <div class="mx-auto max-w-7xl">
-        <label class="label">
-          <span class="label-text pl-3">BIO</span>
-        </label>
-        <div class="mt-1 card bg-kimberly-200/40 rounded-3xl">
-          <t-tabs v-model="bioEditorMode" variant="bordered">
-            <t-tab class="grow" disabled />
-            <t-tab class="lg:tab-lg" value="edit">
-              edit
-            </t-tab>
-            <t-tab class="lg:tab-lg" value="preview">
-              preview
-            </t-tab>
-            <t-tab class="grow" disabled />
-          </t-tabs>
-          <div
-            v-if="bioEditorMode === 'edit'"
-            class="card-body rounded-none rounded-bl-3xl rounded-br-3xl"
-            role="textbox"
-            aria-multiline="true"
-            contenteditable="plaintext-only"
-            @input="editBio"
-          >
-            {{ bio }}
-          </div>
-          <div v-else class="card-body prose">
-            <Markdown :source="bio" />
-          </div>
-        </div>
-      </div>
     </form>
+
+    <label class="label">
+      <span class="label-text pl-3">BIO</span>
+    </label>
+    <editor />
   </section>
 </template>
 
@@ -281,28 +254,29 @@ const saveAvatar = () => {
 
   img,
   .btn {
-    transition: opacity 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
-    overflow: hidden;
+    transition:opacity 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    overflow:hidden;
   }
 
   .btn {
-    opacity: 0;
+    opacity:0;
   }
 
   &:hover {
     // img {
-    //   opacity: 0;
+    //   opacity:0;
     // }
 
     .btn {
-      opacity: 1;
+      opacity:1;
     }
   }
 }
 
 .label-text {
-  @apply font-semibold
+  @apply font-semibold;
 }
+
 </style>
 <style lang="postcss">
 .dropzone {
@@ -310,5 +284,66 @@ const saveAvatar = () => {
   @apply dark:hover:bg-kimberly-200 dark:bg-kimberly-800 dark:bg-kimberly-300 dark:bg-kimberly-700 hover:bg-kimberly-50 dark:border-kimberly-600 dark:hover:border-kimberly-500 dark:hover:bg-kimberly-600;
   @apply hover:shadow-lg;
   @apply transition-shadow transition-colors;
+}
+
+/* Basic editor styles */
+
+.ProseMirror {
+  > * + * {
+    margin-top: 0.75em;
+  }
+
+  ul,
+  ol {
+    padding: 0 1rem;
+  }
+
+  blockquote {
+    padding-left: 1rem;
+    border-left: 2px solid rgba(#0D0D0D, 0.1);
+  }
+}
+
+.bubble-menu {
+  display: flex;
+  background-color: #0D0D0D;
+  padding: 0.2rem;
+  border-radius: 0.5rem;
+
+  button {
+    border: none;
+    background: none;
+    color: #FFF;
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 0 0.2rem;
+    opacity: 0.6;
+
+    &:hover,
+    &.is-active {
+      opacity: 1;
+    }
+  }
+}
+
+.floating-menu {
+  display: flex;
+  background-color: #0D0D0D10;
+  padding: 0.2rem;
+  border-radius: 0.5rem;
+
+  button {
+    border: none;
+    background: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 0 0.2rem;
+    opacity: 0.6;
+
+    &:hover,
+    &.is-active {
+      opacity: 1;
+    }
+  }
 }
 </style>

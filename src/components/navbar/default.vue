@@ -1,8 +1,8 @@
 <template>
   <!-- bg-wewak-300 dark:bg-wewak-800 md:bg-transparent -->
-  <nav class="z-20 w-full transition-all md:fixed md:drop-shadow-lg">
+  <nav ref="root" class="z-20 w-full transition-all md:fixed drop-shadow-lg backdrop-blur-sm bg-kimberly-50/30 dark:bg-kimberly-600/30">
     <div class="mx-auto container lg:px-2">
-      <div class="relative flex items-center justify-between h-16">
+      <div class="relative flex items-center justify-between h-10">
         <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
           <button
             type="button"
@@ -139,9 +139,10 @@
   </nav>
 </template>
 
-<script>
+<script lang="ts">
 import { useAppConfig } from 'nuxt/app'
 import vClickOutside from 'v-click-outside'
+import { ref, onBeforeMount, onUnmounted } from 'vue'
 export default {
   name: 'NavbarDefault',
   directives: {
@@ -149,8 +150,24 @@ export default {
   },
   setup () {
     const config = useAppConfig()
+    const scrolledDown = ref(false)
+    const root = ref<HTMLElement>()
+    const handleScroll = () => {
+      if (!root.value) { return }
+      const sticky = root.value.offsetTop
+
+      scrolledDown.value = window.pageYOffset > sticky
+    }
+    onBeforeMount(() => {
+      document.addEventListener('scroll', handleScroll)
+    })
+    onUnmounted(() => {
+      document.removeEventListener('scroll', handleScroll)
+    })
     return {
-      config
+      config,
+      scrolledDown,
+      root
     }
   },
   data () {
