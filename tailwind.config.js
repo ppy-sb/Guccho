@@ -18,16 +18,23 @@ module.exports = {
     },
     {
       pattern: /btn.+/
+    },
+    {
+      pattern: /hljs+/
     }
   ],
   theme: {
     extend: {
       colors: palette
+    },
+    hljs: {
+      theme: 'night-owl'
     }
   },
   plugins: [
     require('daisyui'),
-    require('@tailwindcss/typography')
+    require('@tailwindcss/typography'),
+    require('tailwind-highlightjs')
   ],
   daisyui: {
     darkMode: 'class',

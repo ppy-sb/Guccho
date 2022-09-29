@@ -1,5 +1,6 @@
 html {
-  @apply bg-kimberly-50 dark:bg-kimberly-800;
+  // @apply bg-kimberly-50 dark:bg-kimberly-800;
+  @apply bg-transparent #{!important};
 }
 
 .width-sizer {
