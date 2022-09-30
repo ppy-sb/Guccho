@@ -37,7 +37,6 @@ module.exports = {
     require('tailwind-highlightjs')
   ],
   daisyui: {
-    darkMode: 'class',
     darkTheme: 'guweb-dark',
     themes: [
       {
