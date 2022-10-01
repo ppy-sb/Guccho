@@ -32,7 +32,7 @@ export default defineNuxtConfig({
     classSuffix: ''
   },
 
-  publicRuntimeConfig: {},
+  publicRuntimeConfig: require('./public.config.js'),
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: {

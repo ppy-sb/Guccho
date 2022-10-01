@@ -1,8 +1,3 @@
-html {
-  // @apply bg-kimberly-50 dark:bg-kimberly-800;
-  @apply bg-transparent #{!important};
-}
-
 .width-sizer {
   @apply max-w-7xl px-2 sm:px-6 lg:px-8;
 }

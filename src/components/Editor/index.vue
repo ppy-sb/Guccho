@@ -1,33 +1,10 @@
-<!-- eslint-disable import/no-named-as-default -->
 <script setup lang="ts">
-import { ref, onBeforeMount, onBeforeUnmount, defineProps, defineEmits } from 'vue'
-
-import Highlight from '@tiptap/extension-highlight'
-import Typography from '@tiptap/extension-typography'
-import StarterKit from '@tiptap/starter-kit'
-import CharacterCount from '@tiptap/extension-character-count'
-import TaskItem from '@tiptap/extension-task-item'
-import TaskList from '@tiptap/extension-task-list'
-import { Editor, EditorContent } from '@tiptap/vue-3'
-import TextAlign from '@tiptap/extension-text-align'
-import Placeholder from '@tiptap/extension-placeholder'
-import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
-
-import { lowlight } from 'lowlight/lib/core'
-// import css from 'highlight.js/lib/languages/css'
-// import js from 'highlight.js/lib/languages/javascript'
-// import ts from 'highlight.js/lib/languages/typescript'
-// import html from 'highlight.js/lib/languages/xml'
-// import python from 'highlight.js/lib/languages/python'
-// lowlight.registerLanguage('html', html)
-// lowlight.registerLanguage('css', css)
-// lowlight.registerLanguage('js', js)
-// lowlight.registerLanguage('ts', ts)
-// lowlight.registerLanguage('python', python)
-
+import { defineProps, defineEmits } from 'vue'
+import { EditorContent } from '@tiptap/vue-3'
 import '@/assets/typography.scss'
 
 import MenuBar from './MenuBar.vue'
+import useEditor from '~/composables/useEditor'
 const props = defineProps({
   content: {
     type: [String, Object],
@@ -35,54 +12,11 @@ const props = defineProps({
   }
 })
 const emit = defineEmits(['update:modelValue'])
-const editor = ref<Editor>()
-const lazyLoadCodeBlock = ({ editor }: {editor: Editor}) => {
-  const json = editor.getJSON()
-  json.content?.forEach(async (node) => {
-    if (node.type !== 'codeBlock') { return }
-    const language = node.attrs?.language
-    if (!language) { return }
-    if (lowlight.registered(language)) { return }
-    try {
-      const hljs = await import(`../../../node_modules/highlight.js/es/languages/${language}.js`)
-      lowlight.registerLanguage(language, hljs.default)
-    } catch (e) {
-    }
-  })
-}
-onBeforeMount(() => {
-  editor.value = new Editor({
-    content: props.content,
-    extensions: [
-      StarterKit.configure({
-        codeBlock: false
-      }),
-      TextAlign.configure({
-        types: ['heading', 'paragraph']
-      }),
-      Highlight,
-      TaskList,
-      TaskItem,
-      Typography,
-      CharacterCount.configure({
-        limit: 10000
-      }),
-      CodeBlockLowlight.configure({
-        lowlight,
-        exitOnArrowDown: true
-      }),
-      Placeholder.configure({
-        placeholder: 'Welcome to my userpage!'
-      })
-    ]
-  })
-  editor.value.on('beforeCreate', lazyLoadCodeBlock)
-  editor.value.on('update', lazyLoadCodeBlock)
-  editor.value.on('update', ({ editor }) => emit('update:modelValue', editor.getHTML()))
-})
-onBeforeUnmount(() => {
-  editor.value?.destroy()
-})
+
+const [editor, subscribe] = useEditor(props.content)
+
+subscribe((content:string) => emit('update:modelValue', content))
+
 </script>
 
 <template>

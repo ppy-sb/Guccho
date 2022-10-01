@@ -1,8 +1,8 @@
 <template>
-  <div v-show="!isLoading" :class="safari ? 'safari' :'not-safari'">
+  <div v-show="!isLoading" :class="safari ? 'safari' :'not-safari'" class="screen">
     <t-modal-container :teleport-id="config.appModalTeleportTargetId">
       <!-- bg-kimberly-50 dark:bg-kimberly-800 -->
-      <div v-show="!isLoading" class="flex flex-col min-h-screen overflow-y-hidden screen">
+      <div v-show="!isLoading" class="flex flex-col min-h-screen overflow-y-hidden">
         <div class="flex flex-col overflow-auto min-h-screen">
           <NavbarDefault />
           <div class="flex-grow flex flex-col">
