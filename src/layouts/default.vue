@@ -1,5 +1,5 @@
 <template>
-  <div v-show="!isLoading">
+  <div v-show="!isLoading" :class="safari ? 'safari' :'not-safari'">
     <t-modal-container :teleport-id="config.appModalTeleportTargetId">
       <!-- bg-kimberly-50 dark:bg-kimberly-800 -->
       <div v-show="!isLoading" class="flex flex-col min-h-screen overflow-y-hidden screen">
@@ -9,6 +9,9 @@
             <slot />
           </div>
           <footer class="py-4 text-center bottom-1">
+            <h3 v-if="safari">
+              dev note: some visual effects are disabled for safari to improve performance.
+            </h3>
             <h1 class="text-sm font-semibold text-kimberly-900 dark:text-kimberly-100">
               © {{ new Date().getFullYear() }} ppy.sb | Varkaria
             </h1>
@@ -60,9 +63,12 @@
 import { ref, onMounted } from 'vue'
 import { useAppConfig } from '#app'
 
+const safari = ref(true)
+
 const isLoading = ref(true)
 const config = useAppConfig()
 onMounted(() => {
+  safari.value = useSafariDetector()
   isLoading.value = false
 })
 // const colorMode = useColorMode()
@@ -72,5 +78,10 @@ onMounted(() => {
 <style lang="postcss">
 .screen {
   @apply bg-gradient-to-b from-kimberly-50/60 to-kimberly-100 dark:from-kimberly-800 dark:to-kimberly-900
+}
+.not-safari {
+  & .custom-container {
+    @apply drop-shadow-lg
+  }
 }
 </style>

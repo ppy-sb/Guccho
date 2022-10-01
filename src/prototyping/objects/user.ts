@@ -23,6 +23,7 @@ export const sampleUserWithSecrets: User<string, true> = {
     password: '123456788',
     apiKey: 'aaaaa-bbbbb'
   },
+  bio: '',
   statistics: {
     osu: {
       standard: {

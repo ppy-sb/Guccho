@@ -1,6 +1,6 @@
 <template>
   <section
-    class="md:container custom-container mx-auto mt-5 md:mt-20 flex flex-col items-center md:flex-row md:items-end gap-5 "
+    class="w-full md:w-max md:container custom-container mx-auto mt-5 md:mt-20 flex flex-col items-center md:flex-row md:items-end gap-5 "
   >
     <!-- Logo -->
     <div>
@@ -8,7 +8,7 @@
     </div>
     <!-- info -->
     <div
-      class="pt-4 flex flex-col md:p-0 w-full md:w-100 bg-kimberly-300 dark:bg-kimberly-700 md:bg-transparent md:grow"
+      class="pt-4 flex flex-col md:p-0 w-full bg-kimberly-200 dark:bg-kimberly-700 md:bg-transparent md:grow"
     >
       <div
         class="order-3 md:order-1 container mx-auto flex justify-around md:justify-end gap-3 pb-4 md:pb-0"

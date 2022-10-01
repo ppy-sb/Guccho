@@ -1,4 +1,7 @@
-<script setup>
+<!-- eslint-disable import/no-named-as-default -->
+<script setup lang="ts">
+import { ref, onBeforeMount, onBeforeUnmount, defineProps, defineEmits } from 'vue'
+
 import Highlight from '@tiptap/extension-highlight'
 import Typography from '@tiptap/extension-typography'
 import StarterKit from '@tiptap/starter-kit'
@@ -10,31 +13,49 @@ import TextAlign from '@tiptap/extension-text-align'
 import Placeholder from '@tiptap/extension-placeholder'
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
 
-import css from 'highlight.js/lib/languages/css'
-import js from 'highlight.js/lib/languages/javascript'
-import ts from 'highlight.js/lib/languages/typescript'
-import html from 'highlight.js/lib/languages/xml'
+import { lowlight } from 'lowlight/lib/core'
+// import css from 'highlight.js/lib/languages/css'
+// import js from 'highlight.js/lib/languages/javascript'
+// import ts from 'highlight.js/lib/languages/typescript'
+// import html from 'highlight.js/lib/languages/xml'
+// import python from 'highlight.js/lib/languages/python'
+// lowlight.registerLanguage('html', html)
+// lowlight.registerLanguage('css', css)
+// lowlight.registerLanguage('js', js)
+// lowlight.registerLanguage('ts', ts)
+// lowlight.registerLanguage('python', python)
 
-import { lowlight } from 'lowlight'
+import '@/assets/typography.scss'
 
 import MenuBar from './MenuBar.vue'
-
-lowlight.registerLanguage('html', html)
-lowlight.registerLanguage('css', css)
-lowlight.registerLanguage('js', js)
-lowlight.registerLanguage('ts', ts)
-
-const editor = ref()
-
+const props = defineProps({
+  content: {
+    type: [String, Object],
+    default: ''
+  }
+})
+const emit = defineEmits(['update:modelValue'])
+const editor = ref<Editor>()
+const lazyLoadCodeBlock = ({ editor }: {editor: Editor}) => {
+  const json = editor.getJSON()
+  json.content?.forEach(async (node) => {
+    if (node.type !== 'codeBlock') { return }
+    const language = node.attrs?.language
+    if (!language) { return }
+    if (lowlight.registered(language)) { return }
+    try {
+      const hljs = await import(`../../../node_modules/highlight.js/es/languages/${language}.js`)
+      lowlight.registerLanguage(language, hljs.default)
+    } catch (e) {
+    }
+  })
+}
 onBeforeMount(() => {
   editor.value = new Editor({
+    content: props.content,
     extensions: [
       StarterKit.configure({
-        history: true,
-        codeBlock: false,
-        mark: {
-          multicolor: true
-        }
+        codeBlock: false
       }),
       TextAlign.configure({
         types: ['heading', 'paragraph']
@@ -47,16 +68,20 @@ onBeforeMount(() => {
         limit: 10000
       }),
       CodeBlockLowlight.configure({
-        lowlight
+        lowlight,
+        exitOnArrowDown: true
       }),
       Placeholder.configure({
         placeholder: 'Welcome to my userpage!'
       })
     ]
   })
+  editor.value.on('beforeCreate', lazyLoadCodeBlock)
+  editor.value.on('update', lazyLoadCodeBlock)
+  editor.value.on('update', ({ editor }) => emit('update:modelValue', editor.getHTML()))
 })
 onBeforeUnmount(() => {
-  editor.value.destroy()
+  editor.value?.destroy()
 })
 </script>
 
@@ -81,9 +106,6 @@ onBeforeUnmount(() => {
   display: flex;
   flex-direction: column;
 
-  // color: ;
-  // background-color: #FFF;
-  // border: 3px solid ;
   border-radius: 0.75rem;
 
   &__header {
@@ -96,8 +118,6 @@ onBeforeUnmount(() => {
   }
 
   &__content {
-    // padding: 1.25rem 1rem;
-    // @apply py-4;
     flex: 1 1 auto;
     overflow-x: hidden;
     overflow-y: auto;
@@ -122,10 +142,5 @@ onBeforeUnmount(() => {
       }
     }
   }
-}
-.custom-typography {
-  @apply prose prose-slate dark:prose-invert xl:prose-xl max-w-none;
-
-  @apply prose-pre:bg-kimberly-800 prose-pre:text-kimberly-50
 }
 </style>

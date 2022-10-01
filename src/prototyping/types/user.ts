@@ -97,7 +97,6 @@ export interface BaseUser<Id> {
   safeName: string
 
   email: string
-  oldNames: UserHistoricalName[]
 
   flag: string,
 }
@@ -139,6 +138,9 @@ export interface UserModel<Id, IncludeSecrets extends boolean, IncludeMode exten
 
   reachable: boolean
   status: UserActivityStatus
+
+  oldNames: UserHistoricalName[]
+  bio: string,
 
   friends: UserFriend<Id>[]
 
