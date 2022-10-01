@@ -1,10 +1,8 @@
 <template>
-  <div class="min-h-full flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full space-y-8   bg-kimberly-50 dark:bg-kimberly-800 p-6 rounded-lg relative overflow-hidden">
-      <fetch-overlay :fetching="fetching" />
-
+  <div class="my-auto flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8 bg-kimberly-100/80 dark:bg-kimberly-800 p-6 rounded-3xl relative overflow-hidden">
       <div>
-        <h2 class="text-center text-3xl text-kimberly-200">
+        <h2 class="text-center text-3xl text-kimberly-800 dark:text-kimberly-50">
           Login
         </h2>
       </div>
@@ -22,8 +20,8 @@
               type="user"
               autocomplete="off"
               required
-              class="auth-input"
-              :class="{ 'auth-error-input': error }"
+              class="input input-ghost w-full"
+              :class="{ 'input-error': error }"
               placeholder="User"
             >
           </div>
@@ -39,20 +37,20 @@
               type="password"
               autocomplete="off"
               required
-              class="auth-input"
-              :class="{ 'auth-error-input': error }"
+              class="input input-ghost w-full"
+              :class="{ 'input-error': error }"
               placeholder="Password"
             >
           </div>
         </div>
 
         <div class="grid grid-cols-2 gap-2">
-          <button type="submit" class="auth-button">
+          <nuxt-link to="/auth/register" class="btn btn-accent" @mouseenter="registerButton = 'sign up'" @mouseleave="registerButton = 'Do not have an account?'">
+            {{ registerButton }}
+          </nuxt-link>
+          <button type="submit" class="btn btn-primary">
             Sign in
           </button>
-          <nuxt-link to="/auth/register" class="auth-button">
-            Sign up
-          </nuxt-link>
         </div>
       </form>
     </div>
@@ -69,7 +67,8 @@ export default {
         password: ''
       },
       fetching: false,
-      error: null
+      error: null,
+      registerButton: 'Do not have an account?'
     }
   },
   methods: {
@@ -98,7 +97,7 @@ export default {
 }
 </script>
 
-<style lang="postcss">
+<style lang="postcss" scoped>
 .auth-error-text {
   @apply text-red-500 text-sm font-medium mb-2
 }

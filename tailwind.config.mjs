@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-env node */
 /** @type {import('tailwindcss').Config} */
-import { palette, hex } from './src/palette'
+import { palette } from './src/palette'
 const themes = require('daisyui/src/colors/themes')
 module.exports = {
   content: [

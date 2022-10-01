@@ -40,6 +40,15 @@ export default defineNuxtConfig({
     dirs: ['~/components']
   },
 
+  nitro: {
+    minify: true
+  },
+  vite: {
+    build: {
+      minify: true
+    }
+  },
+
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
   buildModules: [
     'floating-vue/nuxt'

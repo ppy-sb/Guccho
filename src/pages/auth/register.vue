@@ -1,10 +1,10 @@
 <template>
-  <div class="min-h-full flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full space-y-8   bg-kimberly-50 dark:bg-kimberly-800 p-6 rounded-lg relative overflow-hidden">
+  <div class="my-auto flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8 bg-kimberly-100/80 dark:bg-kimberly-800 p-6 rounded-3xl relative overflow-hidden">
       <fetch-overlay :fetching="fetching" />
 
       <div>
-        <h2 class="text-center text-3xl text-kimberly-200">
+        <h2 class="text-center text-3xl text-kimberly-800 dark:text-kimberly-50">
           Sign Up
         </h2>
       </div>
@@ -22,8 +22,8 @@
               type="user"
               autocomplete="off"
               required
-              class="auth-input"
-              :class="{ 'auth-error-input': error }"
+              class="input input-ghost w-full"
+              :class="{ 'input-error': error }"
               placeholder="User"
             >
           </div>
@@ -39,18 +39,18 @@
               type="password"
               autocomplete="off"
               required
-              class="auth-input"
-              :class="{ 'auth-error-input': error }"
+              class="input input-ghost w-full"
+              :class="{ 'input-error': error }"
               placeholder="Password"
             >
           </div>
         </div>
 
         <div class="grid grid-cols-2 gap-2">
-          <button type="submit" class="auth-button">
+          <button type="submit" class="btn btn-base-100">
             Sign Up
           </button>
-          <nuxt-link :to="{name: 'auth-login'}" class="auth-button">
+          <nuxt-link :to="{name: 'auth-login'}" class="btn btn-neutral">
             Log in
           </nuxt-link>
         </div>
@@ -74,22 +74,8 @@ const userRegisterAction = () => {
   // const data = await userRegister()
 }
 </script>
-
 <style lang="postcss" scoped>
-.auth-input {
-  @apply appearance-none rounded-md   bg-kimberly-50 dark:bg-kimberly-800 relative block w-full px-3 py-4 placeholder-white placeholder-opacity-25 text-kimberly-200 font-semibold rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm
-}
-
-.auth-button {
-  @apply relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-kimberly-900 dark:text-kimberly-100 bg-wewak-300 dark:bg-wewak-800 hover:bg-wewak-300 dark:bg-wewak-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-wewak-700
-}
-
 .auth-error-text {
   @apply text-red-500 text-sm font-medium mb-2
 }
-
-.auth-error-input {
-  @apply border-red-500 bg-red-500 bg-opacity-20 border-opacity-30
-}
-
 </style>

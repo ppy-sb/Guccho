@@ -1,12 +1,12 @@
 
-<script setup>
-import { ref } from 'vue'
-
-import { demoUser } from '~~/src/prototyping/objects/user'
-const unchanged = demoUser
+<script setup lang="ts">
+import { ref, reactive, computed } from 'vue'
+import type modalVue from '~/components/app/chat/modal.vue'
+import { demoUser } from '~/prototyping/objects/user'
+let unchanged = demoUser
 const user = reactive({ ...demoUser, secrets: { ...unchanged.secrets } })
-const changeAvatar = ref(null)
-const repeatPassword = ref(unchanged.secrets.password)
+const changeAvatar = ref<typeof modalVue>()
+const repeatPassword = ref('')
 
 // const bio = ref('')
 
@@ -20,6 +20,18 @@ const saveAvatar = () => {
     //   changeAvatar.value.closeModal()
     // }, 700)
   }, 1000)
+}
+const anythingChanged = computed(() => {
+  const col = (['name', 'email', 'password', 'bio']as Array<keyof typeof demoUser>).some(item => unchanged[item] !== user[item])
+
+  return col
+})
+
+const updateUser = () => {
+  unchanged = {
+    ...unchanged,
+    ...user
+  }
 }
 </script>
 
@@ -71,9 +83,23 @@ const saveAvatar = () => {
         </t-modal>
       </t-modal-wrapper>
     </t-modal-page>
-    <header-default class="!pb-2 !pt-4" title="preferences" />
-    <form action="#" method="POST" class="md:px-4">
-      <div class="flex flex-col flex-wrap md:flex-row">
+    <form action="#" method="POST">
+      <header-default class="!pb-2 !pt-4">
+        <header-simple-title-with-sub
+          title="preferences"
+          class="text-left"
+        />
+        <button
+          v-if="anythingChanged"
+          class="btn btn-sm btn-warning self-end"
+          type="button"
+          @click="updateUser"
+        >
+          update
+        </button>
+      </header-default>
+
+      <div class="flex flex-col flex-wrap md:flex-row md:px-4">
         <div class="grow xl:max-w-2xl w-full lg:[max-width:50%]">
           <div
             class="flex gap-4 justify-center md:justify-start items-end bg-kimberly-200/30 dark:bg-kimberly-700/40 sm:rounded-3xl shadow-md p-3 lg:mr-4 overflow-hidden"
@@ -82,7 +108,7 @@ const saveAvatar = () => {
               <button
                 class="btn btn-primary hover:bg-wewak-500/30 hover:active:border-wewak-500/30 no-animation absolute z-20 top-0 w-full h-full"
                 type="button"
-                @click="changeAvatar.openModal"
+                @click="changeAvatar?.openModal"
               >
                 change
               </button>
@@ -109,20 +135,21 @@ const saveAvatar = () => {
                 v-model="user.name"
                 type="text"
                 placeholder="Username"
-                class="input grow"
+                class="input input-sm grow"
                 :class="{
-                  'input-bordered input-primary':unchanged.name !== user.name,
-                  'input-ghost':unchanged.name === user.name
+                  'input input-bordered input input-primary':unchanged.name !== user.name,
+                  'input input-ghost':unchanged.name === user.name
                 }"
               >
 
               <button
-                class="btn"
+                v-show="unchanged.name !== user.name"
+                class="btn btn-sm"
                 type="button"
                 :disabled="unchanged.name === user.name"
                 @click="user.name = unchanged.name"
               >
-                cancel
+                revert
               </button>
             </div>
           </div>
@@ -134,14 +161,14 @@ const saveAvatar = () => {
               <input
                 v-model="user.safeName"
                 type="text"
-                class="input grow"
+                class="input input-sm grow"
                 disabled
                 :class="{
                   'input-bordered input-primary':unchanged.safeName !== user.safeName,
                   '!input-ghost border-none':unchanged.safeName === user.safeName
                 }"
               >
-              <button class="btn btn-warning" type="button">
+              <button class="btn btn-sm btn-warning" type="button">
                 request change
               </button>
             </div>
@@ -155,19 +182,20 @@ const saveAvatar = () => {
                 v-model="user.email"
                 type="email"
                 placeholder="abc@123.com"
-                class="input grow"
+                class="input input-sm grow"
                 :class="{
                   'input-bordered input-primary':unchanged.email !== user.email,
                   'input-ghost':unchanged.email === user.email
                 }"
               >
               <button
-                class="btn"
+                v-show="unchanged.email !== user.email"
+                class="btn btn-sm"
                 type="button"
                 :disabled="unchanged.email === user.email"
                 @click="user.email = unchanged.email"
               >
-                cancel
+                revert
               </button>
             </div>
           </div>
@@ -181,28 +209,30 @@ const saveAvatar = () => {
                   v-model="user.secrets.password"
                   type="password"
                   placeholder="Type here"
-                  class="input w-full"
+                  class="input input-sm w-full"
                   :class="{
                     'input-bordered input-primary':unchanged.secrets.password !== user.secrets.password,
                     'input-ghost':unchanged.secrets.password === user.secrets.password
                   }"
                 >
-                <label class="label">
+                <label v-show="unchanged.secrets.password !== user.secrets.password" class="label">
                   <span class="label-text pl-3">Repeat Password</span>
                 </label>
                 <input
+                  v-show="unchanged.secrets.password !== user.secrets.password"
                   v-model="repeatPassword"
                   type="password"
                   placeholder="Type here"
-                  class="input w-full"
+                  class="input input-sm w-full"
                   :class="{
-                    'input-bordered input-primary':unchanged.secrets.password !== repeatPassword,
-                    'input-ghost':unchanged.secrets.password === repeatPassword
+                    'input-bordered input-error':user.secrets.password !== repeatPassword,
+                    'input-ghost':user.secrets.password === repeatPassword
                   }"
                 >
               </div>
               <button
-                class="btn"
+                v-show="unchanged.secrets.password !== user.secrets.password"
+                class="btn btn-sm"
                 type="button"
                 :disabled="unchanged.secrets.password === repeatPassword && unchanged.secrets.password === user.secrets.password"
                 @click="() => {
@@ -210,7 +240,7 @@ const saveAvatar = () => {
                   repeatPassword = unchanged.secrets.password
                 }"
               >
-                cancel
+                revert
               </button>
             </div>
           </div>
@@ -223,33 +253,33 @@ const saveAvatar = () => {
                 v-model="user.secrets.apiKey"
                 type="text"
                 placeholder="Your API Key"
-                class="input grow"
+                class="input input-sm grow"
                 disabled
                 :class="{
                   'input-bordered input-primary':unchanged.secrets.apiKey !== user.secrets.apiKey,
                   '!input-ghost border-none':unchanged.secrets.apiKey === user.secrets.apiKey
                 }"
               >
-              <button v-if="!user.secrets.apiKey" class="btn btn-primary" type="button">
+              <button v-if="!user.secrets.apiKey" class="btn btn-sm btn-primary" type="button">
                 Request one
               </button>
-              <button v-else class="btn btn-secondary" type="button">
+              <button v-else class="btn btn-sm btn-secondary" type="button">
                 request a new one
               </button>
             </div>
           </div>
         </div>
       </div>
-    </form>
 
-    <label class="label">
-      <span class="label-text pl-3">BIO</span>
-    </label>
-    <editor />
+      <label class="label">
+        <span class="label-text pl-3">BIO</span>
+      </label>
+      <lazy-editor v-model="user.bio" @click.prevent="" />
+    </form>
   </section>
 </template>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .hoverable {
 
   img,
@@ -263,10 +293,6 @@ const saveAvatar = () => {
   }
 
   &:hover {
-    // img {
-    //   opacity:0;
-    // }
-
     .btn {
       opacity:1;
     }
@@ -277,8 +303,6 @@ const saveAvatar = () => {
   @apply font-semibold;
 }
 
-</style>
-<style lang="postcss">
 .dropzone {
   @apply flex flex-col justify-center items-center w-full h-64 bg-kimberly-50 rounded-lg border-2 border-kimberly-300 border-dashed cursor-pointer;
   @apply dark:hover:bg-kimberly-200 dark:bg-kimberly-800 dark:bg-kimberly-300 dark:bg-kimberly-700 hover:bg-kimberly-50 dark:border-kimberly-600 dark:hover:border-kimberly-500 dark:hover:bg-kimberly-600;
@@ -286,64 +310,4 @@ const saveAvatar = () => {
   @apply transition-shadow transition-colors;
 }
 
-/* Basic editor styles */
-
-.ProseMirror {
-  > * + * {
-    margin-top: 0.75em;
-  }
-
-  ul,
-  ol {
-    padding: 0 1rem;
-  }
-
-  blockquote {
-    padding-left: 1rem;
-    border-left: 2px solid rgba(#0D0D0D, 0.1);
-  }
-}
-
-.bubble-menu {
-  display: flex;
-  background-color: #0D0D0D;
-  padding: 0.2rem;
-  border-radius: 0.5rem;
-
-  button {
-    border: none;
-    background: none;
-    color: #FFF;
-    font-size: 0.85rem;
-    font-weight: 500;
-    padding: 0 0.2rem;
-    opacity: 0.6;
-
-    &:hover,
-    &.is-active {
-      opacity: 1;
-    }
-  }
-}
-
-.floating-menu {
-  display: flex;
-  background-color: #0D0D0D10;
-  padding: 0.2rem;
-  border-radius: 0.5rem;
-
-  button {
-    border: none;
-    background: none;
-    font-size: 0.85rem;
-    font-weight: 500;
-    padding: 0 0.2rem;
-    opacity: 0.6;
-
-    &:hover,
-    &.is-active {
-      opacity: 1;
-    }
-  }
-}
 </style>

@@ -1,0 +1,14 @@
+.custom-typography {
+  @apply prose prose-slate dark:prose-invert xl:prose-xl max-w-none;
+
+  @apply prose-pre:bg-kimberly-800 prose-pre:text-kimberly-50;
+
+  :where(li > p):not(:where([class~="not-prose"] *)) {
+    margin: 0;
+  }
+
+  :where(ul[data-type="taskList"]):not(:where([class~="not-prose"] *)) {
+    @apply pl-1.5;
+    list-style-type: none;
+  }
+}
