@@ -141,7 +141,7 @@ export interface UserModel<Id, IncludeSecrets extends boolean, IncludeMode exten
   status: UserActivityStatus
 
   oldNames: UserHistoricalName[]
-  bio: JSONContent,
+  profile: JSONContent,
 
   friends: UserFriend<Id>[]
 

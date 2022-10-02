@@ -7,9 +7,9 @@ const clientTakeover = ref(false)
 const { editor, extensions } = useEditor()
 onBeforeMount(async () => {
   const lazy = useEditorLazyLoadHighlight()
-  await Promise.all(lazy(user.value.bio))
+  await Promise.all(lazy(user.value.profile))
   editor.value?.setEditable(false)
-  editor.value?.commands.setContent(user.value.bio)
+  editor.value?.commands.setContent(user.value.profile)
   clientTakeover.value = true
 })
 </script>
@@ -20,7 +20,7 @@ onBeforeMount(async () => {
       class="custom-typography"
       :editor="editor"
     />
-    <div v-else class="custom-typography ssr" v-html="generateHTML(user.bio, extensions)" />
+    <div v-else class="custom-typography ssr" v-html="generateHTML(user.profile, extensions)" />
   </div>
 </template>
 

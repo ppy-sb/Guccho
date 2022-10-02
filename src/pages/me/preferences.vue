@@ -12,11 +12,11 @@ const user = reactive({ ...scoped.demoUser, secrets: { ...scoped.demoUser.secret
 const changeAvatar = ref<typeof modalVue>()
 const repeatPassword = ref('')
 const anythingChanged = computed(() => {
-  const col = (['name', 'email', 'bio']as Array<keyof UnwrapRef<typeof unchanged>>).some(item => unchanged.value[item] !== user[item])
+  const col = (['name', 'email', 'profile']as Array<keyof UnwrapRef<typeof unchanged>>).some(item => unchanged.value[item] !== user[item])
 
   return col
 })
-// const bio = ref('')
+// const profile = ref('')
 
 const uploading = ref(0)
 const saveAvatar = () => {
@@ -274,9 +274,9 @@ const updateUser = () => {
       </div>
 
       <label class="label">
-        <span class="label-text pl-3">BIO</span>
+        <span class="label-text pl-3">profile</span>
       </label>
-      <lazy-editor v-model="user.bio" @click.prevent="" />
+      <lazy-editor v-model="user.profile" @click.prevent="" />
     </form>
   </section>
 </template>

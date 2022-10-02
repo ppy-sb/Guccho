@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col justify-stretch">
     <userpage-head />
-    <userpage-bio />
+    <userpage-profile />
     <userpage-ranking-system-switcher class="z-10 !drop-shadow-xl" />
     <lazy-userpage-rank-chart v-if="currentRankingSystem" />
     <lazy-userpage-json-viewer />
