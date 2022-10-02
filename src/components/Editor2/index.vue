@@ -1,21 +1,34 @@
 <script setup lang="ts">
-import { defineProps, defineEmits } from 'vue'
+import { defineProps, defineEmits, onBeforeMount } from 'vue'
 import { EditorContent } from '@tiptap/vue-3'
 import '@/assets/typography.scss'
 
 import MenuBar from './MenuBar.vue'
 import useEditor from '~/composables/useEditor'
+import useEditorLazyLoadHighlight from '~~/src/composables/useEditorLazyLoadHighlight'
 const props = defineProps({
-  content: {
-    type: [String, Object],
-    default: ''
+  modelValue: {
+    type: Object,
+    default: undefined
+  },
+  editable: {
+    type: Boolean,
+    default: true
   }
 })
 const emit = defineEmits(['update:modelValue'])
 
-const [editor, subscribe] = useEditor(props.content)
+const { editor, subscribe } = useEditor()
 
-subscribe((content:string) => emit('update:modelValue', content))
+onBeforeMount(async () => {
+  const lazy = useEditorLazyLoadHighlight()
+  editor.value?.setEditable(props.editable)
+  if (props.editable) {
+    await Promise.all(lazy(props.modelValue))
+    editor.value?.commands.setContent(props.modelValue)
+  }
+  subscribe((content: Record<string, unknown>) => emit('update:modelValue', content))
+})
 
 </script>
 
@@ -60,20 +73,6 @@ subscribe((content:string) => emit('update:modelValue', content))
 
     .ProseMirror {
       min-height: 10vh;
-
-      ul[data-type="taskList"] {
-        >li {
-          @apply flex items-baseline gap-2;
-
-          p {
-            @apply my-0 #{!important};
-          }
-        }
-      }
-
-      mark {
-        @apply bg-warning dark:bg-kimberly-200 rounded-sm;
-      }
     }
   }
 }

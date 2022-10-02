@@ -1,13 +1,21 @@
 
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue'
-import type modalVue from '~/components/app/chat/modal.vue'
-import { demoUser } from '~/prototyping/objects/user'
-let unchanged = demoUser
-const user = reactive({ ...demoUser, secrets: { ...unchanged.secrets } })
+import { ref, reactive, computed, UnwrapRef } from 'vue'
+import type modalVue from '~/components/T/modal.vue'
+import { scoped as _scoped } from '~/prototyping/objects/user'
+
+const scoped = reactive(_scoped)
+const unchanged = computed(() => ({
+  ...scoped.demoUser
+}))
+const user = reactive({ ...scoped.demoUser, secrets: { ...scoped.demoUser.secrets } })
 const changeAvatar = ref<typeof modalVue>()
 const repeatPassword = ref('')
+const anythingChanged = computed(() => {
+  const col = (['name', 'email', 'bio']as Array<keyof UnwrapRef<typeof unchanged>>).some(item => unchanged.value[item] !== user[item])
 
+  return col
+})
 // const bio = ref('')
 
 const uploading = ref(0)
@@ -21,15 +29,9 @@ const saveAvatar = () => {
     // }, 700)
   }, 1000)
 }
-const anythingChanged = computed(() => {
-  const col = (['name', 'email', 'password', 'bio']as Array<keyof typeof demoUser>).some(item => unchanged[item] !== user[item])
-
-  return col
-})
 
 const updateUser = () => {
-  unchanged = {
-    ...unchanged,
+  scoped.demoUser = {
     ...user
   }
 }

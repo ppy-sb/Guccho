@@ -66,6 +66,9 @@ import { Atropos } from 'atropos/vue'
 import { userpageLineChartOptions } from '~/common/shared'
 
 import { hsvRaw } from '~/palette'
+
+import 'chart.js/auto/auto.mjs'
+
 const hsl = ([h, s, l], a) => `hsl(${h} ${s}% ${l}% / ${a}%)`
 const gRankFill = hsl(hsvRaw.wewak[500], 20)
 const cRankFill = hsl(hsvRaw.kimberly[500], 30)

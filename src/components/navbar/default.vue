@@ -189,9 +189,9 @@ export default {
             }
           },
           {
-            name: 'components',
+            name: '[dev] playground',
             route: {
-              name: 'components'
+              name: 'playground'
             }
           },
           // {

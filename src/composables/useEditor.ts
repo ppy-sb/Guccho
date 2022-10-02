@@ -1,75 +1,46 @@
 /* eslint-disable import/no-named-as-default */
+// TODO: considering lazy load libs
 import { ref, onBeforeMount, onBeforeUnmount } from 'vue'
-import Highlight from '@tiptap/extension-highlight'
-import Typography from '@tiptap/extension-typography'
-import StarterKit from '@tiptap/starter-kit'
-import CharacterCount from '@tiptap/extension-character-count'
-import TaskItem from '@tiptap/extension-task-item'
-import TaskList from '@tiptap/extension-task-list'
-import { Editor } from '@tiptap/vue-3'
-import TextAlign from '@tiptap/extension-text-align'
-import Placeholder from '@tiptap/extension-placeholder'
-import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
+import { Editor as EditorVue } from '@tiptap/vue-3'
+import type { Editor as EditorCore, JSONContent } from '@tiptap/core'
 
-import { lowlight } from 'lowlight/lib/core'
-import { useRuntimeConfig } from 'nuxt/app'
+import useEditorExtensions from './useEditorExtensions'
+import useEditorLazyLoadHighlight from './useEditorLazyLoadHighlight'
 
-export default (content: string | Record<string, unknown>) => {
-  const { hljs } = useRuntimeConfig()
-  const editor = ref<Editor>()
-  const lazyLoadCodeBlock = ({ editor }: {editor: Editor}) => {
+export default () => {
+  const extensions = useEditorExtensions()
+  const lazy = useEditorLazyLoadHighlight()
+  const editor = ref<EditorVue>()
+  let mounted = false
+  const lazyLoadCodeBlock = ({ editor }: {editor: EditorCore}) => {
     const json = editor.getJSON()
-    json.content?.forEach(async (node) => {
-      if (node.type !== 'codeBlock') { return }
-      const language = node.attrs?.language
-      if (!language) { return }
-      if (lowlight.registered(language)) { return }
-      if (!hljs[language]) { return }
-      try {
-        console.info('tring to lazy load hljs lib:', hljs[language])
-        const f = await import(`../../node_modules/highlight.js/es/languages/${hljs[language]}.js`)
-        lowlight.registerLanguage(language, f.default)
-      } catch (e) {
-        console.info(e)
-      }
-    })
+    lazy(json)
   }
+
+  const subscribedBeforeMounted: Array<CallableFunction> = []
   onBeforeMount(() => {
-    editor.value = new Editor({
-      content,
-      extensions: [
-        StarterKit.configure({
-          codeBlock: false
-        }),
-        TextAlign.configure({
-          types: ['heading', 'paragraph']
-        }),
-        Highlight,
-        TaskList,
-        TaskItem,
-        Typography,
-        CharacterCount.configure({
-          limit: 10000
-        }),
-        CodeBlockLowlight.configure({
-          lowlight,
-          exitOnArrowDown: true
-        }),
-        Placeholder.configure({
-          placeholder: 'Welcome to my userpage!'
-        })
-      ]
+    editor.value = new EditorVue({
+      extensions
     })
     editor.value.on('beforeCreate', lazyLoadCodeBlock)
     editor.value.on('update', lazyLoadCodeBlock)
-    // if (onUpdate) { editor.value.on('update', ({ editor }) => onUpdate(editor.getHTML())) }
+    mounted = true
+    subscribedBeforeMounted.forEach(subscriber => editor.value?.on('update', ({ editor }) => subscriber(editor.getJSON())))
   })
   onBeforeUnmount(() => {
     editor.value?.destroy()
   })
 
-  return [
+  return {
     editor,
-    (cb: (content: string) => void) => editor.value?.on('update', ({ editor }) => cb(editor.getHTML()))
-  ]
+    extensions,
+    subscribe: (cb: (content: JSONContent) => void) => {
+      if (mounted) {
+        editor.value?.on('update', ({ editor }) => {
+          cb(editor.getJSON())
+        })
+      }
+      subscribedBeforeMounted.push(cb)
+    }
+  }
 }
