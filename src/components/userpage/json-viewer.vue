@@ -1,9 +1,16 @@
 <template>
-  <json-viewer
-    :value="user"
-    :expand-depth="3"
-    theme="dark"
-  />
+  <section
+
+    class="container mt-4 custom-container mx-auto "
+  >
+    <json-viewer
+      :value="user"
+      :expand-depth="3"
+      theme="dark"
+      copyable
+      class="rounded-3xl"
+    />
+  </section>
 </template>
 
 <script setup>

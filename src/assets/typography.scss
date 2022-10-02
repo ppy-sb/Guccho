@@ -7,15 +7,19 @@
     margin: 0;
   }
 
+  :where(pre):not(:where([class~="not-prose"] *)) {
+    @apply rounded-xl;
+  }
+
   :where(ul[data-type="taskList"]):not(:where([class~="not-prose"] *)) {
     @apply pl-1.5;
     list-style-type: none;
 
-    > li {
+    & > li {
       @apply flex items-baseline gap-2;
 
-      p {
-        @apply my-0 #{!important};
+      & p {
+        @apply my-0;
       }
     }
   }
