@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import type { JSONContent } from '@tiptap/core'
 import type {
   VisibilityScope,
   RankingSystem,
@@ -140,7 +141,7 @@ export interface UserModel<Id, IncludeSecrets extends boolean, IncludeMode exten
   status: UserActivityStatus
 
   oldNames: UserHistoricalName[]
-  bio: string,
+  bio: JSONContent,
 
   friends: UserFriend<Id>[]
 

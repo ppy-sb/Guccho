@@ -23,7 +23,7 @@ export const sampleUserWithSecrets: User<string, true> = {
     password: '123456788',
     apiKey: 'aaaaa-bbbbb'
   },
-  bio: '',
+  bio: { type: 'doc', content: [{ type: 'paragraph', attrs: { textAlign: 'left' }, content: [{ type: 'text', text: 'fasdfasdasd' }] }, { type: 'paragraph', attrs: { textAlign: 'left' } }, { type: 'codeBlock', attrs: { language: 'javascript' }, content: [{ type: 'text', text: 'const a = sb()' }] }] },
   statistics: {
     osu: {
       standard: {
@@ -335,23 +335,27 @@ export const sampleUserWithSecrets: User<string, true> = {
 //   }
 // }
 
-export class MockAPI {
-  static getById<HasSecret extends boolean = false> (id: string, secrets: HasSecret): User<typeof id, HasSecret> | void {
-  // const result = demoUserList.get(id)
-    const result = sampleUserWithSecrets
-    if (!result) { return undefined }
-    if ('secrets' in result) {
-      if (secrets) { return result } else {
-        return undefined
-      }
-    } else if (!secrets) { return result } else {
-      const _result = {
-        ...result,
-        secret: undefined
-      }
-      return _result
-    }
-  }
+// export class MockAPI {
+//   static getById<HasSecret extends boolean = false> (id: string, secrets: HasSecret): User<typeof id, HasSecret> | void {
+//   // const result = demoUserList.get(id)
+//     const result = sampleUserWithSecrets
+//     if (!result) { return undefined }
+//     if ('secrets' in result) {
+//       if (secrets) { return result } else {
+//         return undefined
+//       }
+//     } else if (!secrets) { return result } else {
+//       const _result = {
+//         ...result,
+//         secret: undefined
+//       }
+//       return _result
+//     }
+//   }
+// }
+
+export const scoped = {
+  demoUser: sampleUserWithSecrets
 }
 
 export const demoUser = sampleUserWithSecrets

@@ -1,5 +1,5 @@
 .custom-typography {
-  @apply prose prose-slate dark:prose-invert xl:prose-xl max-w-none;
+  @apply prose prose-sm md:prose-base lg:prose-lg xl:prose-xl prose-slate dark:prose-invert xl:prose-xl max-w-none;
 
   @apply prose-pre:bg-kimberly-800 prose-pre:text-kimberly-50;
 
@@ -10,5 +10,23 @@
   :where(ul[data-type="taskList"]):not(:where([class~="not-prose"] *)) {
     @apply pl-1.5;
     list-style-type: none;
+
+    > li {
+      @apply flex items-baseline gap-2;
+
+      p {
+        @apply my-0 #{!important};
+      }
+    }
+  }
+
+  mark {
+    @apply bg-warning dark:bg-kimberly-200 rounded-sm;
+  }
+
+  &.ssr {
+    p:not(:where([class~="not-prose"] *)) {
+      min-height: 2rem;
+    }
   }
 }

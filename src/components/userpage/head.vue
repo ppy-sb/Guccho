@@ -1,6 +1,6 @@
 <template>
   <section
-    class="w-full md:w-max md:container custom-container mx-auto mt-5 md:mt-20 flex flex-col items-center md:flex-row md:items-end gap-5 "
+    class="w-full md:container custom-container mx-auto mt-5 md:mt-20 flex flex-col items-center md:flex-row md:items-end gap-5 "
   >
     <!-- Logo -->
     <div>

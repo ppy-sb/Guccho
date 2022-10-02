@@ -25,7 +25,7 @@ definePageMeta({
         {{ route.name }}
       </t-nuxt-link-button> -->
       <t-tabs variant="bordered">
-        <t-tab
+        <!-- <t-tab
           class="tab-lg"
           :class="{
             'tab-active': currentRoute.path === root.path
@@ -34,7 +34,7 @@ definePageMeta({
           @click="navigateTo(root)"
         >
           Index
-        </t-tab>
+        </t-tab> -->
         <t-tab
           v-for="route in children"
           :key="route.name"
@@ -44,7 +44,7 @@ definePageMeta({
           class="tab-lg"
           @click="navigateTo(route)"
         >
-          {{ route.name }}
+          {{ route.name.split('-').slice(1).join('-') }}
         </t-tab>
       </t-tabs>
     </section>
