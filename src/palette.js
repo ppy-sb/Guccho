@@ -68,7 +68,6 @@ export const hex = {
     900: '#14151E'
   }
 }
-
 const to = (converter, transform = a => a) => {
   const convertSingle = colors => Object.entries(colors).reduce((acc, [key, value]) => {
     acc[key] = transform(converter(value))
@@ -80,6 +79,5 @@ const to = (converter, transform = a => a) => {
     return acc
   }, {})
 }
-
 export const palette = to(convert.hex.hsl, ([h, s, l]) => `hsl(${h} ${s}% ${l}%)`)
 export const hsvRaw = to(convert.hex.hsl)
