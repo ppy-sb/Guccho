@@ -1,6 +1,6 @@
 <template>
   <!-- bg-wewak-300 dark:bg-wewak-800 md:bg-transparent -->
-  <nav ref="root" class="z-20 w-full transition-all md:fixed drop-shadow-lg backdrop-blur-sm bg-kimberly-50/30 dark:bg-kimberly-600/30">
+  <nav ref="root" class="z-20 w-full transition-all md:fixed drop-shadow-lg backdrop-blur bg-kimberly-50/30 dark:bg-kimberly-600/30">
     <div class="mx-auto container lg:px-2">
       <div class="relative flex items-center justify-between h-10">
         <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
