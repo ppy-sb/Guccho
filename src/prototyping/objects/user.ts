@@ -23,7 +23,7 @@ export const sampleUserWithSecrets: User<string, true> = {
     password: '123456788',
     apiKey: 'aaaaa-bbbbb'
   },
-  bio: {
+  profile: {
     type: 'doc',
     content: [
       {
