@@ -40,7 +40,7 @@ onBeforeMount(async () => {
       :editor="editor"
     />
 
-    <div class="character-count">
+    <div class="character-count editor__footer">
       {{ editor.storage.characterCount.characters() }}/{{ 10000 }} characters
       <br>
       {{ editor.storage.characterCount.words() }} words
@@ -60,20 +60,25 @@ onBeforeMount(async () => {
     align-items: center;
     flex: 0 0 auto;
     flex-wrap: wrap;
-    border-bottom: 2px solid;
     border-top: 2px solid;
+    border-bottom: 2px solid;
   }
 
   &__content {
     flex: 1 1 auto;
-    overflow-x: hidden;
-    overflow-y: auto;
+    // overflow-x: hidden;
+    // overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    border-bottom: 2px solid ;
+    // border-bottom: 2px solid ;
 
     .ProseMirror {
       min-height: 10vh;
+      @apply outline-offset-4 overflow-visible
     }
+  }
+  &__footer {
+    @apply mt-2 pt-1;
+    border-top: 2px solid;
   }
 }
 </style>

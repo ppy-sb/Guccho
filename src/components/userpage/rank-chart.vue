@@ -129,15 +129,15 @@ const countryRank = {
   @apply sm:overflow-visible sm:mx-auto;
 
   .atropos-bg {
-    @apply rounded-3xl
+    @apply rounded-2xl
   }
 
   .atropos-inner {
-    @apply sm:rounded-3xl sm:overflow-hidden !important
+    @apply sm:rounded-2xl sm:overflow-hidden !important
   }
 
   .atropos-shadow {
-    @apply rounded-3xl bg-wewak-300 !important;
+    @apply rounded-2xl bg-wewak-300 !important;
     /* width: 102%; */
     /* height: 102%; */
     /* left: -1%; */
