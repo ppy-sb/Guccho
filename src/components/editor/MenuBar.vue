@@ -2,18 +2,53 @@
   <div>
     <template v-for="(item, index) in items">
       <div v-if="item.type === 'divider'" :key="`divider${index}`" class="divider" />
-      <menu-item v-else :key="index" v-bind="item" />
+      <menu-item v-else :key="index" v-bind="item" class="menu-item icon" />
     </template>
     <template v-if="editor.isActive('codeBlock')">
-      <label for="indent" class="label">Tab Size:</label>
-      <input id="indent" :value="indent" type="number" class="input input-sm input-ghost" @input="(event) => $emit('update:indent', event.target.value)">
+      <label for="indent" class="label">Indent:</label>
+      <button
+        class="menu-item flex items-center"
+        :class="{
+          'is-active': indent === '  '
+        }"
+        @click="$emit('update:indent', '  ')"
+      >
+        <svg class="remix" style="width: 1.5rem; height: 1.5rem;">
+          <use :xlink:href="`${remixiconUrl}#ri-space`" />
+        </svg>
+        2
+      </button>
+      <button
+        class="menu-item flex"
+        :class="{
+          'is-active': indent === '    '
+        }"
+        @click="$emit('update:indent', '    ')"
+      >
+        <svg
+          class="remix"
+          style="width: 1.5rem; height: 1.5rem;"
+        >
+          <use :xlink:href="`${remixiconUrl}#ri-space`" />
+        </svg>
+        4
+      </button>
+      <button
+        class="menu-item"
+        :class="{
+          'is-active': indent === '\t'
+        }"
+        @click="$emit('update:indent', '\t')"
+      >
+        ⇥
+      </button>
     </template>
   </div>
 </template>
 
 <script>
+import remixiconUrl from 'remixicon/fonts/remixicon.symbol.svg'
 import MenuItem from './MenuItem.vue'
-
 export default {
   components: {
     MenuItem
@@ -25,14 +60,15 @@ export default {
       required: true
     },
     indent: {
-      type: Number,
-      default: undefined
+      type: String,
+      default: '  '
     }
   },
   emits: ['update:indent'],
 
   data () {
     return {
+      remixiconUrl,
       items: [
         {
           icon: 'bold',
@@ -169,5 +205,32 @@ export default {
   background-color: rgba(#000, 0.1);
   margin-left: 0.5rem;
   margin-right: 0.75rem;
+}
+.menu-item {
+  border: none;
+  background-color: transparent;
+  border-radius: 0.4rem;
+  margin-right: 0.25rem;
+  padding: 0.25rem;
+
+  svg {
+    width: 100%;
+    height: 100%;
+    fill: currentColor;
+  }
+  &.icon {
+    padding: 0.25rem;
+  }
+
+  &.is-active,
+  &:hover {
+    @apply text-kimberly-100 bg-kimberly-800 dark:text-kimberly-900 dark:bg-kimberly-100;
+    // color: #FFF;
+    // background-color: #0D0D0D;
+  }
+}
+.icon {
+  width: 1.75rem !important;
+  height: 1.75rem !important;
 }
 </style>

@@ -10,10 +10,9 @@ import TextAlign from '@tiptap/extension-text-align'
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
 
 import { lowlight } from 'lowlight/lib/core'
-import { Reactive } from 'vue'
 
 export default (config: {
-  indent: number
+  indent: string
 }) => [
   StarterKit.configure({
     codeBlock: false
@@ -31,7 +30,12 @@ export default (config: {
   CodeBlockLowlight.extend({
     addKeyboardShortcuts () {
       return {
-        Tab: ({ editor }) => editor.commands.insertContent(' '.repeat(config.indent || 2))
+        ...this.parent?.(),
+        Tab: ({ editor }) => {
+          if (!this.editor.isActive('codeBlock')) { return false }
+          editor.commands.insertContent(config.indent)
+          return true
+        }
       }
     }
   }).configure({

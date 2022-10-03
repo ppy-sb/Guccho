@@ -9,11 +9,11 @@ import useEditorLazyLoadHighlight from '~/composables/useEditorLazyLoadHighlight
 const props = withDefaults(defineProps<{
   modelValue?: JSONContent,
   editable?: boolean,
-  indent?: number
+  indent?: string
 }>(), {
   modelValue: undefined,
   editable: true,
-  indent: 2
+  indent: '  '
 })
 const emit = defineEmits(['update:modelValue'])
 
