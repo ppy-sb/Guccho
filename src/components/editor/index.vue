@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeMount } from 'vue'
+import { onBeforeMount, reactive } from 'vue'
 import { EditorContent, JSONContent } from '@tiptap/vue-3'
 import '@/assets/typography.scss'
 
@@ -7,14 +7,20 @@ import MenuBar from './MenuBar.vue'
 import useEditor from '~/composables/useEditor'
 import useEditorLazyLoadHighlight from '~/composables/useEditorLazyLoadHighlight'
 const props = withDefaults(defineProps<{
-  modelValue: JSONContent,
-  editable: boolean
+  modelValue?: JSONContent,
+  editable?: boolean,
+  indent?: number
 }>(), {
-  editable: true
+  modelValue: undefined,
+  editable: true,
+  indent: 2
 })
 const emit = defineEmits(['update:modelValue'])
 
-const { editor, subscribe } = useEditor()
+const editorConf = reactive({
+  indent: props.indent
+})
+const { editor, subscribe } = useEditor(editorConf)
 
 onBeforeMount(async () => {
   const lazy = useEditorLazyLoadHighlight()
@@ -25,12 +31,11 @@ onBeforeMount(async () => {
   }
   subscribe((content: Record<string, unknown>) => emit('update:modelValue', content))
 })
-
 </script>
 
 <template>
   <div v-if="editor" class="editor">
-    <menu-bar class="editor__header" :editor="editor" />
+    <menu-bar v-model:indent="editorConf.indent" class="editor__header" :editor="editor" />
     <editor-content
       class="editor__content custom-typography"
       :editor="editor"

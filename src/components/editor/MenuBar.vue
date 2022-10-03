@@ -4,6 +4,10 @@
       <div v-if="item.type === 'divider'" :key="`divider${index}`" class="divider" />
       <menu-item v-else :key="index" v-bind="item" />
     </template>
+    <template v-if="editor.isActive('codeBlock')">
+      <label for="indent" class="label">Tab Size:</label>
+      <input id="indent" :value="indent" type="number" class="input input-sm input-ghost" @input="(event) => $emit('update:indent', event.target.value)">
+    </template>
   </div>
 </template>
 
@@ -19,8 +23,13 @@ export default {
     editor: {
       type: Object,
       required: true
+    },
+    indent: {
+      type: Number,
+      default: undefined
     }
   },
+  emits: ['update:indent'],
 
   data () {
     return {
@@ -143,6 +152,9 @@ export default {
           icon: 'arrow-go-forward-line',
           title: 'Redo',
           action: () => this.editor.chain().focus().redo().run()
+        },
+        {
+          type: 'divider'
         }
       ]
     }

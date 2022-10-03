@@ -6,9 +6,12 @@ import type { Editor as EditorCore, JSONContent } from '@tiptap/core'
 
 import useEditorExtensions from './useEditorExtensions'
 import useEditorLazyLoadHighlight from './useEditorLazyLoadHighlight'
-
-export default () => {
-  const extensions = useEditorExtensions()
+export default (reactiveConfig: {
+  indent: number
+} = {
+  indent: 2
+}) => {
+  const extensions = useEditorExtensions(reactiveConfig)
   const lazy = useEditorLazyLoadHighlight()
   const editor = ref<EditorVue>()
   let mounted = false
