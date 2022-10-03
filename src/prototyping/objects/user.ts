@@ -352,6 +352,10 @@ export const sampleUserWithSecrets: User<string, true> = {
   }
 }
 
+class UserAPIBase implements UserAPI<string, true> {
+
+}
+
 export const scoped = {
   demoUser: sampleUserWithSecrets
 }
