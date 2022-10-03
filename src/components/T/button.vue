@@ -5,7 +5,9 @@
       props.variant && `btn-${props.variant}`
     ]"
     @click="emit('click')"
-  />
+  >
+    <slot />
+  </button>
 </template>
 
 <script setup>

@@ -10,8 +10,11 @@ import TextAlign from '@tiptap/extension-text-align'
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
 
 import { lowlight } from 'lowlight/lib/core'
+import { Reactive } from 'vue'
 
-export default () => [
+export default (config: {
+  indent: number
+}) => [
   StarterKit.configure({
     codeBlock: false
   }),
@@ -25,7 +28,13 @@ export default () => [
   CharacterCount.configure({
     limit: 10000
   }),
-  CodeBlockLowlight.configure({
+  CodeBlockLowlight.extend({
+    addKeyboardShortcuts () {
+      return {
+        Tab: ({ editor }) => editor.commands.insertContent(' '.repeat(config.indent || 2))
+      }
+    }
+  }).configure({
     lowlight,
     exitOnArrowDown: true
   })
