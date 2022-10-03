@@ -1,3 +1,4 @@
+/* eslint-disable import/no-named-as-default */
 import Highlight from '@tiptap/extension-highlight'
 import Typography from '@tiptap/extension-typography'
 import StarterKit from '@tiptap/starter-kit'
