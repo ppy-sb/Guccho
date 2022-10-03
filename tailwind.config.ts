@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-env node */
-import convert from 'color-convert'
+import * as convert from 'color-convert'
 import { palette, convertSingle } from './src/palette'
 
 const themes = require('daisyui/src/colors/themes')
