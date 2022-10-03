@@ -1,4 +1,4 @@
-import convert from 'color-convert'
+import * as convert from 'color-convert'
 
 export const hex = {
   alabaster: {
