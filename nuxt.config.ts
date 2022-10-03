@@ -49,6 +49,11 @@ export default defineNuxtConfig({
     }
   },
 
+  trpc: {
+    baseURL: '', // Set empty string (default) to make requests by relative address
+    endpoint: '/trpc' // defaults to /trpc
+  },
+
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
   buildModules: [
     'floating-vue/nuxt'
@@ -67,7 +72,8 @@ export default defineNuxtConfig({
     // '@nuxt/content',
     // '@nuxtjs/auth-next',
     '@pinia/nuxt',
-    '@nuxtjs/color-mode'
+    '@nuxtjs/color-mode',
+    'trpc-nuxt'
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios

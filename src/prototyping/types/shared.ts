@@ -23,41 +23,41 @@ export type Awaitable<T> = T | Promise<T>
 //   [K in keyof T as K extends keys ? `fetch${Capitalize<string & K>}` : never]: () => Awaitable<T[Uncapitalize<string & K>]>
 // }
 
-export type APIfy<T extends Record<string, unknown>, keys extends keyof T | '_nobody\'s gonna know' = '_nobody\'s gonna know'> =
+export type APIfy<T extends Record<string, unknown>, Keys extends keyof T | '_noProp' = '_noProp'> =
   {
     [K in keyof T as
-
-      keys extends '_nobody\'s gonna know'
+      Keys extends '_noProp'
       ? K | `fetch${Capitalize<string & K>}`
-
-      : K extends keys
+      : K extends Keys
           ? `fetch${Capitalize<string & K>}`
           : K
     ]:
-      keys extends '_nobody\'s gonna know'
+      Keys extends '_noProp'
       ? (() => Awaitable<T[Uncapitalize<string & K>]>) | T[Uncapitalize<string & K>]
-      : K extends `fetch${Capitalize<string & K>}`
+      : K extends Keys
           ? () => Awaitable<T[Uncapitalize<string & K>]>
           : T[K]
   }
 
-// type Modal = {
-//   id: string,
-//   name: string,
-//   preferences: Record<string, any>
-// }
+type Modal = {
+  id: string,
+  name: string,
+  preferences: Record<string, any>
+}
 
-// const api: Partial<APIfy<Modal>> = {
-//   id: '11',
-//   fetchId () {
-//     return '11'
-//   }
-// }
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const api: Partial<APIfy<Modal>> = {
+  id: '11',
+  fetchId () {
+    return '11'
+  }
+}
 
-// const strictAPI: APIfy<Modal, 'preferences'> = {
-//   id: '11',
-//   name: 'test',
-//   fetchPreferences () {
-//     return {}
-//   }
-// }
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const strictAPI: APIfy<Modal, 'preferences'> = {
+  id: '11',
+  name: 'test',
+  fetchPreferences () {
+    return {}
+  }
+}
