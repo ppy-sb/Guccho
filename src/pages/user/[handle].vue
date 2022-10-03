@@ -12,7 +12,7 @@
 import { ref, Ref, provide, computed } from 'vue'
 // import { useAppConfig } from '#app'
 import { scoped } from '@/prototyping/objects/user'
-import { Mode, Ruleset } from '~~/src/prototyping/types/shared'
+import { Mode, Ruleset } from '~/prototyping/types/shared'
 const user = computed(() => scoped.demoUser)
 const tab = ref('ppv2')
 const selectedMode:Ref<Mode> = ref('osu')
