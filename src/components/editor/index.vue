@@ -1,20 +1,16 @@
 <script setup lang="ts">
-import { defineProps, defineEmits, onBeforeMount } from 'vue'
-import { EditorContent } from '@tiptap/vue-3'
+import { onBeforeMount } from 'vue'
+import { EditorContent, JSONContent } from '@tiptap/vue-3'
 import '@/assets/typography.scss'
 
 import MenuBar from './MenuBar.vue'
 import useEditor from '~/composables/useEditor'
 import useEditorLazyLoadHighlight from '~/composables/useEditorLazyLoadHighlight'
-const props = defineProps({
-  modelValue: {
-    type: Object,
-    default: undefined
-  },
-  editable: {
-    type: Boolean,
-    default: true
-  }
+const props = withDefaults(defineProps<{
+  modelValue: JSONContent,
+  editable: boolean
+}>(), {
+  editable: true
 })
 const emit = defineEmits(['update:modelValue'])
 

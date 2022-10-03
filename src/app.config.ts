@@ -1,5 +1,5 @@
-import { defineAppConfig } from 'nuxt/app'
-export default defineAppConfig({
+import { defineAppConfig } from '#app'
+const config = {
   baseUrl: 'dev.ppy.sb',
   version: {
     api: '1.0.3',
@@ -57,4 +57,5 @@ export default defineAppConfig({
     }
   },
   appModalTeleportTargetId: 'app-modal-portal'
-})
+}
+export default defineAppConfig(config)

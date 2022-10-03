@@ -10,17 +10,11 @@
     </div>
   </div>
 </template>
-<script setup>
-const props = defineProps({
-  title: {
-    type: String,
-    default: undefined
-  },
-  subtitle: {
-    type: String,
-    default: undefined
-  }
-})
+<script setup lang="ts">
+const props = defineProps<{
+  title: string,
+  subtitle: string
+}>()
 </script>
 
 <style lang="postcss" scoped>

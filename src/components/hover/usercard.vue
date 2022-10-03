@@ -1,7 +1,7 @@
 <template>
   <VTooltip delay="{ show: 500, hide: 100 }" placement="right">
-    <nuxt-link :to="href">
-      {{ user.name }}
+    <nuxt-link :to="to">
+      {{ props.user.name }}
     </nuxt-link>
 
     <template #popper>
@@ -11,16 +11,16 @@
         <div v-if="user">
           <div class="flex gap-2 items-center">
             <img
-              :src="`https://a.${config.baseUrl}/${user.player_id}`"
+              :src="`https://a.${config.baseUrl}/${props.user.id}`"
               alt=""
               class="w-16 h-16 rounded-lg"
             >
             <div>
               <h1 class="text-xl">
-                {{ user.name }}
+                {{ props.user.name }}
               </h1>
               <h1>
-                <img class="h-6 w-auto" :src="$getFlagURL(user.country)">
+                <img class="h-6 w-auto" :src="$getFlagURL(props.user.flag)">
               </h1>
             </div>
           </div>
@@ -30,23 +30,14 @@
   </VTooltip>
 </template>
 
-<script setup>
-import { useAppConfig } from 'nuxt/app'
-
+<script setup lang="ts">
+import { useAppConfig } from '#app'
+import { RouterLinkProps } from 'vue-router'
+import { User } from '@/prototyping/types/user'
 // const runtimeConfig = useAppConfig()
 const config = useAppConfig()
-const props = defineProps({
-  user: {
-    type: Object,
-    required: true
-  },
-  href: {
-    type: String,
-    required: false,
-    default: '/'
-  }
-})
-
-const user_status = ref(null)
-const fetching = ref(true)
+const props = defineProps<{
+  user: User<string>,
+  to: RouterLinkProps['to']
+}>()
 </script>
