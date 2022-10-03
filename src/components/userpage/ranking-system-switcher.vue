@@ -2,9 +2,9 @@
   <section class="w-full pt-4 mx-auto ">
     <t-tabs v-slot="{select}" v-model="tab" variant="bordered">
       <t-tab disabled class="f-tab grow p-0 m-0" />
-      <t-tab class="f-tab" value="Timeline">
+      <!-- <t-tab class="f-tab" value="Timeline">
         Timeline
-      </t-tab>
+      </t-tab> -->
 
       <t-tab
         v-for="(stats, key) of tabs"
