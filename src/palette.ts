@@ -83,4 +83,4 @@ const to = <T extends (...args: any) => unknown>(converter: T, transform =
     }, {} as Record<keyof typeof hex, Record<string, ReturnType<typeof transform>>>)
 }
 export const palette = to(convert.hex.hsl, ([h, s, l]) => `hsl(${h} ${s}% ${l}%)`) as unknown as typeof hex
-export const hsvRaw = to(convert.hex.hsl)
+export const hsvRaw = to(convert.hex.hsl) as unknown as Record<string, ReturnType<typeof convert['hex']['hsl']>>
