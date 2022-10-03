@@ -5,7 +5,7 @@ import '@/assets/typography.scss'
 
 import MenuBar from './MenuBar.vue'
 import useEditor from '~/composables/useEditor'
-import useEditorLazyLoadHighlight from '~~/src/composables/useEditorLazyLoadHighlight'
+import useEditorLazyLoadHighlight from '~/composables/useEditorLazyLoadHighlight'
 const props = defineProps({
   modelValue: {
     type: Object,

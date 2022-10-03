@@ -1,15 +1,9 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-env node */
-/** @type {import('tailwindcss').Config} */
 import convert from 'color-convert'
-import { palette } from './src/palette'
+import { palette, convertSingle } from './src/palette'
 
 const themes = require('daisyui/src/colors/themes')
-
-const convertSingle = (colors, converter, transform) => Object.entries(colors).reduce((acc, [key, value]) => {
-  acc[key] = transform(converter(value))
-  return acc
-}, {})
 
 const cupcake = convertSingle(themes['[data-theme=cupcake]'], convert.hex.hsl, ([h, s, l]) => `hsl(${h} ${s}% ${l}%)`)
 const dracula = convertSingle(themes['[data-theme=dracula]'], convert.hex.hsl, ([h, s, l]) => `hsl(${h} ${s}% ${l}%)`)
@@ -41,8 +35,7 @@ const guweb = [
     }
   }
 ]
-console.log(guweb)
-
+/** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
     './src/components/**/*.{vue,js}',
