@@ -113,24 +113,24 @@ export interface UserModel<Id, IncludeSecrets extends boolean, IncludeMode exten
   statistics: OmitNever<{
     [M in Mode]: M extends IncludeMode ? OmitNever<{
       [R in Ruleset]:
-        R extends IncludeRuleset
+      R extends IncludeRuleset
 
-        ? M extends StandardAvailable
-        ? R extends 'standard'
-        ? UserModeRulesetStatistics<Ranking>
+      ? M extends StandardAvailable
+      ? R extends 'standard'
+      ? UserModeRulesetStatistics<Ranking>
 
-        : M extends RelaxAvailable
-        ? R extends 'relax'
-        ? UserModeRulesetStatistics<Ranking>
+      : M extends RelaxAvailable
+      ? R extends 'relax'
+      ? UserModeRulesetStatistics<Ranking>
 
-        : M extends AutopilotAvailable
-        ? R extends 'autopilot'
-        ? UserModeRulesetStatistics<Ranking>
+      : M extends AutopilotAvailable
+      ? R extends 'autopilot'
+      ? UserModeRulesetStatistics<Ranking>
 
-        : never
-        : never
-        : never
-        : never
+      : never
+      : never
+      : never
+      : never
 
       : never
     }>
@@ -158,10 +158,18 @@ export type User<
   Ranks extends RankingSystem = RankingSystem
 > = OmitNever<UserModel<Id, Secret, IncludeMode, IncludeRuleset, Ranks>>
 
-export type UserAPI<Id> = APIfy<User<Id, true>,
-  | 'preferences'
-  | 'reachable'
-  | 'statistics'
-  | 'oldNames'
-  | 'secrets'
->
+export type UserAPI<Id, Secrets extends boolean = false> =
+  Secrets extends true ?
+  APIfy<User<Id, true>,
+    | 'preferences'
+    | 'reachable'
+    | 'statistics'
+    | 'oldNames'
+    | 'secrets'
+  >
+  : APIfy<User<Id, false>,
+    | 'preferences'
+    | 'reachable'
+    | 'statistics'
+    | 'oldNames'
+  >
