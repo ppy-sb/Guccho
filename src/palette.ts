@@ -68,19 +68,19 @@ export const hex = {
     900: '#14151E'
   }
 }
-export const convertSingle = <T = any>(colors: Record<string, any>, converter: CallableFunction, transform: (any: any) => T) =>
-  Object.entries(colors).reduce<Record<string, any>>((acc, [key, value]) => {
+export const convertSingle = <T extends (...args: any) => any>(colors: Record<string, any>, converter: T, transform: (any: ReturnType<T>) => any) =>
+  Object.entries(colors).reduce<Record<string, T>>((acc, [key, value]) => {
     acc[key] = transform(converter(value))
     return acc
-  }, {})
+  }, {}) as Record<string, ReturnType<typeof transform>>
 
-const to = <T = any, K = any>(converter: (a: any) => T, transform: (a: T) => K =
-a => a as unknown as K) => {
+const to = <T extends (...args: any) => unknown>(converter: T, transform =
+(a: ReturnType<T>) => a as unknown) => {
   return Object.entries(hex)
     .reduce((acc, [key, colors]: [string, Record<string, any>]) => {
       acc[key as keyof typeof hex] = convertSingle(colors, converter, transform)
       return acc
-    }, {} as Record<keyof typeof hex, Record<string, K>>)
+    }, {} as Record<keyof typeof hex, Record<string, ReturnType<typeof transform>>>)
 }
 export const palette = to(convert.hex.hsl, ([h, s, l]) => `hsl(${h} ${s}% ${l}%)`) as unknown as typeof hex
 export const hsvRaw = to(convert.hex.hsl)
