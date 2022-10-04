@@ -113,7 +113,7 @@ const updateUser = () => {
             >
               change
             </button>
-            <img src="~/assets/images/1.png" class="pointer-events-none " style="min-width:150px; width:150px;">
+            <img src="/images/1.png" class="pointer-events-none " style="min-width:150px; width:150px;">
           </div>
           <div>
             <h1 class="text-5xl text-left">

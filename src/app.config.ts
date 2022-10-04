@@ -1,4 +1,4 @@
-import { defineAppConfig } from '#app'
+import { defineAppConfig } from 'nuxt/app'
 const config = {
   baseUrl: 'dev.ppy.sb',
   version: {
