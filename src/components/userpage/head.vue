@@ -4,7 +4,7 @@
   >
     <!-- Logo -->
     <div>
-      <img src="~/assets/images/1.png" class="mask mask-squircle" width="300">
+      <img src="/images/1.png" class="mask mask-squircle" width="300">
     </div>
     <!-- info -->
     <div
