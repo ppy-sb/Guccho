@@ -39,7 +39,7 @@ export default (reactiveConfig: {
     extensions,
     subscribe: (cb: (content: JSONContent) => void) => {
       if (mounted) {
-        editor.value?.on('update', ({ editor }) => {
+        return editor.value?.on('update', ({ editor }) => {
           cb(editor.getJSON())
         })
       }
