@@ -275,7 +275,7 @@ const updateUser = () => {
     <label class="label">
       <span class="label-text pl-3">profile</span>
     </label>
-    <lazy-editor v-model="user.profile" />
+    <lazy-editor v-model="user.profile" class="safari-performance-boost" />
   </section>
 </template>
 
@@ -309,5 +309,12 @@ const updateUser = () => {
   @apply hover:shadow-lg;
   @apply transition-shadow transition-colors;
 }
-
+</style>
+<style lang="postcss">
+.safari .safari-performance-boost {
+  @apply max-h-80;
+  .editor__content {
+    @apply overflow-y-auto
+  }
+}
 </style>

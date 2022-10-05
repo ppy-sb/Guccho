@@ -48,7 +48,7 @@ onBeforeMount(async () => {
   display: flex;
   flex-direction: column;
 
-  border-radius: 0.75rem;
+  // border-radius: 0.75rem;
 
   &__header {
     display: flex;
