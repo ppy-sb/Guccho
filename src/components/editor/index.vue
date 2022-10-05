@@ -40,12 +40,6 @@ onBeforeMount(async () => {
       class="editor__content custom-typography"
       :editor="editor"
     />
-
-    <div class="character-count editor__footer">
-      {{ editor.storage.characterCount.characters() }}/{{ 10000 }} characters
-      <br>
-      {{ editor.storage.characterCount.words() }} words
-    </div>
   </div>
 </template>
 
