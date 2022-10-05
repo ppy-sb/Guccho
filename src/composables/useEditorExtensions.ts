@@ -2,7 +2,7 @@
 import Highlight from '@tiptap/extension-highlight'
 import Typography from '@tiptap/extension-typography'
 import StarterKit from '@tiptap/starter-kit'
-import CharacterCount from '@tiptap/extension-character-count'
+// import CharacterCount from '@tiptap/extension-character-count'
 import TaskItem from '@tiptap/extension-task-item'
 import TaskList from '@tiptap/extension-task-list'
 import TextAlign from '@tiptap/extension-text-align'
@@ -24,9 +24,9 @@ export default (config: {
   TaskList,
   TaskItem,
   Typography,
-  CharacterCount.configure({
-    limit: 10000
-  }),
+  // CharacterCount.configure({
+  //   limit: 10000
+  // }),
   CodeBlockLowlight.extend({
     addKeyboardShortcuts () {
       return {
