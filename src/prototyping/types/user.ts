@@ -48,6 +48,7 @@ export interface BaseRank {
   countryRank: number,
   // countryRankHistory: number[]
 
+  accuracy: number
   // TODO: Score
   // tops: Score[]
   // recent: Score[]

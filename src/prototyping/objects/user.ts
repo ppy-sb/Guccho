@@ -9,6 +9,7 @@ const createScoreRank = (
     rankHistory: { [createISODate(new Date('2023-01-01'))]: 1 },
     countryRank: 1,
     // countryRankHistory: {[createISODate(new Date('2023-01-01'))]:1},
+    accuracy: 0.98,
     score: 1_000_000_000,
     scoreHistory: {
       [createISODate(new Date('2021-01-01'))]: 0,
@@ -25,6 +26,7 @@ const createPPRank = (
     rankHistory: { [createISODate(new Date('2023-01-01'))]: 1 },
     countryRank: 1,
     // countryRankHistory: {[createISODate(new Date('2023-01-01'))]:1},
+    accuracy: 0.98,
     performance: 100,
     performanceHistory: { [createISODate(new Date('2022-01-01'))]: 0, [createISODate(new Date('2023-01-01'))]: 100 }
   }
