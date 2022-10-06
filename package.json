@@ -16,7 +16,9 @@
     "backend": "python3.9 server/main.py",
     "backend2": "python server/main.py",
     "ts-node": "ts-node",
-    "bump": "yarn upgrade && npx syncyarnlock --save --keepPrefix && yarn install"
+    "sync-from-lock": "yarn upgrade && npx syncyarnlock --save --keepPrefix && yarn install",
+    "check-update": "npx npm-check-updates",
+    "update-dep": "npx ncu -u"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.2.0",
