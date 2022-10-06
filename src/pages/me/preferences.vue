@@ -275,11 +275,11 @@ const updateUser = () => {
     <label class="label">
       <span class="label-text pl-3">profile</span>
     </label>
-    <lazy-editor v-model="user.profile" class="safari-performance-boost" />
+    <lazy-editor v-model.lazy="user.profile" class="safari-performance-boost" />
   </section>
 </template>
 
-<style lang="postcss" scoped>
+<style lang="scss" scoped>
 .hoverable {
 
   img,
@@ -310,7 +310,7 @@ const updateUser = () => {
   @apply transition-shadow transition-colors;
 }
 </style>
-<style lang="postcss">
+<style lang="scss">
 .safari .safari-performance-boost {
   @apply max-h-80;
   .editor__content {

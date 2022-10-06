@@ -25,7 +25,7 @@ const { editor, subscribe } = useEditor(editorConf)
 onBeforeMount(async () => {
   const lazy = useEditorLazyLoadHighlight()
   editor.value?.setEditable(props.editable)
-  if (props.editable) {
+  if (props.editable && props.modelValue) {
     await Promise.all(lazy(props.modelValue))
     editor.value?.commands.setContent(props.modelValue)
   }
