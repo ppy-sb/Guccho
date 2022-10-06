@@ -1,6 +1,6 @@
 <template>
   <div class="container mx-auto">
-    <lazy-editor v-model="html" />
+    <lazy-editor v-model.lazy="html" class="safari-performance-boost" />
 
     <div class="py-4">
       <t-button v-if="!showJSON" variant="primary" @click="showJSON = true">
@@ -29,5 +29,10 @@ const showJSON = ref(false)
 </script>
 
 <style lang="scss" scoped>
-
+.safari .safari-performance-boost {
+  @apply max-h-80;
+  .editor__content {
+    @apply overflow-y-auto
+  }
+}
 </style>
