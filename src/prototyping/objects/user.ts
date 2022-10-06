@@ -1,5 +1,49 @@
 import type { User } from '../types/tree'
-import { UserAPI } from '../types/user'
+import { UserAPI, ScoreRank, PPRank, UserModeRulesetStatistics } from '../types/user'
+
+const createISODate = (date: Date = new Date()) => date.toUTCString()
+
+const createScoreRank = (
+  initial: ScoreRank = {
+    rank: 1,
+    rankHistory: { [createISODate(new Date('2023-01-01'))]: 1 },
+    countryRank: 1,
+    // countryRankHistory: {[createISODate(new Date('2023-01-01'))]:1},
+    score: 1_000_000_000,
+    scoreHistory: {
+      [createISODate(new Date('2021-01-01'))]: 0,
+      [createISODate(new Date('2021-02-01'))]: 200_000_000,
+      [createISODate(new Date('2021-03-01'))]: 800_000_000,
+      [createISODate(new Date('2022-01-01'))]: 1_000_000_000
+    }
+  }
+): ScoreRank => JSON.parse(JSON.stringify(initial))
+
+const createPPRank = (
+  initial: PPRank = {
+    rank: 1,
+    rankHistory: { [createISODate(new Date('2023-01-01'))]: 1 },
+    countryRank: 1,
+    // countryRankHistory: {[createISODate(new Date('2023-01-01'))]:1},
+    performance: 100,
+    performanceHistory: { [createISODate(new Date('2022-01-01'))]: 0, [createISODate(new Date('2023-01-01'))]: 100 }
+  }
+): PPRank => JSON.parse(JSON.stringify(initial))
+
+const createRulesetData = (
+  ppRankData: PPRank | undefined = undefined,
+  scoreRankData: ScoreRank | undefined = undefined
+): UserModeRulesetStatistics => ({
+  ranking: {
+    ppv2: createPPRank(ppRankData),
+    ppv1: createPPRank(ppRankData),
+    rankedScores: createScoreRank(scoreRankData),
+    totalScores: createScoreRank(scoreRankData)
+  },
+  playCount: 1,
+  playTime: 10000,
+  totalHits: 1
+})
 export const sampleUserWithSecrets: User<string, true> = {
   id: 'xxxxxyyyy',
   ingameId: 9999,
@@ -15,7 +59,7 @@ export const sampleUserWithSecrets: User<string, true> = {
     allowPrivateMessage: true,
     visibility: {
       email: 'public',
-      oldNamesDefault: 'public'
+      oldNames: 'public'
     }
   },
   secrets: {
@@ -54,306 +98,22 @@ export const sampleUserWithSecrets: User<string, true> = {
   },
   statistics: {
     osu: {
-      standard: {
-        ranking: {
-          ppv2: {
-            rank: 1000,
-            rankGraph: [1],
-            countryRank: 10,
-            // countryRankGraph: [1],
-            performance: 100,
-            performanceGraph: [0, 100]
-          },
-          ppv1: {
-            rank: 1,
-            rankGraph: [1],
-            countryRank: 1,
-            // countryRankGraph: [1],
-            performance: 100,
-            performanceGraph: [0, 100]
-          },
-          totalScores: {
-            rank: 1,
-            rankGraph: [1],
-            countryRank: 1,
-            // countryRankGraph: [1],
-            score: 1_000_000_000,
-            scoreGraph: [0, 200_000_000, 800_000_000, 1_000_000_000]
-          },
-          rankedScores: {
-            rank: 1,
-            rankGraph: [1],
-            countryRank: 1,
-            // countryRankGraph: [1],
-            score: 1_000_000_000,
-            scoreGraph: [0, 200_000_000, 800_000_000, 1_000_000_000]
-          }
-        }
-      },
-      autopilot: {
-        ranking: {
-          ppv2: {
-            rank: 1,
-            rankGraph: [1],
-            countryRank: 1,
-            // countryRankGraph: [1],
-            performance: 100,
-            performanceGraph: [0, 100]
-          },
-          ppv1: {
-            rank: 1,
-            rankGraph: [1],
-            countryRank: 1,
-            // countryRankGraph: [1],
-            performance: 100,
-            performanceGraph: [0, 100]
-          },
-          totalScores: {
-            rank: 1,
-            rankGraph: [1],
-            countryRank: 1,
-            // countryRankGraph: [1],
-            score: 1_000_000_000,
-            scoreGraph: [0, 200_000_000, 800_000_000, 1_000_000_000]
-          },
-          rankedScores: {
-            rank: 1,
-            rankGraph: [1],
-            countryRank: 1,
-            // countryRankGraph: [1],
-            score: 1_000_000_000,
-            scoreGraph: [0, 200_000_000, 800_000_000, 1_000_000_000]
-          }
-        }
-      },
-      relax: {
-        ranking: {
-          ppv2: {
-            rank: 1,
-            rankGraph: [1],
-            countryRank: 1,
-            // countryRankGraph: [1],
-            performance: 100,
-            performanceGraph: [0, 100]
-          },
-          ppv1: {
-            rank: 1,
-            rankGraph: [1],
-            countryRank: 1,
-            // countryRankGraph: [1],
-            performance: 100,
-            performanceGraph: [0, 100]
-          },
-          totalScores: {
-            rank: 1,
-            rankGraph: [1],
-            countryRank: 1,
-            // countryRankGraph: [1],
-            score: 1_000_000_000,
-            scoreGraph: [0, 200_000_000, 800_000_000, 1_000_000_000]
-          },
-          rankedScores: {
-            rank: 1,
-            rankGraph: [1],
-            countryRank: 1,
-            // countryRankGraph: [1],
-            score: 1_000_000_000,
-            scoreGraph: [0, 200_000_000, 800_000_000, 1_000_000_000]
-          }
-        }
-      }
+      standard: createRulesetData(),
+      autopilot: createRulesetData(),
+      relax: createRulesetData()
     },
     taiko: {
-      standard: {
-        ranking: {
-          ppv2: {
-            rank: 1,
-            rankGraph: [1],
-            countryRank: 1,
-            // countryRankGraph: [1],
-            performance: 100,
-            performanceGraph: [0, 100]
-          },
-          ppv1: {
-            rank: 1,
-            rankGraph: [1],
-            countryRank: 1,
-            // countryRankGraph: [1],
-            performance: 100,
-            performanceGraph: [0, 100]
-          },
-          totalScores: {
-            rank: 1,
-            rankGraph: [1],
-            countryRank: 1,
-            // countryRankGraph: [1],
-            score: 1_000_000_000,
-            scoreGraph: [0, 200_000_000, 800_000_000, 1_000_000_000]
-          },
-          rankedScores: {
-            rank: 1,
-            rankGraph: [1],
-            countryRank: 1,
-            // countryRankGraph: [1],
-            score: 1_000_000_000,
-            scoreGraph: [0, 200_000_000, 800_000_000, 1_000_000_000]
-          }
-        }
-      },
-      relax: {
-        ranking: {
-          ppv2: {
-            rank: 1,
-            rankGraph: [1],
-            countryRank: 1,
-            // countryRankGraph: [1],
-            performance: 100,
-            performanceGraph: [0, 100]
-          },
-          ppv1: {
-            rank: 1,
-            rankGraph: [1],
-            countryRank: 1,
-            // countryRankGraph: [1],
-            performance: 100,
-            performanceGraph: [0, 100]
-          },
-          totalScores: {
-            rank: 1,
-            rankGraph: [1],
-            countryRank: 1,
-            // countryRankGraph: [1],
-            score: 1_000_000_000,
-            scoreGraph: [0, 200_000_000, 800_000_000, 1_000_000_000]
-          },
-          rankedScores: {
-            rank: 1,
-            rankGraph: [1],
-            countryRank: 1,
-            // countryRankGraph: [1],
-            score: 1_000_000_000,
-            scoreGraph: [0, 200_000_000, 800_000_000, 1_000_000_000]
-          }
-        }
-      }
+      standard: createRulesetData(),
+      relax: createRulesetData()
     },
     fruits: {
-      standard: {
-        ranking: {
-          ppv2: {
-            rank: 1,
-            rankGraph: [1],
-            countryRank: 1,
-            // countryRankGraph: [1],
-            performance: 100,
-            performanceGraph: [0, 100]
-          },
-          ppv1: {
-            rank: 1,
-            rankGraph: [1],
-            countryRank: 1,
-            // countryRankGraph: [1],
-            performance: 100,
-            performanceGraph: [0, 100]
-          },
-          totalScores: {
-            rank: 1,
-            rankGraph: [1],
-            countryRank: 1,
-            // countryRankGraph: [1],
-            score: 1_000_000_000,
-            scoreGraph: [0, 200_000_000, 800_000_000, 1_000_000_000]
-          },
-          rankedScores: {
-            rank: 1,
-            rankGraph: [1],
-            countryRank: 1,
-            // countryRankGraph: [1],
-            score: 1_000_000_000,
-            scoreGraph: [0, 200_000_000, 800_000_000, 1_000_000_000]
-          }
-        }
-      },
-      relax: {
-        ranking: {
-          ppv2: {
-            rank: 1,
-            rankGraph: [1],
-            countryRank: 1,
-            // countryRankGraph: [1],
-            performance: 100,
-            performanceGraph: [0, 100]
-          },
-          ppv1: {
-            rank: 1,
-            rankGraph: [1],
-            countryRank: 1,
-            // countryRankGraph: [1],
-            performance: 100,
-            performanceGraph: [0, 100]
-          },
-          totalScores: {
-            rank: 1,
-            rankGraph: [1],
-            countryRank: 1,
-            // countryRankGraph: [1],
-            score: 1_000_000_000,
-            scoreGraph: [0, 200_000_000, 800_000_000, 1_000_000_000]
-          },
-          rankedScores: {
-            rank: 1,
-            rankGraph: [1],
-            countryRank: 1,
-            // countryRankGraph: [1],
-            score: 1_000_000_000,
-            scoreGraph: [0, 200_000_000, 800_000_000, 1_000_000_000]
-          }
-        }
-      }
+      standard: createRulesetData(),
+      relax: createRulesetData()
     },
     mania: {
-      standard: {
-        ranking: {
-          ppv2: {
-            rank: 1,
-            rankGraph: [1],
-            countryRank: 1,
-            // countryRankGraph: [1],
-            performance: 100,
-            performanceGraph: [0, 100]
-          },
-          ppv1: {
-            rank: 1,
-            rankGraph: [1],
-            countryRank: 1,
-            // countryRankGraph: [1],
-            performance: 100,
-            performanceGraph: [0, 100]
-          },
-          totalScores: {
-            rank: 1,
-            rankGraph: [1],
-            countryRank: 1,
-            // countryRankGraph: [1],
-            score: 1_000_000_000,
-            scoreGraph: [0, 200_000_000, 800_000_000, 1_000_000_000]
-          },
-          rankedScores: {
-            rank: 1,
-            rankGraph: [1],
-            countryRank: 1,
-            // countryRankGraph: [1],
-            score: 1_000_000_000,
-            scoreGraph: [0, 200_000_000, 800_000_000, 1_000_000_000]
-          }
-        }
-      }
+      standard: createRulesetData()
     }
   }
-}
-
-class UserAPIBase implements UserAPI<string, true> {
-
 }
 
 export const scoped = {
@@ -361,3 +121,53 @@ export const scoped = {
 }
 
 export const demoUser = sampleUserWithSecrets
+
+export const createMockUserAPI = (initial: User<string, true> = sampleUserWithSecrets): UserAPI<string, true> => ({
+  ...initial,
+  fetchStatistics () {
+    if (initial.statistics) { return initial.statistics }
+    return {
+      osu: {
+        standard: createRulesetData(),
+        autopilot: createRulesetData(),
+        relax: createRulesetData()
+      },
+      taiko: {
+        standard: createRulesetData(),
+        relax: createRulesetData()
+      },
+      fruits: {
+        standard: createRulesetData(),
+        relax: createRulesetData()
+      },
+      mania: {
+        standard: createRulesetData()
+      }
+    }
+  },
+  fetchReachable () {
+    if (initial.reachable) { return initial.reachable }
+    return false
+  },
+  fetchOldNames () {
+    if (initial.oldNames) { return initial.oldNames }
+    return []
+  },
+  fetchPreferences () {
+    if (initial.preferences) { return initial.preferences }
+    return {
+      allowPrivateMessage: true,
+      visibility: {
+        email: 'public',
+        oldNames: 'public'
+      }
+    }
+  },
+  fetchSecrets () {
+    if (initial.secrets) { return initial.secrets }
+    return {
+      password: '123456788',
+      apiKey: 'aaaaa-bbbbb'
+    }
+  }
+})

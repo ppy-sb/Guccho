@@ -4,6 +4,7 @@ import type {
   VisibilityScope,
   RankingSystem,
   ScoreRankingSystem,
+  PPRankingSystem,
   Mode,
   Ruleset,
   AutopilotAvailable,
@@ -13,11 +14,8 @@ import type {
   Awaitable,
   APIfy
 } from './shared'
-// server types
-// export type UserOfflineStatus = 'offline'
-export enum UserOfflineStatus {
-  OFFLINE = 'offline',
-}
+
+export type UserOfflineStatus = 'offline'
 export type UserOnlineStatus = 'playing' | 'idle' | 'modding' | 'multiplaying'
 export type UserWebsiteStatus = 'website-online'
 export type UserActivityStatus =
@@ -25,31 +23,30 @@ export type UserActivityStatus =
   | UserOnlineStatus
   | UserWebsiteStatus
 
-export enum UserPrivilege {
-  banned = 1 << 0,
-  default = 1 << 1,
-  channelModerator = 1 << 2,
-  moderator = 1 << 3,
-  beatmapNominator = 1 << 4,
-  staff = 1 << 5,
-  admin = 1 << 6,
-  superuser = 1 << 7,
-}
+// export enum UserPrivilege {
+//   banned = 1 << 0,
+//   default = 1 << 1,
+//   channelModerator = 1 << 2,
+//   moderator = 1 << 3,
+//   beatmapNominator = 1 << 4,
+//   staff = 1 << 5,
+//   admin = 1 << 6,
+//   superuser = 1 << 7,
+// }
 
-export type UserPrivilegeString = keyof typeof UserPrivilege
+export type UserPrivilegeString = 'inactivated' | 'restricted' | 'normal' | 'channelModerator' | 'moderator' | 'beatmapNominator' | 'staff' | 'admin' | 'owner'
 
 export interface UserStatus {
   activity: UserActivityStatus
-  privilege: UserPrivilege
   roles: UserPrivilegeString[]
 }
 
 export interface BaseRank {
   rank: number
-  rankGraph: number[]
+  rankHistory: Record<string, number>
 
   countryRank: number,
-  // countryRankGraph: number[]
+  // countryRankHistory: number[]
 
   // TODO: Score
   // tops: Score[]
@@ -58,23 +55,31 @@ export interface BaseRank {
 
 export interface PPRank extends BaseRank {
   performance: number
-  performanceGraph: number[]
+  performanceHistory: Record<string, number>
 
   // TODO: BP
   // bests: Score[]
 }
 export interface ScoreRank extends BaseRank {
   score: number
-  scoreGraph: number[]
+  scoreHistory: Record<string, number>
 }
 
 export type Rank<System extends RankingSystem> =
-  System extends ScoreRankingSystem ? ScoreRank : PPRank
+  System extends ScoreRankingSystem
+  ? ScoreRank
+  : System extends PPRankingSystem
+  ? PPRank
+  : BaseRank
 export interface UserModeRulesetStatistics<AvailableRankingSystem extends RankingSystem = RankingSystem> {
+  // TODO: Achievement
   // achievements: Achievement[]
-  ranking: OmitNever<{
-    [P in RankingSystem]: P extends AvailableRankingSystem ? Rank<P> : never
-  }>
+  ranking: {
+    [P in RankingSystem as P extends AvailableRankingSystem ? P : never]: Rank<P>
+  },
+  playCount: number
+  playTime: number
+  totalHits: number
 }
 
 export interface UserHistoricalName {
@@ -88,7 +93,7 @@ export interface UserPreferences {
   allowPrivateMessage: boolean
   visibility: {
     email: VisibilityScope
-    oldNamesDefault: VisibilityScope
+    oldNames: VisibilityScope
   }
 }
 export interface BaseUser<Id> {
@@ -110,32 +115,31 @@ export interface UserSecrets {
 export type UserFriend<Id> = BaseUser<Id>
 
 export interface UserModel<Id, IncludeSecrets extends boolean, IncludeMode extends Mode, IncludeRuleset extends Ruleset, Ranking extends RankingSystem> extends BaseUser<Id> {
-  statistics: OmitNever<{
-    [M in Mode]: M extends IncludeMode ? OmitNever<{
-      [R in Ruleset]:
-      R extends IncludeRuleset
+  statistics: {
+    [M in Mode as M extends IncludeMode ? M : never]: {
+      [R in Ruleset as
+        R extends IncludeRuleset
 
-      ? M extends StandardAvailable
-      ? R extends 'standard'
-      ? UserModeRulesetStatistics<Ranking>
+        ? M extends StandardAvailable
+        ? R extends 'standard'
+        ? R
 
-      : M extends RelaxAvailable
-      ? R extends 'relax'
-      ? UserModeRulesetStatistics<Ranking>
+        : M extends RelaxAvailable
+        ? R extends 'relax'
+        ? R
 
-      : M extends AutopilotAvailable
-      ? R extends 'autopilot'
-      ? UserModeRulesetStatistics<Ranking>
+        : M extends AutopilotAvailable
+        ? R extends 'autopilot'
+        ? R
 
-      : never
-      : never
-      : never
-      : never
-
-      : never
-    }>
-    : never
-  }>
+        : never
+        : never
+        : never
+        : never
+        : never
+      ]: UserModeRulesetStatistics<Ranking>
+    }
+  }
 
   reachable: boolean
   status: UserActivityStatus
@@ -148,6 +152,7 @@ export interface UserModel<Id, IncludeSecrets extends boolean, IncludeMode exten
   preferences: UserPreferences
 
   secrets: IncludeSecrets extends true ? UserSecrets : never
+
 }
 
 export type User<
