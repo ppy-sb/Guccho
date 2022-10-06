@@ -1,5 +1,5 @@
 {
-  "name": "guweb-nuxy",
+  "name": "guweb-next",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -9,16 +9,16 @@
     "preview": "nuxt preview",
     "analyze": "nuxt analyze",
     "postinstall": "nuxt prepare",
-    "#start": "nuxt start",
+    "start": "echo 'use `preview`'; nuxt preview",
     "lint:js": "eslint --ext '.js,.vue' --ignore-path .gitignore .",
     "lint": "yarn lint:js",
     "lintfix": "yarn lint:js --fix",
-    "backend": "python3.9 server/main.py",
-    "backend2": "python server/main.py",
     "ts-node": "ts-node",
     "sync-from-lock": "yarn upgrade && npx syncyarnlock --save --keepPrefix && yarn install",
     "check-update": "npx npm-check-updates",
-    "update-dep": "npx ncu -u"
+    "update-dep": "npx npm-check-updates -u && yarn install",
+    "backend2": "python server/main.py",
+    "backend": "python3.9 server/main.py"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.2.0",
