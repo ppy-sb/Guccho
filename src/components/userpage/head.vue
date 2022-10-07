@@ -13,10 +13,10 @@
       <div
         class="order-3 md:order-1 container mx-auto flex justify-around md:justify-end gap-3 pb-4 md:pb-0"
       >
-        <dv-button size="sm" type="primary">
+        <dv-button size="sm" variant="primary">
           add as friend
         </dv-button>
-        <dv-button size="sm" type="secondary">
+        <dv-button size="sm" variant="secondary">
           send message
         </dv-button>
       </div>
