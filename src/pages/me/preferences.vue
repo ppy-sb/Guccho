@@ -68,8 +68,8 @@ const updateUser = () => {
                 <input id="dropzone-file" type="file" class="hidden">
               </label>
             </div>
-            <div im-just-a-spacer />
-            <dv-button class="grow" :loading="uploading === 1" :type="uploading === 2 && 'success'" @click="saveAvatar">
+            <!-- <div im-just-a-spacer /> -->
+            <dv-button class="grow" :loading="uploading === 1" :variant="uploading === 2 && 'success'" @click="saveAvatar">
               {{ uploading === 0 ? 'Save' :uploading === 1 ? 'Uploading' :uploading === 2 ? 'done' :'' }}
             </dv-button>
             <dv-button
