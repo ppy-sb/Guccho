@@ -81,7 +81,7 @@ onMounted(() => {
 }
 .not-safari {
   & .custom-container {
-    @apply drop-shadow-lg
+    @apply drop-shadow-xl
   }
 }
 </style>

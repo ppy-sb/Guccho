@@ -1,7 +1,7 @@
 <script setup>
 import { EditorContent } from '@tiptap/vue-3'
 import { generateHTML } from '@tiptap/html'
-import '@/assets/typography.scss'
+import '@/assets/styles/typography.scss'
 const user = inject('user')
 const clientTakeover = ref(false)
 const { editor, extensions } = useEditor()

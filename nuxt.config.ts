@@ -23,8 +23,8 @@ export default defineNuxtConfig({
 
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
-    '~/assets/main.scss',
-    '~/assets/daisyui.scss',
+    '~/assets/styles/main.scss',
+    '~/assets/styles/daisyui.scss',
     '@fortawesome/fontawesome-svg-core/styles.css'
   ],
 

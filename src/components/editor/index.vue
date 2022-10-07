@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onBeforeMount, reactive } from 'vue'
 import { EditorContent, JSONContent } from '@tiptap/vue-3'
-import '@/assets/typography.scss'
+import '@/assets/styles/typography.scss'
 
 import MenuBar from './MenuBar.vue'
 import useEditor from '~/composables/useEditor'

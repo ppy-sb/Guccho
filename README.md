@@ -82,3 +82,5 @@ phase 3: migrate legacy python server to nuxt 3 api.
 todo: search 'TODO' in repo.
 
 markdown for userpage
+
+TODO: floating navbar https://daisyui.com/components/navbar/

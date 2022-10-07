@@ -45,7 +45,7 @@ defineExpose({
   wrapper
 })
 </script>
-<style lang="postcss">
+<style lang="scss" scoped>
 .zoom-modal-wrapper {
   & .zoom-modal-wrapper {
     position: fixed;
@@ -67,6 +67,10 @@ defineExpose({
 }
 </style>
 <style lang="scss" scoped>
+@import './shared.scss';
+
+$in: blur(16px) opacity(0) saturate(0.5);
+$scale: scale(1.2);
 .zoom-modal-wrapper {
   // position: absolute;
   // left: 0;
@@ -89,21 +93,21 @@ defineExpose({
     z-index: 50;
 
     >.zoom-modal {
-      animation: zoomIn 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+      animation: zoomIn $duration $animate-function forwards;
     }
   }
 
   &.out {
     >.zoom-modal {
-      animation: zoomOut 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+      animation: zoomOut $duration $animate-function forwards;
     }
   }
 }
 
 @keyframes zoomIn {
   0% {
-    transform: scale(1.4);
-    filter: blur(16px) opacity(0) saturate(0.5);
+    transform: $scale;
+    filter: $in;
   }
 
   100% {
@@ -117,8 +121,8 @@ defineExpose({
   }
 
   100% {
-    transform: scale(1.2);
-    filter: blur(16px) opacity(0) saturate(0.5);
+    transform: $scale;
+    filter: $in;
   }
 }
 </style>
