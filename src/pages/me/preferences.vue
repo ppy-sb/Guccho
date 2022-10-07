@@ -10,7 +10,6 @@ const unchanged = computed(() => ({
 }))
 const user = reactive({ ...scoped.demoUser, secrets: { ...scoped.demoUser.secrets } })
 const changeAvatar = ref<typeof modalVue>()
-const repeatPassword = ref('')
 const anythingChanged = computed(() => {
   const col = (['name', 'email', 'profile']as Array<keyof UnwrapRef<typeof unchanged>>).some(item => unchanged.value[item] !== user[item])
 
@@ -127,24 +126,23 @@ const updateUser = () => {
         </div>
       </div>
       <div class="grow lg:[max-width:50%] mt-4 lg:mt-0 lg:ml-4">
-        <div>
+        <div class="form-control">
           <label class="label">
             <span class="label-text pl-3">Username</span>
           </label>
-          <div class="flex gap-4">
+          <div :class="unchanged.name !== user.name && 'input-group input-group-sm'">
             <input
               v-model="user.name"
               type="text"
               placeholder="Username"
-              class="input input-sm grow"
+              class="input input-sm w-full"
               :class="{
                 'input input-bordered input input-primary':unchanged.name !== user.name,
                 'input input-ghost':unchanged.name === user.name
               }"
             >
-
             <button
-              v-show="unchanged.name !== user.name"
+              v-if="unchanged.name !== user.name"
               class="btn btn-sm"
               type="button"
               :disabled="unchanged.name === user.name"
@@ -174,16 +172,16 @@ const updateUser = () => {
             </button>
           </div>
         </div>
-        <div>
+        <div class="form-control">
           <label class="label">
             <span class="label-text pl-3">Email</span>
           </label>
-          <div class="flex gap-4">
+          <div :class="unchanged.email !== user.email && 'input-group input-group-sm'">
             <input
               v-model="user.email"
               type="email"
               placeholder="abc@123.com"
-              class="input input-sm grow"
+              class="input input-sm w-full"
               :class="{
                 'input-bordered input-primary':unchanged.email !== user.email,
                 'input-ghost':unchanged.email === user.email
@@ -201,47 +199,23 @@ const updateUser = () => {
           </div>
         </div>
         <div>
-          <div class="flex gap-4 items-end">
-            <div class="grow">
-              <label class="label">
-                <span class="label-text pl-3">Password</span>
-              </label>
-              <input
-                v-model="user.secrets.password"
-                type="password"
-                placeholder="Type here"
-                class="input input-sm w-full"
-                :class="{
-                  'input-bordered input-primary':unchanged.secrets.password !== user.secrets.password,
-                  'input-ghost':unchanged.secrets.password === user.secrets.password
-                }"
-              >
-              <label v-show="unchanged.secrets.password !== user.secrets.password" class="label">
-                <span class="label-text pl-3">Repeat Password</span>
-              </label>
-              <input
-                v-show="unchanged.secrets.password !== user.secrets.password"
-                v-model="repeatPassword"
-                type="password"
-                placeholder="Type here"
-                class="input input-sm w-full"
-                :class="{
-                  'input-bordered input-error':user.secrets.password !== repeatPassword,
-                  'input-ghost':user.secrets.password === repeatPassword
-                }"
-              >
-            </div>
-            <button
-              v-show="unchanged.secrets.password !== user.secrets.password"
-              class="btn btn-sm"
-              type="button"
-              :disabled="unchanged.secrets.password === repeatPassword && unchanged.secrets.password === user.secrets.password"
-              @click="() => {
-                user.secrets.password = unchanged.secrets.password
-                repeatPassword = unchanged.secrets.password
+          <label class="label">
+            <span class="label-text pl-3">Password</span>
+          </label>
+          <div class="flex gap-4">
+            <input
+              v-model="user.secrets.password"
+              type="password"
+              placeholder="Your Password"
+              class="input input-sm grow"
+              disabled
+              :class="{
+                'input-bordered input-primary':unchanged.secrets.apiKey !== user.secrets.apiKey,
+                '!input-ghost border-none':unchanged.secrets.apiKey === user.secrets.apiKey
               }"
             >
-              revert
+            <button class="btn btn-sm btn-primary" type="button">
+              Change
             </button>
           </div>
         </div>

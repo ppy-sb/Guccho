@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="container">
+    <div class="container pt-16">
       <div class="o-apps">
         <div class="c-app__tile" data-bg-color="-app-color-1" />
         <div class="c-app__tile" data-bg-color="-app-color-2" />

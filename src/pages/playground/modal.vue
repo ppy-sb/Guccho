@@ -6,7 +6,9 @@
         <t-modal-container>
           <template #default>
             <t-modal>
-              <div class="card-title">modal 1 menu</div>
+              <div class="card-title">
+                modal 1 menu
+              </div>
               <t-button @click="openInner1">
                 open inner
               </t-button>
@@ -43,7 +45,9 @@
         <t-modal-container>
           <template #default>
             <t-modal>
-              <div class="card-title">modal 2 menu</div>
+              <div class="card-title">
+                modal 2 menu
+              </div>
               <t-button @click="openInner2">
                 open inner
               </t-button>

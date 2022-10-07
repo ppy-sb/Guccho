@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col justify-stretch">
+  <div class="flex flex-col justify-stretch pt-16 md:pt-0">
     <userpage-head />
     <lazy-userpage-profile />
     <userpage-ranking-system-switcher class="z-10 !drop-shadow-xl" />

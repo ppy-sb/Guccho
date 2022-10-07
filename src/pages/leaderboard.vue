@@ -1,5 +1,5 @@
 <template>
-  <div class="leaderboard h-full flex flex-col custom-container">
+  <div class="leaderboard h-full flex flex-col custom-container pt-16 md:pt-0">
     <header-leaderboard v-model.lazy="selection" @input="fetchLeaderboard" />
 
     <div
