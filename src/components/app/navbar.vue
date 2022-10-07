@@ -58,14 +58,14 @@ onUnmounted(() => {
 })
 </script>
 <template>
-  <div ref="root" class="w-full z-50 transition-all absolute" :class="[scrolledDown && 'p-2 !fixed']">
-    <div class="navbar navbar-tint transition-all" :class="[scrolledDown && 'rounded-xl']">
+  <div ref="root" class="w-full z-50 transition-[padding] fixed" :class="[scrolledDown && 'px-2 pt-2']">
+    <div class="navbar navbar-tint transition-[border-radius]" :class="[scrolledDown && 'rounded-xl']">
       <div class="navbar-start">
         <div class="dropdown">
           <label tabindex="0" class="btn btn-ghost btn-circle !shadow-none">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" /></svg>
           </label>
-          <ul tabindex="0" class="menu menu-compact dropdown-content bg-kimberly-100 dark:bg-kimberly-600 mt-3 p-2 shadow-xl rounded-box w-52">
+          <ul tabindex="0" class="menu menu-compact dropdown-content bg-kimberly-100 dark:bg-kimberly-600 mt-2 p-2 shadow-xl rounded-br-2xl rounded-bl-2xl w-52">
             <li v-for="menuItem in menu" :key="`menu-${menuItem.name}`">
               <nuxt-link :to="menuItem.route">
                 {{ menuItem.name }}
