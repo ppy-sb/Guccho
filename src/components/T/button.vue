@@ -2,7 +2,8 @@
   <button
     class="btn"
     :class="[
-      props.variant && `btn-${props.variant}`
+      props.variant && `btn-${props.variant}`,
+      props.size && `btn-${props.size}`
     ]"
     @click="emit('click')"
   >
@@ -10,14 +11,15 @@
   </button>
 </template>
 
-<script setup>
-import { variant } from './compose/props'
+<script setup lang="ts">
+
 const emit = defineEmits([
   'click'
 ])
-const props = defineProps({
-  variant
-})
+const props = defineProps<{
+  variant: string,
+  size: string
+}>()
 </script>
 
 <style lang="scss" scoped>
