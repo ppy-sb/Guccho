@@ -80,6 +80,10 @@ onMounted(() => {
 </script>
 
 <style lang="scss">
+@import './shared.scss';
+$content-stage1: blur(1em) opacity(0.5) saturate(0.5);
+$content-stage2: blur(1.3em) opacity(0) saturate(0);
+
 .zoom-modal-container {
   &.init {
     .zoom-modal {
@@ -107,15 +111,15 @@ onMounted(() => {
   }
 
   &.l1 > .content {
-    animation: zoomOutContent 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+    animation: zoomOutContent $duration $animate-function forwards;
   }
 
   &.l2 > .content {
-    animation: zoomOutContentL2 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards !important;
+    animation: zoomOutContentL2 $duration $animate-function forwards !important;
   }
 
   &.l2-out > .content {
-    animation: zoomInContentL2 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+    animation: zoomInContentL2 $duration $animate-function forwards;
   }
 
   > .content {
@@ -129,7 +133,7 @@ onMounted(() => {
   }
 
   > .content {
-    animation: zoomInContent 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+    animation: zoomInContent $duration $animate-function forwards;
   }
 }
 
@@ -140,14 +144,14 @@ onMounted(() => {
 
   100% {
     transform: scale(0.9);
-    filter: blur(24px) opacity(0.6) saturate(0.5);
+    filter: $content-stage1;
   }
 }
 
 @keyframes zoomInContent {
   0% {
     transform: scale(0.9);
-    filter: blur(24px) opacity(0.6) saturate(0.5);
+    filter: $content-stage1;
   }
 
   100% {
@@ -158,24 +162,24 @@ onMounted(() => {
 @keyframes zoomOutContentL2 {
   0% {
     transform: scale(0.9);
-    filter: blur(24px) opacity(0.6) saturate(0.5);
+    filter: $content-stage1;
   }
 
   100% {
     transform: scale(0.81);
-    filter: blur(32px) opacity(0) saturate(0);
+    filter: $content-stage2;
   }
 }
 
 @keyframes zoomInContentL2 {
   0% {
     transform: scale(0.81);
-    filter: blur(32px) opacity(0) saturate(0);
+    filter: $content-stage2;
   }
 
   100% {
     transform: scale(0.9);
-    filter: blur(24px) opacity(0.6) saturate(0.5);
+    filter: $content-stage1;
   }
 }
 </style>

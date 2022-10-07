@@ -1,6 +1,6 @@
 <template>
   <t-modal>
-    <dv-card>123</dv-card>
+    <t-card>123</t-card>
   </t-modal>
 </template>
 

@@ -1,6 +1,6 @@
 <template>
-  <div class="container mx-auto flex gap-2">
-    <div class="w-1/3">
+  <div class="container mx-auto flex flex-col lg:flex-row">
+    <div class="lg:w-1/3">
       <div class="card bg-kimberly-100/20 shadow-lg">
         <div class="card-title bg-kimberly-200/40 p-2 justify-center">
           Top Performance
@@ -12,7 +12,7 @@
         </div>
       </div>
     </div>
-    <div class="w-2/3">
+    <div class="lg:w-2/3">
       <div class="card bg-kimberly-300/30 shadow-lg">
         <div class="card-title bg-kimberly-50/60 p-2 justify-center">
           Top Performance

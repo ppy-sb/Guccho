@@ -69,10 +69,10 @@ const updateUser = () => {
               </label>
             </div>
             <!-- <div im-just-a-spacer /> -->
-            <dv-button class="grow" :loading="uploading === 1" :variant="uploading === 2 && 'success'" @click="saveAvatar">
+            <t-button class="grow" :loading="uploading === 1" :variant="uploading === 2 && 'success'" @click="saveAvatar">
               {{ uploading === 0 ? 'Save' :uploading === 1 ? 'Uploading' :uploading === 2 ? 'done' :'' }}
-            </dv-button>
-            <dv-button
+            </t-button>
+            <t-button
               class="grow"
               @click="() => {
                 closeModal()
@@ -80,7 +80,7 @@ const updateUser = () => {
               }"
             >
               close
-            </dv-button>
+            </t-button>
           </div>
         </t-modal>
       </t-modal-wrapper>

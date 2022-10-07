@@ -7,12 +7,12 @@
           <template #default>
             <t-modal>
               <dv-card-title>modal 1 menu</dv-card-title>
-              <dv-button @click="openInner1">
+              <t-button @click="openInner1">
                 open inner
-              </dv-button>
-              <dv-button @click="closeModal">
+              </t-button>
+              <t-button @click="closeModal">
                 close modal
-              </dv-button>
+              </t-button>
             </t-modal>
           </template>
           <template #modal>
@@ -44,12 +44,12 @@
           <template #default>
             <t-modal>
               <dv-card-title>modal 2 menu</dv-card-title>
-              <dv-button @click="openInner2">
+              <t-button @click="openInner2">
                 open inner
-              </dv-button>
-              <dv-button @click="closeModal">
+              </t-button>
+              <t-button @click="closeModal">
                 close modal
-              </dv-button>
+              </t-button>
             </t-modal>
           </template>
           <template #modal>
@@ -79,12 +79,12 @@
     </t-modal-page>
     <section class="container mx-auto">
       <div class="flex gap-2">
-        <dv-button @click="nested1">
+        <t-button @click="nested1">
           nested modal 1
-        </dv-button>
-        <dv-button @click="nested2">
+        </t-button>
+        <t-button @click="nested2">
           nested modal 2
-        </dv-button>
+        </t-button>
       </div>
     </section>
   </div>

@@ -13,12 +13,12 @@
       <div
         class="order-3 md:order-1 container mx-auto flex justify-around md:justify-end gap-3 pb-4 md:pb-0"
       >
-        <dv-button size="sm" variant="primary">
+        <t-button size="sm" variant="primary">
           add as friend
-        </dv-button>
-        <dv-button size="sm" variant="secondary">
+        </t-button>
+        <t-button size="sm" variant="secondary">
           send message
-        </dv-button>
+        </t-button>
       </div>
       <div
         class="sm:order-2 container mx-auto sm:flex sm:gap-1 sm:items-end sm:justify-between md:pb-2"
