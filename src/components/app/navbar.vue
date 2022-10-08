@@ -125,7 +125,7 @@ onUnmounted(() => {
           v-for="menuItem in menu"
           :key="`menu-${menuItem.name}`"
           :to="menuItem.route"
-          class="btn btn-ghost !shadow-none normal-case text-lg"
+          class="btn btn-ghost !shadow-none normal-case attach:text-lg"
         >
           {{ menuItem.name }}
         </nuxt-link>
@@ -147,7 +147,7 @@ onUnmounted(() => {
             />
           </svg>
         </button>
-        <button class="btn btn-ghost !shadow-none btn-circle">
+        <!-- <button class="btn btn-ghost !shadow-none btn-circle">
           <div class="indicator">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -165,11 +165,25 @@ onUnmounted(() => {
             </svg>
             <span class="badge badge-xs badge-primary indicator-item" />
           </div>
-        </button>
+        </button> -->
       </div>
     </div>
   </div>
 </template>
+<style lang="scss">
+.detached {
+  & .navbar {
+    & .btn {
+      height: 2rem;
+      min-height: 2rem;
+
+      &.attach\:text-lg {
+        @apply text-base #{!important};
+      }
+    }
+  }
+}
+</style>
 <style lang="scss" scoped>
 .navbar-tint {
   @apply bg-kimberly-150/70 dark:bg-kimberly-700/80;
@@ -178,6 +192,13 @@ onUnmounted(() => {
 
 .navbar {
   transition: all 0.5s cubic-bezier(0.05, 1, 0.4, 0.95);
+
+  .btn {
+    @apply transition-all;
+    &.attach\:text-lg {
+      @apply text-lg;
+    }
+  }
 
   &.disabled {
     transition: all 0.5s cubic-bezier(0.05, 1, 0.4, 0.95);
@@ -192,6 +213,7 @@ onUnmounted(() => {
 
   & .navbar {
     @apply rounded-2xl;
+    @apply min-h-0;
 
     &.disabled {
       scale: (0.95);
@@ -199,5 +221,4 @@ onUnmounted(() => {
     }
   }
 }
-
 </style>
