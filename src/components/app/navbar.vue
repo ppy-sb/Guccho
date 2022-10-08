@@ -1,7 +1,14 @@
 <script setup lang="ts">
 import { onBeforeMount, ref, onUnmounted } from 'vue'
 import { useAppConfig } from '#app'
-
+const props = withDefaults(
+  defineProps<{
+    disabled: boolean;
+  }>(),
+  {
+    disabled: false
+  }
+)
 const menu = [
   {
     name: 'Home',
@@ -63,11 +70,12 @@ onUnmounted(() => {
 <template>
   <div
     ref="root"
-    class="w-full z-50 transition-[padding] fixed"
+    class="w-full z-50 transition-[padding] fixed navbar-container"
     :class="[detached && 'detached']"
   >
     <div
       class="navbar navbar-tint transition-[border-radius]"
+      :class="[props.disabled && 'disabled']"
     >
       <div class="navbar-start">
         <div class="dropdown">
@@ -167,11 +175,29 @@ onUnmounted(() => {
   @apply bg-kimberly-150/70 dark:bg-kimberly-700/80;
   @apply backdrop-blur-md shadow-xl;
 }
+
+.navbar {
+  transition: all 0.5s cubic-bezier(0.05, 1, 0.4, 0.95);
+
+  &.disabled {
+    transition: all 0.5s cubic-bezier(0.05, 1, 0.4, 0.95);
+    filter: saturate(0.8) opacity(0.8) blur(0.2rem);
+    * {
+      @apply pointer-events-none;
+    }
+  }
+}
 .detached {
   @apply px-2 pt-2;
 
   & .navbar {
-    @apply rounded-2xl
+    @apply rounded-2xl;
+
+    &.disabled {
+      scale: (0.95);
+      filter: blur(0.3em);
+    }
   }
 }
+
 </style>

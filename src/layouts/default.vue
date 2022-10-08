@@ -1,10 +1,10 @@
 <template>
   <div v-show="!isLoading" :class="safari ? 'safari' :'not-safari'" class="screen">
-    <t-modal-container :teleport-id="config.appModalTeleportTargetId">
+    <app-navbar :disabled="modalContainer?.stat === 1" />
+    <t-modal-container ref="modalContainer" :teleport-id="config.appModalTeleportTargetId">
       <!-- bg-kimberly-50 dark:bg-kimberly-800 -->
       <div v-show="!isLoading" class="flex flex-col min-h-screen overflow-y-hidden">
         <div class="flex flex-col overflow-auto min-h-screen">
-          <app-navbar />
           <div class="flex-grow flex flex-col">
             <slot />
           </div>
@@ -64,8 +64,9 @@ import { ref, onMounted } from 'vue'
 import { useAppConfig } from '#app'
 
 const safari = ref(true)
-
 const isLoading = ref(true)
+const modalContainer = ref()
+
 const config = useAppConfig()
 onMounted(() => {
   safari.value = useSafariDetector()
@@ -77,7 +78,7 @@ onMounted(() => {
 
 <style lang="postcss">
 .screen {
-  @apply bg-gradient-to-b from-kimberly-50/60 to-kimberly-100 dark:from-kimberly-800 dark:to-kimberly-900
+  @apply bg-gradient-to-b from-kimberly-50 to-kimberly-150/80 dark:from-kimberly-800 dark:to-kimberly-900
 }
 .not-safari {
   & .custom-container {

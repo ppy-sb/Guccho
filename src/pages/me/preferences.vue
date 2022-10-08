@@ -10,6 +10,7 @@ const unchanged = computed(() => ({
 }))
 const user = reactive({ ...scoped.demoUser, secrets: { ...scoped.demoUser.secrets } })
 const changeAvatar = ref<typeof modalVue>()
+const changePassword = ref<typeof modalVue>()
 const anythingChanged = computed(() => {
   const col = (['name', 'email', 'profile']as Array<keyof UnwrapRef<typeof unchanged>>).some(item => unchanged.value[item] !== user[item])
 
@@ -81,6 +82,34 @@ const updateUser = () => {
               close
             </t-button>
           </div>
+        </t-modal>
+      </t-modal-wrapper>
+      <t-modal-wrapper ref="changePassword" v-slot="{ closeModal }">
+        <t-modal>
+          <template #body>
+            <div class="card-body w-96">
+              <div class="form-control">
+                <label class="label" for="old-password"><span class="label-text pl-2">Old Password</span></label>
+                <input type="password" class="input input-sm input-ghost">
+              </div>
+              <div class="form-control">
+                <label class="label" for="old-password"><span class="label-text pl-2">New Password</span></label>
+                <input type="password" class="input input-sm  input-ghost">
+              </div>
+              <div class="form-control">
+                <label class="label" for="old-password"><span class="label-text pl-2">Repeat Password</span></label>
+                <input type="password" class="input input-sm  input-ghost">
+              </div>
+            </div>
+            <div class="flex gap-2 p-4">
+              <t-button size="sm" variant="accent" class="grow" @click="closeModal">
+                confirm
+              </t-button>
+              <t-button size="sm" variant="secondary" class="grow" @click="closeModal">
+                cancel
+              </t-button>
+            </div>
+          </template>
         </t-modal>
       </t-modal-wrapper>
     </t-modal-page>
@@ -214,7 +243,7 @@ const updateUser = () => {
                 '!input-ghost border-none':unchanged.secrets.apiKey === user.secrets.apiKey
               }"
             >
-            <button class="btn btn-sm btn-primary" type="button">
+            <button class="btn btn-sm btn-primary" type="button" @click="changePassword?.openModal">
               Change
             </button>
           </div>
