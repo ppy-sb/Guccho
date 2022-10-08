@@ -54,7 +54,8 @@ const closeModal = () => {
 }
 defineExpose({
   openModal,
-  closeModal
+  closeModal,
+  stat
 })
 provide('openModal', openModal)
 provide('closeModal', closeModal)
