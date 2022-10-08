@@ -13,9 +13,10 @@
 
 <script setup lang="ts">
 
-const emit = defineEmits([
-  'click'
-])
+// eslint-disable-next-line func-call-spacing
+const emit = defineEmits<{
+  (e: 'click'): void
+}>()
 const props = defineProps<{
   variant: string,
   size: string
