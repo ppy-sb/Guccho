@@ -48,6 +48,12 @@ const menu = [
     route: {
       name: 'me-preferences'
     }
+  },
+  {
+    name: 'user friends',
+    route: {
+      name: 'me-friends'
+    }
   }
 ]
 const config = useAppConfig()

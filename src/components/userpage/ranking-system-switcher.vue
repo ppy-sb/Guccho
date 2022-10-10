@@ -17,9 +17,7 @@
 
       <div
         class="tab f-tab tab-bordered"
-        :class="{
-          'tab-active': Object.keys(dropdown).includes(tab)
-        }"
+        :active="Object.keys(dropdown).includes(tab)"
       >
         <div class="dropdown dropdown-end dropdown-hover">
           <div tabindex="0">
