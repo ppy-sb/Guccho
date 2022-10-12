@@ -2,6 +2,9 @@
   "name": "guweb-next",
   "version": "1.0.0",
   "private": true,
+  "prisma": {
+    "schema": "src/prisma/schema.prisma"
+  },
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
@@ -50,6 +53,7 @@
     "install": "^0.13.0",
     "lowlight": "^2.7.0",
     "nuxt": "^3.0.0-rc.11",
+    "prisma": "^4.4.0",
     "remixicon": "^2.5.0",
     "tailwind-highlightjs": "^2.0.1",
     "trpc-nuxt": "^0.3.0",
