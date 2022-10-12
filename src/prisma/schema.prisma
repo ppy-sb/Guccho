@@ -1,0 +1,333 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// User related
+
+model User {
+  id               Int           @id @default(autoincrement())
+  name             String        @unique(map: "User_name_uindex") @db.VarChar(32)
+  safeName         String        @unique(map: "User_safe_name_uindex") @map("safe_name") @db.VarChar(32)
+  email            String        @unique(map: "User_email_uindex") @db.VarChar(254)
+  priv             Int           @default(1)
+  pwBcrypt         String        @map("pw_bcrypt") @db.Char(60)
+  country          String        @default("xx") @db.Char(2)
+  silenceEnd       Int           @default(0) @map("silence_end")
+  donorEnd         Int           @default(0) @map("donor_end")
+  creationTime     Int           @default(0) @map("creation_time")
+  latestActivity   Int           @default(0) @map("latest_activity")
+  clan             Clan          @relation(name: "clan", fields: [clanId], references: [id])
+  clanId           Int           @default(0) @map("clan_id")
+  clanPriv         Boolean       @default(false) @map("clan_priv")
+  preferredMode    Int           @default(0) @map("preferred_mode")
+  playStyle        Int           @default(0) @map("play_style")
+  customBadgeName  String?       @map("custom_badge_name") @db.VarChar(16)
+  customBadgeIcon  String?       @map("custom_badge_icon") @db.VarChar(64)
+  userpageContent  String?       @map("userpage_content") @db.VarChar(2048)
+  apiKey           String?       @unique(map: "User_api_key_uindex") @map("api_key") @db.Char(36)
+  // virtual
+  favourites       Favourite[]
+  ingameLogins     IngameLogin[]
+  receivedMessages Mail[]        @relation("receivedMessages")
+  sentMessages     Mail[]        @relation("sentMessages")
+  clientHashes     ClientHash[]
+  comments         Comment[]
+  ownedClan        Clan[]        @relation("owner")
+
+  @@map("users")
+}
+
+model ClientHash {
+  user        User     @relation(fields: [userId], references: [id])
+  userId      Int      @map("userid")
+  osupath     String   @db.Char(32)
+  adapters    String   @db.Char(32)
+  uninstallId String   @map("uninstall_id") @db.Char(32)
+  diskSerial  String   @map("disk_serial") @db.Char(32)
+  latestTime  DateTime @map("latest_time") @db.DateTime(0)
+  occurrences Int      @default(0)
+
+  @@id([userId, osupath, adapters, uninstallId, diskSerial])
+  @@map("client_hashes")
+}
+
+model Comment {
+  id         Int                @id @default(autoincrement())
+  targetId   Int                @map("target_id")
+  targetType CommentsTargetType @map("target_type")
+  user       User               @relation(fields: [userId], references: [id])
+  userId     Int                @map("userid")
+  time       Int
+  comment    String             @db.VarChar(80)
+  colour     String?            @db.Char(6)
+
+  @@map("comments")
+}
+
+model Clan {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique(map: "clans_name_uindex") @db.VarChar(16)
+  tag       String   @unique(map: "clans_tag_uindex") @db.VarChar(6)
+  owner     User     @relation(name: "owner", fields: [ownerId], references: [id])
+  ownerId   Int      @unique(map: "clans_owner_uindex")
+  createdAt DateTime @map("created_at") @db.DateTime(0)
+
+  joinedUsers User[] @relation("clan")
+
+  @@map("clans")
+}
+
+model Favourite {
+  user      User   @relation(fields: [userId], references: [id])
+  userId    Int    @map("userid")
+  set       Mapset @relation(fields: [setId], references: [id])
+  setId     Int    @map("setid")
+  createdAt Int    @default(0) @map("created_at")
+
+  @@id([userId, setId])
+  @@map("favourites")
+}
+
+model IngameLogin {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int      @map("userid")
+  ip        String   @db.VarChar(45)
+  osuVer    DateTime @map("osu_ver") @db.Date
+  osuStream String   @map("osu_stream") @db.VarChar(11)
+  datetime  DateTime @db.DateTime(0)
+
+  @@map("ingame_logins")
+}
+
+model Log {
+  id     Int      @id @default(autoincrement())
+  from   Int
+  to     Int
+  action String   @db.VarChar(32)
+  msg    String?  @db.VarChar(2048)
+  time   DateTime @db.DateTime(0)
+
+  @@map("logs")
+}
+
+model Mail {
+  id       Int     @id @default(autoincrement())
+  fromUser User    @relation(name: "sentMessages", fields: [fromId], references: [id])
+  fromId   Int     @map("from_id")
+  toUser   User    @relation(name: "receivedMessages", fields: [toId], references: [id])
+  toId     Int     @map("to_id")
+  msg      String  @db.VarChar(2048)
+  time     Int?
+  read     Boolean @default(false)
+
+  @@map("mail")
+}
+
+model Channel {
+  id        Int     @id @default(autoincrement())
+  name      String  @unique(map: "channels_name_uindex") @db.VarChar(32)
+  topic     String  @db.VarChar(256)
+  readPriv  Int     @default(1) @map("read_priv")
+  writePriv Int     @default(2) @map("write_priv")
+  autoJoin  Boolean @default(false) @map("auto_join")
+
+  @@map("channels")
+}
+
+model Map {
+  server      MapSource @default(bancho)
+  id          Int       @unique(map: "maps_id_uindex")
+  setId       Int       @map("set_id")
+  status      Int
+  md5         String    @unique(map: "maps_md5_uindex") @db.Char(32)
+  artist      String    @db.VarChar(128)
+  title       String    @db.VarChar(128)
+  version     String    @db.VarChar(128)
+  creator     String    @db.VarChar(19)
+  filename    String    @db.VarChar(256)
+  lastUpdate  DateTime  @map("last_update") @db.DateTime(0)
+  totalLength Int       @map("total_length")
+  maxCombo    Int       @map("max_combo")
+  frozen      Boolean   @default(false)
+  plays       Int       @default(0)
+  passes      Int       @default(0)
+  mode        Boolean   @default(false)
+  bpm         Float     @default(0.00) @db.Float
+  cs          Float     @default(0.00) @db.Float
+  ar          Float     @default(0.00) @db.Float
+  od          Float     @default(0.00) @db.Float
+  hp          Float     @default(0.00) @db.Float
+  diff        Float     @default(0.000) @db.Float
+
+  @@id([server, id])
+  @@map("maps")
+}
+
+model Mapset {
+  server          MapsetSource @default(bancho)
+  id              Int          @unique(map: "nmapsets_id_uindex")
+  lastOsuapiCheck DateTime     @default(now()) @map("last_osuapi_check") @db.DateTime(0)
+  // virtual
+  favouritedBy    Favourite[]
+
+  @@id([server, id])
+  @@map("mapsets")
+}
+
+model PerformanceReports {
+  scoreid          BigInt                   @db.UnsignedBigInt
+  modMode          PerformanceReportModMode @default(vanilla) @map("mod_mode")
+  os               String                   @db.VarChar(64)
+  fullscreen       Boolean
+  fpsCap           String                   @map("fps_cap") @db.VarChar(16)
+  compatibility    Boolean
+  version          String                   @db.VarChar(16)
+  startTime        Int                      @map("start_time")
+  endTime          Int                      @map("end_time")
+  frameCount       Int                      @map("frame_count")
+  spikeFrames      Int                      @map("spike_frames")
+  aimRate          Int                      @map("aim_rate")
+  completion       Boolean
+  identifier       String?                  @db.VarChar(128)
+  averageFrametime Int                      @map("average_frametime")
+
+  @@id([scoreid, modMode])
+  @@map("performance_reports")
+}
+
+model Rating {
+  userId Int    @map("userid")
+  mapMd5 String @map("map_md5") @db.Char(32)
+  rating Int    @db.TinyInt
+
+  @@id([userId, mapMd5])
+  @@map("ratings")
+}
+
+model RelationShip {
+  user1 Int
+  user2 Int
+  type  RelationshipType
+
+  @@id([user1, user2])
+  @@map("relationships")
+}
+
+model Score {
+  id             BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  mapMd5         String   @map("map_md5") @db.Char(32)
+  score          Int
+  pp             Float    @db.Float
+  acc            Float    @db.Float
+  maxCombo       Int      @map("max_combo")
+  mods           Int
+  n300           Int
+  n100           Int
+  n50            Int
+  nmiss          Int
+  ngeki          Int
+  nkatu          Int
+  grade          String   @default("N") @db.VarChar(2)
+  status         Int      @db.TinyInt
+  mode           Int      @db.TinyInt
+  playTime       DateTime @map("play_time") @db.DateTime(0)
+  timeElapsed    Int      @map("time_elapsed")
+  clientFlags    Int      @map("client_flags")
+  userId         Int      @map("userid")
+  perfect        Boolean
+  onlineChecksum String   @map("online_checksum") @db.Char(32)
+
+  @@map("scores")
+}
+
+model Startup {
+  id       Int      @id @default(autoincrement())
+  verMajor Int      @map("ver_major") @db.TinyInt
+  verMinor Int      @map("ver_minor") @db.TinyInt
+  verMicro Int      @map("ver_micro") @db.TinyInt
+  datetime DateTime @db.DateTime(0)
+
+  @@map("startups")
+}
+
+model Stat {
+  id          Int     @default(autoincrement())
+  mode        Boolean
+  tscore      BigInt  @default(0) @db.UnsignedBigInt
+  rscore      BigInt  @default(0) @db.UnsignedBigInt
+  pp          Int     @default(0) @db.UnsignedInt
+  plays       Int     @default(0) @db.UnsignedInt
+  playtime    Int     @default(0) @db.UnsignedInt
+  acc         Float   @default(0.000) @db.Float
+  maxCombo    Int     @default(0) @map("max_combo") @db.UnsignedInt
+  totalHits   Int     @default(0) @map("total_hits") @db.UnsignedInt
+  replayViews Int     @default(0) @map("replay_views") @db.UnsignedInt
+  xhCount     Int     @default(0) @map("xh_count") @db.UnsignedInt
+  xCount      Int     @default(0) @map("x_count") @db.UnsignedInt
+  shCount     Int     @default(0) @map("sh_count") @db.UnsignedInt
+  sCount      Int     @default(0) @map("s_count") @db.UnsignedInt
+  aCount      Int     @default(0) @map("a_count") @db.UnsignedInt
+
+  @@id([id, mode])
+  @@map("stats")
+}
+
+model TourneyPool {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(16)
+  createdAt DateTime @map("created_at") @db.DateTime(0)
+  createdBy Int      @map("created_by")
+
+  @@index([createdBy], map: "tourney_pools_User_id_fk")
+  @@map("tourney_pools")
+}
+
+model UserAchievement {
+  userId       Int @map("userid")
+  achivementId Int @map("achid")
+
+  @@id([userId, achivementId])
+  @@map("user_achievements")
+}
+
+enum MapSource {
+  bancho  @map("osu!")
+  private
+}
+
+enum MapsetSource {
+  bancho  @map("osu!")
+  private
+}
+
+enum PerformanceReportModMode {
+  vanilla
+  relax
+  autopilot
+}
+
+enum CommentsTargetType {
+  replay
+  map
+  song
+}
+
+enum RelationshipType {
+  friend
+  block
+}
+
+model achievements {
+  id   Int    @id @default(autoincrement())
+  file String @unique(map: "achievements_file_uindex") @db.VarChar(128)
+  name String @unique(map: "achievements_name_uindex") @db.VarChar(128)
+  desc String @unique(map: "achievements_desc_uindex") @db.VarChar(256)
+  cond String @db.VarChar(64)
+}

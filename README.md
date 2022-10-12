@@ -13,8 +13,8 @@ yarn install
 # npm
 npm install
 
-# pnpm
-pnpm install --shamefully-hoist
+# pnpm (cannot install.)
+# pnpm install --shamefully-hoist
 ```
 
 ## Development Server
