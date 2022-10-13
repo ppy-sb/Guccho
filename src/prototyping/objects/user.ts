@@ -1,9 +1,9 @@
 import type { User } from '../types/tree'
-import { UserAPI, ScoreRank, PPRank, UserModeRulesetStatistics } from '../types/user'
+import { ScoreRank, PPRank, UserModeRulesetStatistics } from '../types/user'
 
-const createISODate = (date: Date = new Date()) => date.toUTCString()
+export const createISODate = (date: Date = new Date()) => date.toUTCString()
 
-const createScoreRank = (
+export const createScoreRank = (
   initial: ScoreRank = {
     rank: 1,
     rankHistory: { [createISODate(new Date('2023-01-01'))]: 1 },
@@ -20,7 +20,7 @@ const createScoreRank = (
   }
 ): ScoreRank => JSON.parse(JSON.stringify(initial))
 
-const createPPRank = (
+export const createPPRank = (
   initial: PPRank = {
     rank: 1,
     rankHistory: { [createISODate(new Date('2023-01-01'))]: 1 },
@@ -32,7 +32,7 @@ const createPPRank = (
   }
 ): PPRank => JSON.parse(JSON.stringify(initial))
 
-const createRulesetData = (
+export const createRulesetData = (
   ppRankData: PPRank | undefined = undefined,
   scoreRankData: ScoreRank | undefined = undefined
 ): UserModeRulesetStatistics => ({
@@ -47,10 +47,12 @@ const createRulesetData = (
   totalHits: 1
 })
 export const sampleUserWithSecrets: User<string, true> = {
-  id: 'xxxxxyyyy',
+  id: '',
   ingameId: 9999,
   name: 'ppy.sb',
-  safeName: 'ppy-sb',
+  safeName: 'demo-user',
+  avatarUrl: '',
+  // avatarUrl: '/images/1.png',
   oldNames: [],
   flag: 'us',
   email: 'user@example.com',
@@ -67,6 +69,24 @@ export const sampleUserWithSecrets: User<string, true> = {
   secrets: {
     password: '123456788',
     apiKey: 'aaaaa-bbbbb'
+  },
+  statistics: {
+    osu: {
+      standard: createRulesetData(),
+      autopilot: createRulesetData(),
+      relax: createRulesetData()
+    },
+    taiko: {
+      standard: createRulesetData(),
+      relax: createRulesetData()
+    },
+    fruits: {
+      standard: createRulesetData(),
+      relax: createRulesetData()
+    },
+    mania: {
+      standard: createRulesetData()
+    }
   },
   profile: {
     type: 'doc',
@@ -97,24 +117,6 @@ export const sampleUserWithSecrets: User<string, true> = {
         ]
       }
     ]
-  },
-  statistics: {
-    osu: {
-      standard: createRulesetData(),
-      autopilot: createRulesetData(),
-      relax: createRulesetData()
-    },
-    taiko: {
-      standard: createRulesetData(),
-      relax: createRulesetData()
-    },
-    fruits: {
-      standard: createRulesetData(),
-      relax: createRulesetData()
-    },
-    mania: {
-      standard: createRulesetData()
-    }
   }
 }
 
@@ -123,53 +125,3 @@ export const scoped = {
 }
 
 export const demoUser = sampleUserWithSecrets
-
-export const createMockUserAPI = (initial: User<string, true> = sampleUserWithSecrets): UserAPI<string, true> => ({
-  ...initial,
-  fetchStatistics () {
-    if (initial.statistics) { return initial.statistics }
-    return {
-      osu: {
-        standard: createRulesetData(),
-        autopilot: createRulesetData(),
-        relax: createRulesetData()
-      },
-      taiko: {
-        standard: createRulesetData(),
-        relax: createRulesetData()
-      },
-      fruits: {
-        standard: createRulesetData(),
-        relax: createRulesetData()
-      },
-      mania: {
-        standard: createRulesetData()
-      }
-    }
-  },
-  fetchReachable () {
-    if (initial.reachable) { return initial.reachable }
-    return false
-  },
-  fetchOldNames () {
-    if (initial.oldNames) { return initial.oldNames }
-    return []
-  },
-  fetchPreferences () {
-    if (initial.preferences) { return initial.preferences }
-    return {
-      allowPrivateMessage: true,
-      visibility: {
-        email: 'public',
-        oldNames: 'public'
-      }
-    }
-  },
-  fetchSecrets () {
-    if (initial.secrets) { return initial.secrets }
-    return {
-      password: '123456788',
-      apiKey: 'aaaaa-bbbbb'
-    }
-  }
-})
