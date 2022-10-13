@@ -1,10 +1,14 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, UnwrapRef } from 'vue'
+import { useClient } from '#imports'
 import type modalVue from '~/components/T/modal.vue'
-import { scoped as _scoped } from '~/prototyping/objects/user'
+const client = useClient()
+const users = await client.query('getUsers', {
+  handle: 'xxxyyy'
+})
 
-const scoped = reactive(_scoped)
+const scoped = reactive(users)
 const unchanged = computed(() => ({
   ...scoped.demoUser
 }))
