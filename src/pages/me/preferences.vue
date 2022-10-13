@@ -2,12 +2,16 @@
 import { ref, reactive, computed, UnwrapRef } from 'vue'
 import type modalVue from '~/components/T/modal.vue'
 import { useGuwebAPI } from '#imports'
-const { userAPI } = useGuwebAPI()
+const { userAPI, client } = useGuwebAPI()
+
+const getFirstUser = async () => {
+  const firstUser = await client.query('getFirstUser')
+  if (!firstUser) { return }
+
+  return firstUser
+}
 
 const _user = await userAPI('111')
-
-await _user.fetchSecrets()
-await _user.fetchProfile()
 
 const users = {
   'demo-user': _user
