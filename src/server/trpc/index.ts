@@ -2,10 +2,18 @@
 // import type { inferAsyncReturnType } from '@trpc/server'
 import * as trpc from '@trpc/server'
 import { z } from 'zod'
+import { PrismaClient } from '@prisma/client'
 import { sampleUserWithSecrets, scoped } from '@/prototyping/objects/user'
+const prisma = new PrismaClient()
 
 export const router = trpc.router()
-
+  .query('getFirstUser', {
+    async resolve () {
+      const user = await prisma.user.findFirst()
+      if (!user) { return undefined }
+      return user
+    }
+  })
   .query('getFullUser', {
     input: z.object({
       handle: z.union([z.string(), z.number()])

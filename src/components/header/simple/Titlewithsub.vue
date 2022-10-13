@@ -1,5 +1,5 @@
 <template>
-  <div class="h-header container mx-auto">
+  <div class="app-header container mx-auto">
     <div class="text-center">
       <h1 v-if="title" class="text-3xl font-bold text-center sm:text-left">
         {{ title }}
@@ -34,7 +34,7 @@ export default {
 </script>
 
 <style lang="postcss" scoped>
-.h-header {
+.app-header {
   @apply sm:flex mt-2 items-center justify-between text-center text-kimberly-900 dark:text-kimberly-100;
   /* @apply sm:flex sm:w-full mt-2 items-center justify-between text-center text-kimberly-900 dark:text-kimberly-100 ; */
   transition: 0.3s ease;
