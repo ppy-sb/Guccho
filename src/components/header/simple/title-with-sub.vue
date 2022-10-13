@@ -1,5 +1,5 @@
 <template>
-  <div class="app-header container mx-auto">
+  <div class="app-header">
     <div class="text-center">
       <h1 v-if="title" class="text-3xl font-bold text-center sm:text-left">
         {{ title }}
