@@ -149,7 +149,7 @@ const updateUser = () => {
       </button>
     </header-default>
 
-    <div class="flex flex-col flex-wrap md:flex-row md:px-4">
+    <div class="flex flex-col flex-wrap justify-between md:flex-row md:px-4">
       <div class="grow xl:max-w-2xl w-full lg:[max-width:50%]">
         <div
           class="flex gap-4 justify-center md:justify-start items-end bg-kimberly-200/30 dark:bg-kimberly-700/40 sm:rounded-3xl shadow-md p-3 lg:mr-4 overflow-hidden"

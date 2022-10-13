@@ -4,7 +4,7 @@ const layout = ref('list')
 const user = scoped.demoUser
 </script>
 <template>
-  <div class="container mx-auto pt-24 lg:px-4">
+  <div class="container custom-container mx-auto pt-24">
     <t-tabs v-model="layout" size="lg" variant="bordered">
       <t-tab value="list" :active="layout === 'list'">
         list
@@ -64,8 +64,8 @@ const user = scoped.demoUser
       transform: scale(0.98);
     }
     .actions {
-      filter: blur(0.4em) opacity(0) saturate(0);
-      transform: scale(1.2) translateX(-3em) translateY(0.2em);
+      filter: blur(0.3em) opacity(0) saturate(0);
+      transform: scale(1.2) translateX(-1em) translateY(0.2em);
       @apply transition-all;
     }
     &:hover {

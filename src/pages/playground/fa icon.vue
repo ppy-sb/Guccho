@@ -7,7 +7,7 @@ library.add(faEdit)
 </script>
 
 <template>
-  <div class="container lg:px-4 mx-auto">
+  <div class="container custom-container mx-auto">
     <font-awesome-icon icon="fas fa-edit" />
   </div>
 </template>
