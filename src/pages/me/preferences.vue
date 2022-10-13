@@ -1,22 +1,34 @@
-
 <script setup lang="ts">
 import { ref, reactive, computed, UnwrapRef } from 'vue'
-import { useClient } from '#imports'
 import type modalVue from '~/components/T/modal.vue'
-const client = useClient()
-const users = await client.query('getUsers', {
-  handle: 'xxxyyy'
-})
+import { useGuwebAPI } from '#imports'
+const { userAPI } = useGuwebAPI()
+
+const _user = await userAPI('111')
+
+await _user.fetchSecrets()
+await _user.fetchProfile()
+
+const users = {
+  'demo-user': _user
+}
 
 const scoped = reactive(users)
-const unchanged = computed(() => ({
-  ...scoped.demoUser
-}))
-const user = reactive({ ...scoped.demoUser, secrets: { ...scoped.demoUser.secrets } })
+const secrets = await _user.fetchSecrets()
+const profile = await _user.fetchProfile()
+const unchanged = ref({
+  ...scoped['demo-user'],
+  secrets,
+  profile
+})
+const user = reactive({ ...scoped['demo-user'], secrets: await _user.fetchSecrets(), profile: await _user.fetchProfile() })
 const changeAvatar = ref<typeof modalVue>()
 const changePassword = ref<typeof modalVue>()
 const anythingChanged = computed(() => {
-  const col = (['name', 'email', 'profile']as Array<keyof UnwrapRef<typeof unchanged>>).some(item => unchanged.value[item] !== user[item])
+  // TODO: fix compare profile
+  const col = (['name', 'email']as Array<keyof UnwrapRef<typeof unchanged>>).some((item) => {
+    return unchanged.value[item] !== user[item]
+  })
 
   return col
 })
@@ -35,9 +47,10 @@ const saveAvatar = () => {
 }
 
 const updateUser = () => {
-  scoped.demoUser = {
+  scoped['demo-user'] = {
     ...user
   }
+  unchanged.value = { ...user }
 }
 </script>
 
@@ -145,7 +158,7 @@ const updateUser = () => {
             >
               change
             </button>
-            <img src="/images/1.png" class="pointer-events-none " style="min-width:150px; width:150px;">
+            <img :src="user.avatarUrl" class="pointer-events-none " style="min-width:150px; width:150px;">
           </div>
           <div>
             <h1 class="text-5xl text-left">

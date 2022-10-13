@@ -10,8 +10,6 @@ import type {
   AutopilotAvailable,
   RelaxAvailable,
   StandardAvailable,
-  OmitNever,
-  Awaitable,
   APIfy
 } from './shared'
 
@@ -106,6 +104,8 @@ export interface BaseUser<Id> {
   email: string
 
   flag: string,
+
+  avatarUrl: string
 }
 
 export interface UserSecrets {
@@ -162,20 +162,26 @@ export type User<
   IncludeMode extends Mode = Mode,
   IncludeRuleset extends Ruleset = Ruleset,
   Ranks extends RankingSystem = RankingSystem
-> = OmitNever<UserModel<Id, Secret, IncludeMode, IncludeRuleset, Ranks>>
+> = UserModel<Id, Secret, IncludeMode, IncludeRuleset, Ranks>
 
 export type UserAPI<Id, Secrets extends boolean = false> =
   Secrets extends true ?
   APIfy<User<Id, true>,
     | 'preferences'
     | 'reachable'
+    | 'profile'
+    | 'status'
     | 'statistics'
     | 'oldNames'
+    | 'friends'
     | 'secrets'
   >
   : APIfy<User<Id, false>,
     | 'preferences'
     | 'reachable'
+    | 'profile'
+    | 'status'
     | 'statistics'
     | 'oldNames'
+    | 'friends'
   >
