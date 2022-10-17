@@ -15,17 +15,6 @@ export const prisma = new PrismaClient()
 
 type AvailableRankingSystems = 'ppv2' | 'rankedScore' | 'totalScore';
 
-const toBaseUser = (user: DatabaseUser): BaseUser<number> => ({
-  id: user.id,
-  ingameId: user.id,
-  name: user.name,
-  safeName: user.safeName,
-  email: user.email,
-  flag: user.country,
-  avatarUrl: '/images/1.png',
-  roles: toRoles(user.priv)
-})
-
 export const getBaseUser = async (
   handle: string | number
 ): Promise<BaseUser<number> | null> => {
@@ -63,7 +52,16 @@ export const getBaseUser = async (
     return null
   }
 
-  return toBaseUser(user)
+  return {
+    id: user.id,
+    ingameId: user.id,
+    name: user.name,
+    safeName: user.safeName,
+    email: user.email,
+    flag: user.country,
+    avatarUrl: '/images/1.png',
+    roles: toRoles(user.priv)
+  }
 }
 
 const createRulesetData = (
