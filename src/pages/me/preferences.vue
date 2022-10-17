@@ -1,33 +1,25 @@
 <script setup lang="ts">
 import { ref, reactive, computed, UnwrapRef } from 'vue'
-import type modalVue from '~/components/T/modal.vue'
-import { useGuwebAPI } from '#imports'
-const { userAPI, client } = useGuwebAPI()
+import { useClient } from '#imports'
 
-const getFirstUser = async () => {
-  const firstUser = await client.query('getFirstUser')
-  if (!firstUser) { return }
-
-  return firstUser
-}
-
-const _user = await userAPI('1000')
-
-const users = {
-  'demo-user': _user
-}
-
-const scoped = reactive(users)
-const secrets = await _user.fetchSecrets()
-const profile = await _user.fetchProfile()
-const unchanged = ref({
-  ...scoped['demo-user'],
-  secrets,
-  profile
+const client = useClient()
+const _user = await client.query('getFullUser', {
+  secrets: true,
+  handle: 1000
 })
-const user = reactive({ ...scoped['demo-user'], secrets: await _user.fetchSecrets(), profile: await _user.fetchProfile() })
-const changeAvatar = ref<typeof modalVue>()
-const changePassword = ref<typeof modalVue>()
+
+const unchanged = ref({
+  ..._user
+})
+const user = reactive({
+  ..._user
+})
+const changeAvatar = ref<{
+  openModal:() => void
+}>()
+const changePassword = ref<{
+  openModal:() => void
+}>()
 const anythingChanged = computed(() => {
   // TODO: fix compare profile
   const col = (['name', 'email']as Array<keyof UnwrapRef<typeof unchanged>>).some((item) => {
@@ -50,9 +42,6 @@ const saveAvatar = () => {
   }, 1000)
 }
 const updateUser = () => {
-  scoped['demo-user'] = {
-    ...user
-  }
   unchanged.value = { ...user }
 }
 </script>

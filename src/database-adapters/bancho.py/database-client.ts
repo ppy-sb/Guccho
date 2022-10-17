@@ -1,10 +1,19 @@
-import { PrismaClient, Stat, User as DatabaseUser, RelationshipType } from '@prisma/client'
+import {
+  PrismaClient,
+  Stat,
+  User as DatabaseUser,
+  RelationshipType
+} from '@prisma/client'
 import { toRoles, BanchoPyMode } from './enums'
-import { BaseUser, User, UserModeRulesetStatistics } from '~/prototyping/types/user'
+import {
+  BaseUser,
+  User,
+  UserModeRulesetStatistics
+} from '~/prototyping/types/user'
 import { Mode, Ruleset } from '~/prototyping/types/shared'
 export const prisma = new PrismaClient()
 
-type AvailableRankingSystems = 'ppv2' | 'rankedScore'| 'totalScore'
+type AvailableRankingSystems = 'ppv2' | 'rankedScore' | 'totalScore';
 
 const toBaseUser = (user: DatabaseUser): BaseUser<number> => ({
   id: user.id,
@@ -17,9 +26,13 @@ const toBaseUser = (user: DatabaseUser): BaseUser<number> => ({
   roles: toRoles(user.priv)
 })
 
-export const getBaseUser = async (handle: string | number): Promise<BaseUser<number> | null> => {
+export const getBaseUser = async (
+  handle: string | number
+): Promise<BaseUser<number> | null> => {
   let _handle = handle
-  if (typeof _handle === 'string') { _handle = parseInt(_handle) }
+  if (typeof _handle === 'string') {
+    _handle = parseInt(_handle)
+  }
   const query = {
     where: {
       AND: [
@@ -46,12 +59,34 @@ export const getBaseUser = async (handle: string | number): Promise<BaseUser<num
   }
   const user = await prisma.user.findFirst(query)
 
-  if (!user) { return null }
+  if (!user) {
+    return null
+  }
 
   return toBaseUser(user)
 }
 
-const createRulesetData = (databaseResult: Stat): UserModeRulesetStatistics<AvailableRankingSystems> => {
+const createRulesetData = (
+  databaseResult: Stat | undefined
+): UserModeRulesetStatistics<AvailableRankingSystems> => {
+  if (!databaseResult) {
+    return {
+      ranking: {
+        ppv2: {
+          performance: 0
+        },
+        rankedScore: {
+          score: BigInt(0)
+        },
+        totalScore: {
+          score: BigInt(0)
+        }
+      },
+      playCount: 0,
+      playTime: 0,
+      totalHits: 0
+    }
+  }
   return {
     ranking: {
       ppv2: {
@@ -70,36 +105,47 @@ const createRulesetData = (databaseResult: Stat): UserModeRulesetStatistics<Avai
   }
 }
 
-export const getStatisticsOfUser = async ({ id }: {id: number}) => {
+export const getStatisticsOfUser = async ({ id }: { id: number }) => {
   const results = await prisma.stat.findMany({
     where: {
       id
     }
   })
-  const statistics: User<number, false, Mode, Ruleset, AvailableRankingSystems>['statistics'] = {
+  const statistics: User<
+    number,
+    false,
+    Mode,
+    Ruleset,
+    AvailableRankingSystems
+  >['statistics'] = {
     osu: {
-      standard: createRulesetData(results[BanchoPyMode.osuStandard]),
-      relax: createRulesetData(results[BanchoPyMode.osuRelax]),
-      autopilot: createRulesetData(results[BanchoPyMode.osuAutopilot])
+      standard: createRulesetData(results.find(i => i.mode === BanchoPyMode.osuStandard)),
+      relax: createRulesetData(results.find(i => i.mode === BanchoPyMode.osuRelax)),
+      autopilot: createRulesetData(results.find(i => i.mode === BanchoPyMode.osuAutopilot))
     },
     taiko: {
-      standard: createRulesetData(results[BanchoPyMode.taikoStandard]),
-      relax: createRulesetData(results[BanchoPyMode.taikoRelax])
+      standard: createRulesetData(results.find(i => i.mode === BanchoPyMode.taikoStandard)),
+      relax: createRulesetData(results.find(i => i.mode === BanchoPyMode.taikoRelax))
     },
     fruits: {
-      standard: createRulesetData(results[BanchoPyMode.fruitsStandard]),
-      relax: createRulesetData(results[BanchoPyMode.fruitsRelax])
+      standard: createRulesetData(results.find(i => i.mode === BanchoPyMode.fruitsStandard)),
+      relax: createRulesetData(results.find(i => i.mode === BanchoPyMode.fruitsRelax))
     },
     mania: {
-      standard: createRulesetData(results[BanchoPyMode.maniaStandard])
+      standard: createRulesetData(results.find(i => i.mode === BanchoPyMode.maniaStandard))
     }
   }
   return statistics
 }
 
-export const getFullUser = async <HasSecrets extends boolean = false>(handle: string | number, secrets: HasSecrets): Promise<User<number, HasSecrets> | null> => {
+export const getFullUser = async <HasSecrets extends boolean = false>(
+  handle: string | number,
+  secrets: HasSecrets
+): Promise<User<number, HasSecrets> | null> => {
   let _handle = handle
-  if (typeof _handle === 'string') { _handle = parseInt(_handle) }
+  if (typeof _handle === 'string') {
+    _handle = parseInt(_handle)
+  }
   const user = await prisma.user.findFirst({
     where: {
       AND: [
@@ -135,7 +181,9 @@ export const getFullUser = async <HasSecrets extends boolean = false>(handle: st
     }
   })
 
-  if (!user) { return null }
+  if (!user) {
+    return null
+  }
 
   const returnValue: User<number, HasSecrets> = {
     id: user.id,
@@ -159,8 +207,13 @@ export const getFullUser = async <HasSecrets extends boolean = false>(handle: st
     // TODO: get user status
     status: 'website-online',
     oldNames: [],
-    profile: (user.userpageContent && JSON.parse(user.userpageContent)) || {},
-    friends: user.relations.map(relationship => toBaseUser(relationship.toUser))
+    profile: (user.userpageContent && JSON.parse(user.userpageContent)) || {
+      type: 'doc',
+      content: []
+    },
+    friends: user.relations.map(relationship =>
+      toBaseUser(relationship.toUser)
+    )
   }
 
   if (secrets) {
@@ -169,6 +222,5 @@ export const getFullUser = async <HasSecrets extends boolean = false>(handle: st
       apiKey: ''
     }
   }
-
   return returnValue
 }

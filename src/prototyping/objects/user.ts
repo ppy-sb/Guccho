@@ -1,6 +1,10 @@
 import type { User } from '../types/tree'
 import { ScoreRank, PPRank, UserModeRulesetStatistics } from '../types/user'
 
+(BigInt.prototype as any).toJSON = function () {
+  return Number(this)
+}
+
 export const createISODate = (date: Date = new Date()) => date.toUTCString()
 
 export const createScoreRank = (
@@ -17,7 +21,9 @@ export const createScoreRank = (
       [createISODate(new Date('2022-01-01'))]: BigInt(1_000_000_000)
     }
   }
-): ScoreRank => JSON.parse(JSON.stringify(initial))
+): ScoreRank => JSON.parse(
+  JSON.stringify(initial)
+)
 
 export const createPPRank = (
   initial: PPRank = {

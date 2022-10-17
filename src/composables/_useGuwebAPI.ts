@@ -5,8 +5,8 @@ import { useClient } from '#imports'
 export default () => {
   const client = useClient()
 
-  const createMockUserAPI = (initial: BaseUser<string> & Partial<User<string, true>> = demoUser): UserAPI<string, true> => {
-    const returnValue: Partial<User<string, true>> & UserAPI<string, true> = {
+  const createMockUserAPI = <T = unknown>(initial: BaseUser<T> & Partial<User<T, true>>): UserAPI<T, true> => {
+    const returnValue: Partial<User<T, true>> & UserAPI<T, true> = {
       ...initial || {},
       fetchStatistics () {
         if (returnValue.statistics) { return returnValue.statistics }
