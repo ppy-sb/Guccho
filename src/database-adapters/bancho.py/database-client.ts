@@ -15,14 +15,12 @@ export const prisma = new PrismaClient()
 
 type AvailableRankingSystems = 'ppv2' | 'rankedScore' | 'totalScore';
 
-export const getBaseUser = async (
-  handle: string | number
-): Promise<BaseUser<number> | null> => {
+export const getBaseUser = async (handle: string | number): Promise<BaseUser<number> | null> => {
   let _handle = handle
   if (typeof _handle === 'string') {
     _handle = parseInt(_handle)
   }
-  const query = {
+  const user = await prisma.user.findFirst({
     where: {
       AND: [
         {
@@ -45,8 +43,7 @@ export const getBaseUser = async (
         }
       ]
     }
-  }
-  const user = await prisma.user.findFirst(query)
+  })
 
   if (!user) {
     return null
