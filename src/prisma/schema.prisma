@@ -11,34 +11,36 @@ datasource db {
 // User related
 
 model User {
-  id               Int           @id @default(autoincrement())
-  name             String        @unique(map: "User_name_uindex") @db.VarChar(32)
-  safeName         String        @unique(map: "User_safe_name_uindex") @map("safe_name") @db.VarChar(32)
-  email            String        @unique(map: "User_email_uindex") @db.VarChar(254)
-  priv             Int           @default(1)
-  pwBcrypt         String        @map("pw_bcrypt") @db.Char(60)
-  country          String        @default("xx") @db.Char(2)
-  silenceEnd       Int           @default(0) @map("silence_end")
-  donorEnd         Int           @default(0) @map("donor_end")
-  creationTime     Int           @default(0) @map("creation_time")
-  latestActivity   Int           @default(0) @map("latest_activity")
-  clan             Clan          @relation(name: "clan", fields: [clanId], references: [id])
-  clanId           Int           @default(0) @map("clan_id")
-  clanPriv         Boolean       @default(false) @map("clan_priv")
-  preferredMode    Int           @default(0) @map("preferred_mode")
-  playStyle        Int           @default(0) @map("play_style")
-  customBadgeName  String?       @map("custom_badge_name") @db.VarChar(16)
-  customBadgeIcon  String?       @map("custom_badge_icon") @db.VarChar(64)
-  userpageContent  String?       @map("userpage_content") @db.VarChar(2048)
-  apiKey           String?       @unique(map: "User_api_key_uindex") @map("api_key") @db.Char(36)
+  id               Int            @id @default(autoincrement())
+  name             String         @unique(map: "User_name_uindex") @db.VarChar(32)
+  safeName         String         @unique(map: "User_safe_name_uindex") @map("safe_name") @db.VarChar(32)
+  email            String         @unique(map: "User_email_uindex") @db.VarChar(254)
+  priv             Int            @default(1)
+  pwBcrypt         String         @map("pw_bcrypt") @db.Char(60)
+  country          String         @default("xx") @db.Char(2)
+  silenceEnd       Int            @default(0) @map("silence_end")
+  donorEnd         Int            @default(0) @map("donor_end")
+  creationTime     Int            @default(0) @map("creation_time")
+  latestActivity   Int            @default(0) @map("latest_activity")
+  clan             Clan           @relation(name: "clan", fields: [clanId], references: [id])
+  clanId           Int            @default(0) @map("clan_id")
+  clanPriv         Boolean        @default(false) @map("clan_priv")
+  preferredMode    Int            @default(0) @map("preferred_mode")
+  playStyle        Int            @default(0) @map("play_style")
+  customBadgeName  String?        @map("custom_badge_name") @db.VarChar(16)
+  customBadgeIcon  String?        @map("custom_badge_icon") @db.VarChar(64)
+  userpageContent  String?        @map("userpage_content") @db.VarChar(2048)
+  apiKey           String?        @unique(map: "User_api_key_uindex") @map("api_key") @db.Char(36)
   // virtual
   favourites       Favourite[]
   ingameLogins     IngameLogin[]
-  receivedMessages Mail[]        @relation("receivedMessages")
-  sentMessages     Mail[]        @relation("sentMessages")
+  receivedMessages Mail[]         @relation("receivedMessages")
+  sentMessages     Mail[]         @relation("sentMessages")
   clientHashes     ClientHash[]
   comments         Comment[]
-  ownedClan        Clan[]        @relation("owner")
+  ownedClans       Clan[]         @relation("owner")
+  relations        Relationship[] @relation("from")
+  gotRelations     Relationship[] @relation("to")
 
   @@map("users")
 }
@@ -211,12 +213,14 @@ model Rating {
   @@map("ratings")
 }
 
-model RelationShip {
-  user1 Int
-  user2 Int
-  type  RelationshipType
+model Relationship {
+  fromUser   User             @relation(name: "from", fields: [fromUserId], references: [id])
+  fromUserId Int              @map("user1")
+  toUser     User             @relation(name: "to", fields: [toUserId], references: [id])
+  toUserId   Int              @map("user2")
+  type       RelationshipType
 
-  @@id([user1, user2])
+  @@id([fromUserId, toUserId])
   @@map("relationships")
 }
 
@@ -258,22 +262,22 @@ model Startup {
 }
 
 model Stat {
-  id          Int     @default(autoincrement())
-  mode        Boolean
-  tscore      BigInt  @default(0) @db.UnsignedBigInt
-  rscore      BigInt  @default(0) @db.UnsignedBigInt
-  pp          Int     @default(0) @db.UnsignedInt
-  plays       Int     @default(0) @db.UnsignedInt
-  playtime    Int     @default(0) @db.UnsignedInt
-  acc         Float   @default(0.000) @db.Float
-  maxCombo    Int     @default(0) @map("max_combo") @db.UnsignedInt
-  totalHits   Int     @default(0) @map("total_hits") @db.UnsignedInt
-  replayViews Int     @default(0) @map("replay_views") @db.UnsignedInt
-  xhCount     Int     @default(0) @map("xh_count") @db.UnsignedInt
-  xCount      Int     @default(0) @map("x_count") @db.UnsignedInt
-  shCount     Int     @default(0) @map("sh_count") @db.UnsignedInt
-  sCount      Int     @default(0) @map("s_count") @db.UnsignedInt
-  aCount      Int     @default(0) @map("a_count") @db.UnsignedInt
+  id          Int    @default(autoincrement())
+  mode        Int    @db.TinyInt
+  totalScore  BigInt @default(0) @map("tscore") @db.UnsignedBigInt
+  rankedScore BigInt @default(0) @map("rscore") @db.UnsignedBigInt
+  pp          Int    @default(0) @db.UnsignedInt
+  plays       Int    @default(0) @db.UnsignedInt
+  playTime    Int    @default(0) @map("playtime") @db.UnsignedInt
+  accuracy    Float  @default(0.000) @map("acc") @db.Float
+  maxCombo    Int    @default(0) @map("max_combo") @db.UnsignedInt
+  totalHits   Int    @default(0) @map("total_hits") @db.UnsignedInt
+  replayViews Int    @default(0) @map("replay_views") @db.UnsignedInt
+  xhCount     Int    @default(0) @map("xh_count") @db.UnsignedInt
+  xCount      Int    @default(0) @map("x_count") @db.UnsignedInt
+  shCount     Int    @default(0) @map("sh_count") @db.UnsignedInt
+  sCount      Int    @default(0) @map("s_count") @db.UnsignedInt
+  aCount      Int    @default(0) @map("a_count") @db.UnsignedInt
 
   @@id([id, mode])
   @@map("stats")

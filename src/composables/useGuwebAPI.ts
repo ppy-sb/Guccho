@@ -7,7 +7,7 @@ export default () => {
 
   const createMockUserAPI = (initial: BaseUser<string> & Partial<User<string, true>> = demoUser): UserAPI<string, true> => {
     const returnValue: Partial<User<string, true>> & UserAPI<string, true> = {
-      ...initial,
+      ...initial || {},
       fetchStatistics () {
         if (returnValue.statistics) { return returnValue.statistics }
         const _r = {
@@ -109,6 +109,7 @@ export default () => {
     const baseUser = await client.query('getBaseUser', {
       handle
     })
+    if (!baseUser) { return undefined }
     return createMockUserAPI(baseUser)
   }
 

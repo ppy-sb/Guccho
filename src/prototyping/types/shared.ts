@@ -7,7 +7,7 @@ export type StandardAvailable = Mode;
 export type RelaxAvailable = 'osu' | 'taiko' | 'fruits';
 export type AutopilotAvailable = 'osu';
 
-export type ScoreRankingSystem = 'rankedScores' | 'totalScores';
+export type ScoreRankingSystem = 'rankedScore' | 'totalScore';
 export type PPRankingSystem = 'ppv2' | 'ppv1';
 export type RankingSystem = PPRankingSystem | ScoreRankingSystem;
 
