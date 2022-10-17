@@ -11,7 +11,7 @@ const getFirstUser = async () => {
   return firstUser
 }
 
-const _user = await userAPI('111')
+const _user = await userAPI('1000')
 
 const users = {
   'demo-user': _user
@@ -49,7 +49,6 @@ const saveAvatar = () => {
     // }, 700)
   }, 1000)
 }
-
 const updateUser = () => {
   scoped['demo-user'] = {
     ...user

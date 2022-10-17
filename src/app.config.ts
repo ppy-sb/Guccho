@@ -47,13 +47,13 @@ const config = {
       show: 'dropdown',
       name: 'Performance(v1)'
     },
-    rankedScores: {
+    rankedScore: {
       show: 'tab',
-      name: 'Ranked Scores'
+      name: 'Ranked Score'
     },
-    totalScores: {
+    totalScore: {
       show: 'tab',
-      name: 'Total Scores'
+      name: 'Total Score'
     }
   },
   appModalTeleportTargetId: 'app-modal-portal'

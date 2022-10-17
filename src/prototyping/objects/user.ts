@@ -5,17 +5,16 @@ export const createISODate = (date: Date = new Date()) => date.toUTCString()
 
 export const createScoreRank = (
   initial: ScoreRank = {
-    rank: 1,
     rankHistory: { [createISODate(new Date('2023-01-01'))]: 1 },
     countryRank: 1,
     // countryRankHistory: {[createISODate(new Date('2023-01-01'))]:1},
     accuracy: 0.98,
-    score: 1_000_000_000,
+    score: BigInt(1_000_000_000),
     scoreHistory: {
-      [createISODate(new Date('2021-01-01'))]: 0,
-      [createISODate(new Date('2021-02-01'))]: 200_000_000,
-      [createISODate(new Date('2021-03-01'))]: 800_000_000,
-      [createISODate(new Date('2022-01-01'))]: 1_000_000_000
+      [createISODate(new Date('2021-01-01'))]: BigInt(0),
+      [createISODate(new Date('2021-02-01'))]: BigInt(200_000_000),
+      [createISODate(new Date('2021-03-01'))]: BigInt(800_000_000),
+      [createISODate(new Date('2022-01-01'))]: BigInt(1_000_000_000)
     }
   }
 ): ScoreRank => JSON.parse(JSON.stringify(initial))
@@ -39,8 +38,8 @@ export const createRulesetData = (
   ranking: {
     ppv2: createPPRank(ppRankData),
     ppv1: createPPRank(ppRankData),
-    rankedScores: createScoreRank(scoreRankData),
-    totalScores: createScoreRank(scoreRankData)
+    rankedScore: createScoreRank(scoreRankData),
+    totalScore: createScoreRank(scoreRankData)
   },
   playCount: 1,
   playTime: 10000,
@@ -51,13 +50,14 @@ export const sampleUserWithSecrets: User<string, true> = {
   ingameId: 9999,
   name: 'ppy.sb',
   safeName: 'demo-user',
-  avatarUrl: '',
-  // avatarUrl: '/images/1.png',
+  // avatarUrl: '',
+  avatarUrl: '/images/1.png',
   oldNames: [],
   flag: 'us',
   email: 'user@example.com',
   reachable: true,
   status: 'idle',
+  roles: ['normal', 'supported', 'supporter'],
   friends: [],
   preferences: {
     allowPrivateMessage: true,
