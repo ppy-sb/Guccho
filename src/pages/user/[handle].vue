@@ -9,11 +9,21 @@
 </template>
 
 <script setup lang="ts">
-import { ref, Ref, provide, computed } from 'vue'
-// import { useAppConfig } from '#app'
-import { scoped } from '@/prototyping/objects/user'
+import { ref, Ref, provide, computed, reactive } from 'vue'
+import { useRoute } from '#app'
 import { Mode, Ruleset } from '~/prototyping/types/shared'
-const user = computed(() => scoped.demoUser)
+import { useClient } from '#imports'
+const route = useRoute()
+const client = useClient()
+let _user = await client.query('getFullUser', {
+  secrets: true,
+  handle: `${route.params.handle}`
+})
+if (!_user) {
+  _user = {}
+}
+const user = ref(_user)
+
 const tab = ref('ppv2')
 const selectedMode:Ref<Mode> = ref('osu')
 const selectedRuleset: Ref<Ruleset> = ref('standard')

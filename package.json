@@ -71,6 +71,7 @@
     "@nuxtjs/eslint-module": "^3.1.0",
     "@nuxtjs/tailwindcss": "^5.3.5",
     "@types/color-convert": "^2.0.0",
+    "@types/json-bigint": "^1.0.1",
     "@types/node": "18.8.0",
     "@typescript-eslint/eslint-plugin": "^5.40.0",
     "@typescript-eslint/parser": "^5.40.0",
