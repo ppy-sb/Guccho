@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, computed, UnwrapRef } from 'vue'
+import { ref, computed, UnwrapRef } from 'vue'
 import { useClient } from '#imports'
 
 const client = useClient()
@@ -11,7 +11,7 @@ const _user = await client.query('getFullUser', {
 const unchanged = ref({
   ..._user
 })
-const user = reactive({
+const user = ref({
   ..._user
 })
 const changeAvatar = ref<{
@@ -23,7 +23,7 @@ const changePassword = ref<{
 const anythingChanged = computed(() => {
   // TODO: fix compare profile
   const col = (['name', 'email']as Array<keyof UnwrapRef<typeof unchanged>>).some((item) => {
-    return unchanged.value[item] !== user[item]
+    return unchanged.value[item] !== user.value[item]
   })
 
   return col

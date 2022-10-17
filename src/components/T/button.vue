@@ -20,7 +20,6 @@ const emit = defineEmits<{
 const props = defineProps<{
   variant: string,
   size: string,
-  array: string[],
 }>()
 </script>
 

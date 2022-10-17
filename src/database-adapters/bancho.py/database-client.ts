@@ -15,12 +15,25 @@ export const prisma = new PrismaClient()
 
 type AvailableRankingSystems = 'ppv2' | 'rankedScore' | 'totalScore';
 
-export const getBaseUser = async (handle: string | number): Promise<BaseUser<number> | null> => {
+const toBaseUser = (user: DatabaseUser): BaseUser<number> => ({
+  id: user.id,
+  ingameId: user.id,
+  name: user.name,
+  safeName: user.safeName,
+  email: user.email,
+  flag: user.country,
+  avatarUrl: '/images/1.png',
+  roles: toRoles(user.priv)
+})
+
+export const getBaseUser = async (
+  handle: string | number
+): Promise<BaseUser<number> | null> => {
   let _handle = handle
   if (typeof _handle === 'string') {
     _handle = parseInt(_handle)
   }
-  const user = await prisma.user.findFirst({
+  const query = {
     where: {
       AND: [
         {
@@ -43,22 +56,14 @@ export const getBaseUser = async (handle: string | number): Promise<BaseUser<num
         }
       ]
     }
-  })
+  }
+  const user = await prisma.user.findFirst(query)
 
   if (!user) {
     return null
   }
 
-  return {
-    id: user.id,
-    ingameId: user.id,
-    name: user.name,
-    safeName: user.safeName,
-    email: user.email,
-    flag: user.country,
-    avatarUrl: '/images/1.png',
-    roles: toRoles(user.priv)
-  }
+  return toBaseUser(user)
 }
 
 const createRulesetData = (
