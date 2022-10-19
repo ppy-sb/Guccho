@@ -1,53 +1,50 @@
 <script setup lang="ts">
 import { ref, computed, UnwrapRef } from 'vue'
+import { navigateTo } from '#app'
 import { useClient } from '#imports'
 
-const client = useClient()
-const _user = await client.query('getFullUser', {
-  secrets: true,
-  handle: 1000
-})
-
-const unchanged = ref({
-  ..._user
-})
-const user = ref({
-  ..._user
-})
 const changeAvatar = ref<{
   openModal:() => void
 }>()
 const changePassword = ref<{
   openModal:() => void
 }>()
+
+const client = useClient()
+const _user = await client.query('getSecretFullUser', {
+  handle: 2
+})
+if (!_user) {
+  await navigateTo('/auth/login')
+}
+
+const user = ref(_user)
+
+const unchanged = ref(_user)
 const anythingChanged = computed(() => {
   // TODO: fix compare profile
   const col = (['name', 'email']as Array<keyof UnwrapRef<typeof unchanged>>).some((item) => {
+    if (!user.value || !unchanged.value) { return false }
     return unchanged.value[item] !== user.value[item]
   })
 
   return col
 })
-// const profile = ref('')
 
 const uploading = ref(0)
 const saveAvatar = () => {
   uploading.value = 1
   setTimeout(() => {
     uploading.value = 2
-
-    // setTimeout(() => {
-    //   changeAvatar.value.closeModal()
-    // }, 700)
   }, 1000)
 }
 const updateUser = () => {
-  unchanged.value = { ...user }
+  // unchanged.value = { ...user.value }
 }
 </script>
 
 <template>
-  <section class="container custom-container mx-auto">
+  <section v-if="user && unchanged" class="container custom-container mx-auto">
     <t-modal-page>
       <t-modal-wrapper ref="changeAvatar" v-slot="{ closeModal }">
         <t-modal class="max-w-3xl">
@@ -78,7 +75,7 @@ const updateUser = () => {
               </label>
             </div>
             <!-- <div im-just-a-spacer /> -->
-            <t-button class="grow" :loading="uploading === 1" :variant="uploading === 2 && 'success'" @click="saveAvatar">
+            <t-button class="grow" :loading="uploading === 1" :variant="uploading === 2 ? 'success' : 'neutral'" @click="saveAvatar">
               {{ uploading === 0 ? 'Save' :uploading === 1 ? 'Uploading' :uploading === 2 ? 'done' :'' }}
             </t-button>
             <t-button
@@ -184,7 +181,10 @@ const updateUser = () => {
               class="btn btn-sm"
               type="button"
               :disabled="unchanged.name === user.name"
-              @click="user.name = unchanged.name"
+              @click="() => {
+                if (!user || !unchanged) return
+                user.name = unchanged.name
+              }"
             >
               revert
             </button>
@@ -230,7 +230,10 @@ const updateUser = () => {
               class="btn btn-sm"
               type="button"
               :disabled="unchanged.email === user.email"
-              @click="user.email = unchanged.email"
+              @click="() => {
+                if (!user || !unchanged) return
+                user.email = unchanged.email
+              }"
             >
               revert
             </button>
