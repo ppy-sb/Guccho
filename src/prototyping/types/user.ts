@@ -138,7 +138,6 @@ export type UserFriend<Id> = BaseUser<Id>
 
 export interface UserModel<
   Id,
-  IncludeSecrets extends boolean,
   IncludeMode extends Mode,
   IncludeRuleset extends Ruleset,
   Ranking extends RankingSystem
@@ -173,7 +172,15 @@ export interface UserModel<
 
   preferences: UserPreferences
 
-  secrets: IncludeSecrets extends true ? UserSecrets : never
+}
+
+export interface UserSecretModel<
+  Id,
+  IncludeMode extends Mode,
+  IncludeRuleset extends Ruleset,
+  Ranking extends RankingSystem
+> extends UserModel<Id, IncludeMode, IncludeRuleset, Ranking> {
+  secrets: UserSecrets
 }
 
 export type User<
@@ -182,7 +189,9 @@ export type User<
   IncludeMode extends Mode = Mode,
   IncludeRuleset extends Ruleset = Ruleset,
   Ranks extends RankingSystem = RankingSystem
-> = OmitNever<UserModel<Id, Secret, IncludeMode, IncludeRuleset, Ranks>>
+> = Secret extends true
+? UserSecretModel<Id, IncludeMode, IncludeRuleset, Ranks>
+: UserModel<Id, IncludeMode, IncludeRuleset, Ranks>
 
 export type UserAPI<Id, Secrets extends boolean = false> = Secrets extends true
   ? APIfy<

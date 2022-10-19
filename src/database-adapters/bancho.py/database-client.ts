@@ -138,7 +138,7 @@ export const getStatisticsOfUser = async ({ id }: { id: number }) => {
   return statistics
 }
 
-export const getFullUser = async <HasSecrets extends boolean = false>(
+export const getFullUser = async <HasSecrets extends boolean>(
   handle: string | number,
   secrets: HasSecrets
 ): Promise<User<number, HasSecrets> | null> => {
@@ -185,7 +185,7 @@ export const getFullUser = async <HasSecrets extends boolean = false>(
     return null
   }
 
-  const returnValue: User<number, HasSecrets> = {
+  const returnValue: User<number, false> = {
     id: user.id,
     ingameId: user.id,
     name: user.name,
@@ -216,11 +216,18 @@ export const getFullUser = async <HasSecrets extends boolean = false>(
     )
   }
 
-  if (secrets) {
-    (returnValue as User<number, true>).secrets = {
-      password: '',
-      apiKey: ''
-    }
+  if (secrets === true) {
+    const _returnValue = {
+      ...returnValue,
+      secrets: {
+        password: '',
+        apiKey: ''
+      }
+    } as User<number, true>
+    return _returnValue
+  } else {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    return returnValue
   }
-  return returnValue
 }

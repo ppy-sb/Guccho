@@ -7,11 +7,20 @@ import { getBaseUser, getFullUser } from './database-client'
 export const router = trpc.router()
   .query('getFullUser', {
     input: z.object({
-      handle: z.union([z.string(), z.number()]),
-      secrets: z.boolean().default(false)
+      handle: z.union([z.string(), z.number()])
     }),
-    async resolve ({ input: { handle, secrets } }) {
-      return await getFullUser(handle, secrets)
+    async resolve ({ input }) {
+      const user = await getFullUser(input.handle, false)
+      return user
+    }
+  })
+  .query('getSecretFullUser', {
+    input: z.object({
+      handle: z.union([z.string(), z.number()])
+    }),
+    async resolve ({ input }) {
+      const user = await getFullUser(input.handle, true)
+      return user
     }
   })
   .query('getBaseUser', {
