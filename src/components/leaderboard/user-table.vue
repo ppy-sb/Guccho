@@ -1,6 +1,6 @@
 <template>
-  <tr class="bg-wewak-300 dark:bg-wewak-800 rounded-md text-kimberly-900 dark:text-kimberly-100 font-medium">
-    <td class="px-4 font-bold py-3">
+  <tr class="font-medium bg-wewak-300 dark:bg-wewak-800 rounded-md text-kimberly-900 dark:text-kimberly-100">
+    <td class="px-4 py-3 font-bold">
       <p class="text-kimberly-900 dark:text-kimberly-100">
         #{{ props.rank.rank }}
       </p>
@@ -9,7 +9,7 @@
       <div class="flex items-center">
         <div class="flex-shrink-0">
           <img
-            class="h-6 w-auto"
+            class="w-auto h-6"
             :src="$getFlagURL(props.user.flag)"
           >
         </div>
@@ -20,7 +20,7 @@
         </div>
       </div>
     </td>
-    <td class="text-center font-bold">
+    <td class="font-bold text-center">
       <template v-if="sort.selected.icon === 'pp'">
         {{ $addCommas(props.user.pp) }}pp
       </template>

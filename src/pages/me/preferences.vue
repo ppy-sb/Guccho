@@ -44,17 +44,17 @@ const updateUser = () => {
 </script>
 
 <template>
-  <section v-if="user && unchanged" class="container custom-container mx-auto">
+  <section v-if="user && unchanged" class="container mx-auto custom-container">
     <t-modal-page>
       <t-modal-wrapper ref="changeAvatar" v-slot="{ closeModal }">
         <t-modal class="max-w-3xl">
           <div class="flex flex-col gap-2">
-            <div class="flex justify-center items-center w-full">
+            <div class="flex items-center justify-center w-full">
               <label for="dropzone-file" class="dropzone">
-                <div class="flex flex-col justify-center items-center pt-5 pb-6 px-3">
+                <div class="flex flex-col items-center justify-center px-3 pt-5 pb-6">
                   <svg
                     aria-hidden="true"
-                    class="mb-3 w-10 h-10 text-kimberly-600 dark:text-kimberly-400"
+                    class="w-10 h-10 mb-3 text-kimberly-600 dark:text-kimberly-400"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -95,19 +95,19 @@ const updateUser = () => {
           <template #body>
             <div class="card-body w-96">
               <div class="form-control">
-                <label class="label" for="old-password"><span class="label-text pl-2">Old Password</span></label>
+                <label class="label" for="old-password"><span class="pl-2 label-text">Old Password</span></label>
                 <input type="password" class="input input-sm input-ghost">
               </div>
               <div class="form-control">
-                <label class="label" for="old-password"><span class="label-text pl-2">New Password</span></label>
+                <label class="label" for="old-password"><span class="pl-2 label-text">New Password</span></label>
                 <input type="password" class="input input-sm  input-ghost">
               </div>
               <div class="form-control">
-                <label class="label" for="old-password"><span class="label-text pl-2">Repeat Password</span></label>
+                <label class="label" for="old-password"><span class="pl-2 label-text">Repeat Password</span></label>
                 <input type="password" class="input input-sm  input-ghost">
               </div>
             </div>
-            <div class="flex gap-2 p-4">
+            <div class="flex p-4 gap-2">
               <t-button size="sm" variant="accent" class="grow" @click="closeModal">
                 confirm
               </t-button>
@@ -126,7 +126,7 @@ const updateUser = () => {
       />
       <button
         v-if="anythingChanged"
-        class="btn btn-sm btn-warning self-end"
+        class="self-end btn btn-sm btn-warning"
         type="button"
         @click="updateUser"
       >
@@ -137,11 +137,11 @@ const updateUser = () => {
     <div class="flex flex-col flex-wrap justify-between md:flex-row md:px-4">
       <div class="grow xl:max-w-2xl w-full lg:[max-width:50%]">
         <div
-          class="flex gap-4 justify-center md:justify-start items-end bg-kimberly-200/30 dark:bg-kimberly-700/40 sm:rounded-3xl shadow-md p-3 lg:mr-4 overflow-hidden"
+          class="flex items-end justify-center p-3 overflow-hidden shadow-md gap-4 md:justify-start bg-kimberly-200/30 dark:bg-kimberly-700/40 sm:rounded-3xl lg:mr-4"
         >
-          <div class="relative mask mask-squircle z-10 hoverable w-100">
+          <div class="relative z-10 mask mask-squircle hoverable w-100">
             <button
-              class="btn btn-primary hover:bg-wewak-500/30 hover:active:border-wewak-500/30 no-animation absolute z-20 top-0 w-full h-full"
+              class="absolute top-0 z-20 w-full h-full btn btn-primary hover:bg-wewak-500/30 hover:active:border-wewak-500/30 no-animation"
               type="button"
               @click="changeAvatar?.openModal"
             >
@@ -163,14 +163,14 @@ const updateUser = () => {
       <div class="grow lg:[max-width:50%] mt-4 lg:mt-0 lg:ml-4">
         <div class="form-control">
           <label class="label">
-            <span class="label-text pl-3">Username</span>
+            <span class="pl-3 label-text">Username</span>
           </label>
           <div :class="unchanged.name !== user.name && 'input-group input-group-sm'">
             <input
               v-model="user.name"
               type="text"
               placeholder="Username"
-              class="input input-sm w-full"
+              class="w-full input input-sm"
               :class="{
                 'input input-bordered input input-primary':unchanged.name !== user.name,
                 'input input-ghost':unchanged.name === user.name
@@ -192,7 +192,7 @@ const updateUser = () => {
         </div>
         <div>
           <label class="label">
-            <span class="label-text pl-3">Link (safe name)</span>
+            <span class="pl-3 label-text">Link (safe name)</span>
           </label>
           <div class="flex gap-4">
             <input
@@ -212,14 +212,14 @@ const updateUser = () => {
         </div>
         <div class="form-control">
           <label class="label">
-            <span class="label-text pl-3">Email</span>
+            <span class="pl-3 label-text">Email</span>
           </label>
           <div :class="unchanged.email !== user.email && 'input-group input-group-sm'">
             <input
               v-model="user.email"
               type="email"
               placeholder="abc@123.com"
-              class="input input-sm w-full"
+              class="w-full input input-sm"
               :class="{
                 'input-bordered input-primary':unchanged.email !== user.email,
                 'input-ghost':unchanged.email === user.email
@@ -241,7 +241,7 @@ const updateUser = () => {
         </div>
         <div>
           <label class="label">
-            <span class="label-text pl-3">Password</span>
+            <span class="pl-3 label-text">Password</span>
           </label>
           <div class="flex gap-4">
             <input
@@ -262,7 +262,7 @@ const updateUser = () => {
         </div>
         <div>
           <label class="label">
-            <span class="label-text pl-3">API Key</span>
+            <span class="pl-3 label-text">API Key</span>
           </label>
           <div class="flex gap-4">
             <input
@@ -288,7 +288,7 @@ const updateUser = () => {
     </div>
 
     <label class="label">
-      <span class="label-text pl-3">profile</span>
+      <span class="pl-3 label-text">profile</span>
     </label>
     <lazy-editor v-model.lazy="user.profile" class="safari-performance-boost" />
   </section>

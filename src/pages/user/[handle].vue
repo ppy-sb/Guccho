@@ -1,5 +1,5 @@
 <template>
-  <div v-if="user" class="flex flex-col justify-stretch pt-16 md:pt-0">
+  <div v-if="user" class="flex flex-col pt-16 justify-stretch md:pt-0">
     <userpage-head />
     <lazy-userpage-profile />
     <userpage-ranking-system-switcher class="z-10 !drop-shadow-xl" />

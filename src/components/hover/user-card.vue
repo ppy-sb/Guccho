@@ -9,7 +9,7 @@
         class="relative overflow-hidden rounded-lg px-3 py-3 bg-gradient-to-r from-cyan-600 to-blue-600 text-kimberly-900 dark:text-kimberly-100 w-min-[16rem]"
       >
         <div v-if="user">
-          <div class="flex gap-2 items-center">
+          <div class="flex items-center gap-2">
             <img
               :src="`https://a.${config.baseUrl}/${props.user.id}`"
               alt=""
@@ -20,7 +20,7 @@
                 {{ props.user.name }}
               </h1>
               <h1>
-                <img class="h-6 w-auto" :src="$getFlagURL(props.user.flag)">
+                <img class="w-auto h-6" :src="$getFlagURL(props.user.flag)">
               </h1>
             </div>
           </div>

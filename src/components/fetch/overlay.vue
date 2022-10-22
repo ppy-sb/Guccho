@@ -9,7 +9,7 @@
   >
     <div
       v-show="fetching"
-      class="absolute top-0 left-0 z-50 flex items-center justify-center w-full h-full transition-all bg-kimberly-200 dark:bg-kimberly-800 opacity-0 pointer-events-none backdrop-filter bg-opacity-20 backdrop-blur-sm"
+      class="absolute top-0 left-0 z-50 flex items-center justify-center w-full h-full opacity-0 pointer-events-none transition-all bg-kimberly-200 dark:bg-kimberly-800 backdrop-filter bg-opacity-20 backdrop-blur-sm"
     >
       <svg
         class="w-12 h-12 text-kimberly-900 dark:text-kimberly-100 animate-spin"

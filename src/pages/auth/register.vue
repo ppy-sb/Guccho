@@ -1,10 +1,10 @@
 <template>
-  <div class="my-auto flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full space-y-8 bg-kimberly-100/80 dark:bg-kimberly-800 p-6 rounded-3xl relative overflow-hidden">
+  <div class="flex items-center justify-center px-4 py-12 my-auto sm:px-6 lg:px-8">
+    <div class="relative w-full max-w-md p-6 overflow-hidden space-y-8 bg-kimberly-100/80 dark:bg-kimberly-800 rounded-3xl">
       <fetch-overlay :fetching="fetching" />
 
       <div>
-        <h2 class="text-center text-3xl text-kimberly-800 dark:text-kimberly-50">
+        <h2 class="text-3xl text-center text-kimberly-800 dark:text-kimberly-50">
           Sign Up
         </h2>
       </div>
@@ -22,7 +22,7 @@
               type="user"
               autocomplete="off"
               required
-              class="input input-ghost w-full"
+              class="w-full input input-ghost"
               :class="{ 'input-error': error }"
               placeholder="User"
             >
@@ -39,7 +39,7 @@
               type="password"
               autocomplete="off"
               required
-              class="input input-ghost w-full"
+              class="w-full input input-ghost"
               :class="{ 'input-error': error }"
               placeholder="Password"
             >

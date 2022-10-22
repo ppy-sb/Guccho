@@ -1,6 +1,6 @@
 <template>
   <section
-    class="w-full md:container custom-container mx-auto mt-5 md:mt-20 flex flex-col items-center md:flex-row md:items-end gap-5 "
+    class="flex flex-col items-center w-full mx-auto mt-5 md:container custom-container md:mt-20 md:flex-row md:items-end gap-5 "
   >
     <!-- Logo -->
     <div>
@@ -8,10 +8,10 @@
     </div>
     <!-- info -->
     <div
-      class="pt-4 flex flex-col md:p-0 w-full bg-kimberly-200 dark:bg-kimberly-700 md:bg-transparent md:grow"
+      class="flex flex-col w-full pt-4 md:p-0 bg-kimberly-200 dark:bg-kimberly-700 md:bg-transparent md:grow"
     >
       <div
-        class="order-3 md:order-1 container mx-auto flex justify-around md:justify-end gap-3 pb-4 md:pb-0"
+        class="container flex justify-around order-3 pb-4 mx-auto md:order-1 md:justify-end gap-3 md:pb-0"
       >
         <t-button size="sm" variant="primary">
           add as friend
@@ -21,7 +21,7 @@
         </t-button>
       </div>
       <div
-        class="sm:order-2 container mx-auto sm:flex sm:gap-1 sm:items-end sm:justify-between md:pb-2"
+        class="container mx-auto sm:order-2 sm:flex sm:gap-1 sm:items-end sm:justify-between md:pb-2"
       >
         <div>
           <div>
@@ -29,7 +29,7 @@
               {{ user.name }}
             </h1>
             <h2
-              class="text-3xl text-center md:text-left underline decoration-sky-500 text-kimberly-600 dark:text-kimberly-300"
+              class="text-3xl text-center underline md:text-left decoration-sky-500 text-kimberly-600 dark:text-kimberly-300"
             >
               @{{ user.safeName }}
             </h2>
@@ -38,7 +38,7 @@
         </div>
         <app-mode-switcher class="self-end" />
       </div>
-      <div class="user-status order-3">
+      <div class="order-3 user-status">
         currently offline.
       </div>
     </div>

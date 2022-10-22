@@ -19,8 +19,8 @@
           </template>
           <template #modal>
             <t-modal-wrapper ref="inner1" v-slot="{ closeModal: closeModal2 }">
-              <div class="flex justify-center items-center h-screen">
-                <div class="card glass shadow-xl">
+              <div class="flex items-center justify-center h-screen">
+                <div class="shadow-xl card glass">
                   <figure>
                     <img src="https://placeimg.com/400/225/arch" alt="Shoes">
                   </figure>
@@ -29,7 +29,7 @@
                       Inner Modal 1
                     </h2>
                     <p>hell yeah?</p>
-                    <div class="card-actions justify-end">
+                    <div class="justify-end card-actions">
                       <button class="btn btn-primary" @click="closeModal2">
                         close me
                       </button>
@@ -59,7 +59,7 @@
           <template #modal>
             <t-modal-wrapper ref="inner2" v-slot="{ closeModal: closeModal2 }">
               <div class="container mx-auto">
-                <div class="card bg-kimberly-200 dark:bg-kimberly-800 shadow-xl">
+                <div class="shadow-xl card bg-kimberly-200 dark:bg-kimberly-800">
                   <figure>
                     <img src="https://placeimg.com/400/225/arch" alt="Shoes">
                   </figure>
@@ -68,7 +68,7 @@
                       Inner Modal 2
                     </h2>
                     <p>hell yeah?</p>
-                    <div class="card-actions justify-end">
+                    <div class="justify-end card-actions">
                       <button class="btn btn-primary" @click="closeModal2">
                         close me
                       </button>
