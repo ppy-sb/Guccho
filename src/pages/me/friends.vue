@@ -63,7 +63,7 @@ const user = scoped.demoUser
       @apply drop-shadow-sm;
     }
     .actions {
-      filter: blur(0.3em) opacity(0) saturate(0);
+      filter: blur(0.2em) opacity(0);
       transform: scale(1.05);
       @apply transition-all;
     }
@@ -75,7 +75,7 @@ const user = scoped.demoUser
       }
       .actions {
         transform: scale(1) translateY(-0.2em);
-        filter: blur(0) opacity(1) saturate(1);
+        filter: blur(0) opacity(1);
         @apply transition-all;
       }
 
