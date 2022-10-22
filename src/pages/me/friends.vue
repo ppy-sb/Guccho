@@ -61,21 +61,20 @@ const user = scoped.demoUser
     .face {
       @apply transition-all;
       @apply drop-shadow-sm;
-      transform: scale(0.98);
     }
     .actions {
       filter: blur(0.3em) opacity(0) saturate(0);
-      transform: scale(1.2) translateX(-1em) translateY(0.2em);
+      transform: scale(1.05);
       @apply transition-all;
     }
     &:hover {
       .face {
-        transform: scale(1);
+        transform: translateY(-0.2em);
         @apply drop-shadow-xl;
         @apply transition-all;
       }
       .actions {
-        transform: scale(1);
+        transform: scale(1) translateY(-0.2em);
         filter: blur(0) opacity(1) saturate(1);
         @apply transition-all;
       }

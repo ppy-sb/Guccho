@@ -42,5 +42,12 @@
   ],
   "typescript.tsdk": "node_modules/typescript/lib",
   "scss.lint.unknownAtRules": "ignore",
-  "cSpell.enableFiletypes": ["prisma"]
+  "cSpell.enableFiletypes": ["prisma"],
+  "tailwindCSS.includeLanguages": {
+    "vue": "html",
+    "vue-html": "html"
+  },
+  "editor.quickSuggestions": {
+    "strings": true
+  }
 }
