@@ -1,34 +1,34 @@
 <template>
-  <div class="leaderboard h-full flex flex-col custom-container pt-16 md:pt-0">
+  <div class="flex flex-col h-full pt-16 leaderboard custom-container md:pt-0">
     <header-leaderboard v-model.lazy="selection" @input="fetchLeaderboard" />
 
     <div
-      class="container mx-auto grow flex"
+      class="container flex mx-auto grow"
       :class="{
         content: result.length
       }"
     >
       <template v-if="result.length !== 0">
         <div
-          class="relative overflow-hidden mx-auto xl:rounded-lg"
+          class="relative mx-auto overflow-hidden xl:rounded-lg"
         >
           <fetch-overlay :fetching="fetching" />
           <div class="px-8 py-4">
             <div class="relative overflow-x-auto">
               <table
-                class="table text-sm whitespace-nowrap border-separate"
+                class="table text-sm border-separate whitespace-nowrap"
               >
                 <thead class="text-kimberly-200">
-                  <tr class="font-light text-sm">
+                  <tr class="text-sm font-light">
                     <th />
                     <th class="w-full" />
-                    <th class="px-4 text-center text-xs rounded-lg font-semibold">
+                    <th class="px-4 text-xs font-semibold text-center rounded-lg">
                       {{ selection.sort.selected.name }}
                     </th>
-                    <th class="px-4 text-center text-xs opacity-60 font-medium">
+                    <th class="px-4 text-xs font-medium text-center opacity-60">
                       Accuracy
                     </th>
-                    <th class="px-4 text-center text-xs opacity-60 font-medium">
+                    <th class="px-4 text-xs font-medium text-center opacity-60">
                       Play Count
                     </th>
                   </tr>
@@ -42,11 +42,11 @@
         </div>
       </template>
       <template v-else>
-        <div class="text-kimberly-900 dark:text-kimberly-100 grow my-auto pb-10">
-          <h1 class="text-center text-xl font-semibold">
+        <div class="pb-10 my-auto text-kimberly-900 dark:text-kimberly-100 grow">
+          <h1 class="text-xl font-semibold text-center">
             No one played this mode yet.
           </h1>
-          <h2 class="text-center font-semibold opacity-60 text-sm">
+          <h2 class="text-sm font-semibold text-center opacity-60">
             Maybe you will be the first one? Go for it.
           </h2>
         </div>

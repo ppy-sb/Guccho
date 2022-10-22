@@ -1,5 +1,5 @@
 <template>
-  <div class="grid mt-4 sm:mt-0 md:gap-1">
+  <div class="mt-4 grid sm:mt-0 md:gap-1">
     <div class="flex justify-around gap-4 md:gap-2 lg:gap-4">
       <a
         v-for="(m, index) in leaderboard.mode.list"
@@ -32,7 +32,7 @@
       <a
         v-for="(s, index) in leaderboard.sort.list"
         :key="index"
-        class="h-mode text-sm"
+        class="text-sm h-mode"
         :class="{ '!opacity-80 pointer-events-none': leaderboard.sort.selected?.name === s.name }"
         @click="changeValue('sort', index)"
       >

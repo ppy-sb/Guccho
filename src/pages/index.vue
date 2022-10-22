@@ -1,23 +1,23 @@
 <template>
   <div
-    class="grow flex items-center "
+    class="flex items-center grow "
   >
     <div
-      class="container custom-container mx-auto w-max text-left text-kimberly-900 dark:text-kimberly-100 my-auto flex items-center justify-between"
+      class="container flex items-center justify-between mx-auto my-auto text-left custom-container w-max text-kimberly-900 dark:text-kimberly-100"
     >
       <div class="content">
         <div class="mb-6">
-          <h1 class="text-4xl text-center sm:text-left mb-2 font-bold">
+          <h1 class="mb-2 text-4xl font-bold text-center sm:text-left">
             {{ config.title.toUpperCase() }}
           </h1>
-          <h2 class="h-sub font-semibold text-md text-center sm:text-left">
+          <h2 class="font-semibold text-center h-sub text-md sm:text-left">
             We are an osu! private server built from the ground up with many
             unique features not seen elsewhere - for more information, check out
             gulag and {{ config.title }} on GitHub - we're fully open source!
           </h2>
         </div>
 
-        <div class="gap-2 flex">
+        <div class="flex gap-2">
           <t-nuxt-link-button
             :to="{name: 'auth-login'}"
             variant="primary"
@@ -33,7 +33,7 @@
           </t-nuxt-link-button>
         </div>
       </div>
-      <div class="mascot hidden lg:block">
+      <div class="hidden mascot lg:block">
         <img src="/mascot/riru.png" style="max-height:700px" alt="riru Mascot" m="l-auto">
       </div>
     </div>

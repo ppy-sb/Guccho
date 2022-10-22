@@ -4,7 +4,7 @@
       <h1 v-if="title" class="text-3xl font-bold text-center sm:text-left">
         {{ title }}
       </h1>
-      <h2 v-if="subtitle" class="text-lg font-semibold opacity-40 text-center sm:text-left whitespace-pre">
+      <h2 v-if="subtitle" class="text-lg font-semibold text-center whitespace-pre opacity-40 sm:text-left">
         {{ subtitle }}
       </h2>
 

@@ -41,5 +41,6 @@
     "windicss"
   ],
   "typescript.tsdk": "node_modules/typescript/lib",
-  "scss.lint.unknownAtRules": "ignore"
+  "scss.lint.unknownAtRules": "ignore",
+  "cSpell.enableFiletypes": ["prisma"]
 }

@@ -1,7 +1,7 @@
 <template>
   <section class="w-full pt-4 mx-auto ">
     <t-tabs v-slot="{select}" v-model="tab" variant="bordered">
-      <t-tab disabled class="f-tab grow p-0 m-0" />
+      <t-tab disabled class="p-0 m-0 f-tab grow" />
       <!-- <t-tab class="f-tab" value="Timeline">
         Timeline
       </t-tab> -->
@@ -25,7 +25,7 @@
           </div>
           <ul
             tabindex="0"
-            class="dropdown-content menu p-2 shadow bg-base-100 rounded-box rounded-3xl w-52 z-50"
+            class="z-50 p-2 shadow dropdown-content menu bg-base-100 rounded-box rounded-3xl w-52"
           >
             <li v-for="(stats, key) of dropdown" :key="`user-tab-${key}`">
               <a class="z-50" @click="select(key)">{{ rankingSystem[key].name }}</a>
@@ -35,7 +35,7 @@
           </ul>
         </div>
       </div>
-      <t-tab disabled class="f-tab grow p-0 m-0" />
+      <t-tab disabled class="p-0 m-0 f-tab grow" />
     </t-tabs>
   </section>
 </template>
