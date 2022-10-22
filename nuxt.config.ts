@@ -66,13 +66,11 @@ export default defineNuxtConfig({
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     '@nuxtjs/tailwindcss',
-    // https://go.nuxtjs.dev/pwa
-    // '@nuxtjs/pwa',
     // https://go.nuxtjs.dev/content
     // '@nuxt/content',
     // '@nuxtjs/auth-next',
     '@pinia/nuxt',
-    '@nuxtjs/color-mode',
+    // '@nuxtjs/color-mode',
     'trpc-nuxt'
   ],
 
