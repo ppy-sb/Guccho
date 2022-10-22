@@ -73,12 +73,15 @@ const createRulesetData = (
     return {
       ranking: {
         ppv2: {
+          rank: 0,
           performance: 0
         },
         rankedScore: {
+          rank: 0,
           score: BigInt(0)
         },
         totalScore: {
+          rank: 0,
           score: BigInt(0)
         }
       },
@@ -90,12 +93,15 @@ const createRulesetData = (
   return {
     ranking: {
       ppv2: {
+        rank: 0,
         performance: databaseResult.pp
       },
       rankedScore: {
+        rank: 0,
         score: databaseResult.rankedScore
       },
       totalScore: {
+        rank: 0,
         score: databaseResult.totalScore
       }
     },

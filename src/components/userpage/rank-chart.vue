@@ -5,6 +5,7 @@
         <atropos class="my-atropos" :shadow-offset="-3">
           <div data-atropos-offset="0" class="relative atropos-bg w-full h-full" />
           <LineChart
+            v-if="currentRankingSystem.rankHistory"
             data-atropos-offset="-3"
             :chart-data="countryRank"
             style="max-width: 106% !important; height: 320px; top: 10px; left: -3%; right: -3%"
@@ -12,6 +13,7 @@
             :options="userpageLineChartOptions"
           />
           <LineChart
+            v-if="currentRankingSystem.countryRankHistory"
             data-atropos-offset="3"
             :chart-data="globalRank"
             style="height: 340px; max-width: 112% !important; top: 20px; left: -6%; right: -6%"
@@ -35,7 +37,7 @@
               </div>
             </dl>
           </div>
-          <div data-atropos-offset="0" class="absolute w-full h-full top-0">
+          <div v-if="currentRankingSystem.countryRank" data-atropos-offset="0" class="absolute w-full h-full top-0">
             <dl class="flex w-full h-full">
               <div class="w-3/5" />
               <div class="flex flex-col">
@@ -73,7 +75,7 @@ const hsl = ([h, s, l], a) => `hsl(${h} ${s}% ${l}% / ${a}%)`
 const gRankFill = hsl(hsvRaw.wewak[500], 20)
 const cRankFill = hsl(hsvRaw.kimberly[500], 30)
 
-const chars = [' ', ...[...Array(10).keys()].map(String), ',', '#', 'N', '/', 'A']
+const chars = [' ', ...[...Array(10).keys()].map(String), ',', '#', 'N', '/', 'A', 'a']
 
 // weird bug: roller-item can not find out the correct size
 // TODO: investigate this
