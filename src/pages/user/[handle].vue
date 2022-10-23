@@ -14,7 +14,7 @@
       This user is either been deleted or not exists.
     </h2>
     <div class="grid grid-cols-2 gap-2">
-      <t-button variant="primary">
+      <t-button variant="primary" @click="$router.back()">
         take me back
       </t-button>
       <t-button variant="secondary">
