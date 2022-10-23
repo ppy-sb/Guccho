@@ -6,6 +6,22 @@
     <lazy-userpage-rank-chart v-if="currentRankingSystem" />
     <lazy-userpage-json-viewer />
   </div>
+  <section v-else class="container flex flex-col gap-3 justify-between mx-auto my-auto text-left custom-container w-max">
+    <h1 class="text-3xl self-center">
+      oops..
+    </h1>
+    <h2 class="text-2xl self-center">
+      This user is either been deleted or not exists.
+    </h2>
+    <div class="grid grid-cols-2 gap-2">
+      <t-button variant="primary">
+        take me back
+      </t-button>
+      <t-button variant="secondary">
+        refresh
+      </t-button>
+    </div>
+  </section>
 </template>
 
 <script setup lang="ts">

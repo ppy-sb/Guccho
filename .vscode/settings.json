@@ -10,10 +10,12 @@
     "fetchable",
     "fontawesome",
     "fortawesome",
+    "geki",
     "guweb",
     "highlightjs",
     "hoverable",
     "ingame",
+    "katu",
     "leaderboard",
     "lintfix",
     "lowlight",
@@ -45,8 +47,10 @@
   "cSpell.enableFiletypes": ["prisma"],
   "tailwindCSS.includeLanguages": {
     "vue": "html",
-    "vue-html": "html"
+    "vue-html": "html",
+    "javascript": "javascript"
   },
+  "tailwindCSS.experimental.configFile": "./tailwind.config.js",
   "editor.quickSuggestions": {
     "strings": true
   }
