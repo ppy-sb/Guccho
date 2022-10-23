@@ -37,4 +37,8 @@ export const schemaForType = <T>() => <S extends z.ZodType<T, any, any>>(arg: S)
   return arg
 }
 
-// export type SchemaFromType<T> = ReturnType<ReturnType<typeof schemaForType<T>>>
+type Enumerate<N extends number, Acc extends number[] = []> = Acc['length'] extends N
+  ? Acc[number]
+  : Enumerate<N, [...Acc, Acc['length']]>
+
+export type Range<F extends number, T extends number> = Exclude<Enumerate<T>, Enumerate<F>>
