@@ -38,24 +38,6 @@ const config = {
       icon: 'ap'
     }
   ],
-  rankingSystem: {
-    ppv2: {
-      show: 'tab',
-      name: 'Performance(v2)'
-    },
-    ppv1: {
-      show: 'dropdown',
-      name: 'Performance(v1)'
-    },
-    rankedScore: {
-      show: 'tab',
-      name: 'Ranked Score'
-    },
-    totalScore: {
-      show: 'tab',
-      name: 'Total Score'
-    }
-  },
   appModalTeleportTargetId: 'app-modal-portal'
 }
 export default defineAppConfig(config)

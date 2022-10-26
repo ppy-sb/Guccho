@@ -17,7 +17,7 @@
 
       <div
         class="tab f-tab tab-bordered"
-        :active="Object.keys(dropdown).includes(tab)"
+        :active="tab && Object.keys(dropdown).includes(tab)"
       >
         <div class="dropdown dropdown-end dropdown-hover">
           <div tabindex="0">
@@ -31,7 +31,7 @@
               <a class="z-50" @click="select(key)">{{ rankingSystem[key].name }}</a>
             </li>
 
-            <li><a>Acc Only(v2)</a></li>
+            <!-- <li><a>Acc Only(v2)</a></li> -->
           </ul>
         </div>
       </div>
@@ -40,17 +40,25 @@
   </section>
 </template>
 
-<script setup>
-import { useAppConfig } from 'nuxt/app'
+<script setup lang="ts">
+import { inject, Ref, computed } from 'vue'
+import { useBanchoServerConfig } from '#imports'
 
-const tab = inject('rankingSystem')
 // const currentStatistic = inject('selectedStatisticsData')
-const { rankingSystem } = useAppConfig()
+const { rankingSystems: rankingSystem } = await useBanchoServerConfig()
+const tab = inject<Ref<keyof typeof rankingSystem>>('rankingSystem')
 
-const rankingSystemEntries = computed(() => Object.entries(rankingSystem))
+type RankConf = {
+  userpage: {
+    show: string
+  }
+  name: string
+}
+type Entry = [keyof typeof rankingSystem, RankConf]
+const rankingSystemEntries = computed(() => Object.entries(rankingSystem) as Entry[])
 
-const filter = showType => rankingSystemEntries.value.reduce((acc, [key, value]) => {
-  if (value.show === showType) { acc[key] = value }
+const filter = (showType: 'tab' | 'dropdown') => rankingSystemEntries.value.reduce<Partial<Record<keyof typeof rankingSystem, RankConf>>>((acc, [key, value]) => {
+  if (value.userpage.show === showType) { acc[key] = value }
   return acc
 }, {})
 

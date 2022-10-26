@@ -7,6 +7,15 @@ export type StandardAvailable = Mode;
 export type RelaxAvailable = 'osu' | 'taiko' | 'fruits';
 export type AutopilotAvailable = 'osu';
 
+export type AutoAvailable<_Ruleset extends Ruleset> =
+  _Ruleset extends StandardAvailable
+    ? StandardAvailable
+    : _Ruleset extends RelaxAvailable
+    ? RelaxAvailable
+    : _Ruleset extends AutopilotAvailable
+    ? AutopilotAvailable
+    : never;
+
 export type ScoreRankingSystem = 'rankedScore' | 'totalScore';
 export type PPRankingSystem = 'ppv2' | 'ppv1';
 export type RankingSystem = PPRankingSystem | ScoreRankingSystem;
@@ -23,22 +32,27 @@ export type APIfy<
   T extends Record<string, any>,
   Keys extends keyof T | '_noProp' = '_noProp'
 > = {
-    [K in keyof T as K extends Keys
+  [K in keyof T as K extends Keys
     ? `fetch${Capitalize<string & K>}`
     : Keys extends '_noProp'
     ? K | `fetch${Capitalize<string & K>}`
-    : K
-    ]: K extends Keys
-    ? () => Awaitable<T[Uncapitalize<string & K>]>
-    : T[K];
-  };
+    : K]: K extends Keys ? () => Awaitable<T[Uncapitalize<string & K>]> : T[K];
+};
 
-export const schemaForType = <T>() => <S extends z.ZodType<T, any, any>>(arg: S) => {
-  return arg
-}
+export const schemaForType =
+  <T>() =>
+  <S extends z.ZodType<T, any, any>>(arg: S) => {
+    return arg
+  }
 
-type Enumerate<N extends number, Acc extends number[] = []> = Acc['length'] extends N
+type Enumerate<
+  N extends number,
+  Acc extends number[] = []
+> = Acc['length'] extends N
   ? Acc[number]
-  : Enumerate<N, [...Acc, Acc['length']]>
+  : Enumerate<N, [...Acc, Acc['length']]>;
 
-export type Range<F extends number, T extends number> = Exclude<Enumerate<T>, Enumerate<F>>
+export type Range<F extends number, T extends number> = Exclude<
+  Enumerate<T>,
+  Enumerate<F>
+>;
