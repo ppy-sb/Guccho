@@ -2,5 +2,5 @@
   return Number(this)
 }
 
-export * from '~~/src/adapters/bancho.py/trpc'
+export * from '~/adapters/bancho.py/trpc'
 // export * from '~/database-adapters/mock/trpc'

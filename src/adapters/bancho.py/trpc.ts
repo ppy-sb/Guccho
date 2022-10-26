@@ -2,34 +2,9 @@
 // import type { inferAsyncReturnType } from '@trpc/server'
 import * as trpc from '@trpc/server'
 import { z } from 'zod'
-import { getBaseUser, getFullUser } from './database-client'
+import { getBaseUser, getFullUser } from './backend-client'
 
-const rulesetConfig = {
-  ppv2: {
-    userpage: {
-      show: 'tab'
-    },
-    name: 'Performance(v2)'
-  },
-  ppv1: {
-    userpage: {
-      show: 'dropdown'
-    },
-    name: 'Performance(v1)'
-  },
-  rankedScore: {
-    userpage: {
-      show: 'tab'
-    },
-    name: 'Ranked Score'
-  },
-  totalScore: {
-    userpage: {
-      show: 'tab'
-    },
-    name: 'Total Score'
-  }
-}
+import { rulesetConfig } from './config'
 
 export const router = trpc.router()
   .query('getFullUser', {
