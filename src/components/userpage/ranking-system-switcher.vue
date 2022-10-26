@@ -16,6 +16,7 @@
       </t-tab>
 
       <div
+        v-if="Object.keys(dropdown).length"
         class="tab f-tab tab-bordered"
         :active="tab && Object.keys(dropdown).includes(tab)"
       >
