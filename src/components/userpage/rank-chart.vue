@@ -12,6 +12,11 @@
             class="!absolute -z-10"
             :options="userpageLineChartOptions"
           />
+          <div v-else class="absolute -z-10 top-0 grid w-full h-full justify-center items-center" data-atropos-offset="-3">
+            <div class="text-xl mt-8 mr-40">
+              rank history not available
+            </div>
+          </div>
           <LineChart
             v-if="currentRankingSystem.countryRankHistory"
             data-atropos-offset="3"
@@ -20,6 +25,11 @@
             class="!absolute z-10"
             :options="userpageLineChartOptions"
           />
+          <div v-else-if="currentRankingSystem.countryRank" class="absolute -z-10 top-0 grid w-full h-full justify-center items-center" data-atropos-offset="3">
+            <div class="text-xl mt-20 ms-40">
+              country rank history not available
+            </div>
+          </div>
           <div data-atropos-offset="5" class="absolute w-full h-full top-0">
             <dl class="flex w-full h-full z-20">
               <div class="w-1/4" />
