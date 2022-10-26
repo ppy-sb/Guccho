@@ -25,10 +25,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, Ref, provide, computed } from 'vue'
+import { ref, provide, computed } from 'vue'
 import { useRoute } from '#app'
-import { Mode, Ruleset } from '~/prototyping/types/shared'
+import { Mode, Ruleset, RankingSystem } from '~/prototyping/types/shared'
 import { useClient } from '#imports'
+import { UserModeRulesetStatistics } from '~/prototyping/types/user'
 const route = useRoute()
 const client = useClient()
 const _user = await client.query('getFullUser', {
@@ -36,13 +37,13 @@ const _user = await client.query('getFullUser', {
 })
 const user = ref(_user)
 
-const tab = ref('ppv2')
-const selectedMode: Ref<Mode> = ref('osu')
-const selectedRuleset: Ref<Ruleset> = ref('standard')
-const currentStatistic = computed(
+const tab = ref<RankingSystem>('ppv2')
+const selectedMode = ref<Mode>('osu')
+const selectedRuleset = ref<Ruleset>('standard')
+const currentStatistic = computed<UserModeRulesetStatistics>(
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  () => user.value.statistics[selectedMode.value][selectedRuleset.value]
+  () => user.value?.statistics[selectedMode.value][selectedRuleset.value]
 )
 
 const currentRankingSystem = computed(

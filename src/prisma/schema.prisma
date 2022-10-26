@@ -48,14 +48,14 @@ model User {
 model ClientHash {
   user        User     @relation(fields: [userId], references: [id])
   userId      Int      @map("userid")
-  osupath     String   @db.Char(32)
-  adapters    String   @db.Char(32)
+  osuPath     String   @map("osupath") @db.Char(32)
+  iFaces      String   @map("adapters") @db.Char(32)
   uninstallId String   @map("uninstall_id") @db.Char(32)
   diskSerial  String   @map("disk_serial") @db.Char(32)
   latestTime  DateTime @map("latest_time") @db.DateTime(0)
   occurrences Int      @default(0)
 
-  @@id([userId, osupath, adapters, uninstallId, diskSerial])
+  @@id([userId, osuPath, iFaces, uninstallId, diskSerial])
   @@map("client_hashes")
 }
 
@@ -120,14 +120,14 @@ model Log {
 }
 
 model Mail {
-  id       Int     @id @default(autoincrement())
-  fromUser User    @relation(name: "sentMessages", fields: [fromId], references: [id])
-  fromId   Int     @map("from_id")
-  toUser   User    @relation(name: "receivedMessages", fields: [toId], references: [id])
-  toId     Int     @map("to_id")
-  msg      String  @db.VarChar(2048)
-  time     Int?
-  read     Boolean @default(false)
+  id         Int     @id @default(autoincrement())
+  fromUser   User    @relation(name: "sentMessages", fields: [fromId], references: [id])
+  fromId     Int     @map("from_id")
+  targetUser User    @relation(name: "receivedMessages", fields: [targetId], references: [id])
+  targetId   Int     @map("to_id")
+  msg        String  @db.VarChar(2048)
+  time       Int?
+  read       Boolean @default(false)
 
   @@map("mail")
 }
@@ -175,7 +175,7 @@ model Map {
 model Mapset {
   server          MapsetSource @default(bancho)
   id              Int          @unique(map: "nmapsets_id_uindex")
-  lastOsuapiCheck DateTime     @default(now()) @map("last_osuapi_check") @db.DateTime(0)
+  lastOsuApiCheck DateTime     @default(now()) @map("last_osuapi_check") @db.DateTime(0)
   // virtual
   favouritedBy    Favourite[]
 
@@ -184,7 +184,7 @@ model Mapset {
 }
 
 model PerformanceReports {
-  scoreid          BigInt                   @db.UnsignedBigInt
+  scoreId          BigInt                   @map("scoreid") @db.UnsignedBigInt
   modMode          PerformanceReportModMode @default(vanilla) @map("mod_mode")
   os               String                   @db.VarChar(64)
   fullscreen       Boolean
@@ -200,7 +200,7 @@ model PerformanceReports {
   identifier       String?                  @db.VarChar(128)
   averageFrametime Int                      @map("average_frametime")
 
-  @@id([scoreid, modMode])
+  @@id([scoreId, modMode])
   @@map("performance_reports")
 }
 
