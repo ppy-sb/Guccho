@@ -28,7 +28,7 @@ const toBaseUser = (user: DatabaseUser): BaseUser<Id> => ({
   safeName: user.safeName,
   email: user.email,
   flag: user.country,
-  avatarUrl: '/images/1.png',
+  avatarUrl: `https://a.ppy.sb/${user.id}`,
   roles: toRoles(user.priv)
 })
 
@@ -305,7 +305,7 @@ export const getFullUser = async <HasSecrets extends boolean>(
       safeName: user.safeName,
       email: user.email,
       flag: user.country,
-      avatarUrl: '/images/1.png',
+      avatarUrl: `https://a.ppy.sb/${user.id}`,
       roles: toRoles(user.priv),
       statistics: await getStatisticsOfUser(user),
       preferences: {

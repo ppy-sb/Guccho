@@ -1,3 +1,26 @@
+<script setup lang="ts">
+import { navigateTo } from '#app'
+import { reactive, ref } from 'vue'
+import { useSession } from '~/store/session'
+
+const session = useSession()
+
+const userLogin = async () => {
+  const result = await session.login()
+  if (result) { navigateTo('/') }
+}
+
+const error = undefined
+
+const registerButton = ref<string>('Do not have an account?')
+
+const login = reactive<{
+  user?: string
+  password?: string
+}>({})
+
+</script>
+
 <template>
   <div class="flex items-center justify-center px-4 py-12 my-auto sm:px-6 lg:px-8">
     <div class="relative w-full max-w-md p-6 overflow-hidden space-y-8 bg-kimberly-100/80 dark:bg-kimberly-800 rounded-3xl">
@@ -56,46 +79,6 @@
     </div>
   </div>
 </template>
-
-<script>
-export default {
-  name: 'LoginPage',
-  data () {
-    return {
-      login: {
-        user: '',
-        password: ''
-      },
-      fetching: false,
-      error: null,
-      registerButton: 'Do not have an account?'
-    }
-  },
-  methods: {
-    async userLogin () {
-      // try {
-      //   this.error = null
-      //   this.fetching = true
-      //   await this.$auth.loginWith('local', { data: this.login })
-      //   this.$router.push('/')
-      //   this.$toast.show({
-      //     type: 'success',
-      //     message: 'You have been logged in!'
-      //   })
-      // } catch (err) {
-      //   const response = err.response
-      //   if (response.data) {
-      //     this.error = response.data.detail
-      //   } else {
-      //     this.error = response.statusText
-      //   }
-      // } finally {
-      //   this.fetching = false
-      // }
-    }
-  }
-}
-</script>
 
 <style lang="postcss" scoped>
 .auth-error-text {

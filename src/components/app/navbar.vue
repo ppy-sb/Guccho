@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { onBeforeMount, ref, onUnmounted } from 'vue'
 import { useAppConfig } from '#app'
+import { useSession } from '~/store/session'
+
+const session = useSession()
+
 const props = withDefaults(
   defineProps<{
     disabled: boolean;
@@ -153,9 +157,12 @@ onUnmounted(() => {
             />
           </svg>
         </button>
-        <!-- <button class="btn btn-ghost !shadow-none btn-circle">
-          <div class="indicator">
-            <svg
+        <button
+          v-if="session.loggedIn"
+          class="btn btn-ghost !shadow-none btn-circle"
+        >
+          <div class="indicator avatar">
+            <!-- <svg
               xmlns="http://www.w3.org/2000/svg"
               class="h-5 w-5"
               fill="none"
@@ -168,10 +175,15 @@ onUnmounted(() => {
                 stroke-width="2"
                 d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
               />
-            </svg>
-            <span class="badge badge-xs badge-primary indicator-item" />
+            </svg> -->
+            <img
+              :src="session._cachedBaseUser?.avatarUrl"
+              class="avatar-img rounded-full ring ring-kimberly-500 ring-offset-base-100 ring-offset-2"
+              alt=""
+            >
+            <span class="badge badge-xs badge-success indicator-item" />
           </div>
-        </button> -->
+        </button>
       </div>
     </div>
   </div>
@@ -213,6 +225,12 @@ onUnmounted(() => {
       @apply pointer-events-none;
     }
   }
+  .avatar {
+    & img.avatar-img {
+      @apply transition-all;
+      @apply w-7 #{!important};
+    }
+  }
 }
 .detached {
   @apply px-2 pt-2;
@@ -224,6 +242,13 @@ onUnmounted(() => {
     &.disabled {
       scale: (0.95);
       filter: blur(0.3em);
+    }
+
+    .avatar {
+      & img.avatar-img {
+        @apply transition-all;
+        @apply w-6 #{!important};
+      }
     }
   }
 }

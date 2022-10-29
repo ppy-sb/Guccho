@@ -3,6 +3,8 @@ import { ref, computed, UnwrapRef } from 'vue'
 import { navigateTo } from '#app'
 import { useClient } from '#imports'
 
+import { useSession } from '~/store/session'
+
 const changeAvatar = ref<{
   openModal:() => void
 }>()
@@ -11,8 +13,12 @@ const changePassword = ref<{
 }>()
 
 const client = useClient()
+const session = useSession()
+if (!session.loggedIn) {
+  await navigateTo('/auth/login')
+}
 const _user = await client.query('user.full+secret', {
-  handle: 2
+  handle: session.userId
 })
 if (!_user) {
   await navigateTo('/auth/login')
