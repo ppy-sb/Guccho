@@ -24,7 +24,7 @@ const user = scoped.demoUser
         >
           <div class="relative mask mask-squircle z-10 hoverable w-100">
             <img
-              src="/images/1.png"
+              :src="user.avatarUrl"
               class="pointer-events-none w-14 md:w-[4em]"
             >
           </div>
