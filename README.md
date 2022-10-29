@@ -41,7 +41,6 @@ npm run preview
 
 Checkout the [deployment documentation](https://v3.nuxtjs.org/guide/deploy/presets) for more information.
 
-
 Table of Contents
 ==================
 - [Nuxt 3 Minimal Starter](#nuxt-3-minimal-starter)
@@ -52,6 +51,7 @@ Table of Contents
   - [What is guweb-nuxt?](#what-is-guweb-nuxt)
   - [Requirements](#requirements)
   - [The team (guweb-nuxt)](#the-team-guweb-nuxt)
+    - [todo](#todo)
 
 What is guweb-nuxt?
 ------
@@ -69,18 +69,24 @@ Requirements
 
 The team (guweb-nuxt)
 ------
-- [Varkaria](https://github.com/Varkaria)
 
+- [ppy.sb](https://github.com/ppy-sb)
+- [Varkaria](https://github.com/Varkaria)
 
 Plan: deprecate Python api server and use Nuxt 3 only.
 
-phase 1: migrate to nuxt 3 with typescript support
-phase 2: define tRPC schema for both frontend and backend
-phase 3: migrate legacy python server to nuxt 3 api.
-
+- phase 1: migrate to nuxt 3 with typescript support [x]
+- phase 2: define tRPC schema for both frontend and backend [x]
+- phase 3: migrate legacy python server to nuxt 3 api.
 
 todo: search 'TODO' in repo.
 
 markdown for userpage
 
-TODO: floating navbar https://daisyui.com/components/navbar/
+### todo
+
+TODO Register
+TODO Give first registered user owner privilege
+
+TODO Session
+TODO Login (require session & store)

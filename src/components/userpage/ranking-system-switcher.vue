@@ -43,10 +43,10 @@
 
 <script setup lang="ts">
 import { inject, Ref, computed } from 'vue'
-import { useBanchoServerConfig } from '#imports'
+import { useBackendConfig } from '#imports'
 
 // const currentStatistic = inject('selectedStatisticsData')
-const { rankingSystems: rankingSystem } = await useBanchoServerConfig()
+const { rankingSystems: rankingSystem } = await useBackendConfig()
 const tab = inject<Ref<keyof typeof rankingSystem>>('rankingSystem')
 
 type RankConf = {
