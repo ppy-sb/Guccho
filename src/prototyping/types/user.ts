@@ -53,6 +53,9 @@ export type UserPrivilegeString =
   // dangerous
   | 'owner'
 
+  // misc
+  | 'bot'
+
 export interface BaseRank {
   rank?: number
   rankHistory?: Record<string, number>

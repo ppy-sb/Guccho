@@ -7,7 +7,7 @@ import {
 
 import { createClient } from 'redis'
 
-import type { AvailableRankingSystems, IdType as Id } from './config'
+import type { AvailableRankingSystems, IdType as Id } from '../config'
 import { toRoles, BanchoPyMode } from './enums'
 import {
   BaseUser,
