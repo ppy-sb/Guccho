@@ -1,4 +1,4 @@
-export const rulesetConfig = {
+export const ServerRulesetConfig = {
   ppv2: {
     userpage: {
       show: 'tab'
@@ -24,5 +24,5 @@ export const rulesetConfig = {
     name: 'Total Score'
   }
 }
-export type AvailableRankingSystems = keyof typeof rulesetConfig
+export type AvailableRankingSystems = keyof typeof ServerRulesetConfig
 export type IdType = number

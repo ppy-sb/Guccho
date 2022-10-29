@@ -2,9 +2,9 @@
 // import type { inferAsyncReturnType } from '@trpc/server'
 import * as trpc from '@trpc/server'
 import { z } from 'zod'
-import { getBaseUser, getFullUser } from './backend-client'
+import { getBaseUser, getFullUser } from '../backend-clients'
 
-import { rulesetConfig } from './config'
+import { ServerRulesetConfig } from '../config'
 
 export const router = trpc.router()
   .query('getFullUser', {
@@ -34,8 +34,9 @@ export const router = trpc.router()
       return user
     }
   })
+
   .query('getRankingSystems', {
     resolve () {
-      return rulesetConfig
+      return ServerRulesetConfig
     }
   })

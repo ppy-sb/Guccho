@@ -21,6 +21,9 @@ Mod = 1 << 12, //  able to manage users (level 1).
 Admin = 1 << 13, //  able to manage users (level 2).
 Dangerous = 1 << 14, //  able to manage full server state.
 
+// guweb-next custom
+Bot = 1 << 15,
+
 Donator = Supporter | Premium,
 Staff = Mod | Admin | Dangerous
 
@@ -39,6 +42,7 @@ export const toRoles = (priv: number): UserPrivilegeString[] => {
   if (priv & BanchoPyPrivilege.Staff) { roles.push('staff') }
   if (priv & BanchoPyPrivilege.Admin) { roles.push('admin') }
   if (priv & BanchoPyPrivilege.Dangerous) { roles.push('owner') }
+  if (priv & BanchoPyPrivilege.Bot) { roles.push('bot') }
   return roles
 }
 

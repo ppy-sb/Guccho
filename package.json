@@ -43,6 +43,7 @@
     "@tiptap/html": "^2.0.0-beta.199",
     "@tiptap/starter-kit": "^2.0.0-beta.199",
     "@tiptap/vue-3": "^2.0.0-beta.199",
+    "@tiptap/core": "^2.0.0-beta.199",
     "atropos": "^1.0.2",
     "chart.js": "^3.9.1",
     "click-outside-vue3": "^4.0.1",
@@ -50,9 +51,10 @@
     "core-js": "^3.26.0",
     "daisyui-vue": "^0.0.1-alpha.8",
     "floating-vue": "^2.0.0-beta.20",
+    "highlight.js": "^11.6.0",
     "install": "^0.13.0",
     "lowlight": "^2.7.0",
-    "nuxt": "^3.0.0-rc.12",
+    "nuxt": "3.0.0-rc.11",
     "prisma": "^4.5.0",
     "redis": "^4.3.1",
     "remixicon": "^2.5.0",
@@ -63,7 +65,6 @@
     "vue-chart-3": "^3.1.8",
     "vue-roller": "^2.0.3",
     "vue3-json-viewer": "^2.2.2",
-    "vue3-markdown-it": "^1.0.10",
     "zod": "^3.19.1"
   },
   "devDependencies": {
