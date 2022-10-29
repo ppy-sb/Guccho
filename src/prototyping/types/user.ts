@@ -177,7 +177,7 @@ export interface UserModel<
 
 }
 
-export interface UserSecretModel<
+export interface SecretUserModel<
   Id,
   IncludeMode extends Mode,
   IncludeRuleset extends Ruleset,
@@ -193,7 +193,7 @@ export type User<
   IncludeRuleset extends Ruleset = Ruleset,
   Ranks extends RankingSystem = RankingSystem
 > = Secret extends true
-? UserSecretModel<Id, IncludeMode, IncludeRuleset, Ranks>
+? SecretUserModel<Id, IncludeMode, IncludeRuleset, Ranks>
 : UserModel<Id, IncludeMode, IncludeRuleset, Ranks>
 
 export type UserAPI<Id, Secrets extends boolean = false> = Secrets extends true

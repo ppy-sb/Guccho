@@ -11,7 +11,7 @@ const changePassword = ref<{
 }>()
 
 const client = useClient()
-const _user = await client.query('getSecretFullUser', {
+const _user = await client.query('user.full+secret', {
   handle: 2
 })
 if (!_user) {

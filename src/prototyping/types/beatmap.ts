@@ -52,7 +52,7 @@ export interface Beatmap<
 
   foreignSetId: Source extends ForeignSource ? ForeignId : never;
 
-  status: RankingStatus;
+  status: Status;
 
   properties: {
     bpm: number;

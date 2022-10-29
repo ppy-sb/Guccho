@@ -15,10 +15,10 @@
     </h2>
     <div class="grid grid-cols-2 gap-2">
       <t-button variant="primary" @click="$router.back()">
-        take me back
+        bring me back
       </t-button>
       <t-button variant="secondary">
-        refresh
+        try again
       </t-button>
     </div>
   </section>
@@ -32,7 +32,7 @@ import { useClient } from '#imports'
 import { UserModeRulesetStatistics } from '~/prototyping/types/user'
 const route = useRoute()
 const client = useClient()
-const _user = await client.query('getFullUser', {
+const _user = await client.query('user.full', {
   handle: `${route.params.handle}`
 })
 const user = ref(_user)

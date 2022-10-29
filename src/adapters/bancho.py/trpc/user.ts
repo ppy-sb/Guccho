@@ -7,7 +7,7 @@ import { getBaseUser, getFullUser } from '../backend-clients'
 import { ServerRulesetConfig } from '../config'
 
 export const router = trpc.router()
-  .query('getFullUser', {
+  .query('user.full', {
     input: z.object({
       handle: z.union([z.string(), z.number()])
     }),
@@ -16,7 +16,7 @@ export const router = trpc.router()
       return user
     }
   })
-  .query('getSecretFullUser', {
+  .query('user.full+secret', {
     input: z.object({
       handle: z.union([z.string(), z.number()])
     }),
@@ -25,7 +25,7 @@ export const router = trpc.router()
       return user
     }
   })
-  .query('getBaseUser', {
+  .query('user.base', {
     input: z.object({
       handle: z.union([z.string(), z.number()])
     }),
@@ -35,8 +35,23 @@ export const router = trpc.router()
     }
   })
 
-  .query('getRankingSystems', {
+  .query('users.base', {
+    input: z.object({
+      role: z.array(z.string())
+    }),
+    resolve ({ input }) {
+      return []
+    }
+  })
+
+  .query('ranking-system-config', {
     resolve () {
       return ServerRulesetConfig
+    }
+  })
+
+  .query('server-has-owner', {
+    resolve () {
+      return false
     }
   })
