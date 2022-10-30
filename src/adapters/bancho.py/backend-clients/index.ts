@@ -35,23 +35,26 @@ const toBaseUser = (user: DatabaseUser): BaseUser<Id> => ({
 export const getBaseUser = async (
   handle: string | Id
 ): Promise<BaseUser<Id> | null> => {
-  let _handle = handle
-  if (typeof _handle === 'string') {
-    _handle = parseInt(_handle)
+  let handleNum = handle
+  const handleStr = handle.toString()
+  if (typeof handleNum === 'string') {
+    handleNum = parseInt(handleNum)
+    if (isNaN(handleNum)) { handleNum = -1 }
   }
-  const query = {
+
+  const user = await prismaClient.user.findFirst({
     where: {
       AND: [
         {
           OR: [
             {
-              id: _handle
+              id: handleNum
             },
             {
-              name: handle.toString()
+              name: handleStr
             },
             {
-              safeName: handle.toString()
+              safeName: handleStr.startsWith('@') ? handleStr.slice(1) : handleStr
             }
           ]
         },
@@ -62,8 +65,7 @@ export const getBaseUser = async (
         }
       ]
     }
-  }
-  const user = await prismaClient.user.findFirst(query)
+  })
 
   if (!user) {
     return null
@@ -255,9 +257,11 @@ export const getFullUser = async <HasSecrets extends boolean>(
   handle: string | Id,
   secrets: HasSecrets
 ): Promise<User<Id, HasSecrets> | null> => {
-  let _handle = handle
-  if (typeof _handle === 'string') {
-    _handle = parseInt(_handle)
+  let handleNum = handle
+  const handleStr = handle.toString()
+  if (typeof handleNum === 'string') {
+    handleNum = parseInt(handleNum)
+    if (isNaN(handleNum)) { handleNum = -1 }
   }
   const user = await prismaClient.user.findFirst({
     where: {
@@ -265,13 +269,13 @@ export const getFullUser = async <HasSecrets extends boolean>(
         {
           OR: [
             {
-              id: _handle
+              id: handleNum
             },
             {
-              name: handle.toString()
+              name: handleStr
             },
             {
-              safeName: handle.toString()
+              safeName: handleStr.startsWith('@') ? handleStr.slice(1) : handleStr
             }
           ]
         },
