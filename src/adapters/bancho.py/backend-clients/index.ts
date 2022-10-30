@@ -36,7 +36,7 @@ export const getBaseUser = async (
   handle: string | Id
 ): Promise<BaseUser<Id> | null> => {
   let handleNum = handle
-  const handleStr = handle.toString()
+  const handleStr = handle.toString().trim()
   if (typeof handleNum === 'string') {
     handleNum = parseInt(handleNum)
     if (isNaN(handleNum)) { handleNum = -1 }
@@ -258,7 +258,7 @@ export const getFullUser = async <HasSecrets extends boolean>(
   secrets: HasSecrets
 ): Promise<User<Id, HasSecrets> | null> => {
   let handleNum = handle
-  const handleStr = handle.toString()
+  const handleStr = handle.toString().trim()
   if (typeof handleNum === 'string') {
     handleNum = parseInt(handleNum)
     if (isNaN(handleNum)) { handleNum = -1 }
