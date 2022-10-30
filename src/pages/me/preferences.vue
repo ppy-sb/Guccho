@@ -15,13 +15,13 @@ const changePassword = ref<{
 const client = useClient()
 const session = useSession()
 if (!session.loggedIn) {
-  await navigateTo('/auth/login')
+  await navigateTo({ name: 'auth-login', query: { back: '1' } })
 }
 const _user = await client.query('user.full+secret', {
   handle: session.userId
 })
 if (!_user) {
-  await navigateTo('/auth/login')
+  await navigateTo({ name: 'auth-login', query: { back: '1' } })
 }
 
 const user = ref(_user)
