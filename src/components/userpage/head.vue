@@ -10,16 +10,30 @@
     <div
       class="flex flex-col w-full pt-4 md:p-0 bg-kimberly-200 dark:bg-kimberly-700 md:bg-transparent md:grow"
     >
-      <div
-        class="actions container flex justify-around order-3 pb-4 mx-auto md:order-1 md:justify-end gap-3 md:pb-0"
-      >
-        <t-button size="sm" variant="primary">
-          add as friend
-        </t-button>
-        <t-button size="sm" variant="secondary">
-          send message
-        </t-button>
-      </div>
+      <template v-if="session.loggedIn">
+        <div
+          v-if="session.userId !== user.id"
+          class="actions container flex justify-around order-3 pb-4 mx-auto md:order-1 md:justify-end gap-3 md:pb-0"
+        >
+          <t-button size="sm" variant="primary">
+            add as friend
+          </t-button>
+          <t-button size="sm" variant="secondary">
+            send message
+          </t-button>
+        </div>
+        <div v-else class="actions container flex justify-around order-3 pb-4 mx-auto md:order-1 md:justify-end gap-3 md:pb-0">
+          <t-nuxt-link-button
+            size="sm"
+            variant="primary"
+            :to="{
+              name: 'me-preferences'
+            }"
+          >
+            change preferences
+          </t-nuxt-link-button>
+        </div>
+      </template>
       <div
         class="container mx-auto sm:order-2 sm:flex sm:gap-1 sm:items-end sm:justify-between md:pb-2"
       >
@@ -46,6 +60,8 @@
 </template>
 
 <script setup>
+import { useSession } from '~/store/session'
+const session = useSession()
 const user = inject('user')
 </script>
 

@@ -13,7 +13,7 @@ const props = withDefaults(
     disabled: false
   }
 )
-const menu = [
+const menu = ref([
   {
     name: 'Home',
     route: {
@@ -43,7 +43,7 @@ const menu = [
     route: {
       name: 'user-handle',
       params: {
-        handle: 1
+        handle: session.loggedIn ? session.userId : 1000
       }
     }
   },
@@ -59,7 +59,7 @@ const menu = [
       name: 'me-friends'
     }
   }
-]
+])
 const config = useAppConfig()
 const detached = ref(false)
 const root = ref<HTMLElement>()

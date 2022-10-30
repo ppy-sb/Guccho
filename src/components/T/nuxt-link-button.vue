@@ -3,24 +3,23 @@
     :to="props.to"
     class="btn"
     :class="[
-      `btn-${variant}`
+      props.variant && `btn-${props.variant}`,
+      props.size && `btn-${props.size}`
     ]"
   >
     <slot />
   </nuxt-link>
 </template>
 
-<script setup>
-const props = defineProps({
-  to: {
-    type: Object,
-    default: () => ({
-      name: ''
-    })
-  },
-  variant: {
-    type: String,
-    default: 'neutral'
-  }
-})
+<script setup lang="ts">
+
+const props = defineProps<{
+  variant: string,
+  size: string,
+  to: any
+}>()
 </script>
+
+<style lang="scss" scoped>
+
+</style>
