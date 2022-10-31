@@ -11,6 +11,8 @@ import type {
   AutopilotAvailable,
   RelaxAvailable,
   StandardAvailable,
+  Relationship,
+  MutualRelationship,
   APIfy
 } from './shared'
 
@@ -140,7 +142,11 @@ export interface SecretBaseUser<Id> extends BaseUser<Id> {
   secrets: UserSecrets
 }
 
-export type UserFriend<Id> = BaseUser<Id>
+export interface UserRelationship<Id> extends BaseUser<Id> {
+  relationship: Relationship[],
+  reverseRelationship: Relationship[],
+  mutualRelationship: MutualRelationship[],
+}
 
 export interface UserExtended<
   Id,
@@ -174,7 +180,7 @@ export interface UserExtended<
   oldNames: UserHistoricalName[]
   profile: JSONContent
 
-  friends: UserFriend<Id>[]
+  relationships: UserRelationship<Id>[]
 
   preferences: UserPreferences
 
@@ -212,7 +218,7 @@ export type UserAPI<Id, Secrets extends boolean = false> = Secrets extends true
       | 'status'
       | 'statistics'
       | 'oldNames'
-      | 'friends'
+      | 'relationships'
       | 'secrets'
     >
   : APIfy<
@@ -223,5 +229,5 @@ export type UserAPI<Id, Secrets extends boolean = false> = Secrets extends true
       | 'status'
       | 'statistics'
       | 'oldNames'
-      | 'friends'
+      | 'relationships'
     >
