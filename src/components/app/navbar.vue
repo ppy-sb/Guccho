@@ -1,19 +1,15 @@
 <script setup lang="ts">
-import { onBeforeMount, ref, onUnmounted } from 'vue'
+import { onBeforeMount, ref, computed, onUnmounted } from 'vue'
 import { useAppConfig } from '#app'
 import { useSession } from '~/store/session'
 
 const session = useSession()
 
-const props = withDefaults(
+const props =
   defineProps<{
-    disabled: boolean;
-  }>(),
-  {
-    disabled: false
-  }
-)
-const menu = ref([
+    disabled?: boolean;
+  }>()
+const menu = computed(() => [
   {
     name: 'Home',
     route: {
@@ -178,7 +174,7 @@ onUnmounted(() => {
             </svg> -->
             <img
               :src="session._cachedBaseUser?.avatarUrl"
-              class="avatar-img rounded-full ring ring-kimberly-500 ring-offset-base-100 ring-offset-2"
+              class="avatar-img rounded-full ring ring-kimberly-600/70 ring-offset-base-100 ring-offset-2"
               alt=""
             >
             <span class="badge badge-xs badge-success indicator-item" />

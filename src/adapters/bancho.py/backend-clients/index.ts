@@ -219,8 +219,8 @@ export const getFullUser = async <HasSecrets extends boolean>(
       const _returnValue = {
         ...returnValue,
         secrets: {
-          password: '',
-          apiKey: ''
+          password: user.pwBcrypt,
+          apiKey: user.apiKey
         }
       } as User<Id, true>
       return _returnValue
