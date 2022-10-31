@@ -1,56 +1,27 @@
 import {
   PrismaClient,
-  Stat,
-  User as DatabaseUser,
   RelationshipType
 } from '@prisma/client'
-
 import { createClient } from 'redis'
 
 import type { AvailableRankingSystems, IdType as Id } from '../config'
-import { toRoles, BanchoPyMode } from './enums'
-import { queryUser as query } from './queries'
-import {
-  BaseUser,
-  SecretBaseUser,
-  User,
-  UserModeRulesetStatistics
-} from '~/prototyping/types/user'
-import { Mode, Ruleset } from '~/prototyping/types/shared'
+import { BanchoPyMode } from './enums'
+import { createUserQuery } from './queries'
+import { createRulesetData, toBaseUser, toRoles } from './transforms'
+
+import type { Mode, Ruleset } from '~/prototyping/types/shared'
+import type { User } from '~/prototyping/types/user'
 
 export const prismaClient = new PrismaClient()
 const redisClient = Boolean(process.env.REDIS_URI) && createClient({
   url: process.env.REDIS_URI
 })
 
-const toBaseUser = <Secret extends boolean = false>(user: DatabaseUser, secrets?: Secret): Secret extends true ? SecretBaseUser<Id> : BaseUser<Id> => {
-  const base: BaseUser<Id> = {
-    id: user.id,
-    ingameId: user.id,
-    name: user.name,
-    safeName: user.safeName,
-    email: user.email,
-    flag: user.country,
-    avatarUrl: `https://a.ppy.sb/${user.id}`,
-    roles: toRoles(user.priv)
-  }
-
-  if (secrets) {
-    (base as SecretBaseUser<Id>).secrets = {
-      password: user.pwBcrypt,
-      apiKey: user.apiKey || undefined
-    }
-  }
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  return base
-}
-
 export const getBaseUser = async <HasSecrets extends boolean = false>(
   handle: string | Id,
   secrets?: HasSecrets
 ) => {
-  const user = await prismaClient.user.findFirst(query(handle))
+  const user = await prismaClient.user.findFirst(createUserQuery(handle))
 
   if (!user) {
     return null
@@ -63,67 +34,11 @@ export const getBaseUsers = async <HasSecrets extends boolean = false>(
   handle: string | Id,
   secrets?: HasSecrets
 ) => {
-  const users = await prismaClient.user.findMany(query(handle))
+  const users = await prismaClient.user.findMany(createUserQuery(handle))
 
   return users.map(user => toBaseUser(user, secrets))
 }
 
-const createRulesetData = (
-  databaseResult: Stat | undefined,
-  ranks:
-    | {
-        ppv2Rank: number | bigint;
-        totalScoreRank: number | bigint;
-        rankedScoreRank: number | bigint;
-      }
-    | undefined,
-  livePPRank: {
-    rank: number | null,
-    countryRank: number | null
-  } | false
-): UserModeRulesetStatistics<AvailableRankingSystems> => {
-  if (!databaseResult) {
-    return {
-      ranking: {
-        ppv2: {
-          rank: 0,
-          performance: 0
-        },
-        rankedScore: {
-          rank: 0,
-          score: BigInt(0)
-        },
-        totalScore: {
-          rank: 0,
-          score: BigInt(0)
-        }
-      },
-      playCount: 0,
-      playTime: 0,
-      totalHits: 0
-    }
-  }
-  return {
-    ranking: {
-      ppv2: {
-        rank: (livePPRank !== false && livePPRank.rank) || (ranks && Number(ranks.ppv2Rank)),
-        countryRank: (livePPRank !== false && livePPRank.countryRank) || undefined,
-        performance: databaseResult.pp
-      },
-      rankedScore: {
-        rank: ranks && Number(ranks.rankedScoreRank),
-        score: databaseResult.rankedScore
-      },
-      totalScore: {
-        rank: ranks && Number(ranks.totalScoreRank),
-        score: databaseResult.totalScore
-      }
-    },
-    playCount: databaseResult.plays,
-    playTime: databaseResult.playTime,
-    totalHits: databaseResult.totalHits
-  }
-}
 const getLiveRank = async (id: number, mode: number, country: string) => redisClient && ({
   rank: await redisClient.zRevRank(`bancho:leaderboard:${mode}`, id.toString()),
   countryRank: await redisClient.zRevRank(`bancho:leaderboard:${mode}:${country}`, id.toString())
@@ -172,7 +87,7 @@ export const getStatisticsOfUser = async ({ id, country }: { id: Id, country: st
       osu: {
         standard: await getLiveRank(id, BanchoPyMode.osuStandard, country),
         relax: await getLiveRank(id, BanchoPyMode.osuRelax, country),
-        autopuilot: await getLiveRank(id, BanchoPyMode.osuAutopilot, country)
+        autopilot: await getLiveRank(id, BanchoPyMode.osuAutopilot, country)
       },
       taiko: {
         standard: await getLiveRank(id, BanchoPyMode.osuStandard, country),
@@ -209,7 +124,7 @@ export const getStatisticsOfUser = async ({ id, country }: { id: Id, country: st
       autopilot: createRulesetData(
         results.find(i => i.mode === BanchoPyMode.osuAutopilot),
         ranks.find(i => i.mode === BanchoPyMode.osuAutopilot),
-        livePPRank && livePPRank.osu.autopuilot
+        livePPRank && livePPRank.osu.autopilot
       )
     },
     taiko: {
@@ -252,7 +167,7 @@ export const getFullUser = async <HasSecrets extends boolean>(
   secrets: HasSecrets
 ): Promise<User<Id, HasSecrets> | null> => {
   const user = await prismaClient.user.findFirst({
-    ...query(handle),
+    ...createUserQuery(handle),
     include: {
       relations: {
         where: {

@@ -1,5 +1,6 @@
-import { IdType as Id } from '../config'
-export const queryUser = (handle: string | Id) => {
+import type { IdType as Id } from '../config'
+
+export const createUserQuery = (handle: string | Id) => {
   let handleNum = handle
   const handleStr = handle.toString().trim()
   if (typeof handleNum === 'string') {
