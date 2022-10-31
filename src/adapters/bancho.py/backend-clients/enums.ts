@@ -1,4 +1,3 @@
-import { UserPrivilegeString } from '~/prototyping/types/user'
 //  privileges intended for all normal players.
 export enum BanchoPyPrivilege {
 Normal = 1 << 0, //  is an unbanned player.
@@ -27,23 +26,6 @@ Bot = 1 << 15,
 Donator = Supporter | Premium,
 Staff = Mod | Admin | Dangerous
 
-}
-
-export const toRoles = (priv: number): UserPrivilegeString[] => {
-  const roles: UserPrivilegeString[] = []
-  if (priv & BanchoPyPrivilege.Normal) { roles.push('registered') }
-  if (priv & BanchoPyPrivilege.Verified) { roles.push('normal') }
-  if (priv & BanchoPyPrivilege.Whitelisted) { roles.push('bypassAntiCheat') }
-  if (priv & BanchoPyPrivilege.Donator) { roles.push('supporter') }
-  if (priv & BanchoPyPrivilege.Alumni) { roles.push('alumni') }
-  if (priv & BanchoPyPrivilege.Tournament) { roles.push('tournamentStuff') }
-  if (priv & BanchoPyPrivilege.Nominator) { roles.push('beatmapNominator') }
-  if (priv & BanchoPyPrivilege.Mod) { roles.push('moderator') }
-  if (priv & BanchoPyPrivilege.Staff) { roles.push('staff') }
-  if (priv & BanchoPyPrivilege.Admin) { roles.push('admin') }
-  if (priv & BanchoPyPrivilege.Dangerous) { roles.push('owner') }
-  if (priv & BanchoPyPrivilege.Bot) { roles.push('bot') }
-  return roles
 }
 
 export enum BanchoPyMode {
