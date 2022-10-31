@@ -17,7 +17,7 @@ const session = useSession()
 if (!session.loggedIn) {
   await navigateTo({ name: 'auth-login', query: { back: '1' } })
 }
-const _user = await client.query('user.full+secret', {
+const _user = await client.query('user.full-secret', {
   handle: session.userId
 })
 if (!_user) {

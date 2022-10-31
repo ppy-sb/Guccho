@@ -6,17 +6,6 @@ import { useSession } from '~/store/session'
 const session = useSession()
 const route = useRoute()
 const router = useRouter()
-const userLogin = async () => {
-  const result = await session.login()
-  if (result) {
-    const back = route.query.back === '1'
-    if (back) {
-      router.back()
-    } else {
-      navigateTo('/')
-    }
-  }
-}
 
 const error = undefined
 
@@ -27,6 +16,17 @@ const login = reactive<{
   password?: string
 }>({})
 
+const userLogin = async () => {
+  const result = await session.login(login.user, login.password)
+  if (result) {
+    const back = route.query.back === '1'
+    if (back) {
+      router.back()
+    } else {
+      navigateTo('/')
+    }
+  }
+}
 </script>
 
 <template>

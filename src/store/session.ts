@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import md5 from 'md5'
 import type { BaseUser } from '~/prototyping/types/user'
 import { useClient } from '#imports'
 
@@ -13,10 +14,13 @@ export const useSession = defineStore('session', {
     user: async state => state.loggedIn ? state._cachedBaseUser || await useClient().query('user.base', { handle: state.userId }) : null
   },
   actions: {
-    async login () {
+    async login (handle: string, passwordText: string) {
+      const user = await useClient().query('user.login', { handle, md5HashedPassword: md5(passwordText) })
+      if (!user) { return false }
+
       this.loggedIn = true
-      this.userId = 1001
-      this._cachedBaseUser = await useClient().query('user.base', { handle: this.userId })
+      this.userId = user.id
+      this._cachedBaseUser = user
       return true
     }
   }

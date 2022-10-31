@@ -88,5 +88,5 @@ markdown for userpage
 TODO Register
 TODO Give first registered user owner privilege
 
-TODO Session
+TODO Session [x] half baked, using nuxt-store, will replace with nuxt-auth when available
 TODO Login (require session & store)
