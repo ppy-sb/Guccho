@@ -6,11 +6,11 @@
     <lazy-userpage-rank-chart v-if="currentRankingSystem" />
     <lazy-userpage-json-viewer />
   </div>
-  <section v-else class="container flex flex-col gap-3 justify-between mx-auto my-auto text-left custom-container w-max">
-    <h1 class="text-3xl self-center">
+  <section v-else class="container flex flex-col justify-between mx-auto my-auto text-left gap-3 custom-container w-max">
+    <h1 class="self-center text-3xl">
       oops..
     </h1>
-    <h2 class="text-2xl self-center">
+    <h2 class="self-center text-2xl">
       This user is either been deleted or not exists.
     </h2>
     <div class="grid grid-cols-2 gap-2">

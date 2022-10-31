@@ -14,7 +14,7 @@ onBeforeMount(async () => {
 })
 </script>
 <template>
-  <div class="container custom-container mx-auto mt-4">
+  <div class="container mx-auto mt-4 custom-container">
     <editor-content
       v-if="clientTakeover"
       class="custom-typography"

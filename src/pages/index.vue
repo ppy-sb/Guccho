@@ -17,7 +17,22 @@
           </h2>
         </div>
 
-        <div class="flex gap-2">
+        <div v-if="session.loggedIn" class="flex gap-2">
+          <t-nuxt-link-button
+            :to="{name: 'user-handle', params: {handle: session.userId}}"
+            variant="primary"
+          >
+            to my userpage
+          </t-nuxt-link-button>
+
+          <t-nuxt-link-button
+            :to="{name: 'me-preferences'}"
+            variant="secondary"
+          >
+            preferences
+          </t-nuxt-link-button>
+        </div>
+        <div v-else class="flex gap-2">
           <t-nuxt-link-button
             :to="{name: 'auth-login'}"
             variant="primary"
@@ -42,7 +57,8 @@
 
 <script setup lang="ts">
 import { useAppConfig } from '#app'
-
+import { useSession } from '../store/session'
+const session = useSession()
 const config = useAppConfig()
 </script>
 

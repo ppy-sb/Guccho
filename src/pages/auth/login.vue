@@ -12,12 +12,19 @@ const error = undefined
 const registerButton = ref<string>('Do not have an account?')
 
 const login = reactive<{
-  user?: string
-  password?: string
-}>({})
+  user: string
+  password: string
+}>({
+  user: '',
+  password: ''
+})
+
+const fetching = ref(false)
 
 const userLogin = async () => {
+  fetching.value = true
   const result = await session.login(login.user, login.password)
+  fetching.value = false
   if (result) {
     const back = route.query.back === '1'
     if (back) {
@@ -31,7 +38,8 @@ const userLogin = async () => {
 
 <template>
   <div class="flex items-center justify-center px-4 py-12 my-auto sm:px-6 lg:px-8">
-    <div class="relative w-full max-w-md p-6 overflow-hidden space-y-8 bg-kimberly-100/80 dark:bg-kimberly-800 rounded-3xl">
+    <div class="relative w-full max-w-md p-6 overflow-hidden shadow-2xl space-y-8 bg-kimberly-100/80 dark:bg-kimberly-800 rounded-3xl">
+      <fetch-overlay :fetching="fetching" />
       <div>
         <h2 class="text-3xl text-center text-kimberly-800 dark:text-kimberly-50">
           Login
@@ -76,9 +84,9 @@ const userLogin = async () => {
         </div>
 
         <div class="grid grid-cols-2 gap-2">
-          <nuxt-link to="/auth/register" class="btn btn-accent" @mouseenter="registerButton = 'sign up'" @mouseleave="registerButton = 'Do not have an account?'">
+          <t-nuxt-link-button to="/auth/register" variant="accent" @mouseenter="registerButton = 'sign up'" @mouseleave="registerButton = 'Do not have an account?'">
             {{ registerButton }}
-          </nuxt-link>
+          </t-nuxt-link-button>
           <button type="submit" class="btn btn-primary">
             Sign in
           </button>

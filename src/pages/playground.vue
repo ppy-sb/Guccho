@@ -20,7 +20,7 @@ definePageMeta({
 
 <template>
   <div>
-    <section class="container mx-auto custom-container lg:px-2 pt-20 pb-8">
+    <section class="container pt-20 pb-8 mx-auto custom-container lg:px-2">
       <!-- <t-nuxt-link-button v-for="route in children" :key="route.name" :to="route">
         {{ route.name }}
       </t-nuxt-link-button> -->

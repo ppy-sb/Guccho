@@ -1,5 +1,5 @@
-import { library } from '@fortawesome/fontawesome-svg-core'
+import { IconDefinition, library } from '@fortawesome/fontawesome-svg-core'
 
 export default function useLibrary () {
-  return { library }
+  return { addToLibrary: (...icon: IconDefinition[]) => library.add(...icon) }
 }

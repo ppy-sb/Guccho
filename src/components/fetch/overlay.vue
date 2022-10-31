@@ -1,15 +1,15 @@
 <template>
   <transition
-    enter-active-class="transition duration-200 ease-out"
-    enter-class="opacity-0"
+    enter-active-class="transition ease-out"
+    enter-from-class="opacity-0"
     enter-to-class="opacity-100"
-    leave-active-class="transition ease-in duration-200"
-    leave-class="opacity-100"
+    leave-active-class="transition ease-in"
+    leave-from-class="opacity-100"
     leave-to-class="opacity-0"
   >
     <div
       v-show="fetching"
-      class="absolute top-0 left-0 z-50 flex items-center justify-center w-full h-full opacity-0 pointer-events-none transition-all bg-kimberly-200 dark:bg-kimberly-800 backdrop-filter bg-opacity-20 backdrop-blur-sm"
+      class="absolute top-0 left-0 z-50 flex items-center justify-center w-full h-full pointer-events-none bg-kimberly-200 dark:bg-kimberly-800 backdrop-filter bg-opacity-20 backdrop-blur-sm"
     >
       <svg
         class="w-12 h-12 text-kimberly-900 dark:text-kimberly-100 animate-spin"

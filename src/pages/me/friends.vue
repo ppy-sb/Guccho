@@ -4,7 +4,7 @@ const layout = ref('list')
 const user = scoped.demoUser
 </script>
 <template>
-  <div class="container custom-container mx-auto pt-24">
+  <div class="container pt-24 mx-auto custom-container">
     <t-tabs v-model="layout" size="lg" variant="bordered">
       <t-tab value="list" :active="layout === 'list'">
         list
@@ -17,24 +17,24 @@ const user = scoped.demoUser
       <div
         v-for="i in 4"
         :key="i"
-        class="user-list-item w-full p-2"
+        class="w-full p-2 user-list-item"
       >
         <div
-          class="flex gap-2 justify-center md:justify-start items-center face"
+          class="flex items-center justify-center gap-2 md:justify-start face"
         >
-          <div class="relative mask mask-squircle z-10 hoverable w-100">
+          <div class="relative z-10 mask mask-squircle hoverable w-100">
             <img
               :src="user.avatarUrl"
               class="pointer-events-none w-14 md:w-[4em]"
             >
           </div>
           <div class="grow">
-            <h1 class="text-2xl md:text-4xl text-left">
+            <h1 class="text-2xl text-left md:text-4xl">
               {{ user.name }}
             </h1>
             <div class="flex justify-between w-full items-top">
               <a
-                class="text-lg md:text-2xl text-left underline decoration-sky-500 text-kimberly-600 dark:text-kimberly-300 hover:text-kimberly-500"
+                class="text-lg text-left underline md:text-2xl decoration-sky-500 text-kimberly-600 dark:text-kimberly-300 hover:text-kimberly-500"
                 href="#"
               >
                 @{{ user.safeName }}

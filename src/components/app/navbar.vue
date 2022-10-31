@@ -39,7 +39,7 @@ const menu = computed(() => [
     route: {
       name: 'user-handle',
       params: {
-        handle: session.loggedIn ? session.userId : 1000
+        handle: 1000
       }
     }
   },
@@ -88,7 +88,7 @@ onUnmounted(() => {
           <label tabindex="0" class="btn btn-ghost btn-circle !shadow-none">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5"
+              class="w-5 h-5"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -103,7 +103,7 @@ onUnmounted(() => {
           </label>
           <ul
             tabindex="0"
-            class="menu menu-compact dropdown-content bg-kimberly-100 dark:bg-kimberly-600 mt-2 p-2 shadow-xl rounded-br-2xl rounded-bl-2xl w-52"
+            class="p-2 mt-2 shadow-xl menu menu-compact dropdown-content bg-kimberly-100 dark:bg-kimberly-600 rounded-br-2xl rounded-bl-2xl w-52"
           >
             <li v-for="menuItem in menu" :key="`menu-${menuItem.name}`">
               <nuxt-link :to="menuItem.route">
@@ -122,7 +122,7 @@ onUnmounted(() => {
           {{ config.title }}
         </nuxt-link>
       </div>
-      <div class="navbar-center hidden lg:flex gap-2">
+      <div class="hidden gap-2 navbar-center lg:flex">
         <!-- <a class="btn btn-ghost !shadow-none normal-case text-xl">guweb@next</a> -->
         <!-- <nuxt-link :to="{name: 'index'}" class="btn btn-ghost !shadow-none normal-case text-xl">
           guweb@next
@@ -140,7 +140,7 @@ onUnmounted(() => {
         <button class="btn btn-ghost !shadow-none btn-circle">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="h-5 w-5"
+            class="w-5 h-5"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -160,7 +160,7 @@ onUnmounted(() => {
           <div class="indicator avatar">
             <!-- <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5"
+              class="w-5 h-5"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -173,8 +173,8 @@ onUnmounted(() => {
               />
             </svg> -->
             <img
-              :src="session._cachedBaseUser?.avatarUrl"
-              class="avatar-img rounded-full ring ring-kimberly-600/70 ring-offset-base-100 ring-offset-2"
+              :src="session._data?.avatarUrl"
+              class="rounded-full avatar-img ring ring-kimberly-600/70 ring-offset-base-100 ring-offset-2"
               alt=""
             >
             <span class="badge badge-xs badge-success indicator-item" />
