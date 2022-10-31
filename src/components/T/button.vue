@@ -18,8 +18,8 @@ const emit = defineEmits<{
   (e: 'click'): void
 }>()
 const props = defineProps<{
-  variant: string,
-  size: string,
+  variant?: string,
+  size?: string,
 }>()
 </script>
 
