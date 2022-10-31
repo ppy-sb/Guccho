@@ -242,3 +242,5 @@ cython_debug/
 
 yarn.lock
 .DS_Store
+
+fix-permission.sh
