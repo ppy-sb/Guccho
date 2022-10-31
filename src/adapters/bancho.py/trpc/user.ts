@@ -57,6 +57,16 @@ export const router = trpc.router()
     }
   })
 
+// .query('user.relation', {
+//   input: z.object({
+//     from: z.union([z.string(), z.number()]),
+//     target: z.union([z.string(), z.number()])
+//   }),
+//   async resolve ({ input: { from, target } }) {
+
+//   }
+// })
+
   .query('users.base', {
     input: z.object({
       handle: z.union([z.string(), z.number()])

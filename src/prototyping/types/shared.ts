@@ -3,6 +3,9 @@ import type { z } from 'zod'
 export type Mode = 'osu' | 'taiko' | 'fruits' | 'mania';
 export type Ruleset = 'standard' | 'relax' | 'autopilot';
 
+export type Relationship = 'friend' | 'block'
+export type MutualRelationship = 'mutual-friend' | 'mutual-block'
+
 export type StandardAvailable = Mode;
 export type RelaxAvailable = 'osu' | 'taiko' | 'fruits';
 export type AutopilotAvailable = 'osu';
