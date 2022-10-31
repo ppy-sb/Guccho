@@ -9,8 +9,10 @@ import { createClient } from 'redis'
 
 import type { AvailableRankingSystems, IdType as Id } from '../config'
 import { toRoles, BanchoPyMode } from './enums'
+import { queryUser as query } from './queries'
 import {
   BaseUser,
+  SecretBaseUser,
   User,
   UserModeRulesetStatistics
 } from '~/prototyping/types/user'
@@ -21,57 +23,49 @@ const redisClient = Boolean(process.env.REDIS_URI) && createClient({
   url: process.env.REDIS_URI
 })
 
-const toBaseUser = (user: DatabaseUser): BaseUser<Id> => ({
-  id: user.id,
-  ingameId: user.id,
-  name: user.name,
-  safeName: user.safeName,
-  email: user.email,
-  flag: user.country,
-  avatarUrl: `https://a.ppy.sb/${user.id}`,
-  roles: toRoles(user.priv)
-})
-
-export const getBaseUser = async (
-  handle: string | Id
-): Promise<BaseUser<Id> | null> => {
-  let handleNum = handle
-  const handleStr = handle.toString().trim()
-  if (typeof handleNum === 'string') {
-    handleNum = parseInt(handleNum)
-    if (isNaN(handleNum)) { handleNum = -1 }
+const toBaseUser = <Secret extends boolean = false>(user: DatabaseUser, secrets?: Secret): Secret extends true ? SecretBaseUser<Id> : BaseUser<Id> => {
+  const base: BaseUser<Id> = {
+    id: user.id,
+    ingameId: user.id,
+    name: user.name,
+    safeName: user.safeName,
+    email: user.email,
+    flag: user.country,
+    avatarUrl: `https://a.ppy.sb/${user.id}`,
+    roles: toRoles(user.priv)
   }
 
-  const user = await prismaClient.user.findFirst({
-    where: {
-      AND: [
-        {
-          OR: [
-            {
-              id: handleNum
-            },
-            {
-              name: handleStr
-            },
-            {
-              safeName: handleStr.startsWith('@') ? handleStr.slice(1) : handleStr
-            }
-          ]
-        },
-        {
-          priv: {
-            gte: 1
-          }
-        }
-      ]
+  if (secrets) {
+    (base as SecretBaseUser<Id>).secrets = {
+      password: user.pwBcrypt,
+      apiKey: user.apiKey || undefined
     }
-  })
+  }
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  return base
+}
+
+export const getBaseUser = async <HasSecrets extends boolean = false>(
+  handle: string | Id,
+  secrets?: HasSecrets
+) => {
+  const user = await prismaClient.user.findFirst(query(handle))
 
   if (!user) {
     return null
   }
 
-  return toBaseUser(user)
+  return toBaseUser(user, secrets)
+}
+
+export const getBaseUsers = async <HasSecrets extends boolean = false>(
+  handle: string | Id,
+  secrets?: HasSecrets
+) => {
+  const users = await prismaClient.user.findMany(query(handle))
+
+  return users.map(user => toBaseUser(user, secrets))
 }
 
 const createRulesetData = (
@@ -257,35 +251,8 @@ export const getFullUser = async <HasSecrets extends boolean>(
   handle: string | Id,
   secrets: HasSecrets
 ): Promise<User<Id, HasSecrets> | null> => {
-  let handleNum = handle
-  const handleStr = handle.toString().trim()
-  if (typeof handleNum === 'string') {
-    handleNum = parseInt(handleNum)
-    if (isNaN(handleNum)) { handleNum = -1 }
-  }
   const user = await prismaClient.user.findFirst({
-    where: {
-      AND: [
-        {
-          OR: [
-            {
-              id: handleNum
-            },
-            {
-              name: handleStr
-            },
-            {
-              safeName: handleStr.startsWith('@') ? handleStr.slice(1) : handleStr
-            }
-          ]
-        },
-        {
-          priv: {
-            gte: 1
-          }
-        }
-      ]
-    },
+    ...query(handle),
     include: {
       relations: {
         where: {

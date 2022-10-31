@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import type { JSONContent } from '@tiptap/core'
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import type {
   OmitNever,
   VisibilityScope,
@@ -117,6 +117,10 @@ export interface UserPreferences {
     oldNames: VisibilityScope
   }
 }
+export interface UserSecrets {
+  password: string
+  apiKey?: string
+}
 export interface BaseUser<Id> {
   id: Id
   ingameId: number
@@ -132,19 +136,18 @@ export interface BaseUser<Id> {
   roles: UserPrivilegeString[]
 }
 
-export interface UserSecrets {
-  password: string
-  apiKey?: string
+export interface SecretBaseUser<Id> extends BaseUser<Id> {
+  secrets: UserSecrets
 }
 
 export type UserFriend<Id> = BaseUser<Id>
 
-export interface UserModel<
+export interface UserExtended<
   Id,
   IncludeMode extends Mode,
   IncludeRuleset extends Ruleset,
   Ranking extends RankingSystem
-> extends BaseUser<Id> {
+> {
   statistics: {
     [M in Mode as M extends IncludeMode ? M : never]: {
       [R in Ruleset as R extends IncludeRuleset
@@ -177,14 +180,18 @@ export interface UserModel<
 
 }
 
+export interface UserModel<
+  Id,
+  IncludeMode extends Mode,
+  IncludeRuleset extends Ruleset,
+  Ranking extends RankingSystem
+> extends UserExtended<Id, IncludeMode, IncludeRuleset, Ranking>, BaseUser<Id> {}
 export interface SecretUserModel<
   Id,
   IncludeMode extends Mode,
   IncludeRuleset extends Ruleset,
   Ranking extends RankingSystem
-> extends UserModel<Id, IncludeMode, IncludeRuleset, Ranking> {
-  secrets: UserSecrets
-}
+> extends UserExtended<Id, IncludeMode, IncludeRuleset, Ranking>, SecretBaseUser<Id> {}
 
 export type User<
   Id,
