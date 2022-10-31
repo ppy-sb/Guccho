@@ -4,8 +4,8 @@
     <t-modal-container ref="modalContainer" :teleport-id="config.appModalTeleportTargetId">
       <!-- bg-kimberly-50 dark:bg-kimberly-800 -->
       <div v-show="!isLoading" class="flex flex-col min-h-screen overflow-y-hidden">
-        <div class="flex flex-col overflow-auto min-h-screen">
-          <div class="flex-grow flex flex-col">
+        <div class="flex flex-col min-h-screen overflow-auto">
+          <div class="flex flex-col flex-grow">
             <slot />
           </div>
           <footer class="py-4 text-center bottom-1">
@@ -26,7 +26,7 @@
 
     <transition
       leave-active-class="transition ease-in duration-200"
-      leave-class="opacity-100"
+      leave-from-class="opacity-100"
       leave-to-class="opacity-0"
     >
       <div

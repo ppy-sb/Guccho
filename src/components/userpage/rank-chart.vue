@@ -1,9 +1,9 @@
 <template>
   <client-only>
-    <section class="container custom-container mx-auto" v-bind="$attrs">
+    <section class="container mx-auto custom-container" v-bind="$attrs">
       <div class="atropos-wrap">
         <atropos class="my-atropos" :shadow-offset="-3">
-          <div data-atropos-offset="0" class="relative atropos-bg w-full h-full" />
+          <div data-atropos-offset="0" class="relative w-full h-full atropos-bg" />
           <LineChart
             v-if="currentRankingSystem.rankHistory"
             data-atropos-offset="-3"
@@ -12,8 +12,8 @@
             class="!absolute -z-10"
             :options="userpageLineChartOptions"
           />
-          <div v-else class="absolute -z-10 top-0 grid w-full h-full justify-center items-center" data-atropos-offset="-3">
-            <div class="text-xl mt-8 mr-40">
+          <div v-else class="absolute top-0 items-center justify-center w-full h-full -z-10 grid" data-atropos-offset="-3">
+            <div class="mt-8 mr-40 text-xl">
               rank history not available
             </div>
           </div>
@@ -25,20 +25,20 @@
             class="!absolute z-10"
             :options="userpageLineChartOptions"
           />
-          <div v-else-if="currentRankingSystem.countryRank" class="absolute -z-10 top-0 grid w-full h-full justify-center items-center" data-atropos-offset="3">
-            <div class="text-xl mt-20 ms-40">
+          <div v-else-if="currentRankingSystem.countryRank" class="absolute top-0 items-center justify-center w-full h-full -z-10 grid" data-atropos-offset="3">
+            <div class="mt-20 text-xl ms-40">
               country rank history not available
             </div>
           </div>
-          <div data-atropos-offset="5" class="absolute w-full h-full top-0">
-            <dl class="flex w-full h-full z-20">
+          <div data-atropos-offset="5" class="absolute top-0 w-full h-full">
+            <dl class="z-20 flex w-full h-full">
               <div class="w-1/4" />
               <div class="flex flex-col">
                 <div class="h-1/5" />
-                <dt class="text-xl self-end">
+                <dt class="self-end text-xl">
                   Global Rank:
                 </dt>
-                <dd class="text-5xl self-end">
+                <dd class="self-end text-5xl">
                   <Roller
                     :char-set="chars"
                     :value="update ? `#${Intl.NumberFormat().format(currentRankingSystem.rank)}` : ' '"
@@ -47,15 +47,15 @@
               </div>
             </dl>
           </div>
-          <div v-if="currentRankingSystem.countryRank" data-atropos-offset="0" class="absolute w-full h-full top-0">
+          <div v-if="currentRankingSystem.countryRank" data-atropos-offset="0" class="absolute top-0 w-full h-full">
             <dl class="flex w-full h-full">
               <div class="w-3/5" />
               <div class="flex flex-col">
                 <div class="h-1/3" />
-                <dt class="text-xl self-end">
+                <dt class="self-end text-xl">
                   Country Rank:
                 </dt>
-                <dd class="text-3xl ml-20">
+                <dd class="ml-20 text-3xl">
                   <Roller
                     :char-set="chars"
                     :value="update ? `#${Intl.NumberFormat().format(currentRankingSystem.countryRank)}`: ' '"

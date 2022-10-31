@@ -1,13 +1,13 @@
 <script setup>
 import { faEdit } from '@fortawesome/free-solid-svg-icons'
-const { library } = useFAIconLib()
+const { addToLibrary } = useFAIconLib()
 
-library.add(faEdit)
+addToLibrary(faEdit)
 
 </script>
 
 <template>
-  <div class="container custom-container mx-auto">
+  <div class="container mx-auto custom-container">
     <font-awesome-icon icon="fas fa-edit" />
   </div>
 </template>

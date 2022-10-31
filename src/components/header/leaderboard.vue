@@ -1,5 +1,6 @@
 <template>
   <header-simple-title-with-sub
+    class="container mx-auto custom-container lg:px-4"
     title="Leaderboard"
     :subtitle="`${selectedMode} - ${selectedMod} | ${sortBy}`"
   >

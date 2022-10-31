@@ -14,9 +14,9 @@
 <script setup lang="ts">
 
 const props = defineProps<{
-  variant: string,
-  size: string,
-  to: any
+  variant?: string,
+  size?: string,
+  to: Record<string, string> | string
 }>()
 </script>
 

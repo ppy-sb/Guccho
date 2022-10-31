@@ -1,6 +1,6 @@
 <template>
   <div class="flex items-center justify-center px-4 py-12 my-auto sm:px-6 lg:px-8">
-    <div class="relative w-full max-w-md p-6 overflow-hidden space-y-8 bg-kimberly-100/80 dark:bg-kimberly-800 rounded-3xl">
+    <div class="relative w-full max-w-md p-6 overflow-hidden shadow-2xl space-y-8 bg-kimberly-150/30 dark:bg-kimberly-800 rounded-3xl">
       <fetch-overlay :fetching="fetching" />
 
       <div>
@@ -47,12 +47,12 @@
         </div>
 
         <div class="grid grid-cols-2 gap-2">
-          <button type="submit" class="btn btn-base-100">
+          <t-nuxt-link-button :to="{name: 'auth-login'}" variant="secondary">
+            Log in
+          </t-nuxt-link-button>
+          <button type="submit" class="btn btn-primary">
             Sign Up
           </button>
-          <nuxt-link :to="{name: 'auth-login'}" class="btn btn-neutral">
-            Log in
-          </nuxt-link>
         </div>
       </form>
     </div>

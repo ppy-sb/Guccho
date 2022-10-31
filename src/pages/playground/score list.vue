@@ -1,11 +1,11 @@
 <template>
-  <div class="container mx-auto flex flex-col lg:flex-row">
+  <div class="container flex flex-col mx-auto lg:flex-row">
     <div class="lg:w-1/3">
-      <div class="card bg-kimberly-100/20 shadow-lg">
-        <div class="card-title bg-kimberly-200/40 p-2 justify-center">
+      <div class="shadow-lg card bg-kimberly-100/20">
+        <div class="justify-center p-2 card-title bg-kimberly-200/40">
           Top Performance
         </div>
-        <div class="card-body p-4">
+        <div class="p-4 card-body">
           <div v-for="i in 3" :key="i" class="score">
             <app-score />
           </div>
@@ -13,11 +13,11 @@
       </div>
     </div>
     <div class="lg:w-2/3">
-      <div class="card bg-kimberly-300/30 shadow-lg">
-        <div class="card-title bg-kimberly-50/60 p-2 justify-center">
+      <div class="shadow-lg card bg-kimberly-300/30">
+        <div class="justify-center p-2 card-title bg-kimberly-50/60">
           Top Performance
         </div>
-        <div class="card-body p-4">
+        <div class="p-4 card-body">
           <div v-for="i in 3" :key="i" class="score">
             <app-score />
           </div>

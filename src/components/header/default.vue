@@ -10,8 +10,8 @@
 </template>
 <script setup lang="ts">
 const props = defineProps<{
-  title: string,
-  subtitle: string
+  title?: string,
+  subtitle?: string
 }>()
 </script>
 

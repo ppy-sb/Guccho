@@ -1,31 +1,40 @@
 <template>
   <section
-    class="flex flex-col items-center w-full mx-auto mt-5 md:container custom-container md:mt-20 md:flex-row md:items-end gap-5 root"
+    v-if="user"
+    class="flex flex-col items-center w-full gap-5 mx-auto mt-5 md:container custom-container md:mt-20 md:flex-row md:items-end root"
   >
     <!-- Logo -->
     <div>
       <img :src="user.avatarUrl" class="mask mask-squircle" width="300">
     </div>
     <!-- info -->
-    <div
-      class="flex flex-col w-full pt-4 md:p-0 bg-kimberly-200 dark:bg-kimberly-700 md:bg-transparent md:grow"
-    >
+    <div class="flex flex-col w-full pt-4 md:p-0 bg-kimberly-200 dark:bg-kimberly-700 md:bg-transparent md:grow">
       <template v-if="session.loggedIn">
         <div
           v-if="session.userId !== user.id"
-          class="actions container flex justify-around order-3 pb-4 mx-auto md:order-1 md:justify-end gap-3 md:pb-0"
+          class="container flex justify-around order-3 gap-3 pb-4 mx-auto md:order-1 md:justify-end md:pb-0"
+        >
+          <t-button size="sm" variant="primary" class="gap-1">
+            <!-- <font-awesome-icon v-if="session?._data?.relationships.findIndex(f => f.id === user?.id)" icon="fas fa-heart" />
+            <font-awesome-icon v-if="session?._data?.relationships.findIndex(f => f.id === user?.id)" icon="fas fa-heart-crack" />
+            <font-awesome-icon v-else icon="fas fa-user-group" /> -->
+            <span>{{ friendButton }}</span>
+          </t-button>
+          <!-- <t-button size="sm" variant="secondary">
+            send message
+          </t-button> -->
+        </div>
+        <div
+          v-else
+          :data-logged-in="session.loggedIn"
+          class="container flex justify-around order-3 gap-3 pb-4 mx-auto md:order-1 md:justify-end md:pb-0"
         >
           <t-button size="sm" variant="primary">
             add as friend
           </t-button>
-          <t-button size="sm" variant="secondary">
-            send message
-          </t-button>
-        </div>
-        <div v-else class="actions container flex justify-around order-3 pb-4 mx-auto md:order-1 md:justify-end gap-3 md:pb-0">
           <t-nuxt-link-button
             size="sm"
-            variant="primary"
+            variant="accent"
             :to="{
               name: 'me-preferences'
             }"
@@ -34,9 +43,7 @@
           </t-nuxt-link-button>
         </div>
       </template>
-      <div
-        class="container mx-auto sm:order-2 sm:flex sm:gap-1 sm:items-end sm:justify-between md:pb-2"
-      >
+      <div class="container mx-auto sm:order-2 sm:flex sm:gap-1 sm:items-end sm:justify-between md:pb-2">
         <div>
           <div>
             <h1 class="text-5xl text-center md:text-left">
@@ -59,10 +66,20 @@
   </section>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import { faUserGroup, faHeartCrack } from '@fortawesome/free-solid-svg-icons'
+import { inject, ref } from 'vue'
+import { useFAIconLib } from '#imports'
+import { User } from '~/prototyping/types/user'
 import { useSession } from '~/store/session'
+
 const session = useSession()
-const user = inject('user')
+const user = inject<User<unknown>>('user')
+const { addToLibrary } = useFAIconLib()
+
+addToLibrary(faUserGroup, faHeartCrack)
+
+const friendButton = ref('500')
 </script>
 
 <style scoped lang="scss">
@@ -71,19 +88,21 @@ const user = inject('user')
   @apply md:text-left md:rounded;
   @apply md:[margin-left:-7em] md:[padding-left:7em];
 }
-.root {
-  .actions {
-    filter: blur(0.2em) opacity(0);
-    transform: scale(1.05);
-    @apply transition-all;
-  }
 
-  &:hover {
-    .actions {
-      transform: scale(1) translateY(-0.2em);
-      filter: blur(0) opacity(1);
-      @apply transition-all;
-    }
-  }
-}
+// .root {
+//   .actions {
+//     filter: blur(0.2em) opacity(0);
+//     transform: scale(0.95);
+//     @apply transition-all;
+//   }
+
+//   &:hover {
+//     .actions {
+//       transform: scale(1);
+//       filter: blur(0) opacity(1);
+//       @apply transition-all;
+//     }
+
+//   }
+// }
 </style>

@@ -7,7 +7,7 @@
     <template v-if="editor.isActive('codeBlock')">
       <label for="indent" class="label">Indent:</label>
       <button
-        class="menu-item flex items-center"
+        class="flex items-center menu-item"
         :class="{
           'is-active': indent === '  '
         }"
@@ -19,7 +19,7 @@
         2
       </button>
       <button
-        class="menu-item flex"
+        class="flex menu-item"
         :class="{
           'is-active': indent === '    '
         }"

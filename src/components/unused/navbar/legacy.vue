@@ -1,7 +1,7 @@
 <template>
   <!-- bg-wewak-300 dark:bg-wewak-800 md:bg-transparent -->
   <nav ref="root" class="z-20 w-full transition-all md:fixed drop-shadow-lg backdrop-blur bg-kimberly-50/30 dark:bg-kimberly-600/30">
-    <div class="mx-auto container lg:px-2">
+    <div class="container mx-auto lg:px-2">
       <div class="relative flex items-center justify-between h-10">
         <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
           <button
@@ -33,7 +33,7 @@
           class="flex items-center justify-center flex-1 sm:items-stretch sm:justify-start"
         >
           <nuxt-link to="/">
-            <h1 class="text-xl font-bold text-kimberly-900 dark:text-kimberly-100 gw-navbar-item px-2 py-1">
+            <h1 class="px-2 py-1 text-xl font-bold text-kimberly-900 dark:text-kimberly-100 gw-navbar-item">
               {{ config.title }}
             </h1>
           </nuxt-link>
@@ -51,35 +51,35 @@
           </div>
         </div>
         <div v-click-outside="closeMenu" class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-          <div class="ml-3 relative">
+          <div class="relative ml-3">
             <div>
               <button
                 id="user-menu-button"
                 type="button"
-                class="flex text-sm rounded-full transition-all items-center gap-2 text-kimberly-900 dark:text-kimberly-100"
+                class="flex items-center text-sm rounded-full transition-all gap-2 text-kimberly-900 dark:text-kimberly-100"
                 aria-expanded="false"
                 aria-haspopup="true"
                 @click="toggleMenu"
               >
                 <span class="sr-only">Open user menu</span>
                 <!-- <template v-if="$auth.loggedIn">
-                  <img class="h-8 w-8 rounded-full" :src="`https://a.${config.baseUrl}/${$auth.user.id}`">
+                  <img class="w-8 h-8 rounded-full" :src="`https://a.${config.baseUrl}/${$auth.user.id}`">
                   <h1 class="font-semibold">
                     Hi {{ $auth.user.name }}
                   </h1>
                 </template>
                 <template v-else>
-                  <img class="h-8 w-8 rounded-full" :src="`https://a.${config.baseUrl}/0`">
+                  <img class="w-8 h-8 rounded-full" :src="`https://a.${config.baseUrl}/0`">
                 </template> -->
               </button>
             </div>
 
             <transition
               enter-active-class="transition-all duration-100 transform ease-out"
-              enter-class="opacity-0 -translate-y-2"
+              enter-from-class="opacity-0 -translate-y-2"
               enter-to-class="opacity-100"
               leave-active-class="transition-all duration-100 transform ease-in"
-              leave-class="opacity-100"
+              leave-from-class="opacity-100"
               leave-to-class="opacity-0 -translate-y-2"
             >
               <div
@@ -95,7 +95,7 @@
                     v-for="(m, index) in menuItems.guest"
                     :key="index"
                     :to="m.url"
-                    class="block px-4 py-2 text-sm text-kimberly-900 dark:text-kimberly-100 hover:border-l-2 transition-all font-semibold border-hsl-h2"
+                    class="block px-4 py-2 text-sm font-semibold text-kimberly-900 dark:text-kimberly-100 hover:border-l-2 transition-all border-hsl-h2"
                     role="menuitem"
                     tabindex="-1"
                     @click.native="closeMenu"
@@ -108,7 +108,7 @@
                     v-for="(m, index) in menuItems.user"
                     :key="index"
                     :to="m.url"
-                    class="block px-4 py-2 text-sm text-kimberly-900 dark:text-kimberly-100 hover:border-l-2 transition-all font-semibold border-hsl-h2"
+                    class="block px-4 py-2 text-sm font-semibold text-kimberly-900 dark:text-kimberly-100 hover:border-l-2 transition-all border-hsl-h2"
                     role="menuitem"
                     tabindex="-1"
                     @click.native="closeMenu"
