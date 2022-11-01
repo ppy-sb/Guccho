@@ -40,16 +40,11 @@ export const router = trpc.router()
     }),
     async resolve ({ input: { handle, md5HashedPassword } }) {
       try {
-        const user = await getFullUser(handle, true)
+        const user = await getBaseUser(handle, true)
         if (!user) { return false }
         const result = await bcrypt.compare(md5HashedPassword, user.secrets.password)
-        if (!result) { return false } else {
-          const _user = {
-            ...user,
-            statistics: undefined
-          }
-          return _user as Omit<typeof user, 'statistics'>
-        }
+        if (!result) { return false }
+        return user
       } catch (err) {
         console.error(err)
         throw err
@@ -57,15 +52,15 @@ export const router = trpc.router()
     }
   })
 
-// .query('user.relation', {
-//   input: z.object({
-//     from: z.union([z.string(), z.number()]),
-//     target: z.union([z.string(), z.number()])
-//   }),
-//   async resolve ({ input: { from, target } }) {
-
-//   }
-// })
+  .query('user.relation', {
+    input: z.object({
+      from: z.union([z.string(), z.number()]),
+      target: z.union([z.string(), z.number()])
+    }),
+    async resolve ({ input: { from, target } }) {
+      const [fromUser, targetUser] = await Promise.all([getBaseUser(from), getBaseUser(target)])
+    }
+  })
 
   .query('users.base', {
     input: z.object({
