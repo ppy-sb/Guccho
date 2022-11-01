@@ -1,7 +1,34 @@
 <script setup>
-import { scoped } from '@/prototyping/objects/user'
+import { navigateTo, onErrorCaptured, useClient } from '~~/.nuxt/imports'
+import { useSession } from '~~/src/store/session'
+const client = useClient()
+const session = useSession()
+
+if (!session.loggedIn) {
+  await navigateTo({
+    name: 'auth-login',
+    query: {
+      back: '1'
+    }
+  })
+}
+
+const relations = await client.query('user.relations', {
+  from: session.userId
+})
+
+if (!relations) {
+  throw new Error('user not exists')
+}
+
+const errorMessage = ref('')
+
+onErrorCaptured(() => {
+  errorMessage.value = 'something went wrong.'
+})
+
 const layout = ref('list')
-const user = scoped.demoUser
+
 </script>
 <template>
   <div class="container pt-24 mx-auto custom-container">
@@ -9,49 +36,61 @@ const user = scoped.demoUser
       <t-tab value="list" :active="layout === 'list'">
         list
       </t-tab>
-      <t-tab value="grid" :active="layout === 'grid'">
-        grid
+      <t-tab value="condensed" :active="layout === 'condensed'">
+        condensed
       </t-tab>
     </t-tabs>
-    <div v-if="layout === 'list'" class="max-w-4xl mx-auto user-list">
-      <div
-        v-for="i in 4"
-        :key="i"
-        class="w-full p-2 user-list-item"
-      >
+    <suspense>
+      <template #fallback>
+        <div>
+          {{ errorMessage || 'Loading...' }}
+        </div>
+      </template>
+      <div v-if="layout === 'list'" class="mx-auto user-list">
         <div
-          class="flex items-center justify-center gap-2 md:justify-start face"
+          v-for="user in relations"
+          :key="`relation-@${user.safeName}`"
+          class="w-full p-2 user-list-item"
         >
-          <div class="relative z-10 mask mask-squircle hoverable w-100">
-            <img
-              :src="user.avatarUrl"
-              class="pointer-events-none w-14 md:w-[4em]"
-            >
-          </div>
-          <div class="grow">
-            <h1 class="text-2xl text-left md:text-4xl">
-              {{ user.name }}
-            </h1>
-            <div class="flex justify-between w-full items-top">
-              <a
-                class="text-lg text-left underline md:text-2xl decoration-sky-500 text-kimberly-600 dark:text-kimberly-300 hover:text-kimberly-500"
-                href="#"
+          <div
+            class="flex items-center justify-center gap-2 md:justify-start face"
+          >
+            <div class="relative z-10 mask mask-squircle hoverable">
+              <img
+                :src="user.avatarUrl"
+                class="pointer-events-none w-14 md:w-[4em]"
               >
-                @{{ user.safeName }}
-              </a>
-              <div class="flex gap-2 actions">
-                <t-button variant="info" size="xs" class="md:btn-sm">
-                  chat
-                </t-button>
-                <t-button variant="warning" size="xs" class="md:btn-sm">
-                  remove friend
-                </t-button>
+            </div>
+            <div class="grow">
+              <h1 class="text-2xl text-left md:text-4xl">
+                {{ user.name }}
+              </h1>
+              <div class="flex justify-between w-full items-top">
+                <nuxt-link
+                  class="text-lg text-left underline md:text-2xl decoration-sky-500 text-kimberly-600 dark:text-kimberly-300 hover:text-kimberly-500"
+                  :to="{
+                    name: 'user-handle',
+                    params: {
+                      handle: `@${user.safeName}`
+                    }
+                  }"
+                >
+                  @{{ user.safeName }}
+                </nuxt-link>
+                <div class="flex gap-2 actions">
+                  <t-button variant="info" size="xs" class="md:btn-sm">
+                    chat
+                  </t-button>
+                  <t-button variant="warning" size="xs" class="md:btn-sm">
+                    remove friend
+                  </t-button>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </suspense>
   </div>
 </template>
 
@@ -80,9 +119,9 @@ const user = scoped.demoUser
       }
 
     }
-    & + .user-list-item {
-      @apply border-t-2 border-kimberly-500/30;
-    }
+
+    @apply border-b-2 border-kimberly-500/30;
   }
+  @apply grid xl:grid-cols-2 gap-x-8
 }
 </style>
