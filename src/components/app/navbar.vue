@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { onBeforeMount, ref, computed, onUnmounted } from 'vue'
-import { useAppConfig } from '#app'
+import { useAppConfig, useCookie } from '#app'
 import { useSession } from '~/store/session'
 
+const sessionId = useCookie('session')
 const session = useSession()
 
 const props =
@@ -65,6 +66,12 @@ const handleScroll = () => {
   }
 
   detached.value = window.pageYOffset > 0
+}
+
+const logout = () => {
+  session.$reset()
+  sessionId.value = ''
+  window.location.reload()
 }
 onBeforeMount(() => {
   document.addEventListener('scroll', handleScroll)
@@ -153,12 +160,13 @@ onUnmounted(() => {
             />
           </svg>
         </button>
-        <button
-          v-if="session.$state.loggedIn"
-          class="btn btn-ghost !shadow-none btn-circle"
-        >
-          <div class="indicator avatar">
-            <!-- <svg
+        <div class="dropdown dropdown-bottom">
+          <button
+            v-if="session.$state.loggedIn"
+            class="btn btn-ghost !shadow-none btn-circle"
+          >
+            <div class="indicator avatar">
+              <!-- <svg
               xmlns="http://www.w3.org/2000/svg"
               class="w-5 h-5"
               fill="none"
@@ -172,14 +180,28 @@ onUnmounted(() => {
                 d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
               />
             </svg> -->
-            <img
-              :src="session.$state._data?.avatarUrl"
-              class="rounded-full avatar-img ring ring-kimberly-600/70 ring-offset-base-100 ring-offset-2"
-              alt=""
-            >
-            <span class="badge badge-xs badge-success indicator-item" />
-          </div>
-        </button>
+              <img
+                :src="session.$state._data?.avatarUrl"
+                class="rounded-full avatar-img ring ring-kimberly-600/70 ring-offset-base-100 ring-offset-2 pointer-events-none"
+                alt=""
+              >
+              <span class="badge badge-xs badge-success indicator-item" />
+            </div>
+          </button>
+          <ul
+            tabindex="0"
+            class="right-0 p-2 mt-2 shadow-xl menu menu-compact dropdown-content bg-kimberly-100 dark:bg-kimberly-600 rounded-br-2xl rounded-bl-2xl w-52"
+          >
+            <!-- <li v-for="menuItem in menu" :key="`menu-${menuItem.name}`">
+              <nuxt-link :to="menuItem.route">
+                {{ menuItem.name }}
+              </nuxt-link>
+            </li> -->
+            <li>
+              <a href="#" @click="logout">log out</a>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
