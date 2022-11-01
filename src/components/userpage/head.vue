@@ -13,7 +13,7 @@
         v-if="session.userId !== user.id"
         class="container flex justify-around order-3 gap-3 pb-4 mx-auto md:order-1 md:justify-end md:pb-0"
       >
-        <t-button ref="addAsFriendButton" size="sm" :variant="isMutualFriend ? 'primary' : 'neutral'" class="gap-1">
+        <t-button ref="changeFriendStateButton" size="sm" :variant="isMutualFriend ? 'primary' : 'neutral'" class="gap-1">
           <client-only>
             <font-awesome-icon
               :icon="isFriendButtonHovered && isMutualFriend ? 'fas fa-heart-crack' : 'fas fa-heart'"
@@ -75,7 +75,7 @@ import { useElementHover } from '@vueuse/core'
 import { useClient, useFAIconLib } from '#imports'
 import { User } from '~/prototyping/types/user'
 import { useSession } from '~/store/session'
-const addAsFriendButton = ref(null)
+const changeFriendStateButton = ref(null)
 const session = useSession()
 const client = useClient()
 const { addToLibrary } = useFAIconLib()
@@ -93,7 +93,7 @@ const relationWithSessionUser = session.loggedIn
   : undefined
 
 const isMutualFriend = ref(relationWithSessionUser?.mutual.includes('mutual-friend') || false)
-const isFriendButtonHovered = useElementHover(addAsFriendButton)
+const isFriendButtonHovered = useElementHover(changeFriendStateButton)
 const friendButtonContent = ref<string | number>(userFriendCount || 0)
 
 </script>
