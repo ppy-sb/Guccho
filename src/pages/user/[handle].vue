@@ -32,7 +32,7 @@ import { useClient } from '#imports'
 import { UserModeRulesetStatistics } from '~/prototyping/types/user'
 const route = useRoute()
 const client = useClient()
-const _user = await client.query('user.full', {
+const _user = await client.query('user.userpage', {
   handle: `${route.params.handle}`
 })
 const user = ref(_user)

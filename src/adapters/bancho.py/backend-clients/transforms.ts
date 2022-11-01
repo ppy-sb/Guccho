@@ -1,8 +1,4 @@
-import {
-  Stat,
-  User as DatabaseUser,
-  Relationship as DatabaseRelationship
-} from '@prisma/client'
+import { Stat, User as DatabaseUser, RelationshipType } from '@prisma/client'
 import type { AvailableRankingSystems, IdType as Id } from '../config'
 import {
   MutualRelationship,
@@ -122,7 +118,7 @@ export const toRoles = (priv: number): UserPrivilegeString[] => {
 
 export const toBaseUser = <Secret extends boolean = false>(
   user: DatabaseUser,
-  secrets?: Secret
+  includes?: { secrets?: Secret }
 ): Secret extends true ? SecretBaseUser<Id> : BaseUser<Id> => {
   const base: BaseUser<Id> = {
     id: user.id,
@@ -135,7 +131,7 @@ export const toBaseUser = <Secret extends boolean = false>(
     roles: toRoles(user.priv)
   }
 
-  if (secrets) {
+  if (includes?.secrets) {
     (base as SecretBaseUser<Id>).secrets = {
       password: user.pwBcrypt,
       apiKey: user.apiKey || undefined
@@ -147,16 +143,16 @@ export const toBaseUser = <Secret extends boolean = false>(
 }
 
 export const dedupeUserRelationship = (
-  user: DatabaseUser & {
-    relations: (DatabaseRelationship & {
-      toUser: DatabaseUser
-    })[]
-  }
+  relations: {
+    type: RelationshipType
+    toUserId: Id
+    toUser: BaseUser<Id>
+  }[]
 ) => {
-  const reduceUserRelationships = user.relations.reduce((acc, cur) => {
+  const reduceUserRelationships = relations.reduce((acc, cur) => {
     if (!acc.has(cur.toUserId)) {
       acc.set(cur.toUserId, {
-        ...toBaseUser(cur.toUser),
+        ...cur.toUser,
         relationship: [cur.type],
         relationshipFromTarget: [],
         mutualRelationship: []
