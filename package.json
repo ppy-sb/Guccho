@@ -88,7 +88,6 @@
     "mysql2": "^2.3.3",
     "nuxt-animejs": "^1.2.4",
     "sass": "^1.55.0",
-    "ts-node": "^10.9.1",
-    "v-click-outside": "^3.2.0"
+    "ts-node": "^10.9.1"
   }
 }

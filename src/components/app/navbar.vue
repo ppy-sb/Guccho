@@ -154,7 +154,7 @@ onUnmounted(() => {
           </svg>
         </button>
         <button
-          v-if="session.loggedIn"
+          v-if="session.$state.loggedIn"
           class="btn btn-ghost !shadow-none btn-circle"
         >
           <div class="indicator avatar">
@@ -173,7 +173,7 @@ onUnmounted(() => {
               />
             </svg> -->
             <img
-              :src="session._data?.avatarUrl"
+              :src="session.$state._data?.avatarUrl"
               class="rounded-full avatar-img ring ring-kimberly-600/70 ring-offset-base-100 ring-offset-2"
               alt=""
             >

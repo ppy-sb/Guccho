@@ -1,5 +1,6 @@
 import { Stat, User as DatabaseUser, RelationshipType } from '@prisma/client'
 import type { AvailableRankingSystems, IdType as Id } from '../config'
+import { UserSecrets } from './../../../prototyping/types/user'
 import {
   MutualRelationship,
   Relationship
@@ -8,8 +9,8 @@ import { BanchoPyPrivilege } from './enums'
 import type {
   UserModeRulesetStatistics,
   BaseUser,
-  SecretBaseUser,
   UserPrivilegeString,
+  UserOptional,
   UserRelationship
 } from '~/prototyping/types/user'
 
@@ -116,11 +117,11 @@ export const toRoles = (priv: number): UserPrivilegeString[] => {
   return roles
 }
 
-export const toBaseUser = <Includes extends Partial<Record<keyof SecretBaseUser<Id>, boolean>> = Record<never, never>>(
+export const toBaseUser = <Includes extends Partial<Record<keyof UserOptional<Id>, boolean>> = Record<never, never>>(
   user: DatabaseUser,
   includes?: Includes
 ) => {
-  const returnValue: Partial<SecretBaseUser<Id>> = {
+  const returnValue: BaseUser<Id> & Partial<UserOptional<Id>> = {
     id: user.id,
     ingameId: user.id,
     name: user.name,
@@ -141,7 +142,7 @@ export const toBaseUser = <Includes extends Partial<Record<keyof SecretBaseUser<
     returnValue.email = user.email
   }
 
-  return returnValue as Includes['secrets'] extends true ? SecretBaseUser<Id> : BaseUser<Id>
+  return returnValue as Includes['secrets'] extends true ? BaseUser<Id> & { secrets: UserSecrets} : BaseUser<Id>
 }
 
 export const dedupeUserRelationship = (

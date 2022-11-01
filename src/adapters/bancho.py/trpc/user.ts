@@ -29,8 +29,11 @@ export const router = trpc.router()
       handle: z.union([z.string(), z.number()])
     }),
     async resolve ({ input: { handle } }) {
-      const user = await getFullUser(handle, { secrets: false })
-      return user
+      const user = await getFullUser(handle, { email: true })
+      return {
+        ...user,
+        email: user?.preferences.scope.email ? user.email : undefined
+      }
     }
   })
 

@@ -10,7 +10,7 @@
     <!-- info -->
     <div class="flex flex-col w-full pt-4 md:p-0 bg-kimberly-200 dark:bg-kimberly-700 md:bg-transparent md:grow">
       <div
-        v-if="session.userId !== user.id"
+        v-if="session.$state.userId !== user.id"
         class="container flex justify-around order-3 gap-3 pb-4 mx-auto md:order-1 md:justify-end md:pb-0"
       >
         <t-button ref="changeFriendStateButton" size="sm" :variant="isMutualFriend ? 'primary' : 'neutral'" class="gap-1">
@@ -24,7 +24,7 @@
           </client-only>
           <span>{{ friendButtonContent }}</span>
         </t-button>
-        <t-button v-if="session.loggedIn" size="sm" variant="secondary" class="gap-1">
+        <t-button v-if="session.$state.loggedIn" size="sm" variant="secondary" class="gap-1">
           <font-awesome-icon icon="fas fa-envelope" />
           <span>send message</span>
         </t-button>
@@ -71,7 +71,7 @@ import { faUserGroup, faHeartCrack, faHeart, faEnvelope } from '@fortawesome/fre
 import { inject, ref, Ref } from 'vue'
 import { useElementHover } from '@vueuse/core'
 import { useClient, useFAIconLib } from '#imports'
-import { User } from '~/prototyping/types/user'
+import { UserFull as User } from '~/prototyping/types/user'
 import { useSession } from '~/store/session'
 
 import type { IdType } from '~/server/trpc'
@@ -86,10 +86,10 @@ const user = inject<Ref<User<IdType>>>('user')
 const userFriendCount = await client.query('user.count-friends', {
   handle: user?.value.id as IdType
 })
-const relationWithSessionUser = session.loggedIn
+const relationWithSessionUser = session.$state.loggedIn
   ? await client.query('user.relation', {
     from: user?.value.id as IdType,
-    target: session.userId as IdType
+    target: session.$state.userId as IdType
   })
   : undefined
 

@@ -1,6 +1,6 @@
 import type { IdType as Id } from '../config'
 
-export const createUserQuery = (handle: string | Id) => {
+export const createUserQuery = (handle: string | number | Id) => {
   let handleNum = handle
   const handleStr = handle.toString().trim()
   if (typeof handleNum === 'string') {

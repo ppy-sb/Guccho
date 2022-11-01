@@ -4,7 +4,7 @@ import { useSession } from '~/store/session'
 const client = useClient()
 const session = useSession()
 
-if (!session.loggedIn) {
+if (!session.$state.loggedIn) {
   await navigateTo({
     name: 'auth-login',
     query: {
@@ -14,7 +14,7 @@ if (!session.loggedIn) {
 }
 
 const relations = await client.query('user.relations', {
-  from: session.userId
+  from: session.$state.userId
 })
 
 if (!relations) {

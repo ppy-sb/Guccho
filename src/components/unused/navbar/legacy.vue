@@ -42,7 +42,7 @@
               <nuxt-link
                 v-for="(item, index) in menuItems.main"
                 :key="index"
-                :to="item.route || item.url"
+                :to="item.route "
                 class="px-3 py-2 text-sm font-medium gw-navbar-item"
               >
                 {{ item.name }}
@@ -127,7 +127,7 @@
           <nuxt-link
             v-for="(item, index) in menuItems.main"
             :key="index"
-            :to="item.route || item.url"
+            :to="item.route "
             class="block px-3 py-2 text-base font-medium text-kimberly-900 dark:text-kimberly-100 rounded-md"
             aria-current="page"
           >
@@ -141,13 +141,10 @@
 
 <script lang="ts">
 import { useAppConfig } from 'nuxt/app'
-import vClickOutside from 'v-click-outside'
 import { ref, onBeforeMount, onUnmounted } from 'vue'
+import { onClickOutside } from '@vueuse/core'
 export default {
   name: 'NavbarDefault',
-  directives: {
-    clickOutside: vClickOutside.directive
-  },
   setup () {
     const config = useAppConfig()
     const scrolledDown = ref(false)
