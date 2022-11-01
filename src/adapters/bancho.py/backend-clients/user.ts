@@ -10,7 +10,7 @@ import { createRulesetData, toBaseUser, toRoles } from './transforms'
 import { getRelationships } from './user-relations'
 
 import type { Mode, Ruleset } from '~/prototyping/types/shared'
-import type { User } from '~/prototyping/types/user'
+import type { SecretBaseUser, User } from '~/prototyping/types/user'
 
 const prismaClient = new PrismaClient()
 
@@ -18,9 +18,9 @@ const redisClient = Boolean(process.env.REDIS_URI) && createClient({
   url: process.env.REDIS_URI
 })
 
-export const getBaseUser = async <HasSecrets extends boolean = false>(
+export const getBaseUser = async <Includes extends Partial<Record<keyof SecretBaseUser<Id>, boolean>> = Record<never, never>>(
   handle: string | Id,
-  includes?: { secrets?: HasSecrets }
+  includes?: Includes
 ) => {
   const user = await prismaClient.user.findFirst(createUserQuery(handle))
   if (!user) {
@@ -29,9 +29,9 @@ export const getBaseUser = async <HasSecrets extends boolean = false>(
   return toBaseUser(user, includes)
 }
 
-export const getBaseUsers = async <HasSecrets extends boolean = false>(
+export const getBaseUsers = async <Includes extends Partial<Record<keyof SecretBaseUser<Id>, boolean>> = Record<never, never>>(
   handle: string | Id,
-  includes?: { secrets?: HasSecrets }
+  includes?: Includes
 ) => {
   const users = await prismaClient.user.findMany(createUserQuery(handle))
   return users.map(user => toBaseUser(user, includes))
@@ -161,10 +161,10 @@ export const getStatisticsOfUser = async ({ id, country }: { id: Id, country: st
 }
 
 // high cost
-export const getFullUser = async <HasSecrets extends boolean>(
+export const getFullUser = async <Includes extends Partial<Record<keyof SecretBaseUser<Id>, boolean>> = Record<never, never>>(
   handle: string | Id,
-  includes: { secrets?: HasSecrets }
-): Promise<User<Id, HasSecrets> | null> => {
+  includes: Includes
+) => {
   const user = await prismaClient.user.findFirst(createUserQuery(handle))
 
   if (!user) {
@@ -175,19 +175,19 @@ export const getFullUser = async <HasSecrets extends boolean>(
     const pUserRelationships = getRelationships(user)
     const pUserStatistics = getStatisticsOfUser(user)
 
-    const returnValue: User<Id, false> = {
+    const returnValue: Partial<User<Id, true>> = {
       id: user.id,
       ingameId: user.id,
       name: user.name,
       safeName: user.safeName,
-      email: user.email,
+      email: includes?.email ? user.email : undefined,
       flag: user.country,
       avatarUrl: `https://a.ppy.sb/${user.id}`,
       roles: toRoles(user.priv),
       statistics: await pUserStatistics,
       preferences: {
-        allowPrivateMessage: true,
-        visibility: {
+        scope: {
+          privateMessage: 'public',
           email: 'nobody',
           oldNames: 'public'
         }
@@ -205,19 +205,12 @@ export const getFullUser = async <HasSecrets extends boolean>(
     }
 
     if (includes.secrets === true) {
-      const _returnValue = {
-        ...returnValue,
-        secrets: {
-          password: user.pwBcrypt,
-          apiKey: user.apiKey
-        }
-      } as User<Id, true>
-      return _returnValue
-    } else {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-      return returnValue
+      returnValue.secrets = {
+        password: user.pwBcrypt,
+        apiKey: user.apiKey ?? undefined
+      }
     }
+    return returnValue as Includes['secrets'] extends true ? User<Id, true> : User<Id, false>
   } catch (err) {
     console.error(err)
     return null

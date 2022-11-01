@@ -1,8 +1,7 @@
 import type { JSONContent } from '@tiptap/core'
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type {
-  OmitNever,
-  VisibilityScope,
+  Scope,
   RankingSystem,
   ScoreRankingSystem,
   PPRankingSystem,
@@ -12,8 +11,7 @@ import type {
   RelaxAvailable,
   StandardAvailable,
   Relationship,
-  MutualRelationship,
-  APIfy
+  MutualRelationship
 } from './shared'
 
 export type UserOfflineStatus = 'offline'
@@ -109,14 +107,13 @@ export interface UserHistoricalName {
   from: Date
   to: Date
   name: string
-  visibility: VisibilityScope
 }
 
 export interface UserPreferences {
-  allowPrivateMessage: boolean
-  visibility: {
-    email: VisibilityScope
-    oldNames: VisibilityScope
+  scope: {
+    privateMessage: Scope,
+    email: Scope
+    oldNames: Scope
   }
 }
 export interface UserSecrets {
@@ -129,7 +126,7 @@ export interface BaseUser<Id> {
   name: string
   safeName: string
 
-  email: string
+  email?: string
 
   flag: string
 
@@ -177,8 +174,8 @@ export interface UserExtended<
   reachable: boolean
   status: UserActivityStatus
 
-  oldNames: UserHistoricalName[]
-  profile: JSONContent
+  oldNames?: UserHistoricalName[]
+  profile?: JSONContent
 
   relationships: UserRelationship<Id>[]
 
@@ -207,26 +204,3 @@ export type User<
 > = Secret extends true
 ? SecretUserModel<Id, IncludeMode, IncludeRuleset, Ranks>
 : UserModel<Id, IncludeMode, IncludeRuleset, Ranks>
-
-export type UserAPI<Id, Secrets extends boolean = false> = Secrets extends true
-  ? APIfy<
-      User<Id, true>,
-      | 'preferences'
-      | 'reachable'
-      | 'profile'
-      | 'status'
-      | 'statistics'
-      | 'oldNames'
-      | 'relationships'
-      | 'secrets'
-    >
-  : APIfy<
-      User<Id, false>,
-      | 'preferences'
-      | 'reachable'
-      | 'profile'
-      | 'status'
-      | 'statistics'
-      | 'oldNames'
-      | 'relationships'
-    >

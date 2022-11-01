@@ -116,30 +116,32 @@ export const toRoles = (priv: number): UserPrivilegeString[] => {
   return roles
 }
 
-export const toBaseUser = <Secret extends boolean = false>(
+export const toBaseUser = <Includes extends Partial<Record<keyof SecretBaseUser<Id>, boolean>> = Record<never, never>>(
   user: DatabaseUser,
-  includes?: { secrets?: Secret }
-): Secret extends true ? SecretBaseUser<Id> : BaseUser<Id> => {
-  const base: BaseUser<Id> = {
+  includes?: Includes
+) => {
+  const returnValue: Partial<SecretBaseUser<Id>> = {
     id: user.id,
     ingameId: user.id,
     name: user.name,
     safeName: user.safeName,
-    email: user.email,
     flag: user.country,
     avatarUrl: `https://a.ppy.sb/${user.id}`,
     roles: toRoles(user.priv)
   }
 
   if (includes?.secrets) {
-    (base as SecretBaseUser<Id>).secrets = {
+    returnValue.secrets = {
       password: user.pwBcrypt,
       apiKey: user.apiKey || undefined
     }
   }
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  return base
+
+  if (includes?.email) {
+    returnValue.email = user.email
+  }
+
+  return returnValue as Includes['secrets'] extends true ? SecretBaseUser<Id> : BaseUser<Id>
 }
 
 export const dedupeUserRelationship = (

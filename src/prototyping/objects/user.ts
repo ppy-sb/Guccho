@@ -1,4 +1,4 @@
-import type { User } from '../types/tree'
+import type { User } from '../types/user'
 import { ScoreRank, PPRank, UserModeRulesetStatistics } from '../types/user'
 
 (BigInt.prototype as any).toJSON = function () {
@@ -64,10 +64,10 @@ export const sampleUserWithSecrets: User<string, true> = {
   reachable: true,
   status: 'idle',
   roles: ['normal', 'supported', 'supporter'],
-  friends: [],
+  relationships: [],
   preferences: {
-    allowPrivateMessage: true,
-    visibility: {
+    scope: {
+      privateMessage: 'friends',
       email: 'public',
       oldNames: 'public'
     }
