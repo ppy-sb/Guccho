@@ -3,14 +3,13 @@ import {
 } from '@prisma/client'
 import { createClient } from 'redis'
 
-import type { AvailableRankingSystems, IdType as Id } from '../config'
+import type { IdType as Id } from '../config'
 import { BanchoPyMode } from './enums'
 import { createUserQuery } from './queries'
 import { createRulesetData, toBaseUser, toRoles } from './transforms'
 import { getRelationships } from './user-relations'
 
-import type { Mode, Ruleset } from '~/prototyping/types/shared'
-import type { SecretBaseUser, User } from '~/prototyping/types/user'
+import type { BaseUser, UserExtra, UserOptional, UserStatistic } from '~/prototyping/types/user'
 
 const prismaClient = new PrismaClient()
 
@@ -18,7 +17,7 @@ const redisClient = Boolean(process.env.REDIS_URI) && createClient({
   url: process.env.REDIS_URI
 })
 
-export const getBaseUser = async <Includes extends Partial<Record<keyof SecretBaseUser<Id>, boolean>> = Record<never, never>>(
+export const getBaseUser = async <Includes extends Partial<Record<keyof UserOptional<Id>, boolean>> = Record<never, never>>(
   handle: string | Id,
   includes?: Includes
 ) => {
@@ -29,7 +28,7 @@ export const getBaseUser = async <Includes extends Partial<Record<keyof SecretBa
   return toBaseUser(user, includes)
 }
 
-export const getBaseUsers = async <Includes extends Partial<Record<keyof SecretBaseUser<Id>, boolean>> = Record<never, never>>(
+export const getBaseUsers = async <Includes extends Partial<Record<keyof UserOptional<Id>, boolean>> = Record<never, never>>(
   handle: string | Id,
   includes?: Includes
 ) => {
@@ -101,13 +100,7 @@ export const getStatisticsOfUser = async ({ id, country }: { id: Id, country: st
     }
   ])
 
-  const statistics: User<
-    Id,
-    false,
-    Mode,
-    Ruleset,
-    AvailableRankingSystems
-  >['statistics'] = {
+  const statistics: UserStatistic = {
     osu: {
       standard: createRulesetData(
         results.find(i => i.mode === BanchoPyMode.osuStandard),
@@ -161,7 +154,7 @@ export const getStatisticsOfUser = async ({ id, country }: { id: Id, country: st
 }
 
 // high cost
-export const getFullUser = async <Includes extends Partial<Record<keyof SecretBaseUser<Id>, boolean>> = Record<never, never>>(
+export const getFullUser = async <Includes extends Partial<Record<keyof UserOptional<Id>, boolean>> = Record<never, never>>(
   handle: string | Id,
   includes: Includes
 ) => {
@@ -175,18 +168,20 @@ export const getFullUser = async <Includes extends Partial<Record<keyof SecretBa
     const pUserRelationships = getRelationships(user)
     const pUserStatistics = getStatisticsOfUser(user)
 
-    const returnValue: Partial<User<Id, true>> = {
+    const returnValue: BaseUser<Id> & Partial<UserOptional<Id>> & UserExtra<Id> = {
       id: user.id,
       ingameId: user.id,
       name: user.name,
       safeName: user.safeName,
-      email: includes?.email ? user.email : undefined,
+      // email: includes?.email ? user.email : undefined,
       flag: user.country,
       avatarUrl: `https://a.ppy.sb/${user.id}`,
       roles: toRoles(user.priv),
       statistics: await pUserStatistics,
       preferences: {
         scope: {
+          reachable: 'public',
+          status: 'public',
           privateMessage: 'public',
           email: 'nobody',
           oldNames: 'public'
@@ -204,13 +199,18 @@ export const getFullUser = async <Includes extends Partial<Record<keyof SecretBa
       relationships: await pUserRelationships
     }
 
-    if (includes.secrets === true) {
+    if (includes.secrets) {
       returnValue.secrets = {
         password: user.pwBcrypt,
         apiKey: user.apiKey ?? undefined
       }
     }
-    return returnValue as Includes['secrets'] extends true ? User<Id, true> : User<Id, false>
+    // not respecting preferences because bancho.py don't support preferences
+    // if (returnValue.preferences.email || includes.email)
+    if (includes.email) {
+      returnValue.email = user.email
+    }
+    return returnValue
   } catch (err) {
     console.error(err)
     return null

@@ -1,4 +1,4 @@
-import type { User } from '../types/user'
+import type { UserFull } from '../types/user'
 import { ScoreRank, PPRank, UserModeRulesetStatistics } from '../types/user'
 
 (BigInt.prototype as any).toJSON = function () {
@@ -51,7 +51,7 @@ export const createRulesetData = (
   playTime: 10000,
   totalHits: 1
 })
-export const sampleUserWithSecrets: User<string, true> = {
+export const sampleUserWithSecrets: Required<UserFull<string>> = {
   id: '',
   ingameId: 9999,
   name: 'ppy.sb',
@@ -67,6 +67,8 @@ export const sampleUserWithSecrets: User<string, true> = {
   relationships: [],
   preferences: {
     scope: {
+      reachable: 'public',
+      status: 'public',
       privateMessage: 'friends',
       email: 'public',
       oldNames: 'public'

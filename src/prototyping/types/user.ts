@@ -84,10 +84,10 @@ export interface ScoreRank extends BaseRank {
 
 export type Rank<System extends RankingSystem> =
   System extends ScoreRankingSystem
-    ? ScoreRank
-    : System extends PPRankingSystem
-    ? PPRank
-    : BaseRank
+  ? ScoreRank
+  : System extends PPRankingSystem
+  ? PPRank
+  : BaseRank
 export interface UserModeRulesetStatistics<
   AvailableRankingSystem extends RankingSystem = RankingSystem
 > {
@@ -95,8 +95,8 @@ export interface UserModeRulesetStatistics<
   // achievements: Achievement[]
   ranking: {
     [P in RankingSystem as P extends AvailableRankingSystem
-      ? P
-      : never]: Rank<P>
+    ? P
+    : never]: Rank<P>
   }
   playCount: number
   playTime: number
@@ -109,13 +109,6 @@ export interface UserHistoricalName {
   name: string
 }
 
-export interface UserPreferences {
-  scope: {
-    privateMessage: Scope,
-    email: Scope
-    oldNames: Scope
-  }
-}
 export interface UserSecrets {
   password: string
   apiKey?: string
@@ -125,82 +118,68 @@ export interface BaseUser<Id> {
   ingameId: number
   name: string
   safeName: string
-
-  email?: string
-
   flag: string
-
   avatarUrl: string
 
   roles: UserPrivilegeString[]
 }
 
-export interface SecretBaseUser<Id> extends BaseUser<Id> {
+export interface UserOptional<Id = unknown> {
+  reachable: boolean
+  oldNames: UserHistoricalName[]
+  email: string
   secrets: UserSecrets
+  status: UserActivityStatus
 }
 
+export interface UserPreferences {
+  scope: Record<Exclude<keyof UserOptional<unknown> | 'privateMessage', 'secrets'>, Scope>
+}
 export interface UserRelationship<Id> extends BaseUser<Id> {
   relationship: Relationship[],
   relationshipFromTarget: Relationship[],
   mutualRelationship: MutualRelationship[],
 }
 
-export interface UserExtended<
-  Id,
-  IncludeMode extends Mode,
-  IncludeRuleset extends Ruleset,
-  Ranking extends RankingSystem
-> {
-  statistics: {
+export type UserStatistic<
+  IncludeMode extends Mode = Mode,
+  IncludeRuleset extends Ruleset = Ruleset,
+  Ranking extends RankingSystem = RankingSystem
+> = {
     [M in Mode as M extends IncludeMode ? M : never]: {
       [R in Ruleset as R extends IncludeRuleset
-        ? M extends StandardAvailable
-          ? R extends 'standard'
-            ? R
-            : M extends RelaxAvailable
-            ? R extends 'relax'
-              ? R
-              : M extends AutopilotAvailable
-              ? R extends 'autopilot'
-                ? R
-                : never
-              : never
-            : never
-          : never
-        : never]: UserModeRulesetStatistics<Ranking>
+      ? M extends StandardAvailable
+      ? R extends 'standard'
+      ? R
+      : M extends RelaxAvailable
+      ? R extends 'relax'
+      ? R
+      : M extends AutopilotAvailable
+      ? R extends 'autopilot'
+      ? R
+      : never
+      : never
+      : never
+      : never
+      : never]: UserModeRulesetStatistics<Ranking>
     }
   }
+export interface UserExtra<
+  Id,
+  IncludeMode extends Mode = Mode,
+  IncludeRuleset extends Ruleset = Ruleset,
+  Ranking extends RankingSystem = RankingSystem
+> {
+  statistics: UserStatistic<IncludeMode, IncludeRuleset, Ranking>
 
-  reachable: boolean
-  status: UserActivityStatus
-
-  oldNames?: UserHistoricalName[]
   profile?: JSONContent
-
   relationships: UserRelationship<Id>[]
-
   preferences: UserPreferences
 }
 
-export interface UserModel<
+export interface UserFull<
   Id,
-  IncludeMode extends Mode,
-  IncludeRuleset extends Ruleset,
-  Ranking extends RankingSystem
-> extends UserExtended<Id, IncludeMode, IncludeRuleset, Ranking>, BaseUser<Id> {}
-export interface SecretUserModel<
-  Id,
-  IncludeMode extends Mode,
-  IncludeRuleset extends Ruleset,
-  Ranking extends RankingSystem
-> extends UserExtended<Id, IncludeMode, IncludeRuleset, Ranking>, SecretBaseUser<Id> {}
-
-export type User<
-  Id,
-  Secret extends boolean = false,
   IncludeMode extends Mode = Mode,
   IncludeRuleset extends Ruleset = Ruleset,
-  Ranks extends RankingSystem = RankingSystem
-> = Secret extends true
-? SecretUserModel<Id, IncludeMode, IncludeRuleset, Ranks>
-: UserModel<Id, IncludeMode, IncludeRuleset, Ranks>
+  Ranking extends RankingSystem = RankingSystem
+> extends BaseUser<Id>, Partial<UserOptional<Id>>, Partial<UserExtra<Id, IncludeMode, IncludeRuleset, Ranking>> { }

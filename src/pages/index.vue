@@ -1,7 +1,5 @@
 <template>
-  <div
-    class="flex items-center grow "
-  >
+  <div class="flex items-center grow ">
     <div
       class="container flex items-center justify-between mx-auto my-auto text-left custom-container w-max text-kimberly-900 dark:text-kimberly-100"
     >
@@ -17,33 +15,21 @@
           </h2>
         </div>
 
-        <div v-if="session.loggedIn" class="flex gap-2">
-          <t-nuxt-link-button
-            :to="{name: 'user-handle', params: {handle: session.userId}}"
-            variant="primary"
-          >
+        <div v-if="session.$state.loggedIn" class="flex gap-2">
+          <t-nuxt-link-button :to="{ name: 'user-handle', params: { handle: session.$state.userId } }" variant="primary">
             to my userpage
           </t-nuxt-link-button>
 
-          <t-nuxt-link-button
-            :to="{name: 'me-preferences'}"
-            variant="secondary"
-          >
+          <t-nuxt-link-button :to="{ name: 'me-preferences' }" variant="secondary">
             preferences
           </t-nuxt-link-button>
         </div>
         <div v-else class="flex gap-2">
-          <t-nuxt-link-button
-            :to="{name: 'auth-login'}"
-            variant="primary"
-          >
+          <t-nuxt-link-button :to="{ name: 'auth-login' }" variant="primary">
             Login
           </t-nuxt-link-button>
 
-          <t-nuxt-link-button
-            :to="{name: 'auth-register'}"
-            variant="secondary"
-          >
+          <t-nuxt-link-button :to="{ name: 'auth-register' }" variant="secondary">
             Register
           </t-nuxt-link-button>
         </div>
