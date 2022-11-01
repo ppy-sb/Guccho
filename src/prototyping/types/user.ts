@@ -144,7 +144,7 @@ export interface SecretBaseUser<Id> extends BaseUser<Id> {
 
 export interface UserRelationship<Id> extends BaseUser<Id> {
   relationship: Relationship[],
-  reverseRelationship: Relationship[],
+  relationshipFromTarget: Relationship[],
   mutualRelationship: MutualRelationship[],
 }
 

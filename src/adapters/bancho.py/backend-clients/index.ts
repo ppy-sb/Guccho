@@ -5,13 +5,11 @@ import {
 import { createClient } from 'redis'
 
 import type { AvailableRankingSystems, IdType as Id } from '../config'
-import { PassiveRelationship } from './../../../prototyping/types/shared'
 import { BanchoPyMode } from './enums'
 import { createUserQuery } from './queries'
-import { createRulesetData, toBaseUser, toRoles } from './transforms'
-import { UserRelationship } from '~/prototyping/types/user'
+import { calculateMutualRelationships, createRulesetData, dedupeUserRelationship, toBaseUser, toRoles } from './transforms'
 
-import type { Mode, Ruleset, Relationship } from '~/prototyping/types/shared'
+import type { Mode, Ruleset } from '~/prototyping/types/shared'
 import type { User } from '~/prototyping/types/user'
 
 export const prismaClient = new PrismaClient()
@@ -199,46 +197,12 @@ export const getFullUser = async <HasSecrets extends boolean>(
     return null
   }
   try {
-    const reduceUserRelationships = user.relations.reduce((acc, cur) => {
-      if (!acc.has(cur.toUserId)) {
-        acc.set(cur.toUserId, {
-          ...toBaseUser(cur.toUser),
-          relationship: [cur.type],
-          reverseRelationship: [],
-          mutualRelationship: []
-        })
-      } else {
-        acc.get(cur.toUserId)?.relationship.push(cur.type)
-      }
-      return acc
-    }, new Map<Id, UserRelationship<Id>>())
+    const dedupedUserRelationships = dedupeUserRelationship(user)
 
-    const dedupedUserRelationships = [...reduceUserRelationships.values()]
-
-    const rel: Record<Relationship, Record<string, PassiveRelationship>> = {
-      friend: {
-        mutual: 'mutual-friend',
-        reverse: 'friend'
-      },
-      block: {
-        mutual: 'mutual-blocked',
-        reverse: 'blocked'
-      }
-    }
     for (const _user of dedupedUserRelationships) {
       const reverse = await getRelationShip(_user, user)
-      // console.log({
-      //   from: user.id,
-      //   to: _user.id,
-      //   fromRel: _user.relationship,
-      //   reverseRel: reverse
-      // })
-      for (const [mutualRelationship, { mutual, reverse: reverseType }] of Object.entries(rel)) {
-        if (reverse.includes(mutualRelationship as Relationship)) {
-          _user.reverseRelationship.push(reverseType)
-          if (_user.relationship.includes(mutualRelationship as Relationship)) { _user.mutualRelationship.push(mutual) }
-        }
-      }
+      _user.relationshipFromTarget = reverse
+      _user.mutualRelationship = calculateMutualRelationships(_user.relationship, _user.relationshipFromTarget)
     }
 
     const returnValue: User<Id, false> = {
