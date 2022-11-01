@@ -1,6 +1,6 @@
 <script setup>
-import { navigateTo, onErrorCaptured, useClient } from '~~/.nuxt/imports'
-import { useSession } from '~~/src/store/session'
+import { navigateTo, onErrorCaptured, useClient } from '#imports'
+import { useSession } from '~/store/session'
 const client = useClient()
 const session = useSession()
 

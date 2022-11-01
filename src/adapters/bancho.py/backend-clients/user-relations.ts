@@ -4,6 +4,7 @@ import {
 
 import type { IdType as Id } from '../config'
 import { calculateMutualRelationships, dedupeUserRelationship, toBaseUser } from './transforms'
+import { Relationship } from '~/prototyping/types/shared'
 
 const prismaClient = new PrismaClient()
 
@@ -43,11 +44,11 @@ export const getRelationships = async (user: {id: Id}) => {
 
   const [relationships, gotRelationships] = await Promise.all([pRelationResult, pGotRelationResult])
 
-  const convertedToBaseUserShape = relationships.map(r => ({
+  const asBaseUserShape = relationships.map(r => ({
     ...r,
     toUser: toBaseUser(r.toUser)
   }))
-  const deduped = dedupeUserRelationship(convertedToBaseUserShape)
+  const deduped = dedupeUserRelationship(asBaseUserShape)
 
   for (const _user of deduped) {
     const reverse = gotRelationships.filter(reverse => reverse.fromUserId === user.id).map(reverse => reverse.type)
@@ -56,4 +57,14 @@ export const getRelationships = async (user: {id: Id}) => {
   }
 
   return deduped
+}
+
+export const countGotRelationship = async (user: {id: Id}, type: Relationship) => {
+  const count = await prismaClient.relationship.count({
+    where: {
+      toUserId: user.id,
+      type
+    }
+  })
+  return count
 }
