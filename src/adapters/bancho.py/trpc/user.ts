@@ -5,6 +5,7 @@ import bcrypt from 'bcryptjs'
 import { z } from 'zod'
 import { getBaseUser, getFullUser, getBaseUsers, getOneRelationShip } from '../backend-clients'
 import { calculateMutualRelationships } from './../backend-clients/transforms'
+// eslint-disable-next-line import/no-named-as-default-member
 const { compare } = bcrypt
 
 export const router = trpc.router()
