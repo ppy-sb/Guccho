@@ -22,14 +22,12 @@
               }"
             />
           </client-only>
-          <!--
-            <font-awesome-icon v-if="session?._data?.relationships.findIndex(f => f.id === user?.id)" icon="fas fa-heart-crack" />
-            <font-awesome-icon v-else icon="fas fa-user-group" /> -->
           <span>{{ friendButtonContent }}</span>
         </t-button>
-        <!-- <t-button size="sm" variant="secondary">
-            send message
-          </t-button> -->
+        <t-button v-if="session.loggedIn" size="sm" variant="secondary" class="gap-1">
+          <font-awesome-icon icon="fas fa-envelope" />
+          <span>send message</span>
+        </t-button>
       </div>
       <div v-else class="container flex justify-around order-3 gap-3 pb-4 mx-auto md:order-1 md:justify-end md:pb-0">
         <t-button size="sm" variant="primary">
@@ -69,26 +67,29 @@
 </template>
 
 <script setup lang="ts">
-import { faUserGroup, faHeartCrack, faHeart } from '@fortawesome/free-solid-svg-icons'
+import { faUserGroup, faHeartCrack, faHeart, faEnvelope } from '@fortawesome/free-solid-svg-icons'
 import { inject, ref, Ref } from 'vue'
 import { useElementHover } from '@vueuse/core'
 import { useClient, useFAIconLib } from '#imports'
 import { User } from '~/prototyping/types/user'
 import { useSession } from '~/store/session'
+
+import type { IdType } from '~/server/trpc'
+
 const changeFriendStateButton = ref(null)
 const session = useSession()
 const client = useClient()
 const { addToLibrary } = useFAIconLib()
-addToLibrary(faUserGroup, faHeartCrack, faHeart)
+addToLibrary(faUserGroup, faHeartCrack, faHeart, faEnvelope)
 
-const user = inject<Ref<User<unknown>>>('user')
+const user = inject<Ref<User<IdType>>>('user')
 const userFriendCount = await client.query('user.count-friends', {
-  handle: user?.value.id as number | string
+  handle: user?.value.id as IdType
 })
 const relationWithSessionUser = session.loggedIn
   ? await client.query('user.relation', {
-    from: user?.value.id as number | string,
-    target: session.userId as number | string
+    from: user?.value.id as IdType,
+    target: session.userId as IdType
   })
   : undefined
 
