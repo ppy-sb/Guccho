@@ -7,6 +7,10 @@ const session = useSession()
 const route = useRoute()
 const router = useRouter()
 
+if (session.loggedIn) {
+  router.back()
+}
+
 const error = undefined
 
 const registerButton = ref<string>('Do not have an account?')
