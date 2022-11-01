@@ -1,6 +1,5 @@
 import {
-  PrismaClient,
-  RelationshipType
+  PrismaClient
 } from '@prisma/client'
 import { createClient } from 'redis'
 
@@ -19,24 +18,21 @@ const redisClient = Boolean(process.env.REDIS_URI) && createClient({
 
 export const getBaseUser = async <HasSecrets extends boolean = false>(
   handle: string | Id,
-  secrets?: HasSecrets
+  includes?: { secrets?: HasSecrets }
 ) => {
   const user = await prismaClient.user.findFirst(createUserQuery(handle))
-
   if (!user) {
     return null
   }
-
-  return toBaseUser(user, secrets)
+  return toBaseUser(user, includes)
 }
 
 export const getBaseUsers = async <HasSecrets extends boolean = false>(
   handle: string | Id,
-  secrets?: HasSecrets
+  includes?: { secrets?: HasSecrets }
 ) => {
   const users = await prismaClient.user.findMany(createUserQuery(handle))
-
-  return users.map(user => toBaseUser(user, secrets))
+  return users.map(user => toBaseUser(user, includes))
 }
 
 const getLiveRank = async (id: number, mode: number, country: string) => redisClient && ({
@@ -162,7 +158,7 @@ export const getStatisticsOfUser = async ({ id, country }: { id: Id, country: st
   return statistics
 }
 
-const getRelationShip = async (fromUser: {id: Id}, toUser: {id: Id}) => {
+export const getOneRelationShip = async (fromUser: {id: Id}, toUser: {id: Id}) => {
   const relationships = await prismaClient.relationship.findMany({
     where: {
       fromUserId: fromUser.id,
@@ -175,35 +171,58 @@ const getRelationShip = async (fromUser: {id: Id}, toUser: {id: Id}) => {
   return relationships.map(rel => rel.type)
 }
 
-export const getFullUser = async <HasSecrets extends boolean>(
-  handle: string | Id,
-  secrets: HasSecrets
-): Promise<User<Id, HasSecrets> | null> => {
-  const user = await prismaClient.user.findFirst({
-    ...createUserQuery(handle),
-    include: {
-      relations: {
-        where: {
-          type: RelationshipType.friend
-        },
-        include: {
-          toUser: true
-        }
-      }
+export const getRelationships = async (user: {id: Id}) => {
+  const pRelationResult = prismaClient.relationship.findMany({
+    where: {
+      fromUserId: user.id
+    },
+    select: {
+      type: true,
+      toUser: true,
+      toUserId: true
     }
   })
+  const pGotRelationResult = prismaClient.relationship.findMany({
+    where: {
+      toUserId: user.id
+    },
+    select: {
+      type: true,
+      fromUserId: true
+    }
+  })
+
+  const [relationships, gotRelationships] = await Promise.all([pRelationResult, pGotRelationResult])
+
+  const convertedToBaseUserShape = relationships.map(r => ({
+    ...r,
+    toUser: toBaseUser(r.toUser)
+  }))
+  const deduped = dedupeUserRelationship(convertedToBaseUserShape)
+
+  for (const _user of deduped) {
+    const reverse = gotRelationships.filter(reverse => reverse.fromUserId === user.id).map(reverse => reverse.type)
+    _user.relationshipFromTarget = reverse || []
+    _user.mutualRelationship = calculateMutualRelationships(_user.relationship, _user.relationshipFromTarget)
+  }
+
+  return deduped
+}
+
+// high cost
+export const getFullUser = async <HasSecrets extends boolean>(
+  handle: string | Id,
+  includes: { secrets?: HasSecrets }
+): Promise<User<Id, HasSecrets> | null> => {
+  const user = await prismaClient.user.findFirst(createUserQuery(handle))
 
   if (!user) {
     return null
   }
   try {
-    const dedupedUserRelationships = dedupeUserRelationship(user)
-
-    for (const _user of dedupedUserRelationships) {
-      const reverse = await getRelationShip(_user, user)
-      _user.relationshipFromTarget = reverse
-      _user.mutualRelationship = calculateMutualRelationships(_user.relationship, _user.relationshipFromTarget)
-    }
+    // dispatch queries for user data without waiting for results
+    const pUserRelationships = getRelationships(user)
+    const pUserStatistics = getStatisticsOfUser(user)
 
     const returnValue: User<Id, false> = {
       id: user.id,
@@ -214,7 +233,7 @@ export const getFullUser = async <HasSecrets extends boolean>(
       flag: user.country,
       avatarUrl: `https://a.ppy.sb/${user.id}`,
       roles: toRoles(user.priv),
-      statistics: await getStatisticsOfUser(user),
+      statistics: await pUserStatistics,
       preferences: {
         allowPrivateMessage: true,
         visibility: {
@@ -231,10 +250,10 @@ export const getFullUser = async <HasSecrets extends boolean>(
         type: 'doc',
         content: []
       },
-      relationships: dedupedUserRelationships
+      relationships: await pUserRelationships
     }
 
-    if (secrets === true) {
+    if (includes.secrets === true) {
       const _returnValue = {
         ...returnValue,
         secrets: {

@@ -3,27 +3,46 @@ import * as trpc from '@trpc/server'
 // eslint-disable-next-line import/default
 import bcrypt from 'bcryptjs'
 import { z } from 'zod'
-import { getBaseUser, getFullUser, getBaseUsers } from '../backend-clients'
+import { getBaseUser, getFullUser, getBaseUsers, getOneRelationShip } from '../backend-clients'
+import { calculateMutualRelationships } from './../backend-clients/transforms'
+const { compare } = bcrypt
 
 export const router = trpc.router()
+
+  .query('user.userpage', {
+    input: z.object({
+      handle: z.union([z.string(), z.number()])
+    }),
+    async resolve ({ input: { handle } }) {
+      const user = await getFullUser(handle, { secrets: false })
+      if (!user) { return user }
+      return {
+        ...user,
+        relationships: undefined
+      }
+    }
+  })
+
   .query('user.full', {
     input: z.object({
       handle: z.union([z.string(), z.number()])
     }),
-    async resolve ({ input }) {
-      const user = await getFullUser(input.handle, false)
+    async resolve ({ input: { handle } }) {
+      const user = await getFullUser(handle, { secrets: false })
       return user
     }
   })
+
   .query('user.full-secret', {
     input: z.object({
       handle: z.union([z.string(), z.number()])
     }),
     async resolve ({ input }) {
-      const user = await getFullUser(input.handle, true)
+      const user = await getFullUser(input.handle, { secrets: true })
       return user
     }
   })
+
   .query('user.base', {
     input: z.object({
       handle: z.union([z.string(), z.number()])
@@ -33,6 +52,7 @@ export const router = trpc.router()
       return user
     }
   })
+
   .query('user.login', {
     input: z.object({
       handle: z.union([z.string(), z.number()]),
@@ -40,9 +60,9 @@ export const router = trpc.router()
     }),
     async resolve ({ input: { handle, md5HashedPassword } }) {
       try {
-        const user = await getBaseUser(handle, true)
+        const user = await getBaseUser(handle, { secrets: true })
         if (!user) { return false }
-        const result = await bcrypt.compare(md5HashedPassword, user.secrets.password)
+        const result = await compare(md5HashedPassword, user.secrets.password)
         if (!result) { return false }
         return user
       } catch (err) {
@@ -59,8 +79,19 @@ export const router = trpc.router()
     }),
     async resolve ({ input: { from, target } }) {
       const [fromUser, targetUser] = await Promise.all([getBaseUser(from), getBaseUser(target)])
+      if (!fromUser || !targetUser) { return }
+      const [fromRelationship, targetRelationship] = await Promise.all([getOneRelationShip(fromUser, targetUser), getOneRelationShip(targetUser, fromUser)])
+      const mutualRelationship = calculateMutualRelationships(fromRelationship, targetRelationship)
+      return {
+        from: fromRelationship,
+        target: targetRelationship,
+        mutual: mutualRelationship
+      }
     }
   })
+
+// TODO: get user relations
+// .query('user-relations', {})
 
   .query('users.base', {
     input: z.object({

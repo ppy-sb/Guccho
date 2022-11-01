@@ -183,7 +183,6 @@ export interface UserExtended<
   relationships: UserRelationship<Id>[]
 
   preferences: UserPreferences
-
 }
 
 export interface UserModel<
