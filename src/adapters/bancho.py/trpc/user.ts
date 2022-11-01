@@ -3,7 +3,7 @@ import * as trpc from '@trpc/server'
 // eslint-disable-next-line import/default
 import bcrypt from 'bcryptjs'
 import { z } from 'zod'
-import { getBaseUser, getFullUser, getBaseUsers, getOneRelationShip, getRelationships } from '../backend-clients'
+import { getBaseUser, getFullUser, getBaseUsers, getOneRelationShip, countGotRelationship, getRelationships } from '../backend-clients'
 import { calculateMutualRelationships } from './../backend-clients/transforms'
 // eslint-disable-next-line import/no-named-as-default-member
 const { compare } = bcrypt
@@ -102,14 +102,14 @@ export const router = trpc.router()
     }
   })
 
-  .query('user.relations.count', {
+  .query('user.count-friends', {
     input: z.object({
-      from: z.union([z.string(), z.number()])
+      handle: z.union([z.string(), z.number()])
     }),
-    async resolve ({ input: { from } }) {
-      const user = await getBaseUser(from)
+    async resolve ({ input: { handle } }) {
+      const user = await getBaseUser(handle)
       if (!user) { return }
-      return await getRelationships(user)
+      return await countGotRelationship(user, 'friend')
     }
   })
 

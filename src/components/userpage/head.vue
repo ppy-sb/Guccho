@@ -9,40 +9,42 @@
     </div>
     <!-- info -->
     <div class="flex flex-col w-full pt-4 md:p-0 bg-kimberly-200 dark:bg-kimberly-700 md:bg-transparent md:grow">
-      <template v-if="session.loggedIn">
-        <div
-          v-if="session.userId !== user.id"
-          class="container flex justify-around order-3 gap-3 pb-4 mx-auto md:order-1 md:justify-end md:pb-0"
-        >
-          <t-button size="sm" variant="primary" class="gap-1">
-            <!-- <font-awesome-icon v-if="session?._data?.relationships.findIndex(f => f.id === user?.id)" icon="fas fa-heart" />
+      <div
+        v-if="session.userId !== user.id"
+        class="container flex justify-around order-3 gap-3 pb-4 mx-auto md:order-1 md:justify-end md:pb-0"
+      >
+        <t-button ref="addAsFriendButton" size="sm" :variant="isMutualFriend ? 'primary' : 'neutral'" class="gap-1">
+          <client-only>
+            <font-awesome-icon
+              :icon="isFriendButtonHovered && isMutualFriend ? 'fas fa-heart-crack' : 'fas fa-heart'"
+              :class="{
+                'fa-bounce': isFriendButtonHovered
+              }"
+            />
+          </client-only>
+          <!--
             <font-awesome-icon v-if="session?._data?.relationships.findIndex(f => f.id === user?.id)" icon="fas fa-heart-crack" />
             <font-awesome-icon v-else icon="fas fa-user-group" /> -->
-            <span>{{ friendButton }}</span>
-          </t-button>
-          <!-- <t-button size="sm" variant="secondary">
+          <span>{{ friendButtonContent }}</span>
+        </t-button>
+        <!-- <t-button size="sm" variant="secondary">
             send message
           </t-button> -->
-        </div>
-        <div
-          v-else
-          :data-logged-in="session.loggedIn"
-          class="container flex justify-around order-3 gap-3 pb-4 mx-auto md:order-1 md:justify-end md:pb-0"
+      </div>
+      <div v-else class="container flex justify-around order-3 gap-3 pb-4 mx-auto md:order-1 md:justify-end md:pb-0">
+        <t-button size="sm" variant="primary">
+          add as friend
+        </t-button>
+        <t-nuxt-link-button
+          size="sm"
+          variant="accent"
+          :to="{
+            name: 'me-preferences'
+          }"
         >
-          <t-button size="sm" variant="primary">
-            add as friend
-          </t-button>
-          <t-nuxt-link-button
-            size="sm"
-            variant="accent"
-            :to="{
-              name: 'me-preferences'
-            }"
-          >
-            change preferences
-          </t-nuxt-link-button>
-        </div>
-      </template>
+          change preferences
+        </t-nuxt-link-button>
+      </div>
       <div class="container mx-auto sm:order-2 sm:flex sm:gap-1 sm:items-end sm:justify-between md:pb-2">
         <div>
           <div>
@@ -67,19 +69,33 @@
 </template>
 
 <script setup lang="ts">
-import { faUserGroup, faHeartCrack } from '@fortawesome/free-solid-svg-icons'
-import { inject, ref } from 'vue'
-import { useFAIconLib } from '#imports'
+import { faUserGroup, faHeartCrack, faHeart } from '@fortawesome/free-solid-svg-icons'
+import { inject, ref, Ref } from 'vue'
+import { useElementHover } from '@vueuse/core'
+import { useClient, useFAIconLib } from '#imports'
 import { User } from '~/prototyping/types/user'
 import { useSession } from '~/store/session'
-
+const addAsFriendButton = ref(null)
 const session = useSession()
-const user = inject<User<unknown>>('user')
+const client = useClient()
 const { addToLibrary } = useFAIconLib()
+addToLibrary(faUserGroup, faHeartCrack, faHeart)
 
-addToLibrary(faUserGroup, faHeartCrack)
+const user = inject<Ref<User<unknown>>>('user')
+const userFriendCount = await client.query('user.count-friends', {
+  handle: user?.value.id as number | string
+})
+const relationWithSessionUser = session.loggedIn
+  ? await client.query('user.relation', {
+    from: user?.value.id as number | string,
+    target: session.userId as number | string
+  })
+  : undefined
 
-const friendButton = ref('500')
+const isMutualFriend = ref(relationWithSessionUser?.mutual.includes('mutual-friend') || false)
+const isFriendButtonHovered = useElementHover(addAsFriendButton)
+const friendButtonContent = ref<string | number>(userFriendCount || 0)
+
 </script>
 
 <style scoped lang="scss">
@@ -88,21 +104,4 @@ const friendButton = ref('500')
   @apply md:text-left md:rounded;
   @apply md:[margin-left:-7em] md:[padding-left:7em];
 }
-
-// .root {
-//   .actions {
-//     filter: blur(0.2em) opacity(0);
-//     transform: scale(0.95);
-//     @apply transition-all;
-//   }
-
-//   &:hover {
-//     .actions {
-//       transform: scale(1);
-//       filter: blur(0) opacity(1);
-//       @apply transition-all;
-//     }
-
-//   }
-// }
 </style>

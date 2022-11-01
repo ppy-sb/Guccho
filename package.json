@@ -44,6 +44,7 @@
     "@tiptap/html": "^2.0.0-beta.199",
     "@tiptap/starter-kit": "^2.0.0-beta.199",
     "@tiptap/vue-3": "^2.0.0-beta.199",
+    "@vueuse/core": "^9.4.0",
     "atropos": "^1.0.2",
     "bcryptjs": "^2.4.3",
     "chart.js": "^3.9.1",
