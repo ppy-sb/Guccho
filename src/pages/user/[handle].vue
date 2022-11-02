@@ -7,17 +7,24 @@
       <lazy-userpage-rank-chart v-if="currentRankingSystem" />
       <div class="lg:grid lg:grid-cols-6 xl:container xl:mx-auto">
         <div class="lg:col-span-5">
-          <lazy-userpage-statistics />
-          <lazy-userpage-scores v-if="currentRankingSystem" />
-          <lazy-userpage-json-viewer />
+          <lazy-userpage-statistics
+            id="statistics"
+            v-intersection-observer="updateIntersectingStatus('statistics')"
+          />
+          <lazy-userpage-scores v-if="currentRankingSystem" id="bests" v-intersection-observer="updateIntersectingStatus('bests')" />
+          <lazy-userpage-json-viewer id="json" v-intersection-observer="updateIntersectingStatus('json')" />
         </div>
         <div class="hidden self-start lg:block lg:col-span-1 sticky top-[100px]">
-          <ul class="menu bg-kimberly-100/70 w-56 rounded-box shadow-xl">
-            <li><a>Item 1</a></li>
-            <li class="bordered">
-              <a>I have border</a>
+          <ul class="menu drop-shadow-xl">
+            <li
+              v-for="(isVisible, el) of visible"
+              :key="el"
+              :class="{
+                bordered: isVisible
+              }"
+            >
+              <a :href="`#${el}`">{{ el }}</a>
             </li>
-            <li><a>Item 3</a></li>
           </ul>
         </div>
       </div>
@@ -42,9 +49,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, provide, computed } from 'vue'
+import { ref, provide, computed, reactive } from 'vue'
 import { useRoute } from '#app'
-import { useIntersectionObserver } from '@vueuse/core'
+import { vIntersectionObserver } from '@vueuse/components'
 import { Mode, Ruleset, RankingSystem } from '~/prototyping/types/shared'
 import { definePageMeta, useClient } from '#imports'
 import { UserModeRulesetStatistics } from '~/prototyping/types/user'
@@ -54,6 +61,16 @@ definePageMeta({
 })
 const route = useRoute()
 const client = useClient()
+
+const visible = reactive({
+  statistics: false,
+  bests: false,
+  json: false
+})
+
+const updateIntersectingStatus = (key:keyof typeof visible) => ([{ isIntersecting }]: [{isIntersecting: boolean}]) => {
+  visible[key] = isIntersecting
+}
 
 const _user = await client.query('user.userpage', {
   handle: `${route.params.handle}`
@@ -79,6 +96,7 @@ provide('ruleset', selectedRuleset)
 provide('rankingSystem', tab)
 provide('selectedStatisticsData', currentStatistic)
 provide('selectedRankingSystemData', currentRankingSystem)
+
 </script>
 
 <style lang="postcss" scoped>
