@@ -112,7 +112,8 @@ onMounted(() => {
   }
 }
 
-.light .color-theme-light-invert {
-  filter: invert(100%)
+.color-theme-light-invert {
+  filter: invert(100%);
+  @apply dark:[filter:invert(0)]
 }
 </style>

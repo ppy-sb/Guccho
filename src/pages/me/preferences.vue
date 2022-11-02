@@ -25,9 +25,9 @@ if (!_user) {
   await navigateTo({ name: 'auth-login', query: { back: '1' } })
 }
 
-const user = ref(_user)
+const user = ref(_user as Exclude<typeof _user, false | null>)
 
-const unchanged = ref(_user)
+const unchanged = ref(_user as Exclude<typeof _user, false | null>)
 const anythingChanged = computed(() => {
   // TODO: fix compare profile
   const col = (['name', 'email']as Array<keyof UnwrapRef<typeof unchanged>>).some((item) => {
@@ -51,7 +51,7 @@ const updateUser = () => {
 </script>
 
 <template>
-  <section v-if="user && unchanged" class="container mx-auto custom-container">
+  <section v-if="user" class="container mx-auto custom-container">
     <t-modal-page>
       <t-modal-wrapper ref="changeAvatar" v-slot="{ closeModal }">
         <t-modal class="max-w-3xl">
