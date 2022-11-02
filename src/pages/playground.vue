@@ -6,8 +6,6 @@ const root = currentRoute.matched[0]
 
 const children = root.children
 
-// const selectedChild = ref<boolean>(currentRoute.path)
-
 definePageMeta({
   // you can also pass a string or a computed property
   key: route => route.slug,
@@ -48,7 +46,7 @@ definePageMeta({
         </t-tab>
       </t-tabs>
     </section>
-    <nuxt-child />
+    <nuxt-page />
   </div>
 </template>
 
