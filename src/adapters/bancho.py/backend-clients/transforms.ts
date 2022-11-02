@@ -1,12 +1,11 @@
 import { Stat, User as DatabaseUser, RelationshipType } from '@prisma/client'
 import type { AvailableRankingSystems, IdType as Id } from '../config'
-import { UserSecrets } from './../../../prototyping/types/user'
-import {
+import { BanchoPyPrivilege } from './enums'
+import type {
   MutualRelationship,
   Relationship,
   Scope
-} from './../../../prototyping/types/shared'
-import { BanchoPyPrivilege } from './enums'
+} from '~/prototyping/types/shared'
 import type {
   UserModeRulesetStatistics,
   BaseUser,
@@ -14,7 +13,8 @@ import type {
   UserOptional,
   UserRelationship,
   UserExtra,
-  UserPreferences
+  UserPreferences,
+  UserSecrets
 } from '~/prototyping/types/user'
 
 export const createRulesetData = (
