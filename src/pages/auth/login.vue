@@ -34,7 +34,7 @@ const userLogin = async () => {
     if (back) {
       router.back()
     } else {
-      navigateTo('/')
+      await navigateTo('/')
     }
   }
 }

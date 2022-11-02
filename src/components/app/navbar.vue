@@ -24,7 +24,7 @@ const menu = computed(() => [
     }
   },
   {
-    name: '[dev] playground',
+    name: '[dev] components',
     route: {
       name: 'playground'
     }
@@ -36,24 +36,12 @@ const menu = computed(() => [
   //   }
   // },
   {
-    name: 'user page',
+    name: 'user(1000)',
     route: {
       name: 'user-handle',
       params: {
         handle: 1000
       }
-    }
-  },
-  {
-    name: 'user preferences',
-    route: {
-      name: 'me-preferences'
-    }
-  },
-  {
-    name: 'user friends',
-    route: {
-      name: 'me-friends'
     }
   }
 ])
@@ -83,7 +71,7 @@ onUnmounted(() => {
 <template>
   <div
     ref="root"
-    class="w-full z-10 transition-[padding] fixed navbar-container"
+    class="w-full z-50 transition-[padding] fixed navbar-container"
     :class="[detached && 'detached']"
   >
     <div
@@ -192,11 +180,24 @@ onUnmounted(() => {
             tabindex="0"
             class="right-0 p-2 mt-2 shadow-xl menu menu-compact dropdown-content bg-kimberly-100 dark:bg-kimberly-600 rounded-br-2xl rounded-bl-2xl w-52"
           >
-            <!-- <li v-for="menuItem in menu" :key="`menu-${menuItem.name}`">
-              <nuxt-link :to="menuItem.route">
-                {{ menuItem.name }}
+            <li>
+              <nuxt-link
+                :to="{
+                  name: 'me-preferences'
+                }"
+              >
+                Preferences
               </nuxt-link>
-            </li> -->
+            </li>
+            <li>
+              <nuxt-link
+                :to="{
+                  name: 'me-friends'
+                }"
+              >
+                Friends & Blocks
+              </nuxt-link>
+            </li>
             <li>
               <a href="#" @click="logout">log out</a>
             </li>
