@@ -6,7 +6,7 @@ import { createClient } from 'redis'
 import type { IdType as Id } from '../config'
 import { BanchoPyMode } from './enums'
 import { createUserQuery } from './queries'
-import { createRulesetData, toBaseUser, toFullUser, toRoles } from './transforms'
+import { createRulesetData, toBaseUser, toFullUser } from './transforms'
 import { getRelationships } from './user-relations'
 
 import type { BaseUser, UserExtra, UserOptional, UserStatistic } from '~/prototyping/types/user'

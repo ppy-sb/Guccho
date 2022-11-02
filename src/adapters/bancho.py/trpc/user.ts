@@ -4,7 +4,7 @@ import * as trpc from '@trpc/server'
 import bcrypt from 'bcryptjs'
 import { z } from 'zod'
 import { getBaseUser, getFullUser, getBaseUsers, getOneRelationShip, countGotRelationship, getRelationships } from '../backend-clients'
-import { calculateMutualRelationships, followUserPreferences } from './../backend-clients/transforms'
+import { calculateMutualRelationships, followUserPreferences } from '../backend-clients/transforms'
 // eslint-disable-next-line import/no-named-as-default-member
 const { compare } = bcrypt
 
