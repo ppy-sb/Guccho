@@ -5,8 +5,8 @@
       <lazy-userpage-profile />
       <userpage-ranking-system-switcher class="z-10 !drop-shadow-xl" />
       <lazy-userpage-rank-chart v-if="currentRankingSystem" />
-      <div class="lg:grid lg:grid-cols-6 xl:container xl:mx-auto">
-        <div class="lg:col-span-5">
+      <div class="lg:grid lg:grid-cols-7 xl:container xl:mx-auto">
+        <div class="lg:col-span-6">
           <lazy-userpage-statistics
             id="statistics"
             v-intersection-observer="updateIntersectingStatus('statistics')"
@@ -15,15 +15,18 @@
           <lazy-userpage-json-viewer id="json" v-intersection-observer="updateIntersectingStatus('json')" />
         </div>
         <div class="hidden self-start lg:block lg:col-span-1 sticky top-[100px]">
-          <ul class="menu drop-shadow-xl">
+          <ul class="menu menu-compact drop-shadow-xl">
             <li
               v-for="(isVisible, el) of visible"
               :key="el"
-              :class="{
-                bordered: isVisible
-              }"
             >
-              <a :href="`#${el}`">{{ el }}</a>
+              <a
+                class="border-kimberly-500/20 border-l-2"
+                :class="{
+                  'border-accent': isVisible
+                }"
+                :href="`#${el}`"
+              >{{ el }}</a>
             </li>
           </ul>
         </div>
