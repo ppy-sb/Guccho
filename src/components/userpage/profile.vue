@@ -20,7 +20,7 @@ onBeforeMount(async () => {
       class="custom-typography"
       :editor="editor"
     />
-    <div v-else class="custom-typography ssr" v-html="generateHTML(user.profile, extensions)" />
+    <div v-else-if="user.profile" class="custom-typography ssr" v-html="generateHTML(user.profile, extensions)" />
   </div>
 </template>
 

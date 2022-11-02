@@ -1,9 +1,9 @@
 <template>
   <div class="absolute w-full">
     <div v-if="user" class="flex flex-col pt-16 justify-stretch md:pt-0 bg">
-      <userpage-head />
+      <lazy-userpage-head />
       <lazy-userpage-profile />
-      <userpage-ranking-system-switcher class="z-10 !drop-shadow-xl" />
+      <lazy-userpage-ranking-system-switcher class="z-10 !drop-shadow-xl" />
       <lazy-userpage-rank-chart v-if="currentRankingSystem" />
       <div class="lg:grid lg:grid-cols-7 xl:container xl:mx-auto">
         <div class="lg:col-span-6">
@@ -21,7 +21,7 @@
               :key="el"
             >
               <a
-                class="border-kimberly-500/20 border-l-2"
+                class="border-kimberly-500/20 border-l-4"
                 :class="{
                   'border-secondary dark:border-accent': isVisible
                 }"

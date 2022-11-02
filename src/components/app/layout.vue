@@ -8,6 +8,7 @@
     class="screen"
   >
     <app-navbar :disabled="modalContainer?.stat === 1" />
+    <app-experience class="z-50" />
     <t-modal-container ref="modalContainer" :teleport-id="config.appModalTeleportTargetId">
       <!-- bg-kimberly-50 dark:bg-kimberly-800 -->
       <div v-show="!isLoading" class="flex flex-col min-h-screen overflow-y-hidden">
