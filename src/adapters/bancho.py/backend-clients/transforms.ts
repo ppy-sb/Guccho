@@ -3,7 +3,8 @@ import type { AvailableRankingSystems, IdType as Id } from '../config'
 import { UserSecrets } from './../../../prototyping/types/user'
 import {
   MutualRelationship,
-  Relationship
+  Relationship,
+  Scope
 } from './../../../prototyping/types/shared'
 import { BanchoPyPrivilege } from './enums'
 import type {
@@ -11,7 +12,9 @@ import type {
   BaseUser,
   UserPrivilegeString,
   UserOptional,
-  UserRelationship
+  UserRelationship,
+  UserExtra,
+  UserPreferences
 } from '~/prototyping/types/user'
 
 export const createRulesetData = (
@@ -117,10 +120,15 @@ export const toRoles = (priv: number): UserPrivilegeString[] => {
   return roles
 }
 
-export const toBaseUser = <Includes extends Partial<Record<keyof UserOptional<Id>, boolean>> = Record<never, never>>(
-  user: DatabaseUser,
-  includes?: Includes
-) => {
+export const toBaseUser = <
+  Includes extends Partial<Record<keyof UserOptional<Id>, boolean>> = Record<
+    never,
+    never
+  >
+>(
+    user: DatabaseUser,
+    includes?: Includes
+  ) => {
   const returnValue: BaseUser<Id> & Partial<UserOptional<Id>> = {
     id: user.id,
     ingameId: user.id,
@@ -142,7 +150,9 @@ export const toBaseUser = <Includes extends Partial<Record<keyof UserOptional<Id
     returnValue.email = user.email
   }
 
-  return returnValue as Includes['secrets'] extends true ? BaseUser<Id> & { secrets: UserSecrets} : BaseUser<Id>
+  return returnValue as Includes['secrets'] extends true
+    ? BaseUser<Id> & { secrets: UserSecrets }
+    : BaseUser<Id>
 }
 
 export const dedupeUserRelationship = (
@@ -196,4 +206,71 @@ export const calculateMutualRelationships = (
     }
   }
   return mutualRelationships
+}
+
+export const toFullUser = <
+  Extend extends Partial<UserOptional<Id>> & Partial<UserExtra<Id>>
+>(
+    user: DatabaseUser,
+    extraFields: Extend
+  ) => {
+  const returnValue =
+    {
+      id: user.id,
+      ingameId: user.id,
+      name: user.name,
+      safeName: user.safeName,
+      email: extraFields.email,
+      flag: user.country,
+      avatarUrl: `https://a.ppy.sb/${user.id}`,
+      roles: toRoles(user.priv),
+      statistics: extraFields.statistics,
+      preferences: {
+        scope: {
+          reachable: 'public',
+          status: 'public',
+          privateMessage: 'public',
+          email: 'self',
+          oldNames: 'public'
+        }
+      },
+      // TODO: get user reachable status
+      reachable: extraFields.reachable,
+      // TODO: get user status
+      status: extraFields.status,
+      oldNames: extraFields.oldNames || [],
+      profile: (user.userpageContent && JSON.parse(user.userpageContent)) || {
+        type: 'doc',
+        content: []
+      },
+      relationships: extraFields.relationships,
+      secrets: extraFields.secrets
+    }
+  return returnValue as BaseUser<Id> & UserExtra<Id> & {
+    statistics: Extend['statistics'],
+    status: Extend['status']
+    secrets: Extend['secrets'],
+    email: Extend['email'],
+    reachable: Extend['reachable'],
+    relationships: Extend['relationships']
+  }
+}
+
+export const compareScope = (scope: Scope, requiredScope: Scope) => {
+  if (requiredScope === 'public') { return true }
+  if (requiredScope === 'friends') { return scope === 'friends' }
+  if (requiredScope === 'self') { return scope === 'self' }
+}
+
+export const followUserPreferences = (user: BaseUser<Id> & Partial<UserExtra<Id> & Partial<UserOptional<Id>>> & {
+  preferences: UserPreferences,
+}, scope: Scope = 'public') => {
+  // "reachable" | "oldNames" | "email" | "status"
+  return {
+    ...user,
+    email: compareScope(scope, user.preferences.scope.email) ? user.email : undefined,
+    oldNames: compareScope(scope, user.preferences.scope.oldNames) ? user.oldNames : undefined,
+    reachable: compareScope(scope, user.preferences.scope.reachable) ? user.reachable : undefined,
+    status: compareScope(scope, user.preferences.scope.status) ? user.status : undefined
+  }
 }

@@ -4,7 +4,7 @@ import * as trpc from '@trpc/server'
 import bcrypt from 'bcryptjs'
 import { z } from 'zod'
 import { getBaseUser, getFullUser, getBaseUsers, getOneRelationShip, countGotRelationship, getRelationships } from '../backend-clients'
-import { calculateMutualRelationships } from './../backend-clients/transforms'
+import { calculateMutualRelationships, followUserPreferences } from './../backend-clients/transforms'
 // eslint-disable-next-line import/no-named-as-default-member
 const { compare } = bcrypt
 
@@ -15,12 +15,9 @@ export const router = trpc.router()
       handle: z.union([z.string(), z.number()])
     }),
     async resolve ({ input: { handle } }) {
-      const user = await getFullUser(handle, { secrets: false })
+      const user = await getFullUser(handle, { relationships: false })
       if (!user) { return user }
-      return {
-        ...user,
-        relationships: undefined
-      }
+      return followUserPreferences(user, 'public')
     }
   })
 
@@ -30,19 +27,21 @@ export const router = trpc.router()
     }),
     async resolve ({ input: { handle } }) {
       const user = await getFullUser(handle, { email: true })
-      return {
-        ...user,
-        email: user?.preferences.scope.email ? user.email : undefined
-      }
+      if (!user) { return null }
+      return followUserPreferences(user, 'public')
     }
   })
 
   .query('user.full-secret', {
     input: z.object({
-      handle: z.union([z.string(), z.number()])
+      handle: z.union([z.string(), z.number()]),
+      md5HashedPassword: z.string()
     }),
     async resolve ({ input }) {
-      const user = await getFullUser(input.handle, { secrets: true })
+      const user = await getFullUser(input.handle, { email: true, secrets: true })
+      if (!user) { return false }
+      const result = await compare(input.md5HashedPassword, user.secrets.password)
+      if (!result) { return false }
       return user
     }
   })

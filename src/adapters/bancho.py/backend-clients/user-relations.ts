@@ -20,7 +20,7 @@ export const getOneRelationShip = async (fromUser: {id: Id}, toUser: {id: Id}) =
   })
   return relationships.map(rel => rel.type)
 }
-
+// TODO: handle the situation where toUser could be null.
 export const getRelationships = async (user: {id: Id}) => {
   const pRelationResult = prismaClient.relationship.findMany({
     where: {

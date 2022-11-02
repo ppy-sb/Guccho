@@ -23,7 +23,7 @@ export type ScoreRankingSystem = 'rankedScore' | 'totalScore';
 export type PPRankingSystem = 'ppv2' | 'ppv1';
 export type RankingSystem = PPRankingSystem | ScoreRankingSystem;
 
-export type Scope = 'nobody' | 'friends' | 'public';
+export type Scope = 'self' | 'friends' | 'public';
 
 // utils
 export type OmitNever<T> = {
