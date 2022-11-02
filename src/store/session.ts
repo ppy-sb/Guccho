@@ -10,7 +10,8 @@ export const useSession = defineStore('session', {
     loggedIn: boolean,
     userId?: IdType,
     md5HashedPassword?: string
-    _data: Partial<Omit<UserFull<IdType>, 'statistics'>>
+    _data: Partial<Omit<UserFull<IdType>, 'statistics'>>,
+    sessionId?: string
   } => ({
     loggedIn: false,
     _data: {}
@@ -21,14 +22,27 @@ export const useSession = defineStore('session', {
       return await this.loginHashed(handle, md5HashedPassword)
     },
     async loginHashed (handle: string, md5HashedPassword: string) {
-      const user = await useClient().query('user.login', { handle, md5HashedPassword })
-      if (!user) { return false }
+      const result = await useClient().query('user.login', { handle, md5HashedPassword })
+      if (!result) { return false }
 
       this.$patch({
         loggedIn: true,
-        userId: user.id,
+        userId: result.user.id,
         md5HashedPassword,
-        _data: user
+        _data: result.user,
+        sessionId: result.sessionId
+      })
+      return true
+    },
+    async retrieve (sessionId: string) {
+      const result = await useClient().query('user.retrieve-session', { sessionId })
+      if (!result) { return }
+      if (!result.user) { return }
+      this.$patch({
+        loggedIn: true,
+        userId: result.user.id,
+        _data: result.user,
+        sessionId: result.sessionId
       })
       return true
     }

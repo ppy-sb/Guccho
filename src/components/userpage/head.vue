@@ -14,14 +14,12 @@
         class="container flex justify-around order-3 gap-3 pb-4 mx-auto md:order-1 md:justify-end md:pb-0"
       >
         <t-button ref="changeFriendStateButton" size="sm" :variant="isMutualFriend ? 'primary' : 'neutral'" class="gap-1">
-          <client-only>
-            <font-awesome-icon
-              :icon="isFriendButtonHovered && isMutualFriend ? 'fas fa-heart-crack' : 'fas fa-heart'"
-              :class="{
-                'fa-bounce': isFriendButtonHovered
-              }"
-            />
-          </client-only>
+          <font-awesome-icon
+            :icon="isFriendButtonHovered && isMutualFriend ? 'fas fa-heart-crack' : 'fas fa-heart'"
+            :class="{
+              'fa-bounce': isFriendButtonHovered
+            }"
+          />
           <span>{{ friendButtonContent }}</span>
         </t-button>
         <t-button v-if="session.$state.loggedIn" size="sm" variant="secondary" class="gap-1">
@@ -95,7 +93,7 @@ const relationWithSessionUser = session.$state.loggedIn
 
 const isMutualFriend = ref(relationWithSessionUser?.mutual.includes('mutual-friend') || false)
 const isFriendButtonHovered = useElementHover(changeFriendStateButton)
-const friendButtonContent = ref<string | number>(userFriendCount || 0)
+const friendButtonContent = ref<string | number>(userFriendCount || 'Add as friend')
 
 </script>
 

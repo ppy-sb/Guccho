@@ -3,6 +3,7 @@ import * as trpc from '@trpc/server'
 // eslint-disable-next-line import/default
 import bcrypt from 'bcryptjs'
 import { z } from 'zod'
+import { createSession, getSession, refresh } from '../session'
 import { getBaseUser, getFullUser, getBaseUsers, getOneRelationShip, countGotRelationship, getRelationships } from '../backend-clients'
 import { calculateMutualRelationships, followUserPreferences } from '../backend-clients/transforms'
 // eslint-disable-next-line import/no-named-as-default-member
@@ -67,10 +68,30 @@ export const router = trpc.router()
         if (!user) { return false }
         const result = await compare(md5HashedPassword, user.secrets.password)
         if (!result) { return false }
-        return user
+        const sessionId = createSession(user)
+        return {
+          user,
+          sessionId
+        }
       } catch (err) {
         console.error(err)
         throw err
+      }
+    }
+  })
+
+  .query('user.retrieve-session', {
+    input: z.object({
+      sessionId: z.string()
+    }),
+    async resolve ({ input: { sessionId } }) {
+      const session = getSession(sessionId)
+      if (!session) { return }
+      const newSessionId = refresh(sessionId)
+      if (!newSessionId) { return }
+      return {
+        user: await getBaseUser(session.userId),
+        sessionId: newSessionId
       }
     }
   })
@@ -114,9 +135,6 @@ export const router = trpc.router()
       return await countGotRelationship(user, 'friend')
     }
   })
-
-// TODO: get user relations
-// .query('user-relations', {})
 
   .query('users.base', {
     input: z.object({
