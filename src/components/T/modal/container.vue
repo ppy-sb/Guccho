@@ -21,7 +21,7 @@
       </slot>
     </div>
 
-    <div ref="content" class="content position-relative">
+    <div ref="content" class="content">
       <slot v-bind="{ openModal, closeModal }" />
     </div>
   </div>
