@@ -1,5 +1,5 @@
 <template>
-  <div class="flex items-center grow ">
+  <div class="flex items-center grow">
     <div
       class="container flex items-center justify-between mx-auto my-auto text-left custom-container w-max text-kimberly-900 dark:text-kimberly-100"
     >

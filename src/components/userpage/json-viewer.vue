@@ -1,7 +1,7 @@
 <template>
   <section
 
-    class="container mx-auto mt-4 custom-container "
+    class="mt-4 custom-container "
   >
     <json-viewer
       :value="user"
