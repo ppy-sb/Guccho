@@ -1,3 +1,4 @@
+<!-- TODO: turd pile, refactor later -->
 <template>
   <section
     v-if="user"
@@ -44,8 +45,13 @@
       <div class="container mx-auto sm:order-2 sm:flex sm:gap-1 sm:items-end sm:justify-between md:pb-2">
         <div>
           <div>
-            <h1 class="text-5xl text-center md:text-left">
+            <h1 class="text-5xl items-center md:items-left flex flex-col md:flex-row gap-1">
               {{ user.name }}
+              <div class="flex flex-row gap-1 md:self-end">
+                <div v-for="role in user.roles.filter(role => !['normal', 'registered'].includes(role))" :key="role" class="badge">
+                  {{ role }}
+                </div>
+              </div>
             </h1>
             <h2
               class="text-3xl text-center underline md:text-left decoration-sky-500 text-kimberly-600 dark:text-kimberly-300"
@@ -55,7 +61,9 @@
             <div class="pb-2" />
           </div>
         </div>
-        <app-mode-switcher class="self-end" />
+        <div class="div">
+          <app-mode-switcher class="self-end" />
+        </div>
       </div>
       <div class="order-3 user-status">
         currently offline.

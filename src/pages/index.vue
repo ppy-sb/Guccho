@@ -10,8 +10,9 @@
           </h1>
           <h2 class="font-semibold text-center h-sub text-md sm:text-left">
             We are an osu! private server built from the ground up with many
-            unique features not seen elsewhere - for more information, check out
-            gulag and {{ config.title }} on GitHub - we're fully open source!
+            unique features not seen elsewhere!<br>
+            - for more information, check out gulag and guweb-next on GitHub <br>
+            - we're fully open source!
           </h2>
         </div>
 
@@ -35,7 +36,7 @@
         </div>
       </div>
       <div class="hidden mascot lg:block">
-        <img src="/mascot/riru.png" style="max-height:700px" alt="riru Mascot" m="l-auto">
+        <img src="/mascot/riru.png" style="max-height:70vmin" alt="riru Mascot" m="l-auto">
       </div>
     </div>
   </div>
