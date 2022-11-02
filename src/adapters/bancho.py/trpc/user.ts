@@ -36,14 +36,23 @@ export const router = trpc.router()
   .query('user.full-secret', {
     input: z.object({
       handle: z.union([z.string(), z.number()]),
-      md5HashedPassword: z.string()
+      md5HashedPassword: z.string().optional(),
+      sessionId: z.string().optional()
     }),
     async resolve ({ input }) {
-      const user = await getFullUser(input.handle, { email: true, secrets: true })
-      if (!user) { return false }
-      const result = await compare(input.md5HashedPassword, user.secrets.password)
-      if (!result) { return false }
-      return user
+      if (input.sessionId) {
+        const session = getSession(input.sessionId)
+        if (!session) { return false }
+        return await getFullUser(input.handle, { email: true, secrets: true })
+      } else if (input.md5HashedPassword) {
+        const user = await getFullUser(input.handle, { email: true, secrets: true })
+        if (!user) { return false }
+        const result = await compare(input.md5HashedPassword, user.secrets.password)
+        if (!result) { return false }
+        return user
+      } else {
+        throw new Error('need password or sessionId')
+      }
     }
   })
 
