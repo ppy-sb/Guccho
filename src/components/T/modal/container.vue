@@ -10,7 +10,12 @@
       'l2-out': l2Status === 2,
     }"
   >
-    <div class="zoom-modal-background">
+    <div
+      class="zoom-modal-background"
+      :class="{
+        'z-1000': l2Status === 1
+      }"
+    >
       <slot name="modal" v-bind="{ openModal, closeModal }">
         <div v-if="props.teleportId" :id="props.teleportId" />
       </slot>
@@ -182,5 +187,8 @@ $content-stage2: blur(1.3em) opacity(0) saturate(0);
     transform: scale(0.9);
     filter: $content-stage1;
   }
+}
+.z-1000 {
+  z-index: 1000 !important;
 }
 </style>

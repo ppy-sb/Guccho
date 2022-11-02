@@ -83,7 +83,7 @@ onUnmounted(() => {
 <template>
   <div
     ref="root"
-    class="w-full z-50 transition-[padding] fixed navbar-container"
+    class="w-full z-10 transition-[padding] fixed navbar-container"
     :class="[detached && 'detached']"
   >
     <div
