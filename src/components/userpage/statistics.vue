@@ -1,12 +1,12 @@
 <template>
-  <div class="w-full">
+  <div class="card">
     <!-- <div class="radial-progress mx-auto text-primary-content bg-primary/20 border-8 border-primary/20" style="--value:70; --size:12rem; --thickness: 0.66em;">
       <div class="text-3xl">
         Lv. 69
       </div>
     </div> -->
 
-    <div class="card-body">
+    <div class="card-body p-0 md:p-4 xl:p-3">
       <div class="stats bg-transparent drop-shadow-xl">
         <div class="stat">
           <div class="stat-title">
