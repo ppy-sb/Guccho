@@ -6,7 +6,7 @@ import { createClient } from 'redis'
 import type { IdType as Id } from '../config'
 import { BanchoPyMode } from './enums'
 import { createUserQuery } from './queries'
-import { createRulesetData, toBaseUser, toRoles } from './transforms'
+import { createRulesetData, toBaseUser, toFullUser, toRoles } from './transforms'
 import { getRelationships } from './user-relations'
 
 import type { BaseUser, UserExtra, UserOptional, UserStatistic } from '~/prototyping/types/user'
@@ -154,10 +154,14 @@ export const getStatisticsOfUser = async ({ id, country }: { id: Id, country: st
 }
 
 // high cost
-export const getFullUser = async <Includes extends Partial<Record<keyof UserOptional<Id>, boolean>> = Record<never, never>>(
+export const getFullUser = async <Includes extends Partial<Record<keyof UserOptional<Id> | keyof UserExtra<Id>, boolean>> = Record<never, never>>(
   handle: string | Id,
   includes: Includes
-) => {
+): Promise<(BaseUser<Id> & {
+  [KExtra in keyof UserExtra<Id> as Includes[KExtra] extends false ? never : KExtra]: UserExtra<Id>[KExtra]
+} & {
+  [KOptional in keyof UserOptional<Id> as Includes[KOptional] extends true ? KOptional : never]: UserOptional<Id>[KOptional]
+}) | null> => {
   const user = await prismaClient.user.findFirst(createUserQuery(handle))
 
   if (!user) {
@@ -165,52 +169,17 @@ export const getFullUser = async <Includes extends Partial<Record<keyof UserOpti
   }
   try {
     // dispatch queries for user data without waiting for results
-    const pUserRelationships = getRelationships(user)
-    const pUserStatistics = getStatisticsOfUser(user)
 
-    const returnValue: BaseUser<Id> & Partial<UserOptional<Id>> & UserExtra<Id> = {
-      id: user.id,
-      ingameId: user.id,
-      name: user.name,
-      safeName: user.safeName,
-      // email: includes?.email ? user.email : undefined,
-      flag: user.country,
-      avatarUrl: `https://a.ppy.sb/${user.id}`,
-      roles: toRoles(user.priv),
-      statistics: await pUserStatistics,
-      preferences: {
-        scope: {
-          reachable: 'public',
-          status: 'public',
-          privateMessage: 'public',
-          email: 'nobody',
-          oldNames: 'public'
-        }
-      },
-      // TODO: get user reachable status
-      reachable: false,
-      // TODO: get user status
-      status: 'website-online',
-      oldNames: [],
-      profile: (user.userpageContent && JSON.parse(user.userpageContent)) || {
-        type: 'doc',
-        content: []
-      },
-      relationships: await pUserRelationships
-    }
-
-    if (includes.secrets) {
-      returnValue.secrets = {
-        password: user.pwBcrypt,
-        apiKey: user.apiKey ?? undefined
-      }
-    }
-    // not respecting preferences because bancho.py don't support preferences
-    // if (returnValue.preferences.email || includes.email)
-    if (includes.email) {
-      returnValue.email = user.email
-    }
-    return returnValue
+    return toFullUser(user, {
+      statistics: includes.statistics === false ? undefined : await getStatisticsOfUser(user),
+      relationships: includes.relationships === false ? undefined : await getRelationships(user),
+      secrets: includes.secrets
+        ? {
+            password: user.pwBcrypt,
+            apiKey: user.apiKey ?? undefined
+          }
+        : undefined
+    })
   } catch (err) {
     console.error(err)
     return null
