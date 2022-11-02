@@ -23,7 +23,7 @@
               <a
                 class="border-kimberly-500/20 border-l-2"
                 :class="{
-                  'border-accent': isVisible
+                  'border-secondary dark:border-accent': isVisible
                 }"
                 :href="`#${el}`"
               >{{ el }}</a>
@@ -92,6 +92,13 @@ const currentStatistic = computed<UserModeRulesetStatistics>(
 const currentRankingSystem = computed(
   () => currentStatistic.value?.ranking?.[tab.value]
 )
+
+// const smoothScrollTo = (el: string) => {
+//   const selector = `#${el}`
+//   document.querySelector(selector)?.scrollIntoView({
+//     behavior: 'smooth'
+//   })
+// }
 
 provide('user', user)
 provide('mode', selectedMode)
