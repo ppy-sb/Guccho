@@ -1,3 +1,4 @@
+import type { TRPCError } from '@trpc/server'
 import { defineStore } from 'pinia'
 import md5 from 'md5'
 import { IdType } from '~/adapters/bancho.py/config'
@@ -9,9 +10,7 @@ export const useSession = defineStore('session', {
   state: (): {
     loggedIn: boolean,
     userId?: IdType,
-    md5HashedPassword?: string
     _data: Partial<Omit<UserFull<IdType>, 'statistics'>>,
-    sessionId?: string
   } => ({
     loggedIn: false,
     _data: {}
@@ -22,29 +21,33 @@ export const useSession = defineStore('session', {
       return await this.loginHashed(handle, md5HashedPassword)
     },
     async loginHashed (handle: string, md5HashedPassword: string) {
-      const result = await useClient().query('user.login', { handle, md5HashedPassword })
+      const result = await useClient().query('session.login', { handle, md5HashedPassword })
       if (!result) { return false }
 
       this.$patch({
         loggedIn: true,
         userId: result.user.id,
-        md5HashedPassword,
-        _data: result.user,
-        sessionId: result.sessionId
+        _data: result.user
       })
       return true
     },
-    async retrieve (sessionId: string) {
-      const result = await useClient().query('user.retrieve-session', { sessionId })
-      if (!result) { return }
-      if (!result.user) { return }
-      this.$patch({
-        loggedIn: true,
-        userId: result.user.id,
-        _data: result.user,
-        sessionId: result.sessionId
-      })
-      return true
+    async retrieve () {
+      try {
+        const result = await useClient().query('session.retrieve')
+        if (!result) { return }
+        if (!result.user) { return }
+        this.$patch({
+          loggedIn: true,
+          userId: result.user.id,
+          _data: result.user
+        })
+        return true
+      } catch (err) {
+        if ((err as TRPCError)?.code === 'NOT_FOUND') {
+          this.$reset()
+        }
+        return false
+      }
     }
   }
 })

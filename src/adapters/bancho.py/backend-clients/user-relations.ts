@@ -8,7 +8,7 @@ import { calculateMutualRelationships, dedupeUserRelationship, toBaseUser } from
 const prismaClient = new PrismaClient()
 
 export const getOneRelationShip = async (fromUser: {id: Id}, toUser: {id: Id}) => {
-  const relationships = await prismaClient.relationship.findMany({
+  const relationships = await prismaClient.relationship.findFirst({
     where: {
       fromUserId: fromUser.id,
       toUserId: toUser.id
@@ -17,7 +17,7 @@ export const getOneRelationShip = async (fromUser: {id: Id}, toUser: {id: Id}) =
       type: true
     }
   })
-  return relationships.map(rel => rel.type)
+  return relationships?.type
 }
 // TODO: handle the situation where toUser could be null.
 export const getRelationships = async (user: {id: Id}) => {

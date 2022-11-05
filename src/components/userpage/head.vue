@@ -100,7 +100,7 @@ const relationWithSessionUser = session.$state.loggedIn
   })
   : undefined
 
-const isMutualFriend = ref(relationWithSessionUser?.mutual.includes('mutual-friend') || false)
+const isMutualFriend = ref(relationWithSessionUser?.mutual?.includes('mutual-friend') || false)
 const isFriendButtonHovered = useElementHover(changeFriendStateButton)
 const friendButtonContent = ref<string | number>(userFriendCount || 'Add as friend')
 
