@@ -89,8 +89,9 @@ const { addToLibrary } = useFAIconLib()
 addToLibrary(faUserGroup, faHeartCrack, faHeart, faEnvelope)
 
 const user = inject<Ref<User<IdType>>>('user')
-const userFriendCount = await client.query('user.count-friends', {
-  handle: user?.value.id as IdType
+const userFriendCount = await client.query('user.count-relations', {
+  handle: user?.value.id as IdType,
+  type: 'friend'
 })
 const relationWithSessionUser = session.$state.loggedIn
   ? await client.query('user.relation', {
