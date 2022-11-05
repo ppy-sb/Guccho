@@ -133,7 +133,7 @@ export interface UserOptional<Id = unknown> {
 }
 
 export interface UserPreferences {
-  scope: Record<Exclude<keyof UserOptional<unknown> | 'privateMessage', 'secrets'>, Scope>
+  scope: Record<Exclude<keyof UserOptional | 'privateMessage', 'secrets'>, Scope>
 }
 export interface UserRelationship<Id> extends BaseUser<Id> {
   relationship: Relationship[],

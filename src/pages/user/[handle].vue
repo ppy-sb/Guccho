@@ -1,5 +1,5 @@
 <template>
-  <div class="absolute w-full">
+  <div class="absolute w-screen">
     <div v-if="user" class="flex flex-col pt-16 justify-stretch md:pt-0 bg">
       <lazy-userpage-head />
       <lazy-userpage-profile />
@@ -32,20 +32,25 @@
         </div>
       </div>
     </div>
-    <section v-else class="container flex flex-col justify-between mx-auto my-auto text-left gap-3 custom-container w-max bg">
-      <h1 class="self-center text-3xl">
-        oops..
-      </h1>
-      <h2 class="self-center text-2xl">
-        This user is either been deleted or not exists.
-      </h2>
-      <div class="grid grid-cols-2 gap-2">
-        <t-button variant="primary" @click="$router.back()">
-          bring me back
-        </t-button>
-        <t-button variant="secondary">
-          try again
-        </t-button>
+    <section class="min-h-screen grid bg">
+      <div class="mx-auto my-auto flex flex-col justify-between gap-3">
+        <h1 class="self-center text-3xl">
+          Oops...
+        </h1>
+        <h2 v-if="error" class="self-center text-2xl">
+          {{ error.message }}
+        </h2>
+        <h2 v-else class="self-center text-2xl">
+          something went wrong.
+        </h2>
+        <div class="grid grid-cols-2 gap-2">
+          <t-button variant="primary" @click="$router.back()">
+            bring me back
+          </t-button>
+          <t-button variant="secondary" @click="refresh">
+            try again
+          </t-button>
+        </div>
       </div>
     </section>
   </div>
@@ -56,14 +61,14 @@ import { ref, provide, computed, reactive } from 'vue'
 import { useRoute } from '#app'
 import { vIntersectionObserver } from '@vueuse/components'
 import { Mode, Ruleset, RankingSystem } from '~/prototyping/types/shared'
-import { definePageMeta, useClient } from '#imports'
+import { definePageMeta, /* useClient, */ useAsyncQuery } from '#imports'
 import { UserModeRulesetStatistics } from '~/prototyping/types/user'
 
 definePageMeta({
   layout: 'without-bg'
 })
 const route = useRoute()
-const client = useClient()
+// const client = useClient()
 
 const visible = reactive({
   statistics: false,
@@ -75,10 +80,19 @@ const updateIntersectingStatus = (key:keyof typeof visible) => ([{ isIntersectin
   visible[key] = isIntersecting
 }
 
-const _user = await client.query('user.userpage', {
-  handle: `${route.params.handle}`
+// const _user = await client.query('user.userpage', {
+//   handle: `${route.params.handle}`
+// })
+// const user = ref(_user)
+const {
+  data: user,
+  pending,
+  error,
+  refresh
+} = await useAsyncQuery(['user.userpage', { handle: `${route.params.handle}` }], {
+  // pass useAsyncData options here
+  lazy: false
 })
-const user = ref(_user)
 
 const tab = ref<RankingSystem>('ppv2')
 const selectedMode = ref<Mode>('osu')

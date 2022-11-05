@@ -22,6 +22,7 @@ npm install
 Start the development server on http://localhost:3000
 
 ```bash
+# important: follow platform specific procedures first
 npm run dev
 ```
 
@@ -30,42 +31,30 @@ npm run dev
 Build the application for production:
 
 ```bash
+# important: follow platform specific procedures first
 npm run build
 ```
 
 Locally preview production build:
 
 ```bash
+# important: follow platform specific procedures first
 npm run preview
 ```
 
 Checkout the [deployment documentation](https://v3.nuxtjs.org/guide/deploy/presets) for more information.
 
-Table of Contents
-==================
-- [Nuxt 3 Minimal Starter](#nuxt-3-minimal-starter)
-  - [Setup](#setup)
-  - [Development Server](#development-server)
-  - [Production](#production)
-- [Table of Contents](#table-of-contents)
-  - [What is guweb-nuxt?](#what-is-guweb-nuxt)
-  - [Requirements](#requirements)
-  - [The team (guweb-nuxt)](#the-team-guweb-nuxt)
-    - [todo](#todo)
-
 What is guweb-nuxt?
 ------
 
 guweb is the front-facing appearance of the osu! server protocol, [gulag](https://github.com/cmyui/gulag)!
-Using Nuxt for Frontend and Express.js for Backend (old is using Quart for Frontend and Backend at the same time)
-(now is work in progress so don't use this in production right now)
+Using Nuxt for Frontend with tRPC to community with backend
 
 Requirements
 ------
 
-- Some know-how with Linux (tested on Ubuntu 18.04), Node.js, and general-programming knowledge.
-- MySQL
-- NGINX
+- Nodejs >= 14
+- at least one supported platform (see supporting platforms down below)
 
 The team (guweb-nuxt)
 ------
@@ -82,6 +71,12 @@ Plan: deprecate Python api server and use Nuxt 3 only.
 todo: search 'TODO' in repo.
 
 markdown for userpage
+
+## supporting platforms
+
+guweb-next has multi-platform support in mind while developing the app.
+
+
 
 ### todo
 

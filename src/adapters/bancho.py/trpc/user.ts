@@ -3,6 +3,7 @@ import * as trpc from '@trpc/server'
 // eslint-disable-next-line import/default
 import bcrypt from 'bcryptjs'
 import { z } from 'zod'
+import { TRPCError } from '@trpc/server'
 import { createSession, getSession, refresh } from '../session'
 import { getBaseUser, getFullUser, getBaseUsers, getOneRelationShip, countGotRelationship, getRelationships } from '../backend-clients'
 import { calculateMutualRelationships, followUserPreferences } from '../backend-clients/transforms'
@@ -17,7 +18,12 @@ export const router = trpc.router()
     }),
     async resolve ({ input: { handle } }) {
       const user = await getFullUser(handle, { relationships: false })
-      if (!user) { return user }
+      if (!user) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'user not found'
+        })
+      }
       return followUserPreferences(user, 'public')
     }
   })
@@ -51,7 +57,10 @@ export const router = trpc.router()
         if (!result) { return false }
         return user
       } else {
-        throw new Error('need password or sessionId')
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'you need password or seessionId'
+        })
       }
     }
   })
