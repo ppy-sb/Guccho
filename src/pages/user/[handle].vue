@@ -1,6 +1,27 @@
 <template>
-  <div class="absolute w-screen">
-    <div v-if="user" class="flex flex-col pt-16 justify-stretch md:pt-0 bg">
+  <div class="absolute w-full">
+    <section v-if="error" class="min-h-screen grid bg">
+      <div class="mx-auto my-auto flex flex-col justify-between gap-3">
+        <h1 class="self-center text-3xl">
+          Oops...
+        </h1>
+        <h2 v-if="error.message !== ''" class="self-center text-2xl">
+          {{ error.message }}
+        </h2>
+        <h2 v-else class="self-center text-2xl">
+          something went wrong.
+        </h2>
+        <div class="grid grid-cols-2 gap-2">
+          <t-button variant="primary" @click="$router.back()">
+            bring me back
+          </t-button>
+          <t-button variant="secondary" @click="refresh">
+            try again
+          </t-button>
+        </div>
+      </div>
+    </section>
+    <div v-else-if="user" class="flex flex-col pt-16 justify-stretch md:pt-0 bg">
       <lazy-userpage-head />
       <lazy-userpage-profile />
       <lazy-userpage-ranking-system-switcher class="z-10 !drop-shadow-xl" />
@@ -32,27 +53,6 @@
         </div>
       </div>
     </div>
-    <section class="min-h-screen grid bg">
-      <div class="mx-auto my-auto flex flex-col justify-between gap-3">
-        <h1 class="self-center text-3xl">
-          Oops...
-        </h1>
-        <h2 v-if="error" class="self-center text-2xl">
-          {{ error.message }}
-        </h2>
-        <h2 v-else class="self-center text-2xl">
-          something went wrong.
-        </h2>
-        <div class="grid grid-cols-2 gap-2">
-          <t-button variant="primary" @click="$router.back()">
-            bring me back
-          </t-button>
-          <t-button variant="secondary" @click="refresh">
-            try again
-          </t-button>
-        </div>
-      </div>
-    </section>
   </div>
 </template>
 
@@ -64,9 +64,6 @@ import { Mode, Ruleset, RankingSystem } from '~/prototyping/types/shared'
 import { definePageMeta, /* useClient, */ useAsyncQuery } from '#imports'
 import { UserModeRulesetStatistics } from '~/prototyping/types/user'
 
-definePageMeta({
-  layout: 'without-bg'
-})
 const route = useRoute()
 // const client = useClient()
 
@@ -86,12 +83,15 @@ const updateIntersectingStatus = (key:keyof typeof visible) => ([{ isIntersectin
 // const user = ref(_user)
 const {
   data: user,
-  pending,
   error,
   refresh
 } = await useAsyncQuery(['user.userpage', { handle: `${route.params.handle}` }], {
   // pass useAsyncData options here
   lazy: false
+})
+
+definePageMeta({
+  layout: 'default'
 })
 
 const tab = ref<RankingSystem>('ppv2')
