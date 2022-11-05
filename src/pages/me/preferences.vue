@@ -2,7 +2,6 @@
 import { ref, computed, UnwrapRef } from 'vue'
 import { navigateTo } from '#app'
 import { useClient } from '#imports'
-import type { IdType } from '~/server/trpc'
 import { useSession } from '~/store/session'
 
 const changeAvatar = ref<{
@@ -17,10 +16,7 @@ const session = useSession()
 if (!session.$state.loggedIn) {
   await navigateTo({ name: 'auth-login', query: { back: '1' } })
 }
-const _user = await client.query('user.full-secret', {
-  handle: session.$state.userId as IdType,
-  sessionId: session.$state.sessionId
-})
+const _user = await client.query('me.full-secret')
 if (!_user) {
   await navigateTo({ name: 'auth-login', query: { back: '1' } })
 }

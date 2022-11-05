@@ -12,7 +12,7 @@ if (!session.$state.loggedIn) {
     }
   })
 }
-
+// TODO: change to me.relations
 const relations = await client.query('user.relations', {
   from: session.$state.userId
 })

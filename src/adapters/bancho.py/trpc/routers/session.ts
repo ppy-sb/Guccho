@@ -1,22 +1,20 @@
-// import type { inferAsyncReturnType } from '@trpc/server'
-import * as trpc from '@trpc/server'
 // eslint-disable-next-line import/default
 import bcrypt from 'bcryptjs'
 import { z } from 'zod'
 import { TRPCError } from '@trpc/server'
-import { createSession, getSession, refresh } from '../session'
-import { getBaseUser } from '../backend-clients'
+import { getBaseUser } from '../../backend-clients'
+
+import { createRouterWithSession } from '../controllers/session'
 // eslint-disable-next-line import/no-named-as-default-member
 const { compare } = bcrypt
 
-export const router = trpc.router()
-
-  .query('user.login', {
+export const router = createRouterWithSession()
+  .query('login', {
     input: z.object({
       handle: z.union([z.string(), z.number()]),
       md5HashedPassword: z.string()
     }),
-    async resolve ({ input: { handle, md5HashedPassword } }) {
+    async resolve ({ input: { handle, md5HashedPassword }, ctx }) {
       try {
         const user = await getBaseUser(handle, { secrets: true })
         if (!user) {
@@ -32,44 +30,40 @@ export const router = trpc.router()
             message: 'password mismatch'
           })
         }
-        const sessionId = createSession(user)
+        const session = await ctx.session.getBinding()
+        if (!session) {
+          throw new TRPCError({
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'unable to retrieve session'
+          })
+        }
+        session.userId = user.id
         return {
-          user,
-          sessionId
+          user
         }
       } catch (err) {
         if (err instanceof TRPCError) {
           throw err
         }
         throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR'
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'unknown error occurred'
         })
       }
     }
   })
 
-  .query('user.retrieve-session', {
-    input: z.object({
-      sessionId: z.string()
-    }),
-    async resolve ({ input: { sessionId } }) {
-      const session = getSession(sessionId)
+  .query('retrieve', {
+    async resolve ({ ctx }) {
+      const session = await ctx.session.getBinding()
       if (!session) {
         throw new TRPCError({
           code: 'NOT_FOUND',
           message: 'session not found.'
         })
       }
-      const newSessionId = refresh(sessionId)
-      if (!newSessionId) {
-        throw new TRPCError({
-          code: 'UNAUTHORIZED',
-          message: 'unable to refresh token, please logout then login.'
-        })
-      }
       return {
-        user: await getBaseUser(session.userId),
-        sessionId: newSessionId
+        user: (session.userId && await getBaseUser(session.userId)) ?? undefined
       }
     }
   })
