@@ -15,7 +15,6 @@ export const createSession = async (data?: {id: IdType}) => {
     lastActivity: Date.now()
   }
   session.set(sessionId, _session)
-  console.log('created session', sessionId, _session)
   return sessionId
 }
 
