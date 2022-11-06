@@ -77,7 +77,7 @@ const updateIntersectingStatus = (key:keyof typeof visible) => ([{ isIntersectin
   visible[key] = isIntersecting
 }
 
-// const _user = await client.query('user.userpage', {
+// const _user = await client.query('public.user.userpage', {
 //   handle: `${route.params.handle}`
 // })
 // const user = ref(_user)
@@ -85,7 +85,7 @@ const {
   data: user,
   error,
   refresh
-} = await useAsyncQuery(['user.userpage', { handle: `${route.params.handle}` }], {
+} = await useAsyncQuery(['public.user.userpage', { handle: `${route.params.handle}` }], {
   // pass useAsyncData options here
   lazy: false
 })

@@ -28,7 +28,9 @@ trpc.router<Context>()
   .merge('me.', rMe)
 
   // public
-  .merge('user.', rUser)
+  .merge(
+    'public.user.', rUser
+  )
   .query('ranking-system-config', {
     resolve () {
       return ServerRulesetConfig
