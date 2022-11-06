@@ -1,11 +1,10 @@
 import { z } from 'zod'
 import { TRPCError } from '@trpc/server'
-import { getBaseUser, getFullUser, getBaseUsers } from '../../backend-clients'
+import { getBaseUser, getFullUser } from '../../backend-clients'
 import { followUserPreferences } from '../../backend-clients/transforms'
 import { createRouter } from '../context'
 
 export const router = createRouter()
-
   .query('userpage', {
     input: z.object({
       handle: z.union([z.string(), z.number()])
@@ -45,14 +44,5 @@ export const router = createRouter()
     async resolve ({ input }) {
       const user = await getBaseUser(input.handle)
       return user
-    }
-  })
-
-  .query('.base', {
-    input: z.object({
-      handle: z.union([z.string(), z.number()])
-    }),
-    async resolve ({ input }) {
-      return await getBaseUsers(input.handle)
     }
   })
