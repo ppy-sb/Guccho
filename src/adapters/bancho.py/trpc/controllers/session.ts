@@ -13,10 +13,7 @@ export const createRouterWithSession = () => createRouter()
         ctx: {
           ...ctx,
           session: {
-            id: sessionId,
-            async getBinding () {
-              return await getSession(ctx.session.id as string)
-            }
+            id: sessionId
           }
         }
       })
@@ -29,10 +26,7 @@ export const createRouterWithSession = () => createRouter()
         ctx: {
           ...ctx,
           session: {
-            id: sessionId,
-            async getBinding () {
-              return await getSession(ctx.session.id as string)
-            }
+            id: sessionId
           }
         }
       })
@@ -47,15 +41,26 @@ export const createRouterWithSession = () => createRouter()
       if (refreshed !== ctx.session.id) {
         setCookie(ctx.h3Event, 'session', refreshed)
       }
+      return next({
+        ctx: {
+          ...ctx,
+          session: {
+            id: ctx.session.id as string
+          }
+        }
+      })
     }
+  })
+  .middleware(({ ctx, next }) => {
     return next({
       ctx: {
         ...ctx,
         session: {
-          id: ctx.session.id as string,
+          ...ctx.session,
           async getBinding () {
-            console.log('get binding of session', ctx.session.id)
-            return await getSession(ctx.session.id as string)
+            const session = await getSession(ctx.session.id)
+            console.log('get binding of session', ctx.session.id, session)
+            return session
           }
         }
       }

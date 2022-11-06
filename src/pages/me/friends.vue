@@ -13,9 +13,7 @@ if (!session.$state.loggedIn) {
   })
 }
 // TODO: change to me.relations
-const relations = await client.query('me.relations', {
-  from: session.$state.userId
-})
+const relations = await client.query('me.relations')
 
 if (!relations) {
   throw new Error('user not exists')
