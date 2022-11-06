@@ -1,6 +1,7 @@
 /* eslint-disable require-await */
 import { v4 } from 'uuid'
 import { IdType } from '../config'
+import { Awaitable } from './../../../prototyping/types/shared'
 
 export const session = new Map<string, {userId?: IdType, lastActivity: number}>()
 export const config = {
@@ -9,10 +10,12 @@ export const config = {
 
 export const createSession = async (data?: {id: IdType}) => {
   const sessionId = v4()
-  session.set(sessionId, {
+  const _session = {
     userId: data?.id,
     lastActivity: Date.now()
-  })
+  }
+  session.set(sessionId, _session)
+  console.log('created session', sessionId, _session)
   return sessionId
 }
 
@@ -31,3 +34,17 @@ export const refresh = async (sessionId: string) => {
   _session.lastActivity = Date.now()
   return sessionId
 }
+
+export const houseKeeping:Record<string, (store: typeof session, _config: typeof config) => Awaitable<void>> = {
+  minutely (sessionStore, config) {
+    sessionStore.forEach(({ lastActivity }, sessionId) => {
+      if (lastActivity + config.expire > Date.now()) {
+        return
+      }
+      console.log('cleaning session', sessionId)
+      sessionStore.delete(sessionId)
+    })
+  }
+}
+
+setInterval(() => houseKeeping.minutely?.(session, config), 1000 * 60)
