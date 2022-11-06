@@ -2,7 +2,7 @@ export const userpageLineChartOptions = {
   animations: {
     y: {
       easing: 'easeInOutElastic',
-      from: (ctx) => {
+      from: (ctx: { type: string; mode: string; dropped: boolean }) => {
         if (ctx.type === 'data') {
           if (ctx.mode === 'default' && !ctx.dropped) {
             ctx.dropped = true
