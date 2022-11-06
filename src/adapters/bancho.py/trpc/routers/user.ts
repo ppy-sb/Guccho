@@ -1,9 +1,9 @@
 import { z } from 'zod'
 import { TRPCError } from '@trpc/server'
-import { getBaseUser, getFullUser } from '../../backend-clients'
+import { getBaseUser, getFullUser, prismaClient as db } from '../../backend-clients'
 import { followUserPreferences } from '../../backend-clients/transforms'
 import { createRouter } from '../context'
-
+import { zodHandle, zodRelationType } from './../zod/shapes'
 export const router = createRouter()
   .query('userpage', {
     input: z.object({
@@ -44,5 +44,23 @@ export const router = createRouter()
     async resolve ({ input }) {
       const user = await getBaseUser(input.handle)
       return user
+    }
+  })
+
+  .query('count-relations', {
+    input: z.object({
+      handle: zodHandle,
+      type: zodRelationType
+    }),
+    async resolve ({ input: { handle, type } }) {
+      const user = await getBaseUser(handle)
+      if (!user) { return }
+      const count = await db.relationship.count({
+        where: {
+          toUserId: user.id,
+          type
+        }
+      })
+      return count
     }
   })

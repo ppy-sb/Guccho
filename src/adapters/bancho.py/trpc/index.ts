@@ -5,7 +5,6 @@ import { ServerRulesetConfig } from '../config'
 
 // routers
 import { router as rUser } from './routers/user'
-import { router as rUserRelation } from './routers/user-relations'
 import { router as rSession } from './routers/session'
 import { router as rMe } from './routers/me'
 
@@ -24,13 +23,12 @@ export type Context = inferAsyncReturnType<typeof createContext>
 export const router =
 trpc.router<Context>()
   .merge('session.', rSession)
-  .merge('user.', rUserRelation)
   .merge('me.', rMe)
 
   // public
-  .merge(
-    'public.user.', rUser
-  )
+  .merge('public.user.', rUser)
+
+  // TODO
   .query('ranking-system-config', {
     resolve () {
       return ServerRulesetConfig
