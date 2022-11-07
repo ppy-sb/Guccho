@@ -10,7 +10,7 @@
         <div class="flex-shrink-0">
           <img
             class="w-auto h-6"
-            :src="$getFlagURL(props.user.flag)"
+            :src="getFlagURL(props.user.flag)"
           >
         </div>
         <div class="ml-3">
@@ -22,13 +22,13 @@
     </td>
     <td class="font-bold text-center">
       <template v-if="sort.selected.icon === 'pp'">
-        {{ $addCommas(props.user.pp) }}pp
+        {{ addCommas(props.user.pp) }}pp
       </template>
       <template v-else-if="sort.selected.icon === 'acc'">
         {{ props.user.acc }}%
       </template>
       <template v-else>
-        {{ $scoreFormat(props.user[`${sort.selected.icon}`]) }}
+        {{ scoreFormat(props.user[`${sort.selected.icon}`]) }}
       </template>
     </td>
     <td class="text-center opacity-80">
@@ -41,10 +41,12 @@
 </template>
 
 <script lang="ts" setup>
-import { User, UserModeRulesetStatistics, BaseRank } from '~/types/user'
+import { IdType } from '~/server/trpc'
+import { BaseUser, UserExtra, UserModeRulesetStatistics, BaseRank } from '~/types/user'
+import { addCommas, getFlagURL, scoreFormat } from '~/common/varkaUtils'
 
 const props = defineProps<{
-  user: User<string>,
+  user: BaseUser<IdType> & UserExtra<IdType>,
   ruleset: UserModeRulesetStatistics,
   rank: BaseRank,
   sort: Record<string, any>

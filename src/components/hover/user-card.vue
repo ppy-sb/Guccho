@@ -20,7 +20,7 @@
                 {{ props.user.name }}
               </h1>
               <h1>
-                <img class="w-auto h-6" :src="$getFlagURL(props.user.flag)">
+                <img class="w-auto h-6" :src="getFlagURL(props.user.flag)">
               </h1>
             </div>
           </div>
@@ -35,6 +35,7 @@ import { useAppConfig } from '#app'
 import { RouterLinkProps } from 'vue-router'
 import { BaseUser } from '~/types/user'
 import { IdType } from '~/server/trpc'
+import { getFlagURL } from '~/common/varkaUtils'
 // const runtimeConfig = useAppConfig()
 const config = useAppConfig()
 const props = defineProps<{

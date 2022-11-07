@@ -7,7 +7,7 @@
         class="h-mode"
         :class="{
           '!opacity-80 pointer-events-none': leaderboard.mode.selected?.name === m.name,
-          '!opacity-10 pointer-events-none': $forbiddenMode(leaderboard.mod.selected.icon, m.icon)
+          '!opacity-10 pointer-events-none': forbiddenMode(leaderboard.mod.selected.icon, m.icon)
         }"
         @click="changeValue('mode', index)"
       >
@@ -21,7 +21,7 @@
         class="h-mode"
         :class="{
           '!opacity-80 pointer-events-none': leaderboard.mod.selected?.name === m.name,
-          '!opacity-20 pointer-events-none': $forbiddenMods(leaderboard.mode.selected.icon, m.icon)
+          '!opacity-20 pointer-events-none': forbiddenMods(leaderboard.mode.selected.icon, m.icon)
         }"
         @click="changeValue('mod', index)"
       >
@@ -43,6 +43,7 @@
 </template>
 
 <script setup>
+import { forbiddenMode, forbiddenMods } from '~/common/varkaUtils'
 const config = useAppConfig()
 const emit = defineEmits(['input'])
 const props = defineProps({
