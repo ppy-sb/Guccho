@@ -7,7 +7,7 @@ import { zodHandle, zodRelationType } from '../shapes'
 export const router = createRouter()
   .query('userpage', {
     input: z.object({
-      handle: z.union([z.string(), z.number()])
+      handle: zodHandle
     }),
     async resolve ({ input: { handle } }) {
       const user = await getFullUser(handle, { relationships: false })
@@ -23,7 +23,7 @@ export const router = createRouter()
 
   .query('full', {
     input: z.object({
-      handle: z.union([z.string(), z.number()])
+      handle: zodHandle
     }),
     async resolve ({ input: { handle } }) {
       const user = await getFullUser(handle, { email: true })
@@ -39,7 +39,7 @@ export const router = createRouter()
 
   .query('base', {
     input: z.object({
-      handle: z.union([z.string(), z.number()])
+      handle: zodHandle
     }),
     async resolve ({ input }) {
       const user = await getBaseUser(input.handle)
