@@ -1,4 +1,6 @@
-export const ServerRulesetConfig = {
+import { ServerConfig } from '~~/src/types/shared'
+
+export const _ServerRulesetConfig = {
   ppv2: {
     userpage: {
       show: 'tab'
@@ -24,5 +26,6 @@ export const ServerRulesetConfig = {
     name: 'Total Score'
   }
 }
-export type AvailableRankingSystems = keyof typeof ServerRulesetConfig
+export type AvailableRankingSystems = keyof typeof _ServerRulesetConfig
+export const ServerRulesetConfig = _ServerRulesetConfig as ServerConfig<AvailableRankingSystems>
 export type IdType = number

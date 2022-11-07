@@ -77,7 +77,7 @@ import { faUserGroup, faHeartCrack, faHeart, faEnvelope } from '@fortawesome/fre
 import { inject, ref, Ref } from 'vue'
 import { useElementHover } from '@vueuse/core'
 import { useClient, useFAIconLib } from '#imports'
-import { UserFull as User } from '~/prototyping/types/user'
+import { UserFull as User } from '~/types/user'
 import { useSession } from '~/store/session'
 
 import type { IdType } from '~/server/trpc'

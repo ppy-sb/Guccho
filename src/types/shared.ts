@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { z } from 'zod'
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export type Mode = 'osu' | 'taiko' | 'fruits' | 'mania';
 export type Ruleset = 'standard' | 'relax' | 'autopilot';
 
@@ -59,3 +59,11 @@ export type Range<F extends number, T extends number> = Exclude<
   Enumerate<T>,
   Enumerate<F>
 >;
+
+export type UserpageShowType = 'tab' | 'dropdown' | 'hidden'
+export type ServerConfig<AvailableRankingSystem extends RankingSystem> = Record<AvailableRankingSystem, {
+  userpage: {
+    show: UserpageShowType
+  },
+  name: string
+}>
