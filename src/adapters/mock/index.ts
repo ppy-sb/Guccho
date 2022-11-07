@@ -2,7 +2,7 @@
 // import type { inferAsyncReturnType } from '@trpc/server'
 import * as trpc from '@trpc/server'
 import { z } from 'zod'
-import { sampleUserWithSecrets, scoped } from '~~/src/shapes/objects/user'
+import { sampleUserWithSecrets, scoped } from '~/shapes/objects/user'
 
 export const router = trpc.router()
   .query('public.user.full', {

@@ -33,11 +33,12 @@
 <script setup lang="ts">
 import { useAppConfig } from '#app'
 import { RouterLinkProps } from 'vue-router'
-import { User } from '@/shapes/types/user'
+import { BaseUser } from '~/types/user'
+import { IdType } from '~/server/trpc'
 // const runtimeConfig = useAppConfig()
 const config = useAppConfig()
 const props = defineProps<{
-  user: User<string>,
+  user: BaseUser<IdType>,
   to: RouterLinkProps['to']
 }>()
 </script>

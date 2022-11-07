@@ -76,7 +76,14 @@ markdown for userpage
 
 guweb-next has multi-platform support in mind while developing the app.
 
+### guweb
 
+#### pre requests
+
+```bash
+# make sure you did run `yarn install`
+yarn prisma generate prisma/bancho.py.prisma
+```
 
 ### todo
 

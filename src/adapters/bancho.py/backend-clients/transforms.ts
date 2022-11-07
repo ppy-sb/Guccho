@@ -5,7 +5,7 @@ import type {
   MutualRelationship,
   Relationship,
   Scope
-} from '~~/src/types/common'
+} from '~/types/common'
 import type {
   UserModeRulesetStatistics,
   BaseUser,
@@ -15,7 +15,7 @@ import type {
   UserExtra,
   UserPreferences,
   UserSecrets
-} from '~~/src/types/user'
+} from '~/types/user'
 
 export const createRulesetData = (
   databaseResult: Stat | undefined,
