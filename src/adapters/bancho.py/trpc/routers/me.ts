@@ -3,7 +3,7 @@ import z from 'zod'
 import { getFullUser, prismaClient as db, getBaseUser, getOneRelationShip, getRelationships } from '../../backend-clients'
 import { createProtectedRouter } from '../controllers/protected/user'
 import { calculateMutualRelationships } from '../../backend-clients/transforms'
-import { zodHandle, zodRelationType } from '../zod/shapes'
+import { zodHandle, zodRelationType } from '../shapes'
 
 export const router = createProtectedRouter()
   .query('full-secret', {
