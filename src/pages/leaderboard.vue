@@ -55,45 +55,31 @@
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
+import { reactive, ref } from 'vue'
+const selection = reactive({})
+const result = ref([])
+const fetching = ref(false)
 
-export default {
-  name: 'LeaderboardPage',
-  data () {
-    return {
-      selection: {},
-      result: [],
-      fetching: false
-    }
-  },
-  mounted () {
-    // this.$store.commit('changeThemeHue', 80)
-  },
-  methods: {
-    fetchLeaderboard () {
-      this.fetching = true
-      // TODO: migrate to useFetch
-      // this.$axios
-      //   .get(`https://api.${'1'}/get_leaderboard`, {
-      //     params: {
-      //       mode: this.$modeToGulag(this.selection.mode.selected.icon, this.selection.mods.selected.icon)
-      //     }
-      //   })
-      //   .then((response) => {
-      //     this.result = response.data.leaderboard
-      //   })
-      //   .catch((error) => {
-      //     this.$toast.show({
-      //       type: 'danger',
-      //       message: error
-      //     })
-      //   })
-      //   .finally(() => {
-      //     this.fetching = false
-      //   })
-    }
-  }
-}
+// TODO: migrate to useFetch
+// this.$axios
+//   .get(`https://api.${'1'}/get_leaderboard`, {
+//     params: {
+//       mode: this.$modeToGulag(this.selection.mode.selected.icon, this.selection.mods.selected.icon)
+//     }
+//   })
+//   .then((response) => {
+//     this.result = response.data.leaderboard
+//   })
+//   .catch((error) => {
+//     this.$toast.show({
+//       type: 'danger',
+//       message: error
+//     })
+//   })
+//   .finally(() => {
+//     this.fetching = false
+//   })
 </script>
 
 <style scoped lang="postcss">
