@@ -9,7 +9,7 @@ import { createUserQuery } from './queries'
 import { createRulesetData, toBaseUser, toFullUser } from './transforms'
 import { getRelationships } from './user-relations'
 
-import type { BaseUser, UserExtra, UserOptional, UserStatistic } from '~~/src/types/user'
+import type { BaseUser, UserExtra, UserOptional, UserStatistic } from '~/types/user'
 
 const prismaClient = new PrismaClient()
 
