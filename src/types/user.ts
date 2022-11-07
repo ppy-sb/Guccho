@@ -12,7 +12,7 @@ import type {
   StandardAvailable,
   Relationship,
   MutualRelationship
-} from './shared'
+} from './common'
 
 export type UserOfflineStatus = 'offline'
 export type UserOnlineStatus = 'playing' | 'idle' | 'modding' | 'multiplaying'

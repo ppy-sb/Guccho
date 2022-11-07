@@ -1,4 +1,4 @@
-import type { PPRankingSystem, Mode as _Mode, Ruleset as _Ruleset, Range } from './shared'
+import type { PPRankingSystem, Mode as _Mode, Ruleset as _Ruleset, Range } from './common'
 
 type BaseCount = {
     300: number,

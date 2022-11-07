@@ -60,7 +60,7 @@
 import { ref, provide, computed, reactive } from 'vue'
 import { useRoute } from '#app'
 import { vIntersectionObserver } from '@vueuse/components'
-import { Mode, Ruleset, RankingSystem } from '~/types/shared'
+import { Mode, Ruleset, RankingSystem } from '~~/src/types/common'
 import { definePageMeta, /* useClient, */ useAsyncQuery } from '#imports'
 import { UserModeRulesetStatistics } from '~/types/user'
 
