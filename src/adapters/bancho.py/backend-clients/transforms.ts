@@ -5,7 +5,7 @@ import type {
   MutualRelationship,
   Relationship,
   Scope
-} from '~/prototyping/types/shared'
+} from '~~/src/types/shared'
 import type {
   UserModeRulesetStatistics,
   BaseUser,
@@ -15,7 +15,7 @@ import type {
   UserExtra,
   UserPreferences,
   UserSecrets
-} from '~/prototyping/types/user'
+} from '~~/src/types/user'
 
 export const createRulesetData = (
   databaseResult: Stat | undefined,

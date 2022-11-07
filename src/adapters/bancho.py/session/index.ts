@@ -1,7 +1,7 @@
 /* eslint-disable require-await */
 import { v4 } from 'uuid'
 import { IdType } from '../config'
-import { Awaitable } from './../../../prototyping/types/shared'
+import { Awaitable } from '~~/src/types/shared'
 
 export const session = new Map<string, {userId?: IdType, lastActivity: number}>()
 export const config = {

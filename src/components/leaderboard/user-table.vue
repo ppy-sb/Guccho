@@ -41,7 +41,7 @@
 </template>
 
 <script lang="ts" setup>
-import { User, UserModeRulesetStatistics, BaseRank } from '~/prototyping/types/user'
+import { User, UserModeRulesetStatistics, BaseRank } from '~/types/user'
 
 const props = defineProps<{
   user: User<string>,

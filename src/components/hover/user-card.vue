@@ -33,7 +33,7 @@
 <script setup lang="ts">
 import { useAppConfig } from '#app'
 import { RouterLinkProps } from 'vue-router'
-import { User } from '@/prototyping/types/user'
+import { User } from '@/shapes/types/user'
 // const runtimeConfig = useAppConfig()
 const config = useAppConfig()
 const props = defineProps<{
