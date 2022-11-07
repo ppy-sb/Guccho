@@ -25,6 +25,7 @@ export default defineNuxtConfig({
   css: [
     '~/assets/styles/main.scss',
     '~/assets/styles/daisyui.scss',
+    '~/assets/styles/popper.scss',
     '@fortawesome/fontawesome-svg-core/styles.css'
   ],
 

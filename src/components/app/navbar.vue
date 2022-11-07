@@ -29,12 +29,6 @@ const menu = computed(() => [
       name: 'playground'
     }
   },
-  // {
-  //   name: 'playground',
-  //   route: {
-  //     name: 'components'
-  //   }
-  // },
   {
     name: 'user(1000)',
     route: {
@@ -79,7 +73,7 @@ onUnmounted(() => {
       :class="[props.disabled && 'disabled']"
     >
       <div class="navbar-start">
-        <div class="dropdown">
+        <v-dropdown theme="guweb-dropdown" placement="bottom" :distance="8">
           <label tabindex="0" class="btn btn-ghost btn-circle !shadow-none">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -96,17 +90,25 @@ onUnmounted(() => {
               />
             </svg>
           </label>
-          <ul
-            tabindex="0"
-            class="p-2 mt-2 shadow-xl menu menu-compact dropdown-content bg-kimberly-100 dark:bg-kimberly-600 rounded-br-2xl rounded-bl-2xl w-52"
-          >
-            <li v-for="menuItem in menu" :key="`menu-${menuItem.name}`">
-              <nuxt-link :to="menuItem.route">
-                {{ menuItem.name }}
-              </nuxt-link>
-            </li>
-          </ul>
-        </div>
+          <template #popper>
+            <div class="menu bg-kimberly-150/70 dark:bg-kimberly-700/80">
+              <li
+                v-for="menuItem in menu"
+                :key="`menu-${menuItem.name}`"
+                class="hover-bordered"
+              >
+                <nuxt-link
+                  :to="menuItem.route"
+                  :class="{
+                    '!border-primary' : menuItem.route.name === $route.name
+                  }"
+                >
+                  {{ menuItem.name }}
+                </nuxt-link>
+              </li>
+            </div>
+          </template>
+        </v-dropdown>
       </div>
       <div class="navbar-center lg:hidden">
         <!-- <a class="btn btn-ghost !shadow-none normal-case text-xl">guweb@next</a> -->
@@ -132,7 +134,7 @@ onUnmounted(() => {
         </nuxt-link>
       </div>
       <div class="navbar-end">
-        <div class="dropdown dropdown-bottom">
+        <v-dropdown theme="guweb-dropdown" placement="left" :distance="8">
           <button class="btn btn-ghost !shadow-none btn-circle">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -149,20 +151,19 @@ onUnmounted(() => {
               />
             </svg>
           </button>
-          <div
-            tabindex="0"
-            class="right-0 p-2 mt-2 shadow-xl menu menu-compact dropdown-content bg-kimberly-150 dark:bg-kimberly-600 rounded-br-2xl rounded-bl-2xl"
-          >
-            <div class="form-control">
-              <div class="input-group">
-                <input type="text" placeholder="Search…" class="input input-bordered input-sm shadow-md">
-                <button class="btn btn-sm btn-primary">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                </button>
+          <template #popper>
+            <div class="overflow-hidden">
+              <div class="form-control">
+                <div class="input-group">
+                  <input type="text" placeholder="Search…" class="input input-bordered input-sm shadow-md">
+                  <button class="btn btn-sm btn-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
+          </template>
+        </v-dropdown>
         <div class="dropdown dropdown-bottom">
           <button
             v-if="session.$state.loggedIn"
