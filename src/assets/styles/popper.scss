@@ -1,0 +1,19 @@
+.v-popper--theme-guweb-dropdown {
+  &[data-popper-placement^="bottom"] {
+    .v-popper__inner {
+      @apply rounded-b-box;
+    }
+  }
+}
+
+.v-popper--theme-guweb-dropdown .v-popper__arrow-outer {
+  visibility: hidden;
+}
+
+.v-popper--theme-guweb-dropdown .v-popper__arrow-inner {
+  visibility: hidden;
+}
+
+.v-popper--theme-guweb-dropdown .v-popper__inner {
+  @apply backdrop-blur-md shadow-lg;
+}
