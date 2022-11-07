@@ -1,7 +1,7 @@
 <template>
   <div class="fixed bottom-0 w-full bg-gradient-to-b from-kimberly-100 to-kimberly-150 dark:from-kimberly-800 dark:to-kimberly-900 px-2 border-t-2 border-kimberly-200 font-mono flex items-end gap-1">
     <div class="flex flex-col md:flex-row gap-1">
-      <div v-if="memory">
+      <div v-if="isSupported && memory">
         MEM {{ size(memory.usedJSHeapSize) }} / {{ size(memory.jsHeapSizeLimit) }} ({{ percent(memory.usedJSHeapSize / memory.jsHeapSizeLimit) }}) | Alloc {{ size(memory.totalJSHeapSize) }}|
       </div>
       <div class="flex gap-1 items-center">
@@ -40,7 +40,7 @@ const size = (v: number) => {
 const fmt = new Intl.NumberFormat(undefined, { style: 'percent', minimumFractionDigits: 2 })
 const percent = (num: number) => fmt.format(num)
 const { isSupported, memory } = useMemory()
-const { charging, chargingTime, dischargingTime, level } = useBattery()
+const { charging, level } = useBattery()
 </script>
 
 <style scoped>
