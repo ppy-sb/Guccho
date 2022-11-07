@@ -5,13 +5,14 @@ import { TRPCError } from '@trpc/server'
 import { getBaseUser } from '../../backend-clients'
 
 import { createRouterWithSession } from '../controllers/session'
+import { zodHandle } from '../shapes'
 // eslint-disable-next-line import/no-named-as-default-member
 const { compare } = bcrypt
 
 export const router = createRouterWithSession()
   .query('login', {
     input: z.object({
-      handle: z.union([z.string(), z.number()]),
+      handle: zodHandle,
       md5HashedPassword: z.string()
     }),
     async resolve ({ input: { handle, md5HashedPassword }, ctx }) {
