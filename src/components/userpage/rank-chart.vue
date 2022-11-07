@@ -75,7 +75,7 @@ import 'atropos/scss'
 
 import { LineChart } from 'vue-chart-3'
 import { Atropos } from 'atropos/vue'
-import { userpageLineChartOptions } from '~/common/shared'
+import { userpageLineChartOptions } from '~~/src/common/shared-chart-options'
 
 import { hsvRaw } from '~/palette'
 

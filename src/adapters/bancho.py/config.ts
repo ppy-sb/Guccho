@@ -1,4 +1,4 @@
-import { ServerConfig } from '~~/src/types/shared'
+import { ServerConfig } from '~~/src/types/common'
 
 export const _ServerRulesetConfig = {
   ppv2: {

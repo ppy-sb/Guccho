@@ -1,5 +1,6 @@
-import type { z } from 'zod'
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import type { Enumerate } from './internal-utils'
+
 export type Mode = 'osu' | 'taiko' | 'fruits' | 'mania';
 export type Ruleset = 'standard' | 'relax' | 'autopilot';
 
@@ -41,20 +42,6 @@ export type APIfy<
     ? K | `fetch${Capitalize<string & K>}`
     : K]: K extends Keys ? () => Awaitable<T[Uncapitalize<string & K>]> : T[K];
 };
-
-export const schemaForType =
-  <T>() =>
-  <S extends z.ZodType<T, any, any>>(arg: S) => {
-    return arg
-  }
-
-type Enumerate<
-  N extends number,
-  Acc extends number[] = []
-> = Acc['length'] extends N
-  ? Acc[number]
-  : Enumerate<N, [...Acc, Acc['length']]>;
-
 export type Range<F extends number, T extends number> = Exclude<
   Enumerate<T>,
   Enumerate<F>

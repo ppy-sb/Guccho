@@ -5,7 +5,7 @@ import type {
   MutualRelationship,
   Relationship,
   Scope
-} from '~~/src/types/shared'
+} from '~~/src/types/common'
 import type {
   UserModeRulesetStatistics,
   BaseUser,
