@@ -2,7 +2,7 @@ import { TRPCError } from '@trpc/server'
 import { setCookie } from 'h3'
 
 import { getSession, refresh, createSession } from '../../session'
-import { createRouter } from './../context'
+import { createRouter } from '../context'
 
 export const createRouterWithSession = () => createRouter()
   .middleware(async ({ ctx, next }) => {
