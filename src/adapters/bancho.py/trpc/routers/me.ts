@@ -1,7 +1,7 @@
 import { TRPCError } from '@trpc/server'
 import z from 'zod'
 import { getFullUser, prismaClient as db, getBaseUser, getOneRelationShip, getRelationships } from '../../backend-clients'
-import { createProtectedRouter } from '../controllers/protected/user'
+import { createProtectedRouter } from '../pre-middleware/protected/user'
 import { calculateMutualRelationships } from '../../backend-clients/transforms'
 import { zodHandle, zodRelationType } from '../shapes'
 

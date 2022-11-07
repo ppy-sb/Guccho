@@ -4,7 +4,7 @@ import { z } from 'zod'
 import { TRPCError } from '@trpc/server'
 import { getBaseUser } from '../../backend-clients'
 
-import { createRouterWithSession } from '../controllers/session'
+import { createRouterWithSession } from '../pre-middleware/session'
 import { zodHandle } from '../shapes'
 // eslint-disable-next-line import/no-named-as-default-member
 const { compare } = bcrypt
