@@ -6,13 +6,13 @@ import { calculateMutualRelationships } from '../../backend-clients/transforms'
 import { zodHandle, zodRelationType } from '../shapes'
 
 export const router = createProtectedRouter()
-  .query('full-secret', {
+  .query('.full-secret', {
     async resolve ({ ctx }) {
       return await getFullUser(ctx.user.id, { email: true, secrets: true })
     }
   })
 
-  .query('relation', {
+  .query('.relation', {
     input: z.object({
       target: zodHandle
     }),
@@ -28,7 +28,7 @@ export const router = createProtectedRouter()
     }
   })
 
-  .query('relations', {
+  .query('.relations', {
     async resolve ({ ctx }) {
       return await getRelationships(ctx.user)
     }

@@ -5,7 +5,7 @@ import { followUserPreferences } from '../../backend-clients/transforms'
 import { createRouter } from '../context'
 import { zodHandle, zodRelationType } from '../shapes'
 export const router = createRouter()
-  .query('userpage', {
+  .query('.userpage', {
     input: z.object({
       handle: zodHandle
     }),
@@ -21,7 +21,7 @@ export const router = createRouter()
     }
   })
 
-  .query('full', {
+  .query('.full', {
     input: z.object({
       handle: zodHandle
     }),
@@ -37,7 +37,7 @@ export const router = createRouter()
     }
   })
 
-  .query('base', {
+  .query('.base', {
     input: z.object({
       handle: zodHandle
     }),
@@ -47,7 +47,7 @@ export const router = createRouter()
     }
   })
 
-  .query('count-relations', {
+  .query('.count-relations', {
     input: z.object({
       handle: zodHandle,
       type: zodRelationType
