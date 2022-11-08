@@ -77,5 +77,10 @@
     "html",
     "vue",
     "markdown"
-  ]
+  ],
+  "eslint.format.enable": true,
+  "eslint.lintTask.enable": true,
+  "eslint.packageManager": "yarn",
+  "eslint.useESLintClass": true,
+  "eslint.codeActionsOnSave.rules": null
 }
