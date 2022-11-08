@@ -2,7 +2,7 @@
   <tr class="font-medium bg-wewak-300 dark:bg-wewak-800 rounded-md text-kimberly-900 dark:text-kimberly-100">
     <td class="px-4 py-3 font-bold">
       <p class="text-kimberly-900 dark:text-kimberly-100">
-        #{{ props.rank.rank }}
+        #{{ props.place }}
       </p>
     </td>
     <td>
@@ -20,35 +20,45 @@
         </div>
       </div>
     </td>
+    <td>{{ user.name }}</td>
     <td class="font-bold text-center">
-      <template v-if="sort.selected.icon === 'pp'">
-        {{ addCommas(props.user.pp) }}pp
+      <template v-if="sort === 'ppv2'">
+        {{ addCommas(props.user.inThisLeaderboard.ppv2) }}pp
       </template>
-      <template v-else-if="sort.selected.icon === 'acc'">
-        {{ props.user.acc }}%
+      <template v-else-if="sort === 'ppv1'">
+        {{ addCommas(props.user.inThisLeaderboard.ppv1) }}pp
       </template>
-      <template v-else>
-        {{ scoreFormat(props.user[`${sort.selected.icon}`]) }}
+      <template v-else-if="sort in props.user.inThisLeaderboard">
+        {{ scoreFormat(props.user.inThisLeaderboard[sort]) }}
       </template>
     </td>
     <td class="text-center opacity-80">
-      {{ props.user.acc }}%
+      {{ formatter.format((props.user.inThisLeaderboard.accuracy as number) / 100) }}
     </td>
     <td class="text-center opacity-80">
-      {{ props.user.plays }}
+      {{ addCommas(props.user.inThisLeaderboard.playCount) }}
     </td>
   </tr>
 </template>
 
 <script lang="ts" setup>
-import { IdType } from '~/server/trpc'
-import { BaseUser, UserExtra, UserModeRulesetStatistics, BaseRank } from '~/types/user'
+
+import { UserModeRulesetStatistics } from '~/types/user'
 import { addCommas, getFlagURL, scoreFormat } from '~/common/varkaUtils'
+import { RankingSystem } from '~~/src/types/common'
+import { LeaderboardItemType } from '~~/src/pages/leaderboard.vue'
+
+const option = {
+  style: 'percent',
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2
+}
+const formatter = new Intl.NumberFormat(undefined, option)
 
 const props = defineProps<{
-  user: BaseUser<IdType> & UserExtra<IdType>,
+  user: LeaderboardItemType['user'],
   ruleset: UserModeRulesetStatistics,
-  rank: BaseRank,
-  sort: Record<string, any>
+  place: number,
+  sort: RankingSystem
 }>()
 </script>

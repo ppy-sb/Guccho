@@ -1,40 +1,43 @@
 <template>
   <div class="flex flex-col h-full pt-16 leaderboard custom-container md:pt-0">
-    <header-leaderboard v-model.lazy="selection" @input="fetchLeaderboard" />
+    <header-leaderboard v-model="selection" @input="getLeaderboard" />
 
     <div
       class="container flex mx-auto grow"
       :class="{
-        content: result.length
+        content: result.length,
       }"
     >
       <template v-if="result.length !== 0">
-        <div
-          class="relative mx-auto overflow-hidden xl:rounded-lg"
-        >
+        <div class="relative mx-auto overflow-hidden xl:rounded-lg">
           <fetch-overlay :fetching="fetching" />
           <div class="px-8 py-4">
             <div class="relative overflow-x-auto">
-              <table
-                class="table text-sm border-separate whitespace-nowrap"
-              >
-                <thead class="text-kimberly-200">
+              <table class="table text-sm border-separate whitespace-nowrap">
+                <thead class="rounded-lg">
                   <tr class="text-sm font-light">
-                    <th />
-                    <th class="w-full" />
-                    <th class="px-4 text-xs font-semibold text-center rounded-lg">
-                      {{ selection.sort.selected.name }}
+                    <th>rank</th>
+                    <th>flag</th>
+                    <th>player</th>
+                    <th class="px-4 text-xs font-semibold text-center">
+                      {{ selection.rankingSystem?.name }}
                     </th>
-                    <th class="px-4 text-xs font-medium text-center opacity-60">
+                    <th class="px-4 text-xs font-medium text-center">
                       Accuracy
                     </th>
-                    <th class="px-4 text-xs font-medium text-center opacity-60">
+                    <th class="px-4 text-xs font-medium text-center">
                       Play Count
                     </th>
                   </tr>
                 </thead>
                 <tbody>
-                  <leaderboard-user-table v-for="(u, index) in result" :key="index" :user="u" :place="index+1" :sort="selection.sort" />
+                  <leaderboard-user-table
+                    v-for="(item, index) in table"
+                    :key="index"
+                    :user="item.user"
+                    :place="item.rank"
+                    :sort="selection.rankingSystem?.value"
+                  />
                 </tbody>
               </table>
             </div>
@@ -42,7 +45,9 @@
         </div>
       </template>
       <template v-else>
-        <div class="pb-10 my-auto text-kimberly-900 dark:text-kimberly-100 grow">
+        <div
+          class="pb-10 my-auto text-kimberly-900 dark:text-kimberly-100 grow"
+        >
           <h1 class="text-xl font-semibold text-center">
             No one played this mode yet.
           </h1>
@@ -57,55 +62,59 @@
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-const selection = reactive({})
-const result = ref([])
+import result from 'postcss/lib/result'
+import { BaseUser } from '../types/user'
+import { Mode, Ruleset, RankingSystem } from '../types/common'
+import { useClient } from '#imports'
+export type LeaderboardItemType = {
+  user: BaseUser<unknown> & {
+    inThisLeaderboard: Record<string, number| bigint>
+  }
+  rank: bigint
+}
+type EmitType = {
+  mode?: { value: Mode, name: string }
+  ruleset?: { value: Ruleset, name: string }
+  rankingSystem?: { value: RankingSystem, name: string }
+}
+const selection = reactive<EmitType>({})
+const table = ref<Array<LeaderboardItemType>>([])
 const fetching = ref(false)
+const page = ref(0)
+const perPage = ref(50)
 
-// TODO: migrate to useFetch
-// this.$axios
-//   .get(`https://api.${'1'}/get_leaderboard`, {
-//     params: {
-//       mode: this.$modeToGulag(this.selection.mode.selected.icon, this.selection.mods.selected.icon)
-//     }
-//   })
-//   .then((response) => {
-//     this.result = response.data.leaderboard
-//   })
-//   .catch((error) => {
-//     this.$toast.show({
-//       type: 'danger',
-//       message: error
-//     })
-//   })
-//   .finally(() => {
-//     this.fetching = false
-//   })
+const client = useClient()
+const getLeaderboard = async (selection: EmitType) => {
+  if (!selection.mode || !selection.ruleset || !selection.rankingSystem) {
+    return
+  }
+  console.log(selection)
+  const result = await client.query('leaderboard', {
+    mode: selection.mode.value,
+    ruleset: selection.ruleset.value,
+    rankingSystem: selection.rankingSystem.value,
+    page: page.value,
+    pageSize: perPage.value
+  })
+
+  table.value = result
+}
 </script>
 
 <style scoped lang="postcss">
 .content {
   @screen md {
-    margin-top: -3rem;
+    margin-top: -3rem
   }
 }
 </style>
 
 <style>
 .table {
-  border-spacing: 0 8px;
+  border-spacing: 0 2px
 }
 
 .table tr {
-  border-radius: 22px;
-}
-
-tr td:nth-child(n+5),
-tr th:nth-child(n+5) {
-  border-radius: 0 .3rem .3rem 0;
-}
-
-tr td:nth-child(1),
-tr th:nth-child(1) {
-  border-radius: .3rem 0 0 .3rem;
+  border-radius: 22px
 }
 </style>

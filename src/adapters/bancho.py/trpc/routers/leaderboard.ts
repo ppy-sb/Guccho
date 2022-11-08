@@ -13,6 +13,7 @@ export const router = createRouter()
       pageSize: z.number().gte(50).lt(100)
     }),
     async resolve ({ input: { mode, ruleset, rankingSystem, page, pageSize } }) {
+      if (rankingSystem === 'ppv1') { return [] }
       return await getLeaderboard({ mode, ruleset, rankingSystem, page: page as Range<0, 10>, pageSize: pageSize as Range<50, 100> })
     }
   })

@@ -43,18 +43,18 @@ export default defineNuxtPlugin(() => ({
       // return x1 + x2
     },
     forbiddenMode: (mods, mode) => {
-      if (mods === 'rx' && mode === 'mania') {
+      if (mods === 'relax' && mode === 'mania') {
         return true
-      } else if (mods === 'ap' && mode !== 'osu') {
+      } else if (mods === 'autopilot' && mode !== 'osu') {
         return true
       } else {
         return false
       }
     },
     forbiddenMods: (mode, mods) => {
-      if (mode === 'mania' && mods === 'rx') {
+      if (mode === 'mania' && mods === 'relax') {
         return true
-      } else if (mode !== 'osu' && mods === 'ap') {
+      } else if (mode !== 'osu' && mods === 'autopilot') {
         return true
       } else {
         return false
