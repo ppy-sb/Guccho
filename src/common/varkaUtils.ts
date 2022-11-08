@@ -1,18 +1,7 @@
-import { BanchoPyMode } from '../adapters/bancho.py/backend-clients/enums'
+import { toBanchoPyMode } from '../adapters/bancho.py/backend-clients/enums'
+import { Ruleset, Mode } from '~/types/common'
 
-export const modeToGulag = (mode = 'osu', mods = 'vn') => {
-  switch (mode + '|' + mods) {
-    case 'osu|vn': return BanchoPyMode.osuStandard
-    case 'taiko|vn': return BanchoPyMode.taikoStandard
-    case 'catch|vn': return BanchoPyMode.fruitsStandard
-    case 'mania|vn': return BanchoPyMode.maniaStandard
-    case 'osu|rx': return BanchoPyMode.osuRelax
-    case 'taiko|rx': return BanchoPyMode.taikoRelax
-    case 'catch|rx': return BanchoPyMode.fruitsRelax
-    case 'osu|ap': return BanchoPyMode.osuAutopilot
-    default: return -1
-  }
-}
+export const modeToGulag = toBanchoPyMode
 
 export const getFlagURL = (flag: string) => {
   let url = 'https://osu.ppy.sh/assets/images/flags/'
@@ -32,20 +21,20 @@ export const addCommas = (nStr: number | bigint) => {
   return Intl.NumberFormat().format(nStr)
 }
 
-export const forbiddenMode = (mods: string, mode: string) => {
-  if (mods === 'rx' && mode === 'mania') {
+export const forbiddenMode = (mods: Ruleset, mode: Mode) => {
+  if (mods === 'relax' && mode === 'mania') {
     return true
-  } else if (mods === 'ap' && mode !== 'osu') {
+  } else if (mods === 'autopilot' && mode !== 'osu') {
     return true
   } else {
     return false
   }
 }
 
-export const forbiddenMods = (mode: string, mods: string) => {
-  if (mode === 'mania' && mods === 'rx') {
+export const forbiddenMods = (mode: Mode, mods: Ruleset) => {
+  if (mode === 'mania' && mods === 'relax') {
     return true
-  } else if (mode !== 'osu' && mods === 'ap') {
+  } else if (mode !== 'osu' && mods === 'autopilot') {
     return true
   } else {
     return false
