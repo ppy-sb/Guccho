@@ -8,7 +8,7 @@
         content: result.length,
       }"
     >
-      <template v-if="result.length !== 0">
+      <template v-if="result.length">
         <div class="relative mx-auto overflow-hidden xl:rounded-lg">
           <fetch-overlay :fetching="fetching" />
           <div class="px-8 py-4">
@@ -66,7 +66,6 @@ import { useClient } from '#imports'
 export type LeaderboardItemType = {
   user: {
     id: unknown;
-    ingameId: number;
     name: string;
     safeName: string;
     flag: string;
@@ -103,14 +102,6 @@ const getLeaderboard = async (selection: EmitType) => {
   table.value = result
 }
 </script>
-
-<style scoped lang="postcss">
-.content {
-  @screen md {
-    margin-top: -3rem
-  }
-}
-</style>
 
 <style>
 .table {
