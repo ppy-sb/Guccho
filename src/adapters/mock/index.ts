@@ -5,7 +5,7 @@ import { z } from 'zod'
 import { sampleUserWithSecrets, scoped } from '~/shapes/objects/user'
 
 export const router = trpc.router()
-  .query('public.user.full', {
+  .query('user.full', {
     input: z.object({
       handle: z.union([z.string(), z.number()])
     }),
@@ -13,7 +13,7 @@ export const router = trpc.router()
       return sampleUserWithSecrets
     }
   })
-  .query('public.user.base', {
+  .query('user.base', {
     input: z.object({
       handle: z.union([z.string(), z.number()])
     }),
