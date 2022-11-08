@@ -7,6 +7,7 @@ import { ServerRulesetConfig } from '../config'
 import { router as rUser } from './routers/user'
 import { router as rSession } from './routers/session'
 import { router as rMe } from './routers/me'
+import { router as rLeaderboard } from './routers/leaderboard'
 
 // The app's context - is generated for each incoming request
 export function createContext (e: H3Event) {
@@ -26,7 +27,8 @@ trpc.router<Context>()
   .merge('me.', rMe)
 
   // public
-  .merge('public.user.', rUser)
+  .merge('user.', rUser)
+  .merge('leaderboard.', rLeaderboard)
 
   // TODO
   .query('ranking-system-config', {
