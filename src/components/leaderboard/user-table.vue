@@ -21,11 +21,14 @@
       </div>
     </td>
     <td>
-      <div class="flex gap-2 items-center">
-        <img :src="user.avatarUrl" :alt="user.name" width="30">{{ user.name }}
+      <div class="flex gap-2 items-center ">
+        <div class="aspect-square mask mask-squircle flex">
+          <img class="m-auto" :src="user.avatarUrl" :alt="user.name" width="30">
+        </div>
+        {{ user.name }}
       </div>
     </td>
-    <td class="font-bold text-center">
+    <td class="font-bold text-right">
       <template v-if="sort === 'ppv2'">
         {{ addCommas(props.user.inThisLeaderboard.ppv2) }}pp
       </template>
@@ -36,10 +39,10 @@
         {{ scoreFormat(props.user.inThisLeaderboard[sort]) }}
       </template>
     </td>
-    <td class="text-center opacity-80">
+    <td class="text-right opacity-80">
       {{ formatter.format((props.user.inThisLeaderboard.accuracy as number) / 100) }}
     </td>
-    <td class="text-center opacity-80">
+    <td class="text-right opacity-80">
       {{ addCommas(props.user.inThisLeaderboard.playCount) }}
     </td>
   </tr>
