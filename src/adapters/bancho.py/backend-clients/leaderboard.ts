@@ -1,6 +1,4 @@
 import { PrismaClient } from '@prisma/client'
-import { BaseUser } from './../../../types/user'
-import { getBaseUser } from './user'
 import { BanchoPyMode, toBanchoPyMode } from './enums'
 import { AvailableRankingSystems, IdType } from '~/adapters/bancho.py/config'
 
@@ -31,42 +29,60 @@ export async function getLeaderboard<
 }) {
   const start = page * pageSize
   const end = start + pageSize
+
   const sql = /* sql */`
   WITH ranks AS (
     SELECT
 ${rankingSystem === 'ppv2'
       ? /* sql */ `
       RANK () OVER (
-        PARTITION BY mode
-        ORDER BY pp desc
+        PARTITION BY stat.mode
+        ORDER BY stat.pp desc
       ) as _rank,`
       : ''
 }${rankingSystem === 'totalScore'
       ? /* sql */ `
       RANK () OVER (
-        PARTITION BY mode
-        ORDER BY tscore desc
+        PARTITION BY stat.mode
+        ORDER BY stat.tscore desc
       ) as _rank,`
       : ''
 }${rankingSystem === 'rankedScore'
       ? /* sql */ `
       RANK () OVER (
-        PARTITION BY mode
-        ORDER BY rscore desc
+        PARTITION BY stat.mode
+        ORDER BY stat.rscore desc
       ) as _rank,`
       : ''
     }
-      id,
-      pp as ppv2,
-      acc as accuracy,
-      rscore as rankedScore,
-      tscore as totalScore,
-      plays as playCount,
-      mode
-    FROM stats
-    WHERE mode = ${toBanchoPyMode(mode, ruleset)}
+      user.id,
+      user.name,
+      user.safe_name as safeName,
+      user.country as flag,
+      stat.pp as ppv2,
+      stat.acc as accuracy,
+      stat.rscore as rankedScore,
+      stat.tscore as totalScore,
+      stat.plays as playCount,
+      stat.mode
+    FROM stats stat
+    LEFT JOIN users user
+    ON stat.id = user.id 
+    WHERE stat.mode = ${toBanchoPyMode(mode, ruleset)} AND user.priv > 2
   )
-  SELECT * FROM ranks
+  SELECT 
+    id,
+    name,
+    safeName,
+    flag,
+    _rank,
+
+    ppv2,
+    accuracy,
+    rankedScore,
+    totalScore,
+    playCount
+  FROM ranks
   WHERE _rank > 0
   ORDER BY _rank ASC
   LIMIT ${start}, ${end}
@@ -75,6 +91,10 @@ ${rankingSystem === 'ppv2'
   const result = await db.$queryRawUnsafe<
     Array<{
       id: IdType
+      name: string,
+      safeName: string,
+      flag: string,
+
       mode: BanchoPyMode
       _rank: bigint,
       accuracy: number,
@@ -85,10 +105,14 @@ ${rankingSystem === 'ppv2'
     }>
   >(sql)
 
-  // TODO: fetch user in batch for better #performance#
-  return await Promise.all(result.map(async item => ({
+  return result.map(item => ({
     user: {
-      ...await getBaseUser(item.id) as BaseUser<IdType>,
+      id: item.id,
+      name: item.name,
+      safeName: item.safeName,
+      flag: item.flag,
+      avatarUrl: 'https://a.ppy.sb/' + item.id,
+
       inThisLeaderboard: {
         ppv2: item.ppv2,
         accuracy: item.accuracy,
@@ -98,5 +122,5 @@ ${rankingSystem === 'ppv2'
       }
     },
     rank: item._rank
-  })))
+  }))
 }

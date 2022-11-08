@@ -15,12 +15,16 @@
         </div>
         <div class="ml-3">
           <p class="font-medium text-kimberly-900 dark:text-kimberly-100">
-            <user-card :user="user" :href="'/user/' + props.user.id" />
+            <!-- <user-card :user="user" :href="'/user/' + props.user.id" /> -->
           </p>
         </div>
       </div>
     </td>
-    <td>{{ user.name }}</td>
+    <td>
+      <div class="flex gap-2 items-center">
+        <img :src="user.avatarUrl" :alt="user.name" width="30">{{ user.name }}
+      </div>
+    </td>
     <td class="font-bold text-center">
       <template v-if="sort === 'ppv2'">
         {{ addCommas(props.user.inThisLeaderboard.ppv2) }}pp

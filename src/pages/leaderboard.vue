@@ -45,9 +45,7 @@
         </div>
       </template>
       <template v-else>
-        <div
-          class="pb-10 my-auto text-kimberly-900 dark:text-kimberly-100 grow"
-        >
+        <div class="pb-10 my-auto text-kimberly-900 dark:text-kimberly-100 grow">
           <h1 class="text-xl font-semibold text-center">
             No one played this mode yet.
           </h1>
@@ -63,14 +61,19 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import result from 'postcss/lib/result'
-import { BaseUser } from '../types/user'
 import { Mode, Ruleset, RankingSystem } from '../types/common'
 import { useClient } from '#imports'
 export type LeaderboardItemType = {
-  user: BaseUser<unknown> & {
-    inThisLeaderboard: Record<string, number| bigint>
-  }
-  rank: bigint
+  user: {
+    id: unknown;
+    ingameId: number;
+    name: string;
+    safeName: string;
+    flag: string;
+    avatarUrl: string;
+    inThisLeaderboard: Record<string, number | bigint>;
+  };
+  rank: bigint;
 }
 type EmitType = {
   mode?: { value: Mode, name: string }
