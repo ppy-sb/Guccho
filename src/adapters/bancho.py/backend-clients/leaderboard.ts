@@ -72,7 +72,7 @@ ${rankingSystem === 'ppv2'
     }>
   >(sql)
 
-  // TODO: fetch user in batch #performance
+  // TODO: fetch user in batch for better #performance#
   return await Promise.all(result.map(async item => ({
     user: await getBaseUser(item.id),
     rank: item._rank

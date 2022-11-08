@@ -23,12 +23,12 @@ export type Context = inferAsyncReturnType<typeof createContext>
 
 export const router =
 trpc.router<Context>()
-  .merge('session.', rSession)
-  .merge('me.', rMe)
+  .merge('session', rSession)
+  .merge('me', rMe)
 
   // public
-  .merge('user.', rUser)
-  .merge('leaderboard.', rLeaderboard)
+  .merge('user', rUser)
+  .merge('leaderboard', rLeaderboard)
 
   // TODO
   .query('ranking-system-config', {

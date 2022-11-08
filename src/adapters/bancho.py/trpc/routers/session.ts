@@ -10,7 +10,7 @@ import { zodHandle } from '../shapes'
 const { compare } = bcrypt
 
 export const router = createRouterWithSession()
-  .query('login', {
+  .query('.login', {
     input: z.object({
       handle: zodHandle,
       md5HashedPassword: z.string()
@@ -54,7 +54,7 @@ export const router = createRouterWithSession()
     }
   })
 
-  .query('retrieve', {
+  .query('.retrieve', {
     async resolve ({ ctx }) {
       console.log('retrieving session', ctx.session.id)
       const session = await ctx.session.getBinding()
