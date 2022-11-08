@@ -62,5 +62,11 @@
   "tailwindCSS.experimental.configFile": "./tailwind.config.js",
   "editor.quickSuggestions": {
     "strings": true
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
   }
 }
