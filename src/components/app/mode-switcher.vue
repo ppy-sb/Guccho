@@ -1,140 +1,84 @@
+<!-- eslint-disable vue/no-v-for-template-key -->
 <template>
   <div class="mt-4 grid sm:mt-0 md:gap-1">
     <div class="flex justify-around gap-4 md:gap-2 lg:gap-4">
       <a
-        v-for="(m, index) in leaderboard.mode.list"
-        :key="index"
+        v-for="(m, mode) in config.mode"
+        :key="mode"
         class="h-mode"
         :class="{
-          '!opacity-80 pointer-events-none':leaderboard.mode.selected?.name === m.name,
-          '!opacity-10 pointer-events-none':leaderboard.ruleset.selected && forbiddenMode(leaderboard.ruleset.selected.ruleset, m.mode)
+          '!opacity-80 pointer-events-none':selected.mode === mode,
+          '!opacity-10 pointer-events-none':selected.ruleset && forbiddenMode(selected.ruleset, mode)
         }"
-        @click="changeValue('mode', index)"
+        @click="selected.mode = mode"
       >
         <img :src="`/icons/mode/${m.icon}.svg`" class="color-theme-light-invert">
       </a>
     </div>
     <div class="flex justify-around gap-4 md:gap-2 lg:gap-4">
       <a
-        v-for="(m, index) in leaderboard.ruleset.list"
-        :key="index"
+        v-for="(m, ruleset) in config.ruleset"
+        :key="ruleset"
         class="h-mode"
         :class="{
-          '!opacity-80 pointer-events-none':leaderboard.ruleset.selected?.name === m.name,
-          '!opacity-20 pointer-events-none':leaderboard.mode.selected && forbiddenMods(leaderboard.mode.selected.mode, m.ruleset)
+          '!opacity-80 pointer-events-none':selected.ruleset === ruleset,
+          '!opacity-20 pointer-events-none':selected.mode && forbiddenMods(selected.mode, ruleset)
         }"
-        @click="changeValue('ruleset', index)"
+        @click="selected.ruleset = ruleset"
       >
         {{ m.name }}
       </a>
     </div>
     <div v-if="props.showSort" class="flex justify-center gap-3 md:gap-3 lg:gap-3">
-      <a
-        v-for="(s, index) in leaderboard.rankingSystem.list"
-        :key="index"
-        class="text-sm h-mode"
-        :class="{ '!opacity-80 pointer-events-none':leaderboard.rankingSystem.selected?.name === s.name }"
-        @click="changeValue('rankingSystem', index)"
+      <template
+        v-for="(s, rankingSystem) in config.rankingSystem"
+        :key="rankingSystem"
       >
-        {{ s.name }}
-      </a>
+        <a
+          v-if="rankingSystem in ServerRulesetConfig"
+          class="text-sm h-mode"
+          :class="{ '!opacity-80 pointer-events-none': selected.rankingSystem === rankingSystem }"
+          @click="selected.rankingSystem = rankingSystem"
+        >
+          {{ s.name }}
+        </a>
+      </template>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { useAppConfig } from '#app'
-import { ref, onMounted } from 'vue'
+import { reactive, watch, toRaw } from 'vue'
 import { forbiddenMode, forbiddenMods } from '~/common/varkaUtils'
 import type { AppConfig } from '~/app.config'
 import { RankingSystem, Mode, Ruleset } from '~/types/common'
+import { ServerRulesetConfig } from '~/server/trpc/config'
+export interface EmitType {
+  input: {
+    mode?:Mode,
+    ruleset?:Ruleset,
+    rankingSystem?:RankingSystem
+  }
+}
 const config = useAppConfig() as AppConfig
+
 // eslint-disable-next-line func-call-spacing
 const emit = defineEmits<{
-  (event:'input', res:{
-    mode?:{value: Mode, name: string},
-    ruleset?:{value: Ruleset, name: string},
-    rankingSystem?:{value: RankingSystem, name: string}
-  }):void
+  (event:'input', res:EmitType['input']):void,
+  (event:'update:modelValue', res:EmitType['input']):void
 }>()
-const props = defineProps({
-  showSort: {
-    type: Boolean,
-    default: false
-  }
-})
+const props = defineProps<{
+  showSort?: boolean,
+  modelValue?: EmitType['input']
+}>()
 
-type RankingSystemItem = {
-  name:string,
-  icon:string,
-  rank:RankingSystem
+const selected = reactive<EmitType['input']>(toRaw(props.modelValue) || {})
+const emitData = () => {
+  emit('input', toRaw(selected))
+  emit('update:modelValue', toRaw(selected))
 }
-const leaderboard = ref({
-  mode: {
-    selected: undefined as AppConfig['mode'][0] | undefined,
-    list: [] as AppConfig['mode']
-  },
-  ruleset: {
-    selected: undefined as AppConfig['rulesets'][0] | undefined,
-    list: [] as AppConfig['rulesets']
-  },
-  rankingSystem: {
-    selected: undefined as RankingSystemItem | undefined,
-    list: [
-      {
-        name: 'Performance',
-        icon: 'pp',
-        rank: 'ppv2'
-      },
-      // {
-      //   name:'Accuracy',
-      //   icon:'acc'
-      // },
-      {
-        name: 'Total Score',
-        icon: 'tscore',
-        rank: 'totalScore'
-      },
-      {
-        name: 'Ranked score',
-        icon: 'rscore',
-        rank: 'rankedScore'
-      }
-    ] as RankingSystemItem[]
-  }
-})
-const emitData = () => emit('input', {
-  mode: leaderboard.value.mode.selected && {
-    value: leaderboard.value.mode.selected.mode,
-    name: leaderboard.value.mode.selected.name
-  },
-  ruleset: leaderboard.value.ruleset.selected && {
-    value: leaderboard.value.ruleset.selected?.ruleset,
-    name: leaderboard.value.ruleset.selected?.name
-  },
-  rankingSystem: leaderboard.value.rankingSystem.selected && {
-    value: leaderboard.value.rankingSystem.selected?.rank,
-    name: leaderboard.value.rankingSystem.selected?.name
-  }
-})
-
-const changeValue = (type:'mode' | 'ruleset' | 'rankingSystem', index:number) => {
-  leaderboard.value[type].selected = leaderboard.value[type].list[index]
-  emitData()
-}
-
-const initLeaderboard = () => {
-  leaderboard.value.mode.list = config.mode
-  leaderboard.value.ruleset.list = config.rulesets
-  leaderboard.value.mode.selected = leaderboard.value.mode.list[0]
-  leaderboard.value.ruleset.selected = leaderboard.value.ruleset.list[0]
-  leaderboard.value.rankingSystem.selected = leaderboard.value.rankingSystem.list[0]
-  emitData()
-}
-
-onMounted(() => {
-  initLeaderboard()
-})
+watch(selected, () => emitData())
 </script>
 
 <style lang="postcss" scoped>

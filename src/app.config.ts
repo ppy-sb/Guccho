@@ -1,6 +1,6 @@
 import { defineAppConfig } from 'nuxt/app'
 
-import { Mode, Ruleset } from '~/types/common'
+import { Mode, RankingSystem, Ruleset } from '~/types/common'
 
 type AppConfigItemBase = {
   name: string,
@@ -8,67 +8,84 @@ type AppConfigItemBase = {
 }
 
 const config: {
-    baseUrl: string,
-    version: {
-      api: string,
-      front: string,
-    }
-    title: string,
-    mode: Array<AppConfigItemBase & {
-      mode: Mode
-    }>,
-    rulesets: Array<AppConfigItemBase & {
-      ruleset: Ruleset
-    }>,
-    appModalTeleportTargetId: string
-  } = {
-    baseUrl: 'dev.ppy.sb',
-    version: {
-      api: '1.0.3',
-      front: '1.0.3'
-    },
-    title: 'guweb@next',
-    mode: [
-      {
-        name: 'Osu',
-        icon: 'osu',
-        mode: 'osu'
-      },
-      {
-        name: 'Taiko',
-        icon: 'taiko',
-        mode: 'taiko'
-      },
-      {
-        name: 'Fruits',
-        icon: 'catch',
-        mode: 'fruits'
-      },
-      {
-        name: 'Mania',
-        icon: 'mania',
-        mode: 'mania'
-      }
-    ],
-    rulesets: [
-      {
-        name: 'Standard',
-        icon: 'vn',
-        ruleset: 'standard'
-      },
-      {
-        name: 'Relax',
-        icon: 'relax',
-        ruleset: 'relax'
-      },
-      {
-        name: 'Autopilot',
-        icon: 'autopilot',
-        ruleset: 'autopilot'
-      }
-    ],
-    appModalTeleportTargetId: 'app-modal-portal'
+  baseUrl: string,
+  version: {
+    api: string,
+    front: string,
   }
+  title: string,
+  mode: Record<
+    Mode,
+    AppConfigItemBase
+  >,
+  ruleset: Record<
+    Ruleset,
+    AppConfigItemBase
+  >,
+  rankingSystem: Record<
+    RankingSystem,
+    AppConfigItemBase
+  >
+  appModalTeleportTargetId: string
+} = {
+  baseUrl: 'dev.ppy.sb',
+  version: {
+    api: '1.0.3',
+    front: '1.0.3'
+  },
+  title: 'guweb@next',
+  mode: {
+    osu: {
+      name: 'Osu',
+      icon: 'osu'
+    },
+    taiko: {
+      name: 'Taiko',
+      icon: 'taiko'
+    },
+    fruits: {
+      name: 'CTB',
+      icon: 'catch'
+    },
+    mania: {
+      name: 'Mania',
+      icon: 'mania'
+    }
+  },
+  ruleset: {
+    standard: {
+      name: 'Standard',
+      icon: 'vn'
+    },
+    relax: {
+      name: 'Relax',
+      icon: 'relax'
+    },
+    autopilot: {
+      name: 'Autopilot',
+      icon: 'autopilot'
+    }
+  },
+  rankingSystem: {
+    ppv2: {
+      name: 'Performance(v2)',
+      icon: 'pp'
+    },
+    ppv1: {
+      name: 'Performance(v1)',
+      icon: 'pp'
+    },
+    totalScore: {
+      name: 'Total Score',
+      icon: 'tscore'
+    },
+    rankedScore: {
+      name: 'Ranked score',
+      icon: 'rscore'
+    }
+  },
+  appModalTeleportTargetId: 'app-modal-portal'
+}
 export default defineAppConfig(config)
 
 export type AppConfig = typeof config
