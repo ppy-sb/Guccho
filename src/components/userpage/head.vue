@@ -80,7 +80,7 @@ import { useClient, useFAIconLib } from '#imports'
 import { UserFull as User } from '~/types/user'
 import { useSession } from '~/store/session'
 
-import type { IdType } from '~/server/trpc'
+import type { IdType } from '~/server/trpc/config'
 
 const changeFriendStateButton = ref(null)
 const session = useSession()

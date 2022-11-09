@@ -1,5 +1,5 @@
-import type { UserFull } from '../../types/user'
-import { ScoreRank, PPRank, UserModeRulesetStatistics } from '../../types/user'
+import type { UserFull } from '~/types/user'
+import { ScoreRank, PPRank, UserModeRulesetStatistics } from '~/types/user'
 
 (BigInt.prototype as any).toJSON = function () {
   return Number(this)

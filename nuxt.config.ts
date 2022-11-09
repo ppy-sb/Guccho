@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'url'
 import { defineNuxtConfig } from 'nuxt/config'
 
 import postcss from './postcss.config'
@@ -58,8 +59,6 @@ export default defineNuxtConfig({
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
   buildModules: [
     'floating-vue/nuxt'
-    // https://go.nuxtjs.dev/eslint
-    // '@nuxtjs/eslint-module',
     // // https://animejs.com/
     // 'nuxt-animejs'
   ],
@@ -67,19 +66,11 @@ export default defineNuxtConfig({
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     '@nuxtjs/tailwindcss',
-    // https://go.nuxtjs.dev/content
-    // '@nuxt/content',
     // '@nuxtjs/auth-next',
     '@pinia/nuxt',
     // '@nuxtjs/color-mode',
     'trpc-nuxt'
   ],
-
-  // Axios module configuration: https://go.nuxtjs.dev/config-axios
-  axios: {
-    // Workaround to avoid enforcing hard-coded localhost:3000: https://github.com/nuxt-community/axios-module/issues/308
-    baseURL: '/'
-  },
 
   // PWA module configuration: https://go.nuxtjs.dev/pwa
   pwa: {
@@ -92,28 +83,32 @@ export default defineNuxtConfig({
     baseUrl: process.env.BASE_URL || 'localhost'
   },
 
-  auth: {
-    strategies: {
-      local: {
-        token: {
-          property: 'access_token',
-          global: true,
-          required: true,
-          maxAge: 60 * 60,
-          type: 'Bearer'
-        },
-        user: {
-          property: '',
-          autoFetch: true
-        },
-        endpoints: {
-          login: { url: 'http://localhost:3001/v1/auth/token', method: 'post' },
-          logout: false,
-          user: { url: 'http://localhost:3001/v1/auth/user/me', method: 'get' }
-        }
-      }
-    }
+  alias: {
+    '#': fileURLToPath(new URL('./src/adapters', import.meta.url))
   },
+
+  // auth: {
+  //   strategies: {
+  //     local: {
+  //       token: {
+  //         property: 'access_token',
+  //         global: true,
+  //         required: true,
+  //         maxAge: 60 * 60,
+  //         type: 'Bearer'
+  //       },
+  //       user: {
+  //         property: '',
+  //         autoFetch: true
+  //       },
+  //       endpoints: {
+  //         login: { url: 'http://localhost:3001/v1/auth/token', method: 'post' },
+  //         logout: false,
+  //         user: { url: 'http://localhost:3001/v1/auth/user/me', method: 'get' }
+  //       }
+  //     }
+  //   }
+  // },
   postcss,
   vue: {
     config: {

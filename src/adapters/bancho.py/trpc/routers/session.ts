@@ -2,10 +2,10 @@
 import bcrypt from 'bcryptjs'
 import { z } from 'zod'
 import { TRPCError } from '@trpc/server'
-import { getBaseUser } from '../../backend-clients'
 
 import { createRouterWithSession } from '../pre-middleware/session'
 import { zodHandle } from '../shapes'
+import { getBaseUser } from '#/bancho.py/backend-clients'
 // eslint-disable-next-line import/no-named-as-default-member
 const { compare } = bcrypt
 
