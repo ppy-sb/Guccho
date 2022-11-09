@@ -1,17 +1,12 @@
 <template>
   <section class="w-full pt-4 mx-auto ">
-    <t-tabs v-slot="{select}" v-model="tab" variant="bordered">
+    <t-tabs v-slot="{ select }" v-model="tab" variant="bordered">
       <t-tab disabled class="p-0 m-0 f-tab grow" />
       <!-- <t-tab class="f-tab" value="Timeline">
         Timeline
       </t-tab> -->
 
-      <t-tab
-        v-for="(stats, key) of tabs"
-        :key="`user-tab-${key}`"
-        class="f-tab"
-        :value="key"
-      >
+      <t-tab v-for="(stats, key) of tabs" :key="`user-tab-${key}`" class="f-tab" :value="key">
         {{ rankingSystem[key].name }}
       </t-tab>
 
@@ -24,10 +19,7 @@
           <div tabindex="0">
             Other Ranks
           </div>
-          <ul
-            tabindex="0"
-            class="z-50 p-2 shadow dropdown-content menu bg-base-100 rounded-box rounded-3xl w-52"
-          >
+          <ul tabindex="0" class="z-50 p-2 shadow dropdown-content menu bg-base-100 rounded-box rounded-3xl w-52">
             <li v-for="(stats, key) of dropdown" :key="`user-tab-${key}`">
               <a class="z-50" @click="select(key)">{{ rankingSystem[key].name }}</a>
             </li>
@@ -42,26 +34,37 @@
 </template>
 
 <script setup lang="ts">
+import { useAppConfig } from 'nuxt/app'
 import { inject, Ref, computed } from 'vue'
-import { useBackendConfig } from '#imports'
+import { AppConfig } from '~/app.config'
+import { serverRankingSystemConfig } from '~~/src/server/trpc/config'
 
-// const currentStatistic = inject('selectedStatisticsData')
-const { rankingSystems: rankingSystem } = await useBackendConfig()
+const config = useAppConfig() as AppConfig
+const rankingSystem = config.rankingSystem
+
 const tab = inject<Ref<keyof typeof rankingSystem>>('rankingSystem')
 
 type RankConf = {
-  userpage: {
-    show: string
+  userpage:{
+    show:string
   }
-  name: string
+  name:string,
+  icon:string
 }
 type Entry = [keyof typeof rankingSystem, RankConf]
 const rankingSystemEntries = computed(() => Object.entries(rankingSystem) as Entry[])
 
-const filter = (showType: 'tab' | 'dropdown') => rankingSystemEntries.value.reduce<Partial<Record<keyof typeof rankingSystem, RankConf>>>((acc, [key, value]) => {
-  if (value.userpage.show === showType) { acc[key] = value }
-  return acc
-}, {})
+const filter = (showType:'tab' | 'dropdown') =>
+  rankingSystemEntries.value.reduce<
+    Partial<
+      Record<keyof typeof rankingSystem, RankConf>
+    >
+  >((acc, [key, value]) => {
+    if (value.userpage.show !== showType) { return acc }
+    if (key in serverRankingSystemConfig === false) { return acc }
+    acc[key] = value
+    return acc
+  }, {})
 
 const tabs = computed(() => filter('tab'))
 const dropdown = computed(() => filter('dropdown'))

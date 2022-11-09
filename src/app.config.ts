@@ -24,7 +24,11 @@ const config: {
   >,
   rankingSystem: Record<
     RankingSystem,
-    AppConfigItemBase
+    AppConfigItemBase & {
+      userpage: {
+        show: 'tab' | 'dropdown'
+      }
+    }
   >
   appModalTeleportTargetId: string
 } = {
@@ -68,20 +72,32 @@ const config: {
   },
   rankingSystem: {
     ppv2: {
+      userpage: {
+        show: 'tab'
+      },
       name: 'Performance(v2)',
       icon: 'pp'
     },
     ppv1: {
+      userpage: {
+        show: 'dropdown'
+      },
       name: 'Performance(v1)',
       icon: 'pp'
     },
-    totalScore: {
-      name: 'Total Score',
-      icon: 'tscore'
-    },
     rankedScore: {
-      name: 'Ranked score',
-      icon: 'rscore'
+      userpage: {
+        show: 'tab'
+      },
+      name: 'Ranked Score',
+      icon: 'score'
+    },
+    totalScore: {
+      userpage: {
+        show: 'tab'
+      },
+      name: 'Total Score',
+      icon: 'score'
     }
   },
   appModalTeleportTargetId: 'app-modal-portal'
