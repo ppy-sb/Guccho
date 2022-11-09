@@ -35,7 +35,7 @@
         :key="rankingSystem"
       >
         <a
-          v-if="rankingSystem in ServerRulesetConfig"
+          v-if="rankingSystem in serverRankingSystemConfig"
           class="text-sm h-mode"
           :class="{ '!opacity-80 pointer-events-none': selected.rankingSystem === rankingSystem }"
           @click="selected.rankingSystem = rankingSystem"
@@ -53,7 +53,7 @@ import { reactive, watch, toRaw } from 'vue'
 import { forbiddenMode, forbiddenMods } from '~/common/varkaUtils'
 import type { AppConfig } from '~/app.config'
 import { RankingSystem, Mode, Ruleset } from '~/types/common'
-import { ServerRulesetConfig } from '~/server/trpc/config'
+import { serverRankingSystemConfig } from '~/server/trpc/config'
 export interface EmitType {
   input: {
     mode?:Mode,

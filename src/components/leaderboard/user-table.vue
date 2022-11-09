@@ -46,7 +46,7 @@
 <script lang="ts" setup>
 import { addCommas, getFlagURL, scoreFormat } from '~/common/varkaUtils'
 import { RankingSystem } from '~/types/common'
-import { LeaderboardItemType } from '~~/src/pages/leaderboard/[[mode]]/[[ruleset]]/[[ranking]]/[[page]].vue'
+import { LeaderboardItemType } from '~/pages/leaderboard/[[mode]]/[[ruleset]]/[[ranking]]/[[page]].vue'
 
 const option = {
   style: 'percent',
