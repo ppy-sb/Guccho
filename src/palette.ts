@@ -1,3 +1,9 @@
+// as long as the type hint is right I've got no desire to touch those anys
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+// follow the following rules will break the app
+/* eslint-disable import/no-named-as-default-member */
+/* eslint-disable import/default */
 import convert from 'color-convert'
 
 export const hex = {

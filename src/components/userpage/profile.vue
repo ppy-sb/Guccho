@@ -20,6 +20,7 @@ onBeforeMount(async () => {
       class="custom-typography"
       :editor="editor"
     />
+    <!-- eslint-disable-next-line vue/no-v-html -->
     <div v-else-if="user.profile" class="custom-typography ssr" v-html="generateHTML(user.profile, extensions)" />
   </div>
 </template>

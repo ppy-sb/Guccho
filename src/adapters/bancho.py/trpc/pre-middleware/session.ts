@@ -58,9 +58,7 @@ export const createRouterWithSession = () => createRouter()
         session: {
           ...ctx.session,
           async getBinding () {
-            const session = await getSession(ctx.session.id)
-            console.log('get binding of session', ctx.session.id, session)
-            return session
+            return await getSession(ctx.session.id)
           }
         }
       }
