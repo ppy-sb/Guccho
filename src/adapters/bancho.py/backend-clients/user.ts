@@ -181,7 +181,7 @@ export const getFullUser = async <Includes extends Partial<Record<keyof UserOpti
         : undefined
     })
   } catch (err) {
-    console.error(err)
+    // console.error(err)
     return null
   }
 }

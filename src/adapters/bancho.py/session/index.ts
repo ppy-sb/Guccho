@@ -40,7 +40,6 @@ export const houseKeeping:Record<string, (store: typeof session, _config: typeof
       if (lastActivity + config.expire > Date.now()) {
         return
       }
-      console.log('cleaning session', sessionId)
       sessionStore.delete(sessionId)
     })
   }

@@ -11,6 +11,6 @@ config.autoAddCss = false
 // can add other styles or just individual icons.
 // addToLibrary(fas)
 
-export default defineNuxtPlugin((nuxtApp) => {
-  // nuxtApp.vueApp.component('font-awesome-icon', FontAwesomeIcon)
+export default defineNuxtPlugin((_nuxtApp) => {
+  // _nuxtApp.vueApp.component('font-awesome-icon', FontAwesomeIcon)
 })

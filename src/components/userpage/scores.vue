@@ -16,6 +16,5 @@
 </template>
 
 <script setup>
-import 'vue3-json-viewer/dist/index.css'
 const user = inject('user')
 </script>

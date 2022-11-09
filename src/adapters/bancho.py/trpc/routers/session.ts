@@ -56,7 +56,6 @@ export const router = createRouterWithSession()
 
   .query('.retrieve', {
     async resolve ({ ctx }) {
-      console.log('retrieving session', ctx.session.id)
       const session = await ctx.session.getBinding()
       if (!session) {
         throw new TRPCError({
