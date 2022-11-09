@@ -1,9 +1,9 @@
 import { TRPCError } from '@trpc/server'
 import z from 'zod'
-import { getFullUser, prismaClient as db, getBaseUser, getOneRelationShip, getRelationships } from '../../backend-clients'
 import { createProtectedRouter } from '../pre-middleware/protected/user'
-import { calculateMutualRelationships } from '../../backend-clients/transforms'
 import { zodHandle, zodRelationType } from '../shapes'
+import { getFullUser, prismaClient as db, getBaseUser, getOneRelationShip, getRelationships } from '#/bancho.py/backend-clients'
+import { calculateMutualRelationships } from '#/bancho.py/backend-clients/transforms'
 
 export const router = createProtectedRouter()
   .query('.full-secret', {
