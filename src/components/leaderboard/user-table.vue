@@ -13,11 +13,6 @@
             :src="getFlagURL(props.user.flag)"
           >
         </div>
-        <div class="ml-3">
-          <p class="font-medium text-kimberly-900 dark:text-kimberly-100">
-            <!-- <user-card :user="user" :href="'/user/' + props.user.id" /> -->
-          </p>
-        </div>
       </div>
     </td>
     <td>
@@ -49,11 +44,9 @@
 </template>
 
 <script lang="ts" setup>
-
-import { UserModeRulesetStatistics } from '~/types/user'
 import { addCommas, getFlagURL, scoreFormat } from '~/common/varkaUtils'
-import { RankingSystem } from '~~/src/types/common'
-import { LeaderboardItemType } from '~~/src/pages/leaderboard.vue'
+import { RankingSystem } from '~/types/common'
+import { LeaderboardItemType } from '~~/src/pages/leaderboard/[[mode]]/[[ruleset]]/[[ranking]]/[[page]].vue'
 
 const option = {
   style: 'percent',
@@ -64,7 +57,6 @@ const formatter = new Intl.NumberFormat(undefined, option)
 
 const props = defineProps<{
   user: LeaderboardItemType['user'],
-  ruleset: UserModeRulesetStatistics,
   place: number,
   sort: RankingSystem
 }>()

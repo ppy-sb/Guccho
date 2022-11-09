@@ -182,7 +182,7 @@ export default {
           {
             name: 'Leaderboard',
             route: {
-              name: 'leaderboard'
+              name: 'leaderboard-mode-ruleset-ranking-page'
             }
           },
           {
