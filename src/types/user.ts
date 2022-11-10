@@ -1,4 +1,5 @@
 import type { JSONContent } from '@tiptap/core'
+import { Score } from './score'
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type {
   Scope,
@@ -56,7 +57,12 @@ export type UserPrivilegeString =
   // misc
   | 'bot'
 
-export interface BaseRank {
+export interface BaseRank<
+  Id,
+  _Mode extends Mode,
+  _Ruleset extends Ruleset,
+  _RankingSystem extends RankingSystem
+> {
   rank?: number
   rankHistory?: Record<string, number>
 
@@ -66,37 +72,57 @@ export interface BaseRank {
   accuracy?: number
 
   // TODO: Score
-  // tops: Score[]
-  // recent: Score[]
+  bests?: Score<Id, _Mode, _Ruleset, _RankingSystem>[]
+  recent?: Score<Id, _Mode, _Ruleset, _RankingSystem>[]
 }
 
-export interface PPRank extends BaseRank {
+export interface PPRank<
+  Id,
+  _Mode extends Mode,
+  _Ruleset extends Ruleset,
+  _RankingSystem extends RankingSystem
+> extends BaseRank<Id, _Mode, _Ruleset, _RankingSystem> {
   performance: number
   performanceHistory?: Record<string, number>
 
   // TODO: BP
   // bests: Score[]
 }
-export interface ScoreRank extends BaseRank {
+export interface ScoreRank<
+  Id,
+  _Mode extends Mode,
+  _Ruleset extends Ruleset,
+  _RankingSystem extends RankingSystem
+> extends BaseRank<Id, _Mode, _Ruleset, _RankingSystem> {
   score: bigint | null
   scoreHistory?: Record<string, bigint>
 }
 
-export type Rank<System extends RankingSystem> =
-  System extends ScoreRankingSystem
-  ? ScoreRank
-  : System extends PPRankingSystem
-  ? PPRank
-  : BaseRank
+export type Rank<
+  Id,
+  _Mode extends Mode,
+  _Ruleset extends Ruleset,
+  _RankingSystem extends RankingSystem
+> = _RankingSystem extends ScoreRankingSystem
+  ? ScoreRank<Id, _Mode, _Ruleset, _RankingSystem>
+  : _RankingSystem extends PPRankingSystem
+  ? PPRank<Id, _Mode, _Ruleset, _RankingSystem>
+  : BaseRank<Id, _Mode, _Ruleset, _RankingSystem>
 export interface UserModeRulesetStatistics<
-  AvailableRankingSystem extends RankingSystem = RankingSystem
+  Id,
+  _Mode extends Mode,
+  _Ruleset extends Ruleset,
+  _RankingSystem extends RankingSystem
 > {
   // TODO: Achievement
   // achievements: Achievement[]
   ranking: {
-    [P in RankingSystem as P extends AvailableRankingSystem
-    ? P
-    : never]: Rank<P>
+    [P in RankingSystem as P extends _RankingSystem ? P : never]: Rank<
+      Id,
+      _Mode,
+      _Ruleset,
+      P
+    >
   }
   playCount: number
   playTime: number
@@ -133,15 +159,19 @@ export interface UserOptional<Id = unknown> {
 }
 
 export interface UserPreferences {
-  scope: Record<Exclude<keyof UserOptional | 'privateMessage', 'secrets'>, Scope>
+  scope: Record<
+    Exclude<keyof UserOptional | 'privateMessage', 'secrets'>,
+    Scope
+  >
 }
 export interface UserRelationship<Id> extends BaseUser<Id> {
-  relationship: Relationship[],
-  relationshipFromTarget: Relationship[],
-  mutualRelationship: MutualRelationship[],
+  relationship: Relationship[]
+  relationshipFromTarget: Relationship[]
+  mutualRelationship: MutualRelationship[]
 }
 
 export type UserStatistic<
+  Id,
   IncludeMode extends Mode = Mode,
   IncludeRuleset extends Ruleset = Ruleset,
   Ranking extends RankingSystem = RankingSystem
@@ -161,7 +191,7 @@ export type UserStatistic<
       : never
       : never
       : never
-      : never]: UserModeRulesetStatistics<Ranking>
+      : never]: UserModeRulesetStatistics<Id, M, R, Ranking>
     }
   }
 export interface UserExtra<
@@ -170,7 +200,7 @@ export interface UserExtra<
   IncludeRuleset extends Ruleset = Ruleset,
   Ranking extends RankingSystem = RankingSystem
 > {
-  statistics: UserStatistic<IncludeMode, IncludeRuleset, Ranking>
+  statistics: UserStatistic<Id, IncludeMode, IncludeRuleset, Ranking>
 
   profile?: JSONContent
   relationships: UserRelationship<Id>[]
@@ -182,4 +212,6 @@ export interface UserFull<
   IncludeMode extends Mode = Mode,
   IncludeRuleset extends Ruleset = Ruleset,
   Ranking extends RankingSystem = RankingSystem
-> extends BaseUser<Id>, Partial<UserOptional<Id>>, Partial<UserExtra<Id, IncludeMode, IncludeRuleset, Ranking>> { }
+> extends BaseUser<Id>,
+  Partial<UserOptional<Id>>,
+  Partial<UserExtra<Id, IncludeMode, IncludeRuleset, Ranking>> { }

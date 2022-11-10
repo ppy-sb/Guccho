@@ -1,5 +1,5 @@
 import { Stat, User as DatabaseUser, RelationshipType } from '@prisma/client'
-import type { AvailableRankingSystems, IdType as Id } from '../config'
+import type { Mode, Ruleset, RankingSystem, IdType as Id } from '../config'
 import { BanchoPyPrivilege } from './enums'
 import type {
   MutualRelationship,
@@ -32,7 +32,7 @@ export const createRulesetData = (
         countryRank: number | null
       }
     | false
-): UserModeRulesetStatistics<AvailableRankingSystems> => {
+): UserModeRulesetStatistics<Id, Mode, Ruleset, RankingSystem> => {
   if (!databaseResult) {
     return {
       ranking: {

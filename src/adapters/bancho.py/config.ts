@@ -1,4 +1,6 @@
-import { Mode, RankingSystem, Ruleset, ServerConfig } from '~/types/common'
+import { Mode as _Mode, Ruleset as _Ruleset, ServerConfig } from '~/types/common'
+
+export type IdType = number
 
 type AppConfigItemBase = {
   name: string,
@@ -6,7 +8,7 @@ type AppConfigItemBase = {
 }
 
 const _serverModeConfig: Record<
-    Mode,
+    _Mode,
     AppConfigItemBase
   > = {
     osu: {
@@ -27,7 +29,7 @@ const _serverModeConfig: Record<
     }
   }
 const _serverRulesetConfig: Record<
-    Ruleset,
+    _Ruleset,
     AppConfigItemBase
   > = {
     standard: {
@@ -44,45 +46,40 @@ const _serverRulesetConfig: Record<
     }
   }
 
-export const _serverRankingSystemConfig: Partial<Record<
-    RankingSystem,
-    AppConfigItemBase & {
-      userpage: {
-        show: 'tab' | 'dropdown'
-      }
-    }
-  >> = {
-    ppv2: {
-      userpage: {
-        show: 'tab'
-      },
-      name: 'Performance(v2)',
-      icon: 'pp'
+export const _serverRankingSystemConfig = {
+  ppv2: {
+    userpage: {
+      show: 'tab'
     },
-    // ppv1: {
-    //   userpage: {
-    //     show: 'dropdown'
-    //   },
-    //   name: 'Performance(v1)'
-    // },
-    rankedScore: {
-      userpage: {
-        show: 'tab'
-      },
-      name: 'Ranked Score',
-      icon: 'score'
+    name: 'Performance(v2)',
+    icon: 'pp'
+  },
+  // ppv1: {
+  //   userpage: {
+  //     show: 'dropdown'
+  //   },
+  //   name: 'Performance(v1)'
+  // },
+  rankedScore: {
+    userpage: {
+      show: 'tab'
     },
-    totalScore: {
-      userpage: {
-        show: 'tab'
-      },
-      name: 'Total Score',
-      icon: 'score'
-    }
+    name: 'Ranked Score',
+    icon: 'score'
+  },
+  totalScore: {
+    userpage: {
+      show: 'tab'
+    },
+    name: 'Total Score',
+    icon: 'score'
   }
+}
 
-export type AvailableRankingSystems = keyof typeof _serverRankingSystemConfig
+export type Mode = keyof typeof _serverModeConfig
+export type Ruleset = keyof typeof _serverRulesetConfig
+export type RankingSystem = keyof typeof _serverRankingSystemConfig
+
 export const serverModeConfig = _serverModeConfig
 export const serverRulesetConfig = _serverRulesetConfig
-export const serverRankingSystemConfig = _serverRankingSystemConfig as ServerConfig<AvailableRankingSystems>
-export type IdType = number
+export const serverRankingSystemConfig = _serverRankingSystemConfig as ServerConfig<RankingSystem>

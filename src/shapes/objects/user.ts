@@ -1,3 +1,4 @@
+import { Mode, Ruleset, RankingSystem } from '~/types/common'
 import type { UserFull } from '~/types/user'
 import { ScoreRank, PPRank, UserModeRulesetStatistics } from '~/types/user'
 
@@ -10,7 +11,7 @@ import { ScoreRank, PPRank, UserModeRulesetStatistics } from '~/types/user'
 export const createISODate = (date: Date = new Date()) => date.toUTCString()
 
 export const createScoreRank = (
-  initial: ScoreRank = {
+  initial: ScoreRank<unknown, Mode, Ruleset, RankingSystem> = {
     rankHistory: { [createISODate(new Date('2023-01-01'))]: 1 },
     countryRank: 1,
     // countryRankHistory: {[createISODate(new Date('2023-01-01'))]:1},
@@ -23,12 +24,12 @@ export const createScoreRank = (
       [createISODate(new Date('2022-01-01'))]: BigInt(1_000_000_000)
     }
   }
-): ScoreRank => JSON.parse(
+): ScoreRank<unknown, Mode, Ruleset, RankingSystem> => JSON.parse(
   JSON.stringify(initial)
 )
 
 export const createPPRank = (
-  initial: PPRank = {
+  initial: PPRank<unknown, Mode, Ruleset, RankingSystem> = {
     rank: 1,
     rankHistory: { [createISODate(new Date('2023-01-01'))]: 1 },
     countryRank: 1,
@@ -37,12 +38,12 @@ export const createPPRank = (
     performance: 100,
     performanceHistory: { [createISODate(new Date('2022-01-01'))]: 0, [createISODate(new Date('2023-01-01'))]: 100 }
   }
-): PPRank => JSON.parse(JSON.stringify(initial))
+): PPRank<unknown, Mode, Ruleset, RankingSystem> => JSON.parse(JSON.stringify(initial))
 
 export const createRulesetData = (
-  ppRankData: PPRank | undefined = undefined,
-  scoreRankData: ScoreRank | undefined = undefined
-): UserModeRulesetStatistics => ({
+  ppRankData: PPRank<unknown, Mode, Ruleset, RankingSystem> | undefined = undefined,
+  scoreRankData: ScoreRank<unknown, Mode, Ruleset, RankingSystem> | undefined = undefined
+): UserModeRulesetStatistics<unknown, Mode, Ruleset, RankingSystem> => ({
   ranking: {
     ppv2: createPPRank(ppRankData),
     ppv1: createPPRank(ppRankData),
