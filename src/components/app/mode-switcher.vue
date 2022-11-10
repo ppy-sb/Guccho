@@ -35,7 +35,7 @@
         :key="rankingSystem"
       >
         <a
-          v-if="rankingSystem in serverRankingSystemConfig"
+          v-if="rankingSystem in serverRankingSystem"
           class="text-sm h-mode"
           :class="{ '!opacity-80 pointer-events-none': selected.rankingSystem === rankingSystem }"
           @click="selected.rankingSystem = rankingSystem"
@@ -53,7 +53,8 @@ import { reactive, watch, toRaw } from 'vue'
 import { forbiddenMode, forbiddenMods } from '~/common/varkaUtils'
 import type { AppConfig } from '~/app.config'
 import { RankingSystem, Mode, Ruleset } from '~/types/common'
-import { serverRankingSystemConfig } from '~/server/trpc/config'
+import { useBackendConfig } from '#imports'
+
 export interface EmitType {
   input: {
     mode?:Mode,
@@ -62,6 +63,7 @@ export interface EmitType {
   }
 }
 const config = useAppConfig() as AppConfig
+const { rankingSystem: serverRankingSystem } = await useBackendConfig()
 
 // eslint-disable-next-line func-call-spacing
 const emit = defineEmits<{

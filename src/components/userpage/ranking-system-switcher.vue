@@ -37,7 +37,9 @@
 import { useAppConfig } from 'nuxt/app'
 import { inject, Ref, computed } from 'vue'
 import { AppConfig } from '~/app.config'
-import { serverRankingSystemConfig } from '~~/src/server/trpc/config'
+import { useBackendConfig } from '#imports'
+
+const { rankingSystem: serverRankingSystem } = await useBackendConfig()
 
 const config = useAppConfig() as AppConfig
 const rankingSystem = config.rankingSystem
@@ -61,7 +63,7 @@ const filter = (showType:'tab' | 'dropdown') =>
     >
   >((acc, [key, value]) => {
     if (value.userpage.show !== showType) { return acc }
-    if (key in serverRankingSystemConfig === false) { return acc }
+    if (key in serverRankingSystem === false) { return acc }
     acc[key] = value
     return acc
   }, {})

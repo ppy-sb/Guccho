@@ -1,8 +1,9 @@
-import { useClient } from '#imports'
 
-export default async () => {
-  const client = await useClient()
+import { serverRankingSystemConfig } from '~/server/trpc/config'
+export default () => {
+  // const client = await useClient()
   return {
-    rankingSystems: await client.query('ranking-system-config')
+    // rankingSystems: await client.query('ranking-system-config')
+    rankingSystem: serverRankingSystemConfig
   }
 }
