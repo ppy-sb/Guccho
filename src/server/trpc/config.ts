@@ -1,1 +1,1 @@
-export * from '~/adapters/bancho.py/config'
+export * from '#/bancho.py/config'
