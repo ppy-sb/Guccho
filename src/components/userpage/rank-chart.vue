@@ -87,8 +87,7 @@ const cRankFill = hsl(hsvRaw.kimberly[500], 30)
 
 const chars = [' ', ...[...Array(10).keys()].map(String), ',', '#', 'N', '/', 'A', 'a']
 
-// weird bug: roller-item can not find out the correct size
-// TODO: investigate this
+// TODO: fix bug: roller-item can not find out the correct size
 const update = ref(0)
 
 onMounted(() => {

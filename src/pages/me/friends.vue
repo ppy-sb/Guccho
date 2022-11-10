@@ -12,7 +12,6 @@ if (!session.$state.loggedIn) {
     }
   })
 }
-// TODO: change to me.relations
 const relations = await client.query('me.relations')
 
 if (!relations) {

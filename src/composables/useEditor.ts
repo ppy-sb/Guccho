@@ -1,5 +1,4 @@
 /* eslint-disable import/no-named-as-default */
-// TODO: considering lazy load libs
 import { ref, onBeforeMount, onBeforeUnmount } from 'vue'
 import { Editor as EditorVue } from '@tiptap/vue-3'
 import type { Editor as EditorCore, JSONContent } from '@tiptap/core'
