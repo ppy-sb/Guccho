@@ -1,4 +1,4 @@
-import type { PPRankingSystem, Mode as _Mode, Ruleset as _Ruleset, Range } from './common'
+import type { PPRankingSystem, Mode as _Mode, Ruleset as _Ruleset, Range, RankingSystem } from './common'
 
 type BaseCount = {
     300: number,
@@ -34,7 +34,7 @@ export type Score<
   Id,
   Mode extends _Mode,
   Ruleset extends _Ruleset,
-  Rank extends PPRankingSystem = never
+  Rank extends RankingSystem = never
 > = {
   id: Id
   mode: Mode
@@ -47,32 +47,5 @@ export type Score<
   [R in PPRankingSystem as R extends Rank ? R : never]: {
     rank?: number,
     pp: number,
-  }
-}
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const test: Score<string, 'osu', 'standard', 'ppv1' | 'ppv2'> = {
-  id: '1',
-  mode: 'osu',
-  ruleset: 'standard',
-  score: 3000n,
-  scoreRank: 1,
-
-  mods: ['easy', 'half-time'],
-  count: {
-    300: 0,
-    100: 0,
-    50: 0,
-    miss: 0,
-    geki: 0,
-    katu: 0
-  },
-  ppv1: {
-    rank: 0,
-    pp: 0
-  },
-  ppv2: {
-    rank: 0,
-    pp: 0
   }
 }

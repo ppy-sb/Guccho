@@ -1,19 +1,20 @@
 import { PrismaClient } from '@prisma/client'
 import { BanchoPyMode, toBanchoPyMode } from './enums'
-import { AvailableRankingSystems, IdType } from '~/adapters/bancho.py/config'
+import { Range } from '~/types/common'
 
 import {
-  Range,
+  IdType,
   Mode as _Mode,
-  Ruleset as _Ruleset
-} from '~/types/common'
+  Ruleset as _Ruleset,
+  RankingSystem as _RankingSystem
+} from '#/bancho.py/config'
 
 const db = new PrismaClient()
 
 export async function getLeaderboard<
   Mode extends _Mode = _Mode,
   Ruleset extends _Ruleset = _Ruleset,
-  RankingSystem extends AvailableRankingSystems = AvailableRankingSystems
+  RankingSystem extends _RankingSystem = _RankingSystem
 > ({
   mode,
   ruleset,

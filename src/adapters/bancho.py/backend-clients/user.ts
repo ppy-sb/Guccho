@@ -100,7 +100,7 @@ export const getStatisticsOfUser = async ({ id, country }: { id: Id, country: st
     }
   ])
 
-  const statistics: UserStatistic = {
+  const statistics: UserStatistic<Id> = {
     osu: {
       standard: createRulesetData(
         results.find(i => i.mode === BanchoPyMode.osuStandard),

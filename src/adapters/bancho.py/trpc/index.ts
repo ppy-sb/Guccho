@@ -1,7 +1,6 @@
 import * as trpc from '@trpc/server'
 import type { inferAsyncReturnType } from '@trpc/server'
 import { type H3Event, parseCookies } from 'h3'
-import { serverRankingSystemConfig } from '../config'
 
 // routers
 import { router as rUser } from './routers/user'
@@ -29,13 +28,6 @@ trpc.router<Context>()
   // public
   .merge('user', rUser)
   .merge('leaderboard', rLeaderboard)
-
-  // TODO
-  .query('ranking-system-config', {
-    resolve () {
-      return serverRankingSystemConfig
-    }
-  })
 
   .query('server-has-owner', {
     resolve () {
