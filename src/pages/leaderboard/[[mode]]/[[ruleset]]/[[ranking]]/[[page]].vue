@@ -82,21 +82,16 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { navigateTo, useAppConfig, useRoute } from '#app'
+import { inferProcedureOutput } from '@trpc/server'
 import { useClient } from '#imports'
 import { EmitType } from '~/components/app/mode-switcher.vue'
 import { AppConfig } from '~/app.config'
 import { Mode, RankingSystem, Ruleset } from '~/types/common'
-export type LeaderboardItemType = {
-  user: {
-    id: unknown;
-    name: string;
-    safeName: string;
-    flag: string;
-    avatarUrl: string;
-    inThisLeaderboard: Record<string, number | bigint>;
-  };
-  rank: bigint;
-}
+
+// TODO: standardize type
+import { type router } from '~/server/trpc/index'
+export type LeaderboardItemType = inferProcedureOutput<typeof router['_def']['queries']['leaderboard']>
+
 const config = useAppConfig() as AppConfig
 
 const route = useRoute()
@@ -126,7 +121,7 @@ const selected = reactive<Required<EmitType['input']>>({
   ruleset,
   rankingSystem
 })
-const table = ref<Array<LeaderboardItemType>>([])
+const table = ref<LeaderboardItemType>([])
 const fetching = ref(false)
 const page = ref(0)
 const perPage = ref(50)
