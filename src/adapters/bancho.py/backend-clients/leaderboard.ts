@@ -7,7 +7,7 @@ import {
   Mode as _Mode,
   Ruleset as _Ruleset,
   RankingSystem as _RankingSystem
-} from '#/bancho.py/config'
+} from '$/bancho.py/config'
 
 const db = new PrismaClient()
 

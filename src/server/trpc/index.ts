@@ -3,5 +3,5 @@
   return Number(this)
 }
 
-export * from '#/bancho.py/trpc'
-export * from '#/bancho.py/config'
+export * from '$/bancho.py/trpc'
+export * from '$/bancho.py/config'

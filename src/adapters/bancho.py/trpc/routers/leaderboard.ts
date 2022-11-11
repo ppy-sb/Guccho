@@ -1,7 +1,7 @@
 import z from 'zod'
 import { createRouter } from '../context'
 import { zodMode, zodRankingSystem, zodRuleset } from './../shapes/index'
-import { getLeaderboard } from '#/bancho.py/backend-clients/leaderboard'
+import { getLeaderboard } from '$/bancho.py/backend-clients/leaderboard'
 import { Range } from '~/types/common'
 export const router = createRouter()
   .query('', {
