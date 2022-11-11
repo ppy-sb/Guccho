@@ -31,7 +31,7 @@ guweb-next has multi-platform support in mind. It's modular but not hot-swapable
 
 ```bash
 # make sure you did run `yarn install`
-yarn prisma generate prisma/bancho.py.prisma
+yarn prisma generate --schema=prisma/bancho.py.prisma
 ```
 
 ## Development Server
