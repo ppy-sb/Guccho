@@ -6,8 +6,17 @@
     }
   },
   "compilerOptions": {
-    "noErrorTruncation": true,
-    "strictNullChecks": true,
+    "esModuleInterop": false,
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "strict": true,
+    "noImplicitAny": true,
+    "noEmit": true,
+    "noUnusedLocals": true,
+    "resolveJsonModule": true,
     "allowJs": true
     // "paths": {
     //   "~/*": ["./src/*"],

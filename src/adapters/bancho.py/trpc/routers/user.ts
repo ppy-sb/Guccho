@@ -2,8 +2,8 @@ import { z } from 'zod'
 import { TRPCError } from '@trpc/server'
 import { createRouter } from '../context'
 import { zodHandle, zodRelationType } from '../shapes'
-import { getBaseUser, getFullUser, prismaClient as db } from '#/bancho.py/backend-clients'
-import { followUserPreferences } from '#/bancho.py/backend-clients/transforms'
+import { getBaseUser, getFullUser, prismaClient as db } from '$/bancho.py/backend-clients'
+import { followUserPreferences } from '$/bancho.py/backend-clients/transforms'
 export const router = createRouter()
   .query('.userpage', {
     input: z.object({

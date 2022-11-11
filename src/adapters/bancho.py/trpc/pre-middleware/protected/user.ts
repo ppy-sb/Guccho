@@ -1,7 +1,7 @@
 import { TRPCError } from '@trpc/server'
 import { createRouterWithSession } from '../session'
 
-import { getBaseUser } from '#/bancho.py/backend-clients/user'
+import { getBaseUser } from '$/bancho.py/backend-clients/user'
 
 export function createProtectedRouter () {
   return createRouterWithSession()
