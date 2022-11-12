@@ -32,21 +32,21 @@
       <template v-if="table.length">
         <div class="relative mx-auto overflow-hidden xl:rounded-lg">
           <fetch-overlay :fetching="fetching" />
-          <div class="px-8 py-4">
+          <div class="px-8 pt-2">
             <div class="relative overflow-x-auto">
-              <table class="table text-sm border-separate whitespace-nowrap">
+              <table class="table table-compact w-full border-separate whitespace-nowrap">
                 <thead class="rounded-lg">
-                  <tr class="text-sm font-light">
+                  <tr>
                     <th>rank</th>
                     <th>flag</th>
                     <th>player</th>
-                    <th class="px-4 text-xs font-semibold text-center">
-                      {{ selected.rankingSystem }}
+                    <th class="px-4 font-semibold text-center">
+                      {{ config.rankingSystem[selected.rankingSystem].name }}
                     </th>
-                    <th class="px-4 text-xs font-medium text-center">
+                    <th class="px-4 font-medium text-center">
                       Accuracy
                     </th>
-                    <th class="px-4 text-xs font-medium text-center">
+                    <th class="px-4 font-medium text-center">
                       Play Count
                     </th>
                   </tr>
@@ -61,6 +61,22 @@
                   />
                 </tbody>
               </table>
+            </div>
+          </div>
+          <div class="flex py-4">
+            <div class="btn-group mx-auto">
+              <button class="btn btn-md btn-active">
+                1
+              </button>
+              <button class="btn btn-md">
+                2
+              </button>
+              <button class="btn btn-md">
+                3
+              </button>
+              <button class="btn btn-md">
+                4
+              </button>
             </div>
           </div>
         </div>
@@ -140,11 +156,11 @@ fetching.value = false
 </script>
 
 <style>
-.table {
+/* .table {
   border-spacing: 0 2px
 }
 
 .table tr {
   border-radius: 22px
-}
+} */
 </style>

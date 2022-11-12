@@ -1,11 +1,11 @@
 <template>
-  <tr class="font-medium bg-wewak-300 dark:bg-wewak-800 rounded-md text-kimberly-900 dark:text-kimberly-100">
-    <td class="px-4 py-3 font-bold">
+  <tr class="font-medium">
+    <th class="px-4 py-3 font-bold">
       <p class="text-kimberly-900 dark:text-kimberly-100">
         #{{ props.place }}
       </p>
-    </td>
-    <td>
+    </th>
+    <th>
       <div class="flex items-center">
         <div class="flex-shrink-0">
           <img
@@ -14,15 +14,15 @@
           >
         </div>
       </div>
-    </td>
-    <td>
+    </th>
+    <th>
       <div class="flex gap-2 items-center ">
         <div class="aspect-square mask mask-squircle flex">
           <img class="m-auto" :src="user.avatarUrl" :alt="user.name" width="30">
         </div>
         {{ user.name }}
       </div>
-    </td>
+    </th>
     <td class="font-bold text-right">
       <template v-if="sort === 'ppv2'">
         {{ addCommas(props.user.inThisLeaderboard.ppv2) }}pp
