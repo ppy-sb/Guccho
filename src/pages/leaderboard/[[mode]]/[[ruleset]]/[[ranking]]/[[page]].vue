@@ -106,7 +106,7 @@ import { Mode, RankingSystem, Ruleset } from '~/types/common'
 
 // TODO: standardize type
 import { type router } from '~/server/trpc/index'
-export type LeaderboardItemType = inferProcedureOutput<typeof router['_def']['queries']['leaderboard']>
+export type LeaderboardItemType = inferProcedureOutput<typeof router['_def']['queries']['leaderboard']>[number]
 
 const config = useAppConfig() as AppConfig
 
