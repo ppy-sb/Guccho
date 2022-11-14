@@ -1,23 +1,14 @@
 <template>
   <div
     class="zoom-modal-container"
-    :class="{
-      init: stat === 0,
-      in: stat === 1,
-      out: stat === 2,
-      l1: l2Status === 0,
-      l2: l2Status === 1,
-      'l2-out': l2Status === 2,
-    }"
+    :data-l1-status="stat"
+    :data-l2-status="l2Status"
   >
     <div
       class="zoom-modal-background"
-      :class="{
-        'z-1000': l2Status === 1
-      }"
     >
       <slot name="modal" v-bind="{ openModal, closeModal }">
-        <div v-if="props.teleportId" :id="props.teleportId" />
+        <div v-if="props.teleportId" :id="props.teleportId.toString()" />
       </slot>
     </div>
 
@@ -27,7 +18,10 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import { ref, inject, provide, onMounted } from 'vue'
+import { Status } from './shared'
+
 const props = defineProps({
   teleportId: {
     type: [String, Number],
@@ -36,26 +30,25 @@ const props = defineProps({
 })
 const content = ref()
 
-const stat = ref(0)
-const l2Status = ref(0)
+const stat = ref<Status>('hidden')
+const l2Status = ref<Status>('hidden')
 
-/* polyfill js until :has got better supports */
-const l2 = (value = false) => {
+const l2 = (value: Status) => {
   l2Status.value = value
 }
 
-const outerL2 = inject('openL2', undefined)
+const outerL2 = inject<typeof l2 | undefined>('openL2', undefined)
 const openModal = () => {
   if (outerL2) {
-    outerL2(1)
+    outerL2('show')
   }
-  stat.value = 1
+  stat.value = 'show'
 }
 const closeModal = () => {
   if (outerL2) {
-    outerL2(2)
+    outerL2('closed')
   }
-  stat.value = 2
+  stat.value = 'closed'
 }
 defineExpose({
   openModal,
@@ -70,16 +63,16 @@ provide('openL2', l2)
 
 // events
 onMounted(() => {
-  content.value.addEventListener('animationend', (e) => {
+  content.value.addEventListener('animationend', (e: AnimationEvent) => {
     if (e.animationName !== 'zoomInContent') {
       return
     }
     if (e.srcElement !== content.value) {
       return
     }
-    stat.value = 0
+    stat.value = 'hidden'
     if (!outerL2) {
-      l2Status.value = 0
+      l2Status.value = 'hidden'
     }
   })
 })
@@ -91,14 +84,13 @@ $content-stage1: blur(1em) opacity(0.5) saturate(0.5);
 $content-stage2: blur(1.3em) opacity(0) saturate(0);
 
 .zoom-modal-container {
-  &.init {
+  &[data-l1-status="hidden"] {
     .zoom-modal {
       filter: opacity(0);
     }
   }
 
   .zoom-modal-background {
-
     position: fixed;
     top: 0;
     left: 0;
@@ -106,9 +98,10 @@ $content-stage2: blur(1.3em) opacity(0) saturate(0);
     right: 0;
     z-index: -50;
   }
+
 }
 
-.in {
+[data-l1-status="show"] {
   z-index: 0;
 
   > .zoom-modal-background {
@@ -116,15 +109,15 @@ $content-stage2: blur(1.3em) opacity(0) saturate(0);
     z-index: 1;
   }
 
-  &.l1 > .content {
+  &[data-l2-status="hidden"] > .content {
     animation: zoomOutContent $duration $animate-function forwards;
   }
 
-  &.l2 > .content {
+  &[data-l2-status="show"] > .content {
     animation: zoomOutContentL2 $duration $animate-function forwards !important;
   }
 
-  &.l2-out > .content {
+  &[data-l2-status="closed"] > .content {
     animation: zoomInContentL2 $duration $animate-function forwards;
   }
 
@@ -133,7 +126,7 @@ $content-stage2: blur(1.3em) opacity(0) saturate(0);
   }
 }
 
-.out {
+[data-l1-status="closed"] {
   .zoom-modal-background {
     z-index: 0;
   }
@@ -188,7 +181,8 @@ $content-stage2: blur(1.3em) opacity(0) saturate(0);
     filter: $content-stage1;
   }
 }
-.z-1000 {
+
+[data-l2-status="show"] > .zoom-modal-background {
   z-index: 1000 !important;
 }
 </style>
