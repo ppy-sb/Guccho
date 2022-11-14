@@ -1,12 +1,6 @@
 <template>
-  <div
-    class="zoom-modal-container"
-    :data-l1-status="stat"
-    :data-l2-status="l2Status"
-  >
-    <div
-      class="zoom-modal-background"
-    >
+  <div class="zoom-modal-container" :data-l1-status="stat" :data-l2-status="l2Status">
+    <div class="zoom-modal-background">
       <slot name="modal" v-bind="{ openModal, closeModal }">
         <div v-if="props.teleportId" :id="props.teleportId.toString()" />
       </slot>
@@ -19,8 +13,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, inject, provide, onMounted } from 'vue'
-import { Status } from './shared'
+import { ref, inject, provide, onMounted, nextTick } from 'vue'
+import type { Status } from './shared'
 
 const props = defineProps({
   teleportId: {
@@ -70,10 +64,12 @@ onMounted(() => {
     if (e.srcElement !== content.value) {
       return
     }
-    stat.value = 'hidden'
-    if (!outerL2) {
-      l2Status.value = 'hidden'
-    }
+    nextTick(() => {
+      if (stat.value !== 'hidden') { stat.value = 'hidden' }
+      if (!outerL2) {
+        if (l2Status.value !== 'hidden') { l2Status.value = 'hidden' }
+      }
+    })
   })
 })
 </script>
@@ -99,51 +95,54 @@ $content-stage2: blur(1.3em) opacity(0) saturate(0);
     z-index: -50;
   }
 
-}
-
-[data-l1-status="show"] {
-  z-index: 0;
-
-  > .zoom-modal-background {
-    // background: rgba(0, 0, 0, .1);
-    z-index: 1;
-  }
-
-  &[data-l2-status="hidden"] > .content {
-    animation: zoomOutContent $duration $animate-function forwards;
-  }
-
-  &[data-l2-status="show"] > .content {
-    animation: zoomOutContentL2 $duration $animate-function forwards !important;
-  }
-
-  &[data-l2-status="closed"] > .content {
-    animation: zoomInContentL2 $duration $animate-function forwards;
-  }
-
-  > .content {
-    z-index: 1;
-  }
-}
-
-[data-l1-status="closed"] {
-  .zoom-modal-background {
+  &[data-l1-status="show"] {
     z-index: 0;
+
+    > .zoom-modal-background {
+      // background: rgba(0, 0, 0, .1);
+      z-index: 1;
+    }
+
+    &[data-l2-status="hidden"] > .content {
+      animation: zoomOutContent $duration $animate-function forwards;
+    }
+
+    &[data-l2-status="show"] > .content {
+      animation: zoomOutContentL2 $duration $animate-function forwards !important;
+    }
+
+    &[data-l2-status="closed"] > .content {
+      animation: zoomInContentL2 $duration $animate-function forwards;
+    }
+
+    > .content {
+      z-index: 1;
+    }
   }
 
-  > .content {
-    animation: zoomInContent $duration $animate-function forwards;
+  &[data-l1-status="closed"] {
+    .zoom-modal-background {
+      z-index: 0;
+    }
+
+    > .content {
+      animation: zoomInContent $duration $animate-function forwards;
+    }
   }
+
 }
 
 @keyframes zoomOutContent {
   0% {
     transform: scale(1);
+    // -webkit-transform: scale(1);
   }
 
   100% {
     transform: scale(0.9);
     filter: $content-stage1;
+    // -webkit-transform: scale(0.9);
+    // -webkit-filter: $content-stage1;
   }
 }
 
@@ -151,10 +150,13 @@ $content-stage2: blur(1.3em) opacity(0) saturate(0);
   0% {
     transform: scale(0.9);
     filter: $content-stage1;
+    // -webkit-transform: scale(0.9);
+    // -webkit-filter: $content-stage1;
   }
 
   100% {
     transform: scale(1);
+    // -webkit-transform: scale(1);
   }
 }
 
@@ -162,11 +164,15 @@ $content-stage2: blur(1.3em) opacity(0) saturate(0);
   0% {
     transform: scale(0.9);
     filter: $content-stage1;
+    // -webkit-transform: scale(0.9);
+    // -webkit-filter: $content-stage1;
   }
 
   100% {
     transform: scale(0.81);
     filter: $content-stage2;
+    // -webkit-transform: scale(0.81);
+    // -webkit-filter: $content-stage2;
   }
 }
 
@@ -174,11 +180,15 @@ $content-stage2: blur(1.3em) opacity(0) saturate(0);
   0% {
     transform: scale(0.81);
     filter: $content-stage2;
+    // -webkit-transform: scale(0.81);
+    // -webkit-filter: $content-stage2;
   }
 
   100% {
     transform: scale(0.9);
     filter: $content-stage1;
+    // -webkit-transform: scale(0.9);
+    // -webkit-filter: $content-stage1;
   }
 }
 

@@ -12,7 +12,7 @@
 
 <script setup lang="ts">
 import { ref, inject } from 'vue'
-import { Status } from './shared'
+import type { Status } from './shared'
 const props = defineProps<{
   initStatus?: Status
 }>()
@@ -57,7 +57,7 @@ defineExpose({
   }
 }
 </style>
-<style lang="scss" scoped>
+<style lang="scss">
 @import './shared.scss';
 
 $in: blur(16px) opacity(0) saturate(0.5);
