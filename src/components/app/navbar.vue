@@ -216,8 +216,8 @@ onUnmounted(() => {
         min-width: 2.5rem;
       }
 
-      &.attach\:text-lg {
-        @apply text-base #{!important};
+      &.attach:text-lg {
+        @apply text-base !important;
       }
     }
   }
@@ -234,7 +234,7 @@ onUnmounted(() => {
 
   .btn {
     @apply transition-all;
-    &.attach\:text-lg {
+    &.attach:text-lg {
       @apply text-lg;
     }
   }
@@ -249,7 +249,7 @@ onUnmounted(() => {
   .avatar {
     & img.avatar-img {
       @apply transition-all;
-      @apply w-7 #{!important};
+      @apply w-7 !important;
     }
   }
 }
@@ -268,7 +268,7 @@ onUnmounted(() => {
     .avatar {
       & img.avatar-img {
         @apply transition-all;
-        @apply w-6 #{!important};
+        @apply w-6 !important;
       }
     }
   }
