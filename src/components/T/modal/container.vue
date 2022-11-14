@@ -58,7 +58,7 @@ defineExpose({
 provide('openModal', openModal)
 provide('closeModal', closeModal)
 provide('stat', stat)
-provide('l2Stat', l2Status)
+// provide('l2Stat', l2Status)
 provide('openL2', l2)
 
 // events
