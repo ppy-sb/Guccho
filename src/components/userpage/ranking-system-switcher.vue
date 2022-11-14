@@ -6,7 +6,7 @@
         Timeline
       </t-tab> -->
 
-      <t-tab v-for="(stats, key) of tabs" :key="`user-tab-${key}`" class="f-tab" :value="key">
+      <t-tab v-for="(_stats, key) of tabs" :key="`user-tab-${key}`" class="f-tab" :value="key">
         {{ rankingSystem[key].name }}
       </t-tab>
 
@@ -20,7 +20,7 @@
             Other Ranks
           </div>
           <ul tabindex="0" class="z-50 p-2 shadow dropdown-content menu bg-base-100 rounded-box rounded-3xl w-52">
-            <li v-for="(stats, key) of dropdown" :key="`user-tab-${key}`">
+            <li v-for="(_stats, key) of dropdown" :key="`user-tab-${key}`">
               <a class="z-50" @click="select(key)">{{ rankingSystem[key].name }}</a>
             </li>
 
