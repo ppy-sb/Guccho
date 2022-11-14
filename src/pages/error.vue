@@ -12,7 +12,7 @@
 import { clearError } from 'nuxt/app'
 
 const props = defineProps<{
-  error: any
+  error: Error
 }>()
 const handleError = () => clearError({ redirect: '/' })
 </script>
