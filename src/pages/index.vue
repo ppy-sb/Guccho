@@ -44,9 +44,10 @@
 
 <script setup lang="ts">
 import { useAppConfig } from '#app'
+import { AppConfig } from '~/app.config'
 import { useSession } from '~/store/session'
 const session = useSession()
-const config = useAppConfig()
+const config = useAppConfig() as AppConfig
 </script>
 
 <style lang="postcss">

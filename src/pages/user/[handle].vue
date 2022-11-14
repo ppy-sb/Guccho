@@ -63,6 +63,7 @@ import { vIntersectionObserver } from '@vueuse/components'
 import { Mode, Ruleset, RankingSystem } from '~/types/common'
 import { definePageMeta, /* useClient, */ useAsyncQuery } from '#imports'
 import { UserModeRulesetStatistics } from '~/types/user'
+import { IdType } from '~~/src/server/trpc'
 
 const route = useRoute()
 // const client = useClient()
@@ -97,22 +98,15 @@ definePageMeta({
 const tab = ref<RankingSystem>('ppv2')
 const selectedMode = ref<Mode>('osu')
 const selectedRuleset = ref<Ruleset>('standard')
-const currentStatistic = computed<UserModeRulesetStatistics>(
+const currentStatistic = computed<UserModeRulesetStatistics<IdType, Mode, Ruleset, RankingSystem>>(
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
+  // @ts-ignore combinations are handled by switcher.
   () => user.value?.statistics[selectedMode.value][selectedRuleset.value]
 )
 
 const currentRankingSystem = computed(
   () => currentStatistic.value?.ranking?.[tab.value]
 )
-
-// const smoothScrollTo = (el: string) => {
-//   const selector = `#${el}`
-//   document.querySelector(selector)?.scrollIntoView({
-//     behavior: 'smooth'
-//   })
-// }
 
 provide('user', user)
 provide('mode', selectedMode)

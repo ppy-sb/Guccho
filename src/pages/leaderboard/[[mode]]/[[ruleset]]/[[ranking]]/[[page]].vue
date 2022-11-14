@@ -98,15 +98,12 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { navigateTo, useAppConfig, useRoute } from '#app'
-import { inferProcedureOutput } from '@trpc/server'
 import { useClient } from '#imports'
 import { EmitType } from '~/components/app/mode-switcher.vue'
 import { AppConfig } from '~/app.config'
-import { Mode, RankingSystem, Ruleset } from '~/types/common'
-
-// TODO: standardize type
-import { type router } from '~/server/trpc/index'
-export type LeaderboardItemType = inferProcedureOutput<typeof router['_def']['queries']['leaderboard']>[number]
+import { Mode, Ruleset } from '~/types/common'
+import { LeaderboardItem } from '~/types/leaderboard'
+import { IdType, RankingSystem as AvailableRankingSystem } from '~/server/trpc'
 
 const config = useAppConfig() as AppConfig
 
@@ -118,7 +115,7 @@ const availableRulesets = Object.keys(config.ruleset)
 const availableRankingSystems = Object.keys(config.rankingSystem)
 const mode = (availableModes.includes(route.params.mode as string) ? route.params.mode : availableModes[0]) as Mode
 const ruleset = (availableRulesets.includes(route.params.ruleset as string) ? route.params.ruleset : availableRulesets[0]) as Ruleset
-const rankingSystem = (availableRankingSystems.includes(route.params.ranking as string) ? route.params.ranking : availableRankingSystems[0]) as RankingSystem
+const rankingSystem = (availableRankingSystems.includes(route.params.ranking as string) ? route.params.ranking : availableRankingSystems[0]) as AvailableRankingSystem
 
 if (!route.params.mode || !route.params.ruleset || !route.params.ranking) {
   // rewrite url to show stat of the page
@@ -137,7 +134,7 @@ const selected = reactive<Required<EmitType['input']>>({
   ruleset,
   rankingSystem
 })
-const table = ref<LeaderboardItemType>([])
+const table = ref<Array<LeaderboardItem<IdType, AvailableRankingSystem>>>([])
 const fetching = ref(false)
 const page = ref(0)
 const perPage = ref(50)

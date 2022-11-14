@@ -46,7 +46,8 @@
 <script lang="ts" setup>
 import { addCommas, getFlagURL, scoreFormat } from '~/common/varkaUtils'
 import { RankingSystem } from '~/types/common'
-import { LeaderboardItemType } from '~/pages/leaderboard/[[mode]]/[[ruleset]]/[[ranking]]/[[page]].vue'
+import { LeaderboardItem } from '~/types/leaderboard'
+import { IdType } from '~/server/trpc'
 
 const option = {
   style: 'percent',
@@ -56,7 +57,7 @@ const option = {
 const formatter = new Intl.NumberFormat(undefined, option)
 
 const props = defineProps<{
-  user: LeaderboardItemType['user'],
+  user: LeaderboardItem<IdType>['user'],
   place: number,
   sort: RankingSystem
 }>()
