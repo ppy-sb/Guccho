@@ -94,16 +94,18 @@
   </div>
 </template>
 
-<script setup>
-const nested1 = ref(undefined)
-const openInner1 = ref(undefined)
-const nested2 = ref(undefined)
-const openInner2 = ref(undefined)
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
 
-const wrapper1 = ref(null)
-const inner1 = ref(null)
-const wrapper2 = ref(null)
-const inner2 = ref(null)
+const nested1 = ref()
+const openInner1 = ref()
+const nested2 = ref()
+const openInner2 = ref()
+
+const wrapper1 = ref()
+const inner1 = ref()
+const wrapper2 = ref()
+const inner2 = ref()
 // const wrapper2 = ref(null)
 // const { openModal } = wrapper.value
 onMounted(() => {

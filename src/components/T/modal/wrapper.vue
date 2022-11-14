@@ -2,14 +2,7 @@
   <div
     ref="wrapper"
     class="zoom-modal-wrapper"
-    :class="{
-      init: stat === 0,
-      in: stat === 1,
-      out: stat === 2,
-      l1: l2Status === 0,
-      l2: l2Status === 1,
-      'l2-out': l2Status === 2
-    }"
+    :data-wrapper-status="stat"
   >
     <div class="zoom-modal">
       <slot v-bind="{openModal, closeModal}" />
@@ -17,27 +10,25 @@
   </div>
 </template>
 
-<script setup>
-const props = defineProps({
-  initStatus: {
-    type: Number,
-    default: 0
-  }
-})
+<script setup lang="ts">
+import { ref, inject } from 'vue'
+import { Status } from './shared'
+const props = defineProps<{
+  initStatus?: Status
+}>()
 const wrapper = ref(null)
 // const status = ref(0)
-const openModalContainer = inject('openModal')
-const closeModalContainer = inject('closeModal')
-const stat = ref(props.initStatus)
-const l2Status = inject('l2Stat')
+const openModalContainer = inject<() => void>('openModal')
+const closeModalContainer = inject<() => void>('closeModal')
+const stat = ref(props.initStatus || 'hidden')
 
 const openModal = () => {
-  stat.value = 1
-  openModalContainer()
+  stat.value = 'show'
+  openModalContainer?.()
 }
 const closeModal = () => {
-  stat.value = 2
-  closeModalContainer()
+  stat.value = 'closed'
+  closeModalContainer?.()
 }
 defineExpose({
   openModal,
@@ -59,7 +50,7 @@ defineExpose({
     pointer-events: none;
   }
 
-  &.in {
+  &[data-wrapper-status="show"] {
     img {
       pointer-events: all;
     }
@@ -72,24 +63,19 @@ defineExpose({
 $in: blur(16px) opacity(0) saturate(0.5);
 $scale: scale(1.2);
 .zoom-modal-wrapper {
-  // position: absolute;
-  // left: 0;
-  // right: 0;
-  // top: 0;
-  // bottom: 0;
   position: fixed;
   left: 0;
   right: 0;
   top: 0;
   bottom: 0;
 
-  &.init {
+  &[data-wrapper-status="hidden"] {
     visibility: hidden;
     z-index: 0;
     pointer-events: none;
 
   }
-  &.in {
+  &[data-wrapper-status="show"] {
     z-index: 50;
 
     >.zoom-modal {
@@ -97,7 +83,7 @@ $scale: scale(1.2);
     }
   }
 
-  &.out {
+  &[data-wrapper-status="closed"]{
     >.zoom-modal {
       animation: zoomOut $duration $animate-function forwards;
     }
