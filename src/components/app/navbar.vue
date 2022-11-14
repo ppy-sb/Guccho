@@ -112,7 +112,6 @@ onUnmounted(() => {
         </v-dropdown>
       </div>
       <div class="navbar-center lg:hidden">
-        <!-- <a class="btn btn-ghost !shadow-none normal-case text-xl">guweb@next</a> -->
         <nuxt-link
           :to="{ name: 'index' }"
           class="btn btn-ghost !shadow-none normal-case text-xl"
@@ -121,10 +120,6 @@ onUnmounted(() => {
         </nuxt-link>
       </div>
       <div class="hidden gap-2 navbar-center lg:flex">
-        <!-- <a class="btn btn-ghost !shadow-none normal-case text-xl">guweb@next</a> -->
-        <!-- <nuxt-link :to="{name: 'index'}" class="btn btn-ghost !shadow-none normal-case text-xl">
-          guweb@next
-        </nuxt-link> -->
         <nuxt-link
           v-for="menuItem in menu"
           :key="`menu-${menuItem.name}`"
@@ -171,20 +166,6 @@ onUnmounted(() => {
             class="btn btn-ghost !shadow-none btn-circle"
           >
             <div class="indicator avatar">
-              <!-- <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="w-5 h-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-              />
-            </svg> -->
               <img
                 :src="session.$state._data?.avatarUrl"
                 class="rounded-full avatar-img ring ring-kimberly-600/70 ring-offset-base-100 ring-offset-2 pointer-events-none"
@@ -242,7 +223,7 @@ onUnmounted(() => {
   }
 }
 </style>
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .navbar-tint {
   @apply bg-kimberly-150/70 dark:bg-kimberly-700/80;
   @apply backdrop-blur-md shadow-xl;
