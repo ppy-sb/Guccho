@@ -61,12 +61,11 @@ import { ref, provide, computed, reactive } from 'vue'
 import { useRoute } from '#app'
 import { vIntersectionObserver } from '@vueuse/components'
 import { Mode, Ruleset, RankingSystem } from '~/types/common'
-import { definePageMeta, /* useClient, */ useAsyncQuery } from '#imports'
+import { definePageMeta, useAsyncQuery } from '#imports'
 import { UserModeRulesetStatistics } from '~/types/user'
 import { IdType } from '~~/src/server/trpc'
 
 const route = useRoute()
-// const client = useClient()
 
 const visible = reactive({
   statistics: false,

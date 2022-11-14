@@ -224,7 +224,7 @@ onUnmounted(() => {
     </div>
   </div>
 </template>
-<style lang="scss">
+<style lang="postcss">
 .detached {
   & .navbar {
     & .btn {
