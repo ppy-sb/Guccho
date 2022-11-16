@@ -44,11 +44,6 @@ const closeModal = () => {
   }
   stat.value = 'closed'
 }
-defineExpose({
-  openModal,
-  closeModal,
-  stat
-})
 provide('openModal', openModal)
 provide('closeModal', closeModal)
 provide('stat', stat)
@@ -72,12 +67,22 @@ onMounted(() => {
     })
   })
 })
+defineExpose({
+  openModal,
+  closeModal,
+  stat
+})
 </script>
 
 <style lang="scss">
 @import './shared.scss';
 $content-stage1: blur(1em) opacity(0.5) saturate(0.5);
 $content-stage2: blur(1.3em) opacity(0) saturate(0);
+
+.content {
+  will-change: transform;
+  will-change: opacity;
+}
 
 .zoom-modal-container {
   &[data-l1-status="hidden"] {
