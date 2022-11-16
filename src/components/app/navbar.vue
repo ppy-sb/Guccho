@@ -2,7 +2,6 @@
 import { onBeforeMount, ref, computed, onUnmounted } from 'vue'
 import { useAppConfig, useCookie } from '#app'
 import { useSession } from '~/store/session'
-import { AppConfig } from '~/app.config'
 
 const sessionId = useCookie('session')
 const session = useSession()
@@ -40,7 +39,7 @@ const menu = computed(() => [
     }
   }
 ])
-const config = useAppConfig() as AppConfig
+const config = useAppConfig()
 const detached = ref(false)
 const root = ref<HTMLElement>()
 const handleScroll = () => {

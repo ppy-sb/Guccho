@@ -76,25 +76,28 @@
 import { faUserGroup, faHeartCrack, faHeart, faEnvelope } from '@fortawesome/free-solid-svg-icons'
 import { inject, ref, Ref } from 'vue'
 import { useElementHover } from '@vueuse/core'
-import { useClient, useFAIconLib } from '#imports'
+import { useNuxtApp } from '#app'
+import { useFAIconLib } from '#imports'
 import { UserFull as User } from '~/types/user'
 import { useSession } from '~/store/session'
 
 import type { IdType } from '~/server/trpc/config'
+const app = useNuxtApp()
+
+const client = app.$client
 
 const changeFriendStateButton = ref(null)
 const session = useSession()
-const client = useClient()
 const { addToLibrary } = useFAIconLib()
 addToLibrary(faUserGroup, faHeartCrack, faHeart, faEnvelope)
 
 const user = inject<Ref<User<IdType>>>('user')
-const userFriendCount = await client.query('user.count-relations', {
+const userFriendCount = await client.user.countRelations.query({
   handle: user?.value.id as IdType,
   type: 'friend'
 })
 const relationWithSessionUser = session.$state.loggedIn
-  ? await client.query('me.relation', {
+  ? await client.me.relation.query({
     target: session.$state.userId as IdType
   })
   : undefined

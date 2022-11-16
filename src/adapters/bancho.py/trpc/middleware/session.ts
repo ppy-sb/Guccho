@@ -1,11 +1,11 @@
 import { TRPCError } from '@trpc/server'
 import { setCookie } from 'h3'
+import { publicProcedure } from '../trpc'
 
 import { getSession, refresh, createSession } from '../../session'
-import { createRouter } from '../context'
 
-export const createRouterWithSession = () => createRouter()
-  .middleware(async ({ ctx, next }) => {
+export const procedureWithSession = publicProcedure
+  .use(async ({ ctx, next }) => {
     if (!ctx.session.id) {
       const sessionId = await createSession()
       setCookie(ctx.h3Event, 'session', sessionId)
@@ -51,7 +51,7 @@ export const createRouterWithSession = () => createRouter()
       })
     }
   })
-  .middleware(({ ctx, next }) => {
+  .use(({ ctx, next }) => {
     return next({
       ctx: {
         ...ctx,

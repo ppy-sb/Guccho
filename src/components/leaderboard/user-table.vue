@@ -47,7 +47,7 @@
 import { addCommas, getFlagURL, scoreFormat } from '~/common/varkaUtils'
 import { RankingSystem } from '~/types/common'
 import { LeaderboardItem } from '~/types/leaderboard'
-import { IdType } from '~/server/trpc'
+import { IdType } from '~/server/trpc/trpc'
 
 const option = {
   style: 'percent',
