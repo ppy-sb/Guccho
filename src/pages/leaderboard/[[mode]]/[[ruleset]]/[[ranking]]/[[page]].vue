@@ -98,17 +98,16 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { navigateTo, useAppConfig, useRoute } from '#app'
-import { useClient } from '#imports'
 import { EmitType } from '~/components/app/mode-switcher.vue'
-import { AppConfig } from '~/app.config'
+
 import { Mode, Ruleset } from '~/types/common'
 import { LeaderboardItem } from '~/types/leaderboard'
-import { IdType, RankingSystem as AvailableRankingSystem } from '~/server/trpc'
+import { IdType, RankingSystem as AvailableRankingSystem } from '~/server/trpc/trpc'
 
-const config = useAppConfig() as AppConfig
+const config = useAppConfig()
 
 const route = useRoute()
-const client = useClient()
+const { $client: client } = useNuxtApp()
 
 const availableModes = Object.keys(config.mode)
 const availableRulesets = Object.keys(config.ruleset)
@@ -140,7 +139,7 @@ const page = ref(0)
 const perPage = ref(50)
 
 fetching.value = true
-const result = await client.query('leaderboard', {
+const result = await client.leaderboard.fetch.query({
   mode: selected.mode,
   ruleset: selected.ruleset,
   rankingSystem: selected.rankingSystem,

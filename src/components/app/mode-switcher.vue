@@ -51,7 +51,6 @@
 import { useAppConfig } from '#app'
 import { reactive, watch, toRaw } from 'vue'
 import { forbiddenMode, forbiddenMods } from '~/common/varkaUtils'
-import type { AppConfig } from '~/app.config'
 import { RankingSystem, Mode, Ruleset } from '~/types/common'
 import { useBackendConfig } from '#imports'
 
@@ -62,7 +61,7 @@ export interface EmitType {
     rankingSystem?:RankingSystem
   }
 }
-const config = useAppConfig() as AppConfig
+const config = useAppConfig()
 const { rankingSystem: serverRankingSystem } = await useBackendConfig()
 
 // eslint-disable-next-line func-call-spacing

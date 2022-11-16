@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, UnwrapRef } from 'vue'
 import { navigateTo } from '#app'
-import { useClient } from '#imports'
 import { useSession } from '~/store/session'
 
 const changeAvatar = ref<{
@@ -11,12 +10,12 @@ const changePassword = ref<{
   openModal:() => void
 }>()
 
-const client = useClient()
+const { $client: client } = useNuxtApp()
 const session = useSession()
 if (!session.$state.loggedIn) {
   await navigateTo({ name: 'auth-login', query: { back: '1' } })
 }
-const _user = await client.query('me.full-secret')
+const _user = await client.me.fullSecret.query()
 if (!_user) {
   await navigateTo({ name: 'auth-login', query: { back: '1' } })
 }

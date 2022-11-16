@@ -1,45 +1,62 @@
 import { TRPCError } from '@trpc/server'
 import z from 'zod'
-import { createProtectedRouter } from '../pre-middleware/protected/user'
+import { router as _router } from '../trpc'
 import { zodHandle, zodRelationType } from '../shapes'
-import { getFullUser, prismaClient as db, getBaseUser, getOneRelationShip, getRelationships } from '$/bancho.py/backend-clients'
+import { procedureWithUserLoggedIn as pUser } from './../middleware/user'
+import {
+  getFullUser,
+  prismaClient as db,
+  getBaseUser,
+  getOneRelationShip,
+  getRelationships
+} from '$/bancho.py/backend-clients'
 import { calculateMutualRelationships } from '$/bancho.py/backend-clients/transforms'
 
-export const router = createProtectedRouter()
-  .query('.full-secret', {
-    async resolve ({ ctx }) {
-      return await getFullUser(ctx.user.id, { email: true, secrets: true })
-    }
-  })
-
-  .query('.relation', {
-    input: z.object({
-      target: zodHandle
-    }),
-    async resolve ({ input: { target }, ctx }) {
-      const [fromUser, targetUser] = await Promise.all([ctx.user, getBaseUser(target)])
-      if (!fromUser || !targetUser) { return }
-      const [fromRelationship, targetRelationship] = await Promise.all([getOneRelationShip(fromUser, targetUser), getOneRelationShip(targetUser, fromUser)])
+export const router = _router({
+  fullSecret: pUser.query(async ({ ctx }) => {
+    return await getFullUser(ctx.user.id, { email: true, secrets: true })
+  }),
+  relation: pUser
+    .input(
+      z.object({
+        target: zodHandle
+      })
+    )
+    .query(async ({ input: { target }, ctx }) => {
+      const [fromUser, targetUser] = await Promise.all([
+        ctx.user,
+        getBaseUser(target)
+      ])
+      if (!fromUser || !targetUser) {
+        return
+      }
+      const [fromRelationship, targetRelationship] = await Promise.all([
+        getOneRelationShip(fromUser, targetUser),
+        getOneRelationShip(targetUser, fromUser)
+      ])
       return {
         from: [fromRelationship],
         target: [targetRelationship],
-        mutual: (fromRelationship && targetRelationship) && calculateMutualRelationships([fromRelationship], [targetRelationship])
+        mutual:
+          fromRelationship &&
+          targetRelationship &&
+          calculateMutualRelationships(
+            [fromRelationship],
+            [targetRelationship]
+          )
       }
-    }
-  })
-
-  .query('.relations', {
-    async resolve ({ ctx }) {
-      return await getRelationships(ctx.user)
-    }
-  })
-
-  .mutation('remove-one-relation', {
-    input: z.object({
-      target: zodHandle,
-      type: zodRelationType
     }),
-    async resolve ({ input, ctx }) {
+  relations: pUser.query(async ({ ctx }) => {
+    return await getRelationships(ctx.user)
+  }),
+  removeOneRelation: pUser
+    .input(
+      z.object({
+        target: zodHandle,
+        type: zodRelationType
+      })
+    )
+    .query(async ({ input, ctx }) => {
       const [fromUser, targetUser] = await Promise.all([
         ctx.user,
         getBaseUser(input.target)
@@ -70,5 +87,5 @@ export const router = createProtectedRouter()
           }
         }
       })
-    }
-  })
+    })
+})
