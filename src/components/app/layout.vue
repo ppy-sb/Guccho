@@ -26,7 +26,6 @@
 import { ref, onMounted } from 'vue'
 import { useAppConfig } from '#app'
 import { useSafariDetector } from '#imports'
-import { AppConfig } from '~/app.config'
 const safari = ref(true)
 const modalContainer = ref()
 
@@ -36,7 +35,7 @@ const props = withDefaults(defineProps<{
   hasBg: true
 })
 
-const config = useAppConfig() as AppConfig
+const config = useAppConfig()
 onMounted(() => {
   safari.value = useSafariDetector()
 })

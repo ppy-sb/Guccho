@@ -21,11 +21,11 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useAppConfig } from '#app'
-import { AppConfig } from '~/app.config'
+
 import { useSafariDetector } from '#imports'
 const safari = ref(true)
 
-const config = useAppConfig() as AppConfig
+const config = useAppConfig()
 onMounted(() => {
   safari.value = useSafariDetector()
 })

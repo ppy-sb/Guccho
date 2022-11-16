@@ -36,9 +36,9 @@ import { RouterLinkProps } from 'vue-router'
 import { BaseUser } from '~/types/user'
 import { IdType } from '~/server/trpc/config'
 import { getFlagURL } from '~/common/varkaUtils'
-import { AppConfig } from '~/app.config'
+
 // const runtimeConfig = useAppConfig()
-const config = useAppConfig() as AppConfig
+const config = useAppConfig()
 const props = defineProps<{
   user: BaseUser<IdType>,
   to: RouterLinkProps['to']
