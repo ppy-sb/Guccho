@@ -3,7 +3,6 @@ import { defineStore } from 'pinia'
 import md5 from 'md5'
 import { IdType } from '$/bancho.py/config'
 import type { UserFull } from '~/types/user'
-import { useClient } from '#imports'
 
 /** counterストア */
 export const useSession = defineStore('session', {
@@ -21,7 +20,8 @@ export const useSession = defineStore('session', {
       return await this.loginHashed(handle, md5HashedPassword)
     },
     async loginHashed (handle: string, md5HashedPassword: string) {
-      const result = await useClient().query('session.login', { handle, md5HashedPassword })
+      const { $client: client } = useNuxtApp()
+      const result = await client.session.login.query({ handle, md5HashedPassword })
       if (!result) { return false }
 
       this.$patch({
@@ -33,7 +33,8 @@ export const useSession = defineStore('session', {
     },
     async retrieve () {
       try {
-        const result = await useClient().query('session.retrieve')
+        const { $client: client } = useNuxtApp()
+        const result = await client.session.retrieve.query()
         if (!result) { return }
         if (!result.user) { return }
         this.$patch({

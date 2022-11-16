@@ -1,10 +1,10 @@
 import { TRPCError } from '@trpc/server'
-import { createRouterWithSession } from '../session'
+import { procedureWithSession } from './session'
 
 import { getBaseUser } from '$/bancho.py/backend-clients/user'
 
-export const createProtectedRouter = () => createRouterWithSession()
-  .middleware(async ({ ctx, next }) => {
+export const procedureWithUserLoggedIn = procedureWithSession
+  .use(async ({ ctx, next }) => {
     const session = await ctx.session.getBinding()
     if (!session) {
       throw new TRPCError({

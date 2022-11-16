@@ -1,3 +1,12 @@
-import * as trpc from '@trpc/server'
-import { type Context as _Context } from './'
-export const createRouter = <Context = _Context>() => trpc.router<Context>()
+import { type H3Event, parseCookies } from 'h3'
+import { inferAsyncReturnType } from '@trpc/server'
+export function createContext (e: H3Event) {
+  const cookies = parseCookies(e)
+  return {
+    session: {
+      id: cookies.session as string | undefined
+    },
+    h3Event: e
+  }
+}
+export type Context = inferAsyncReturnType<typeof createContext>

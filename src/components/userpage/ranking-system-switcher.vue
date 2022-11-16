@@ -36,12 +36,12 @@
 <script setup lang="ts">
 import { useAppConfig } from 'nuxt/app'
 import { inject, Ref, computed } from 'vue'
-import { AppConfig } from '~/app.config'
+
 import { useBackendConfig } from '#imports'
 
 const { rankingSystem: serverRankingSystem } = await useBackendConfig()
 
-const config = useAppConfig() as AppConfig
+const config = useAppConfig()
 const rankingSystem = config.rankingSystem
 
 const tab = inject<Ref<keyof typeof rankingSystem>>('rankingSystem')

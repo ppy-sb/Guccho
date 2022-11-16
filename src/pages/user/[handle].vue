@@ -61,11 +61,20 @@ import { ref, provide, computed, reactive } from 'vue'
 import { useRoute } from '#app'
 import { vIntersectionObserver } from '@vueuse/components'
 import { Mode, Ruleset, RankingSystem } from '~/types/common'
-import { definePageMeta, useAsyncQuery } from '#imports'
+import { definePageMeta } from '#imports'
 import { UserModeRulesetStatistics } from '~/types/user'
-import { IdType } from '~~/src/server/trpc'
+import { IdType } from '~/server/trpc/trpc'
 
 const route = useRoute()
+
+const { $client } = useNuxtApp()
+const {
+  data: user,
+  error,
+  refresh
+} = useAsyncData(() => $client.user.userpage.query({
+  handle: `${route.params.handle}`
+}))
 
 const visible = reactive({
   statistics: false,
@@ -76,19 +85,6 @@ const visible = reactive({
 const updateIntersectingStatus = (key:keyof typeof visible) => ([{ isIntersecting }]: [{isIntersecting: boolean}]) => {
   visible[key] = isIntersecting
 }
-
-// const _user = await client.query('user.userpage', {
-//   handle: `${route.params.handle}`
-// })
-// const user = ref(_user)
-const {
-  data: user,
-  error,
-  refresh
-} = await useAsyncQuery(['user.userpage', { handle: `${route.params.handle}` }], {
-  // pass useAsyncData options here
-  lazy: false
-})
 
 definePageMeta({
   layout: 'default'
