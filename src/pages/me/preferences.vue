@@ -25,7 +25,7 @@ const user = ref(_user as Exclude<typeof _user, false | null>)
 const unchanged = ref(_user as Exclude<typeof _user, false | null>)
 const anythingChanged = computed(() => {
   // TODO: fix compare profile
-  const col = (['name', 'email']as Array<keyof UnwrapRef<typeof unchanged>>).some((item) => {
+  const col = (['name', 'email'] as Array<keyof UnwrapRef<typeof unchanged>>).some((item) => {
     if (!user.value || !unchanged.value) { return false }
     return unchanged.value[item] !== user.value[item]
   })
@@ -77,8 +77,13 @@ const updateUser = () => {
               </label>
             </div>
             <!-- <div im-just-a-spacer /> -->
-            <t-button class="grow" :loading="uploading === 1" :variant="uploading === 2 ? 'success' : 'neutral'" @click="saveAvatar">
-              {{ uploading === 0 ? 'Save' :uploading === 1 ? 'Uploading' :uploading === 2 ? 'done' :'' }}
+            <t-button
+              class="grow"
+              :loading="uploading === 1"
+              :variant="uploading === 2 ? 'success' : 'neutral'"
+              @click="saveAvatar"
+            >
+              {{ uploading === 0 ? 'Save' : uploading === 1 ? 'Uploading' : uploading === 2 ? 'done' : '' }}
             </t-button>
             <t-button
               class="grow"
@@ -122,16 +127,8 @@ const updateUser = () => {
       </t-modal-wrapper>
     </t-modal-page>
     <header-default class="!pb-2 !pt-4">
-      <header-simple-title-with-sub
-        title="preferences"
-        class="text-left"
-      />
-      <button
-        v-if="anythingChanged"
-        class="self-end btn btn-sm btn-warning"
-        type="button"
-        @click="updateUser"
-      >
+      <header-simple-title-with-sub title="preferences" class="text-left" />
+      <button v-if="anythingChanged" class="self-end btn btn-sm btn-warning" type="button" @click="updateUser">
         update
       </button>
     </header-default>
@@ -174,8 +171,8 @@ const updateUser = () => {
               placeholder="Username"
               class="w-full input input-sm"
               :class="{
-                'input input-bordered input input-primary':unchanged.name !== user.name,
-                'input input-ghost':unchanged.name === user.name
+                'input-bordered input-primary': unchanged.name !== user.name,
+                'input-ghost': unchanged.name === user.name
               }"
             >
             <button
@@ -203,8 +200,8 @@ const updateUser = () => {
               class="input input-sm grow"
               disabled
               :class="{
-                'input-bordered input-primary':unchanged.safeName !== user.safeName,
-                '!input-ghost border-none':unchanged.safeName === user.safeName
+                'input-bordered input-primary': unchanged.safeName !== user.safeName,
+                '!input-ghost border-none': unchanged.safeName === user.safeName
               }"
             >
             <button class="btn btn-sm btn-warning" type="button">
@@ -223,8 +220,8 @@ const updateUser = () => {
               placeholder="abc@123.com"
               class="w-full input input-sm"
               :class="{
-                'input-bordered input-primary':unchanged.email !== user.email,
-                'input-ghost':unchanged.email === user.email
+                'input-bordered input-primary': unchanged.email !== user.email,
+                'input-ghost': unchanged.email === user.email
               }"
             >
             <button
@@ -253,8 +250,8 @@ const updateUser = () => {
               class="input input-sm grow"
               disabled
               :class="{
-                'input-bordered input-primary':unchanged.secrets.apiKey !== user.secrets.apiKey,
-                '!input-ghost border-none':unchanged.secrets.apiKey === user.secrets.apiKey
+                'input-bordered input-primary': unchanged.secrets.apiKey !== user.secrets.apiKey,
+                '!input-ghost border-none': unchanged.secrets.apiKey === user.secrets.apiKey
               }"
             >
             <button class="btn btn-sm btn-primary" type="button" @click="changePassword?.openModal">
@@ -274,8 +271,8 @@ const updateUser = () => {
               class="input input-sm grow"
               disabled
               :class="{
-                'input-bordered input-primary':unchanged.secrets.apiKey !== user.secrets.apiKey,
-                '!input-ghost border-none':unchanged.secrets.apiKey === user.secrets.apiKey
+                'input-bordered input-primary': unchanged.secrets.apiKey !== user.secrets.apiKey,
+                '!input-ghost border-none': unchanged.secrets.apiKey === user.secrets.apiKey
               }"
             >
             <button v-if="!user.secrets.apiKey" class="btn btn-sm btn-primary" type="button">
@@ -301,17 +298,17 @@ const updateUser = () => {
 
   img,
   .btn {
-    transition:opacity 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
-    overflow:hidden;
+    transition: opacity 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    overflow: hidden;
   }
 
   .btn {
-    opacity:0;
+    opacity: 0;
   }
 
   &:hover {
     .btn {
-      opacity:1;
+      opacity: 1;
     }
   }
 }
@@ -330,6 +327,7 @@ const updateUser = () => {
 <style lang="scss">
 .safari .safari-performance-boost {
   @apply max-h-80;
+
   .editor__content {
     @apply overflow-y-auto
   }
