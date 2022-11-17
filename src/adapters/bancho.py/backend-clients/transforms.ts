@@ -17,22 +17,22 @@ import type {
   UserSecrets
 } from '~/types/user'
 
-export const createRulesetData = (
+export const createRulesetData = <Id, _Mode extends Mode, _Ruleset extends Ruleset, _RankingSystem extends RankingSystem>(
   databaseResult: Stat | undefined,
   ranks:
     | {
-        ppv2Rank: number | bigint
-        totalScoreRank: number | bigint
-        rankedScoreRank: number | bigint
-      }
+      ppv2Rank: number | bigint
+      totalScoreRank: number | bigint
+      rankedScoreRank: number | bigint
+    }
     | undefined,
   livePPRank:
     | {
-        rank: number | null
-        countryRank: number | null
-      }
+      rank: number | null
+      countryRank: number | null
+    }
     | false
-): UserModeRulesetStatistics<Id, Mode, Ruleset, RankingSystem> => {
+): UserModeRulesetStatistics<Id, _Mode, _Ruleset, _RankingSystem> => {
   if (!databaseResult) {
     return {
       ranking: {
@@ -126,9 +126,9 @@ export const toBaseUser = <
     never
   >
 >(
-    user: DatabaseUser,
-    includes?: Includes
-  ) => {
+  user: DatabaseUser,
+  includes?: Includes
+) => {
   const returnValue: BaseUser<Id> & Partial<UserOptional<Id>> = {
     id: user.id,
     ingameId: user.id,
@@ -211,41 +211,41 @@ export const calculateMutualRelationships = (
 export const toFullUser = <
   Extend extends Partial<UserOptional<Id>> & Partial<UserExtra<Id>>
 >(
-    user: DatabaseUser,
-    extraFields: Extend
-  ) => {
+  user: DatabaseUser,
+  extraFields: Extend
+) => {
   const returnValue =
-    {
-      id: user.id,
-      ingameId: user.id,
-      name: user.name,
-      safeName: user.safeName,
-      email: extraFields.email,
-      flag: user.country,
-      avatarUrl: `https://a.ppy.sb/${user.id}`,
-      roles: toRoles(user.priv),
-      statistics: extraFields.statistics,
-      preferences: {
-        scope: {
-          reachable: 'public',
-          status: 'public',
-          privateMessage: 'public',
-          email: 'self',
-          oldNames: 'public'
-        }
-      },
-      // TODO: get user reachable status
-      reachable: extraFields.reachable,
-      // TODO: get user status
-      status: extraFields.status,
-      oldNames: extraFields.oldNames || [],
-      profile: (user.userpageContent && JSON.parse(user.userpageContent)) || {
-        type: 'doc',
-        content: []
-      },
-      relationships: extraFields.relationships,
-      secrets: extraFields.secrets
-    }
+  {
+    id: user.id,
+    ingameId: user.id,
+    name: user.name,
+    safeName: user.safeName,
+    email: extraFields.email,
+    flag: user.country,
+    avatarUrl: `https://a.ppy.sb/${user.id}`,
+    roles: toRoles(user.priv),
+    statistics: extraFields.statistics,
+    preferences: {
+      scope: {
+        reachable: 'public',
+        status: 'public',
+        privateMessage: 'public',
+        email: 'self',
+        oldNames: 'public'
+      }
+    },
+    // TODO: get user reachable status
+    reachable: extraFields.reachable,
+    // TODO: get user status
+    status: extraFields.status,
+    oldNames: extraFields.oldNames || [],
+    profile: (user.userpageContent && JSON.parse(user.userpageContent)) || {
+      type: 'doc',
+      content: []
+    },
+    relationships: extraFields.relationships,
+    secrets: extraFields.secrets
+  }
   return returnValue as BaseUser<Id> & UserExtra<Id> & {
     statistics: Extend['statistics'],
     status: Extend['status']

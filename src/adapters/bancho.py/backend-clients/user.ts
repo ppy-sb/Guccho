@@ -3,7 +3,7 @@ import {
 } from '@prisma/client'
 import { createClient } from 'redis'
 
-import type { IdType as Id } from '../config'
+import type { IdType as Id, Mode, RankingSystem, Ruleset } from '../config'
 import { BanchoPyMode } from './enums'
 import { createUserQuery } from './queries'
 import { createRulesetData, toBaseUser, toFullUser } from './transforms'
@@ -100,7 +100,7 @@ export const getStatisticsOfUser = async ({ id, country }: { id: Id, country: st
     }
   ])
 
-  const statistics: UserStatistic<Id> = {
+  const statistics: UserStatistic<Id, Mode, Ruleset, RankingSystem> = {
     osu: {
       standard: createRulesetData(
         results.find(i => i.mode === BanchoPyMode.osuStandard),
@@ -160,8 +160,8 @@ export const getFullUser = async <Includes extends Partial<Record<keyof UserOpti
 ): Promise<(BaseUser<Id> & {
   [KExtra in keyof UserExtra<Id> as Includes[KExtra] extends false ? never : KExtra]: UserExtra<Id>[KExtra]
 } & {
-  [KOptional in keyof UserOptional<Id> as Includes[KOptional] extends true ? KOptional : never]: UserOptional<Id>[KOptional]
-}) | null> => {
+    [KOptional in keyof UserOptional<Id> as Includes[KOptional] extends true ? KOptional : never]: UserOptional<Id>[KOptional]
+  }) | null> => {
   const user = await prismaClient.user.findFirst(createUserQuery(handle))
 
   if (!user) {
@@ -175,9 +175,9 @@ export const getFullUser = async <Includes extends Partial<Record<keyof UserOpti
       relationships: includes.relationships === false ? undefined : await getRelationships(user),
       secrets: includes.secrets
         ? {
-            password: user.pwBcrypt,
-            apiKey: user.apiKey ?? undefined
-          }
+          password: user.pwBcrypt,
+          apiKey: user.apiKey ?? undefined
+        }
         : undefined
     })
   } catch (err) {

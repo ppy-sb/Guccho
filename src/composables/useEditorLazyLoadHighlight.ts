@@ -1,10 +1,10 @@
 import { JSONContent } from '@tiptap/core'
 import { lowlight } from 'lowlight/lib/core'
-import { useRuntimeConfig } from 'nuxt/app'
+import { useRuntimeConfig } from '#app'
 export default () => (json: JSONContent) => json.content?.map(async (node) => {
   const { hljs } = useRuntimeConfig()
   if (node.type !== 'codeBlock') { return }
-  const language = node.attrs?.language
+  const language = `#${node.attrs?.language}`
   if (!language) { return }
   if (lowlight.registered(language)) { return }
   if (!hljs[language]) { return }
