@@ -9,11 +9,11 @@ const files = readdirSync('./node_modules/highlight.js/es/languages').filter(fil
 files.forEach((file) => {
   const module = require(`../node_modules/highlight.js/es/languages/${file}`)
   const { aliases } = module(highlight)
-  const language = file.slice(0, -3)
+  const language = `#${file.slice(0, -3)}`
   hljs[language] = language
   if (!aliases) { return }
   aliases.forEach((alias: string) => {
-    hljs[alias] = language
+    hljs[`#${alias}`] = language
   })
 })
 
