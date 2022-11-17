@@ -8,15 +8,12 @@
     <th>
       <div class="flex items-center">
         <div class="flex-shrink-0">
-          <img
-            class="w-auto h-6"
-            :src="getFlagURL(props.user.flag)"
-          >
+          <img class="w-auto h-6" :src="getFlagURL(props.user.flag)">
         </div>
       </div>
     </th>
     <th>
-      <div class="flex gap-2 items-center ">
+      <div class="flex gap-2 items-center">
         <div class="aspect-square mask mask-squircle flex">
           <img class="m-auto" :src="user.avatarUrl" :alt="user.name" width="30">
         </div>
@@ -25,20 +22,20 @@
     </th>
     <td class="font-bold text-right">
       <template v-if="sort === 'ppv2'">
-        {{ addCommas(props.user.inThisLeaderboard.ppv2) }}pp
+        {{ addCommas(props.user.inThisLeaderboard.ppv2 || 0) }}pp
       </template>
       <template v-else-if="sort === 'ppv1'">
-        {{ addCommas(props.user.inThisLeaderboard.ppv1) }}pp
+        {{ addCommas(props.user.inThisLeaderboard.ppv1 || 0) }}pp
       </template>
       <template v-else-if="sort in props.user.inThisLeaderboard">
-        {{ scoreFormat(props.user.inThisLeaderboard[sort]) }}
+        {{ scoreFormat(props.user.inThisLeaderboard[sort] || 0) }}
       </template>
     </td>
     <td class="text-right opacity-80">
-      {{ formatter.format((props.user.inThisLeaderboard.accuracy as number) / 100) }}
+      {{ formatter.format((props.user.inThisLeaderboard.accuracy || 0) / 100) }}
     </td>
     <td class="text-right opacity-80">
-      {{ addCommas(props.user.inThisLeaderboard.playCount) }}
+      {{ addCommas(props.user.inThisLeaderboard.playCount || 0) }}
     </td>
   </tr>
 </template>
@@ -46,8 +43,8 @@
 <script lang="ts" setup>
 import { addCommas, getFlagURL, scoreFormat } from '~/common/varkaUtils'
 import { RankingSystem } from '~/types/common'
+import { IdType } from '~/server/trpc/config'
 import { LeaderboardItem } from '~/types/leaderboard'
-import { IdType } from '~/server/trpc/trpc'
 
 const option = {
   style: 'percent',
@@ -56,9 +53,15 @@ const option = {
 }
 const formatter = new Intl.NumberFormat(undefined, option)
 
+type IUser = LeaderboardItem<IdType>['user']
+
+type OptionalLeaderboardItem = Omit<IUser, 'inThisLeaderboard'> & {
+  inThisLeaderboard: Partial<IUser['inThisLeaderboard']>
+}
+
 const props = defineProps<{
-  user: LeaderboardItem<IdType>['user'],
-  place: number,
+  user: OptionalLeaderboardItem,
+  place: number | bigint,
   sort: RankingSystem
 }>()
 </script>

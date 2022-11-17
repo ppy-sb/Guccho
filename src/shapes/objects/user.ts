@@ -2,8 +2,6 @@ import { Mode, Ruleset, RankingSystem } from '~/types/common'
 import type { UserFull } from '~/types/user'
 import { ScoreRank, PPRank, UserModeRulesetStatistics } from '~/types/user'
 
-// BigInt need this to work with trpc
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 (BigInt.prototype as any).toJSON = function () {
   return Number(this)
 }
@@ -59,7 +57,6 @@ export const sampleUserWithSecrets: Required<UserFull<string>> = {
   ingameId: 9999,
   name: 'ppy.sb',
   safeName: 'demo-user',
-  // avatarUrl: '',
   avatarUrl: '/images/1.png',
   oldNames: [],
   flag: 'us',
