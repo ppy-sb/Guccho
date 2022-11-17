@@ -101,7 +101,7 @@ import { navigateTo, useAppConfig, useRoute } from '#app'
 import { EmitType } from '~/components/app/mode-switcher.vue'
 
 import { Mode, Ruleset } from '~/types/common'
-import { LeaderboardItem } from '~/types/leaderboard'
+import { FrontendLeaderboardItem } from '~/types/leaderboard'
 import { IdType, RankingSystem as AvailableRankingSystem } from '~/server/trpc/trpc'
 
 const config = useAppConfig()
@@ -133,7 +133,7 @@ const selected = reactive<Required<EmitType['input']>>({
   ruleset,
   rankingSystem
 })
-const table = ref<Array<LeaderboardItem<IdType, AvailableRankingSystem>>>([])
+const table = ref<Array<FrontendLeaderboardItem<IdType, AvailableRankingSystem>>>([])
 const fetching = ref(false)
 const page = ref(0)
 const perPage = ref(50)
