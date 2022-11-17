@@ -41,7 +41,12 @@ const menu = computed(() => [
 ])
 const config = useAppConfig()
 const detached = ref(false)
+
 const root = ref<HTMLElement>()
+const shownMenu = reactive({
+  left: false,
+  right: false
+})
 const handleScroll = () => {
   if (!root.value) {
     return
@@ -63,17 +68,22 @@ onUnmounted(() => {
 })
 </script>
 <template>
-  <div
-    ref="root"
-    class="w-full z-50 transition-[padding] fixed navbar-container"
-    :class="[detached && 'detached']"
-  >
+  <div ref="root" class="w-full z-50 transition-[padding] fixed navbar-container" :class="[detached && 'detached']">
     <div
       class="navbar navbar-tint transition-[border-radius]"
-      :class="[props.disabled && 'disabled']"
+      :class="[
+        props.disabled && 'disabled',
+        shownMenu.left && '!rounded-bl-none'
+      ]"
     >
       <div class="navbar-start">
-        <v-dropdown theme="guweb-dropdown" placement="bottom" :distance="8">
+        <v-dropdown
+          v-model:shown="shownMenu.left"
+          theme="guweb-dropdown"
+          placement="bottom"
+          :distance="8"
+          strategy="fixed"
+        >
           <label tabindex="0" class="btn btn-ghost btn-circle !shadow-none">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -82,25 +92,16 @@ onUnmounted(() => {
               viewBox="0 0 24 24"
               stroke="currentColor"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M4 6h16M4 12h16M4 18h7"
-              />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
             </svg>
           </label>
           <template #popper>
             <div class="menu bg-kimberly-150/70 dark:bg-kimberly-700/80">
-              <li
-                v-for="menuItem in menu"
-                :key="`menu-${menuItem.name}`"
-                class="hover-bordered"
-              >
+              <li v-for="menuItem in menu" :key="`menu-${menuItem.name}`" class="hover-bordered">
                 <nuxt-link
                   :to="menuItem.route"
                   :class="{
-                    '!border-primary' : menuItem.route.name === $route.name
+                    '!border-primary': menuItem.route.name === $route.name
                   }"
                 >
                   {{ menuItem.name }}
@@ -111,10 +112,7 @@ onUnmounted(() => {
         </v-dropdown>
       </div>
       <div class="navbar-center lg:hidden">
-        <nuxt-link
-          :to="{ name: 'index' }"
-          class="btn btn-ghost !shadow-none normal-case text-xl"
-        >
+        <nuxt-link :to="{ name: 'index' }" class="btn btn-ghost !shadow-none normal-case text-xl">
           {{ config.title }}
         </nuxt-link>
       </div>
@@ -129,7 +127,7 @@ onUnmounted(() => {
         </nuxt-link>
       </div>
       <div class="navbar-end">
-        <v-dropdown theme="guweb-dropdown" placement="left" :distance="8">
+        <v-dropdown theme="guweb-dropdown" placement="left" :distance="8" strategy="fixed">
           <button class="btn btn-ghost !shadow-none btn-circle">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -152,7 +150,20 @@ onUnmounted(() => {
                 <div class="input-group">
                   <input type="text" placeholder="Search…" class="input input-bordered input-sm shadow-md">
                   <button class="btn btn-sm btn-primary">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-4 w-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                      />
+                    </svg>
                   </button>
                 </div>
               </div>
@@ -160,10 +171,7 @@ onUnmounted(() => {
           </template>
         </v-dropdown>
         <div class="dropdown dropdown-bottom">
-          <button
-            v-if="session.$state.loggedIn"
-            class="btn btn-ghost !shadow-none btn-circle"
-          >
+          <button v-if="session.$state.loggedIn" class="btn btn-ghost !shadow-none btn-circle">
             <div class="indicator avatar">
               <img
                 :src="session.$state._data?.avatarUrl"
@@ -210,6 +218,7 @@ onUnmounted(() => {
     & .btn {
       height: 2.5rem;
       min-height: 2.5rem;
+
       &.btn-circle {
         width: 2.5rem;
         min-width: 2.5rem;
@@ -233,6 +242,7 @@ onUnmounted(() => {
 
   .btn {
     @apply transition-all;
+
     &.attach:text-lg {
       @apply text-lg;
     }
@@ -241,10 +251,12 @@ onUnmounted(() => {
   &.disabled {
     transition: all 0.5s cubic-bezier(0.05, 1, 0.4, 0.95);
     filter: saturate(0.8) opacity(0.8) blur(0.2rem);
+
     * {
       @apply pointer-events-none;
     }
   }
+
   .avatar {
     & img.avatar-img {
       @apply transition-all;
@@ -252,6 +264,7 @@ onUnmounted(() => {
     }
   }
 }
+
 .detached {
   @apply px-2 pt-2;
 
