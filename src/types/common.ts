@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import type { Enumerate } from './internal-utils'
 
 export type Mode = 'osu' | 'taiko' | 'fruits' | 'mania';
