@@ -10,12 +10,12 @@ const changePassword = ref<{
   openModal:() => void
 }>()
 
-const { $client: client } = useNuxtApp()
+const { $client } = useNuxtApp()
 const session = useSession()
 if (!session.$state.loggedIn) {
   await navigateTo({ name: 'auth-login', query: { back: '1' } })
 }
-const _user = await client.me.fullSecret.query()
+const _user = await $client.me.fullSecret.query()
 if (!_user) {
   await navigateTo({ name: 'auth-login', query: { back: '1' } })
 }

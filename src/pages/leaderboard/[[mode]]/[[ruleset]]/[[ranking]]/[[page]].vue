@@ -107,7 +107,7 @@ import { IdType, RankingSystem as AvailableRankingSystem } from '~/server/trpc/t
 const config = useAppConfig()
 
 const route = useRoute()
-const { $client: client } = useNuxtApp()
+const { $client } = useNuxtApp()
 
 const availableModes = Object.keys(config.mode)
 const availableRulesets = Object.keys(config.ruleset)
@@ -139,7 +139,7 @@ const page = ref(0)
 const perPage = ref(50)
 
 fetching.value = true
-const result = await client.leaderboard.fetch.query({
+const result = await $client.leaderboard.fetch.query({
   mode: selected.mode,
   ruleset: selected.ruleset,
   rankingSystem: selected.rankingSystem,
