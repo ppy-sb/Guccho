@@ -1,7 +1,7 @@
 <script setup>
 import { navigateTo, onErrorCaptured } from '#imports'
 import { useSession } from '~/store/session'
-const { $client: client } = useNuxtApp()
+const { $client } = useNuxtApp()
 const session = useSession()
 
 if (!session.$state.loggedIn) {
@@ -12,7 +12,7 @@ if (!session.$state.loggedIn) {
     }
   })
 }
-const relations = await client.me.relations.query()
+const relations = await $client.me.relations.query()
 
 if (!relations) {
   throw new Error('user not exists')

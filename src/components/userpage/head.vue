@@ -82,9 +82,7 @@ import { UserFull as User } from '~/types/user'
 import { useSession } from '~/store/session'
 
 import type { IdType } from '~/server/trpc/config'
-const app = useNuxtApp()
-
-const client = app.$client
+const { $client } = useNuxtApp()
 
 const changeFriendStateButton = ref(null)
 const session = useSession()
@@ -92,12 +90,12 @@ const { addToLibrary } = useFAIconLib()
 addToLibrary(faUserGroup, faHeartCrack, faHeart, faEnvelope)
 
 const user = inject<Ref<User<IdType>>>('user')
-const userFriendCount = await client.user.countRelations.query({
+const userFriendCount = await $client.user.countRelations.query({
   handle: user?.value.id as IdType,
   type: 'friend'
 })
 const relationWithSessionUser = session.$state.loggedIn
-  ? await client.me.relation.query({
+  ? await $client.me.relation.query({
     target: session.$state.userId as IdType
   })
   : undefined
