@@ -44,7 +44,7 @@
 import { addCommas, getFlagURL, scoreFormat } from '~/common/varkaUtils'
 import { RankingSystem } from '~/types/common'
 import { IdType } from '~/server/trpc/config'
-import { FrontendLeaderboardItem } from '~/types/leaderboard'
+import { ComponentLeaderboardItem } from '~/types/leaderboard'
 
 const option = {
   style: 'percent',
@@ -54,7 +54,7 @@ const option = {
 const formatter = new Intl.NumberFormat(undefined, option)
 
 const props = defineProps<{
-  user: FrontendLeaderboardItem<IdType>['user'],
+  user: ComponentLeaderboardItem<IdType>['user'],
   place: number | bigint,
   sort: RankingSystem
 }>()

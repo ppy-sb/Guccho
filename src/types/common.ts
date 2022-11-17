@@ -1,6 +1,8 @@
 
 import type { Enumerate } from './internal-utils'
 
+export type TypeTarget = 'component' | 'server'
+
 export type Mode = 'osu' | 'taiko' | 'fruits' | 'mania';
 export type Ruleset = 'standard' | 'relax' | 'autopilot';
 

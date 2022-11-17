@@ -34,6 +34,7 @@
 </template>
 
 <script setup lang="ts">
+// follow server
 import { useAppConfig } from 'nuxt/app'
 import { inject, Ref, computed } from 'vue'
 
