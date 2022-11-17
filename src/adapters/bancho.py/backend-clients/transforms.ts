@@ -126,9 +126,9 @@ export const toBaseUser = <
     never
   >
 >(
-  user: DatabaseUser,
-  includes?: Includes
-) => {
+    user: DatabaseUser,
+    includes?: Includes
+  ) => {
   const returnValue: BaseUser<Id> & Partial<UserOptional<Id>> = {
     id: user.id,
     ingameId: user.id,
@@ -211,9 +211,9 @@ export const calculateMutualRelationships = (
 export const toFullUser = <
   Extend extends Partial<UserOptional<Id>> & Partial<UserExtra<Id>>
 >(
-  user: DatabaseUser,
-  extraFields: Extend
-) => {
+    user: DatabaseUser,
+    extraFields: Extend
+  ) => {
   const returnValue =
   {
     id: user.id,

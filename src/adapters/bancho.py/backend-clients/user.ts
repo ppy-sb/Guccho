@@ -158,7 +158,7 @@ export const getFullUser = async <Includes extends Partial<Record<keyof UserOpti
   handle: string | Id,
   includes: Includes
 ): Promise<(BaseUser<Id> & {
-  [KExtra in keyof UserExtra<Id> as Includes[KExtra] extends false ? never : KExtra]: UserExtra<Id>[KExtra]
+  [Extra in keyof UserExtra<Id> as Includes[Extra] extends false ? never : Extra]: UserExtra<Id>[Extra]
 } & {
     [KOptional in keyof UserOptional<Id> as Includes[KOptional] extends true ? KOptional : never]: UserOptional<Id>[KOptional]
   }) | null> => {
@@ -169,17 +169,17 @@ export const getFullUser = async <Includes extends Partial<Record<keyof UserOpti
   }
   try {
     // dispatch queries for user data without waiting for results
-
-    return toFullUser(user, {
+    const t = toFullUser(user, {
       statistics: includes.statistics === false ? undefined : await getStatisticsOfUser(user),
       relationships: includes.relationships === false ? undefined : await getRelationships(user),
       secrets: includes.secrets
         ? {
-          password: user.pwBcrypt,
-          apiKey: user.apiKey ?? undefined
-        }
+            password: user.pwBcrypt,
+            apiKey: user.apiKey ?? undefined
+          }
         : undefined
     })
+    return t
   } catch (err) {
     // console.error(err)
     return null
