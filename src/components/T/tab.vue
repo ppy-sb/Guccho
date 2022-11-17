@@ -20,7 +20,7 @@ const props = defineProps({
     default: () => Symbol('tab')
   },
   disabled: {
-    type: String,
+    type: [String, Boolean],
     default: undefined
   }
 })

@@ -16,7 +16,8 @@
     "noEmit": true,
     "noUnusedLocals": true,
     "resolveJsonModule": true,
-    "allowJs": true
+    "allowJs": true,
+    "strictNullChecks": true
     // "paths": {
     //   "~/*": ["./src/*"],
     //   "@/*": ["./src/*"],

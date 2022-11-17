@@ -12,11 +12,12 @@
 </template>
 
 <script setup lang="ts">
+import { RouteLocationRaw } from 'vue-router'
 
 const props = defineProps<{
   variant?: string,
   size?: string,
-  to: Record<string, string> | string
+  to: RouteLocationRaw
 }>()
 </script>
 

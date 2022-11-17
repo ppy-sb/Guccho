@@ -94,8 +94,7 @@ const tab = ref<RankingSystem>('ppv2')
 const selectedMode = ref<Mode>('osu')
 const selectedRuleset = ref<Ruleset>('standard')
 const currentStatistic = computed<UserModeRulesetStatistics<IdType, Mode, Ruleset, RankingSystem>>(
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore combinations are handled by switcher.
+  // @ts-expect-error combinations are handled by switcher.
   () => user.value?.statistics[selectedMode.value][selectedRuleset.value]
 )
 
