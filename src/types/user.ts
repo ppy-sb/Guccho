@@ -108,6 +108,7 @@ export type Rank<
   : _RankingSystem extends PPRankingSystem
   ? PPRank<Id, _Mode, _Ruleset, _RankingSystem>
   : BaseRank<Id, _Mode, _Ruleset, _RankingSystem>
+
 export interface UserModeRulesetStatistics<
   Id,
   _Mode extends Mode,
