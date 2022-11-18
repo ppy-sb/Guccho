@@ -11,10 +11,10 @@ export const router = _router({
       ruleset: zodRuleset,
       rankingSystem: zodRankingSystem,
       page: z.number().gte(0).lt(10),
-      pageSize: z.number().gte(50).lt(100)
+      pageSize: z.number().gte(20).lt(51)
     }))
     .query(async ({ input: { mode, ruleset, rankingSystem, page, pageSize } }) => {
       if (rankingSystem === 'ppv1') { return [] }
-      return await getLeaderboard({ mode, ruleset, rankingSystem, page: page as Range<0, 10>, pageSize: pageSize as Range<50, 100> })
+      return await getLeaderboard({ mode, ruleset, rankingSystem, page: page as Range<0, 10>, pageSize: pageSize as Range<20, 51> })
     })
 })
