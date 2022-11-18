@@ -1,5 +1,6 @@
 import { fileURLToPath } from 'url'
-import { defineNuxtConfig } from 'nuxt/config'
+
+import hljs from './configs/hljs'
 
 import postcss from './postcss.config'
 export default defineNuxtConfig({
@@ -30,7 +31,7 @@ export default defineNuxtConfig({
     '@fortawesome/fontawesome-svg-core/styles.css'
   ],
 
-  runtimeConfig: require('./configs/hljs.ts'),
+  runtimeConfig: { public: { hljs } },
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: {
