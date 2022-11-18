@@ -37,6 +37,9 @@ export default (config: {
     }
   }).configure({
     lowlight,
-    exitOnArrowDown: true
+    exitOnArrowDown: true,
+    HTMLAttributes: {
+      class: 'mockup-window border border-kimberly-500/20'
+    }
   })
 ]
