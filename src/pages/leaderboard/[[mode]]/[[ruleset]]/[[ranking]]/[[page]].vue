@@ -4,11 +4,14 @@
       class="container mx-auto custom-container lg:px-4"
       title="Leaderboard"
       :subtitle="
-        selected.mode &&
+        (selected.mode &&
           selected.ruleset &&
           selected.rankingSystem &&
-          `${config.mode[selected.mode].name} - ${config.ruleset[selected.ruleset].name} | ${config.rankingSystem[selected.rankingSystem].name}`
-          || ''"
+          `${config.mode[selected.mode].name} - ${
+            config.ruleset[selected.ruleset].name
+          } | ${config.rankingSystem[selected.rankingSystem].name}`) ||
+          ''
+      "
     >
       <app-mode-switcher
         v-model="selected"
@@ -65,18 +68,21 @@
           </div>
           <div class="flex py-4">
             <div class="btn-group mx-auto">
-              <button class="btn btn-md btn-active">
-                1
-              </button>
-              <button class="btn btn-md">
-                2
-              </button>
-              <button class="btn btn-md">
-                3
-              </button>
-              <button class="btn btn-md">
-                4
-              </button>
+              <t-nuxt-link-button
+                v-for="(i) in 5"
+                :key="`pagination-${i}`"
+                :to="{
+                  name: 'leaderboard-mode-ruleset-ranking-page',
+                  params: {
+                    mode,
+                    ruleset,
+                    ranking: rankingSystem,
+                    page: i
+                  },
+                }"
+              >
+                {{ i }}
+              </t-nuxt-link-button>
             </div>
           </div>
         </div>
@@ -113,9 +119,18 @@ const { $client } = useNuxtApp()
 const availableModes = Object.keys(config.mode)
 const availableRulesets = Object.keys(config.ruleset)
 const availableRankingSystems = Object.keys(config.rankingSystem)
-const mode = (availableModes.includes(route.params.mode as string) ? route.params.mode : availableModes[0]) as Mode
-const ruleset = (availableRulesets.includes(route.params.ruleset as string) ? route.params.ruleset : availableRulesets[0]) as Ruleset
-const rankingSystem = (availableRankingSystems.includes(route.params.ranking as string) ? route.params.ranking : availableRankingSystems[0]) as AvailableRankingSystem
+const mode = (availableModes.includes(route.params.mode as string)
+  ? route.params.mode
+  : availableModes[0]) as Mode
+const ruleset = (availableRulesets.includes(route.params.ruleset as string)
+  ? route.params.ruleset
+  : availableRulesets[0]) as Ruleset
+const rankingSystem = (availableRankingSystems.includes(route.params.ranking as string)
+  ? route.params.ranking
+  : availableRankingSystems[0]) as AvailableRankingSystem
+const page = parseInt(route.params.page as string) || 1
+
+const perPage = 20
 
 if (!route.params.mode || !route.params.ruleset || !route.params.ranking) {
   // rewrite url to show stat of the page
@@ -136,16 +151,16 @@ const selected = reactive<Required<EmitType['input']>>({
 })
 const table = ref<Array<ComponentLeaderboardItem<IdType, AvailableRankingSystem>>>([])
 const fetching = ref(false)
-const page = ref(0)
-const perPage = ref(50)
+// const page = ref(0)
+// const perPage = ref(50)
 
 fetching.value = true
 const result = await $client.leaderboard.fetch.query({
   mode: selected.mode,
   ruleset: selected.ruleset,
   rankingSystem: selected.rankingSystem,
-  page: page.value,
-  pageSize: perPage.value
+  page: page - 1,
+  pageSize: perPage
 })
 
 table.value = result

@@ -26,7 +26,7 @@ export async function getLeaderboard<
   ruleset: Ruleset
   rankingSystem: RankingSystem,
   page: Range<0, 10>
-  pageSize: Range<50, 100>
+  pageSize: Range<20, 51>
 }) {
   const start = page * pageSize
   const end = start + pageSize
