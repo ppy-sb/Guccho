@@ -76,8 +76,11 @@ defineExpose({
 
 <style lang="scss">
 @import './shared.scss';
-$content-stage1: blur(1em) opacity(0.5) saturate(0.5);
-$content-stage2: blur(1.3em) opacity(0) saturate(0);
+$content-stage1: blur(0.6em) opacity(0.5) saturate(0.9);
+$content-stage2: blur(1.2em) opacity(0.2) saturate(0.8);
+
+$scale: scale(0.97);
+$scale2: scale(0.95);
 
 .content {
   will-change: transform;
@@ -144,18 +147,18 @@ $content-stage2: blur(1.3em) opacity(0) saturate(0);
   }
 
   100% {
-    transform: scale(0.9);
+    transform: $scale;
     filter: $content-stage1;
-    // -webkit-transform: scale(0.9);
+    // -webkit-transform: $scale;
     // -webkit-filter: $content-stage1;
   }
 }
 
 @keyframes zoomInContent {
   0% {
-    transform: scale(0.9);
+    transform: $scale;
     filter: $content-stage1;
-    // -webkit-transform: scale(0.9);
+    // -webkit-transform: $scale;
     // -webkit-filter: $content-stage1;
   }
 
@@ -167,32 +170,32 @@ $content-stage2: blur(1.3em) opacity(0) saturate(0);
 
 @keyframes zoomOutContentL2 {
   0% {
-    transform: scale(0.9);
+    transform: $scale;
     filter: $content-stage1;
-    // -webkit-transform: scale(0.9);
+    // -webkit-transform: $scale;
     // -webkit-filter: $content-stage1;
   }
 
   100% {
-    transform: scale(0.81);
+    transform: $scale2;
     filter: $content-stage2;
-    // -webkit-transform: scale(0.81);
+    // -webkit-transform: $scale2;
     // -webkit-filter: $content-stage2;
   }
 }
 
 @keyframes zoomInContentL2 {
   0% {
-    transform: scale(0.81);
+    transform: $scale2;
     filter: $content-stage2;
-    // -webkit-transform: scale(0.81);
+    // -webkit-transform: $scale2;
     // -webkit-filter: $content-stage2;
   }
 
   100% {
-    transform: scale(0.9);
+    transform: $scale;
     filter: $content-stage1;
-    // -webkit-transform: scale(0.9);
+    // -webkit-transform: $scale;
     // -webkit-filter: $content-stage1;
   }
 }
