@@ -1,3 +1,5 @@
+// eslint-disable-next-line import/default, @typescript-eslint/no-unused-vars
+import bcrypt from 'bcryptjs'
 import { TRPCError } from '@trpc/server'
 import z from 'zod'
 import { router as _router } from '../trpc'
@@ -10,11 +12,32 @@ import {
   getOneRelationShip,
   getRelationships
 } from '$/bancho.py/backend-clients'
-import { calculateMutualRelationships } from '$/bancho.py/backend-clients/transforms'
+import { calculateMutualRelationships, toBaseUser } from '$/bancho.py/backend-clients/transforms'
 
 export const router = _router({
   fullSecret: pUser.query(async ({ ctx }) => {
     return await getFullUser(ctx.user.id, { email: true, secrets: true })
+  }),
+  updatePreferences: pUser.input(z.object({
+    email: z.string().email().optional(),
+    name: z.string().optional()
+  })).mutation(async ({ ctx, input }) => {
+    // TODO: check input ok
+    const result = await db.user.update({
+      where: {
+        id: ctx.user.id
+      },
+      data: {
+        email: input.email,
+        name: input.name
+      }
+    })
+    if (!result) { throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' }) }
+    ctx.user = toBaseUser(result, {
+      secrets: true,
+      email: true
+    })
+    return ctx.user
   }),
   relation: pUser
     .input(

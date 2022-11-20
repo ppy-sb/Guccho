@@ -79,7 +79,7 @@ import { userpageLineChartOptions } from '~/common/shared-chart-options'
 
 import { hsvRaw } from '~/palette'
 
-import 'chart.js/auto/auto.js'
+// import 'chart.js/auto/auto.js'
 
 const hsl = ([h, s, l], a) => `hsl(${h} ${s}% ${l}% / ${a}%)`
 const gRankFill = hsl(hsvRaw.wewak[500], 20)
