@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { navigateTo, useRoute, useRouter } from '#app'
+import { TRPCError } from '@trpc/server'
 import { reactive, ref } from 'vue'
 import { useSession } from '~/store/session'
 
@@ -11,7 +12,7 @@ if (session.loggedIn) {
   router.back()
 }
 
-const error = undefined
+const error = ref('')
 
 const registerButton = ref<string>('Do not have an account?')
 
@@ -27,15 +28,21 @@ const fetching = ref(false)
 
 const userLogin = async () => {
   fetching.value = true
-  const result = await session.login(login.user, login.password)
-  fetching.value = false
-  if (result) {
-    const back = route.query.back === '1'
-    if (back) {
-      router.back()
-    } else {
-      await navigateTo('/')
+  error.value = ''
+  try {
+    const result = await session.login(login.user, login.password)
+    if (result) {
+      const back = route.query.back === '1'
+      if (back) {
+        router.back()
+      } else {
+        await navigateTo('/')
+      }
     }
+  } catch (_error) {
+    error.value = (_error as TRPCError).message
+  } finally {
+    fetching.value = false
   }
 }
 </script>
@@ -50,12 +57,9 @@ const userLogin = async () => {
         </h2>
       </div>
       <form class="mt-8 space-y-12" autocomplete="off" @submit.prevent="userLogin">
-        <div class="shadow-sm space-y-2">
+        <div class="shadow-sm flex flex-col gap-2">
           <div>
             <label for="user" class="sr-only">User / Email</label>
-            <h1 v-if="error" class="auth-error-text">
-              {{ error }}
-            </h1>
             <input
               id="user"
               v-model="login.user"
@@ -65,14 +69,11 @@ const userLogin = async () => {
               required
               class="w-full input input-ghost"
               :class="{ 'input-error': error }"
-              placeholder="User"
+              placeholder="User / ID / Email"
             >
           </div>
           <div>
             <label for="password" class="sr-only">Password</label>
-            <h1 v-if="error" class="auth-error-text">
-              {{ error }}
-            </h1>
             <input
               id="password"
               v-model="login.password"
@@ -85,8 +86,10 @@ const userLogin = async () => {
               placeholder="Password"
             >
           </div>
+          <h1 v-if="error" class="auth-error-text">
+            {{ error }}
+          </h1>
         </div>
-
         <div class="grid grid-cols-2 gap-2">
           <t-nuxt-link-button to="/auth/register" variant="accent" @mouseenter="registerButton = 'sign up'" @mouseleave="registerButton = 'Do not have an account?'">
             {{ registerButton }}
@@ -102,6 +105,6 @@ const userLogin = async () => {
 
 <style lang="postcss" scoped>
 .auth-error-text {
-  @apply text-red-500 text-sm font-medium mb-2
+  @apply text-red-500 text-sm font-medium
 }
 </style>
