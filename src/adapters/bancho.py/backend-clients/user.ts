@@ -21,7 +21,7 @@ export const getBaseUser = async <Includes extends Partial<Record<keyof UserOpti
   handle: string | Id,
   includes?: Includes
 ) => {
-  const user = await prismaClient.user.findFirst(createUserQuery(handle))
+  const user = await prismaClient.user.findFirst(createUserQuery(handle, ['id', 'name', 'safeName', 'email']))
   if (!user) {
     return null
   }
@@ -177,7 +177,8 @@ export const getFullUser = async <Includes extends Partial<Record<keyof UserOpti
             password: user.pwBcrypt,
             apiKey: user.apiKey ?? undefined
           }
-        : undefined
+        : undefined,
+      email: includes.email ? user.email : undefined
     })
     return t
   } catch (err) {

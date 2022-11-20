@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, UnwrapRef } from 'vue'
+import { ref, computed } from 'vue'
 import { navigateTo } from '#app'
 import { useSession } from '~/store/session'
 
@@ -20,12 +20,14 @@ if (!_user) {
   await navigateTo({ name: 'auth-login', query: { back: '1' } })
 }
 
-const user = ref(_user as Exclude<typeof _user, false | null>)
+const user = ref({ ..._user } as Exclude<typeof _user, false | null>)
+const unchanged = ref({ ..._user } as Exclude<typeof _user, false | null>)
 
-const unchanged = ref(_user as Exclude<typeof _user, false | null>)
+const editable = ['name', 'email'] as const
+
 const anythingChanged = computed(() => {
   // TODO: fix compare profile
-  const col = (['name', 'email'] as Array<keyof UnwrapRef<typeof unchanged>>).some((item) => {
+  const col = (editable).some((item) => {
     if (!user.value || !unchanged.value) { return false }
     return unchanged.value[item] !== user.value[item]
   })
@@ -40,8 +42,17 @@ const saveAvatar = () => {
     uploading.value = 2
   }, 1000)
 }
-const updateUser = () => {
-  // unchanged.value = { ...user.value }
+const updateUser = async () => {
+  const updateData = editable.reduce((acc, cur) => {
+    if (user.value[cur] === unchanged.value[cur]) { return acc }
+    acc[cur] = user.value[cur]
+    return acc
+  }, {} as Partial<Record<typeof editable[number], string>>)
+
+  const result = await $client.me.updatePreferences.mutate(updateData)
+  if (!result) { return }
+
+  unchanged.value = { ...unchanged.value, ...result }
 }
 </script>
 
