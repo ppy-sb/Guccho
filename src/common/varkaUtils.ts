@@ -1,4 +1,4 @@
-import { toBanchoPyMode } from '../adapters/bancho.py/backend-clients/enums'
+import { toBanchoPyMode } from '../adapters/bancho.py/enums'
 import { Ruleset, Mode } from '~/types/common'
 
 export const modeToGulag = toBanchoPyMode

@@ -1,7 +1,7 @@
 import { TRPCError } from '@trpc/server'
 import { procedureWithSession } from './session'
 
-import { getBaseUser } from '$/bancho.py/backend-clients/user'
+import { getBaseUser } from '$/client/user'
 
 export const procedureWithUserLoggedIn = procedureWithSession
   .use(async ({ ctx, next }) => {

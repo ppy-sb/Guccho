@@ -1,9 +1,7 @@
 import { Stat, User as DatabaseUser, RelationshipType } from '@prisma/client'
-import type { Mode, Ruleset, RankingSystem, IdType as Id } from '../config'
+import type { Mode, Ruleset, RankingSystem, IdType as Id } from './config'
 import { BanchoPyPrivilege } from './enums'
 import type {
-  MutualRelationship,
-  Relationship,
   Scope
 } from '~/types/common'
 import type {
@@ -13,7 +11,6 @@ import type {
   UserOptional,
   UserRelationship,
   UserExtra,
-  UserPreferences,
   UserSecrets
 } from '~/types/user'
 
@@ -179,35 +176,6 @@ export const dedupeUserRelationship = (
   return [...reduceUserRelationships.values()]
 }
 
-const rel: Record<
-  Relationship,
-  {
-    mutual: MutualRelationship
-  }
-> = {
-  friend: {
-    mutual: 'mutual-friend'
-  },
-  block: {
-    mutual: 'mutual-block'
-  }
-}
-export const calculateMutualRelationships = (
-  relationships: Relationship[],
-  passiveRelationships: Relationship[]
-) => {
-  const mutualRelationships: MutualRelationship[] = []
-
-  for (const [relation, { mutual }] of Object.entries(rel)) {
-    if (passiveRelationships.includes(relation as Relationship)) {
-      if (relationships.includes(relation as Relationship)) {
-        mutualRelationships.push(mutual)
-      }
-    }
-  }
-  return mutualRelationships
-}
-
 export const toFullUser = <
   Extend extends Partial<UserOptional<Id>> & Partial<UserExtra<Id>>
 >(
@@ -262,15 +230,6 @@ export const compareScope = (scope: Scope, requiredScope: Scope) => {
   if (requiredScope === 'self') { return scope === 'self' }
 }
 
-export const followUserPreferences = (user: BaseUser<Id> & Partial<UserExtra<Id> & Partial<UserOptional<Id>>> & {
-  preferences: UserPreferences,
-}, scope: Scope = 'public') => {
-  // "reachable" | "oldNames" | "email" | "status"
-  return {
-    ...user,
-    email: compareScope(scope, user.preferences.scope.email) ? user.email : undefined,
-    oldNames: compareScope(scope, user.preferences.scope.oldNames) ? user.oldNames : undefined,
-    reachable: compareScope(scope, user.preferences.scope.reachable) ? user.reachable : undefined,
-    status: compareScope(scope, user.preferences.scope.status) ? user.status : undefined
-  }
+export function capitalizeFirstLetter <T extends string> (string: T) {
+  return string.charAt(0).toUpperCase() + string.slice(1) as Capitalize<T>
 }

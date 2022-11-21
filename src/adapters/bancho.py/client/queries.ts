@@ -1,5 +1,5 @@
 import type { IdType as Id } from '../config'
-import { IdType } from '$/bancho.py/config'
+import { IdType } from '$/config'
 
 export const createUserQuery = (handle: string | Id, selectAgainst: Array<'id' | 'name' | 'safeName' | 'email'> = ['id', 'name', 'safeName']) => {
   let handleNum = handle

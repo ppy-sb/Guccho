@@ -1,1 +1,1 @@
-export * from '$/bancho.py/config'
+export * from '$/config'
