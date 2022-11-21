@@ -1,7 +1,7 @@
 <template>
   <div class="container mx-auto custom-container">
     <!-- <header-default class="!pb-2" title="components playground" /> -->
-    <t-modal-page>
+    <t-modal-root>
       <t-modal-wrapper ref="wrapper1" v-slot="{ closeModal }">
         <t-modal-container>
           <template #default>
@@ -80,7 +80,7 @@
           </template>
         </t-modal-container>
       </t-modal-wrapper>
-    </t-modal-page>
+    </t-modal-root>
     <section class="container mx-auto">
       <div class="flex gap-2">
         <t-button @click="nested1">

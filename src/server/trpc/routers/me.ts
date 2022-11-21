@@ -1,3 +1,6 @@
+/* eslint-disable import/no-named-as-default-member */
+// eslint-disable-next-line import/default
+import bcrypt from 'bcryptjs'
 // !eslint-disable-next-line import/default, @typescript-eslint/no-unused-vars
 // import bcrypt from 'bcryptjs'
 import { TRPCError } from '@trpc/server'
@@ -11,7 +14,8 @@ import {
   getOneRelationShip,
   getRelationships,
   updateUser,
-  removeRelationship
+  removeRelationship,
+  updateUserPassword
 } from '$/client'
 import { calculateMutualRelationships } from '~/server/transforms'
 
@@ -28,6 +32,17 @@ export const router = _router({
     if (!result) { throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' }) }
     ctx.user = result
     return ctx.user
+  }),
+  updatePassword: pUser.input(z.object({
+    oldPassword: z.string(),
+    newPassword: z.string()
+  })).mutation(async ({ ctx, input }) => {
+    const userWithPassword = await getBaseUser(ctx.user.id, { secrets: true })
+    if (!userWithPassword) { throw new TRPCError({ code: 'NOT_FOUND', message: 'user not found' }) }
+    if (!await bcrypt.compare(input.oldPassword, userWithPassword.secrets.password)) {
+      throw new TRPCError({ code: 'UNAUTHORIZED', message: 'old password mismatch' })
+    }
+    return await updateUserPassword(userWithPassword, input.newPassword)
   }),
   relation: pUser
     .input(

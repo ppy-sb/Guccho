@@ -18,17 +18,17 @@ const props = defineProps<{
 }>()
 const wrapper = ref(null)
 // const status = ref(0)
-const openModalContainer = inject<() => void>('openModal')
-const closeModalContainer = inject<() => void>('closeModal')
+const openModalContainer = inject<(cb?: () => void) => void>('openModal')
+const closeModalContainer = inject<(cb?: () => void) => void>('closeModal')
 const stat = ref(props.initStatus || 'hidden')
 
-const openModal = () => {
+const openModal = (cb?: () => void) => {
   stat.value = 'show'
-  openModalContainer?.()
+  openModalContainer?.(cb)
 }
-const closeModal = () => {
+const closeModal = (cb?: () => void) => {
   stat.value = 'closed'
-  closeModalContainer?.()
+  closeModalContainer?.(cb)
 }
 defineExpose({
   openModal,
