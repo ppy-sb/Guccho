@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { navigateTo } from '#app'
+import md5 from 'md5'
 import { useSession } from '~/store/session'
 
 const changeAvatar = ref<{
@@ -26,12 +27,10 @@ const unchanged = ref({ ..._user } as Exclude<typeof _user, false | null>)
 const editable = ['name', 'email'] as const
 
 const anythingChanged = computed(() => {
-  // TODO: fix compare profile
   const col = (editable).some((item) => {
     if (!user.value || !unchanged.value) { return false }
     return unchanged.value[item] !== user.value[item]
   })
-
   return col
 })
 
@@ -54,11 +53,52 @@ const updateUser = async () => {
 
   unchanged.value = { ...unchanged.value, ...result }
 }
+
+const changePasswordForm = reactive<{
+  oldPassword?: string
+  newPassword?: string
+  repeatNewPassword?: string
+}>({
+  oldPassword: undefined,
+  newPassword: undefined,
+  repeatNewPassword: undefined
+})
+
+const changePasswordError = ref('')
+
+const updatePassword = async (closeModal: () => void) => {
+  if (!changePasswordForm.newPassword) { return } // checked by browser
+  if (changePasswordForm.newPassword !== changePasswordForm.repeatNewPassword) {
+    changePasswordError.value = 'new password mismatch'
+    return
+  }
+  if (changePasswordForm.oldPassword === changePasswordForm.newPassword) {
+    changePasswordError.value = 'old and new, those are the same...?'
+    return
+  }
+
+  const md5HashedPassword = {
+    newPassword: md5(changePasswordForm.newPassword),
+    // TODO: allow empty oldPassword?
+    oldPassword: md5(changePasswordForm.oldPassword as string)
+  }
+
+  try {
+    const result = await $client.me.updatePassword.mutate(md5HashedPassword)
+    unchanged.value = {
+      ...unchanged.value,
+      ...result
+    }
+    closeModal()
+  } catch (error: any) {
+    changePasswordError.value = error.message
+  }
+}
 </script>
 
 <template>
   <section v-if="user" class="container mx-auto custom-container">
-    <t-modal-page>
+    <t-modal-root>
       <t-modal-wrapper ref="changeAvatar" v-slot="{ closeModal }">
         <t-modal class="max-w-3xl">
           <div class="flex flex-col gap-2">
@@ -111,32 +151,50 @@ const updateUser = async () => {
       <t-modal-wrapper ref="changePassword" v-slot="{ closeModal }">
         <t-modal>
           <template #body>
-            <div class="card-body w-96">
-              <div class="form-control">
-                <label class="label" for="old-password"><span class="pl-2 label-text">Old Password</span></label>
-                <input type="password" class="input input-sm input-ghost">
+            <form action="#" @submit.prevent="updatePassword(closeModal)">
+              <div class="card-body w-96">
+                <div class="form-control">
+                  <label class="label" for="old-password">
+                    <span class="pl-2 label-text">Old Password</span>
+                  </label>
+                  <input v-model="changePasswordForm.oldPassword" type="password" class="input input-sm input-ghost" required>
+                </div>
+                <div class="form-control">
+                  <label class="label" for="old-password">
+                    <span class="pl-2 label-text">New Password</span>
+                  </label>
+                  <input v-model="changePasswordForm.newPassword" type="password" class="input input-sm  input-ghost" required>
+                </div>
+                <div class="form-control">
+                  <label class="label" for="old-password">
+                    <span class="pl-2 label-text">Repeat Password</span>
+                  </label>
+                  <input v-model="changePasswordForm.repeatNewPassword" type="password" class="input input-sm  input-ghost" required>
+                </div>
+                <span class="text-error px-2">{{ changePasswordError }}</span>
               </div>
-              <div class="form-control">
-                <label class="label" for="old-password"><span class="pl-2 label-text">New Password</span></label>
-                <input type="password" class="input input-sm  input-ghost">
+              <div class="flex p-4 gap-2">
+                <t-button size="sm" variant="accent" class="grow">
+                  confirm
+                </t-button>
+                <t-button
+                  size="sm"
+                  variant="secondary"
+                  class="grow"
+                  type="button"
+                  @click="closeModal(() => {
+                    changePasswordForm = {},
+                    changePasswordError = ''
+                  })"
+                >
+                  cancel
+                </t-button>
               </div>
-              <div class="form-control">
-                <label class="label" for="old-password"><span class="pl-2 label-text">Repeat Password</span></label>
-                <input type="password" class="input input-sm  input-ghost">
-              </div>
-            </div>
-            <div class="flex p-4 gap-2">
-              <t-button size="sm" variant="accent" class="grow" @click="closeModal">
-                confirm
-              </t-button>
-              <t-button size="sm" variant="secondary" class="grow" @click="closeModal">
-                cancel
-              </t-button>
-            </div>
+            </form>
           </template>
         </t-modal>
       </t-modal-wrapper>
-    </t-modal-page>
+    </t-modal-root>
     <header-default class="!pb-2 !pt-4">
       <header-simple-title-with-sub title="preferences" class="text-left" />
       <button v-if="anythingChanged" class="self-end btn btn-sm btn-warning" type="button" @click="updateUser">
@@ -306,17 +364,12 @@ const updateUser = async () => {
 
 <style lang="scss" scoped>
 .hoverable {
-
   img,
   .btn {
     transition: opacity 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
     overflow: hidden;
-  }
-
-  .btn {
     opacity: 0;
   }
-
   &:hover {
     .btn {
       opacity: 1;

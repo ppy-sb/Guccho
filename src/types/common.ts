@@ -13,15 +13,6 @@ export type StandardAvailable = Mode;
 export type RelaxAvailable = 'osu' | 'taiko' | 'fruits';
 export type AutopilotAvailable = 'osu';
 
-export type AutoAvailable<_Ruleset extends Ruleset> =
-  _Ruleset extends StandardAvailable
-    ? StandardAvailable
-    : _Ruleset extends RelaxAvailable
-    ? RelaxAvailable
-    : _Ruleset extends AutopilotAvailable
-    ? AutopilotAvailable
-    : never;
-
 export type ScoreRankingSystem = 'rankedScore' | 'totalScore';
 export type PPRankingSystem = 'ppv2' | 'ppv1';
 export type RankingSystem = PPRankingSystem | ScoreRankingSystem;

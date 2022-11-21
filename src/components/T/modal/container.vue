@@ -31,18 +31,28 @@ const l2 = (value: Status) => {
   l2Status.value = value
 }
 
+let modalShownCallback = () => {}
+let modalClosedCallback = () => {}
+
+// eslint-disable-next-line func-call-spacing
+const emit = defineEmits<{
+  (event:'closed'): void,
+  (event:'shown'): void,
+}>()
 const outerL2 = inject<typeof l2 | undefined>('openL2', undefined)
-const openModal = () => {
+const openModal = (cb?: () => void) => {
   if (outerL2) {
     outerL2('show')
   }
   stat.value = 'show'
+  modalShownCallback = cb ?? modalShownCallback
 }
-const closeModal = () => {
+const closeModal = (cb?: () => void) => {
   if (outerL2) {
     outerL2('closed')
   }
   stat.value = 'closed'
+  modalClosedCallback = cb ?? modalClosedCallback
 }
 provide('openModal', openModal)
 provide('closeModal', closeModal)
@@ -53,18 +63,22 @@ provide('openL2', l2)
 // events
 onMounted(() => {
   content.value.addEventListener('animationend', (e: AnimationEvent) => {
-    if (e.animationName !== 'zoomInContent') {
-      return
-    }
-    if (e.srcElement !== content.value) {
-      return
-    }
-    nextTick(() => {
-      if (stat.value !== 'hidden') { stat.value = 'hidden' }
-      if (!outerL2) {
-        if (l2Status.value !== 'hidden') { l2Status.value = 'hidden' }
+    if (e.animationName === 'zoomInContent') {
+      if (e.srcElement !== content.value) {
+        return
       }
-    })
+      nextTick(() => {
+        if (stat.value !== 'hidden') { stat.value = 'hidden' }
+        if (!outerL2) {
+          if (l2Status.value !== 'hidden') { l2Status.value = 'hidden' }
+        }
+        modalClosedCallback()
+        emit('closed')
+      })
+    } else if (e.animationName === 'zoomOutContent') {
+      modalShownCallback()
+      emit('shown')
+    }
   })
 })
 defineExpose({

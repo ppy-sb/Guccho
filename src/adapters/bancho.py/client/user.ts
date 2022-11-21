@@ -1,12 +1,14 @@
+/* eslint-disable import/no-named-as-default-member */
+// eslint-disable-next-line import/default
+import bcrypt from 'bcryptjs'
 
 import { createClient } from 'redis'
-
 import type { IdType as Id, Mode, RankingSystem, Ruleset } from '../config'
 import { BanchoPyMode } from '../enums'
 import { createRulesetData, toBaseUser, toFullUser } from '../transforms'
 import { createUserQuery } from './queries'
 import { getRelationships } from './user-relations'
-import { prismaClient } from './index'
+import { prismaClient as db } from './index'
 
 import type { BaseUser, UserExtra, UserOptional, UserStatistic } from '~/types/user'
 
@@ -18,7 +20,7 @@ export const getBaseUser = async <Includes extends Partial<Record<keyof UserOpti
   handle: string | Id,
   includes?: Includes
 ) => {
-  const user = await prismaClient.user.findFirst(createUserQuery(handle, ['id', 'name', 'safeName', 'email']))
+  const user = await db.user.findFirst(createUserQuery(handle, ['id', 'name', 'safeName', 'email']))
   if (!user) {
     return null
   }
@@ -29,7 +31,7 @@ export const getBaseUsers = async <Includes extends Partial<Record<keyof UserOpt
   handle: string | Id,
   includes?: Includes
 ) => {
-  const users = await prismaClient.user.findMany(createUserQuery(handle))
+  const users = await db.user.findMany(createUserQuery(handle))
   return users.map(user => toBaseUser(user, includes))
 }
 
@@ -40,13 +42,13 @@ const getLiveRank = async (id: number, mode: number, country: string) => redisCl
 
 export const getStatisticsOfUser = async ({ id, country }: { id: Id, country: string }) => {
   const [results, ranks, livePPRank] = await Promise.all([
-    prismaClient.stat.findMany({
+    db.stat.findMany({
       where: {
         id
       }
     }),
 
-    prismaClient.$queryRaw<
+    db.$queryRaw<
       Array<{
         id: Id;
         mode: number;
@@ -159,7 +161,7 @@ export const getFullUser = async <Includes extends Partial<Record<keyof UserOpti
 } & {
     [KOptional in keyof UserOptional<Id> as Includes[KOptional] extends true ? KOptional : never]: UserOptional<Id>[KOptional]
   }) | null> => {
-  const user = await prismaClient.user.findFirst(createUserQuery(handle))
+  const user = await db.user.findFirst(createUserQuery(handle))
 
   if (!user) {
     return null
@@ -185,13 +187,32 @@ export const getFullUser = async <Includes extends Partial<Record<keyof UserOpti
 }
 
 export const updateUser = async (user: BaseUser<Id>, input: { email?: string, name?: string }) => {
-  const result = await prismaClient.user.update({
+  const result = await db.user.update({
     where: {
       id: user.id
     },
     data: {
       email: input.email,
       name: input.name
+    }
+  })
+  return toBaseUser(result)
+}
+
+export const updateUserPassword = async (user: BaseUser<Id>, newPasswordMD5: string) => {
+  // # calculate new md5 & bcrypt pw
+  // pw_md5 = hashlib.md5(new_password.encode()).hexdigest().encode()
+  // pw_bcrypt = bcrypt.hashpw(pw_md5, bcrypt.gensalt())
+
+  // TODO: gen salt round
+  const salt = await bcrypt.genSalt()
+  const pwBcrypt = await bcrypt.hash(newPasswordMD5, salt)
+  const result = await db.user.update({
+    where: {
+      id: user.id
+    },
+    data: {
+      pwBcrypt
     }
   })
   return toBaseUser(result)
