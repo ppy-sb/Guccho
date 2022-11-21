@@ -1,5 +1,5 @@
-// eslint-disable-next-line import/default, @typescript-eslint/no-unused-vars
-import bcrypt from 'bcryptjs'
+// !eslint-disable-next-line import/default, @typescript-eslint/no-unused-vars
+// import bcrypt from 'bcryptjs'
 import { TRPCError } from '@trpc/server'
 import z from 'zod'
 import { router as _router } from '../trpc'
@@ -7,12 +7,13 @@ import { zodHandle, zodRelationType } from '../shapes'
 import { procedureWithUserLoggedIn as pUser } from './../middleware/user'
 import {
   getFullUser,
-  prismaClient as db,
   getBaseUser,
   getOneRelationShip,
-  getRelationships
-} from '$/bancho.py/backend-clients'
-import { calculateMutualRelationships, toBaseUser } from '$/bancho.py/backend-clients/transforms'
+  getRelationships,
+  updateUser,
+  removeRelationship
+} from '$/client'
+import { calculateMutualRelationships } from '~/server/transforms'
 
 export const router = _router({
   fullSecret: pUser.query(async ({ ctx }) => {
@@ -23,20 +24,9 @@ export const router = _router({
     name: z.string().optional()
   })).mutation(async ({ ctx, input }) => {
     // TODO: check input ok
-    const result = await db.user.update({
-      where: {
-        id: ctx.user.id
-      },
-      data: {
-        email: input.email,
-        name: input.name
-      }
-    })
+    const result = await updateUser(ctx.user, input)
     if (!result) { throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' }) }
-    ctx.user = toBaseUser(result, {
-      secrets: true,
-      email: true
-    })
+    ctx.user = result
     return ctx.user
   }),
   relation: pUser
@@ -90,25 +80,17 @@ export const router = _router({
           message: 'at least one of the supplied user is not exist'
         })
       }
-      // bancho.py only allows one relationshipType per direction per one user pair
-      // so cannot delete with where condition due to prisma not allowing it.
-      // So to make sure that we are removing right relationship, we have to compare
-      // relation type against input before remove it.
-      const relationship = await getOneRelationShip(fromUser, targetUser)
-
-      if (relationship !== input.type) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'specified relation type in user not found'
-        })
-      }
-      await db.relationship.delete({
-        where: {
-          fromUserId_toUserId: {
-            fromUserId: fromUser.id,
-            toUserId: targetUser.id
-          }
+      try {
+        await removeRelationship(fromUser, targetUser, input.type)
+        return true
+      } catch (err: any) {
+        if (err.message === 'not-found') {
+          throw new TRPCError({
+            code: 'NOT_FOUND',
+            message: 'specified relation type in user not found'
+          })
         }
-      })
+        throw err
+      }
     })
 })

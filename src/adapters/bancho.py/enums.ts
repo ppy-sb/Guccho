@@ -1,3 +1,4 @@
+import { capitalizeFirstLetter } from './transforms'
 import { Mode, Ruleset } from '~/types/common'
 //  privileges intended for all normal players.
 export enum BanchoPyPrivilege {
@@ -45,9 +46,7 @@ export enum BanchoPyMode {
   // fruitsAutopilot = 10,
   // maniaAutopilot = 11,
 }
-function capitalizeFirstLetter <T extends string> (string: T) {
-  return string.charAt(0).toUpperCase() + string.slice(1) as Capitalize<T>
-}
+
 export function toBanchoPyMode (mode: Mode, ruleset: Ruleset): BanchoPyMode | undefined {
   const joined: `${Mode}${Capitalize<Ruleset>}` = `${mode}${capitalizeFirstLetter(ruleset)}`
   switch (joined) {

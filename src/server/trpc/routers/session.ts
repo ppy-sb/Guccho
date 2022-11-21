@@ -6,7 +6,7 @@ import { TRPCError } from '@trpc/server'
 import { zodHandle } from '../shapes'
 import { procedureWithSession as pSession } from '../middleware/session'
 import { router as _router } from '../trpc'
-import { getBaseUser } from '$/bancho.py/backend-clients'
+import { getBaseUser } from '$/client'
 
 // eslint-disable-next-line import/no-named-as-default-member
 const { compare } = bcrypt

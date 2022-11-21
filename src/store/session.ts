@@ -1,7 +1,7 @@
 import type { TRPCError } from '@trpc/server'
 import { defineStore } from 'pinia'
 import md5 from 'md5'
-import { IdType } from '$/bancho.py/config'
+import { IdType } from '$/config'
 import type { UserFull } from '~/types/user'
 
 /** counterストア */

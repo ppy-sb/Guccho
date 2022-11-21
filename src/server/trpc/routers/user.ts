@@ -1,9 +1,9 @@
 import { z } from 'zod'
 import { TRPCError } from '@trpc/server'
 import { zodHandle, zodRelationType } from '../shapes'
+import { followUserPreferences } from '../../transforms'
 import { publicProcedure as p, router as _router } from './../trpc'
-import { getBaseUser, getFullUser, prismaClient as db } from '$/bancho.py/backend-clients'
-import { followUserPreferences } from '$/bancho.py/backend-clients/transforms'
+import { countRelationship, getBaseUser, getFullUser } from '$/client'
 
 export const router = _router({
   userpage: p.input(z.object({
@@ -42,12 +42,7 @@ export const router = _router({
   })).query(async ({ input: { handle, type } }) => {
     const user = await getBaseUser(handle)
     if (!user) { return }
-    const count = await db.relationship.count({
-      where: {
-        toUserId: user.id,
-        type
-      }
-    })
+    const count = await countRelationship(user, type)
     return count
   })
 })

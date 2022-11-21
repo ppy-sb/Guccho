@@ -1,17 +1,14 @@
-import {
-  PrismaClient
-} from '@prisma/client'
+
 import { createClient } from 'redis'
 
 import type { IdType as Id, Mode, RankingSystem, Ruleset } from '../config'
-import { BanchoPyMode } from './enums'
+import { BanchoPyMode } from '../enums'
+import { createRulesetData, toBaseUser, toFullUser } from '../transforms'
 import { createUserQuery } from './queries'
-import { createRulesetData, toBaseUser, toFullUser } from './transforms'
 import { getRelationships } from './user-relations'
+import { prismaClient } from './index'
 
 import type { BaseUser, UserExtra, UserOptional, UserStatistic } from '~/types/user'
-
-const prismaClient = new PrismaClient()
 
 const redisClient = Boolean(process.env.REDIS_URI) && createClient({
   url: process.env.REDIS_URI
@@ -185,4 +182,17 @@ export const getFullUser = async <Includes extends Partial<Record<keyof UserOpti
     // console.error(err)
     return null
   }
+}
+
+export const updateUser = async (user: BaseUser<Id>, input: { email?: string, name?: string }) => {
+  const result = await prismaClient.user.update({
+    where: {
+      id: user.id
+    },
+    data: {
+      email: input.email,
+      name: input.name
+    }
+  })
+  return toBaseUser(result)
 }

@@ -1,6 +1,6 @@
 /* eslint-disable require-await */
 import { v4 } from 'uuid'
-import { IdType } from '../config'
+import { IdType } from '$/config'
 import { Awaitable } from '~/types/common'
 
 export const session = new Map<string, {userId?: IdType, lastActivity: number}>()
