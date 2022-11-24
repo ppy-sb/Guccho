@@ -100,32 +100,20 @@ export interface ScoreRank<
   scoreHistory?: Record<string, bigint>
 }
 
-export type Rank<
+export type UserModeRulesetStatistics<
   Id,
   _Mode extends Mode,
   _Ruleset extends Ruleset,
   _RankingSystem extends RankingSystem
-> = _RankingSystem extends ScoreRankingSystem
-  ? ScoreRank<Id, _Mode, _Ruleset, _RankingSystem>
-  : _RankingSystem extends PPRankingSystem
-  ? PPRank<Id, _Mode, _Ruleset, _RankingSystem>
-  : BaseRank<Id, _Mode, _Ruleset, _RankingSystem>
-
-export interface UserModeRulesetStatistics<
-  Id,
-  _Mode extends Mode,
-  _Ruleset extends Ruleset,
-  _RankingSystem extends RankingSystem
-> {
+> = {
   // TODO: Achievement
   // achievements: Achievement[]
   ranking: {
-    [P in RankingSystem as P extends _RankingSystem ? P : never]: Rank<
-      Id,
-      _Mode,
-      _Ruleset,
-      P
-    >
+    [P in _RankingSystem]: P extends ScoreRankingSystem
+    ? ScoreRank<Id, _Mode, _Ruleset, P>
+    : P extends PPRankingSystem
+    ? PPRank<Id, _Mode, _Ruleset, P>
+    : BaseRank<Id, _Mode, _Ruleset, P>
   }
   playCount: number
   playTime: number
@@ -173,12 +161,36 @@ export interface UserRelationship<Id> extends BaseUser<Id> {
   mutualRelationship: MutualRelationship[]
 }
 
-type UserStatisticGen<
-  Target extends TypeTarget,
+export type UserStatistic<
   Id,
-  IncludeMode extends Mode,
-  IncludeRuleset extends Ruleset,
-  Ranking extends RankingSystem,
+  IncludeMode extends Mode = Mode,
+  IncludeRuleset extends Ruleset = Ruleset,
+  Ranking extends RankingSystem = RankingSystem
+> ={
+    [M in Mode as M extends IncludeMode ? M : never]: {
+      [R in Ruleset as R extends IncludeRuleset
+      ? M extends StandardAvailable
+      ? R extends 'standard'
+      ? R
+      : M extends RelaxAvailable
+      ? R extends 'relax'
+      ? R
+      : M extends AutopilotAvailable
+      ? R extends 'autopilot'
+      ? R
+      : never
+      : never
+      : never
+      : never
+      : never]: UserModeRulesetStatistics<Id, M, R, Ranking>
+    }
+  }
+
+export type ComponentUserStatistic<
+  Id,
+  IncludeMode extends Mode = Mode,
+  IncludeRuleset extends Ruleset = Ruleset,
+  Ranking extends RankingSystem = RankingSystem
 > = {
     [M in Mode as M extends IncludeMode ? M : never]: {
       [R in Ruleset as R extends IncludeRuleset
@@ -195,75 +207,33 @@ type UserStatisticGen<
       : never
       : never
       : never
-      : never]: Target extends 'component' ? Maybe<UserModeRulesetStatistics<Id, M, R, Ranking>, 'ranking'> : UserModeRulesetStatistics<Id, M, R, Ranking>
+      : never]: Maybe<UserModeRulesetStatistics<Id, M, R, Ranking>, 'ranking'>
     }
   }
-
-export type UserStatistic<
+export interface UserExtra<
   Id,
   IncludeMode extends Mode = Mode,
   IncludeRuleset extends Ruleset = Ruleset,
   Ranking extends RankingSystem = RankingSystem
-> = UserStatisticGen<
-  'server',
-  Id,
-  IncludeMode,
-  IncludeRuleset,
-  Ranking
->
-
-export type ComponentUserStatistic<
-  Id,
-  IncludeMode extends Mode = Mode,
-  IncludeRuleset extends Ruleset = Ruleset,
-  Ranking extends RankingSystem = RankingSystem
-> = UserStatisticGen<
-  'component',
-  Id,
-  IncludeMode,
-  IncludeRuleset,
-  Ranking
->
-
-interface UserExtraGen<
-  Target extends TypeTarget,
-  Id,
-  IncludeMode extends Mode,
-  IncludeRuleset extends Ruleset,
-  Ranking extends RankingSystem
 > {
-  statistics: Target extends 'component' ? ComponentUserStatistic<Id, IncludeMode, IncludeRuleset, Ranking> : UserStatistic<Id, IncludeMode, IncludeRuleset, Ranking>
+  statistics: UserStatistic<Id, IncludeMode, IncludeRuleset, Ranking>
 
   profile?: JSONContent
   relationships: UserRelationship<Id>[]
   preferences: UserPreferences
 }
 
-export type UserExtra<
-  Id,
-  IncludeMode extends Mode = Mode,
-  IncludeRuleset extends Ruleset = Ruleset,
-  Ranking extends RankingSystem = RankingSystem
-> = UserExtraGen<
-  'server',
-  Id,
-  IncludeMode,
-  IncludeRuleset,
-  Ranking
->
-
 export type ComponentUserExtra<
   Id,
   IncludeMode extends Mode = Mode,
   IncludeRuleset extends Ruleset = Ruleset,
   Ranking extends RankingSystem = RankingSystem
-> = UserExtraGen<
-  'component',
+> = Maybe<UserExtra<
   Id,
   IncludeMode,
   IncludeRuleset,
   Ranking
->
+>, 'statistics'>
 
 export interface UserFull<
   Id,
