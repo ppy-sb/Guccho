@@ -1,4 +1,4 @@
-import { IF, EXTENDS, STRICTEQUAL } from './internal-utils'
+import { IF, STRICTEQUAL } from './internal-utils'
 
 export type UnknownSource = 'unknown';
 export type LocalSource = 'local';

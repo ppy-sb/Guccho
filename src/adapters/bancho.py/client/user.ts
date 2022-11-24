@@ -165,11 +165,7 @@ export const getStatisticsOfUser = async ({ id, country }: { id: Id, country: st
 export async function getFullUser<Includes extends Partial<Record<keyof UserOptional<Id> | keyof UserExtra<Id>, boolean>> = Record<never, never>> (opt: {
   handle: string | Id
   includes: Includes
-}): Promise<(BaseUser<Id> & {
-  [Extra in keyof UserExtra<Id> as Includes[Extra] extends false ? never : Extra]: UserExtra<Id>[Extra]
-} & {
-    [KOptional in keyof UserOptional<Id> as Includes[KOptional] extends true ? KOptional : never]: UserOptional<Id>[KOptional]
-  }) | null> {
+}) {
   const { includes, handle } = opt
   const user = await db.user.findFirst(createUserQuery(handle))
 
