@@ -1,7 +1,6 @@
-import type { IdType as Id } from '../config'
 import { IdType } from '$/config'
 
-export const createUserQuery = (handle: string | Id, selectAgainst: Array<'id' | 'name' | 'safeName' | 'email'> = ['id', 'name', 'safeName']) => {
+export const createUserQuery = (handle: string | IdType, selectAgainst: Array<'id' | 'name' | 'safeName' | 'email'> = ['id', 'name', 'safeName']) => {
   let handleNum = handle
   const handleStr = handle.toString().trim()
   if (typeof handleNum === 'string') {

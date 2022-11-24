@@ -7,7 +7,7 @@ import { TRPCError } from '@trpc/server'
 import z from 'zod'
 import { router as _router } from '../trpc'
 import { zodHandle, zodRelationType } from '../shapes'
-import { procedureWithUserLoggedIn as pUser } from './../middleware/user'
+import { procedureWithUserLoggedIn as pUser } from '~/server/trpc/middleware/user'
 import {
   getFullUser,
   getBaseUser,

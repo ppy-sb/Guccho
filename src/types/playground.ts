@@ -1,20 +1,15 @@
-import { SWITCH, CASE, DEFAULT, EQUALS } from './internal-utils'
-import { Ruleset, StandardAvailable, RelaxAvailable, AutopilotAvailable } from './common'
+import { SWITCH, CASE, MATCHER, DEFAULT, TRY, IF, STRICTEQUAL, EXTENDS, INCLUDES } from './internal-utils'
 
-type AutoAvailable<_Ruleset extends Ruleset> =
-  // _Ruleset extends StandardAvailable
-  //   ? StandardAvailable
-  //   : _Ruleset extends RelaxAvailable
-  //   ? RelaxAvailable
-  //   : _Ruleset extends AutopilotAvailable
-  //   ? AutopilotAvailable
-  //   : never;
+type SwitchRes<T> = SWITCH.STRICTEQUAL<SWITCH<T,
+  | [2, 'number[2]']
+  | ((index: number) => 'matched number')
+  | CASE<number, 'any number'>
+  | MATCHER<(i: any, str: string) => 'matched any string', 1>
+  | CASE<'2', 'string[2]'>
+  | DEFAULT<never>>
+>
 
-  SWITCH<_Ruleset,
-    | CASE<'standard', StandardAvailable>
-    | CASE<'relax', RelaxAvailable>
-    | CASE<'autopilot', AutopilotAvailable>
-    | DEFAULT<never>
-  >
-
-  type D<IP extends Ruleset>= EQUALS<AutoAvailable<IP>>
+type result = IF<STRICTEQUAL<1, 1> | EXTENDS<number, 3>, {
+  true: () => true,
+  else: () => false
+}>
