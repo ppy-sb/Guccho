@@ -14,22 +14,18 @@ import type {
   UserSecrets
 } from '~/types/user'
 
-export const createRulesetData = <Id, _Mode extends Mode, _Ruleset extends Ruleset, _RankingSystem extends RankingSystem>(
-  databaseResult: Stat | undefined,
-  ranks:
-    | {
-      ppv2Rank: number | bigint
-      totalScoreRank: number | bigint
-      rankedScoreRank: number | bigint
-    }
-    | undefined,
-  livePPRank:
-    | {
-      rank: number | null
-      countryRank: number | null
-    }
-    | false
-): UserModeRulesetStatistics<Id, _Mode, _Ruleset, _RankingSystem> => {
+export function createRulesetData<Id, _Mode extends Mode, _Ruleset extends Ruleset, _RankingSystem extends RankingSystem> (databaseResult: Stat | undefined,
+  ranks: {
+    ppv2Rank: number | bigint
+    totalScoreRank: number | bigint
+    rankedScoreRank: number | bigint
+  } |
+    undefined,
+  livePPRank: {
+    rank: number | null
+    countryRank: number | null
+  } |
+    false): UserModeRulesetStatistics<Id, _Mode, _Ruleset, _RankingSystem> {
   if (!databaseResult) {
     return {
       ranking: {
@@ -54,11 +50,9 @@ export const createRulesetData = <Id, _Mode extends Mode, _Ruleset extends Rules
   return {
     ranking: {
       ppv2: {
-        rank:
-          (livePPRank !== false && livePPRank.rank) ||
+        rank: (livePPRank !== false && livePPRank.rank) ||
           (ranks && Number(ranks.ppv2Rank)),
-        countryRank:
-          (livePPRank !== false && livePPRank.countryRank) || undefined,
+        countryRank: (livePPRank !== false && livePPRank.countryRank) || undefined,
         performance: databaseResult.pp
       },
       rankedScore: {
@@ -76,7 +70,7 @@ export const createRulesetData = <Id, _Mode extends Mode, _Ruleset extends Rules
   }
 }
 
-export const toRoles = (priv: number): UserPrivilegeString[] => {
+export function toRoles (priv: number): UserPrivilegeString[] {
   const roles: UserPrivilegeString[] = []
   if (priv & BanchoPyPrivilege.Normal) {
     roles.push('registered')
@@ -117,15 +111,10 @@ export const toRoles = (priv: number): UserPrivilegeString[] => {
   return roles
 }
 
-export const toBaseUser = <
-  Includes extends Partial<Record<keyof UserOptional<Id>, boolean>> = Record<
-    never,
-    never
-  >
->(
-    user: DatabaseUser,
-    includes?: Includes
-  ) => {
+export function toBaseUser<Includes extends Partial<Record<keyof UserOptional<Id>, boolean>> = Record<
+  never, never
+>> (user: DatabaseUser,
+  includes?: Includes) {
   const returnValue: BaseUser<Id> & Partial<UserOptional<Id>> = {
     id: user.id,
     ingameId: user.id,
@@ -147,18 +136,14 @@ export const toBaseUser = <
     returnValue.email = user.email
   }
 
-  return returnValue as Includes['secrets'] extends true
-    ? BaseUser<Id> & { secrets: UserSecrets }
-    : BaseUser<Id>
+  return returnValue as Includes['secrets'] extends true ? BaseUser<Id> & { secrets: UserSecrets} : BaseUser<Id>
 }
 
-export const dedupeUserRelationship = (
-  relations: {
-    type: RelationshipType
-    toUserId: Id
-    toUser: BaseUser<Id>
-  }[]
-) => {
+export function dedupeUserRelationship (relations: {
+  type: RelationshipType
+  toUserId: Id
+  toUser: BaseUser<Id>
+}[]) {
   const reduceUserRelationships = relations.reduce((acc, cur) => {
     if (!acc.has(cur.toUserId)) {
       acc.set(cur.toUserId, {
@@ -176,14 +161,9 @@ export const dedupeUserRelationship = (
   return [...reduceUserRelationships.values()]
 }
 
-export const toFullUser = <
-  Extend extends Partial<UserOptional<Id>> & Partial<UserExtra<Id>>
->(
-    user: DatabaseUser,
-    extraFields: Extend
-  ) => {
-  const returnValue =
-  {
+export function toFullUser<Extend extends Partial<UserOptional<Id>> & Partial<UserExtra<Id>>> (user: DatabaseUser,
+  extraFields: Extend) {
+  const returnValue = {
     id: user.id,
     ingameId: user.id,
     name: user.name,
@@ -215,16 +195,16 @@ export const toFullUser = <
     secrets: extraFields.secrets
   }
   return returnValue as BaseUser<Id> & UserExtra<Id> & {
-    statistics: Extend['statistics'],
+    statistics: Extend['statistics']
     status: Extend['status']
-    secrets: Extend['secrets'],
-    email: Extend['email'],
-    reachable: Extend['reachable'],
+    secrets: Extend['secrets']
+    email: Extend['email']
+    reachable: Extend['reachable']
     relationships: Extend['relationships']
   }
 }
 
-export const compareScope = (scope: Scope, requiredScope: Scope) => {
+export function compareScope (scope: Scope, requiredScope: Scope) {
   if (requiredScope === 'public') { return true }
   if (requiredScope === 'friends') { return scope === 'friends' }
   if (requiredScope === 'self') { return scope === 'self' }

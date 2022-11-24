@@ -23,24 +23,39 @@ export async function getLeaderboard ({
   const start = page * pageSize
   const end = start + pageSize
 
-  const sql = /* sql */`
+  const result = await db.$queryRawUnsafe<
+    Array<{
+      id: IdType
+      name: string,
+      safeName: string,
+      flag: string,
+
+      mode: BanchoPyMode
+      _rank: bigint,
+      accuracy: number,
+      totalScore: bigint,
+      rankedScore: bigint,
+      ppv2: number,
+      playCount: number
+    }>
+  >(/* sql */`
   WITH ranks AS (
     SELECT
-${rankingSystem === 'ppv2'
+    ${rankingSystem === 'ppv2'
       ? /* sql */ `
       RANK () OVER (
         PARTITION BY stat.mode
         ORDER BY stat.pp desc
       ) as _rank,`
       : ''
-}${rankingSystem === 'totalScore'
+    }${rankingSystem === 'totalScore'
       ? /* sql */ `
       RANK () OVER (
         PARTITION BY stat.mode
         ORDER BY stat.tscore desc
       ) as _rank,`
       : ''
-}${rankingSystem === 'rankedScore'
+    }${rankingSystem === 'rankedScore'
       ? /* sql */ `
       RANK () OVER (
         PARTITION BY stat.mode
@@ -79,24 +94,7 @@ ${rankingSystem === 'ppv2'
   WHERE _rank > 0
   ORDER BY _rank ASC
   LIMIT ${start}, ${end}
-  `
-
-  const result = await db.$queryRawUnsafe<
-    Array<{
-      id: IdType
-      name: string,
-      safeName: string,
-      flag: string,
-
-      mode: BanchoPyMode
-      _rank: bigint,
-      accuracy: number,
-      totalScore: bigint,
-      rankedScore: bigint,
-      ppv2: number,
-      playCount: number
-    }>
-  >(sql)
+  `)
 
   return result.map(item => ({
     user: {

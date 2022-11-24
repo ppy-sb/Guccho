@@ -6,7 +6,7 @@ import { createClient } from 'redis'
 import type { IdType as Id, Mode, RankingSystem, Ruleset } from '../config'
 import { BanchoPyMode } from '../enums'
 import { createRulesetData, toBaseUser, toFullUser } from '../transforms'
-import { createUserQuery } from './queries'
+import { createUserQuery } from './db-queries'
 import { getRelationships } from './user-relations'
 import { prismaClient as db } from './index'
 
@@ -15,30 +15,39 @@ import type { BaseUser, UserExtra, UserOptional, UserStatistic } from '~/types/u
 const redisClient = Boolean(process.env.REDIS_URI) && createClient({
   url: process.env.REDIS_URI
 })
-
-export const getBaseUser = async <Includes extends Partial<Record<keyof UserOptional<Id>, boolean>> = Record<never, never>>(
-  handle: string | Id,
+type OptType<Includes extends Partial<Record<keyof UserOptional<Id>, boolean>> = Record<never, never>> = {
+  handle: string | Id
   includes?: Includes
-) => {
-  const user = await db.user.findFirst(createUserQuery(handle, ['id', 'name', 'safeName', 'email']))
+  keys?: Array<['id', 'name', 'safeName', 'email'][number]>
+}
+export async function userExists ({ handle, keys }: OptType) {
+  return await db.user.count(createUserQuery(handle, keys || ['id', 'name', 'safeName', 'email'])) > 0
+}
+
+export async function getBaseUser<Includes extends Partial<Record<keyof UserOptional<number>, boolean>>> (opt: OptType<Includes>) {
+  const { handle, includes, keys } = opt
+  const user = await db.user.findFirst(createUserQuery(handle, keys || ['id', 'name', 'safeName', 'email']))
   if (!user) {
     return null
   }
   return toBaseUser(user, includes)
 }
 
-export const getBaseUsers = async <Includes extends Partial<Record<keyof UserOptional<Id>, boolean>> = Record<never, never>>(
-  handle: string | Id,
+export async function getBaseUsers<Includes extends Partial<Record<keyof UserOptional<Id>, boolean>>> (opt: {
+  handle: string | Id
   includes?: Includes
-) => {
+}) {
+  const { handle, includes } = opt
   const users = await db.user.findMany(createUserQuery(handle))
   return users.map(user => toBaseUser(user, includes))
 }
 
-const getLiveRank = async (id: number, mode: number, country: string) => redisClient && ({
-  rank: await redisClient.zRevRank(`bancho:leaderboard:${mode}`, id.toString()),
-  countryRank: await redisClient.zRevRank(`bancho:leaderboard:${mode}:${country}`, id.toString())
-})
+async function getLiveRank (id: number, mode: number, country: string) {
+  return redisClient && ({
+    rank: await redisClient.zRevRank(`bancho:leaderboard:${mode}`, id.toString()),
+    countryRank: await redisClient.zRevRank(`bancho:leaderboard:${mode}:${country}`, id.toString())
+  })
+}
 
 export const getStatisticsOfUser = async ({ id, country }: { id: Id, country: string }) => {
   const [results, ranks, livePPRank] = await Promise.all([
@@ -153,14 +162,15 @@ export const getStatisticsOfUser = async ({ id, country }: { id: Id, country: st
 }
 
 // high cost
-export const getFullUser = async <Includes extends Partial<Record<keyof UserOptional<Id> | keyof UserExtra<Id>, boolean>> = Record<never, never>>(
-  handle: string | Id,
+export async function getFullUser<Includes extends Partial<Record<keyof UserOptional<Id> | keyof UserExtra<Id>, boolean>> = Record<never, never>> (opt: {
+  handle: string | Id
   includes: Includes
-): Promise<(BaseUser<Id> & {
+}): Promise<(BaseUser<Id> & {
   [Extra in keyof UserExtra<Id> as Includes[Extra] extends false ? never : Extra]: UserExtra<Id>[Extra]
 } & {
     [KOptional in keyof UserOptional<Id> as Includes[KOptional] extends true ? KOptional : never]: UserOptional<Id>[KOptional]
-  }) | null> => {
+  }) | null> {
+  const { includes, handle } = opt
   const user = await db.user.findFirst(createUserQuery(handle))
 
   if (!user) {
@@ -186,7 +196,7 @@ export const getFullUser = async <Includes extends Partial<Record<keyof UserOpti
   }
 }
 
-export const updateUser = async (user: BaseUser<Id>, input: { email?: string, name?: string }) => {
+export async function updateUser (user: BaseUser<Id>, input: { email?: string; name?: string}) {
   const result = await db.user.update({
     where: {
       id: user.id
@@ -199,11 +209,7 @@ export const updateUser = async (user: BaseUser<Id>, input: { email?: string, na
   return toBaseUser(result)
 }
 
-export const updateUserPassword = async (user: BaseUser<Id>, newPasswordMD5: string) => {
-  // # calculate new md5 & bcrypt pw
-  // pw_md5 = hashlib.md5(new_password.encode()).hexdigest().encode()
-  // pw_bcrypt = bcrypt.hashpw(pw_md5, bcrypt.gensalt())
-
+export async function updateUserPassword (user: BaseUser<Id>, newPasswordMD5: string) {
   // TODO: gen salt round
   const salt = await bcrypt.genSalt()
   const pwBcrypt = await bcrypt.hash(newPasswordMD5, salt)

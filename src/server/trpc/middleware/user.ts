@@ -18,7 +18,7 @@ export const procedureWithUserLoggedIn = procedureWithSession
         message: 'you need to login first'
       })
     }
-    const user = await getBaseUser(session.userId)
+    const user = await getBaseUser({ handle: session.userId })
     if (!user) {
       throw new TRPCError({
         code: 'NOT_FOUND',

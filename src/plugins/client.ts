@@ -1,6 +1,6 @@
 import { httpBatchLink, createTRPCProxyClient } from '@trpc/client'
 import type { AppRouter } from '@/server/trpc/routers'
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 (BigInt.prototype as any).toJSON = function () {
   return Number(this)
 }

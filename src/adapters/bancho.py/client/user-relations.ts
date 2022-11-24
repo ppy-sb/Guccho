@@ -7,7 +7,7 @@ import { BaseUser } from '~/types/user'
 import { Relationship } from '~/types/common'
 import { calculateMutualRelationships } from '~/server/transforms'
 
-export const getOneRelationShip = async (fromUser: {id: Id}, toUser: {id: Id}) => {
+export async function getOneRelationShip (fromUser: { id: Id}, toUser: { id: Id}) {
   const relationships = await prismaClient.relationship.findFirst({
     where: {
       fromUserId: fromUser.id,
@@ -20,7 +20,7 @@ export const getOneRelationShip = async (fromUser: {id: Id}, toUser: {id: Id}) =
   return relationships?.type
 }
 // TODO: handle the situation where toUser could be null.
-export const getRelationships = async (user: {id: Id}) => {
+export async function getRelationships (user: { id: Id}) {
   const pRelationResult = prismaClient.relationship.findMany({
     where: {
       fromUserId: user.id
@@ -58,7 +58,7 @@ export const getRelationships = async (user: {id: Id}) => {
   return deduped
 }
 
-export const removeRelationship = async (fromUser: BaseUser<Id>, targetUser: BaseUser<Id>, type: Relationship) => {
+export async function removeRelationship (fromUser: BaseUser<Id>, targetUser: BaseUser<Id>, type: Relationship) {
   // bancho.py only allows one relationshipType per direction per one user pair
   // so cannot delete with where condition due to prisma not allowing it.
   // So to make sure that we are removing right relationship, we have to compare
@@ -78,7 +78,7 @@ export const removeRelationship = async (fromUser: BaseUser<Id>, targetUser: Bas
   })
 }
 
-export const countRelationship = async (user: BaseUser<Id>, type: Relationship) => {
+export async function countRelationship (user: BaseUser<Id>, type: Relationship) {
   return await prismaClient.relationship.count({
     where: {
       toUserId: user.id,
