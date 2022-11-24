@@ -1,8 +1,8 @@
 import { z } from 'zod'
 import { TRPCError } from '@trpc/server'
 import { zodHandle, zodRelationType } from '../shapes'
-import { followUserPreferences } from '../../transforms'
-import { publicProcedure as p, router as _router } from './../trpc'
+import { publicProcedure as p, router as _router } from '../trpc'
+import { followUserPreferences } from '~/server/transforms'
 import { countRelationship, getBaseUser, getFullUser } from '$/client'
 
 export const router = _router({

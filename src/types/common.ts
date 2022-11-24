@@ -47,3 +47,12 @@ export type ServerConfig<AvailableRankingSystem extends RankingSystem> = Record<
   },
   name: string
 }>
+
+export type AutoAvailable<_Ruleset extends Ruleset> =
+  _Ruleset extends 'standard'
+    ? StandardAvailable
+    : _Ruleset extends 'relax'
+    ? RelaxAvailable
+    : _Ruleset extends 'autopilot'
+    ? AutopilotAvailable
+    : never;

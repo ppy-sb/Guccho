@@ -2,7 +2,7 @@ import { TRPCError } from '@trpc/server'
 import { setCookie } from 'h3'
 import { publicProcedure } from '../trpc'
 
-import { getSession, refresh, createSession } from '../../session'
+import { getSession, refresh, createSession } from '~/server/session'
 
 export const procedureWithSession = publicProcedure
   .use(async ({ ctx, next }) => {

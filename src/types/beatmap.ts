@@ -1,3 +1,5 @@
+import { IF, EXTENDS, STRICTEQUAL } from './internal-utils'
+
 export type UnknownSource = 'unknown';
 export type LocalSource = 'local';
 export type ForeignSource = 'bancho' | 'private-server';
@@ -40,11 +42,18 @@ export interface Beatmap<
   LocalId,
   ForeignId
 > {
-  id: Source extends UnknownSource
-    ? Status extends RankingStatusEnum.deleted
-      ? never
-      : LocalId
-    : LocalId;
+  id: IF<STRICTEQUAL<Source, UnknownSource>, {
+    true: IF<STRICTEQUAL<Status, RankingStatusEnum.deleted>, {
+      true: never,
+      else: LocalId
+    }>,
+    else: LocalId
+  }>
+  // id: Source extends UnknownSource
+  //   ? Status extends RankingStatusEnum.deleted
+  //     ? never
+  //     : LocalId
+  //   : LocalId;
 
   foreignId: Source extends ForeignSource ? ForeignId : never;
 
@@ -73,4 +82,8 @@ export interface Beatmap<
   };
   md5: string;
   beatmapSet: BeatmapSet<Source, LocalId, ForeignId>;
+}
+
+type BM = {
+  [K in keyof Beatmap<UnknownSource, RankingStatusEnum.deleted, string, string>]: Beatmap<UnknownSource, RankingStatusEnum.deleted, string, string>[K]
 }
