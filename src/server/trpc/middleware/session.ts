@@ -57,8 +57,11 @@ export const procedureWithSession = publicProcedure
         ...ctx,
         session: {
           ...ctx.session,
-          async getBinding () {
-            return await getSession(ctx.session.id)
+          async getBinding<Additional extends Record<string, any>> () {
+            type _ReturnType = Awaited<ReturnType<typeof getSession>> & Partial<Additional>
+            return await getSession(ctx.session.id) as {
+              [K in keyof _ReturnType]: _ReturnType[K]
+            }
           }
         }
       }

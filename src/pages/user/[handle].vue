@@ -63,7 +63,7 @@ import { vIntersectionObserver } from '@vueuse/components'
 import { Mode, Ruleset, RankingSystem } from '~/types/common'
 import { definePageMeta } from '#imports'
 import { UserModeRulesetStatistics } from '~/types/user'
-import { IdType } from '~/server/trpc/trpc'
+import type { IdType } from '~/server/trpc/config'
 
 const route = useRoute()
 

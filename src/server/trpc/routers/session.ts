@@ -17,7 +17,7 @@ export const router = _router({
     md5HashedPassword: z.string()
   })).query(async ({ input: { handle, md5HashedPassword }, ctx }) => {
     try {
-      const user = await getBaseUser(handle, { secrets: true })
+      const user = await getBaseUser({ handle, includes: { secrets: true } })
       if (!user) {
         throw new TRPCError({
           code: 'NOT_FOUND',
@@ -61,7 +61,7 @@ export const router = _router({
       })
     }
     return {
-      user: (session.userId && await getBaseUser(session.userId)) ?? undefined
+      user: (session.userId && await getBaseUser({ handle: session.userId })) ?? undefined
     }
   })
 })

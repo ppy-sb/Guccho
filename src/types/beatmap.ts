@@ -83,7 +83,3 @@ export interface Beatmap<
   md5: string;
   beatmapSet: BeatmapSet<Source, LocalId, ForeignId>;
 }
-
-type BM = {
-  [K in keyof Beatmap<UnknownSource, RankingStatusEnum.deleted, string, string>]: Beatmap<UnknownSource, RankingStatusEnum.deleted, string, string>[K]
-}

@@ -109,7 +109,7 @@ import { EmitType } from '~/components/app/mode-switcher.vue'
 
 import { Mode, Ruleset } from '~/types/common'
 import { ComponentLeaderboardItem } from '~/types/leaderboard'
-import { IdType, RankingSystem as AvailableRankingSystem } from '~/server/trpc/trpc'
+import type { IdType, RankingSystem as AvailableRankingSystem } from '~/server/trpc/config'
 
 const config = useAppConfig()
 

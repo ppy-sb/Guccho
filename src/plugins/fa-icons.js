@@ -1,6 +1,6 @@
 import { config } from '@fortawesome/fontawesome-svg-core'
 // we got this. Weird type error thingy
-// eslint-disable-next-line import/named
+
 // import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 // import { fas } from '@fortawesome/free-solid-svg-icons'
 

@@ -21,23 +21,32 @@ import { calculateMutualRelationships } from '~/server/transforms'
 
 export const router = _router({
   fullSecret: pUser.query(async ({ ctx }) => {
-    return await getFullUser(ctx.user.id, { email: true, secrets: true })
+    return await getFullUser({ handle: ctx.user.id, includes: { email: true, secrets: true } })
   }),
-  updatePreferences: pUser.input(z.object({
-    email: z.string().email().optional(),
-    name: z.string().optional()
-  })).mutation(async ({ ctx, input }) => {
-    // TODO: check input ok
-    const result = await updateUser(ctx.user, input)
-    if (!result) { throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' }) }
-    ctx.user = result
-    return ctx.user
-  }),
+  updatePreferences: pUser
+    .input(z.object({
+      email: z.string().email().optional(),
+      name: z.string().optional()
+    })).mutation(async ({ ctx, input }) => {
+      // const session = await ctx.session.getBinding()
+      // const checks = []
+      // email
+      // if (input.email) {
+      //   const user = await getBaseUser({ handle: input.email, includes: { email: true } })
+      // }
+      // if (input.name) {
+
+      // }
+      const result = await updateUser(ctx.user, input)
+      if (!result) { throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' }) }
+      ctx.user = result
+      return ctx.user
+    }),
   updatePassword: pUser.input(z.object({
     oldPassword: z.string(),
     newPassword: z.string()
   })).mutation(async ({ ctx, input }) => {
-    const userWithPassword = await getBaseUser(ctx.user.id, { secrets: true })
+    const userWithPassword = await getBaseUser({ handle: ctx.user.id, includes: { secrets: true } })
     if (!userWithPassword) { throw new TRPCError({ code: 'NOT_FOUND', message: 'user not found' }) }
     if (!await bcrypt.compare(input.oldPassword, userWithPassword.secrets.password)) {
       throw new TRPCError({ code: 'UNAUTHORIZED', message: 'old password mismatch' })
@@ -53,7 +62,7 @@ export const router = _router({
     .query(async ({ input: { target }, ctx }) => {
       const [fromUser, targetUser] = await Promise.all([
         ctx.user,
-        getBaseUser(target)
+        getBaseUser({ handle: target })
       ])
       if (!fromUser || !targetUser) {
         return
@@ -87,7 +96,7 @@ export const router = _router({
     .query(async ({ input, ctx }) => {
       const [fromUser, targetUser] = await Promise.all([
         ctx.user,
-        getBaseUser(input.target)
+        getBaseUser({ handle: input.target })
       ])
       if (!fromUser || !targetUser) {
         throw new TRPCError({
