@@ -3,7 +3,7 @@ import { Ruleset, Mode } from '~/types/common'
 
 export const modeToGulag = toBanchoPyMode
 
-export const getFlagURL = (flag: string) => {
+export function getFlagURL (flag: string) {
   let url = 'https://osu.ppy.sh/assets/images/flags/'
   flag = flag.toUpperCase()
   for (let i = 0; i < flag.length; i++) {
@@ -12,16 +12,15 @@ export const getFlagURL = (flag: string) => {
   }
   return url
 }
-export const
-  scoreFormat = (score: bigint | number) => {
-    return Intl.NumberFormat(undefined, { notation: 'compact' }).format(score)
-  }
+export function scoreFormat (score: bigint | number) {
+  return Intl.NumberFormat(undefined, { notation: 'compact' }).format(score)
+}
 
-export const addCommas = (nStr: number | bigint) => {
+export function addCommas (nStr: number | bigint) {
   return Intl.NumberFormat().format(nStr)
 }
 
-export const forbiddenMode = (mods: Ruleset, mode: Mode) => {
+export function forbiddenMode (mods: Ruleset, mode: Mode) {
   if (mods === 'relax' && mode === 'mania') {
     return true
   } else if (mods === 'autopilot' && mode !== 'osu') {
@@ -31,7 +30,7 @@ export const forbiddenMode = (mods: Ruleset, mode: Mode) => {
   }
 }
 
-export const forbiddenMods = (mode: Mode, mods: Ruleset) => {
+export function forbiddenMods (mode: Mode, mods: Ruleset) {
   if (mode === 'mania' && mods === 'relax') {
     return true
   } else if (mode !== 'osu' && mods === 'autopilot') {
