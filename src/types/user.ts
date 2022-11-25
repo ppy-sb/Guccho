@@ -75,12 +75,12 @@ export interface BaseRank<
   recent?: Score<Id, _Mode, _Ruleset, _RankingSystem>[]
 }
 
-export interface PPRank<
+export type PPRank<
   Id,
   _Mode extends Mode,
   _Ruleset extends Ruleset,
   _RankingSystem extends RankingSystem
-> extends BaseRank<Id, _Mode, _Ruleset, _RankingSystem> {
+> = BaseRank<Id, _Mode, _Ruleset, _RankingSystem> & {
   performance: number
   performanceHistory?: Record<string, number>
 
@@ -88,12 +88,12 @@ export interface PPRank<
   // bests: Score[]
 }
 
-export interface ScoreRank<
+export type ScoreRank<
   Id,
   _Mode extends Mode,
   _Ruleset extends Ruleset,
   _RankingSystem extends RankingSystem
-> extends BaseRank<Id, _Mode, _Ruleset, _RankingSystem> {
+> = BaseRank<Id, _Mode, _Ruleset, _RankingSystem> & {
   score: bigint | null
   scoreHistory?: Record<string, bigint>
 }
