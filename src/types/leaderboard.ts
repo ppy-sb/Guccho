@@ -12,8 +12,8 @@ export interface LeaderboardItem<IdType, _RankingSystem extends RankingSystem = 
       accuracy: number;
       playCount: number;
     }
-    & Record<keyof _RankingSystem & PPRankingSystem, number>
-    & Record<keyof _RankingSystem & ScoreRankingSystem, bigint>;
+    & Record<_RankingSystem & PPRankingSystem, number>
+    & Record<_RankingSystem & ScoreRankingSystem, bigint>;
   };
   rank: bigint;
 }
