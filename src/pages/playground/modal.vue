@@ -30,7 +30,7 @@
                     </h2>
                     <p>hell yeah?</p>
                     <div class="justify-end card-actions">
-                      <button class="btn btn-primary" @click="closeModal2">
+                      <button class="btn btn-primary" @click="closeModal2()">
                         close me
                       </button>
                     </div>
@@ -69,7 +69,7 @@
                     </h2>
                     <p>hell yeah?</p>
                     <div class="justify-end card-actions">
-                      <button class="btn btn-primary" @click="closeModal2">
+                      <button class="btn btn-primary" @click="closeModal2()">
                         close me
                       </button>
                     </div>

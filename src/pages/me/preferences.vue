@@ -21,8 +21,8 @@ if (!_user) {
   await navigateTo({ name: 'auth-login', query: { back: '1' } })
 }
 
-const user = ref({ ..._user } as Exclude<typeof _user, false | null>)
-const unchanged = ref({ ..._user } as Exclude<typeof _user, false | null>)
+const user = ref({ ..._user } as Exclude<typeof _user, null>)
+const unchanged = ref({ ...user.value })
 
 const editable = ['name', 'email'] as const
 

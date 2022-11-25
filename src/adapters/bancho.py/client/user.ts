@@ -211,7 +211,7 @@ export const getStatisticsOfUser = async ({
 // high cost
 export async function getFullUser<
   Includes extends Partial<
-    Record<keyof UserOptional<Id> | keyof UserExtra<Id>, boolean>
+    Record<keyof (UserExtra<Id> & UserOptional<Id>), boolean>
   > = Record<never, never>
 > (opt: { handle: string | Id; includes: Includes }) {
   const { includes, handle } = opt
@@ -220,32 +220,27 @@ export async function getFullUser<
   if (!user) {
     return null
   }
-  try {
-    // dispatch queries for user data without waiting for results
-    const t = toFullUser<Mode, Ruleset, RankingSystem>({
-      user,
-      extraFields: {
-        statistics:
+  return toFullUser<Mode, Ruleset, RankingSystem>({
+    user,
+    extraFields: {
+      statistics:
           includes.statistics === false
             ? undefined
             : await getStatisticsOfUser(user),
-        relationships:
+      relationships:
           includes.relationships === false
             ? undefined
             : await getRelationships(user),
-        secrets: includes.secrets
-          ? {
-              password: user.pwBcrypt,
-              apiKey: user.apiKey ?? undefined
-            }
-          : undefined,
-        email: includes.email ? user.email : undefined
-      }
-    })
-    return t
-  } catch (err) {
-    // console.error(err)
-    return null
+      secrets: includes.secrets
+        ? {
+            password: user.pwBcrypt,
+            apiKey: user.apiKey ?? undefined
+          }
+        : undefined,
+      email: includes.email ? user.email : undefined
+    }
+  }) as BaseUser<Id> & {
+    [K in keyof (UserExtra<Id> & UserOptional<Id>) as Includes[K] extends false ? never : K]: (Required<UserOptional<Id>> & UserExtra<Id>)[K]
   }
 }
 

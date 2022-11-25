@@ -38,20 +38,20 @@ export const createPPRank = (
   }
 ): PPRank<unknown, Mode, Ruleset, RankingSystem> => JSON.parse(JSON.stringify(initial))
 
-export const createRulesetData = <Id, _Mode extends Mode = Mode, _Ruleset extends Ruleset = Ruleset, _RankingSystem extends RankingSystem = RankingSystem>(
-  ppRankData: PPRank<Id, _Mode, _Ruleset, _RankingSystem> | undefined = undefined,
-  scoreRankData: ScoreRank<Id, _Mode, _Ruleset, _RankingSystem> | undefined = undefined
-): UserModeRulesetStatistics<Id, _Mode, _Ruleset, _RankingSystem> => ({
-    ranking: {
-      ppv2: createPPRank(ppRankData),
-      ppv1: createPPRank(ppRankData),
-      rankedScore: createScoreRank(scoreRankData),
-      totalScore: createScoreRank(scoreRankData)
-    },
-    playCount: 1,
-    playTime: 10000,
-    totalHits: 1
-  })
+export const createRulesetData = <M extends Mode, Rs extends Ruleset, R extends RankingSystem>(
+  ppRankData: PPRank<unknown, M, Rs, RankingSystem> | undefined = undefined,
+  scoreRankData: ScoreRank<unknown, M, Rs, RankingSystem> | undefined = undefined
+) => ({
+  ranking: {
+    ppv2: createPPRank(ppRankData),
+    ppv1: createPPRank(ppRankData),
+    rankedScore: createScoreRank(scoreRankData),
+    totalScore: createScoreRank(scoreRankData)
+  },
+  playCount: 1,
+  playTime: 10000,
+  totalHits: 1
+}) as UserModeRulesetStatistics<unknown, M, Rs, R>
 export const sampleUserWithSecrets: Required<UserFull<unknown>> = {
   id: '',
   ingameId: 9999,
