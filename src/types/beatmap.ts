@@ -1,5 +1,3 @@
-import { IF, STRICTEQUAL } from './internal-utils'
-
 export type UnknownSource = 'unknown';
 export type LocalSource = 'local';
 export type ForeignSource = 'bancho' | 'private-server';
@@ -42,13 +40,10 @@ export interface Beatmap<
   LocalId,
   ForeignId
 > {
-  id: IF<STRICTEQUAL<Source, UnknownSource>, {
-    true: IF<STRICTEQUAL<Status, RankingStatusEnum.deleted>, {
-      true: never,
-      else: LocalId
-    }>,
-    else: LocalId
-  }>
+  id: [Source, Status] extends [UnknownSource, RankingStatusEnum.deleted]
+      ? never
+      : LocalId
+
   // id: Source extends UnknownSource
   //   ? Status extends RankingStatusEnum.deleted
   //     ? never

@@ -11,16 +11,14 @@ export interface LeaderboardItem<IdType, _RankingSystem extends RankingSystem = 
     inThisLeaderboard: {
       accuracy: number;
       playCount: number;
-    } & {
-      [K in _RankingSystem as K extends PPRankingSystem ? K : never]: number
-    } & {
-      [K in _RankingSystem as K extends ScoreRankingSystem ? K : never]: bigint
-    };
+    }
+    & Record<keyof _RankingSystem & PPRankingSystem, number>
+    & Record<keyof _RankingSystem & ScoreRankingSystem, bigint>;
   };
   rank: bigint;
 }
 
-export interface ComponentLeaderboardItem <IdType, _RankingSystem extends RankingSystem = RankingSystem> {
+export interface ComponentLeaderboardItem<IdType, _RankingSystem extends RankingSystem = RankingSystem> {
   rank: bigint
   user: Maybe<LeaderboardItem<IdType, _RankingSystem>['user'], 'inThisLeaderboard'>
 }

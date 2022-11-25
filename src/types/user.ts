@@ -155,29 +155,24 @@ export interface UserRelationship<Id> extends BaseUser<Id> {
   mutualRelationship: MutualRelationship[]
 }
 
+type GetR<M> = M extends StandardAvailable
+  ? 'standard'
+  : M extends RelaxAvailable
+  ? 'relax'
+  : M extends AutopilotAvailable
+  ? 'autopilot'
+  : never
+
 export type UserStatistic<
   Id,
   IncludeMode extends Mode = Mode,
   IncludeRuleset extends Ruleset = Ruleset,
   Ranking extends RankingSystem = RankingSystem
-> ={
-    [M in IncludeMode]: {
-      [R in Ruleset as R extends IncludeRuleset
-      ? M extends StandardAvailable
-      ? R extends 'standard'
-      ? R
-      : M extends RelaxAvailable
-      ? R extends 'relax'
-      ? R
-      : M extends AutopilotAvailable
-      ? R extends 'autopilot'
-      ? R
-      : never
-      : never
-      : never
-      : never
-      : never]: UserModeRulesetStatistics<Id, M, R, Ranking>
-    }
+> = {
+    [M in IncludeMode]: Record<
+      IncludeRuleset,
+      UserModeRulesetStatistics<Id, M, GetR<M>, Ranking>
+    >;
   }
 
 export type ComponentUserStatistic<
@@ -186,24 +181,15 @@ export type ComponentUserStatistic<
   IncludeRuleset extends Ruleset = Ruleset,
   Ranking extends RankingSystem = RankingSystem
 > = {
-    [M in Mode as M extends IncludeMode ? M : never]: {
-      [R in Ruleset as R extends IncludeRuleset
-      ? M extends StandardAvailable
-      ? R extends 'standard'
-      ? R
-      : M extends RelaxAvailable
-      ? R extends 'relax'
-      ? R
-      : M extends AutopilotAvailable
-      ? R extends 'autopilot'
-      ? R
-      : never
-      : never
-      : never
-      : never
-      : never]: Maybe<UserModeRulesetStatistics<Id, M, R, Ranking>, 'ranking'>
-    }
+    [M in IncludeMode]: Record<
+      IncludeRuleset,
+      Maybe<
+        UserModeRulesetStatistics<Id, M, GetR<M>, Ranking>,
+        'ranking'
+      >
+    >;
   }
+
 export interface UserExtra<
   Id,
   IncludeMode extends Mode = Mode,
@@ -229,11 +215,10 @@ export type ComponentUserExtra<
   Ranking
 >, 'statistics'>
 
-export interface UserFull<
+export type UserFull<
   Id,
   IncludeMode extends Mode = Mode,
   IncludeRuleset extends Ruleset = Ruleset,
   Ranking extends RankingSystem = RankingSystem
-> extends BaseUser<Id>,
-  Partial<UserOptional<Id>>,
-  Partial<UserExtra<Id, IncludeMode, IncludeRuleset, Ranking>> { }
+> = BaseUser<Id> & Partial<UserOptional<Id>>
+  & Partial<UserExtra<Id, IncludeMode, IncludeRuleset, Ranking>>
