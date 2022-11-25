@@ -5,8 +5,8 @@ import { palette, convertSingle } from './src/palette'
 
 const themes = require('daisyui/src/colors/themes')
 
-const cupcake = convertSingle(themes['[data-theme=cupcake]'], convert.hex.hsl, ([h, s, l]) => `hsl(${h} ${s}% ${l}%)`) satisfies Record<keyof typeof themes['[data-theme=cupcake]'], string>
-const dracula = convertSingle(themes['[data-theme=dracula]'], convert.hex.hsl, ([h, s, l]) => `hsl(${h} ${s}% ${l}%)`) satisfies Record<keyof typeof themes['[data-theme=dracula]'], string>
+const cupcake = convertSingle(themes['[data-theme=cupcake]'], convert.hex.hsl, ([h, s, l]) => `hsl(${h} ${s}% ${l}%)`) as Record<keyof typeof themes['[data-theme=cupcake]'], string>
+const dracula = convertSingle(themes['[data-theme=dracula]'], convert.hex.hsl, ([h, s, l]) => `hsl(${h} ${s}% ${l}%)`) as Record<keyof typeof themes['[data-theme=dracula]'], string>
 
 const guweb = [
   {
