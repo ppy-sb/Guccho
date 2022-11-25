@@ -10,46 +10,79 @@ import { createUserQuery } from './db-queries'
 import { getRelationships } from './user-relations'
 import { prismaClient as db } from './index'
 
-import type { BaseUser, UserExtra, UserOptional, UserStatistic } from '~/types/user'
+import type {
+  BaseUser,
+  UserExtra,
+  UserOptional,
+  UserStatistic
+} from '~/types/user'
 
-const redisClient = Boolean(process.env.REDIS_URI) && createClient({
-  url: process.env.REDIS_URI
-})
-type OptType<Includes extends Partial<Record<keyof UserOptional<Id>, boolean>> = Record<never, never>> = {
-  handle: string | Id
-  includes?: Includes
-  keys?: Array<['id', 'name', 'safeName', 'email'][number]>
-}
+const redisClient =
+  Boolean(process.env.REDIS_URI) &&
+  createClient({
+    url: process.env.REDIS_URI
+  })
+type OptType<
+  Includes extends Partial<Record<keyof UserOptional<Id>, boolean>> = Record<
+    never,
+    never
+  >
+> = {
+  handle: string | Id;
+  includes?: Includes;
+  keys?: Array<['id', 'name', 'safeName', 'email'][number]>;
+};
 export async function userExists ({ handle, keys }: OptType) {
-  return await db.user.count(createUserQuery(handle, keys || ['id', 'name', 'safeName', 'email'])) > 0
+  return (
+    (await db.user.count(
+      createUserQuery(handle, keys || ['id', 'name', 'safeName', 'email'])
+    )) > 0
+  )
 }
 
-export async function getBaseUser<Includes extends Partial<Record<keyof UserOptional<number>, boolean>>> (opt: OptType<Includes>) {
+export async function getBaseUser<
+  Includes extends Partial<Record<keyof UserOptional<number>, boolean>>
+> (opt: OptType<Includes>) {
   const { handle, includes, keys } = opt
-  const user = await db.user.findFirst(createUserQuery(handle, keys || ['id', 'name', 'safeName', 'email']))
+  const user = await db.user.findFirst(
+    createUserQuery(handle, keys || ['id', 'name', 'safeName', 'email'])
+  )
   if (!user) {
     return null
   }
-  return toBaseUser(user, includes)
+  return toBaseUser({ user, includes })
 }
 
-export async function getBaseUsers<Includes extends Partial<Record<keyof UserOptional<Id>, boolean>>> (opt: {
-  handle: string | Id
-  includes?: Includes
-}) {
+export async function getBaseUsers<
+  Includes extends Partial<Record<keyof UserOptional<Id>, boolean>>
+> (opt: { handle: string | Id; includes?: Includes }) {
   const { handle, includes } = opt
   const users = await db.user.findMany(createUserQuery(handle))
-  return users.map(user => toBaseUser(user, includes))
+  return users.map(user => toBaseUser({ user, includes }))
 }
 
 async function getLiveRank (id: number, mode: number, country: string) {
-  return redisClient && ({
-    rank: await redisClient.zRevRank(`bancho:leaderboard:${mode}`, id.toString()),
-    countryRank: await redisClient.zRevRank(`bancho:leaderboard:${mode}:${country}`, id.toString())
-  })
+  if (redisClient) {
+    return {
+      rank: await redisClient.zRevRank(
+        `bancho:leaderboard:${mode}`,
+        id.toString()
+      ),
+      countryRank: await redisClient.zRevRank(
+        `bancho:leaderboard:${mode}:${country}`,
+        id.toString()
+      )
+    }
+  }
 }
 
-export const getStatisticsOfUser = async ({ id, country }: { id: Id, country: string }) => {
+export const getStatisticsOfUser = async ({
+  id,
+  country
+}: {
+  id: Id;
+  country: string;
+}) => {
   const [results, ranks, livePPRank] = await Promise.all([
     db.stat.findMany({
       where: {
@@ -88,84 +121,99 @@ export const getStatisticsOfUser = async ({ id, country }: { id: Id, country: st
   WHERE id = ${id}
   `,
 
-    redisClient && {
-      osu: {
-        standard: await getLiveRank(id, BanchoPyMode.osuStandard, country),
-        relax: await getLiveRank(id, BanchoPyMode.osuRelax, country),
-        autopilot: await getLiveRank(id, BanchoPyMode.osuAutopilot, country)
-      },
-      taiko: {
-        standard: await getLiveRank(id, BanchoPyMode.osuStandard, country),
-        relax: await getLiveRank(id, BanchoPyMode.osuRelax, country)
-      },
-      fruits: {
-        standard: await getLiveRank(id, BanchoPyMode.osuStandard, country),
-        relax: await getLiveRank(id, BanchoPyMode.osuRelax, country)
-      },
-      mania: {
-        standard: await getLiveRank(id, BanchoPyMode.osuStandard, country)
-      }
-    }
+    redisClient
+      ? {
+          osu: {
+            standard: await getLiveRank(id, BanchoPyMode.osuStandard, country),
+            relax: await getLiveRank(id, BanchoPyMode.osuRelax, country),
+            autopilot: await getLiveRank(id, BanchoPyMode.osuAutopilot, country)
+          },
+          taiko: {
+            standard: await getLiveRank(id, BanchoPyMode.osuStandard, country),
+            relax: await getLiveRank(id, BanchoPyMode.osuRelax, country)
+          },
+          fruits: {
+            standard: await getLiveRank(id, BanchoPyMode.osuStandard, country),
+            relax: await getLiveRank(id, BanchoPyMode.osuRelax, country)
+          },
+          mania: {
+            standard: await getLiveRank(id, BanchoPyMode.osuStandard, country)
+          }
+        }
+      : undefined
   ])
 
   const statistics: UserStatistic<Id, Mode, Ruleset, RankingSystem> = {
     osu: {
-      standard: createRulesetData(
-        results.find(i => i.mode === BanchoPyMode.osuStandard),
-        ranks.find(i => i.mode === BanchoPyMode.osuStandard),
-        livePPRank && livePPRank.osu.standard
-      ),
-      relax: createRulesetData(
-        results.find(i => i.mode === BanchoPyMode.osuRelax),
-        ranks.find(i => i.mode === BanchoPyMode.osuRelax),
-        livePPRank && livePPRank.osu.relax
-      ),
-      autopilot: createRulesetData(
-        results.find(i => i.mode === BanchoPyMode.osuAutopilot),
-        ranks.find(i => i.mode === BanchoPyMode.osuAutopilot),
-        livePPRank && livePPRank.osu.autopilot
-      )
+      standard: createRulesetData({
+        databaseResult: results.find(
+          i => i.mode === BanchoPyMode.osuStandard
+        ),
+        ranks: ranks.find(i => i.mode === BanchoPyMode.osuStandard),
+        livePPRank: livePPRank?.osu.standard
+      }),
+      relax: createRulesetData({
+        databaseResult: results.find(i => i.mode === BanchoPyMode.osuRelax),
+        ranks: ranks.find(i => i.mode === BanchoPyMode.osuRelax),
+        livePPRank: livePPRank?.osu.relax
+      }),
+      autopilot: createRulesetData({
+        databaseResult: results.find(
+          i => i.mode === BanchoPyMode.osuAutopilot
+        ),
+        ranks: ranks.find(i => i.mode === BanchoPyMode.osuAutopilot),
+        livePPRank: livePPRank?.osu.autopilot
+      })
     },
     taiko: {
-      standard: createRulesetData(
-        results.find(i => i.mode === BanchoPyMode.taikoStandard),
-        ranks.find(i => i.mode === BanchoPyMode.taikoStandard),
-        livePPRank && livePPRank.taiko.standard
-      ),
-      relax: createRulesetData(
-        results.find(i => i.mode === BanchoPyMode.taikoRelax),
-        ranks.find(i => i.mode === BanchoPyMode.taikoRelax),
-        livePPRank && livePPRank.taiko.relax
-      )
+      standard: createRulesetData({
+        databaseResult: results.find(
+          i => i.mode === BanchoPyMode.taikoStandard
+        ),
+        ranks: ranks.find(i => i.mode === BanchoPyMode.taikoStandard),
+        livePPRank: livePPRank?.taiko.standard
+      }),
+      relax: createRulesetData({
+        databaseResult: results.find(i => i.mode === BanchoPyMode.taikoRelax),
+        ranks: ranks.find(i => i.mode === BanchoPyMode.taikoRelax),
+        livePPRank: livePPRank?.taiko.relax
+      })
     },
     fruits: {
-      standard: createRulesetData(
-        results.find(i => i.mode === BanchoPyMode.fruitsStandard),
-        ranks.find(i => i.mode === BanchoPyMode.fruitsStandard),
-        livePPRank && livePPRank.fruits.standard
-      ),
-      relax: createRulesetData(
-        results.find(i => i.mode === BanchoPyMode.fruitsRelax),
-        ranks.find(i => i.mode === BanchoPyMode.fruitsRelax),
-        livePPRank && livePPRank.fruits.relax
-      )
+      standard: createRulesetData({
+        databaseResult: results.find(
+          i => i.mode === BanchoPyMode.fruitsStandard
+        ),
+        ranks: ranks.find(i => i.mode === BanchoPyMode.fruitsStandard),
+        livePPRank: livePPRank?.fruits.standard
+      }),
+      relax: createRulesetData({
+        databaseResult: results.find(
+          i => i.mode === BanchoPyMode.fruitsRelax
+        ),
+        ranks: ranks.find(i => i.mode === BanchoPyMode.fruitsRelax),
+        livePPRank: livePPRank?.fruits.relax
+      })
     },
     mania: {
-      standard: createRulesetData(
-        results.find(i => i.mode === BanchoPyMode.maniaStandard),
-        ranks.find(i => i.mode === BanchoPyMode.maniaStandard),
-        livePPRank && livePPRank.mania.standard
-      )
+      standard: createRulesetData({
+        databaseResult: results.find(
+          i => i.mode === BanchoPyMode.maniaStandard
+        ),
+        ranks: ranks.find(i => i.mode === BanchoPyMode.maniaStandard),
+        livePPRank: livePPRank?.mania.standard
+      })
     }
   }
   return statistics
 }
 
 // high cost
-export async function getFullUser<Includes extends Partial<Record<keyof UserOptional<Id> | keyof UserExtra<Id>, boolean>> = Record<never, never>> (opt: {
-  handle: string | Id
-  includes: Includes
-}) {
+export async function getFullUser<
+  Includes extends Partial<
+    Record<keyof UserOptional<Id> | keyof UserExtra<Id>, boolean>
+  > = Record<never, never>
+> (opt: { handle: string | Id; includes: Includes }) {
   const { includes, handle } = opt
   const user = await db.user.findFirst(createUserQuery(handle))
 
@@ -174,16 +222,25 @@ export async function getFullUser<Includes extends Partial<Record<keyof UserOpti
   }
   try {
     // dispatch queries for user data without waiting for results
-    const t = toFullUser(user, {
-      statistics: includes.statistics === false ? undefined : await getStatisticsOfUser(user),
-      relationships: includes.relationships === false ? undefined : await getRelationships(user),
-      secrets: includes.secrets
-        ? {
-            password: user.pwBcrypt,
-            apiKey: user.apiKey ?? undefined
-          }
-        : undefined,
-      email: includes.email ? user.email : undefined
+    const t = toFullUser<Mode, Ruleset, RankingSystem>({
+      user,
+      extraFields: {
+        statistics:
+          includes.statistics === false
+            ? undefined
+            : await getStatisticsOfUser(user),
+        relationships:
+          includes.relationships === false
+            ? undefined
+            : await getRelationships(user),
+        secrets: includes.secrets
+          ? {
+              password: user.pwBcrypt,
+              apiKey: user.apiKey ?? undefined
+            }
+          : undefined,
+        email: includes.email ? user.email : undefined
+      }
     })
     return t
   } catch (err) {
@@ -192,7 +249,10 @@ export async function getFullUser<Includes extends Partial<Record<keyof UserOpti
   }
 }
 
-export async function updateUser (user: BaseUser<Id>, input: { email?: string; name?: string}) {
+export async function updateUser (
+  user: BaseUser<Id>,
+  input: { email?: string; name?: string }
+) {
   const result = await db.user.update({
     where: {
       id: user.id
@@ -202,10 +262,13 @@ export async function updateUser (user: BaseUser<Id>, input: { email?: string; n
       name: input.name
     }
   })
-  return toBaseUser(result)
+  return toBaseUser({ user: result })
 }
 
-export async function updateUserPassword (user: BaseUser<Id>, newPasswordMD5: string) {
+export async function updateUserPassword (
+  user: BaseUser<Id>,
+  newPasswordMD5: string
+) {
   // TODO: gen salt round
   const salt = await bcrypt.genSalt()
   const pwBcrypt = await bcrypt.hash(newPasswordMD5, salt)
@@ -217,5 +280,5 @@ export async function updateUserPassword (user: BaseUser<Id>, newPasswordMD5: st
       pwBcrypt
     }
   })
-  return toBaseUser(result)
+  return toBaseUser({ user: result })
 }

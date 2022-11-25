@@ -45,7 +45,7 @@ export async function getRelationships (user: { id: Id}) {
 
   const asBaseUserShape = relationships.map(r => ({
     ...r,
-    toUser: toBaseUser(r.toUser)
+    toUser: toBaseUser({ user: r.toUser })
   }))
   const deduped = dedupeUserRelationship(asBaseUserShape)
 

@@ -7,7 +7,7 @@ type AppConfigItemBase = {
   icon: string,
 }
 
-const _serverModeConfig: Record<
+export const serverModeConfig: Record<
     _Mode,
     AppConfigItemBase
   > = {
@@ -28,7 +28,7 @@ const _serverModeConfig: Record<
       icon: 'mania'
     }
   }
-const _serverRulesetConfig: Record<
+export const serverRulesetConfig: Record<
     _Ruleset,
     AppConfigItemBase
   > = {
@@ -46,13 +46,13 @@ const _serverRulesetConfig: Record<
     }
   }
 
-export const _serverRankingSystemConfig = {
+const _serverRankingSystemConfig = {
   ppv2: {
     userpage: {
       show: 'tab'
     },
-    name: 'Performance(v2)',
-    icon: 'pp'
+    name: 'Performance(v2)'
+    // icon: 'pp'
   },
   // ppv1: {
   //   userpage: {
@@ -64,22 +64,20 @@ export const _serverRankingSystemConfig = {
     userpage: {
       show: 'tab'
     },
-    name: 'Ranked Score',
-    icon: 'score'
+    name: 'Ranked Score'
+    // icon: 'score'
   },
   totalScore: {
     userpage: {
       show: 'tab'
     },
-    name: 'Total Score',
-    icon: 'score'
+    name: 'Total Score'
+    // icon: 'score'
   }
-}
+} as const
 
-export type Mode = keyof typeof _serverModeConfig
-export type Ruleset = keyof typeof _serverRulesetConfig
+export type Mode = keyof typeof serverModeConfig
+export type Ruleset = keyof typeof serverRulesetConfig
 export type RankingSystem = keyof typeof _serverRankingSystemConfig
 
-export const serverModeConfig = _serverModeConfig
-export const serverRulesetConfig = _serverRulesetConfig
-export const serverRankingSystemConfig = _serverRankingSystemConfig as ServerConfig<RankingSystem>
+export const serverRankingSystemConfig = _serverRankingSystemConfig satisfies ServerConfig<RankingSystem>
