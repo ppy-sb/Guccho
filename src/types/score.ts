@@ -1,26 +1,10 @@
 import type { PPRankingSystem, Mode as _Mode, Ruleset as _Ruleset, Range, RankingSystem } from './common'
 
-type BaseCount = {
-  300: number,
-  100: number,
-  50: number,
-  miss: number,
-  geki: number,
-  katu: number,
-}
-type ModeCount = {
-  osu: BaseCount
-  taiko: BaseCount
-  fruits: BaseCount
-  mania: {
-    max: number,
-    300: number,
-    200: number,
-    100: number,
-    50: number,
-    miss: number,
-  }
-}
+type BaseCount<T extends _Mode> = Record<
+  300 | 100 | 50 | 'miss' | (T extends 'mania' ? 'max' | 200 : 'geki' | 'katu'),
+  number
+>
+
 export type Mod =
   | 'easy' | 'no-fail' | 'half-time'
   | 'hard-rock' | 'sudden-death' | 'double-time' | 'night-core' | 'hidden' | 'flashlight'
@@ -42,10 +26,8 @@ export type Score<
   mods: Mode extends 'mania' ? ManiaMod[] : Mod[]
   score: bigint
   scoreRank?: number,
-  count: ModeCount[Mode]
-} & {
-    [R in PPRankingSystem as R extends Rank ? R : never]: {
-      rank?: number,
-      pp: number,
-    }
-  }
+  count: BaseCount<Mode>
+} & Record<PPRankingSystem & Rank, {
+  rank?: number,
+  pp: number,
+}>
