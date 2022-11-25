@@ -210,38 +210,40 @@ export const getStatisticsOfUser = async ({
 
 // high cost
 export async function getFullUser<
-  Includes extends Partial<
-    Record<keyof (UserExtra<Id> & UserOptional<Id>), boolean>
-  > = Record<never, never>
-> (opt: { handle: string | Id; includes: Includes }) {
-  const { includes, handle } = opt
+  Includes extends Partial<Record<keyof (UserExtra<Id> & UserOptional<Id>), boolean>>,
+>(handle: string | Id, includes: Includes) {
   const user = await db.user.findFirst(createUserQuery(handle))
 
   if (!user) {
     return null
   }
-  return toFullUser<Mode, Ruleset, RankingSystem>({
-    user,
-    extraFields: {
+
+  return Object.assign(
+    toFullUser(user),
+    {
       statistics:
-          includes.statistics === false
-            ? undefined
-            : await getStatisticsOfUser(user),
+        includes.statistics === false
+          ? undefined
+          : await getStatisticsOfUser(user),
       relationships:
-          includes.relationships === false
-            ? undefined
-            : await getRelationships(user),
+        includes.relationships === false
+          ? undefined
+          : await getRelationships(user),
       secrets: includes.secrets
         ? {
             password: user.pwBcrypt,
             apiKey: user.apiKey ?? undefined
           }
         : undefined,
-      email: includes.email ? user.email : undefined
-    }
-  }) as BaseUser<Id> & {
-    [K in keyof (UserExtra<Id> & UserOptional<Id>) as Includes[K] extends false ? never : K]: (Required<UserOptional<Id>> & UserExtra<Id>)[K]
-  }
+      email: includes.email === false ? undefined : user.email
+    } as unknown as Pick<
+      UserExtra<Id, Mode, Ruleset, Exclude<RankingSystem, 'ppv1'>> & UserOptional<Id>,
+      (Includes['statistics'] extends false ? never : 'statistics')
+      | (Includes['relationships'] extends false ? never : 'relationships')
+      | (Includes['secrets'] extends true ? 'secrets' : never)
+      | (Includes['email'] extends false ? never : 'email')
+    >
+  )
 }
 
 export async function updateUser (

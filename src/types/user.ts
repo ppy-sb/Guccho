@@ -14,13 +14,12 @@ import type {
 } from './common'
 import { Maybe } from './frontend-common'
 
-export type UserOfflineStatus = 'offline'
-export type UserOnlineStatus = 'playing' | 'idle' | 'modding' | 'multiplaying'
-export type UserWebsiteStatus = 'website-online'
-export type UserActivityStatus =
-  | UserOfflineStatus
-  | UserOnlineStatus
-  | UserWebsiteStatus
+export interface UserStatus {
+  Offline: 'offline';
+  Online: 'playing' | 'idle' | 'modding' | 'multiplaying';
+  Website: 'website-online';
+}
+export type UserActivityStatus = UserStatus[keyof UserStatus];
 
 export type UserPrivilegeString =
   // restricted type

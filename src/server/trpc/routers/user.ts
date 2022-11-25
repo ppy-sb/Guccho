@@ -9,7 +9,7 @@ export const router = _router({
   userpage: p.input(z.object({
     handle: zodHandle
   })).query(async ({ input: { handle } }) => {
-    const user = await getFullUser({ handle, includes: { relationships: false } })
+    const user = await getFullUser(handle, { relationships: false })
     if (!user) {
       throw new TRPCError({
         code: 'NOT_FOUND',
@@ -21,7 +21,7 @@ export const router = _router({
   full: p.input(z.object({
     handle: zodHandle
   })).query(async ({ input: { handle } }) => {
-    const user = await getFullUser({ handle, includes: { email: true } })
+    const user = await getFullUser(handle, { email: true })
     if (!user) {
       throw new TRPCError({
         code: 'NOT_FOUND',
