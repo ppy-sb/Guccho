@@ -1,8 +1,6 @@
 /* eslint-disable import/no-named-as-default-member */
 // eslint-disable-next-line import/default
 import bcrypt from 'bcryptjs'
-// !eslint-disable-next-line import/default, @typescript-eslint/no-unused-vars
-// import bcrypt from 'bcryptjs'
 import { TRPCError } from '@trpc/server'
 import z from 'zod'
 import { router as _router } from '../trpc'
