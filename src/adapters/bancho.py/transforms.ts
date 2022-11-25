@@ -16,7 +16,7 @@ export function createRulesetData<
   _Mode extends Mode,
   _Ruleset extends Ruleset,
   _RankingSystem extends RankingSystem
->({
+> ({
   databaseResult,
   ranks,
   livePPRank
@@ -77,7 +77,7 @@ export function createRulesetData<
   } as UserModeRulesetStatistics<Id, _Mode, _Ruleset, _RankingSystem>
 }
 
-export function toRoles(priv: number): UserPrivilegeString[] {
+export function toRoles (priv: number): UserPrivilegeString[] {
   const roles: UserPrivilegeString[] = []
   if (priv & BanchoPyPrivilege.Normal) {
     roles.push('registered')
@@ -123,7 +123,7 @@ export function toBaseUser<
     never,
     never
   >
->({ user, includes }: { user: DatabaseUser, includes?: Includes }) {
+> ({ user, includes }: { user: DatabaseUser, includes?: Includes }) {
   const returnValue: BaseUser<Id> & Partial<UserOptional<Id>> = {
     id: user.id,
     ingameId: user.id,
@@ -150,7 +150,7 @@ export function toBaseUser<
     : BaseUser<Id>
 }
 
-export function dedupeUserRelationship(
+export function dedupeUserRelationship (
   relations: {
     type: RelationshipType
     toUserId: Id
@@ -174,7 +174,7 @@ export function dedupeUserRelationship(
   return [...reduceUserRelationships.values()]
 }
 
-export function toFullUser(user: DatabaseUser) {
+export function toFullUser (user: DatabaseUser) {
   return {
     id: user.id,
     ingameId: user.id,
@@ -196,11 +196,11 @@ export function toFullUser(user: DatabaseUser) {
       type: 'doc',
       content: []
     },
-    oldNames: [],
+    oldNames: []
   }
 }
 
-export function compareScope(scope: Scope, requiredScope: Scope) {
+export function compareScope (scope: Scope, requiredScope: Scope) {
   if (requiredScope === 'public') {
     return true
   }
@@ -212,6 +212,6 @@ export function compareScope(scope: Scope, requiredScope: Scope) {
   }
 }
 
-export function capitalizeFirstLetter<T extends string>(string: T) {
+export function capitalizeFirstLetter<T extends string> (string: T) {
   return (string.charAt(0).toUpperCase() + string.slice(1)) as Capitalize<T>
 }
