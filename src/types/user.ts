@@ -155,13 +155,9 @@ export interface UserRelationship<Id> extends BaseUser<Id> {
   mutualRelationship: MutualRelationship[]
 }
 
-type GetR<M> = M extends StandardAvailable
-  ? 'standard'
-  : M extends RelaxAvailable
-  ? 'relax'
-  : M extends AutopilotAvailable
-  ? 'autopilot'
-  : never
+type AvailableRuleset<R extends Ruleset> = (R extends StandardAvailable ? 'standard' : never)
+  | (R extends RelaxAvailable ? 'relax' : never)
+  | (R extends AutopilotAvailable ? 'autopilot' : never)
 
 export type UserStatistic<
   Id,
@@ -170,8 +166,8 @@ export type UserStatistic<
   Ranking extends RankingSystem = RankingSystem
 > = {
     [M in IncludeMode]: Record<
-      IncludeRuleset,
-      UserModeRulesetStatistics<Id, M, GetR<M>, Ranking>
+      IncludeRuleset & AvailableRuleset<M>,
+      UserModeRulesetStatistics<Id, M, AvailableRuleset<M>, Ranking>
     >;
   }
 
@@ -182,9 +178,9 @@ export type ComponentUserStatistic<
   Ranking extends RankingSystem = RankingSystem
 > = {
     [M in IncludeMode]: Record<
-      IncludeRuleset,
+      IncludeRuleset & AvailableRuleset<M>,
       Maybe<
-        UserModeRulesetStatistics<Id, M, GetR<M>, Ranking>,
+        UserModeRulesetStatistics<Id, M, AvailableRuleset<M>, Ranking>,
         'ranking'
       >
     >;
