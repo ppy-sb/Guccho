@@ -155,7 +155,7 @@ export interface UserRelationship<Id> extends BaseUser<Id> {
   mutualRelationship: MutualRelationship[]
 }
 
-type AvailableRuleset<R extends Ruleset> = (R extends StandardAvailable ? 'standard' : never)
+type AvailableRuleset<R extends Mode> = (R extends StandardAvailable ? 'standard' : never)
   | (R extends RelaxAvailable ? 'relax' : never)
   | (R extends AutopilotAvailable ? 'autopilot' : never)
 
