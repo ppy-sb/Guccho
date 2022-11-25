@@ -1,13 +1,13 @@
 import type { PPRankingSystem, Mode as _Mode, Ruleset as _Ruleset, Range, RankingSystem } from './common'
 
 type BaseCount = {
-    300: number,
-    100: number,
-    50: number,
-    miss: number,
-    geki: number,
-    katu: number,
-  }
+  300: number,
+  100: number,
+  50: number,
+  miss: number,
+  geki: number,
+  katu: number,
+}
 type ModeCount = {
   osu: BaseCount
   taiko: BaseCount
@@ -22,13 +22,13 @@ type ModeCount = {
   }
 }
 export type Mod =
-| 'easy' | 'no-fail' | 'half-time'
-| 'hard-rock' | 'sudden-death' | 'double-time' | 'night-core' | 'hidden' | 'flashlight'
-| /* 'relax' | 'auto-pilot' | */ 'spun-out' | 'auto' | 'cinema'
+  | 'easy' | 'no-fail' | 'half-time'
+  | 'hard-rock' | 'sudden-death' | 'double-time' | 'night-core' | 'hidden' | 'flashlight'
+  | /* 'relax' | 'auto-pilot' | */ 'spun-out' | 'auto' | 'cinema'
 
 export type ManiaMod =
-| `${Range<4, 10>}k`
-| 'fade-in' | 'co-op' | 'random'
+  | `${Range<4, 10>}k`
+  | 'fade-in' | 'co-op' | 'random'
 
 export type Score<
   Id,
@@ -39,13 +39,13 @@ export type Score<
   id: Id
   mode: Mode
   ruleset: Ruleset
-  mods: Mode extends 'mania' ? ManiaMod[] :Mod[]
+  mods: Mode extends 'mania' ? ManiaMod[] : Mod[]
   score: bigint
   scoreRank?: number,
   count: ModeCount[Mode]
 } & {
-  [R in PPRankingSystem as R extends Rank ? R : never]: {
-    rank?: number,
-    pp: number,
+    [R in PPRankingSystem as R extends Rank ? R : never]: {
+      rank?: number,
+      pp: number,
+    }
   }
-}

@@ -27,12 +27,12 @@ export type APIfy<
   T extends Record<string, any>,
   Keys extends keyof T | '_noProp' = '_noProp'
 > = {
-  [K in keyof T as K extends Keys
+    [K in keyof T as K extends Keys
     ? `fetch${Capitalize<string & K>}`
     : Keys extends '_noProp'
     ? K | `fetch${Capitalize<string & K>}`
     : K]: K extends Keys ? () => Awaitable<T[Uncapitalize<string & K>]> : T[K];
-};
+  };
 export type Range<F extends number, T extends number> = Exclude<
   Enumerate<T>,
   Enumerate<F>
@@ -46,11 +46,8 @@ export type ServerConfig<AvailableRankingSystem extends RankingSystem> = Record<
   name: string
 }>
 
-export type AutoAvailable<_Ruleset extends Ruleset> =
-  _Ruleset extends 'standard'
-    ? StandardAvailable
-    : _Ruleset extends 'relax'
-    ? RelaxAvailable
-    : _Ruleset extends 'autopilot'
-    ? AutopilotAvailable
-    : never;
+export type AutoAvailable<_Ruleset extends Ruleset> = {
+  'standard': StandardAvailable;
+  'relax': RelaxAvailable;
+  'autopilot': AutopilotAvailable;
+}[_Ruleset];
