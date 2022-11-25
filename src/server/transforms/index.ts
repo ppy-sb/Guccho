@@ -1,10 +1,12 @@
+import { Ruleset, Mode, RankingSystem, MutualRelationship, Relationship, Scope } from '~/types/common'
 import { compareScope } from '$/transforms'
-import { MutualRelationship, Relationship, Scope } from '~/types/common'
 import { BaseUser, UserExtra, UserOptional, UserPreferences } from '~/types/user'
 
-export const followUserPreferences = <Id>(user: BaseUser<Id> & Partial<UserExtra<Id> & Partial<UserOptional<Id>>> & {
-  preferences: UserPreferences,
-}, scope: Scope = 'public') => {
+export function followUserPreferences<Id, _Mode extends Mode, _Ruleset extends Ruleset, _RankingSystem extends RankingSystem> ({ user, scope = 'public' }: {
+  user: BaseUser<Id> & Partial<UserExtra<Id, _Mode, _Ruleset, _RankingSystem> & Partial<UserOptional<Id>>> & {
+    preferences: UserPreferences
+  }; scope?: Scope
+}) {
   // "reachable" | "oldNames" | "email" | "status"
   return {
     ...user,

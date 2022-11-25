@@ -4,16 +4,13 @@ import { Score } from './score'
 import type {
   Scope,
   RankingSystem,
-  ScoreRankingSystem,
-  PPRankingSystem,
   Mode,
   Ruleset,
   AutopilotAvailable,
   RelaxAvailable,
   StandardAvailable,
   Relationship,
-  MutualRelationship,
-  TypeTarget
+  MutualRelationship
 } from './common'
 import { Maybe } from './frontend-common'
 
@@ -90,6 +87,7 @@ export interface PPRank<
   // TODO: BP
   // bests: Score[]
 }
+
 export interface ScoreRank<
   Id,
   _Mode extends Mode,
@@ -104,16 +102,12 @@ export type UserModeRulesetStatistics<
   Id,
   _Mode extends Mode,
   _Ruleset extends Ruleset,
-  _RankingSystem extends RankingSystem
+  RS extends RankingSystem
 > = {
   // TODO: Achievement
   // achievements: Achievement[]
   ranking: {
-    [P in _RankingSystem]: P extends ScoreRankingSystem
-    ? ScoreRank<Id, _Mode, _Ruleset, P>
-    : P extends PPRankingSystem
-    ? PPRank<Id, _Mode, _Ruleset, P>
-    : BaseRank<Id, _Mode, _Ruleset, P>
+    [R in RS]: BaseRank<Id, _Mode, _Ruleset, R>
   }
   playCount: number
   playTime: number
@@ -167,7 +161,7 @@ export type UserStatistic<
   IncludeRuleset extends Ruleset = Ruleset,
   Ranking extends RankingSystem = RankingSystem
 > ={
-    [M in Mode as M extends IncludeMode ? M : never]: {
+    [M in IncludeMode]: {
       [R in Ruleset as R extends IncludeRuleset
       ? M extends StandardAvailable
       ? R extends 'standard'

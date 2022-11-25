@@ -16,7 +16,7 @@ export const router = _router({
         message: 'not found'
       })
     }
-    return followUserPreferences(user, 'public')
+    return followUserPreferences({ user, scope: 'public' })
   }),
   full: p.input(z.object({
     handle: zodHandle
@@ -28,7 +28,7 @@ export const router = _router({
         message: 'not found'
       })
     }
-    return followUserPreferences(user, 'public')
+    return followUserPreferences({ user, scope: 'public' })
   }),
   base: p.input(z.object({
     handle: zodHandle

@@ -17,22 +17,22 @@ export function createRulesetData<
   _Mode extends Mode,
   _Ruleset extends Ruleset,
   _RankingSystem extends RankingSystem
-> (
-  databaseResult: Stat | undefined,
-  ranks:
-    | {
-        ppv2Rank: number | bigint;
-        totalScoreRank: number | bigint;
-        rankedScoreRank: number | bigint;
-      }
-    | undefined,
-  livePPRank:
-    | {
-        rank: number | null;
-        countryRank: number | null;
-      }
-    | false
-): UserModeRulesetStatistics<Id, _Mode, _Ruleset, _RankingSystem> {
+> ({
+  databaseResult,
+  ranks,
+  livePPRank
+}: {
+  databaseResult?: Stat
+  ranks?: {
+    ppv2Rank: number | bigint
+    totalScoreRank: number | bigint
+    rankedScoreRank: number | bigint
+  }
+  livePPRank?: {
+    rank: number | null
+    countryRank: number | null
+  }
+}) {
   if (!databaseResult) {
     return {
       ranking: {
@@ -52,31 +52,30 @@ export function createRulesetData<
       playCount: 0,
       playTime: 0,
       totalHits: 0
-    }
+    } as UserModeRulesetStatistics<Id, _Mode, _Ruleset, _RankingSystem>
   }
   return {
     ranking: {
       ppv2: {
         rank:
-          (livePPRank !== false && livePPRank.rank) ||
-          (ranks && Number(ranks.ppv2Rank)),
+          livePPRank?.rank || Number(ranks?.ppv2Rank) || undefined,
         countryRank:
-          (livePPRank !== false && livePPRank.countryRank) || undefined,
+          livePPRank?.countryRank || undefined,
         performance: databaseResult.pp
       },
       rankedScore: {
-        rank: ranks && Number(ranks.rankedScoreRank),
+        rank: Number(ranks?.rankedScoreRank) || undefined,
         score: databaseResult.rankedScore
       },
       totalScore: {
-        rank: ranks && Number(ranks.totalScoreRank),
+        rank: Number(ranks?.totalScoreRank) || undefined,
         score: databaseResult.totalScore
       }
     },
     playCount: databaseResult.plays,
     playTime: databaseResult.playTime,
     totalHits: databaseResult.totalHits
-  }
+  } as UserModeRulesetStatistics<Id, _Mode, _Ruleset, _RankingSystem>
 }
 
 export function toRoles (priv: number): UserPrivilegeString[] {
@@ -125,7 +124,7 @@ export function toBaseUser<
     never,
     never
   >
-> (user: DatabaseUser, includes?: Includes) {
+> ({ user, includes }: { user: DatabaseUser, includes?: Includes }) {
   const returnValue: BaseUser<Id> & Partial<UserOptional<Id>> = {
     id: user.id,
     ingameId: user.id,
@@ -154,9 +153,9 @@ export function toBaseUser<
 
 export function dedupeUserRelationship (
   relations: {
-    type: RelationshipType;
-    toUserId: Id;
-    toUser: BaseUser<Id>;
+    type: RelationshipType
+    toUserId: Id
+    toUser: BaseUser<Id>
   }[]
 ) {
   const reduceUserRelationships = relations.reduce((acc, cur) => {
@@ -180,12 +179,19 @@ export function toFullUser<
   IncludeMode extends Mode,
   IncludeRulesets extends Ruleset,
   IncludeRankingSystem extends RankingSystem,
-  Optional extends Partial<UserOptional<Id>>,
-  Extra extends Partial<UserExtra<Id, IncludeMode, IncludeRulesets, IncludeRankingSystem>>
-> (
-  user: DatabaseUser,
+  Optional extends Partial<UserOptional<Id>> = Partial<UserOptional<Id>>,
+  Extra extends Partial<
+    UserExtra<Id, IncludeMode, IncludeRulesets, IncludeRankingSystem>
+  > = Partial<
+    UserExtra<Id, IncludeMode, IncludeRulesets, IncludeRankingSystem>
+  >
+> ({
+  user,
+  extraFields
+}: {
+  user: DatabaseUser
   extraFields: Optional & Extra
-) {
+}) {
   return {
     id: user.id,
     ingameId: user.id,
@@ -203,7 +209,7 @@ export function toFullUser<
         privateMessage: 'public',
         email: 'self',
         oldNames: 'public'
-      }
+      } as const
     },
     // TODO: get user reachable status
     reachable: extraFields.reachable,

@@ -75,7 +75,7 @@ export const convertSingle = (colors: Record<string, any>, converter: (...any: a
   Object.entries(colors).reduce<Record<string, ReturnType<typeof transform>>>((acc, [key, value]) => {
     acc[key] = transform(converter(value))
     return acc
-  }, {}) as Record<string, ReturnType<typeof transform>>
+  }, {}) satisfies Record<string, ReturnType<typeof transform>>
 
 const to = (converter: (...any: any) => any, transform: (...any: any) => any = a => a) => {
   return Object.entries(hex)
