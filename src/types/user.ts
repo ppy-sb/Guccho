@@ -193,7 +193,7 @@ export interface UserExtra<
 > {
   statistics: UserStatistic<Id, IncludeMode, IncludeRuleset, Ranking>
 
-  profile?: JSONContent
+  profile: JSONContent
   relationships: Array<UserRelationship<Id>>
   preferences: UserPreferences
 }
