@@ -41,11 +41,12 @@
 </template>
 
 <script lang="ts" setup>
-import { addCommas, getFlagURL, scoreFormat } from '~/common/varkaUtils'
+import { createAddCommasFormatter, getFlagURL, createScoreFormatter } from '~/common/varkaUtils'
 import { RankingSystem } from '~/types/common'
 import { IdType } from '~/server/trpc/config'
 import { ComponentLeaderboardItem } from '~/types/leaderboard'
-
+const addCommas = createAddCommasFormatter()
+const scoreFormat = createScoreFormatter()
 const option = {
   style: 'percent',
   minimumFractionDigits: 2,
