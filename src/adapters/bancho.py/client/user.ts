@@ -22,8 +22,8 @@ const redisClient
   })
 interface OptType<
   Includes extends Partial<Record<keyof UserOptional<Id>, boolean>> = Record<
-  never,
-  never
+    never,
+    never
   >,
 > {
   handle: string | Id
@@ -208,39 +208,50 @@ export const getStatisticsOfUser = async ({
 
 // high cost
 export async function getFullUser<
-  Includes extends Partial<Record<keyof (UserExtra<Id> & UserOptional<Id>), boolean>>,
->(handle: string | Id, includes: Includes) {
+  Excludes extends Partial<Record<keyof (UserExtra<Id> & UserOptional<Id>), boolean>>,
+>({ handle, excludes }: { handle: string | Id; excludes?: Excludes }) {
+  if (!excludes)
+    excludes = <Excludes>{ secrets: true }
   const user = await db.user.findFirst(createUserQuery(handle))
 
   if (user == null)
     return null
 
-  return Object.assign(
+  const returnValue = Object.assign(
     toFullUser(user),
     {
       statistics:
-        includes.statistics === false
+        excludes.statistics === true
           ? undefined
           : await getStatisticsOfUser(user),
       relationships:
-        includes.relationships === false
+        excludes.relationships === true
           ? undefined
           : await getRelationships(user),
-      secrets: includes.secrets
+      email: excludes.email === true ? undefined : user.email,
+      profile: excludes.profile === true
+        ? undefined
+        : (user.userpageContent && JSON.parse(user.userpageContent)) || {
+            type: 'doc',
+            content: [],
+          },
+      secrets: excludes.secrets === false
         ? {
             password: user.pwBcrypt,
             apiKey: user.apiKey ?? undefined,
           }
         : undefined,
-      email: includes.email === false ? undefined : user.email,
     } as unknown as Pick<
-    UserExtra<Id, Mode, Ruleset, Exclude<RankingSystem, 'ppv1'>> & UserOptional<Id>,
-    (Includes['statistics'] extends false ? never : 'statistics')
-    | (Includes['relationships'] extends false ? never : 'relationships')
-    | (Includes['secrets'] extends true ? 'secrets' : never)
-    | (Includes['email'] extends false ? never : 'email')
+    UserExtra<Id, Mode, Ruleset, RankingSystem> & UserOptional<Id>,
+    | (Excludes['statistics'] extends true ? never : 'statistics')
+    | (Excludes['relationships'] extends true ? never : 'relationships')
+    | (Excludes['profile'] extends true ? never : 'profile')
+    | (Excludes['email'] extends true ? never : 'email')
+
+    | (Excludes['secrets'] extends false ? 'secrets' : never)
     >,
   )
+  return returnValue
 }
 
 export async function updateUser(

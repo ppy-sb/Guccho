@@ -17,6 +17,7 @@ if (!session.$state.loggedIn)
   await navigateTo({ name: 'auth-login', query: { back: '1' } })
 
 const _user = await $client.me.fullSecret.query()
+
 if (_user == null)
   await navigateTo({ name: 'auth-login', query: { back: '1' } })
 

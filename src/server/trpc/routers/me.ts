@@ -18,7 +18,7 @@ import { calculateMutualRelationships } from '~/server/transforms'
 
 export const router = _router({
   fullSecret: pUser.query(async ({ ctx }) => {
-    return await getFullUser(ctx.user.id, { email: true, secrets: true })
+    return await getFullUser({ handle: ctx.user.id, excludes: { secrets: false } })
   }),
   updatePreferences: pUser
     .input(z.object({

@@ -192,10 +192,6 @@ export function toFullUser(user: DatabaseUser) {
         oldNames: 'public',
       } as const,
     },
-    profile: (user.userpageContent && JSON.parse(user.userpageContent)) || {
-      type: 'doc',
-      content: [],
-    },
     oldNames: [],
   }
 }
