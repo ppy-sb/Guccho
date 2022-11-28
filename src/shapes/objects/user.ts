@@ -1,3 +1,4 @@
+import type { Score } from './../../types/score'
 import type { Mode, RankingSystem, Ruleset } from '~/types/common'
 import type { PPRank, ScoreRank, UserFull, UserModeRulesetStatistics } from '~/types/user'
 
@@ -24,9 +25,61 @@ export const createScoreRank = (
 ): ScoreRank<unknown, Mode, Ruleset, RankingSystem> => JSON.parse(
   JSON.stringify(initial),
 )
+export const createBeatmapSet = (initial = {
+  id: 1234,
+  source: 'bancho',
+  foreignId: '1122',
+  meta: {
+    artist: '名無しアーティスト',
+    title: '曲のタイトル',
+    intl: {
+      artist: 'unknown artist',
+      title: 'song title',
+    },
+  },
+}) => JSON.parse(JSON.stringify(initial))
 
-export const createPPRank = (
-  initial: PPRank<unknown, Mode, Ruleset, RankingSystem> = {
+export const createBeatmap = (initial = {
+  id: 12345,
+  foreignId: '11223',
+
+  status: 'ranked',
+  properties: {
+    bpm: 120,
+    circleSize: 9,
+    approachRate: 9,
+    accuracy: 8,
+    hpDrain: 6,
+    count: {
+      circles: 200,
+      sliders: 95,
+      spinners: 2,
+    },
+  },
+  md5: 'ed390d5c6d138c4f910035d054ccffc5',
+  beatmapSet: createBeatmapSet(),
+}) => JSON.parse(JSON.stringify(initial))
+
+export const createHitObject = <_Mode extends Mode>(mode: _Mode) => (mode === 'mania'
+  ? {
+      max: 0,
+      300: 0,
+      200: 0,
+      100: 0,
+      50: 0,
+      miss: 0,
+    }
+  : {
+      300: 0,
+      geki: 0,
+      100: 0,
+      katu: 0,
+      50: 0,
+      miss: 0,
+    }) as unknown as Score<unknown, _Mode, Ruleset, RankingSystem>['hit']
+
+export const createPPRank = <_Mode extends Mode>(
+  initial: PPRank<unknown, _Mode, Ruleset, RankingSystem> = {
     rank: 1,
     rankHistory: { [createISODate(new Date('2023-01-01'))]: 1 },
     countryRank: 1,
@@ -35,15 +88,38 @@ export const createPPRank = (
     performance: 100,
     performanceHistory: { [createISODate(new Date('2022-01-01'))]: 0, [createISODate(new Date('2023-01-01'))]: 100 },
   },
-): PPRank<unknown, Mode, Ruleset, RankingSystem> => JSON.parse(JSON.stringify(initial))
+  mode: _Mode,
+): PPRank<unknown, _Mode, Ruleset, RankingSystem> => {
+  const copy = JSON.parse(JSON.stringify(initial)) as PPRank<unknown, _Mode, Ruleset, RankingSystem>
+
+  copy.bests = [{
+    id: 13,
+    mods: [],
+    score: 999_999_999_999n,
+    scoreRank: 0,
+    ppv2: {
+      pp: 0,
+      rank: 0,
+    },
+    ppv1: {
+      pp: 0,
+      rank: 0,
+    },
+    hit: createHitObject(mode),
+    beatmap: createBeatmap(),
+  }]
+
+  return copy
+}
 
 export const createRulesetData = <M extends Mode, Rs extends Ruleset, R extends RankingSystem>(
+  mode: M,
   ppRankData: PPRank<unknown, M, Rs, RankingSystem> | undefined = undefined,
   scoreRankData: ScoreRank<unknown, M, Rs, RankingSystem> | undefined = undefined,
 ) => ({
     ranking: {
-      ppv2: createPPRank(ppRankData),
-      ppv1: createPPRank(ppRankData),
+      ppv2: createPPRank(ppRankData, mode),
+      ppv1: createPPRank(ppRankData, mode),
       rankedScore: createScoreRank(scoreRankData),
       totalScore: createScoreRank(scoreRankData),
     },
@@ -79,20 +155,20 @@ export const sampleUserWithSecrets: Required<UserFull<unknown>> = {
   },
   statistics: {
     osu: {
-      standard: createRulesetData(),
-      autopilot: createRulesetData(),
-      relax: createRulesetData(),
+      standard: createRulesetData('osu'),
+      autopilot: createRulesetData('osu'),
+      relax: createRulesetData('osu'),
     },
     taiko: {
-      standard: createRulesetData(),
-      relax: createRulesetData(),
+      standard: createRulesetData('taiko'),
+      relax: createRulesetData('taiko'),
     },
     fruits: {
-      standard: createRulesetData(),
-      relax: createRulesetData(),
+      standard: createRulesetData('fruits'),
+      relax: createRulesetData('fruits'),
     },
     mania: {
-      standard: createRulesetData(),
+      standard: createRulesetData('mania'),
     },
   },
   profile: {

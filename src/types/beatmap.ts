@@ -4,17 +4,18 @@ export type ForeignSource = 'bancho' | 'private-server'
 export type BeatmapSource = LocalSource | ForeignSource | UnknownSource
 
 // https://osu.ppy.sh/docs/index.html#beatmapsetcompact-rank-status
-export enum RankingStatusEnum {
-  graveyard = -2,
-  WIP = -1,
-  wip = -1,
-  pending,
-  ranked,
-  approved,
-  qualified,
-  loved,
-  deleted,
-}
+export const RankingStatusEnum = {
+  graveyard: -2,
+  WIP: -1,
+  pending: 0,
+  ranked: 1,
+  approved: 2,
+  qualified: 3,
+  loved: 4,
+  deleted: 5,
+} as const
+
+export type RankingStatus = keyof typeof RankingStatusEnum
 
 export interface BeatmapSet<Source extends BeatmapSource, LocalId, ForeignId> {
   source: Source
@@ -36,11 +37,11 @@ export interface BeatmapSet<Source extends BeatmapSource, LocalId, ForeignId> {
 
 export interface Beatmap<
   Source extends BeatmapSource,
-  Status extends RankingStatusEnum,
+  Status extends RankingStatus,
   LocalId,
   ForeignId,
 > {
-  id: [Source, Status] extends [UnknownSource, RankingStatusEnum.deleted]
+  id: [Source, Status] extends [UnknownSource, 'deleted']
     ? never
     : LocalId
 
@@ -52,9 +53,9 @@ export interface Beatmap<
 
   foreignId: Source extends ForeignSource ? ForeignId : never
 
-  setId: Source extends UnknownSource ? never : LocalId
+  // setId: Source extends UnknownSource ? never : LocalId
 
-  foreignSetId: Source extends ForeignSource ? ForeignId : never
+  // foreignSetId: Source extends ForeignSource ? ForeignId : never
 
   status: Status
 
