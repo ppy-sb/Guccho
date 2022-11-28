@@ -1,4 +1,38 @@
 <!-- eslint-disable vue/no-v-for-template-key -->
+<script setup lang="ts">
+import { reactive, toRaw, watch } from 'vue'
+import { useAppConfig } from '#app'
+import { forbiddenMode, forbiddenMods } from '~/common/varkaUtils'
+import type { Mode, RankingSystem, Ruleset } from '~/types/common'
+import { useBackendConfig } from '#imports'
+
+export interface EmitType {
+  input: {
+    mode?: Mode
+    ruleset?: Ruleset
+    rankingSystem?: RankingSystem
+  }
+}
+const props = defineProps<{
+  showSort?: boolean
+  modelValue?: EmitType['input']
+}>()
+
+const emit = defineEmits<{
+  (event: 'input', res: EmitType['input']): void
+  (event: 'update:modelValue', res: EmitType['input']): void
+}>()
+const config = useAppConfig()
+const { rankingSystem: serverRankingSystem } = await useBackendConfig()
+
+const selected = reactive<EmitType['input']>(toRaw(props.modelValue) || {})
+const emitData = () => {
+  emit('input', toRaw(selected))
+  emit('update:modelValue', toRaw(selected))
+}
+watch(selected, () => emitData())
+</script>
+
 <template>
   <div class="mt-4 grid sm:mt-0 md:gap-1">
     <div class="flex justify-around gap-4 md:gap-2 lg:gap-4">
@@ -7,12 +41,15 @@
         :key="mode"
         class="h-mode"
         :class="{
-          '!opacity-80 pointer-events-none':selected.mode === mode,
-          '!opacity-10 pointer-events-none':selected.ruleset && forbiddenMode(selected.ruleset, mode)
+          '!opacity-80 pointer-events-none': selected.mode === mode,
+          '!opacity-10 pointer-events-none': selected.ruleset && forbiddenMode(selected.ruleset, mode),
         }"
         @click="selected.mode = mode"
       >
-        <img :src="`/icons/mode/${m.icon}.svg`" class="color-theme-light-invert">
+        <img
+          :src="`/icons/mode/${m.icon}.svg`"
+          class="color-theme-light-invert"
+        >
       </a>
     </div>
     <div class="flex justify-around gap-4 md:gap-2 lg:gap-4">
@@ -21,15 +58,18 @@
         :key="ruleset"
         class="h-mode"
         :class="{
-          '!opacity-80 pointer-events-none':selected.ruleset === ruleset,
-          '!opacity-20 pointer-events-none':selected.mode && forbiddenMods(selected.mode, ruleset)
+          '!opacity-80 pointer-events-none': selected.ruleset === ruleset,
+          '!opacity-20 pointer-events-none': selected.mode && forbiddenMods(selected.mode, ruleset),
         }"
         @click="selected.ruleset = ruleset"
       >
         {{ m.name }}
       </a>
     </div>
-    <div v-if="props.showSort" class="flex justify-center gap-3 md:gap-3 lg:gap-3">
+    <div
+      v-if="props.showSort"
+      class="flex justify-center gap-3 md:gap-3 lg:gap-3"
+    >
       <template
         v-for="(s, rankingSystem) in config.rankingSystem"
         :key="rankingSystem"
@@ -46,41 +86,6 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { useAppConfig } from '#app'
-import { reactive, watch, toRaw } from 'vue'
-import { forbiddenMode, forbiddenMods } from '~/common/varkaUtils'
-import { RankingSystem, Mode, Ruleset } from '~/types/common'
-import { useBackendConfig } from '#imports'
-
-export interface EmitType {
-  input: {
-    mode?:Mode,
-    ruleset?:Ruleset,
-    rankingSystem?:RankingSystem
-  }
-}
-const config = useAppConfig()
-const { rankingSystem: serverRankingSystem } = await useBackendConfig()
-
-// eslint-disable-next-line func-call-spacing
-const emit = defineEmits<{
-  (event:'input', res:EmitType['input']):void,
-  (event:'update:modelValue', res:EmitType['input']):void
-}>()
-const props = defineProps<{
-  showSort?: boolean,
-  modelValue?: EmitType['input']
-}>()
-
-const selected = reactive<EmitType['input']>(toRaw(props.modelValue) || {})
-const emitData = () => {
-  emit('input', toRaw(selected))
-  emit('update:modelValue', toRaw(selected))
-}
-watch(selected, () => emitData())
-</script>
 
 <style lang="postcss" scoped>
 .h-mode {

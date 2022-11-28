@@ -1,9 +1,15 @@
+<script setup>
+import { JsonViewer } from 'vue3-json-viewer'
+import 'vue3-json-viewer/dist/index.css'
+const user = inject('user')
+</script>
+
 <template>
   <section
 
     class="mt-4 custom-container "
   >
-    <json-viewer
+    <JsonViewer
       :value="user"
       :expand-depth="3"
       theme="dark"
@@ -12,9 +18,3 @@
     />
   </section>
 </template>
-
-<script setup>
-import { JsonViewer } from 'vue3-json-viewer'
-import 'vue3-json-viewer/dist/index.css'
-const user = inject('user')
-</script>

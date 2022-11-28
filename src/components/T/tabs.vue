@@ -1,22 +1,22 @@
 <script setup>
-const emit = defineEmits(['update:modelValue'])
 const props = defineProps({
   variant: {
     type: String,
-    default: undefined
+    default: undefined,
   },
   size: {
     type: String,
-    default: undefined
+    default: undefined,
   },
   modelValue: {
     type: [String, Number, Symbol],
-    default: Symbol
-  }
+    default: Symbol,
+  },
 })
-if (props.variant !== 'boxed') {
+const emit = defineEmits(['update:modelValue'])
+if (props.variant !== 'boxed')
   provide('variant', props.variant)
-}
+
 const size = computed(() => props.size)
 const current = computed(() => props.modelValue)
 const disabled = Symbol('disabled tab')
@@ -26,8 +26,12 @@ provide('current', current)
 provide('select', select)
 provide('disabled', disabled)
 </script>
+
 <template>
-  <div class="tabs" :class="[props.variant === 'boxed' && 'tabs-boxed']">
+  <div
+    class="tabs"
+    :class="[props.variant === 'boxed' && 'tabs-boxed']"
+  >
     <slot v-bind="{ disabled, select }" />
   </div>
 </template>

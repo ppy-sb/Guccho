@@ -1,106 +1,106 @@
 import { defineAppConfig } from 'nuxt/app'
 
-import { Mode, RankingSystem, Ruleset } from '~/types/common'
+import type { Mode, RankingSystem, Ruleset } from '~/types/common'
 
-type AppConfigItemBase = {
-  name: string,
-  icon: string,
+interface AppConfigItemBase {
+  name: string
+  icon: string
 }
 
 const config: {
-  baseUrl: string,
+  baseUrl: string
   version: {
-    api: string,
-    front: string,
+    api: string
+    front: string
   }
-  title: string,
+  title: string
   mode: Record<
-    Mode,
-    AppConfigItemBase
-  >,
+  Mode,
+  AppConfigItemBase
+  >
   ruleset: Record<
-    Ruleset,
-    AppConfigItemBase
-  >,
+  Ruleset,
+  AppConfigItemBase
+  >
   rankingSystem: Record<
-    RankingSystem,
-    AppConfigItemBase & {
-      userpage: {
-        show: 'tab' | 'dropdown'
-      }
+  RankingSystem,
+  AppConfigItemBase & {
+    userpage: {
+      show: 'tab' | 'dropdown'
     }
+  }
   >
   appModalTeleportTargetId: string
 } = {
   baseUrl: 'dev.ppy.sb',
   version: {
     api: '1.0.3',
-    front: '1.0.3'
+    front: '1.0.3',
   },
   title: 'guweb@next',
   mode: {
     osu: {
       name: 'Osu',
-      icon: 'osu'
+      icon: 'osu',
     },
     taiko: {
       name: 'Taiko',
-      icon: 'taiko'
+      icon: 'taiko',
     },
     fruits: {
       name: 'CTB',
-      icon: 'catch'
+      icon: 'catch',
     },
     mania: {
       name: 'Mania',
-      icon: 'mania'
-    }
+      icon: 'mania',
+    },
   },
   ruleset: {
     standard: {
       name: 'Standard',
-      icon: 'vn'
+      icon: 'vn',
     },
     relax: {
       name: 'Relax',
-      icon: 'relax'
+      icon: 'relax',
     },
     autopilot: {
       name: 'Autopilot',
-      icon: 'autopilot'
-    }
+      icon: 'autopilot',
+    },
   },
   rankingSystem: {
     ppv2: {
       userpage: {
-        show: 'tab'
+        show: 'tab',
       },
       name: 'Performance(v2)',
-      icon: 'pp'
+      icon: 'pp',
     },
     ppv1: {
       userpage: {
-        show: 'dropdown'
+        show: 'dropdown',
       },
       name: 'Performance(v1)',
-      icon: 'pp'
+      icon: 'pp',
     },
     rankedScore: {
       userpage: {
-        show: 'tab'
+        show: 'tab',
       },
       name: 'Ranked Score',
-      icon: 'score'
+      icon: 'score',
     },
     totalScore: {
       userpage: {
-        show: 'tab'
+        show: 'tab',
       },
       name: 'Total Score',
-      icon: 'score'
-    }
+      icon: 'score',
+    },
   },
-  appModalTeleportTargetId: 'app-modal-portal'
+  appModalTeleportTargetId: 'app-modal-portal',
 }
 export default defineAppConfig(config)
 

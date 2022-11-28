@@ -4,6 +4,6 @@ export default defineNuxtPlugin(() => {
   options.themes['guweb-dropdown'] = {
     $extend: 'dropdown',
     $resetCss: true,
-    autoHide: true
+    autoHide: true,
   }
 })

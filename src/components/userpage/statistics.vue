@@ -1,3 +1,7 @@
+<script setup>
+const user = inject('user')
+</script>
+
 <template>
   <div class="card">
     <!-- <div class="radial-progress mx-auto text-primary-content bg-primary/20 border-8 border-primary/20" style="--value:70; --size:12rem; --thickness: 0.66em;">
@@ -16,7 +20,11 @@
             69
           </div>
           <div class="stat-desc">
-            <progress class="progress progress-primary" value="50" max="100" />
+            <progress
+              class="progress progress-primary"
+              value="50"
+              max="100"
+            />
           </div>
         </div>
         <div class="stat">
@@ -45,7 +53,3 @@
     </div>
   </div>
 </template>
-
-<script setup>
-const user = inject('user')
-</script>

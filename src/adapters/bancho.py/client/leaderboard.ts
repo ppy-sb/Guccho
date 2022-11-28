@@ -1,43 +1,45 @@
-import { BanchoPyMode, toBanchoPyMode } from '../enums'
+import type { BanchoPyMode } from '../enums'
+import { toBanchoPyMode } from '../enums'
 import { prismaClient as db } from './index'
-import { Mode, Range, RankingSystem, Ruleset } from '~/types/common'
+import type { Mode, Range, RankingSystem, Ruleset } from '~/types/common'
 
-import {
-  IdType
+import type {
+  IdType,
 } from '$/config'
 
-export async function getLeaderboard ({
+export async function getLeaderboard({
   mode,
   ruleset,
   rankingSystem,
   page,
-  pageSize
+  pageSize,
 }: {
   mode: Mode
   ruleset: Ruleset
-  rankingSystem: RankingSystem,
+  rankingSystem: RankingSystem
   page: Range<0, 10>
   pageSize: Range<20, 51>
 }) {
-  if (rankingSystem === 'ppv1') { return [] }
+  if (rankingSystem === 'ppv1')
+    return []
   const start = page * pageSize
   const end = start + pageSize
 
   const result = await db.$queryRawUnsafe<
-    Array<{
-      id: IdType
-      name: string,
-      safeName: string,
-      flag: string,
+  Array<{
+    id: IdType
+    name: string
+    safeName: string
+    flag: string
 
-      mode: BanchoPyMode
-      _rank: bigint,
-      accuracy: number,
-      totalScore: bigint,
-      rankedScore: bigint,
-      ppv2: number,
-      playCount: number
-    }>
+    mode: BanchoPyMode
+    _rank: bigint
+    accuracy: number
+    totalScore: bigint
+    rankedScore: bigint
+    ppv2: number
+    playCount: number
+  }>
   >(/* sql */`
   WITH ranks AS (
     SELECT
@@ -102,16 +104,16 @@ export async function getLeaderboard ({
       name: item.name,
       safeName: item.safeName,
       flag: item.flag,
-      avatarUrl: 'https://a.ppy.sb/' + item.id,
+      avatarUrl: `https://a.ppy.sb/${item.id}`,
 
       inThisLeaderboard: {
         ppv2: item.ppv2,
         accuracy: item.accuracy,
         totalScore: item.totalScore,
         rankedScore: item.rankedScore,
-        playCount: item.playCount
-      }
+        playCount: item.playCount,
+      },
     },
-    rank: item._rank
+    rank: item._rank,
   }))
 }

@@ -1,8 +1,8 @@
-import type { PPRankingSystem, Mode as _Mode, Ruleset as _Ruleset, Range, RankingSystem } from './common'
+import type { PPRankingSystem, Range, RankingSystem, Mode as _Mode, Ruleset as _Ruleset } from './common'
 
 type BaseCount<T extends _Mode> = Record<
-  300 | 100 | 50 | 'miss' | (T extends 'mania' ? 'max' | 200 : 'geki' | 'katu'),
-  number
+300 | 100 | 50 | 'miss' | (T extends 'mania' ? 'max' | 200 : 'geki' | 'katu'),
+number
 >
 
 export type Mod =
@@ -18,16 +18,16 @@ export type Score<
   Id,
   Mode extends _Mode,
   Ruleset extends _Ruleset,
-  Rank extends RankingSystem = never
+  Rank extends RankingSystem = never,
 > = {
   id: Id
   mode: Mode
   ruleset: Ruleset
   mods: Mode extends 'mania' ? ManiaMod[] : Mod[]
   score: bigint
-  scoreRank?: number,
+  scoreRank?: number
   count: BaseCount<Mode>
 } & Record<PPRankingSystem & Rank, {
-  rank?: number,
-  pp: number,
+  rank?: number
+  pp: number
 }>

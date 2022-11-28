@@ -1,16 +1,15 @@
 <script setup lang="ts">
-import { navigateTo, useRoute, useRouter } from '#app'
-import { TRPCError } from '@trpc/server'
+import type { TRPCError } from '@trpc/server'
 import { reactive, ref } from 'vue'
+import { navigateTo, useRoute, useRouter } from '#app'
 import { useSession } from '~/store/session'
 
 const session = useSession()
 const route = useRoute()
 const router = useRouter()
 
-if (session.loggedIn) {
+if (session.loggedIn)
   router.back()
-}
 
 const error = ref('')
 
@@ -21,7 +20,7 @@ const login = reactive<{
   password: string
 }>({
   user: '',
-  password: ''
+  password: '',
 })
 
 const fetching = ref(false)
@@ -33,15 +32,15 @@ const userLogin = async () => {
     const result = await session.login(login.user, login.password)
     if (result) {
       const back = route.query.back === '1'
-      if (back) {
+      if (back)
         router.back()
-      } else {
-        await navigateTo('/')
-      }
+      else await navigateTo('/')
     }
-  } catch (_error) {
+  }
+  catch (_error) {
     error.value = (_error as TRPCError).message
-  } finally {
+  }
+  finally {
     fetching.value = false
   }
 }
@@ -56,10 +55,17 @@ const userLogin = async () => {
           Login
         </h2>
       </div>
-      <form class="mt-8 space-y-12" autocomplete="off" @submit.prevent="userLogin">
+      <form
+        class="mt-8 space-y-12"
+        autocomplete="off"
+        @submit.prevent="userLogin"
+      >
         <div class="shadow-sm flex flex-col gap-2">
           <div>
-            <label for="user" class="sr-only">User / Email</label>
+            <label
+              for="user"
+              class="sr-only"
+            >User / Email</label>
             <input
               id="user"
               v-model="login.user"
@@ -73,7 +79,10 @@ const userLogin = async () => {
             >
           </div>
           <div>
-            <label for="password" class="sr-only">Password</label>
+            <label
+              for="password"
+              class="sr-only"
+            >Password</label>
             <input
               id="password"
               v-model="login.password"
@@ -86,15 +95,26 @@ const userLogin = async () => {
               placeholder="Password"
             >
           </div>
-          <h1 v-if="error" class="auth-error-text">
+          <h1
+            v-if="error"
+            class="auth-error-text"
+          >
             {{ error }}
           </h1>
         </div>
         <div class="grid grid-cols-2 gap-2">
-          <t-nuxt-link-button to="/auth/register" variant="accent" @mouseenter="registerButton = 'sign up'" @mouseleave="registerButton = 'Do not have an account?'">
+          <t-nuxt-link-button
+            to="/auth/register"
+            variant="accent"
+            @mouseenter="registerButton = 'sign up'"
+            @mouseleave="registerButton = 'Do not have an account?'"
+          >
             {{ registerButton }}
           </t-nuxt-link-button>
-          <button type="submit" class="btn btn-primary">
+          <button
+            type="submit"
+            class="btn btn-primary"
+          >
             Sign in
           </button>
         </div>

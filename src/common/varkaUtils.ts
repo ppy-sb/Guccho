@@ -1,9 +1,9 @@
 import { toBanchoPyMode } from '../adapters/bancho.py/enums'
-import { Ruleset, Mode } from '~/types/common'
+import type { Mode, Ruleset } from '~/types/common'
 
 export const modeToGulag = toBanchoPyMode
 
-export function getFlagURL (flag: string) {
+export function getFlagURL(flag: string) {
   let url = 'https://osu.ppy.sh/assets/images/flags/'
   flag = flag.toUpperCase()
   for (let i = 0; i < flag.length; i++) {
@@ -13,36 +13,32 @@ export function getFlagURL (flag: string) {
   return url
 }
 
-export function createScoreFormatter () {
+export function createScoreFormatter() {
   const fmt = Intl.NumberFormat(undefined, { notation: 'compact' })
-  return function scoreFormat (score: bigint | number) {
+  return function scoreFormat(score: bigint | number) {
     return fmt.format(score)
   }
 }
 
-export function createAddCommasFormatter () {
+export function createAddCommasFormatter() {
   const fmt = Intl.NumberFormat()
-  return function addCommas (nStr: number | bigint) {
+  return function addCommas(nStr: number | bigint) {
     return fmt.format(nStr)
   }
 }
 
-export function forbiddenMode (mods: Ruleset, mode: Mode) {
-  if (mods === 'relax' && mode === 'mania') {
+export function forbiddenMode(mods: Ruleset, mode: Mode) {
+  if (mods === 'relax' && mode === 'mania')
     return true
-  } else if (mods === 'autopilot' && mode !== 'osu') {
+  else if (mods === 'autopilot' && mode !== 'osu')
     return true
-  } else {
-    return false
-  }
+  else return false
 }
 
-export function forbiddenMods (mode: Mode, mods: Ruleset) {
-  if (mode === 'mania' && mods === 'relax') {
+export function forbiddenMods(mode: Mode, mods: Ruleset) {
+  if (mode === 'mania' && mods === 'relax')
     return true
-  } else if (mode !== 'osu' && mods === 'autopilot') {
+  else if (mode !== 'osu' && mods === 'autopilot')
     return true
-  } else {
-    return false
-  }
+  else return false
 }

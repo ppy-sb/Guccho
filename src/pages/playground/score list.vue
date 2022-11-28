@@ -1,3 +1,7 @@
+<script setup>
+
+</script>
+
 <template>
   <div class="container flex flex-col mx-auto lg:flex-row">
     <div class="lg:w-1/3">
@@ -6,7 +10,11 @@
           Top Performance
         </div>
         <div class="p-4 card-body">
-          <div v-for="i in 3" :key="i" class="score">
+          <div
+            v-for="i in 3"
+            :key="i"
+            class="score"
+          >
             <app-score />
           </div>
         </div>
@@ -18,7 +26,11 @@
           Top Performance
         </div>
         <div class="p-4 card-body">
-          <div v-for="i in 3" :key="i" class="score">
+          <div
+            v-for="i in 3"
+            :key="i"
+            class="score"
+          >
             <app-score />
           </div>
         </div>
@@ -26,10 +38,6 @@
     </div>
   </div>
 </template>
-
-<script setup>
-
-</script>
 
 <style lang="scss" scoped>
 .score + .score {

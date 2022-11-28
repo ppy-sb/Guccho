@@ -1,13 +1,23 @@
+<script setup>
+
+</script>
+
 <template>
   <!-- style="background: linear-gradient(hsl(var(--main,200 ), 25%, 25%, 0%), hsl(var(--main, 200), 25%, 25%, 90%)), url(https\:\/\/assets\.ppy\.sh\/beatmaps\/746506\/covers\/cover\.jpg);" -->
   <div>
     <div class="flex justify-between">
       <div class="flex min-w-0 gap-4">
         <div class="hidden md:block">
-          <img src="https://assets.ppy.sh/beatmaps/746506/covers/list.jpg" class="object-cover w-20 h-16 rounded-xl">
+          <img
+            src="https://assets.ppy.sh/beatmaps/746506/covers/list.jpg"
+            class="object-cover w-20 h-16 rounded-xl"
+          >
         </div>
         <div class="flex flex-col min-w-0">
-          <a href="#" class="text-sm truncate md:text-md lg:text-lg">
+          <a
+            href="#"
+            class="text-sm truncate md:text-md lg:text-lg"
+          >
             Fujijo Seitokai Shikkou-bu - Best FriendS (GoldenWolf Edit) [Extreme]
           </a>
           <div class="flex text-xs gap-2 md:text-sm lg:text-md">
@@ -51,10 +61,6 @@
     </div>
   </div>
 </template>
-
-<script setup>
-
-</script>
 
 <style lang="scss" scoped>
 

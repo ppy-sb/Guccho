@@ -1,16 +1,34 @@
+<script setup>
+import { JsonViewer } from 'vue3-json-viewer'
+import 'vue3-json-viewer/dist/index.css'
+const html = ref({})
+const showJSON = ref(false)
+</script>
+
 <template>
   <div class="container mx-auto">
-    <lazy-editor v-model.lazy="html" class="safari-performance-boost" />
+    <lazy-editor
+      v-model.lazy="html"
+      class="safari-performance-boost"
+    />
 
     <div class="py-4">
-      <t-button v-if="!showJSON" variant="primary" @click="showJSON = true">
+      <t-button
+        v-if="!showJSON"
+        variant="primary"
+        @click="showJSON = true"
+      >
         show json
       </t-button>
-      <t-button v-if="showJSON" variant="primary" @click="showJSON = false">
+      <t-button
+        v-if="showJSON"
+        variant="primary"
+        @click="showJSON = false"
+      >
         hide json
       </t-button>
     </div>
-    <json-viewer
+    <JsonViewer
       v-if="showJSON"
       :value="html"
       :expand-depth="3"
@@ -20,13 +38,6 @@
     />
   </div>
 </template>
-
-<script setup>
-import { JsonViewer } from 'vue3-json-viewer'
-import 'vue3-json-viewer/dist/index.css'
-const html = ref({})
-const showJSON = ref(false)
-</script>
 
 <style lang="scss" scoped>
 .safari .safari-performance-boost {

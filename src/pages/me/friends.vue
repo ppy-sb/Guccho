@@ -8,50 +8,60 @@ if (!session.$state.loggedIn) {
   await navigateTo({
     name: 'auth-login',
     query: {
-      back: '1'
-    }
+      back: '1',
+    },
   })
 }
 const relations = await $client.me.relations.query()
 
-if (!relations) {
+if (!relations)
   throw new Error('user not exists')
-}
 
 const errorMessage = ref('')
 
-onErrorCaptured(() => {
-  errorMessage.value = 'something went wrong.'
+onErrorCaptured((err) => {
+  errorMessage.value = err.message || 'something went wrong.'
 })
 
 const layout = ref('list')
-
 </script>
+
 <template>
   <div class="container pt-24 mx-auto custom-container">
-    <t-tabs v-model="layout" size="lg" variant="bordered">
-      <t-tab value="list" :active="layout === 'list'">
+    <t-tabs
+      v-model="layout"
+      size="lg"
+      variant="bordered"
+    >
+      <t-tab
+        value="list"
+        :active="layout === 'list'"
+      >
         list
       </t-tab>
-      <t-tab value="condensed" :active="layout === 'condensed'">
+      <t-tab
+        value="condensed"
+        :active="layout === 'condensed'"
+      >
         condensed
       </t-tab>
     </t-tabs>
     <suspense>
       <template #fallback>
         <div>
-          {{ errorMessage || 'Loading...' }}
+          {{ errorMessage || "Loading..." }}
         </div>
       </template>
-      <div v-if="layout === 'list'" class="mx-auto user-list">
+      <div
+        v-if="layout === 'list'"
+        class="mx-auto user-list"
+      >
         <div
           v-for="user in relations"
           :key="`relation-@${user.safeName}`"
           class="w-full p-2 user-list-item"
         >
-          <div
-            class="flex items-center justify-center gap-2 md:justify-start face"
-          >
+          <div class="flex items-center justify-center gap-2 md:justify-start face">
             <div class="relative z-10 mask mask-squircle hoverable">
               <img
                 :src="user.avatarUrl"
@@ -68,17 +78,25 @@ const layout = ref('list')
                   :to="{
                     name: 'user-handle',
                     params: {
-                      handle: `@${user.safeName}`
-                    }
+                      handle: `@${user.safeName}`,
+                    },
                   }"
                 >
                   @{{ user.safeName }}
                 </nuxt-link>
                 <div class="flex gap-2 actions">
-                  <t-button variant="info" size="xs" class="md:btn-sm">
+                  <t-button
+                    variant="info"
+                    size="xs"
+                    class="md:btn-sm"
+                  >
                     chat
                   </t-button>
-                  <t-button variant="warning" size="xs" class="md:btn-sm">
+                  <t-button
+                    variant="warning"
+                    size="xs"
+                    class="md:btn-sm"
+                  >
                     remove friend
                   </t-button>
                 </div>
@@ -114,11 +132,10 @@ const layout = ref('list')
         filter: blur(0) opacity(1);
         @apply transition-all;
       }
-
     }
 
     @apply border-b-2 border-kimberly-500/30;
   }
-  @apply grid xl:grid-cols-2 gap-x-8
+  @apply grid xl:grid-cols-2 gap-x-8;
 }
 </style>

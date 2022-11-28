@@ -1,3 +1,11 @@
+<script setup lang="ts">
+import { useAppConfig } from '#app'
+
+import { useSession } from '~/store/session'
+const session = useSession()
+const config = useAppConfig()
+</script>
+
 <template>
   <div class="flex items-center grow">
     <div
@@ -17,38 +25,53 @@
         </div>
 
         <client-only>
-          <div v-if="session.$state.loggedIn" class="flex gap-2">
-            <t-nuxt-link-button :to="{ name: 'user-handle', params: { handle: session.$state.userId } }" variant="primary">
+          <div
+            v-if="session.$state.loggedIn"
+            class="flex gap-2"
+          >
+            <t-nuxt-link-button
+              :to="{ name: 'user-handle', params: { handle: session.$state.userId } }"
+              variant="primary"
+            >
               to my userpage
             </t-nuxt-link-button>
-            <t-nuxt-link-button :to="{ name: 'me-preferences' }" variant="secondary">
+            <t-nuxt-link-button
+              :to="{ name: 'me-preferences' }"
+              variant="secondary"
+            >
               preferences
             </t-nuxt-link-button>
           </div>
-          <div v-else class="flex gap-2">
-            <t-nuxt-link-button :to="{ name: 'auth-login' }" variant="primary">
+          <div
+            v-else
+            class="flex gap-2"
+          >
+            <t-nuxt-link-button
+              :to="{ name: 'auth-login' }"
+              variant="primary"
+            >
               Login
             </t-nuxt-link-button>
-            <t-nuxt-link-button :to="{ name: 'auth-register' }" variant="secondary">
+            <t-nuxt-link-button
+              :to="{ name: 'auth-register' }"
+              variant="secondary"
+            >
               Register
             </t-nuxt-link-button>
           </div>
         </client-only>
       </div>
       <div class="hidden mascot lg:block">
-        <img src="/mascot/riru.png" style="max-height:70vmin" alt="riru Mascot" m="l-auto">
+        <img
+          src="/mascot/riru.png"
+          style="max-height:70vmin"
+          alt="riru Mascot"
+          m="l-auto"
+        >
       </div>
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { useAppConfig } from '#app'
-
-import { useSession } from '~/store/session'
-const session = useSession()
-const config = useAppConfig()
-</script>
 
 <style lang="postcss">
 .h-sub {

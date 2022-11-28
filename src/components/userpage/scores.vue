@@ -1,3 +1,7 @@
+<script setup>
+const user = inject('user')
+</script>
+
 <template>
   <section
     class="custom-container"
@@ -7,14 +11,14 @@
         Top Performance (dummy)
       </div>
       <div class="p-4 card-body">
-        <div v-for="i in 10" :key="i" class="score">
+        <div
+          v-for="i in 10"
+          :key="i"
+          class="score"
+        >
           <app-score />
         </div>
       </div>
     </div>
   </section>
 </template>
-
-<script setup>
-const user = inject('user')
-</script>

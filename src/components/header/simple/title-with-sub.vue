@@ -1,10 +1,32 @@
+<script>
+export default {
+  name: 'HeaderSimpleTitleWithSub',
+  props: {
+    title: {
+      type: String,
+      default: undefined,
+    },
+    subtitle: {
+      type: String,
+      default: undefined,
+    },
+  },
+}
+</script>
+
 <template>
   <div class="app-header">
     <div class="text-center">
-      <h1 v-if="title" class="text-3xl font-bold text-center sm:text-left">
+      <h1
+        v-if="title"
+        class="text-3xl font-bold text-center sm:text-left"
+      >
         {{ title }}
       </h1>
-      <h2 v-if="subtitle" class="text-lg font-semibold text-center whitespace-pre opacity-40 sm:text-left">
+      <h2
+        v-if="subtitle"
+        class="text-lg font-semibold text-center whitespace-pre opacity-40 sm:text-left"
+      >
         {{ subtitle }}
       </h2>
 
@@ -16,22 +38,6 @@
     </div>
   </div>
 </template>
-
-<script>
-export default {
-  name: 'HeaderSimpleTitleWithSub',
-  props: {
-    title: {
-      type: String,
-      default: undefined
-    },
-    subtitle: {
-      type: String,
-      default: undefined
-    }
-  }
-}
-</script>
 
 <style lang="postcss" scoped>
 .app-header {

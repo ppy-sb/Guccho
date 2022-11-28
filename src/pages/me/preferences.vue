@@ -1,25 +1,24 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { navigateTo } from '#app'
+import { computed, ref } from 'vue'
 import md5 from 'md5'
+import { navigateTo } from '#app'
 import { useSession } from '~/store/session'
 
 const changeAvatar = ref<{
-  openModal:() => void
+  openModal: () => void
 }>()
 const changePassword = ref<{
-  openModal:() => void
+  openModal: () => void
 }>()
 
 const { $client } = useNuxtApp()
 const session = useSession()
-if (!session.$state.loggedIn) {
+if (!session.$state.loggedIn)
   await navigateTo({ name: 'auth-login', query: { back: '1' } })
-}
+
 const _user = await $client.me.fullSecret.query()
-if (!_user) {
+if (_user == null)
   await navigateTo({ name: 'auth-login', query: { back: '1' } })
-}
 
 const user = ref({ ..._user } as Exclude<typeof _user, null>)
 const unchanged = ref({ ...user.value })
@@ -28,7 +27,8 @@ const editable = ['name', 'email'] as const
 
 const anythingChanged = computed(() => {
   const col = (editable).some((item) => {
-    if (!user.value || !unchanged.value) { return false }
+    if (!user.value || !unchanged.value)
+      return false
     return unchanged.value[item] !== user.value[item]
   })
   return col
@@ -43,13 +43,15 @@ const saveAvatar = () => {
 }
 const updateUser = async () => {
   const updateData = editable.reduce((acc, cur) => {
-    if (user.value[cur] === unchanged.value[cur]) { return acc }
+    if (user.value[cur] === unchanged.value[cur])
+      return acc
     acc[cur] = user.value[cur]
     return acc
   }, {} as Partial<Record<typeof editable[number], string>>)
 
   const result = await $client.me.updatePreferences.mutate(updateData)
-  if (!result) { return }
+  if (!result)
+    return
 
   unchanged.value = { ...unchanged.value, ...result }
 }
@@ -61,13 +63,14 @@ const changePasswordForm = reactive<{
 }>({
   oldPassword: undefined,
   newPassword: undefined,
-  repeatNewPassword: undefined
+  repeatNewPassword: undefined,
 })
 
 const changePasswordError = ref('')
 
 const updatePassword = async (closeModal: () => void) => {
-  if (!changePasswordForm.newPassword) { return } // checked by browser
+  if (!changePasswordForm.newPassword)
+    return // checked by browser
   if (changePasswordForm.newPassword !== changePasswordForm.repeatNewPassword) {
     changePasswordError.value = 'new password mismatch'
     return
@@ -80,30 +83,40 @@ const updatePassword = async (closeModal: () => void) => {
   const md5HashedPassword = {
     newPassword: md5(changePasswordForm.newPassword),
     // TODO: allow empty oldPassword?
-    oldPassword: md5(changePasswordForm.oldPassword as string)
+    oldPassword: md5(changePasswordForm.oldPassword as string),
   }
 
   try {
     const result = await $client.me.updatePassword.mutate(md5HashedPassword)
     unchanged.value = {
       ...unchanged.value,
-      ...result
+      ...result,
     }
     closeModal()
-  } catch (error: any) {
+  }
+  catch (error: any) {
     changePasswordError.value = error.message
   }
 }
 </script>
 
 <template>
-  <section v-if="user" class="container mx-auto custom-container">
+  <section
+    v-if="user"
+    class="container mx-auto custom-container"
+  >
     <t-modal-root>
-      <t-modal-wrapper ref="changeAvatar" v-slot="{ closeModal }">
+      <t-modal-wrapper
+        ref="changeAvatar"
+        v-slot="{ closeModal }"
+      >
         <t-modal class="max-w-3xl">
           <div class="flex flex-col gap-2">
             <div class="flex items-center justify-center w-full">
-              <label for="dropzone-file" class="dropzone">
+              <label
+                for="dropzone-file"
+                class="dropzone"
+              >
                 <div class="flex flex-col items-center justify-center px-3 pt-5 pb-6">
                   <svg
                     aria-hidden="true"
@@ -124,7 +137,11 @@ const updatePassword = async (closeModal: () => void) => {
                     upload</span> or drag and drop</p>
                   <p class="text-xs text-kimberly-500 dark:text-kimberly-300">SVG, PNG, JPG or GIF (MAX. 800x400px)</p>
                 </div>
-                <input id="dropzone-file" type="file" class="hidden">
+                <input
+                  id="dropzone-file"
+                  type="file"
+                  class="hidden"
+                >
               </label>
             </div>
             <!-- <div im-just-a-spacer /> -->
@@ -148,33 +165,67 @@ const updatePassword = async (closeModal: () => void) => {
           </div>
         </t-modal>
       </t-modal-wrapper>
-      <t-modal-wrapper ref="changePassword" v-slot="{ closeModal }">
+      <t-modal-wrapper
+        ref="changePassword"
+        v-slot="{ closeModal }"
+      >
         <t-modal>
           <template #body>
-            <form action="#" @submit.prevent="updatePassword(closeModal)">
+            <form
+              action="#"
+              @submit.prevent="updatePassword(closeModal)"
+            >
               <div class="card-body w-96">
                 <div class="form-control">
-                  <label class="label" for="old-password">
+                  <label
+                    class="label"
+                    for="old-password"
+                  >
                     <span class="pl-2 label-text">Old Password</span>
                   </label>
-                  <input v-model="changePasswordForm.oldPassword" type="password" class="input input-sm input-ghost" required>
+                  <input
+                    v-model="changePasswordForm.oldPassword"
+                    type="password"
+                    class="input input-sm input-ghost"
+                    required
+                  >
                 </div>
                 <div class="form-control">
-                  <label class="label" for="old-password">
+                  <label
+                    class="label"
+                    for="old-password"
+                  >
                     <span class="pl-2 label-text">New Password</span>
                   </label>
-                  <input v-model="changePasswordForm.newPassword" type="password" class="input input-sm  input-ghost" required>
+                  <input
+                    v-model="changePasswordForm.newPassword"
+                    type="password"
+                    class="input input-sm  input-ghost"
+                    required
+                  >
                 </div>
                 <div class="form-control">
-                  <label class="label" for="old-password">
+                  <label
+                    class="label"
+                    for="old-password"
+                  >
                     <span class="pl-2 label-text">Repeat Password</span>
                   </label>
-                  <input v-model="changePasswordForm.repeatNewPassword" type="password" class="input input-sm  input-ghost" required>
+                  <input
+                    v-model="changePasswordForm.repeatNewPassword"
+                    type="password"
+                    class="input input-sm  input-ghost"
+                    required
+                  >
                 </div>
                 <span class="text-error px-2">{{ changePasswordError }}</span>
               </div>
               <div class="flex p-4 gap-2">
-                <t-button size="sm" variant="accent" class="grow">
+                <t-button
+                  size="sm"
+                  variant="accent"
+                  class="grow"
+                >
                   confirm
                 </t-button>
                 <t-button
@@ -196,8 +247,16 @@ const updatePassword = async (closeModal: () => void) => {
       </t-modal-wrapper>
     </t-modal-root>
     <header-default class="!pb-2 !pt-4">
-      <header-simple-title-with-sub title="preferences" class="text-left" />
-      <button v-if="anythingChanged" class="self-end btn btn-sm btn-warning" type="button" @click="updateUser">
+      <header-simple-title-with-sub
+        title="preferences"
+        class="text-left"
+      />
+      <button
+        v-if="anythingChanged"
+        class="self-end btn btn-sm btn-warning"
+        type="button"
+        @click="updateUser"
+      >
         update
       </button>
     </header-default>
@@ -215,7 +274,11 @@ const updatePassword = async (closeModal: () => void) => {
             >
               change
             </button>
-            <img :src="user.avatarUrl" class="pointer-events-none " style="min-width:150px; width:150px;">
+            <img
+              :src="user.avatarUrl"
+              class="pointer-events-none "
+              style="min-width:150px; width:150px;"
+            >
           </div>
           <div>
             <h1 class="text-5xl text-left">
@@ -241,7 +304,7 @@ const updatePassword = async (closeModal: () => void) => {
               class="w-full input input-sm"
               :class="{
                 'input-bordered input-primary': unchanged.name !== user.name,
-                'input-ghost': unchanged.name === user.name
+                'input-ghost': unchanged.name === user.name,
               }"
             >
             <button
@@ -270,10 +333,13 @@ const updatePassword = async (closeModal: () => void) => {
               disabled
               :class="{
                 'input-bordered input-primary': unchanged.safeName !== user.safeName,
-                '!input-ghost border-none': unchanged.safeName === user.safeName
+                '!input-ghost border-none': unchanged.safeName === user.safeName,
               }"
             >
-            <button class="btn btn-sm btn-warning" type="button">
+            <button
+              class="btn btn-sm btn-warning"
+              type="button"
+            >
               request change
             </button>
           </div>
@@ -290,7 +356,7 @@ const updatePassword = async (closeModal: () => void) => {
               class="w-full input input-sm"
               :class="{
                 'input-bordered input-primary': unchanged.email !== user.email,
-                'input-ghost': unchanged.email === user.email
+                'input-ghost': unchanged.email === user.email,
               }"
             >
             <button
@@ -320,10 +386,14 @@ const updatePassword = async (closeModal: () => void) => {
               disabled
               :class="{
                 'input-bordered input-primary': unchanged.secrets.apiKey !== user.secrets.apiKey,
-                '!input-ghost border-none': unchanged.secrets.apiKey === user.secrets.apiKey
+                '!input-ghost border-none': unchanged.secrets.apiKey === user.secrets.apiKey,
               }"
             >
-            <button class="btn btn-sm btn-primary" type="button" @click="changePassword?.openModal">
+            <button
+              class="btn btn-sm btn-primary"
+              type="button"
+              @click="changePassword?.openModal"
+            >
               Change
             </button>
           </div>
@@ -341,13 +411,21 @@ const updatePassword = async (closeModal: () => void) => {
               disabled
               :class="{
                 'input-bordered input-primary': unchanged.secrets.apiKey !== user.secrets.apiKey,
-                '!input-ghost border-none': unchanged.secrets.apiKey === user.secrets.apiKey
+                '!input-ghost border-none': unchanged.secrets.apiKey === user.secrets.apiKey,
               }"
             >
-            <button v-if="!user.secrets.apiKey" class="btn btn-sm btn-primary" type="button">
+            <button
+              v-if="!user.secrets.apiKey"
+              class="btn btn-sm btn-primary"
+              type="button"
+            >
               Request one
             </button>
-            <button v-else class="btn btn-sm btn-secondary" type="button">
+            <button
+              v-else
+              class="btn btn-sm btn-secondary"
+              type="button"
+            >
               request a new one
             </button>
           </div>
@@ -358,7 +436,10 @@ const updatePassword = async (closeModal: () => void) => {
     <label class="label">
       <span class="pl-3 label-text">profile</span>
     </label>
-    <lazy-editor v-model.lazy="user.profile" class="safari-performance-boost" />
+    <lazy-editor
+      v-model.lazy="user.profile"
+      class="safari-performance-boost"
+    />
   </section>
 </template>
 
@@ -388,6 +469,7 @@ const updatePassword = async (closeModal: () => void) => {
   @apply transition-shadow transition-colors;
 }
 </style>
+
 <style lang="scss">
 .safari .safari-performance-boost {
   @apply max-h-80;

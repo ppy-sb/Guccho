@@ -1,27 +1,17 @@
-<template>
-  <div class="zoom-modal-container" :data-l1-status="stat" :data-l2-status="l2Status">
-    <div class="zoom-modal-background">
-      <slot name="modal" v-bind="{ openModal, closeModal }">
-        <div v-if="props.teleportId" :id="props.teleportId.toString()" />
-      </slot>
-    </div>
-
-    <div ref="content" class="content">
-      <slot v-bind="{ openModal, closeModal }" />
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
-import { ref, inject, provide, onMounted, nextTick } from 'vue'
+import { inject, nextTick, onMounted, provide, ref } from 'vue'
 import type { Status } from './shared'
 
 const props = defineProps({
   teleportId: {
     type: [String, Number],
-    default: undefined
-  }
+    default: undefined,
+  },
 })
+const emit = defineEmits<{
+  (event: 'closed'): void
+  (event: 'shown'): void
+}>()
 const content = ref()
 
 const stat = ref<Status>('hidden')
@@ -34,23 +24,18 @@ const l2 = (value: Status) => {
 let modalShownCallback = () => {}
 let modalClosedCallback = () => {}
 
-// eslint-disable-next-line func-call-spacing
-const emit = defineEmits<{
-  (event:'closed'): void,
-  (event:'shown'): void,
-}>()
 const outerL2 = inject<typeof l2 | undefined>('openL2', undefined)
 const openModal = (cb?: () => void) => {
-  if (outerL2) {
+  if (outerL2)
     outerL2('show')
-  }
+
   stat.value = 'show'
   modalShownCallback = cb ?? modalShownCallback
 }
 const closeModal = (cb?: () => void) => {
-  if (outerL2) {
+  if (outerL2)
     outerL2('closed')
-  }
+
   stat.value = 'closed'
   modalClosedCallback = cb ?? modalClosedCallback
 }
@@ -64,18 +49,22 @@ provide('openL2', l2)
 onMounted(() => {
   content.value.addEventListener('animationend', (e: AnimationEvent) => {
     if (e.animationName === 'zoomInContent') {
-      if (e.srcElement !== content.value) {
+      if (e.srcElement !== content.value)
         return
-      }
+
       nextTick(() => {
-        if (stat.value !== 'hidden') { stat.value = 'hidden' }
-        if (!outerL2) {
-          if (l2Status.value !== 'hidden') { l2Status.value = 'hidden' }
+        if (stat.value !== 'hidden')
+          stat.value = 'hidden'
+        if (outerL2 == null) {
+          if (l2Status.value !== 'hidden')
+            l2Status.value = 'hidden'
         }
+
         modalClosedCallback()
         emit('closed')
       })
-    } else if (e.animationName === 'zoomOutContent') {
+    }
+    else if (e.animationName === 'zoomOutContent') {
       modalShownCallback()
       emit('shown')
     }
@@ -84,9 +73,36 @@ onMounted(() => {
 defineExpose({
   openModal,
   closeModal,
-  stat
+  stat,
 })
 </script>
+
+<template>
+  <div
+    class="zoom-modal-container"
+    :data-l1-status="stat"
+    :data-l2-status="l2Status"
+  >
+    <div class="zoom-modal-background">
+      <slot
+        name="modal"
+        v-bind="{ openModal, closeModal }"
+      >
+        <div
+          v-if="props.teleportId"
+          :id="props.teleportId.toString()"
+        />
+      </slot>
+    </div>
+
+    <div
+      ref="content"
+      class="content"
+    >
+      <slot v-bind="{ openModal, closeModal }" />
+    </div>
+  </div>
+</template>
 
 <style lang="scss">
 @import './shared.scss';

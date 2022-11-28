@@ -1,4 +1,38 @@
 <!-- TODO: turd pile, refactor later -->
+<script setup lang="ts">
+import { faEnvelope, faHeart, faHeartCrack, faUserGroup } from '@fortawesome/free-solid-svg-icons'
+import type { Ref } from 'vue'
+import { inject, ref } from 'vue'
+import { useElementHover } from '@vueuse/core'
+import { useNuxtApp } from '#app'
+import { useFAIconLib } from '#imports'
+import type { UserFull as User } from '~/types/user'
+import { useSession } from '~/store/session'
+
+import type { IdType } from '~/server/trpc/config'
+const { $client } = useNuxtApp()
+
+const changeFriendStateButton = ref(null)
+const session = useSession()
+const { addToLibrary } = useFAIconLib()
+addToLibrary(faUserGroup, faHeartCrack, faHeart, faEnvelope)
+
+const user = inject<Ref<User<IdType>>>('user')
+const userFriendCount = await $client.user.countRelations.query({
+  handle: user?.value.id as IdType,
+  type: 'friend',
+})
+const relationWithSessionUser = session.$state.loggedIn
+  ? await $client.me.relation.query({
+    target: session.$state.userId as IdType,
+  })
+  : undefined
+
+const isMutualFriend = ref(relationWithSessionUser?.mutual?.includes('mutual-friend') || false)
+const isFriendButtonHovered = useElementHover(changeFriendStateButton)
+const friendButtonContent = ref<string | number>(userFriendCount || 'Add as friend')
+</script>
+
 <template>
   <section
     v-if="user"
@@ -6,7 +40,11 @@
   >
     <!-- Logo -->
     <div>
-      <img :src="user.avatarUrl" class="mask mask-squircle" width="300">
+      <img
+        :src="user.avatarUrl"
+        class="mask mask-squircle"
+        width="300"
+      >
     </div>
     <!-- info -->
     <div class="flex flex-col w-full pt-4 md:p-0 bg-kimberly-200 dark:bg-kimberly-700 md:bg-transparent md:grow">
@@ -14,29 +52,45 @@
         v-if="session.$state.userId !== user.id"
         class="container flex justify-around order-3 gap-3 pb-4 mx-auto md:order-1 md:justify-end md:pb-0"
       >
-        <t-button ref="changeFriendStateButton" size="sm" :variant="isMutualFriend ? 'primary' : 'neutral'" class="gap-1">
+        <t-button
+          ref="changeFriendStateButton"
+          size="sm"
+          :variant="isMutualFriend ? 'primary' : 'neutral'"
+          class="gap-1"
+        >
           <font-awesome-icon
             :icon="isFriendButtonHovered && isMutualFriend ? 'fas fa-heart-crack' : 'fas fa-heart'"
             :class="{
-              'fa-bounce': isFriendButtonHovered
+              'fa-bounce': isFriendButtonHovered,
             }"
           />
           <span>{{ friendButtonContent }}</span>
         </t-button>
-        <t-button v-if="session.$state.loggedIn" size="sm" variant="secondary" class="gap-1">
+        <t-button
+          v-if="session.$state.loggedIn"
+          size="sm"
+          variant="secondary"
+          class="gap-1"
+        >
           <font-awesome-icon icon="fas fa-envelope" />
           <span>send message</span>
         </t-button>
       </div>
-      <div v-else class="container flex justify-around order-3 gap-3 pb-4 mx-auto md:order-1 md:justify-end md:pb-0">
-        <t-button size="sm" variant="primary">
+      <div
+        v-else
+        class="container flex justify-around order-3 gap-3 pb-4 mx-auto md:order-1 md:justify-end md:pb-0"
+      >
+        <t-button
+          size="sm"
+          variant="primary"
+        >
           add as friend
         </t-button>
         <t-nuxt-link-button
           size="sm"
           variant="accent"
           :to="{
-            name: 'me-preferences'
+            name: 'me-preferences',
           }"
         >
           change preferences
@@ -48,7 +102,11 @@
             <h1 class="text-5xl items-center md:items-left flex flex-col md:flex-row gap-1">
               {{ user.name }}
               <div class="flex flex-row gap-1 md:self-end">
-                <div v-for="role in user.roles.filter(role => !['normal', 'registered'].includes(role))" :key="role" class="badge">
+                <div
+                  v-for="role in user.roles.filter(role => !['normal', 'registered'].includes(role))"
+                  :key="role"
+                  class="badge"
+                >
                   {{ role }}
                 </div>
               </div>
@@ -71,40 +129,6 @@
     </div>
   </section>
 </template>
-
-<script setup lang="ts">
-import { faUserGroup, faHeartCrack, faHeart, faEnvelope } from '@fortawesome/free-solid-svg-icons'
-import { inject, ref, Ref } from 'vue'
-import { useElementHover } from '@vueuse/core'
-import { useNuxtApp } from '#app'
-import { useFAIconLib } from '#imports'
-import { UserFull as User } from '~/types/user'
-import { useSession } from '~/store/session'
-
-import type { IdType } from '~/server/trpc/config'
-const { $client } = useNuxtApp()
-
-const changeFriendStateButton = ref(null)
-const session = useSession()
-const { addToLibrary } = useFAIconLib()
-addToLibrary(faUserGroup, faHeartCrack, faHeart, faEnvelope)
-
-const user = inject<Ref<User<IdType>>>('user')
-const userFriendCount = await $client.user.countRelations.query({
-  handle: user?.value.id as IdType,
-  type: 'friend'
-})
-const relationWithSessionUser = session.$state.loggedIn
-  ? await $client.me.relation.query({
-    target: session.$state.userId as IdType
-  })
-  : undefined
-
-const isMutualFriend = ref(relationWithSessionUser?.mutual?.includes('mutual-friend') || false)
-const isFriendButtonHovered = useElementHover(changeFriendStateButton)
-const friendButtonContent = ref<string | number>(userFriendCount || 'Add as friend')
-
-</script>
 
 <style scoped lang="scss">
 .user-status {
