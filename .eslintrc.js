@@ -9,7 +9,7 @@ module.exports = {
     parser: '@typescript-eslint/parser',
     sourceType: 'module',
   },
-  plugins: ['vue', 'antfu'],
+  plugins: ['vue'],
   extends: [
     'eslint:recommended',
     '@nuxtjs/eslint-config-typescript',
@@ -21,6 +21,5 @@ module.exports = {
     'vue/multi-word-component-names': ['off'],
     'vue/no-v-model-argument': ['off'],
     '@typescript-eslint/type-annotation-spacing': 'warn',
-    'antfu/generic-spacing': ['warn'],
   },
 }
