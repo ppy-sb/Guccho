@@ -8,7 +8,6 @@ import type { UserModeRulesetStatistics } from '~/types/user'
 import type { IdType } from '~/server/trpc/config'
 
 const route = useRoute()
-
 const { $client } = useNuxtApp()
 const {
   data: user,
@@ -29,7 +28,7 @@ const updateIntersectingStatus = (key: keyof typeof visible) => ([{ isIntersecti
 }
 
 definePageMeta({
-  layout: 'default',
+  layout: 'without-bg',
 })
 
 const tab = ref<RankingSystem>('ppv2')
