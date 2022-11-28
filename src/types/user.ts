@@ -144,8 +144,8 @@ export interface UserOptional<Id = unknown> {
 
 export interface UserPreferences {
   scope: Record<
-  Exclude<keyof UserOptional | 'privateMessage', 'secrets'>,
-  Scope
+    Exclude<keyof UserOptional | 'privateMessage', 'secrets'>,
+    Scope
   >
 }
 export interface UserRelationship<Id> extends BaseUser<Id> {
@@ -165,8 +165,8 @@ export type UserStatistic<
   Ranking extends RankingSystem = RankingSystem,
 > = {
   [M in IncludeMode]: Record<
-  IncludeRuleset & AvailableRuleset<M>,
-  UserModeRulesetStatistics<Id, M, AvailableRuleset<M>, Ranking>
+    IncludeRuleset & AvailableRuleset<M>,
+    UserModeRulesetStatistics<Id, M, AvailableRuleset<M>, Ranking>
   >;
 }
 
@@ -177,11 +177,11 @@ export type ComponentUserStatistic<
   Ranking extends RankingSystem = RankingSystem,
 > = {
   [M in IncludeMode]: Record<
-  IncludeRuleset & AvailableRuleset<M>,
-  Maybe<
-  UserModeRulesetStatistics<Id, M, AvailableRuleset<M>, Ranking>,
-  'ranking'
-  >
+    IncludeRuleset & AvailableRuleset<M>,
+    Maybe<
+      UserModeRulesetStatistics<Id, M, AvailableRuleset<M>, Ranking>,
+      'ranking'
+    >
   >;
 }
 
@@ -204,10 +204,10 @@ export type ComponentUserExtra<
   IncludeRuleset extends Ruleset = Ruleset,
   Ranking extends RankingSystem = RankingSystem,
 > = Maybe<UserExtra<
-Id,
-IncludeMode,
-IncludeRuleset,
-Ranking
+  Id,
+  IncludeMode,
+  IncludeRuleset,
+  Ranking
 >, 'statistics'>
 
 export type UserFull<
