@@ -2,6 +2,7 @@ import { TRPCError } from '@trpc/server'
 import { setCookie } from 'h3'
 import { publicProcedure } from '../trpc'
 
+import { unableToRefreshToken } from '../messages'
 import { getSession, refresh, createSession } from '~/server/session'
 
 export const procedureWithSession = publicProcedure
@@ -35,7 +36,7 @@ export const procedureWithSession = publicProcedure
       if (!refreshed) {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
-          message: 'error when refreshing token'
+          message: unableToRefreshToken
         })
       }
       if (refreshed !== ctx.session.id) {

@@ -5,6 +5,7 @@ import { TRPCError } from '@trpc/server'
 import z from 'zod'
 import { router as _router } from '../trpc'
 import { zodHandle, zodRelationType } from '../shapes'
+import { oldPasswordMismatch, userNotFound, userExists, atLeastOneUserNotExists, relationTypeNotFound } from '../messages'
 import { procedureWithUserLoggedIn as pUser } from '~/server/trpc/middleware/user'
 import {
   getFullUser,
@@ -26,15 +27,17 @@ export const router = _router({
       email: z.string().email().optional(),
       name: z.string().optional()
     })).mutation(async ({ ctx, input }) => {
-      // const session = await ctx.session.getBinding()
-      // const checks = []
-      // email
+      // TODO: check email(should verified by frontend with another request (not impl'd yet ))
       // if (input.email) {
       //   const user = await getBaseUser({ handle: input.email, includes: { email: true } })
       // }
-      // if (input.name) {
-
-      // }
+      if (input.name) {
+        const existingUser = await getBaseUser({
+          handle: input.name,
+          keys: ['id', 'name', 'safeName']
+        })
+        if (existingUser) { throw new TRPCError({ code: 'PRECONDITION_FAILED', message: userExists }) }
+      }
       const result = await updateUser(ctx.user, input)
       if (!result) { throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' }) }
       ctx.user = result
@@ -45,9 +48,9 @@ export const router = _router({
     newPassword: z.string()
   })).mutation(async ({ ctx, input }) => {
     const userWithPassword = await getBaseUser({ handle: ctx.user.id, includes: { secrets: true } })
-    if (!userWithPassword) { throw new TRPCError({ code: 'NOT_FOUND', message: 'user not found' }) }
+    if (!userWithPassword) { throw new TRPCError({ code: 'NOT_FOUND', message: userNotFound }) }
     if (!await bcrypt.compare(input.oldPassword, userWithPassword.secrets.password)) {
-      throw new TRPCError({ code: 'UNAUTHORIZED', message: 'old password mismatch' })
+      throw new TRPCError({ code: 'UNAUTHORIZED', message: oldPasswordMismatch })
     }
     return await updateUserPassword(userWithPassword, input.newPassword)
   }),
@@ -99,7 +102,7 @@ export const router = _router({
       if (!fromUser || !targetUser) {
         throw new TRPCError({
           code: 'PRECONDITION_FAILED',
-          message: 'at least one of the supplied user is not exist'
+          message: atLeastOneUserNotExists
         })
       }
       try {
@@ -109,7 +112,7 @@ export const router = _router({
         if (err.message === 'not-found') {
           throw new TRPCError({
             code: 'NOT_FOUND',
-            message: 'specified relation type in user not found'
+            message: relationTypeNotFound
           })
         }
         throw err

@@ -99,7 +99,7 @@ TODO Register
 TODO Give first registered user owner privilege
 
 TODO Session [x] half baked, currently lives in memory
-TODO Login (require session & store)
+TODO standardize error string
 
 ## AppConfig and ServerConfig
 

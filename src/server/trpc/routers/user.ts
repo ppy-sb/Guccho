@@ -2,6 +2,7 @@ import { z } from 'zod'
 import { TRPCError } from '@trpc/server'
 import { zodHandle, zodRelationType } from '../shapes'
 import { publicProcedure as p, router as _router } from '../trpc'
+import { userNotFound } from '../messages'
 import { followUserPreferences } from '~/server/transforms'
 import { countRelationship, getBaseUser, getFullUser } from '$/client'
 
@@ -13,7 +14,7 @@ export const router = _router({
     if (!user) {
       throw new TRPCError({
         code: 'NOT_FOUND',
-        message: 'not found'
+        message: userNotFound
       })
     }
     return followUserPreferences({ user, scope: 'public' })
@@ -25,7 +26,7 @@ export const router = _router({
     if (!user) {
       throw new TRPCError({
         code: 'NOT_FOUND',
-        message: 'not found'
+        message: userNotFound
       })
     }
     return followUserPreferences({ user, scope: 'public' })
