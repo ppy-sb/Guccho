@@ -11,7 +11,7 @@ export const appRouter = router({
   me,
 
   user,
-  leaderboard
+  leaderboard,
 })
 
 // export type definition of API

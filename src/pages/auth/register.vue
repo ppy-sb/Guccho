@@ -1,3 +1,19 @@
+<script setup>
+import { ref } from 'vue'
+// import { userRegister } from '@/mock/index'
+const credential = ref({
+  user: '',
+  password: '',
+})
+const error = ref('')
+const fetching = ref(false)
+
+const userRegisterAction = () => {
+  fetching.value = true
+  // const data = await userRegister()
+}
+</script>
+
 <template>
   <div class="flex items-center justify-center px-4 py-12 my-auto sm:px-6 lg:px-8">
     <div class="relative w-full max-w-md p-6 overflow-hidden shadow-2xl space-y-8 bg-kimberly-150/30 dark:bg-kimberly-800 rounded-3xl">
@@ -8,11 +24,21 @@
           Sign Up
         </h2>
       </div>
-      <form class="mt-8 space-y-12" autocomplete="off" @submit.prevent="userRegisterAction">
+      <form
+        class="mt-8 space-y-12"
+        autocomplete="off"
+        @submit.prevent="userRegisterAction"
+      >
         <div class="shadow-sm space-y-2">
           <div>
-            <label for="user" class="sr-only">User / Email</label>
-            <h1 v-if="error" class="auth-error-text">
+            <label
+              for="user"
+              class="sr-only"
+            >User / Email</label>
+            <h1
+              v-if="error"
+              class="auth-error-text"
+            >
               {{ error }}
             </h1>
             <input
@@ -28,8 +54,14 @@
             >
           </div>
           <div>
-            <label for="password" class="sr-only">Password</label>
-            <h1 v-if="error" class="auth-error-text">
+            <label
+              for="password"
+              class="sr-only"
+            >Password</label>
+            <h1
+              v-if="error"
+              class="auth-error-text"
+            >
               {{ error }}
             </h1>
             <input
@@ -47,10 +79,16 @@
         </div>
 
         <div class="grid grid-cols-2 gap-2">
-          <t-nuxt-link-button :to="{name: 'auth-login'}" variant="secondary">
+          <t-nuxt-link-button
+            :to="{ name: 'auth-login' }"
+            variant="secondary"
+          >
             Log in
           </t-nuxt-link-button>
-          <button type="submit" class="btn btn-primary">
+          <button
+            type="submit"
+            class="btn btn-primary"
+          >
             Sign Up
           </button>
         </div>
@@ -59,21 +97,6 @@
   </div>
 </template>
 
-<script setup>
-import { ref } from 'vue'
-// import { userRegister } from '@/mock/index'
-const credential = ref({
-  user: '',
-  password: ''
-})
-const error = ref('')
-const fetching = ref(false)
-
-const userRegisterAction = () => {
-  fetching.value = true
-  // const data = await userRegister()
-}
-</script>
 <style lang="postcss" scoped>
 .auth-error-text {
   @apply text-red-500 text-sm font-medium mb-2

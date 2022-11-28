@@ -9,7 +9,7 @@
     "preview": "nuxt preview",
     "analyze": "nuxt analyze",
     "postinstall": "nuxt prepare",
-    "lint:ts": "eslint --ext '.js,.vue,.ts' --ignore-path .gitignore .",
+    "lint:ts": "eslint --ext '.js,.vue,.ts,.jsx,.tsx' --ignore-path .gitignore .",
     "lint": "yarn lint:ts",
     "lintfix": "yarn lint:ts --fix",
     "lint:type-check": "tsc -p . --noEmit && vue-tsc --noEmit",
@@ -68,6 +68,7 @@
     "zod": "^3.19.1"
   },
   "devDependencies": {
+    "@antfu/eslint-config": "^0.31.0",
     "@nuxtjs/eslint-config-typescript": "^12.0.0",
     "@nuxtjs/tailwindcss": "^6.1.3",
     "@types/bcryptjs": "^2.4.2",
@@ -83,6 +84,7 @@
     "@vueuse/components": "^9.6.0",
     "daisyui": "^2.42.1",
     "eslint": "^8.28.0",
+    "eslint-plugin-vue": "^9.8.0",
     "express": "^4.18.2",
     "mysql2": "^2.3.3",
     "nuxt-animejs": "^1.2.4",

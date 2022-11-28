@@ -1,5 +1,23 @@
+<script setup lang="ts">
+import type { RouterLinkProps } from 'vue-router'
+import { useAppConfig } from '#app'
+import type { BaseUser } from '~/types/user'
+import type { IdType } from '~/server/trpc/config'
+import { getFlagURL } from '~/common/varkaUtils'
+
+const props = defineProps<{
+  user: BaseUser<IdType>
+  to: RouterLinkProps['to']
+}>()
+// const runtimeConfig = useAppConfig()
+const config = useAppConfig()
+</script>
+
 <template>
-  <VTooltip delay="{ show: 500, hide: 100 }" placement="right">
+  <VTooltip
+    delay="{ show: 500, hide: 100 }"
+    placement="right"
+  >
     <nuxt-link :to="to">
       {{ props.user.name }}
     </nuxt-link>
@@ -20,7 +38,10 @@
                 {{ props.user.name }}
               </h1>
               <h1>
-                <img class="w-auto h-6" :src="getFlagURL(props.user.flag)">
+                <img
+                  class="w-auto h-6"
+                  :src="getFlagURL(props.user.flag)"
+                >
               </h1>
             </div>
           </div>
@@ -29,18 +50,3 @@
     </template>
   </VTooltip>
 </template>
-
-<script setup lang="ts">
-import { useAppConfig } from '#app'
-import { RouterLinkProps } from 'vue-router'
-import { BaseUser } from '~/types/user'
-import { IdType } from '~/server/trpc/config'
-import { getFlagURL } from '~/common/varkaUtils'
-
-// const runtimeConfig = useAppConfig()
-const config = useAppConfig()
-const props = defineProps<{
-  user: BaseUser<IdType>,
-  to: RouterLinkProps['to']
-}>()
-</script>

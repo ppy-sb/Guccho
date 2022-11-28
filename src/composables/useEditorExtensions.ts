@@ -12,10 +12,10 @@ export default (config: {
   indent: string
 }) => [
   StarterKit.configure({
-    codeBlock: false
+    codeBlock: false,
   }),
   TextAlign.configure({
-    types: ['heading', 'paragraph']
+    types: ['heading', 'paragraph'],
   }),
   Highlight,
   TaskList,
@@ -25,21 +25,22 @@ export default (config: {
   //   limit: 10000
   // }),
   CodeBlockLowlight.extend({
-    addKeyboardShortcuts () {
+    addKeyboardShortcuts() {
       return {
         ...this.parent?.(),
         Tab: ({ editor }) => {
-          if (!this.editor.isActive('codeBlock')) { return false }
+          if (!this.editor.isActive('codeBlock'))
+            return false
           editor.commands.insertContent(config.indent)
           return true
-        }
+        },
       }
-    }
+    },
   }).configure({
     lowlight,
     exitOnArrowDown: true,
     HTMLAttributes: {
-      class: 'mockup-window border border-kimberly-500/20'
-    }
-  })
+      class: 'mockup-window border border-kimberly-500/20',
+    },
+  }),
 ]

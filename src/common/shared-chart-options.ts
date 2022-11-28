@@ -9,23 +9,23 @@ export const userpageLineChartOptions = {
             return 0
           }
         }
-      }
-    }
+      },
+    },
   },
   plugins: {
     legend: {
-      display: false
-    }
+      display: false,
+    },
   },
   responsive: true,
   maintainAspectRatio: false,
   scales: {
     yAxes: {
-      display: false
+      display: false,
     },
     x: {
-      display: false
-    }
+      display: false,
+    },
   },
-  radius: 0
+  radius: 0,
 }

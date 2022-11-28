@@ -1,3 +1,23 @@
+<script lang="ts" setup>
+import { createAddCommasFormatter, createScoreFormatter, getFlagURL } from '~/common/varkaUtils'
+import type { RankingSystem } from '~/types/common'
+import type { IdType } from '~/server/trpc/config'
+import type { ComponentLeaderboardItem } from '~/types/leaderboard'
+const props = defineProps<{
+  user: ComponentLeaderboardItem<IdType>['user']
+  place: number | bigint
+  sort: RankingSystem
+}>()
+const addCommas = createAddCommasFormatter()
+const scoreFormat = createScoreFormatter()
+const option = {
+  style: 'percent',
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+}
+const formatter = new Intl.NumberFormat(undefined, option)
+</script>
+
 <template>
   <tr class="font-medium">
     <th class="px-4 py-3 font-bold">
@@ -8,14 +28,22 @@
     <th>
       <div class="flex items-center">
         <div class="flex-shrink-0">
-          <img class="w-auto h-6" :src="getFlagURL(props.user.flag)">
+          <img
+            class="w-auto h-6"
+            :src="getFlagURL(props.user.flag)"
+          >
         </div>
       </div>
     </th>
     <th>
       <div class="flex gap-2 items-center">
         <div class="aspect-square mask mask-squircle flex">
-          <img class="m-auto" :src="user.avatarUrl" :alt="user.name" width="30">
+          <img
+            class="m-auto"
+            :src="user.avatarUrl"
+            :alt="user.name"
+            width="30"
+          >
         </div>
         {{ user.name }}
       </div>
@@ -39,24 +67,3 @@
     </td>
   </tr>
 </template>
-
-<script lang="ts" setup>
-import { createAddCommasFormatter, getFlagURL, createScoreFormatter } from '~/common/varkaUtils'
-import { RankingSystem } from '~/types/common'
-import { IdType } from '~/server/trpc/config'
-import { ComponentLeaderboardItem } from '~/types/leaderboard'
-const addCommas = createAddCommasFormatter()
-const scoreFormat = createScoreFormatter()
-const option = {
-  style: 'percent',
-  minimumFractionDigits: 2,
-  maximumFractionDigits: 2
-}
-const formatter = new Intl.NumberFormat(undefined, option)
-
-const props = defineProps<{
-  user: ComponentLeaderboardItem<IdType>['user'],
-  place: number | bigint,
-  sort: RankingSystem
-}>()
-</script>

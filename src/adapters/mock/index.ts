@@ -5,25 +5,25 @@ import { sampleUserWithSecrets, scoped } from '~/shapes/objects/user'
 export const router = trpc.router()
   .query('user.full', {
     input: z.object({
-      handle: z.union([z.string(), z.number()])
+      handle: z.union([z.string(), z.number()]),
     }),
-    resolve () {
+    resolve() {
       return sampleUserWithSecrets
-    }
+    },
   })
   .query('user.base', {
     input: z.object({
-      handle: z.union([z.string(), z.number()])
+      handle: z.union([z.string(), z.number()]),
     }),
-    resolve () {
+    resolve() {
       return sampleUserWithSecrets
-    }
+    },
   })
   .query('getUsers', {
     input: z.object({
-      handle: z.union([z.string(), z.number()])
+      handle: z.union([z.string(), z.number()]),
     }),
-    resolve () {
+    resolve() {
       return Object.values(scoped).map(user => ({
         id: user.id,
         ingameId: user.ingameId,
@@ -31,7 +31,7 @@ export const router = trpc.router()
         safeName: user.safeName,
         email: user.email,
         avatarUrl: user.avatarUrl,
-        flag: user.flag
+        flag: user.flag,
       }))
-    }
+    },
   })

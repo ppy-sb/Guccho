@@ -10,26 +10,26 @@ export const procedureWithUserLoggedIn = procedureWithSession
     if (!session) {
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
-        message: unableToRetrieveSession
+        message: unableToRetrieveSession,
       })
     }
     if (!session.userId) {
       throw new TRPCError({
         code: 'UNAUTHORIZED',
-        message: youNeedToLogin
+        message: youNeedToLogin,
       })
     }
     const user = await getBaseUser({ handle: session.userId })
-    if (!user) {
+    if (user == null) {
       throw new TRPCError({
         code: 'NOT_FOUND',
-        message: userNotFound
+        message: userNotFound,
       })
     }
-    return next({
+    return await next({
       ctx: {
         ...ctx,
-        user
-      }
+        user,
+      },
     })
   })

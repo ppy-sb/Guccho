@@ -77,5 +77,6 @@
   "eslint.lintTask.enable": true,
   "eslint.packageManager": "yarn",
   "eslint.useESLintClass": true,
-  "eslint.codeActionsOnSave.rules": null
+  "eslint.codeActionsOnSave.rules": null,
+  "vue3snippets.enable-compile-vue-file-on-did-save-code": false
 }

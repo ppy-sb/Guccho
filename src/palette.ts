@@ -1,10 +1,9 @@
 // follow the following rules will break the app
-/* eslint-disable import/no-named-as-default-member */
-/* eslint-disable import/default */
+
 import convert from 'color-convert'
 
 export const hex = {
-  alabaster: {
+  'alabaster': {
     DEFAULT: '#9D9595',
     50: '#F5F4F4',
     100: '#EBEAEA',
@@ -15,7 +14,7 @@ export const hex = {
     600: '#827878',
     700: '#655D5D',
     800: '#484242',
-    900: '#2A2727'
+    900: '#2A2727',
   },
   'pigeon-post': {
     DEFAULT: '#B3B2DC',
@@ -28,9 +27,9 @@ export const hex = {
     600: '#4A489D',
     700: '#383677',
     800: '#262550',
-    900: '#14132A'
+    900: '#14132A',
   },
-  jaffa: {
+  'jaffa': {
     DEFAULT: '#F0763D',
     50: '#FDEEE7',
     100: '#FCE1D4',
@@ -41,9 +40,9 @@ export const hex = {
     600: '#E45511',
     700: '#AF410D',
     800: '#7B2E09',
-    900: '#471A05'
+    900: '#471A05',
   },
-  wewak: {
+  'wewak': {
     DEFAULT: '#EE9AB9',
     50: '#FDF2F6',
     100: '#FAE0EA',
@@ -54,9 +53,9 @@ export const hex = {
     600: '#C0205A',
     700: '#901844',
     800: '#60102D',
-    900: '#300817'
+    900: '#300817',
   },
-  kimberly: {
+  'kimberly': {
     DEFAULT: '#7277A1',
     50: '#EEEFF4',
     100: '#E0E1EA',
@@ -68,21 +67,21 @@ export const hex = {
     600: '#585C83',
     700: '#414462',
     800: '#282B43',
-    900: '#14151E'
-  }
+    900: '#14151E',
+  },
 }
 export const convertSingle = (colors: Record<string, any>, converter: (...any: any) => any, transform: (...any: any) => any) =>
   Object.entries(colors).reduce<Record<string, ReturnType<typeof transform>>>((acc, [key, value]) => {
     acc[key] = transform(converter(value))
     return acc
-  }, {}) as Record<string, ReturnType<typeof transform>>
+  }, {})
 
 const to = (converter: (...any: any) => any, transform: (...any: any) => any = a => a) => {
   return Object.entries(hex)
-    .reduce((acc, [key, colors]: [string, Record<string, any>]) => {
+    .reduce<Record<keyof typeof hex, Record<string, ReturnType<typeof transform>>>>((acc, [key, colors]: [string, Record<string, any>]) => {
       acc[key as keyof typeof hex] = convertSingle(colors, converter, transform)
       return acc
-    }, {} as Record<keyof typeof hex, Record<string, ReturnType<typeof transform>>>)
+    }, {})
 }
-export const palette = to(convert.hex.hsl, ([h, s, l]) => `hsl(${h} ${s}% ${l}%)`) as typeof hex
+export const palette = to(convert.hex.hsl, ([h, s, l]) => `hsl(${h} ${s}% ${l}%)`) as unknown as typeof hex
 export const hsvRaw = to(convert.hex.hsl) as unknown as Record<string, ReturnType<typeof convert['hex']['hsl']>>

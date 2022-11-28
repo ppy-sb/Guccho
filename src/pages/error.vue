@@ -1,3 +1,12 @@
+<script setup lang="ts">
+import { clearError } from 'nuxt/app'
+
+const props = defineProps<{
+  error: Error
+}>()
+const handleError = async () => await clearError({ redirect: '/' })
+</script>
+
 <template>
   <div class="card">
     <div class="card-body">
@@ -8,11 +17,3 @@
     </div>
   </div>
 </template>
-<script setup lang="ts">
-import { clearError } from 'nuxt/app'
-
-const props = defineProps<{
-  error: Error
-}>()
-const handleError = () => clearError({ redirect: '/' })
-</script>

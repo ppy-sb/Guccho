@@ -1,11 +1,12 @@
-import { IdType } from '$/config'
+import type { IdType } from '$/config'
 
 export const createUserQuery = (handle: string | IdType, selectAgainst: Array<'id' | 'name' | 'safeName' | 'email'> = ['id', 'name', 'safeName']) => {
   let handleNum = handle
   const handleStr = handle.toString().trim()
   if (typeof handleNum === 'string') {
     handleNum = parseInt(handleNum)
-    if (isNaN(handleNum)) { handleNum = -1 }
+    if (isNaN(handleNum))
+      handleNum = -1
   }
 
   return {
@@ -15,32 +16,32 @@ export const createUserQuery = (handle: string | IdType, selectAgainst: Array<'i
           OR: [
             selectAgainst.includes('id')
               ? {
-                  id: handleNum
+                  id: handleNum,
                 }
               : undefined,
             selectAgainst.includes('name')
               ? {
-                  name: handleStr
+                  name: handleStr,
                 }
               : undefined,
             selectAgainst.includes('safeName')
               ? {
-                  safeName: handleStr.startsWith('@') ? handleStr.slice(1) : handleStr
+                  safeName: handleStr.startsWith('@') ? handleStr.slice(1) : handleStr,
                 }
               : undefined,
             selectAgainst.includes('email')
               ? {
-                  email: handleStr
+                  email: handleStr,
                 }
-              : undefined
-          ].filter(Boolean) as Array<{ id: IdType } | { name: string } | { safeName: string } | { email: string }>
+              : undefined,
+          ].filter(Boolean) as Array<{ id: IdType } | { name: string } | { safeName: string } | { email: string }>,
         },
         {
           priv: {
-            gte: 1
-          }
-        }
-      ]
-    }
+            gte: 1,
+          },
+        },
+      ],
+    },
   }
 }

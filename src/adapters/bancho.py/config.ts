@@ -1,57 +1,58 @@
-import { Mode as _Mode, Ruleset as _Ruleset, ServerConfig } from '~/types/common'
+import type { Mode as _Mode, Ruleset as _Ruleset } from '~/types/common'
+import { ServerConfig } from '~/types/common'
 
 export type IdType = number
 
-type AppConfigItemBase = {
-  name: string,
-  icon: string,
+interface AppConfigItemBase {
+  name: string
+  icon: string
 }
 
 export const serverModeConfig: Record<
-    _Mode,
-    AppConfigItemBase
-  > = {
-    osu: {
-      name: 'Osu',
-      icon: 'osu'
-    },
-    taiko: {
-      name: 'Taiko',
-      icon: 'taiko'
-    },
-    fruits: {
-      name: 'CTB',
-      icon: 'catch'
-    },
-    mania: {
-      name: 'Mania',
-      icon: 'mania'
-    }
-  }
+_Mode,
+AppConfigItemBase
+> = {
+  osu: {
+    name: 'Osu',
+    icon: 'osu',
+  },
+  taiko: {
+    name: 'Taiko',
+    icon: 'taiko',
+  },
+  fruits: {
+    name: 'CTB',
+    icon: 'catch',
+  },
+  mania: {
+    name: 'Mania',
+    icon: 'mania',
+  },
+}
 export const serverRulesetConfig: Record<
-    _Ruleset,
-    AppConfigItemBase
-  > = {
-    standard: {
-      name: 'Standard',
-      icon: 'vn'
-    },
-    relax: {
-      name: 'Relax',
-      icon: 'relax'
-    },
-    autopilot: {
-      name: 'Autopilot',
-      icon: 'autopilot'
-    }
-  }
+_Ruleset,
+AppConfigItemBase
+> = {
+  standard: {
+    name: 'Standard',
+    icon: 'vn',
+  },
+  relax: {
+    name: 'Relax',
+    icon: 'relax',
+  },
+  autopilot: {
+    name: 'Autopilot',
+    icon: 'autopilot',
+  },
+}
 
 const _serverRankingSystemConfig = {
   ppv2: {
     userpage: {
-      show: 'tab'
+      show: 'tab',
     },
-    name: 'Performance(v2)'
+    name: 'Performance(v2)',
     // icon: 'pp'
   },
   // ppv1: {
@@ -62,18 +63,18 @@ const _serverRankingSystemConfig = {
   // },
   rankedScore: {
     userpage: {
-      show: 'tab'
+      show: 'tab',
     },
-    name: 'Ranked Score'
+    name: 'Ranked Score',
     // icon: 'score'
   },
   totalScore: {
     userpage: {
-      show: 'tab'
+      show: 'tab',
     },
-    name: 'Total Score'
+    name: 'Total Score',
     // icon: 'score'
-  }
+  },
 } as const
 
 export type Mode = keyof typeof serverModeConfig

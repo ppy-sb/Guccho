@@ -1,3 +1,15 @@
+<script>
+export default {
+  name: 'LoadingOverlay',
+  props: {
+    fetching: {
+      type: Boolean,
+      required: true,
+    },
+  },
+}
+</script>
+
 <template>
   <transition
     enter-active-class="transition ease-out"
@@ -34,15 +46,3 @@
     </div>
   </transition>
 </template>
-
-<script>
-export default {
-  name: 'LoadingOverlay',
-  props: {
-    fetching: {
-      type: Boolean,
-      required: true
-    }
-  }
-}
-</script>

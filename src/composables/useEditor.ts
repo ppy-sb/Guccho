@@ -1,5 +1,4 @@
-
-import { ref, onBeforeMount, onBeforeUnmount } from 'vue'
+import { onBeforeMount, onBeforeUnmount, ref } from 'vue'
 import { Editor as EditorVue } from '@tiptap/vue-3'
 import type { Editor as EditorCore, JSONContent } from '@tiptap/core'
 
@@ -8,21 +7,21 @@ import useEditorLazyLoadHighlight from './useEditorLazyLoadHighlight'
 export default (reactiveConfig: {
   indent: string
 } = {
-  indent: '  '
+  indent: '  ',
 }) => {
   const extensions = useEditorExtensions(reactiveConfig)
   const lazy = useEditorLazyLoadHighlight()
   const editor = ref<EditorVue>()
   let mounted = false
-  const lazyLoadCodeBlock = ({ editor }: {editor: EditorCore}) => {
+  const lazyLoadCodeBlock = ({ editor }: { editor: EditorCore }) => {
     const json = editor.getJSON()
     lazy(json)
   }
 
-  const subscribedBeforeMounted: Array<CallableFunction> = []
+  const subscribedBeforeMounted: CallableFunction[] = []
   onBeforeMount(() => {
     editor.value = new EditorVue({
-      extensions
+      extensions,
     })
     editor.value.on('beforeCreate', lazyLoadCodeBlock)
     editor.value.on('update', lazyLoadCodeBlock)
@@ -43,6 +42,6 @@ export default (reactiveConfig: {
         })
       }
       subscribedBeforeMounted.push(cb)
-    }
+    },
   }
 }

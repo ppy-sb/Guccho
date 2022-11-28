@@ -28,7 +28,7 @@ export default defineNuxtConfig({
     '~/assets/styles/main.scss',
     '~/assets/styles/daisyui.scss',
     '~/assets/styles/popper.scss',
-    '@fortawesome/fontawesome-svg-core/styles.css'
+    '@fortawesome/fontawesome-svg-core/styles.css',
   ],
 
   runtimeConfig: { public: { hljs } },
@@ -36,16 +36,16 @@ export default defineNuxtConfig({
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: {
     global: true,
-    dirs: ['~/components']
+    dirs: ['~/components'],
   },
 
   nitro: {
-    minify: true
+    minify: true,
   },
   vite: {
     build: {
-      minify: true
-    }
+      minify: true,
+    },
   },
 
   // Modules: https://go.nuxtjs.dev/config-modules
@@ -54,11 +54,11 @@ export default defineNuxtConfig({
     // '@nuxtjs/color-mode',
     // 'floating-vue/nuxt',
     '@nuxtjs/tailwindcss',
-    '@pinia/nuxt'
+    '@pinia/nuxt',
   ],
 
   alias: {
-    $: fileURLToPath(new URL('./src/adapters/bancho.py', import.meta.url))
+    $: fileURLToPath(new URL('./src/adapters/bancho.py', import.meta.url)),
   },
 
   // auth: {
@@ -85,6 +85,6 @@ export default defineNuxtConfig({
   // },
   postcss,
   typescript: {
-    strict: true
-  }
+    strict: true,
+  },
 })

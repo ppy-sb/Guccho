@@ -1,25 +1,25 @@
 import type { JSONContent } from '@tiptap/core'
-import { Score } from './score'
+import type { Score } from './score'
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type {
-  Scope,
-  RankingSystem,
-  Mode,
-  Ruleset,
   AutopilotAvailable,
-  RelaxAvailable,
-  StandardAvailable,
+  Mode,
+  MutualRelationship,
+  RankingSystem,
   Relationship,
-  MutualRelationship
+  RelaxAvailable,
+  Ruleset,
+  Scope,
+  StandardAvailable,
 } from './common'
-import { Maybe } from './frontend-common'
+import type { Maybe } from './frontend-common'
 
 export interface UserStatus {
-  Offline: 'offline';
-  Online: 'playing' | 'idle' | 'modding' | 'multiplaying';
-  Website: 'website-online';
+  Offline: 'offline'
+  Online: 'playing' | 'idle' | 'modding' | 'multiplaying'
+  Website: 'website-online'
 }
-export type UserActivityStatus = UserStatus[keyof UserStatus];
+export type UserActivityStatus = UserStatus[keyof UserStatus]
 
 export type UserPrivilegeString =
   // restricted type
@@ -59,7 +59,7 @@ export interface BaseRank<
   Id,
   _Mode extends Mode,
   _Ruleset extends Ruleset,
-  _RankingSystem extends RankingSystem
+  _RankingSystem extends RankingSystem,
 > {
   rank?: number
   rankHistory?: Record<string, number>
@@ -70,15 +70,15 @@ export interface BaseRank<
   accuracy?: number
 
   // TODO: Score
-  bests?: Score<Id, _Mode, _Ruleset, _RankingSystem>[]
-  recent?: Score<Id, _Mode, _Ruleset, _RankingSystem>[]
+  bests?: Array<Score<Id, _Mode, _Ruleset, _RankingSystem>>
+  recent?: Array<Score<Id, _Mode, _Ruleset, _RankingSystem>>
 }
 
 export type PPRank<
   Id,
   _Mode extends Mode,
   _Ruleset extends Ruleset,
-  _RankingSystem extends RankingSystem
+  _RankingSystem extends RankingSystem,
 > = BaseRank<Id, _Mode, _Ruleset, _RankingSystem> & {
   performance: number
   performanceHistory?: Record<string, number>
@@ -91,18 +91,18 @@ export type ScoreRank<
   Id,
   _Mode extends Mode,
   _Ruleset extends Ruleset,
-  _RankingSystem extends RankingSystem
+  _RankingSystem extends RankingSystem,
 > = BaseRank<Id, _Mode, _Ruleset, _RankingSystem> & {
   score: bigint | null
   scoreHistory?: Record<string, bigint>
 }
 
-export type UserModeRulesetStatistics<
+export interface UserModeRulesetStatistics<
   Id,
   _Mode extends Mode,
   _Ruleset extends Ruleset,
-  RS extends RankingSystem
-> = {
+  RS extends RankingSystem,
+> {
   // TODO: Achievement
   // achievements: Achievement[]
   ranking: {
@@ -144,8 +144,8 @@ export interface UserOptional<Id = unknown> {
 
 export interface UserPreferences {
   scope: Record<
-    Exclude<keyof UserOptional | 'privateMessage', 'secrets'>,
-    Scope
+  Exclude<keyof UserOptional | 'privateMessage', 'secrets'>,
+  Scope
   >
 }
 export interface UserRelationship<Id> extends BaseUser<Id> {
@@ -155,46 +155,46 @@ export interface UserRelationship<Id> extends BaseUser<Id> {
 }
 
 type AvailableRuleset<R extends Mode> = (R extends StandardAvailable ? 'standard' : never)
-  | (R extends RelaxAvailable ? 'relax' : never)
-  | (R extends AutopilotAvailable ? 'autopilot' : never)
+| (R extends RelaxAvailable ? 'relax' : never)
+| (R extends AutopilotAvailable ? 'autopilot' : never)
 
 export type UserStatistic<
   Id,
   IncludeMode extends Mode = Mode,
   IncludeRuleset extends Ruleset = Ruleset,
-  Ranking extends RankingSystem = RankingSystem
+  Ranking extends RankingSystem = RankingSystem,
 > = {
-    [M in IncludeMode]: Record<
-      IncludeRuleset & AvailableRuleset<M>,
-      UserModeRulesetStatistics<Id, M, AvailableRuleset<M>, Ranking>
-    >;
-  }
+  [M in IncludeMode]: Record<
+  IncludeRuleset & AvailableRuleset<M>,
+  UserModeRulesetStatistics<Id, M, AvailableRuleset<M>, Ranking>
+  >;
+}
 
 export type ComponentUserStatistic<
   Id,
   IncludeMode extends Mode = Mode,
   IncludeRuleset extends Ruleset = Ruleset,
-  Ranking extends RankingSystem = RankingSystem
+  Ranking extends RankingSystem = RankingSystem,
 > = {
-    [M in IncludeMode]: Record<
-      IncludeRuleset & AvailableRuleset<M>,
-      Maybe<
-        UserModeRulesetStatistics<Id, M, AvailableRuleset<M>, Ranking>,
-        'ranking'
-      >
-    >;
-  }
+  [M in IncludeMode]: Record<
+  IncludeRuleset & AvailableRuleset<M>,
+  Maybe<
+  UserModeRulesetStatistics<Id, M, AvailableRuleset<M>, Ranking>,
+  'ranking'
+  >
+  >;
+}
 
 export interface UserExtra<
   Id,
   IncludeMode extends Mode = Mode,
   IncludeRuleset extends Ruleset = Ruleset,
-  Ranking extends RankingSystem = RankingSystem
+  Ranking extends RankingSystem = RankingSystem,
 > {
   statistics: UserStatistic<Id, IncludeMode, IncludeRuleset, Ranking>
 
   profile?: JSONContent
-  relationships: UserRelationship<Id>[]
+  relationships: Array<UserRelationship<Id>>
   preferences: UserPreferences
 }
 
@@ -202,18 +202,18 @@ export type ComponentUserExtra<
   Id,
   IncludeMode extends Mode = Mode,
   IncludeRuleset extends Ruleset = Ruleset,
-  Ranking extends RankingSystem = RankingSystem
+  Ranking extends RankingSystem = RankingSystem,
 > = Maybe<UserExtra<
-  Id,
-  IncludeMode,
-  IncludeRuleset,
-  Ranking
+Id,
+IncludeMode,
+IncludeRuleset,
+Ranking
 >, 'statistics'>
 
 export type UserFull<
   Id,
   IncludeMode extends Mode = Mode,
   IncludeRuleset extends Ruleset = Ruleset,
-  Ranking extends RankingSystem = RankingSystem
+  Ranking extends RankingSystem = RankingSystem,
 > = BaseUser<Id> & Partial<UserOptional<Id>>
-  & Partial<UserExtra<Id, IncludeMode, IncludeRuleset, Ranking>>
+& Partial<UserExtra<Id, IncludeMode, IncludeRuleset, Ranking>>

@@ -1,3 +1,10 @@
+<script setup lang="ts">
+const props = defineProps<{
+  title?: string
+  subtitle?: string
+}>()
+</script>
+
 <template>
   <div class="container items-center justify-between py-3 mx-auto text-center app-header-container custom-container sm:flex sm:w-full text-kimberly-900 dark:text-kimberly-100">
     <slot>
@@ -8,12 +15,6 @@
     </slot>
   </div>
 </template>
-<script setup lang="ts">
-const props = defineProps<{
-  title?: string,
-  subtitle?: string
-}>()
-</script>
 
 <style lang="postcss" scoped>
 .app-header {

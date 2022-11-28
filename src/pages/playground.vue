@@ -1,6 +1,5 @@
-
 <script setup>
-import { useRoute, navigateTo } from '#app'
+import { navigateTo, useRoute } from '#app'
 const currentRoute = useRoute()
 const root = currentRoute.matched[0]
 
@@ -10,10 +9,9 @@ definePageMeta({
   // you can also pass a string or a computed property
   key: route => route.slug,
   keepalive: {
-    exclude: ['modal']
-  }
+    exclude: ['modal'],
+  },
 })
-
 </script>
 
 <template>
@@ -37,7 +35,7 @@ definePageMeta({
           v-for="route in children"
           :key="route.name"
           :class="{
-            'tab-active': $route.name === route.name
+            'tab-active': $route.name === route.name,
           }"
           class="tab-lg"
           @click="navigateTo(route)"

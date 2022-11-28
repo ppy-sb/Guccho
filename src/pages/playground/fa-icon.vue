@@ -3,7 +3,6 @@ import { faEdit } from '@fortawesome/free-solid-svg-icons'
 const { addToLibrary } = useFAIconLib()
 
 addToLibrary(faEdit)
-
 </script>
 
 <template>

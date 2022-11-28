@@ -1,17 +1,5 @@
-<template>
-  <div
-    ref="wrapper"
-    class="zoom-modal-wrapper"
-    :data-wrapper-status="stat"
-  >
-    <div class="zoom-modal">
-      <slot v-bind="{openModal, closeModal}" />
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
-import { ref, inject } from 'vue'
+import { inject, ref } from 'vue'
 import type { Status } from './shared'
 const props = defineProps<{
   initStatus?: Status
@@ -33,9 +21,22 @@ const closeModal = (cb?: () => void) => {
 defineExpose({
   openModal,
   closeModal,
-  wrapper
+  wrapper,
 })
 </script>
+
+<template>
+  <div
+    ref="wrapper"
+    class="zoom-modal-wrapper"
+    :data-wrapper-status="stat"
+  >
+    <div class="zoom-modal">
+      <slot v-bind="{ openModal, closeModal }" />
+    </div>
+  </div>
+</template>
+
 <style lang="scss" scoped>
 .zoom-modal-wrapper {
   & .zoom-modal-wrapper {
@@ -57,6 +58,7 @@ defineExpose({
   }
 }
 </style>
+
 <style lang="scss">
 @import './shared.scss';
 

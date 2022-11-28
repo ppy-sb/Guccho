@@ -1,25 +1,25 @@
-import { Stat, User as DatabaseUser, RelationshipType } from '@prisma/client'
+import type { User as DatabaseUser, RelationshipType, Stat } from '@prisma/client'
 import type { IdType as Id } from './config'
 import { BanchoPyPrivilege } from './enums'
-import type { Mode, Ruleset, RankingSystem, Scope } from '~/types/common'
+import type { Mode, RankingSystem, Ruleset, Scope } from '~/types/common'
 import type {
-  UserModeRulesetStatistics,
   BaseUser,
-  UserPrivilegeString,
+  UserModeRulesetStatistics,
   UserOptional,
+  UserPrivilegeString,
   UserRelationship,
-  UserSecrets
+  UserSecrets,
 } from '~/types/user'
 
 export function createRulesetData<
   Id,
   _Mode extends Mode,
   _Ruleset extends Ruleset,
-  _RankingSystem extends RankingSystem
-> ({
+  _RankingSystem extends RankingSystem,
+>({
   databaseResult,
   ranks,
-  livePPRank
+  livePPRank,
 }: {
   databaseResult?: Stat
   ranks?: {
@@ -32,25 +32,25 @@ export function createRulesetData<
     countryRank: number | null
   }
 }) {
-  if (!databaseResult) {
+  if (databaseResult == null) {
     return {
       ranking: {
         ppv2: {
           rank: 0,
-          performance: 0
+          performance: 0,
         },
         rankedScore: {
           rank: 0,
-          score: BigInt(0)
+          score: BigInt(0),
         },
         totalScore: {
           rank: 0,
-          score: BigInt(0)
-        }
+          score: BigInt(0),
+        },
       },
       playCount: 0,
       playTime: 0,
-      totalHits: 0
+      totalHits: 0,
     } as UserModeRulesetStatistics<Id, _Mode, _Ruleset, _RankingSystem>
   }
   return {
@@ -60,70 +60,70 @@ export function createRulesetData<
           livePPRank?.rank || Number(ranks?.ppv2Rank) || undefined,
         countryRank:
           livePPRank?.countryRank || undefined,
-        performance: databaseResult.pp
+        performance: databaseResult.pp,
       },
       rankedScore: {
         rank: Number(ranks?.rankedScoreRank) || undefined,
-        score: databaseResult.rankedScore
+        score: databaseResult.rankedScore,
       },
       totalScore: {
         rank: Number(ranks?.totalScoreRank) || undefined,
-        score: databaseResult.totalScore
-      }
+        score: databaseResult.totalScore,
+      },
     },
     playCount: databaseResult.plays,
     playTime: databaseResult.playTime,
-    totalHits: databaseResult.totalHits
+    totalHits: databaseResult.totalHits,
   } as UserModeRulesetStatistics<Id, _Mode, _Ruleset, _RankingSystem>
 }
 
-export function toRoles (priv: number): UserPrivilegeString[] {
+export function toRoles(priv: number): UserPrivilegeString[] {
   const roles: UserPrivilegeString[] = []
-  if (priv & BanchoPyPrivilege.Normal) {
+  if (priv & BanchoPyPrivilege.Normal)
     roles.push('registered')
-  }
-  if (priv & BanchoPyPrivilege.Verified) {
+
+  if (priv & BanchoPyPrivilege.Verified)
     roles.push('normal')
-  }
-  if (priv & BanchoPyPrivilege.Whitelisted) {
+
+  if (priv & BanchoPyPrivilege.Whitelisted)
     roles.push('bypassAntiCheat')
-  }
-  if (priv & BanchoPyPrivilege.Donator) {
+
+  if (priv & BanchoPyPrivilege.Donator)
     roles.push('supporter')
-  }
-  if (priv & BanchoPyPrivilege.Alumni) {
+
+  if (priv & BanchoPyPrivilege.Alumni)
     roles.push('alumni')
-  }
-  if (priv & BanchoPyPrivilege.Tournament) {
+
+  if (priv & BanchoPyPrivilege.Tournament)
     roles.push('tournamentStuff')
-  }
-  if (priv & BanchoPyPrivilege.Nominator) {
+
+  if (priv & BanchoPyPrivilege.Nominator)
     roles.push('beatmapNominator')
-  }
-  if (priv & BanchoPyPrivilege.Mod) {
+
+  if (priv & BanchoPyPrivilege.Mod)
     roles.push('moderator')
-  }
-  if (priv & BanchoPyPrivilege.Staff) {
+
+  if (priv & BanchoPyPrivilege.Staff)
     roles.push('staff')
-  }
-  if (priv & BanchoPyPrivilege.Admin) {
+
+  if (priv & BanchoPyPrivilege.Admin)
     roles.push('admin')
-  }
-  if (priv & BanchoPyPrivilege.Dangerous) {
+
+  if (priv & BanchoPyPrivilege.Dangerous)
     roles.push('owner')
-  }
-  if (priv & BanchoPyPrivilege.Bot) {
+
+  if (priv & BanchoPyPrivilege.Bot)
     roles.push('bot')
-  }
+
   return roles
 }
 
 export function toBaseUser<
   Includes extends Partial<Record<keyof UserOptional<Id>, boolean>> = Record<
-    never,
-    never
-  >
-> ({ user, includes }: { user: DatabaseUser, includes?: Includes }) {
+  never,
+  never
+  >,
+>({ user, includes }: { user: DatabaseUser; includes?: Includes }) {
   const returnValue: BaseUser<Id> & Partial<UserOptional<Id>> = {
     id: user.id,
     ingameId: user.id,
@@ -131,31 +131,30 @@ export function toBaseUser<
     safeName: user.safeName,
     flag: user.country,
     avatarUrl: `https://a.ppy.sb/${user.id}`,
-    roles: toRoles(user.priv)
+    roles: toRoles(user.priv),
   }
 
   if (includes?.secrets) {
     returnValue.secrets = {
       password: user.pwBcrypt,
-      apiKey: user.apiKey || undefined
+      apiKey: user.apiKey || undefined,
     }
   }
 
-  if (includes?.email) {
+  if (includes?.email)
     returnValue.email = user.email
-  }
 
   return returnValue as Includes['secrets'] extends true
     ? BaseUser<Id> & { secrets: UserSecrets }
     : BaseUser<Id>
 }
 
-export function dedupeUserRelationship (
-  relations: {
+export function dedupeUserRelationship(
+  relations: Array<{
     type: RelationshipType
     toUserId: Id
     toUser: BaseUser<Id>
-  }[]
+  }>,
 ) {
   const reduceUserRelationships = relations.reduce((acc, cur) => {
     if (!acc.has(cur.toUserId)) {
@@ -163,9 +162,10 @@ export function dedupeUserRelationship (
         ...cur.toUser,
         relationship: [cur.type],
         relationshipFromTarget: [],
-        mutualRelationship: []
+        mutualRelationship: [],
       })
-    } else {
+    }
+    else {
       acc.get(cur.toUserId)?.relationship.push(cur.type)
     }
     return acc
@@ -174,7 +174,7 @@ export function dedupeUserRelationship (
   return [...reduceUserRelationships.values()]
 }
 
-export function toFullUser (user: DatabaseUser) {
+export function toFullUser(user: DatabaseUser) {
   return {
     id: user.id,
     ingameId: user.id,
@@ -189,29 +189,28 @@ export function toFullUser (user: DatabaseUser) {
         status: 'public',
         privateMessage: 'public',
         email: 'self',
-        oldNames: 'public'
-      } as const
+        oldNames: 'public',
+      } as const,
     },
     profile: (user.userpageContent && JSON.parse(user.userpageContent)) || {
       type: 'doc',
-      content: []
+      content: [],
     },
-    oldNames: []
+    oldNames: [],
   }
 }
 
-export function compareScope (scope: Scope, requiredScope: Scope) {
-  if (requiredScope === 'public') {
+export function compareScope(scope: Scope, requiredScope: Scope) {
+  if (requiredScope === 'public')
     return true
-  }
-  if (requiredScope === 'friends') {
+
+  if (requiredScope === 'friends')
     return scope === 'friends'
-  }
-  if (requiredScope === 'self') {
+
+  if (requiredScope === 'self')
     return scope === 'self'
-  }
 }
 
-export function capitalizeFirstLetter<T extends string> (string: T) {
+export function capitalizeFirstLetter<T extends string>(string: T) {
   return (string.charAt(0).toUpperCase() + string.slice(1)) as Capitalize<T>
 }

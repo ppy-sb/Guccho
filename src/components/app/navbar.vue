@@ -1,43 +1,43 @@
 <script setup lang="ts">
-import { onBeforeMount, ref, computed, onUnmounted } from 'vue'
+import { computed, onBeforeMount, onUnmounted, ref } from 'vue'
 import { useAppConfig, useCookie } from '#app'
 import { useSession } from '~/store/session'
 
+const props
+  = defineProps<{
+    disabled?: boolean
+  }>()
 const sessionId = useCookie('session')
 const session = useSession()
 
-const props =
-  defineProps<{
-    disabled?: boolean;
-  }>()
 const menu = computed(() => [
   {
     name: 'Home',
     route: {
-      name: 'index'
-    }
+      name: 'index',
+    },
   },
   {
     name: 'Leaderboard',
     route: {
-      name: 'leaderboard-mode-ruleset-ranking-page'
-    }
+      name: 'leaderboard-mode-ruleset-ranking-page',
+    },
   },
   {
     name: '[dev] components',
     route: {
-      name: 'playground'
-    }
+      name: 'playground',
+    },
   },
   {
     name: 'user(1000)',
     route: {
       name: 'user-handle',
       params: {
-        handle: 1000
-      }
-    }
-  }
+        handle: 1000,
+      },
+    },
+  },
 ])
 const config = useAppConfig()
 const detached = ref(false)
@@ -45,12 +45,11 @@ const detached = ref(false)
 const root = ref<HTMLElement>()
 const shownMenu = reactive({
   left: false,
-  right: false
+  right: false,
 })
 const handleScroll = () => {
-  if (!root.value) {
+  if (root.value == null)
     return
-  }
 
   detached.value = window.pageYOffset > 0
 }
@@ -67,13 +66,18 @@ onUnmounted(() => {
   document.removeEventListener('scroll', handleScroll)
 })
 </script>
+
 <template>
-  <div ref="root" class="w-full z-50 transition-[padding] fixed navbar-container" :class="[detached && 'detached']">
+  <div
+    ref="root"
+    class="w-full z-50 transition-[padding] fixed navbar-container"
+    :class="[detached && 'detached']"
+  >
     <div
       class="navbar navbar-tint transition-[border-radius]"
       :class="[
         props.disabled && 'disabled',
-        shownMenu.left && '!rounded-bl-none'
+        shownMenu.left && '!rounded-bl-none',
       ]"
     >
       <div class="navbar-start">
@@ -84,7 +88,10 @@ onUnmounted(() => {
           :distance="8"
           strategy="fixed"
         >
-          <label tabindex="0" class="btn btn-ghost btn-circle !shadow-none">
+          <label
+            tabindex="0"
+            class="btn btn-ghost btn-circle !shadow-none"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               class="w-5 h-5"
@@ -92,16 +99,25 @@ onUnmounted(() => {
               viewBox="0 0 24 24"
               stroke="currentColor"
             >
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h7"
+              />
             </svg>
           </label>
           <template #popper>
             <div class="menu bg-kimberly-150/70 dark:bg-kimberly-700/80">
-              <li v-for="menuItem in menu" :key="`menu-${menuItem.name}`" class="hover-bordered">
+              <li
+                v-for="menuItem in menu"
+                :key="`menu-${menuItem.name}`"
+                class="hover-bordered"
+              >
                 <nuxt-link
                   :to="menuItem.route"
                   :class="{
-                    '!border-primary': menuItem.route.name === $route.name
+                    '!border-primary': menuItem.route.name === $route.name,
                   }"
                 >
                   {{ menuItem.name }}
@@ -112,7 +128,10 @@ onUnmounted(() => {
         </v-dropdown>
       </div>
       <div class="navbar-center lg:hidden">
-        <nuxt-link :to="{ name: 'index' }" class="btn btn-ghost !shadow-none normal-case text-xl">
+        <nuxt-link
+          :to="{ name: 'index' }"
+          class="btn btn-ghost !shadow-none normal-case text-xl"
+        >
           {{ config.title }}
         </nuxt-link>
       </div>
@@ -127,7 +146,12 @@ onUnmounted(() => {
         </nuxt-link>
       </div>
       <div class="navbar-end">
-        <v-dropdown theme="guweb-dropdown" placement="left" :distance="8" strategy="fixed">
+        <v-dropdown
+          theme="guweb-dropdown"
+          placement="left"
+          :distance="8"
+          strategy="fixed"
+        >
           <button class="btn btn-ghost !shadow-none btn-circle">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -148,7 +172,11 @@ onUnmounted(() => {
             <div class="overflow-hidden">
               <div class="form-control">
                 <div class="input-group">
-                  <input type="text" placeholder="Search…" class="input input-bordered input-sm shadow-md">
+                  <input
+                    type="text"
+                    placeholder="Search…"
+                    class="input input-bordered input-sm shadow-md"
+                  >
                   <button class="btn btn-sm btn-primary">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -171,7 +199,10 @@ onUnmounted(() => {
           </template>
         </v-dropdown>
         <div class="dropdown dropdown-bottom">
-          <button v-if="session.$state.loggedIn" class="btn btn-ghost !shadow-none btn-circle">
+          <button
+            v-if="session.$state.loggedIn"
+            class="btn btn-ghost !shadow-none btn-circle"
+          >
             <div class="indicator avatar">
               <img
                 :src="session.$state._data?.avatarUrl"
@@ -188,7 +219,7 @@ onUnmounted(() => {
             <li>
               <nuxt-link
                 :to="{
-                  name: 'me-preferences'
+                  name: 'me-preferences',
                 }"
               >
                 Preferences
@@ -197,14 +228,17 @@ onUnmounted(() => {
             <li>
               <nuxt-link
                 :to="{
-                  name: 'me-friends'
+                  name: 'me-friends',
                 }"
               >
                 Friends & Blocks
               </nuxt-link>
             </li>
             <li>
-              <a href="#" @click="logout">log out</a>
+              <a
+                href="#"
+                @click="logout"
+              >log out</a>
             </li>
           </ul>
         </div>
@@ -212,6 +246,7 @@ onUnmounted(() => {
     </div>
   </div>
 </template>
+
 <style lang="postcss">
 .detached {
   & .navbar {
@@ -231,6 +266,7 @@ onUnmounted(() => {
   }
 }
 </style>
+
 <style lang="postcss" scoped>
 .navbar-tint {
   @apply bg-kimberly-150/70 dark:bg-kimberly-700/80;

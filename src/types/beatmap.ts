@@ -1,7 +1,7 @@
-export type UnknownSource = 'unknown';
-export type LocalSource = 'local';
-export type ForeignSource = 'bancho' | 'private-server';
-export type BeatmapSource = LocalSource | ForeignSource | UnknownSource;
+export type UnknownSource = 'unknown'
+export type LocalSource = 'local'
+export type ForeignSource = 'bancho' | 'private-server'
+export type BeatmapSource = LocalSource | ForeignSource | UnknownSource
 
 // https://osu.ppy.sh/docs/index.html#beatmapsetcompact-rank-status
 export enum RankingStatusEnum {
@@ -16,33 +16,33 @@ export enum RankingStatusEnum {
   deleted,
 }
 
-export type BeatmapSet<Source extends BeatmapSource, LocalId, ForeignId> = {
-  source: Source;
-  id: Source extends UnknownSource ? never : LocalId;
+export interface BeatmapSet<Source extends BeatmapSource, LocalId, ForeignId> {
+  source: Source
+  id: Source extends UnknownSource ? never : LocalId
 
-  foreignId: Source extends ForeignSource ? ForeignId : never;
+  foreignId: Source extends ForeignSource ? ForeignId : never
   meta: {
     // unicode
-    artist?: string;
-    title?: string;
+    artist?: string
+    title?: string
 
     // (Probably) ASCII Based
     intl: {
-      artist: string;
-      title: string;
-    };
-  };
-};
+      artist: string
+      title: string
+    }
+  }
+}
 
 export interface Beatmap<
   Source extends BeatmapSource,
   Status extends RankingStatusEnum,
   LocalId,
-  ForeignId
+  ForeignId,
 > {
   id: [Source, Status] extends [UnknownSource, RankingStatusEnum.deleted]
-      ? never
-      : LocalId
+    ? never
+    : LocalId
 
   // id: Source extends UnknownSource
   //   ? Status extends RankingStatusEnum.deleted
@@ -50,31 +50,31 @@ export interface Beatmap<
   //     : LocalId
   //   : LocalId;
 
-  foreignId: Source extends ForeignSource ? ForeignId : never;
+  foreignId: Source extends ForeignSource ? ForeignId : never
 
-  setId: Source extends UnknownSource ? never : LocalId;
+  setId: Source extends UnknownSource ? never : LocalId
 
-  foreignSetId: Source extends ForeignSource ? ForeignId : never;
+  foreignSetId: Source extends ForeignSource ? ForeignId : never
 
-  status: Status;
+  status: Status
 
   properties: {
-    bpm: number;
+    bpm: number
     // CS
-    circleSize: number;
+    circleSize: number
     // AR
-    approachRate: number;
+    approachRate: number
     // OD
-    accuracy: number;
+    accuracy: number
     // HP
-    hpDrain: number;
+    hpDrain: number
 
     count: {
-      circles: number;
-      sliders: number;
-      spinners: number;
-    };
-  };
-  md5: string;
-  beatmapSet: BeatmapSet<Source, LocalId, ForeignId>;
+      circles: number
+      sliders: number
+      spinners: number
+    }
+  }
+  md5: string
+  beatmapSet: BeatmapSet<Source, LocalId, ForeignId>
 }
