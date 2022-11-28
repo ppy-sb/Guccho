@@ -12,12 +12,19 @@ export function getFlagURL (flag: string) {
   }
   return url
 }
-export function scoreFormat (score: bigint | number) {
-  return Intl.NumberFormat(undefined, { notation: 'compact' }).format(score)
+
+export function createScoreFormatter () {
+  const fmt = Intl.NumberFormat(undefined, { notation: 'compact' })
+  return function scoreFormat (score: bigint | number) {
+    return fmt.format(score)
+  }
 }
 
-export function addCommas (nStr: number | bigint) {
-  return Intl.NumberFormat().format(nStr)
+export function createAddCommasFormatter () {
+  const fmt = Intl.NumberFormat()
+  return function addCommas (nStr: number | bigint) {
+    return fmt.format(nStr)
+  }
 }
 
 export function forbiddenMode (mods: Ruleset, mode: Mode) {
