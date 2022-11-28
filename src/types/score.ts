@@ -1,8 +1,9 @@
+import type { Beatmap, BeatmapSource, RankingStatus } from './beatmap'
 import type { PPRankingSystem, Range, RankingSystem, Mode as _Mode, Ruleset as _Ruleset } from './common'
 
-type BaseCount<T extends _Mode> = Record<
-300 | 100 | 50 | 'miss' | (T extends 'mania' ? 'max' | 200 : 'geki' | 'katu'),
-number
+type HitCount<T extends _Mode> = Record<
+  300 | 100 | 50 | 'miss' | (T extends 'mania' ? 'max' | 200 : 'geki' | 'katu'),
+  number
 >
 
 export type Mod =
@@ -19,14 +20,17 @@ export type Score<
   Mode extends _Mode,
   Ruleset extends _Ruleset,
   Rank extends RankingSystem = never,
+  BMSrc extends BeatmapSource = BeatmapSource,
+  Status extends RankingStatus = RankingStatus,
 > = {
   id: Id
   mode: Mode
   ruleset: Ruleset
+  beatmap: Beatmap<BMSrc, Status, Id, unknown>
   mods: Mode extends 'mania' ? ManiaMod[] : Mod[]
   score: bigint
   scoreRank?: number
-  count: BaseCount<Mode>
+  hit: HitCount<Mode>
 } & Record<PPRankingSystem & Rank, {
   rank?: number
   pp: number

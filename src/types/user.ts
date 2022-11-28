@@ -69,9 +69,7 @@ export interface BaseRank<
 
   accuracy?: number
 
-  // TODO: Score
-  bests?: Array<Score<Id, _Mode, _Ruleset, _RankingSystem>>
-  recent?: Array<Score<Id, _Mode, _Ruleset, _RankingSystem>>
+  bests?: Array<Omit<Score<Id, _Mode, _Ruleset, _RankingSystem>, 'mode' | 'ruleset'>>
 }
 
 export type PPRank<
@@ -82,9 +80,6 @@ export type PPRank<
 > = BaseRank<Id, _Mode, _Ruleset, _RankingSystem> & {
   performance: number
   performanceHistory?: Record<string, number>
-
-  // TODO: BP
-  // bests: Score[]
 }
 
 export type ScoreRank<
