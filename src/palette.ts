@@ -76,12 +76,12 @@ export const convertSingle = (colors: Record<string, any>, converter: (...any: a
     return acc
   }, {})
 
-const to = (converter: (...any: any) => any, transform: (...any: any) => any = a => a) => {
+const to = <ConverterReturn extends Return, Return = ConverterReturn>(converter: (...any: any) => ConverterReturn, transform: (input: ConverterReturn) => Return = a => a) => {
   return Object.entries(hex)
     .reduce<Record<keyof typeof hex, Record<string, ReturnType<typeof transform>>>>((acc, [key, colors]: [string, Record<string, any>]) => {
       acc[key as keyof typeof hex] = convertSingle(colors, converter, transform)
       return acc
-    }, {})
+    }, {} as any)
 }
 export const palette = to(convert.hex.hsl, ([h, s, l]) => `hsl(${h} ${s}% ${l}%)`) as unknown as typeof hex
-export const hsvRaw = to(convert.hex.hsl) as unknown as Record<string, ReturnType<typeof convert['hex']['hsl']>>
+export const hsvRaw = to(convert.hex.hsl)
