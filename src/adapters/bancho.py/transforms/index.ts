@@ -1,6 +1,8 @@
-import type { User as DatabaseUser, RelationshipType, Stat } from '@prisma/client'
-import type { IdType as Id } from './config'
-import { BanchoPyPrivilege } from './enums'
+import type { Map as DBMap, Score as DBScore, User as DatabaseUser, RelationshipType, Source, Stat } from '@prisma/client'
+import type { IdType as Id } from '../config'
+import { BanchoPyPrivilege } from '../enums'
+import type { RankingStatus } from '~/types/beatmap'
+import { RankingStatusEnum } from '~/types/beatmap'
 import type { Mode, RankingSystem, Ruleset, Scope } from '~/types/common'
 import type {
   BaseUser,
@@ -120,8 +122,8 @@ export function toRoles(priv: number): UserPrivilegeString[] {
 
 export function toBaseUser<
   Includes extends Partial<Record<keyof UserOptional<Id>, boolean>> = Record<
-  never,
-  never
+    never,
+    never
   >,
 >({ user, includes }: { user: DatabaseUser; includes?: Includes }) {
   const returnValue: BaseUser<Id> & Partial<UserOptional<Id>> = {
@@ -210,3 +212,14 @@ export function compareScope(scope: Scope, requiredScope: Scope) {
 export function capitalizeFirstLetter<T extends string>(string: T) {
   return (string.charAt(0).toUpperCase() + string.slice(1)) as Capitalize<T>
 }
+
+export function toRankingStatus(status: number) {
+  return RankingStatusEnum[status] as RankingStatus | undefined
+}
+
+export type AbleToTransformToScores = (DBScore & {
+  beatmap: DBMap & {
+    source: Source
+  } | null
+})
+

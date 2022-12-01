@@ -88,7 +88,7 @@ model Clan {
 model Favourite {
   user      User   @relation(fields: [userId], references: [id])
   userId    Int    @map("userid")
-  set       Mapset @relation(fields: [setId], references: [id])
+  source    Source @relation(fields: [setId], references: [id])
   setId     Int    @map("setid")
   createdAt Int    @default(0) @map("created_at")
 
@@ -144,38 +144,38 @@ model Channel {
 }
 
 model Map {
-  server      Source   @default(bancho)
-  id          Int      @unique(map: "maps_id_uindex")
-  setId       Int      @map("set_id")
-  set         Mapset   @relation(fields: [setId, server], references: [id, server])
+  server      SourceEnum @default(bancho)
+  id          Int        @unique(map: "maps_id_uindex")
+  setId       Int        @map("set_id")
+  source      Source     @relation(fields: [setId, server], references: [id, server])
   status      Int
-  md5         String   @unique(map: "maps_md5_uindex") @db.Char(32)
-  artist      String   @db.VarChar(128)
-  title       String   @db.VarChar(128)
-  version     String   @db.VarChar(128)
-  creator     String   @db.VarChar(19)
-  filename    String   @db.VarChar(256)
-  lastUpdate  DateTime @map("last_update") @db.DateTime(0)
-  totalLength Int      @map("total_length")
-  maxCombo    Int      @map("max_combo")
-  frozen      Boolean  @default(false)
-  plays       Int      @default(0)
-  passes      Int      @default(0)
-  mode        Boolean  @default(false)
-  bpm         Float    @default(0.00) @db.Float
-  cs          Float    @default(0.00) @db.Float
-  ar          Float    @default(0.00) @db.Float
-  od          Float    @default(0.00) @db.Float
-  hp          Float    @default(0.00) @db.Float
-  diff        Float    @default(0.000) @db.Float
+  md5         String     @unique(map: "maps_md5_uindex") @db.Char(32)
+  artist      String     @db.VarChar(128)
+  title       String     @db.VarChar(128)
+  version     String     @db.VarChar(128)
+  creator     String     @db.VarChar(19)
+  filename    String     @db.VarChar(256)
+  lastUpdate  DateTime   @map("last_update") @db.DateTime(0)
+  totalLength Int        @map("total_length")
+  maxCombo    Int        @map("max_combo")
+  frozen      Boolean    @default(false)
+  plays       Int        @default(0)
+  passes      Int        @default(0)
+  mode        Boolean    @default(false)
+  bpm         Float      @default(0.00) @db.Float
+  cs          Float      @default(0.00) @db.Float
+  ar          Float      @default(0.00) @db.Float
+  od          Float      @default(0.00) @db.Float
+  hp          Float      @default(0.00) @db.Float
+  diff        Float      @default(0.000) @db.Float
   Score       Score[]
 
   @@id([server, id])
   @@map("maps")
 }
 
-model Mapset {
-  server          Source      @default(bancho)
+model Source {
+  server          SourceEnum  @default(bancho)
   id              Int         @unique(map: "nmapsets_id_uindex")
   lastOsuApiCheck DateTime    @default(now()) @map("last_osuapi_check") @db.DateTime(0)
   // virtual
@@ -230,7 +230,7 @@ model Relationship {
 model Score {
   id             BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
   mapMd5         String   @map("map_md5") @db.Char(32)
-  beatmap        Map      @relation(fields: [mapMd5], references: [md5])
+  beatmap        Map?     @relation(fields: [mapMd5], references: [md5])
   score          Int
   pp             Float    @db.Float
   acc            Float    @db.Float
@@ -305,9 +305,9 @@ model UserAchievement {
   @@map("user_achievements")
 }
 
-enum Source {
-  bancho  @map("osu!")
-  private
+enum SourceEnum {
+  bancho        @map("osu!")
+  privateServer @map("private")
 
   @@map("MapSource")
 }

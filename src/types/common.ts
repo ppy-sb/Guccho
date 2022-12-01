@@ -17,21 +17,22 @@ export type RankingSystem = PPRankingSystem | ScoreRankingSystem
 export type Scope = 'self' | 'friends' | 'public'
 
 // utils
-export type OmitNever<T> = {
-  [K in keyof T as T[K] extends never ? never : K]: T[K];
-}
+// export type OmitNever<T> = {
+//   [K in keyof T as T[K] extends never ? never : K]: T[K];
+// }
 export type Awaitable<T> = T | Promise<T>
 
-export type APIfy<
-  T extends Record<string, any>,
-  Keys extends keyof T | '_noProp' = '_noProp',
-> = {
-  [K in keyof T as K extends Keys
-    ? `fetch${Capitalize<string & K>}`
-    : Keys extends '_noProp'
-      ? K | `fetch${Capitalize<string & K>}`
-      : K]: K extends Keys ? () => Awaitable<T[Uncapitalize<string & K>]> : T[K];
-}
+// export type APIfy<
+//   T extends Record<string, any>,
+//   Keys extends keyof T | '_noProp' = '_noProp',
+// > = {
+//   [K in keyof T as K extends Keys
+//     ? `fetch${Capitalize<string & K>}`
+//     : Keys extends '_noProp'
+//       ? K | `fetch${Capitalize<string & K>}`
+//       : K]: K extends Keys ? () => Awaitable<T[Uncapitalize<string & K>]> : T[K];
+// }
+
 export type Range<F extends number, T extends number> = Exclude<
 Enumerate<T>,
 Enumerate<F>

@@ -1,10 +1,6 @@
-import type { Score } from './../../types/score'
+import type { RulesetScore } from '~/types/score'
 import type { Mode, RankingSystem, Ruleset } from '~/types/common'
 import type { PPRank, ScoreRank, UserFull, UserModeRulesetStatistics } from '~/types/user'
-
-(BigInt.prototype as any).toJSON = function () {
-  return Number(this)
-}
 
 export const createISODate = (date: Date = new Date()) => date.toUTCString()
 
@@ -57,7 +53,7 @@ export const createBeatmap = (initial = {
     },
   },
   md5: 'ed390d5c6d138c4f910035d054ccffc5',
-  beatmapSet: createBeatmapSet(),
+  beatmapset: createBeatmapSet(),
 }) => JSON.parse(JSON.stringify(initial))
 
 export const createHitObject = <_Mode extends Mode>(mode: _Mode) => (mode === 'mania'
@@ -76,7 +72,7 @@ export const createHitObject = <_Mode extends Mode>(mode: _Mode) => (mode === 'm
       katu: 0,
       50: 0,
       miss: 0,
-    }) as unknown as Score<unknown, _Mode, Ruleset, RankingSystem>['hit']
+    }) as unknown as RulesetScore<unknown, unknown, _Mode, Ruleset, RankingSystem>['hit']
 
 export const createPPRank = <_Mode extends Mode>(
   initial: PPRank<unknown, _Mode, Ruleset, RankingSystem> = {
@@ -93,7 +89,7 @@ export const createPPRank = <_Mode extends Mode>(
   const copy = JSON.parse(JSON.stringify(initial)) as PPRank<unknown, _Mode, Ruleset, RankingSystem>
 
   copy.bests = [{
-    id: 13,
+    id: 13n,
     mods: [],
     score: 999_999_999_999n,
     scoreRank: 0,
@@ -105,8 +101,11 @@ export const createPPRank = <_Mode extends Mode>(
       pp: 0,
       rank: 0,
     },
+    playedAt: new Date(0),
+    maxCombo: 0,
     hit: createHitObject(mode),
     beatmap: createBeatmap(),
+    accuracy: 1,
   }]
 
   return copy
