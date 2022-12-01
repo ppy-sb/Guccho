@@ -17,7 +17,8 @@ export function toScore<_RankingSystem extends RankingSystem>({ score, mode, rul
     maxCombo: 0,
     // mods: score.mods,
     score: BigInt(score.score),
-    accuracy: 1,
+    grade: 'ssh',
+    accuracy: 98,
     hit: createHitCount(mode, score),
     beatmap: (score.beatmap !== null && toBeatmap(score.beatmap)) || {
       status: 'notFound',
@@ -57,6 +58,7 @@ export function toRankingSystemScore<_RankingSystem extends RankingSystem>({ sco
       // mods: score.mods,
       score: BigInt(score.score),
       accuracy: score.acc,
+      grade: score.grade,
       hit: createHitCount(mode, score),
       beatmap: (score.beatmap !== null && toBeatmap(score.beatmap)) || {
         status: 'notFound',

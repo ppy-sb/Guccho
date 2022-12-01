@@ -1,5 +1,5 @@
 import type { Beatmap, BeatmapSource, RankingStatus } from './beatmap'
-import type { PPRankingSystem, Range, RankingSystem, Mode as _Mode, Ruleset as _Ruleset } from './common'
+import type { Grade, PPRankingSystem, Range, RankingSystem, Mode as _Mode, Ruleset as _Ruleset } from './common'
 
 type HitCount<T extends _Mode> = Record<
   300 | 100 | 50 | 'miss' | (T extends 'mania' ? 'max' | 200 : 'geki' | 'katu'),
@@ -25,6 +25,7 @@ export interface ScoreEssential<
   score: bigint
   accuracy: number
   maxCombo: number
+  grade: Grade
   hit: HitCount<Mode>
 }
 

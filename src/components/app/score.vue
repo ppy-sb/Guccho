@@ -81,15 +81,15 @@ const meta = computed((): {
             <span class="font-light">pp</span>
           </div>
           <div class="flex mt-auto text-xs md:text-md lg:text-md whitespace-nowrap">
-            <b class="font-mono">{{ score.accuracy }}</b>
+            <b class="font-mono">{{ score.accuracy.toFixed(2) }}</b>
             <div class="text-light">
               % Acc
             </div>
           </div>
         </div>
         <div class="flex items-center justify-center">
-          <div class="text-5xl font-bold lg:text-6xl">
-            A
+          <div class="text-5xl font-bold lg:text-6xl font-mono w-16 text-center">
+            {{ score.grade }}
           </div>
         </div>
       </div>
