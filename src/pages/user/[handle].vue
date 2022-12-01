@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import { computed, provide, reactive, ref } from 'vue'
-import { vIntersectionObserver } from '@vueuse/components'
+import { useIntersectionObserver } from '@vueuse/core'
 import { useRoute } from '#app'
 import type { Mode, RankingSystem, Ruleset } from '~/types/common'
 import { definePageMeta } from '#imports'
 import type { UserModeRulesetStatistics } from '~/types/user'
 import type { IdType } from '~/server/trpc/config'
-
 const route = useRoute()
 const { $client } = useNuxtApp()
 const {
@@ -22,10 +21,21 @@ const visible = reactive({
   bests: false,
   json: false,
 })
-
-const updateIntersectingStatus = (key: keyof typeof visible) => ([{ isIntersecting }]: [{ isIntersecting: boolean }]) => {
-  visible[key] = isIntersecting
-}
+const [statistics, bests, json] = [ref(null), ref(null), ref(null)]
+onMounted(() => {
+  const stop = Object.entries({ statistics, bests, json }).map(([k, v]) => {
+    const { stop } = useIntersectionObserver(
+      v,
+      ([{ isIntersecting }]) => {
+        visible[k as keyof typeof visible] = isIntersecting
+      },
+    )
+    return stop
+  })
+  onBeforeUnmount(() => {
+    stop.forEach(item => item())
+  })
+})
 
 definePageMeta({
   layout: 'without-bg',
@@ -101,16 +111,16 @@ provide('selectedRankingSystemData', currentRankingSystem)
         <div class="lg:col-span-6">
           <lazy-userpage-statistics
             id="statistics"
-            v-intersection-observer="updateIntersectingStatus('statistics')"
+            ref="statistics"
           />
           <lazy-userpage-scores
             v-if="currentRankingSystem"
             id="bests"
-            v-intersection-observer="updateIntersectingStatus('bests')"
+            ref="bests"
           />
           <lazy-userpage-json-viewer
             id="json"
-            v-intersection-observer="updateIntersectingStatus('json')"
+            ref="json"
           />
         </div>
         <div class="hidden self-start lg:block lg:col-span-1 sticky top-[100px]">
