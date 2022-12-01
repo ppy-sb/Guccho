@@ -44,7 +44,7 @@ const meta = computed((): {
 
 <template>
   <!-- style="background: linear-gradient(hsl(var(--main,200 ), 25%, 25%, 0%), hsl(var(--main, 200), 25%, 25%, 90%)), url(https\:\/\/assets\.ppy\.sh\/beatmaps\/746506\/covers\/cover\.jpg);" -->
-  <div v-if="(score && beatmap && meta)">
+  <div v-if="(score && beatmap && meta)" class="score">
     <div class="flex justify-between">
       <div class="flex min-w-0 gap-4">
         <div v-if="beatmap.beatmapset.source === 'bancho'" class="hidden md:block">
@@ -97,6 +97,8 @@ const meta = computed((): {
   </div>
 </template>
 
-<style lang="scss" scoped>
-
+<style lang="scss">
+.score + .score {
+  @apply border-t-2 border-kimberly-300/50 pt-2
+}
 </style>

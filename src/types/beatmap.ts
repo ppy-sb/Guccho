@@ -12,9 +12,9 @@ export enum RankingStatusEnum {
   approved = 2,
   qualified = 3,
   loved = 4,
-  deleted = 5,
 
-  notFound = 8, // should not be saved in db
+  deleted = 'deleted',
+  notFound = 'notFound', // should not be saved in db
 }
 
 export type RankingStatus = keyof typeof RankingStatusEnum

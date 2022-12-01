@@ -1,4 +1,5 @@
 import { capitalizeFirstLetter } from './transforms'
+import { RankingStatusEnum } from '~/types/beatmap'
 import type { Mode, Ruleset } from '~/types/common'
 //  privileges intended for all normal players.
 export enum BanchoPyPrivilege {
@@ -77,20 +78,37 @@ export function fromBanchoPyMode(input: BanchoPyMode): [Mode, Ruleset] {
   const rulesetKet = Math.floor(input / 4)
 
   return [reverseMode[modeKey], reverseRuleset[rulesetKet]]
-  // switch (input) {
-  //   case 0:
-  //     return ['osu', 'standard']
-  //   case 1:
-  //     return ['taiko', 'standard']
-  //   case 2:
-  //     return ['fruits', 'standard']
-  //   case 4:
-  //     return ['mania', 'standard']
-  //   case 5:
-  //     return ['']
-  // }
 }
 
 export enum BanchoPyScoreStatus {
   Best = 2,
+}
+
+export enum BanchoPyRankedStatus {
+  NotSubmitted = -1,
+  Pending = 0,
+  UpdateAvailable = 1,
+  Ranked = 2,
+  Approved = 3,
+  Qualified = 4,
+  Loved = 5,
+}
+
+export function toBanchoRankingStatus(input: BanchoPyRankedStatus): RankingStatusEnum {
+  switch (input) {
+    case BanchoPyRankedStatus.NotSubmitted:
+      return RankingStatusEnum.deleted
+    case BanchoPyRankedStatus.Pending:
+      return RankingStatusEnum.pending
+    case BanchoPyRankedStatus.UpdateAvailable:
+      return RankingStatusEnum.notFound
+    case BanchoPyRankedStatus.Ranked:
+      return RankingStatusEnum.ranked
+    case BanchoPyRankedStatus.Approved:
+      return RankingStatusEnum.approved
+    case BanchoPyRankedStatus.Qualified:
+      return RankingStatusEnum.qualified
+    case BanchoPyRankedStatus.Loved:
+      return RankingStatusEnum.loved
+  }
 }
