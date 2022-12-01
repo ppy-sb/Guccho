@@ -59,3 +59,38 @@ export function toBanchoPyMode(mode: Mode, ruleset: Ruleset): BanchoPyMode | und
       return BanchoPyMode[joined]
   }
 }
+
+const reverseRuleset: Record<number, Ruleset> = {
+  0: 'standard',
+  1: 'relax',
+  2: 'autopilot',
+}
+const reverseMode: Record<number, Mode> = {
+  0: 'osu',
+  1: 'taiko',
+  2: 'fruits',
+  3: 'mania',
+}
+
+export function fromBanchoPyMode(input: BanchoPyMode): [Mode, Ruleset] {
+  const modeKey = input % 4
+  const rulesetKet = Math.floor(input / 4)
+
+  return [reverseMode[modeKey], reverseRuleset[rulesetKet]]
+  // switch (input) {
+  //   case 0:
+  //     return ['osu', 'standard']
+  //   case 1:
+  //     return ['taiko', 'standard']
+  //   case 2:
+  //     return ['fruits', 'standard']
+  //   case 4:
+  //     return ['mania', 'standard']
+  //   case 5:
+  //     return ['']
+  // }
+}
+
+export enum BanchoPyScoreStatus {
+  Best = 2,
+}

@@ -1,5 +1,5 @@
 import type { JSONContent } from '@tiptap/core'
-import type { Score } from './score'
+import type { RulesetScore } from './score'
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type {
   AutopilotAvailable,
@@ -69,7 +69,7 @@ export interface BaseRank<
 
   accuracy?: number
 
-  bests?: Array<Omit<Score<Id, _Mode, _Ruleset, _RankingSystem>, 'mode' | 'ruleset'>>
+  bests?: Array<Omit<RulesetScore<bigint, Id, _Mode, _Ruleset, _RankingSystem>, 'mode' | 'ruleset'>>
 }
 
 export type PPRank<
@@ -149,7 +149,8 @@ export interface UserRelationship<Id> extends BaseUser<Id> {
   mutualRelationship: MutualRelationship[]
 }
 
-type AvailableRuleset<R extends Mode> = (R extends StandardAvailable ? 'standard' : never)
+type AvailableRuleset<R extends Mode> =
+| (R extends StandardAvailable ? 'standard' : never)
 | (R extends RelaxAvailable ? 'relax' : never)
 | (R extends AutopilotAvailable ? 'autopilot' : never)
 

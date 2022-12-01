@@ -1,12 +1,14 @@
 import bcrypt from 'bcryptjs'
-
 import { createClient } from 'redis'
+import { TRPCError } from '@trpc/server'
 import type { IdType as Id, Mode, RankingSystem, Ruleset } from '../config'
-import { BanchoPyMode } from '../enums'
+import { BanchoPyMode, toBanchoPyMode } from '../enums'
 import { createRulesetData, toBaseUser, toFullUser } from '../transforms'
+import { toRankingSystemScores } from '../transforms/scores'
 import { createUserQuery } from './db-queries'
 import { getRelationships } from './user-relations'
 import { prismaClient as db } from './index'
+import type { Range } from '~/types/common'
 
 import type {
   BaseUser,
@@ -73,14 +75,56 @@ async function getLiveRank(id: number, mode: number, country: string) {
     }
   }
 }
+export async function getBests({
+  id,
+  mode,
+  ruleset,
+  rankingSystem,
+  page,
+  perPage,
+}: {
+  id: Id
+  mode: Mode
+  ruleset: Ruleset
+  rankingSystem: RankingSystem
+  page: Range<0, 10>
+  perPage: Range<1, 11>
+}) {
+  const start = page * perPage
+  const _mode = toBanchoPyMode(mode, ruleset)
+  if (_mode === undefined)
+    throw new TRPCError({ code: 'PRECONDITION_FAILED', message: 'unsupported mode' })
+  const scores = await db.score.findMany({
+    where: {
+      userId: id,
+      mode: _mode,
+      status: {
+        in: [2, 3],
+      },
+    },
+    include: {
+      beatmap: {
+        include: {
+          source: true,
+        },
+      },
+    },
+    orderBy: {
+      pp: 'desc',
+    },
+    skip: start,
+    take: perPage,
+  })
+  return toRankingSystemScores({ scores, rankingSystem, mode })
+}
 
-export const getStatisticsOfUser = async ({
+export async function getStatisticsOfUser({
   id,
   country,
 }: {
   id: Id
   country: string
-}) => {
+}) {
   const [results, ranks, livePPRank] = await Promise.all([
     db.stat.findMany({
       where: {

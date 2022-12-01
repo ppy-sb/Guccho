@@ -1,32 +1,66 @@
-<script setup>
+<script setup lang="ts">
+import type { RankingSystemScore } from '~/types/score'
+import type { Mode, RankingSystem, Ruleset } from '~/types/common'
 
+const props = withDefaults(
+  defineProps<{
+    score?: RankingSystemScore<unknown, unknown, Mode, RankingSystem>
+    mode: Mode
+    ruleset: Ruleset
+    rankingSystem: RankingSystem
+    useIntl?: boolean
+  }>(),
+  {
+    useIntl: true,
+  },
+)
+const beatmap = computed(() => {
+  if (!props.score)
+    return
+  if (props.score.beatmap.status === 'notFound')
+    return
+  if (props.score.beatmap.status === 'deleted')
+    return
+  return props.score.beatmap
+})
+const meta = computed((): {
+  artist: string
+  title: string
+} | void => {
+  if (!beatmap.value)
+    return
+  if (props.useIntl) {
+    return beatmap.value.beatmapset.meta.intl
+  }
+
+  else {
+    return {
+      artist: beatmap.value.beatmapset.meta.artist || beatmap.value.beatmapset.meta.intl.artist,
+      title: beatmap.value.beatmapset.meta.title || beatmap.value.beatmapset.meta.intl.title,
+    }
+  }
+})
 </script>
 
 <template>
   <!-- style="background: linear-gradient(hsl(var(--main,200 ), 25%, 25%, 0%), hsl(var(--main, 200), 25%, 25%, 90%)), url(https\:\/\/assets\.ppy\.sh\/beatmaps\/746506\/covers\/cover\.jpg);" -->
-  <div>
+  <div v-if="(score && beatmap && meta)">
     <div class="flex justify-between">
       <div class="flex min-w-0 gap-4">
-        <div class="hidden md:block">
-          <img
-            src="https://assets.ppy.sh/beatmaps/746506/covers/list.jpg"
-            class="object-cover w-20 h-16 rounded-xl"
-          >
+        <div v-if="beatmap.beatmapset.source === 'bancho'" class="hidden md:block">
+          <img :src="`https://assets.ppy.sh/beatmaps/${beatmap.beatmapset.foreignId}/covers/list.jpg`" class="object-cover w-20 h-16 rounded-xl">
         </div>
         <div class="flex flex-col min-w-0">
-          <a
-            href="#"
-            class="text-sm truncate md:text-md lg:text-lg"
-          >
-            Fujijo Seitokai Shikkou-bu - Best FriendS (GoldenWolf Edit) [Extreme]
+          <a href="#" class="text-sm truncate md:text-md lg:text-lg">
+            {{ meta.artist }} - {{ meta.title }} [{{ beatmap.version }}]
           </a>
           <div class="flex text-xs gap-2 md:text-sm lg:text-md">
             <div class="text-semibold">
-              HDDT
+              {{ score.mods.join(',') || 'noMod' }}
             </div>
             <div class="flex">
               <div class="font-semibold">
-                468
+                {{ score.maxCombo }}
               </div>
               <div class="font-light">
                 x
@@ -34,20 +68,21 @@
             </div>
           </div>
           <div class="mt-auto map-date">
-            <time class="text-xs italic lg:text-sm"> 2 years ago </time>
+            <time class="text-xs italic lg:text-sm"> {{ score.playedAt.toLocaleDateString() }} {{ score.playedAt.toLocaleTimeString() }} </time>
           </div>
         </div>
       </div>
       <div class="flex gap-4">
         <div class="flex flex-col">
           <div class="flex items-center justify-end flex-grow text-lg md:text-xl lg:text-2xl">
-            <div class="font-bold">
-              445
+            <div class="font-bold font-mono">
+              {{ score.pp.toFixed(2) }}
             </div>
-            <span class="italic font-light">pp</span>
+            <span class="font-light">pp</span>
           </div>
           <div class="flex mt-auto text-xs md:text-md lg:text-md whitespace-nowrap">
-            <b>89.83</b><div class="text-light">
+            <b class="font-mono">{{ score.accuracy }}</b>
+            <div class="text-light">
               % Acc
             </div>
           </div>

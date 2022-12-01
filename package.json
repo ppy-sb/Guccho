@@ -58,6 +58,7 @@
     "prisma": "^4.6.1",
     "redis": "^4.5.1",
     "remixicon": "^2.5.0",
+    "superjson": "^1.11.0",
     "tailwind-highlightjs": "^2.0.1",
     "trpc-nuxt": "^0.4.3",
     "uuid": "^9.0.0",
