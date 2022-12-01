@@ -5,7 +5,7 @@ import type { IdType } from '~/server/trpc/config'
 import type { ComponentLeaderboardItem } from '~/types/leaderboard'
 const props = defineProps<{
   user: ComponentLeaderboardItem<IdType>['user']
-  place: number | bigint
+  place: bigint
   sort: RankingSystem
 }>()
 const addCommas = createAddCommasFormatter()
