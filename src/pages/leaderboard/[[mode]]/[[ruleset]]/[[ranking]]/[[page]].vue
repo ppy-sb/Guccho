@@ -4,9 +4,9 @@ import { reactive, ref } from 'vue'
 import { navigateTo, useAppConfig, useRoute } from '#app'
 import type { EmitType } from '~/components/app/mode-switcher.vue'
 
-import type { Mode, Ruleset } from '~/types/common'
+import type { Mode, RankingSystem, Ruleset } from '~/types/common'
 import type { ComponentLeaderboardItem } from '~/types/leaderboard'
-import type { RankingSystem as AvailableRankingSystem, IdType } from '~/server/trpc/config'
+import type { IdType } from '~/server/trpc/config'
 
 const config = useAppConfig()
 
@@ -24,7 +24,7 @@ const ruleset = (availableRulesets.includes(route.params.ruleset as string)
   : availableRulesets[0]) as Ruleset
 const rankingSystem = (availableRankingSystems.includes(route.params.ranking as string)
   ? route.params.ranking
-  : availableRankingSystems[0]) as AvailableRankingSystem
+  : availableRankingSystems[0]) as RankingSystem
 const page = parseInt(route.params.page as string) || 1
 
 const perPage = 20
@@ -46,7 +46,7 @@ const selected = reactive<Required<EmitType['input']>>({
   ruleset,
   rankingSystem,
 })
-const table = ref<Array<ComponentLeaderboardItem<IdType, AvailableRankingSystem>>>([])
+const table = ref<Array<ComponentLeaderboardItem<IdType, RankingSystem>>>([])
 const fetching = ref(false)
 // const page = ref(0)
 // const perPage = ref(50)

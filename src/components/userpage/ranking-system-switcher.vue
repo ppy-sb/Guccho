@@ -6,7 +6,7 @@ import { computed, inject } from 'vue'
 
 import { useBackendConfig } from '#imports'
 
-const { rankingSystem: serverRankingSystem } = await useBackendConfig()
+const { supportedRankingSystems } = await useBackendConfig()
 
 const config = useAppConfig()
 const rankingSystem = config.rankingSystem
@@ -31,7 +31,7 @@ const filter = (showType: 'tab' | 'dropdown') =>
   >((acc, [key, value]) => {
     if (value.userpage.show !== showType)
       return acc
-    if (!(key in serverRankingSystem))
+    if (!supportedRankingSystems.includes(key))
       return acc
     acc[key] = value
     return acc

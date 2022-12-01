@@ -1,14 +1,14 @@
 import bcrypt from 'bcryptjs'
 import { createClient } from 'redis'
 import { TRPCError } from '@trpc/server'
-import type { IdType as Id, Mode, RankingSystem, Ruleset } from '../config'
+import type { IdType as Id } from '../config'
 import { BanchoPyMode, toBanchoPyMode } from '../enums'
 import { createRulesetData, toBaseUser, toFullUser } from '../transforms'
 import { toRankingSystemScores } from '../transforms/scores'
 import { createUserQuery } from './db-queries'
 import { getRelationships } from './user-relations'
 import { prismaClient as db } from './index'
-import type { Range } from '~/types/common'
+import type { Mode, Range, RankingSystem, Ruleset } from '~/types/common'
 
 import type {
   BaseUser,

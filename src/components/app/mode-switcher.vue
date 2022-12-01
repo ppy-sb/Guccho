@@ -23,7 +23,7 @@ const emit = defineEmits<{
   (event: 'update:modelValue', res: EmitType['input']): void
 }>()
 const config = useAppConfig()
-const { rankingSystem: serverRankingSystem } = await useBackendConfig()
+const { supportedRankingSystems } = await useBackendConfig()
 
 const selected = reactive<EmitType['input']>(toRaw(props.modelValue) || {})
 const emitData = () => {
@@ -75,7 +75,7 @@ watch(selected, () => emitData())
         :key="rankingSystem"
       >
         <a
-          v-if="rankingSystem in serverRankingSystem"
+          v-if="supportedRankingSystems.includes(rankingSystem)"
           class="text-sm h-mode"
           :class="{ '!opacity-80 pointer-events-none': selected.rankingSystem === rankingSystem }"
           @click="selected.rankingSystem = rankingSystem"
