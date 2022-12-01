@@ -166,13 +166,3 @@ fetching.value = false
     </div>
   </div>
 </template>
-
-<style>
-/* .table {
-  border-spacing: 0 2px
-}
-
-.table tr {
-  border-radius: 22px
-} */
-</style>

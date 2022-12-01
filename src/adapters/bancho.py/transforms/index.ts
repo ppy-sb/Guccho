@@ -1,6 +1,7 @@
 import type { Map as DBMap, Score as DBScore, User as DatabaseUser, RelationshipType, Source, Stat } from '@prisma/client'
 import type { IdType as Id } from '../config'
-import { BanchoPyPrivilege } from '../enums'
+import type { BanchoPyRankedStatus } from '../enums'
+import { BanchoPyPrivilege, toBanchoRankingStatus } from '../enums'
 import type { RankingStatus } from '~/types/beatmap'
 import { RankingStatusEnum } from '~/types/beatmap'
 import type { Mode, RankingSystem, Ruleset, Scope } from '~/types/common'
@@ -213,8 +214,8 @@ export function capitalizeFirstLetter<T extends string>(string: T) {
   return (string.charAt(0).toUpperCase() + string.slice(1)) as Capitalize<T>
 }
 
-export function toRankingStatus(status: number) {
-  return RankingStatusEnum[status] as RankingStatus | undefined
+export function toRankingStatus(status: BanchoPyRankedStatus) {
+  return RankingStatusEnum[toBanchoRankingStatus(status)] as RankingStatus | undefined
 }
 
 export type AbleToTransformToScores = (DBScore & {
