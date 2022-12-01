@@ -93,6 +93,7 @@ export const createPPRank = <_Mode extends Mode>(
     mods: [],
     score: 999_999_999_999n,
     scoreRank: 0,
+    grade: 'ssh',
     ppv2: {
       pp: 0,
       rank: 0,
@@ -105,7 +106,7 @@ export const createPPRank = <_Mode extends Mode>(
     maxCombo: 0,
     hit: createHitObject(mode),
     beatmap: createBeatmap(),
-    accuracy: 1,
+    accuracy: 98,
   }]
 
   return copy

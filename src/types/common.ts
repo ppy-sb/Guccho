@@ -16,6 +16,8 @@ export type RankingSystem = PPRankingSystem | ScoreRankingSystem
 
 export type Scope = 'self' | 'friends' | 'public'
 
+export type Grade = 'f' | 'd' | 'c' | 'b' | 'a' | 's' | 'sh' | 'ss' | 'ssh'
+
 // utils
 // export type OmitNever<T> = {
 //   [K in keyof T as T[K] extends never ? never : K]: T[K];

@@ -32,7 +32,7 @@ if (user && mode && ruleset && ['ppv2', 'ppv1'].includes(rankingSystem?.value as
   >
     <div class="shadow-lg card bg-kimberly-300/30">
       <div class="justify-center p-2 card-title">
-        Top Performance (dummy)
+        Top Performance
       </div>
       <div class="p-4 card-body">
         <div
