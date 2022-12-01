@@ -1,7 +1,4 @@
-import { toBanchoPyMode } from '../adapters/bancho.py/enums'
 import type { Mode, Ruleset } from '~/types/common'
-
-export const modeToGulag = toBanchoPyMode
 
 export function getFlagURL(flag: string) {
   let url = 'https://osu.ppy.sh/assets/images/flags/'
