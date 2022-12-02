@@ -65,7 +65,7 @@ const meta = computed((): {
               class="object-cover w-20 h-16 rounded-xl"
             >
             <div v-else class="w-20 h-16">
-              <font-awesome-icon icon="fa-solid fa-ban" size="4x" />
+              <font-awesome-icon icon="fa-solid fa-ban" size="4x" class="w-full" />
             </div>
           </div>
         </template>
