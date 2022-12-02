@@ -4,9 +4,9 @@ import { useAppConfig } from 'nuxt/app'
 import type { Ref } from 'vue'
 import { computed, inject } from 'vue'
 
-import { useBackendConfig } from '#imports'
+import { useAdapterConfig } from '#imports'
 
-const { supportedRankingSystems } = await useBackendConfig()
+const { supportedRankingSystems } = await useAdapterConfig()
 
 const config = useAppConfig()
 const rankingSystem = config.rankingSystem
