@@ -1,22 +1,39 @@
 import type { Enumerate } from './internal-utils'
+export const mode = ['osu', 'taiko', 'fruits', 'mania'] as const
+export type Mode = typeof mode[number]
 
-export type Mode = 'osu' | 'taiko' | 'fruits' | 'mania'
-export type Ruleset = 'standard' | 'relax' | 'autopilot'
+export const ruleset = ['standard', 'relax', 'autopilot'] as const
+export type Ruleset = typeof ruleset[number]
 
-export type Relationship = 'friend' | 'block'
-export type MutualRelationship = 'mutual-friend' | 'mutual-block'
+export const relationship = ['friend', 'block'] as const
+export type Relationship = typeof relationship[number]
 
+export const mutualRelationship = ['mutual-friend', 'mutual-block'] as const
+export type MutualRelationship = typeof mutualRelationship[number]
+
+export const standardAvailable = mode
 export type StandardAvailable = Mode
-export type RelaxAvailable = 'osu' | 'taiko' | 'fruits'
-export type AutopilotAvailable = 'osu'
 
-export type ScoreRankingSystem = 'rankedScore' | 'totalScore'
-export type PPRankingSystem = 'ppv2' | 'ppv1'
-export type RankingSystem = PPRankingSystem | ScoreRankingSystem
+export const relaxAvailable = ['osu', 'taiko', 'fruits'] as const
+export type RelaxAvailable = typeof relaxAvailable[number]
 
-export type Scope = 'self' | 'friends' | 'public'
+export const autopilotAvailable = ['osu'] as const
+export type AutopilotAvailable = typeof autopilotAvailable[number]
 
-export type Grade = 'f' | 'd' | 'c' | 'b' | 'a' | 's' | 'sh' | 'ss' | 'ssh'
+export const scoreRankingSystem = ['rankedScore', 'totalScore'] as const
+export type ScoreRankingSystem = typeof scoreRankingSystem[number]
+
+export const ppRankingSystem = ['ppv2', 'ppv1'] as const
+export type PPRankingSystem = typeof ppRankingSystem[number]
+
+export const rankingSystem = [...ppRankingSystem, ...scoreRankingSystem] as const
+export type RankingSystem = typeof rankingSystem[number]
+
+export const scope = ['self', 'friends', 'public'] as const
+export type Scope = typeof scope[number]
+
+export const grade = ['f', 'd', 'c', 'b', 'a', 's', 'sh', 'ss', 'ssh'] as const
+export type Grade = typeof grade[number]
 
 // utils
 // export type OmitNever<T> = {
