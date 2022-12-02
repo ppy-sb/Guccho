@@ -4,6 +4,7 @@ import type { Mode, PPRankingSystem, Range, RankingSystem, Ruleset } from '~/typ
 import type { IdType } from '$/config'
 
 import type { BaseUser } from '~/types/user'
+import { rankingSystem as allRankingSystems } from '~/types/common'
 const { $client } = useNuxtApp()
 const user = inject('user') as Ref<BaseUser<IdType>>
 const mode = inject('mode') as Ref<Mode>
@@ -49,6 +50,13 @@ watch([user, mode, ruleset, rankingSystem, page], async () => {
   await refresh()
 })
 const transition = ref<'left' | 'right'>('left')
+watch(rankingSystem, (rs, prevRs) => {
+  const [idx, prevIdx] = [allRankingSystems.indexOf(rs), allRankingSystems.indexOf(prevRs)]
+  if (idx > prevIdx)
+    transition.value = 'left'
+  else
+    transition.value = 'right'
+})
 const prevPage = () => {
   transition.value = 'right'
   if (page.value > 0)
@@ -71,7 +79,7 @@ const nextPage = () => {
       <div class="p-4 card-body">
         <div v-if="bp" class="relative">
           <transition :name="transition">
-            <ul :key="bp.page">
+            <ul :key="mode + ruleset + rankingSystem + user.id + bp.page">
               <li v-for="i in bp.result" :key="`bests-${i.id}`" class="score">
                 <app-score :score="i" :mode="bp.mode" :ruleset="bp.ruleset" :ranking-system="bp.rankingSystem" />
               </li>
@@ -106,7 +114,7 @@ const nextPage = () => {
 .right-enter-active,
 .left-leave-active,
 .right-leave-active {
-  transition: all 0.2s ease-out;
+  transition: all 0.2s ease;
 }
 
 .left-enter-from,
@@ -116,16 +124,16 @@ const nextPage = () => {
   filter: opacity(0) blur(2px);
 }
 .right-enter-from {
-  transform: translateX(-2%) translateY(0.5%) scale(0.98);
+  transform: translateX(-2%) translateY(1%);
 }
 .right-leave-to{
-  transform: translateX(2%) translateY(0.5%) scale(0.98);
+  transform: translateX(2%) translateY(1%);
 }
 .left-enter-from {
-  transform: translateX(2%) translateY(0.5%) scale(0.98);
+  transform: translateX(2%) translateY(1%);
 }
 .left-leave-to{
-  transform: translateX(-2%) translateY(0.5%) scale(0.98);
+  transform: translateX(-2%) translateY(1%);
 }
 
 /* ensure leaving items are taken out of layout flow so that moving
