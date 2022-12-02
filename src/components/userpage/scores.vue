@@ -34,7 +34,7 @@ const prevPage = () => {
 }
 const nextPage = () => {
   if (page.value <= 9)
-    page.value = 1
+    page.value += 1
 }
 </script>
 
