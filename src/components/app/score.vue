@@ -113,7 +113,7 @@ const meta = computed((): {
               </div>
             </template>
           </div>
-          <div class="flex mt-auto text-xs md:text-md lg:text-md whitespace-nowrap">
+          <div class="flex mt-auto text-xs md:text-md lg:text-md whitespace-nowrap justify-end">
             <b class="font-mono">{{ score.accuracy.toFixed(2) }}</b>
             <div class="text-light">
               % Acc

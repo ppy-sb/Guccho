@@ -15,47 +15,74 @@ const {
   data: bp,
   error,
   refresh,
+  pending,
 } = useAsyncData(async () => {
-  // if (user && mode && ruleset && ['ppv2', 'ppv1'].includes(rankingSystem?.value as string))
-  //   return []
-  return await $client.user.best.query({
+  if (!user.value || !mode.value || !ruleset.value || !rankingSystem.value) {
+    return {
+      result: [],
+      handle: user.value.id,
+      mode: mode.value,
+      ruleset: ruleset.value,
+      rankingSystem: rankingSystem?.value as PPRankingSystem,
+      page: page.value,
+    }
+  }
+  return {
+    result: await $client.user.best.query({
+      handle: user.value.id,
+      mode: mode.value,
+      ruleset: ruleset.value,
+      rankingSystem: rankingSystem?.value as PPRankingSystem,
+      page: page.value,
+    }),
     handle: user.value.id,
     mode: mode.value,
     ruleset: ruleset.value,
     rankingSystem: rankingSystem?.value as PPRankingSystem,
     page: page.value,
-  })
+  }
 })
-
-watch([user, mode, ruleset, rankingSystem, page], refresh)
+watch([user, mode, ruleset, rankingSystem, page], async () => {
+  if (!user.value || !mode.value || !ruleset.value || !rankingSystem.value)
+    return
+  // bp && bp.value && (bp.value.result = [])
+  await refresh()
+})
+const transition = ref<'left' | 'right'>('left')
 const prevPage = () => {
-  if (page.value >= 1)
+  transition.value = 'right'
+  if (page.value > 0)
     page.value -= 1
 }
 const nextPage = () => {
-  if (page.value <= 9)
+  transition.value = 'left'
+  if (page.value < 9)
     page.value += 1
 }
 </script>
 
 <template>
-  <section
-    v-if="!error"
-    class="custom-container"
-  >
-    <div class="shadow-lg card bg-kimberly-300/30">
+  <section class="custom-container">
+    <div class="shadow-lg card bg-kimberly-300/30" :class="[pending && 'pointer-events-none']">
       <div class="justify-center p-2 card-title">
         Top Performance
       </div>
+
       <div class="p-4 card-body">
-        <div
-          v-for="i, index in bp"
-          :key="`bests-${index}`"
-          class="score"
-        >
-          <app-score :score="i" :mode="mode" :ruleset="ruleset" :ranking-system="rankingSystem" />
+        <div v-if="bp" class="relative">
+          <transition :name="transition">
+            <ul :key="bp.page">
+              <li v-for="i in bp.result" :key="`bests-${i.id}`" class="score">
+                <app-score :score="i" :mode="bp.mode" :ruleset="bp.ruleset" :ranking-system="bp.rankingSystem" />
+              </li>
+            </ul>
+          </transition>
+        </div>
+        <div v-else-if="error">
+          {{ error }}
         </div>
       </div>
+
       <div class="btn-group d-flex w-full">
         <button class="btn btn-ghost !shadow-none" @click="prevPage">
           «
@@ -70,3 +97,41 @@ const nextPage = () => {
     </div>
   </section>
 </template>
+
+<style scoped lang="postcss">
+.left-move,
+.right-move,
+/* apply transition to moving elements */
+.left-enter-active,
+.right-enter-active,
+.left-leave-active,
+.right-leave-active {
+  transition: all 0.2s ease-out;
+}
+
+.left-enter-from,
+.right-enter-from,
+.left-leave-to,
+.right-leave-to {
+  filter: opacity(0) blur(2px);
+}
+.right-enter-from {
+  transform: translateX(-2%) translateY(0.5%) scale(0.98);
+}
+.right-leave-to{
+  transform: translateX(2%) translateY(0.5%) scale(0.98);
+}
+.left-enter-from {
+  transform: translateX(2%) translateY(0.5%) scale(0.98);
+}
+.left-leave-to{
+  transform: translateX(-2%) translateY(0.5%) scale(0.98);
+}
+
+/* ensure leaving items are taken out of layout flow so that moving
+   animations can be calculated correctly. */
+.left-leave-active,
+.right-leave-active {
+  @apply absolute left-0 right-0 -z-10;
+}
+</style>
