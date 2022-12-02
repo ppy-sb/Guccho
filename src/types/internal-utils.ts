@@ -4,3 +4,4 @@ export type Enumerate<
 > = Acc['length'] extends N
   ? Acc[number]
   : Enumerate<N, [...Acc, Acc['length']]>
+

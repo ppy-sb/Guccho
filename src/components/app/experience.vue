@@ -31,7 +31,7 @@ const { charging, level } = useBattery()
             level >= 0.875
               ? 'fa-solid fa-battery-full'
               : level >= 0.625
-                ? 'fa-solid fa-battery-three-quarter'
+                ? 'fa-solid fa-battery-three-quarters'
                 : level >= 0.375
                   ? 'fa-solid fa-battery-half'
                   : level >= 0.125

@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs'
 import { createClient } from 'redis'
 import { TRPCError } from '@trpc/server'
+import type { Prisma } from '@prisma/client'
 import type { IdType as Id } from '../config'
 import { BanchoPyMode, toBanchoPyMode } from '../enums'
 import { createRulesetData, toBaseUser, toFullUser } from '../transforms'
@@ -94,6 +95,14 @@ export async function getBests({
   const _mode = toBanchoPyMode(mode, ruleset)
   if (_mode === undefined)
     throw new TRPCError({ code: 'PRECONDITION_FAILED', message: 'unsupported mode' })
+
+  const orderBy: Prisma.ScoreFindManyArgs['orderBy'] = {}
+  if (rankingSystem === 'ppv2')
+    orderBy.pp = 'desc'
+  else if (rankingSystem === 'rankedScore')
+    orderBy.score = 'desc'
+  else if (rankingSystem === 'totalScore')
+    orderBy.score = 'desc'
   const scores = await db.score.findMany({
     where: {
       userId: id,
@@ -109,9 +118,7 @@ export async function getBests({
         },
       },
     },
-    orderBy: {
-      pp: 'desc',
-    },
+    orderBy,
     skip: start,
     take: perPage,
   })
