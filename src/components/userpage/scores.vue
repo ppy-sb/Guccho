@@ -46,7 +46,6 @@ const {
 watch([user, mode, ruleset, rankingSystem, page], async () => {
   if (!user.value || !mode.value || !ruleset.value || !rankingSystem.value)
     return
-  // bp && bp.value && (bp.value.result = [])
   await refresh()
 })
 const transition = ref<'left' | 'right'>('left')

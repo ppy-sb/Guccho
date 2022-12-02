@@ -1,10 +1,10 @@
 <!-- eslint-disable vue/no-v-for-template-key -->
 <script setup lang="ts">
-import { reactive, toRaw, watch } from 'vue'
+import { toRaw, watch } from 'vue'
 import { useAppConfig } from '#app'
 import { forbiddenMode, forbiddenMods } from '~/common/varkaUtils'
 import type { Mode, RankingSystem, Ruleset } from '~/types/common'
-import { useBackendConfig } from '#imports'
+import { useAdapterConfig } from '#imports'
 
 export interface EmitType {
   input: {
@@ -23,14 +23,14 @@ const emit = defineEmits<{
   (event: 'update:modelValue', res: EmitType['input']): void
 }>()
 const config = useAppConfig()
-const { supportedRankingSystems } = await useBackendConfig()
+const { supportedRankingSystems } = await useAdapterConfig()
 
-const selected = reactive<EmitType['input']>(toRaw(props.modelValue) || {})
+const [switcher, setSwitcher] = useSwitcher(toRaw(props.modelValue) || {})
 const emitData = () => {
-  emit('input', toRaw(selected))
-  emit('update:modelValue', toRaw(selected))
+  emit('input', toRaw(switcher))
+  emit('update:modelValue', toRaw(switcher))
 }
-watch(selected, () => emitData())
+watch(switcher, () => emitData())
 </script>
 
 <template>
@@ -41,10 +41,10 @@ watch(selected, () => emitData())
         :key="mode"
         class="h-mode"
         :class="{
-          '!opacity-80 pointer-events-none': selected.mode === mode,
-          '!opacity-10 pointer-events-none': selected.ruleset && forbiddenMode(selected.ruleset, mode),
+          '!opacity-80 pointer-events-none': switcher.mode === mode,
+          '!opacity-10 pointer-events-none': switcher.ruleset && forbiddenMode(switcher.ruleset, mode),
         }"
-        @click="selected.mode = mode"
+        @click="setSwitcher({ mode })"
       >
         <img
           :src="`/icons/mode/${m.icon}.svg`"
@@ -58,10 +58,10 @@ watch(selected, () => emitData())
         :key="ruleset"
         class="h-mode"
         :class="{
-          '!opacity-80 pointer-events-none': selected.ruleset === ruleset,
-          '!opacity-20 pointer-events-none': selected.mode && forbiddenMods(selected.mode, ruleset),
+          '!opacity-80 pointer-events-none': switcher.ruleset === ruleset,
+          '!opacity-20 pointer-events-none': switcher.mode && forbiddenMods(switcher.mode, ruleset),
         }"
-        @click="selected.ruleset = ruleset"
+        @click="setSwitcher({ ruleset })"
       >
         {{ m.name }}
       </a>
@@ -77,8 +77,8 @@ watch(selected, () => emitData())
         <a
           v-if="supportedRankingSystems.includes(rankingSystem)"
           class="text-sm h-mode"
-          :class="{ '!opacity-80 pointer-events-none': selected.rankingSystem === rankingSystem }"
-          @click="selected.rankingSystem = rankingSystem"
+          :class="{ '!opacity-80 pointer-events-none': switcher.rankingSystem === rankingSystem }"
+          @click="setSwitcher({ rankingSystem })"
         >
           {{ s.name }}
         </a>
