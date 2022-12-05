@@ -134,7 +134,7 @@ const nextPage = () => {
 .right-enter-active,
 .left-leave-active,
 .right-leave-active {
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
 }
 
 .left-enter-from,

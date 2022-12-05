@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import { computed, onBeforeMount, onUnmounted, ref } from 'vue'
-import { useAppConfig, useCookie } from '#app'
+import { useAppConfig } from '#app'
 import { useSession } from '~/store/session'
 
 const props
   = defineProps<{
     disabled?: boolean
   }>()
-const sessionId = useCookie('session')
 const session = useSession()
 
 const menu = computed(() => [
