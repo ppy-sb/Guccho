@@ -4,7 +4,6 @@ import md5 from 'md5'
 import type { IdType } from '$/config'
 import type { UserFull } from '~/types/user'
 
-/** counterストア */
 export const useSession = defineStore('session', {
   state: (): {
     loggedIn: boolean
@@ -20,8 +19,8 @@ export const useSession = defineStore('session', {
       return await this.loginHashed(handle, md5HashedPassword)
     },
     async loginHashed(handle: string, md5HashedPassword: string) {
-      const { $client: client } = useNuxtApp()
-      const result = await client.session.login.query({ handle, md5HashedPassword })
+      const { $client } = useNuxtApp()
+      const result = await $client.session.login.query({ handle, md5HashedPassword })
       if (!result)
         return false
 
@@ -34,8 +33,8 @@ export const useSession = defineStore('session', {
     },
     async retrieve() {
       try {
-        const { $client: client } = useNuxtApp()
-        const result = await client.session.retrieve.query()
+        const { $client } = useNuxtApp()
+        const result = await $client.session.retrieve.query()
         if (!result)
           return
         if (!result.user)

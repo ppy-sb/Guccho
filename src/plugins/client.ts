@@ -3,6 +3,7 @@ import superjson from 'superjson'
 import type { AppRouter } from '@/server/trpc/routers'
 
 export default defineNuxtPlugin(() => {
+  const session = useCookie('session')
   const client = createTRPCProxyClient<AppRouter>({
     transformer: superjson,
     links: [
@@ -12,6 +13,16 @@ export default defineNuxtPlugin(() => {
          * @link https://trpc.io/docs/ssr
          **/
         url: 'http://localhost:3000/api/trpc',
+        fetch(url, options) {
+          return fetch(url, {
+            ...options,
+            headers: {
+              ...options?.headers || {},
+              cookie: (options?.headers as Record<string, string>)?.cookie || `session=${session.value}`,
+            },
+            credentials: 'include',
+          })
+        },
       }),
     ],
   })

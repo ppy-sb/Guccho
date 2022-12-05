@@ -6,6 +6,7 @@ import { zodHandle } from '../shapes'
 import { procedureWithSession as pSession } from '../middleware/session'
 import { router as _router } from '../trpc'
 import { passwordMismatch, sessionNotFound, unableToRetrieveSession, unknownError, userNotFound } from '../messages'
+import { getSession } from './../../session/index'
 import { getBaseUser } from '$/client'
 
 const { compare } = bcrypt
@@ -52,8 +53,15 @@ export const router = _router({
       })
     }
   }),
-  retrieve: pSession.query(async ({ ctx }) => {
-    const session = await ctx.session.getBinding()
+  retrieve: pSession.input(z.object({
+    sessionId: z.string().optional(),
+  }).optional()).query(async ({ ctx, input }) => {
+    let session
+    if (input?.sessionId)
+      session = await getSession(input.sessionId)
+    else
+      session = await ctx.session.getBinding()
+
     if (!session) {
       throw new TRPCError({
         code: 'NOT_FOUND',

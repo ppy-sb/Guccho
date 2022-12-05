@@ -31,9 +31,12 @@ const userLogin = async () => {
   try {
     const result = await session.login(login.user, login.password)
     if (result) {
-      const back = route.query.back === '1'
-      if (back)
+      if (route.query.redirect)
+        await navigateTo(route.query.redirect.toString())
+
+      else if (route.query.back === '1')
         router.back()
+
       else await navigateTo('/')
     }
   }

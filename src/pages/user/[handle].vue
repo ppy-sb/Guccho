@@ -42,7 +42,7 @@ definePageMeta({
 })
 
 const currentStatistic = computed<UserModeRulesetStatistics<IdType, Mode, Ruleset, RankingSystem>>(
-  // @ts-expect-error 2532
+  // @ts-expect-error switcher has its logic to not spit out wrong combination
   () => user.value?.statistics[switcher.mode][switcher.ruleset],
 )
 const currentRankingSystem = computed(

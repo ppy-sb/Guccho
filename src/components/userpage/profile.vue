@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { EditorContent, generateJSON } from '@tiptap/vue-3'
+import { generateJSON } from '@tiptap/html'
+import { EditorContent } from '@tiptap/vue-3'
 import '@/assets/styles/typography.scss'
 import type { Ref } from 'vue'
 const user = inject<Ref<{
