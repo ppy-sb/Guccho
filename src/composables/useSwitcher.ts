@@ -7,6 +7,7 @@ interface PropType {
   ruleset?: Ruleset
   rankingSystem?: RankingSystem
 }
+
 export default function useSwitcher(initial?: PropType) {
   const { mode, ruleset, rankingSystem } = initial || {}
   const { supportedModes, supportedRankingSystems, supportedRulesets } = useAdapterConfig()
@@ -27,3 +28,4 @@ export default function useSwitcher(initial?: PropType) {
     },
   ] as const
 }
+export type SwitcherComposableType = ReturnType<typeof useSwitcher>

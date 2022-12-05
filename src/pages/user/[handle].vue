@@ -8,6 +8,7 @@ import type { UserModeRulesetStatistics } from '~/types/user'
 import type { IdType } from '~/server/trpc/config'
 const route = useRoute()
 const { $client } = useNuxtApp()
+const _switcherContext = useSwitcher()
 const {
   data: user,
   error,
@@ -15,7 +16,6 @@ const {
 } = useAsyncData(async () => await $client.user.userpage.query({
   handle: `${route.params.handle}`,
 }))
-
 const visible = reactive({
   statistics: false,
   bests: false,
@@ -54,9 +54,10 @@ const currentRankingSystem = computed(
 )
 
 provide('user', user)
-provide('mode', selectedMode)
-provide('ruleset', selectedRuleset)
-provide('rankingSystem', tab)
+provide('switcher', _switcherContext)
+// provide('mode', selectedMode)
+// provide('ruleset', selectedRuleset)
+// provide('rankingSystem', tab)
 provide('selectedStatisticsData', currentStatistic)
 provide('selectedRankingSystemData', currentRankingSystem)
 </script>

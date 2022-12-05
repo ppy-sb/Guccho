@@ -1,15 +1,14 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
-import type { Mode, PPRankingSystem, Range, RankingSystem, Ruleset } from '~/types/common'
+import type { PPRankingSystem, Range } from '~/types/common'
+import { mode, rankingSystem, ruleset } from '~/types/common'
 import type { IdType } from '$/config'
 
 import type { BaseUser } from '~/types/user'
-import { rankingSystem as allRankingSystems } from '~/types/common'
+import type { SwitcherComposableType } from '~/composables/useSwitcher'
 const { $client } = useNuxtApp()
 const user = inject('user') as Ref<BaseUser<IdType>>
-const mode = inject('mode') as Ref<Mode>
-const ruleset = inject('ruleset') as Ref<Ruleset>
-const rankingSystem = inject('rankingSystem') as Ref<RankingSystem>
+const [switcher] = inject('switcher') as SwitcherComposableType
 
 const page = ref<Range<0, 10>>(0)
 const {
@@ -18,51 +17,73 @@ const {
   refresh,
   pending,
 } = useAsyncData(async () => {
-  if (!user.value || !mode.value || !ruleset.value || !rankingSystem.value) {
+  if (!user.value || !switcher.mode || !switcher.ruleset || !switcher.rankingSystem) {
     return {
       result: [],
       handle: user.value.id,
-      mode: mode.value,
-      ruleset: ruleset.value,
-      rankingSystem: rankingSystem?.value as PPRankingSystem,
       page: page.value,
+      lastSwitcherStatus: {
+        ...switcher,
+      },
     }
   }
   return {
     result: await $client.user.best.query({
       handle: user.value.id,
-      mode: mode.value,
-      ruleset: ruleset.value,
-      rankingSystem: rankingSystem?.value as PPRankingSystem,
+      mode: switcher.mode,
+      ruleset: switcher.ruleset,
+      rankingSystem: switcher.rankingSystem as PPRankingSystem,
       page: page.value,
     }),
     handle: user.value.id,
-    mode: mode.value,
-    ruleset: ruleset.value,
-    rankingSystem: rankingSystem?.value as PPRankingSystem,
     page: page.value,
+    lastSwitcherStatus: {
+      ...switcher,
+    },
   }
 })
-watch([user, mode, ruleset, rankingSystem, page], async () => {
-  if (!user.value || !mode.value || !ruleset.value || !rankingSystem.value)
+watch([user, switcher, page], async () => {
+  if (!user.value || !switcher.mode || !switcher.ruleset || !switcher.rankingSystem)
     return
   await refresh()
 })
 const transition = ref<'left' | 'right'>('left')
-watch(rankingSystem, (rs, prevRs) => {
-  const [idx, prevIdx] = [allRankingSystems.indexOf(rs), allRankingSystems.indexOf(prevRs)]
-  if (idx > prevIdx)
-    transition.value = 'left'
-  else
-    transition.value = 'right'
+// transition direction
+const arrayMap = {
+  mode,
+  ruleset,
+  rankingSystem,
+} as const
+let prevSw = {
+  ...switcher,
+}
+watch(switcher, (sw) => {
+  const animationDirection = <T extends readonly any[]>(val: T[number], prevVal: T[number], array: T) => {
+    const [idx, prevIdx] = [array.indexOf(val), array.indexOf(prevVal)]
+    if (idx === prevIdx)
+      return
+    if (idx > prevIdx)
+      return 'right'
+    else
+      return 'left'
+  }
+  for (const [key, value] of Object.entries(sw)) {
+    const [v, pV] = [value, prevSw[key as keyof typeof prevSw]]
+    const direction = animationDirection(v, pV, arrayMap[key as keyof typeof prevSw])
+    if (!direction)
+      continue
+    transition.value = direction
+    break
+  }
+  prevSw = { ...sw }
 })
 const prevPage = () => {
-  transition.value = 'right'
+  transition.value = 'left'
   if (page.value > 0)
     page.value -= 1
 }
 const nextPage = () => {
-  transition.value = 'left'
+  transition.value = 'right'
   if (page.value < 9)
     page.value += 1
 }
@@ -78,9 +99,9 @@ const nextPage = () => {
       <div class="p-4 card-body">
         <div v-if="bp" class="relative">
           <transition :name="transition">
-            <ul :key="mode + ruleset + rankingSystem + user.id + bp.page">
+            <ul :key="switcher.mode + switcher.ruleset + switcher.rankingSystem + user.id + bp.page">
               <li v-for="i in bp.result" :key="`bests-${i.id}`" class="score">
-                <app-score :score="i" :mode="bp.mode" :ruleset="bp.ruleset" :ranking-system="bp.rankingSystem" />
+                <app-score :score="i" :mode="bp.lastSwitcherStatus.mode" :ruleset="bp.lastSwitcherStatus.ruleset" :ranking-system="bp.lastSwitcherStatus.rankingSystem" />
               </li>
             </ul>
           </transition>
@@ -122,16 +143,16 @@ const nextPage = () => {
 .right-leave-to {
   filter: opacity(0) blur(2px);
 }
-.right-enter-from {
+.left-enter-from {
   transform: translateX(-2%) translateY(1%);
 }
-.right-leave-to{
-  transform: translateX(2%) translateY(1%);
-}
-.left-enter-from {
-  transform: translateX(2%) translateY(1%);
-}
 .left-leave-to{
+  transform: translateX(2%) translateY(1%);
+}
+.right-enter-from {
+  transform: translateX(2%) translateY(1%);
+}
+.right-leave-to{
   transform: translateX(-2%) translateY(1%);
 }
 
