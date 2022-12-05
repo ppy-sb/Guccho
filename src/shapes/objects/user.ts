@@ -117,12 +117,10 @@ export const createRulesetData = <M extends Mode, Rs extends Ruleset, R extends 
   ppRankData: PPRank<unknown, M, Rs, RankingSystem> | undefined = undefined,
   scoreRankData: ScoreRank<unknown, M, Rs, RankingSystem> | undefined = undefined,
 ) => ({
-    ranking: {
-      ppv2: createPPRank(ppRankData, mode),
-      ppv1: createPPRank(ppRankData, mode),
-      rankedScore: createScoreRank(scoreRankData),
-      totalScore: createScoreRank(scoreRankData),
-    },
+    ppv2: createPPRank(ppRankData, mode),
+    ppv1: createPPRank(ppRankData, mode),
+    rankedScore: createScoreRank(scoreRankData),
+    totalScore: createScoreRank(scoreRankData),
     playCount: 1,
     playTime: 10000,
     totalHits: 1,
