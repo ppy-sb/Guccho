@@ -2,13 +2,13 @@ import { forbiddenMode, forbiddenMods } from '../common/varkaUtils'
 import type { Mode, RankingSystem, Ruleset } from './../types/common'
 import useAdapterConfig from './useAdapterConfig'
 
-interface PropType {
+export interface SwitcherPropType {
   mode?: Mode
   ruleset?: Ruleset
   rankingSystem?: RankingSystem
 }
 
-export default function useSwitcher(initial?: PropType) {
+export default function useSwitcher(initial?: SwitcherPropType) {
   const { mode, ruleset, rankingSystem } = initial || {}
   const { supportedModes, supportedRankingSystems, supportedRulesets } = useAdapterConfig()
   const data = reactive({
@@ -18,7 +18,7 @@ export default function useSwitcher(initial?: PropType) {
   })
   return [
     data,
-    function setSwitcher({ mode, ruleset, rankingSystem }: PropType) {
+    function setSwitcher({ mode, ruleset, rankingSystem }: SwitcherPropType) {
       if (mode && supportedModes.includes(mode) && !forbiddenMode(ruleset || data.ruleset, mode))
         data.mode = mode
       if (ruleset && supportedRulesets.includes(ruleset) && !forbiddenMods(mode || data.mode, ruleset))

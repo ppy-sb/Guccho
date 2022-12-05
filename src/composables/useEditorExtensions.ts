@@ -8,8 +8,8 @@ import { CodeBlockLowlight } from '@tiptap/extension-code-block-lowlight'
 
 import { lowlight } from 'lowlight/lib/core'
 
-export default (config: {
-  indent: string
+export default (config?: {
+  indent?: string
 }) => [
   StarterKit.configure({
     codeBlock: false,
@@ -31,7 +31,7 @@ export default (config: {
         Tab: ({ editor }) => {
           if (!this.editor.isActive('codeBlock'))
             return false
-          editor.commands.insertContent(config.indent)
+          editor.commands.insertContent(config?.indent || '  ')
           return true
         },
       }

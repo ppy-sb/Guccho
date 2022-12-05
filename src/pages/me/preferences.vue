@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 import md5 from 'md5'
 import { navigateTo } from '#app'
+import { generateJSON } from '@tiptap/core'
 import { useSession } from '~/store/session'
 
 const changeAvatar = ref<{
@@ -23,18 +24,7 @@ if (_user == null)
 
 const user = ref({ ..._user } as Exclude<typeof _user, null>)
 const unchanged = ref({ ...user.value })
-
-const editable = ['name', 'email'] as const
-
-const anythingChanged = computed(() => {
-  const col = (editable).some((item) => {
-    if (!user.value || !unchanged.value)
-      return false
-    return unchanged.value[item] !== user.value[item]
-  })
-  return col
-})
-
+const profile = ref(generateJSON(user.value.profile as string, useEditorExtensions()))
 const uploading = ref(0)
 const saveAvatar = () => {
   uploading.value = 1
@@ -43,12 +33,11 @@ const saveAvatar = () => {
   }, 1000)
 }
 const updateUser = async () => {
-  const updateData = editable.reduce((acc, cur) => {
-    if (user.value[cur] === unchanged.value[cur])
-      return acc
-    acc[cur] = user.value[cur]
-    return acc
-  }, {} as Partial<Record<typeof editable[number], string>>)
+  const updateData = {
+    name: user.value.name !== unchanged.value.name ? user.value.name : undefined,
+    email: user.value.email !== unchanged.value.email ? user.value.email : undefined,
+    profile: profile.value,
+  }
 
   const result = await $client.me.updatePreferences.mutate(updateData)
   if (!result)
@@ -253,7 +242,6 @@ const updatePassword = async (closeModal: () => void) => {
         class="text-left"
       />
       <button
-        v-if="anythingChanged"
         class="self-end btn btn-sm btn-warning"
         type="button"
         @click="updateUser"
@@ -438,7 +426,7 @@ const updatePassword = async (closeModal: () => void) => {
       <span class="pl-3 label-text">profile</span>
     </label>
     <lazy-editor
-      v-model.lazy="user.profile"
+      v-model.lazy="profile"
       class="safari-performance-boost"
     />
   </section>

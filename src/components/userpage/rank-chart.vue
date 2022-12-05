@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import 'atropos/scss'
 
 import { LineChart } from 'vue-chart-3'
@@ -6,10 +6,12 @@ import { Atropos } from 'atropos/vue'
 import { userpageLineChartOptions } from '~/common/shared-chart-options'
 
 import { hsvRaw } from '~/palette'
+import type { BaseRank } from '~/types/user'
+import type { Mode, RankingSystem, Ruleset } from '~/types/common'
 
 // import 'chart.js/auto/auto.js'
 
-const hsl = ([h, s, l], a) => `hsl(${h} ${s}% ${l}% / ${a}%)`
+const hsl = ([h, s, l]: [any, any, any], a: any) => `hsl(${h} ${s}% ${l}% / ${a}%)`
 const gRankFill = hsl(hsvRaw.wewak[500], 20)
 const cRankFill = hsl(hsvRaw.kimberly[500], 30)
 
@@ -24,7 +26,7 @@ onMounted(() => {
   }, 100)
 })
 // const user = inject('user')
-const currentRankingSystem = inject('selectedRankingSystemData')
+const currentRankingSystem = inject<BaseRank<unknown, Mode, Ruleset, RankingSystem>>('selectedRankingSystemData')
 /* mock */
 const globalRank = {
   labels: ['Paris', 'Nîmes', 'Toulon', 'Perpignan', 'Autre'],
@@ -53,7 +55,7 @@ const countryRank = {
 </script>
 
 <template>
-  <client-only>
+  <ClientOnly v-if="currentRankingSystem">
     <section
       class="container mx-auto custom-container"
       v-bind="$attrs"
@@ -115,7 +117,7 @@ const countryRank = {
                 <dd class="self-end text-5xl">
                   <Roller
                     :char-set="chars"
-                    :value="update ? `#${Intl.NumberFormat().format(currentRankingSystem.rank)}` : ' '"
+                    :value="update ? `#${Intl.NumberFormat().format(currentRankingSystem.rank || 0)}` : ' '"
                   />
                 </dd>
               </div>
@@ -145,7 +147,7 @@ const countryRank = {
         </Atropos>
       </div>
     </section>
-  </client-only>
+  </ClientOnly>
 </template>
 
 <style lang="postcss">

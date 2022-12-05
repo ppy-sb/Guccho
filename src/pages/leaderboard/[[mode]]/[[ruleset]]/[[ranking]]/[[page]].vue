@@ -2,11 +2,11 @@
 // follow component | server
 import { reactive, ref } from 'vue'
 import { navigateTo, useAppConfig, useRoute } from '#app'
-import type { EmitType } from '~/components/app/mode-switcher.vue'
 
 import type { Mode, RankingSystem, Ruleset } from '~/types/common'
 import type { ComponentLeaderboardItem } from '~/types/leaderboard'
 import type { IdType } from '~/server/trpc/config'
+import type { SwitcherPropType } from '~/composables/useSwitcher'
 
 const config = useAppConfig()
 
@@ -41,7 +41,7 @@ if (!route.params.mode || !route.params.ruleset || !route.params.ranking) {
   })
 }
 
-const selected = reactive<Required<EmitType['input']>>({
+const selected = reactive<Required<SwitcherPropType>>({
   mode,
   ruleset,
   rankingSystem,
@@ -82,7 +82,7 @@ fetching.value = false
       <app-mode-switcher
         v-model="selected"
         :show-sort="true"
-        @input="(selected: EmitType['input']) => navigateTo({
+        @input="(selected: SwitcherPropType) => navigateTo({
           name: 'leaderboard-mode-ruleset-ranking-page',
           params: {
             mode: selected.mode,

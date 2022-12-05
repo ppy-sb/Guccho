@@ -9,6 +9,7 @@ import type { IdType } from '~/server/trpc/config'
 const route = useRoute()
 const { $client } = useNuxtApp()
 const _switcherContext = useSwitcher()
+const [switcher] = _switcherContext
 const {
   data: user,
   error,
@@ -19,11 +20,10 @@ const {
 const visible = reactive({
   statistics: false,
   bests: false,
-  json: false,
 })
-const [statistics, bests, json] = [ref(null), ref(null), ref(null)]
+const [statistics, bests] = [ref(null), ref(null)]
 onMounted(() => {
-  const stop = Object.entries({ statistics, bests, json }).map(([k, v]) => {
+  const stop = Object.entries({ statistics, bests }).map(([k, v]) => {
     const { stop } = useIntersectionObserver(
       v,
       ([{ isIntersecting }]) => {
@@ -41,16 +41,12 @@ definePageMeta({
   layout: 'without-bg',
 })
 
-const tab = ref<RankingSystem>('ppv2')
-const selectedMode = ref<Mode>('osu')
-const selectedRuleset = ref<Ruleset>('standard')
 const currentStatistic = computed<UserModeRulesetStatistics<IdType, Mode, Ruleset, RankingSystem>>(
-  // @ts-expect-error combinations are handled by switcher.
-  () => user.value?.statistics[selectedMode.value][selectedRuleset.value],
+  // @ts-expect-error 2532
+  () => user.value?.statistics[switcher.mode][switcher.ruleset],
 )
-
 const currentRankingSystem = computed(
-  () => currentStatistic.value?.ranking?.[tab.value],
+  () => currentStatistic.value?.ranking?.[switcher.rankingSystem],
 )
 
 provide('user', user)

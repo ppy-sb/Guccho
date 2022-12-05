@@ -282,10 +282,7 @@ export async function getFullUser<
       email: excludes.email === true ? undefined : user.email,
       profile: excludes.profile === true
         ? undefined
-        : (user.userpageContent && JSON.parse(user.userpageContent)) || {
-            type: 'doc',
-            content: [],
-          },
+        : user.userpageContent,
       secrets: excludes.secrets === false
         ? {
             password: user.pwBcrypt,
@@ -307,7 +304,11 @@ export async function getFullUser<
 
 export async function updateUser(
   user: BaseUser<Id>,
-  input: { email?: string; name?: string },
+  input: {
+    email?: string
+    name?: string
+    userpageContent?: string
+  },
 ) {
   const result = await db.user.update({
     where: {
@@ -316,6 +317,7 @@ export async function updateUser(
     data: {
       email: input.email,
       name: input.name,
+      userpageContent: input.userpageContent,
     },
   })
   return toBaseUser({ user: result })
