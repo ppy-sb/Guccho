@@ -92,20 +92,20 @@ export type ScoreRank<
   scoreHistory?: Record<string, bigint>
 }
 
-export interface UserModeRulesetStatistics<
+export type UserModeRulesetStatistics<
   Id,
   _Mode extends Mode,
   _Ruleset extends Ruleset,
   RS extends RankingSystem,
-> {
+> = {
   // TODO: Achievement
   // achievements: Achievement[]
-  ranking: {
-    [R in RS]: BaseRank<Id, _Mode, _Ruleset, R>
-  }
   playCount: number
   playTime: number
   totalHits: number
+
+} & {
+  [R in RS]: BaseRank<Id, _Mode, _Ruleset, R>
 }
 
 export interface UserHistoricalName {
@@ -163,21 +163,6 @@ export type UserStatistic<
   [M in IncludeMode]: Record<
     IncludeRuleset & AvailableRuleset<M>,
     UserModeRulesetStatistics<Id, M, AvailableRuleset<M>, Ranking>
-  >;
-}
-
-export type ComponentUserStatistic<
-  Id,
-  IncludeMode extends Mode = Mode,
-  IncludeRuleset extends Ruleset = Ruleset,
-  Ranking extends RankingSystem = RankingSystem,
-> = {
-  [M in IncludeMode]: Record<
-    IncludeRuleset & AvailableRuleset<M>,
-    Maybe<
-      UserModeRulesetStatistics<Id, M, AvailableRuleset<M>, Ranking>,
-      'ranking'
-    >
   >;
 }
 

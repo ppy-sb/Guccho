@@ -46,7 +46,7 @@ const currentStatistic = computed<UserModeRulesetStatistics<IdType, Mode, Rulese
   () => user.value?.statistics[switcher.mode][switcher.ruleset],
 )
 const currentRankingSystem = computed(
-  () => currentStatistic.value?.ranking?.[switcher.rankingSystem],
+  () => currentStatistic.value?.[switcher.rankingSystem],
 )
 
 provide('user', user)

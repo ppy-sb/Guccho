@@ -37,42 +37,40 @@ export function createRulesetData<
 }) {
   if (databaseResult == null) {
     return {
-      ranking: {
-        ppv2: {
-          rank: 0,
-          performance: 0,
-        },
-        rankedScore: {
-          rank: 0,
-          score: BigInt(0),
-        },
-        totalScore: {
-          rank: 0,
-          score: BigInt(0),
-        },
+
+      ppv2: {
+        rank: 0,
+        performance: 0,
       },
+      rankedScore: {
+        rank: 0,
+        score: BigInt(0),
+      },
+      totalScore: {
+        rank: 0,
+        score: BigInt(0),
+      },
+
       playCount: 0,
       playTime: 0,
       totalHits: 0,
     } as UserModeRulesetStatistics<Id, _Mode, _Ruleset, _RankingSystem>
   }
   return {
-    ranking: {
-      ppv2: {
-        rank:
+    ppv2: {
+      rank:
           livePPRank?.rank || Number(ranks?.ppv2Rank) || undefined,
-        countryRank:
+      countryRank:
           livePPRank?.countryRank || undefined,
-        performance: databaseResult.pp,
-      },
-      rankedScore: {
-        rank: Number(ranks?.rankedScoreRank) || undefined,
-        score: databaseResult.rankedScore,
-      },
-      totalScore: {
-        rank: Number(ranks?.totalScoreRank) || undefined,
-        score: databaseResult.totalScore,
-      },
+      performance: databaseResult.pp,
+    },
+    rankedScore: {
+      rank: Number(ranks?.rankedScoreRank) || undefined,
+      score: databaseResult.rankedScore,
+    },
+    totalScore: {
+      rank: Number(ranks?.totalScoreRank) || undefined,
+      score: databaseResult.totalScore,
     },
     playCount: databaseResult.plays,
     playTime: databaseResult.playTime,
