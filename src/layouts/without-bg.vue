@@ -9,5 +9,9 @@
 </template>
 
 <style scoped>
-
+@media (prefers-color-scheme: dark) {
+  :root {
+    background-color: dark;
+  }
+}
 </style>

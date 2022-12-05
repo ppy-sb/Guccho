@@ -54,10 +54,9 @@ const handleScroll = () => {
   detached.value = window.pageYOffset > 0
 }
 
-const logout = () => {
-  session.$reset()
-  sessionId.value = ''
-  window.location.reload()
+const logout = async () => {
+  await session.destroy()
+  navigateTo('/')
 }
 onBeforeMount(() => {
   document.addEventListener('scroll', handleScroll)

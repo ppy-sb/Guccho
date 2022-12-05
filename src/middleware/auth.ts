@@ -1,6 +1,6 @@
 import { useSession } from '~/store/session'
 
-export default defineNuxtRouteMiddleware((to, from) => {
+export default defineNuxtRouteMiddleware((to) => {
   const { $state } = useSession()
   if (!$state.userId && to.name !== 'auth-login') {
     const returnValue = {
