@@ -1,13 +1,17 @@
-<script setup>
-import { EditorContent } from '@tiptap/vue-3'
-import { generateHTML } from '@tiptap/html'
+<script setup lang="ts">
+import { EditorContent, generateJSON } from '@tiptap/vue-3'
 import '@/assets/styles/typography.scss'
-const user = inject('user')
+import type { Ref } from 'vue'
+const user = inject<Ref<{
+  profile: string
+}>>('user')
 const clientTakeover = ref(false)
 const { editor, extensions } = useEditor()
 onBeforeMount(async () => {
+  if (!user)
+    return
   const lazy = useEditorLazyLoadHighlight()
-  await Promise.all(lazy(user.value.profile))
+  await Promise.all(lazy(generateJSON(user.value.profile, extensions)))
   editor.value?.setEditable(false)
   editor.value?.commands.setContent(user.value.profile)
   clientTakeover.value = true
@@ -23,9 +27,9 @@ onBeforeMount(async () => {
     />
     <!-- eslint-disable-next-line vue/no-v-html -->
     <div
-      v-else-if="user.profile"
+      v-else-if="user?.profile"
       class="custom-typography ssr"
-      v-html="generateHTML(user.profile, extensions)"
+      v-html="user.profile"
     />
   </div>
 </template>

@@ -65,7 +65,7 @@ export interface BaseRank<
   rankHistory?: Record<string, number>
 
   countryRank?: number
-  // countryRankHistory: number[]
+  countryRankHistory?: number[]
 
   accuracy?: number
 
@@ -189,7 +189,8 @@ export interface UserExtra<
 > {
   statistics: UserStatistic<Id, IncludeMode, IncludeRuleset, Ranking>
 
-  profile: JSONContent
+  profile: string
+  profileJSON?: JSONContent
   relationships: Array<UserRelationship<Id>>
   preferences: UserPreferences
 }

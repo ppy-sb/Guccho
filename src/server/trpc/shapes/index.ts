@@ -8,3 +8,5 @@ export const zodRuleset = z.union([z.literal('standard'), z.literal('relax'), z.
 export const zodPPRankingSystem = z.union([z.literal('ppv2'), z.literal('ppv1')])
 export const zodScoreRankingSystem = z.union([z.literal('rankedScore'), z.literal('totalScore')])
 export const zodRankingSystem = z.union([zodPPRankingSystem, zodScoreRankingSystem])
+
+export const zodTipTapJSONContent = z.record(z.string(), z.any())

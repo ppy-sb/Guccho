@@ -1,4 +1,4 @@
-import { defineAppConfig } from '#app'
+import { defineAppConfig } from 'nuxt/app'
 
 import type { Mode, RankingSystem, Ruleset } from '~/types/common'
 

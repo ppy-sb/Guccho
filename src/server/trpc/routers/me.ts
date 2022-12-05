@@ -1,8 +1,9 @@
 import bcrypt from 'bcryptjs'
 import { TRPCError } from '@trpc/server'
 import z from 'zod'
+import { generateHTML } from '@tiptap/html'
 import { router as _router } from '../trpc'
-import { zodHandle, zodRelationType } from '../shapes'
+import { zodHandle, zodRelationType, zodTipTapJSONContent } from '../shapes'
 import { atLeastOneUserNotExists, oldPasswordMismatch, relationTypeNotFound, userExists, userNotFound } from '../messages'
 import { procedureWithUserLoggedIn as pUser } from '~/server/trpc/middleware/user'
 import {
@@ -16,6 +17,8 @@ import {
 } from '$/client'
 import { calculateMutualRelationships } from '~/server/transforms'
 
+import useEditorExtensions from '~/composables/useEditorExtensions'
+
 export const router = _router({
   fullSecret: pUser.query(async ({ ctx }) => {
     return await getFullUser({ handle: ctx.user.id, excludes: { secrets: false } })
@@ -24,7 +27,9 @@ export const router = _router({
     .input(z.object({
       email: z.string().email().optional(),
       name: z.string().optional(),
+      profile: zodTipTapJSONContent,
     })).mutation(async ({ ctx, input }) => {
+      const update: Partial<typeof input & { userpageContent: string }> = {}
       // TODO: check email(should verified by frontend with another request (not impl'd yet ))
       // if (input.email) {
       //   const user = await getBaseUser({ handle: input.email, includes: { email: true } })
@@ -34,10 +39,22 @@ export const router = _router({
           handle: input.name,
           keys: ['id', 'name', 'safeName'],
         })
-        if (existedUser)
+        if (existedUser?.name === input.name)
           throw new TRPCError({ code: 'PRECONDITION_FAILED', message: userExists })
+
+        update.name = input.name
       }
-      const result = await updateUser(ctx.user, input)
+      if (input.profile) {
+        const renderExtensions = useEditorExtensions()
+        try {
+          const html = generateHTML(input.profile, renderExtensions)
+          update.userpageContent = html
+        }
+        catch (err) {
+          throw new TRPCError({ code: 'PARSE_ERROR', message: 'unable to parse json content' })
+        }
+      }
+      const result = await updateUser(ctx.user, update)
       if (!result)
         throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' })
       ctx.user = result

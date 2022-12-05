@@ -4,12 +4,8 @@ import { useAppConfig } from '#app'
 import { computed, inject } from 'vue'
 
 import { useAdapterConfig } from '#imports'
-import type { RankingSystem } from '~/types/common'
 import type { SwitcherComposableType } from '~/composables/useSwitcher'
-
-const emits = defineEmits<{
-  (e: 'update:modelValue', v: RankingSystem): void
-}>()
+import { RankingSystem } from '~/types/common'
 
 const { supportedRankingSystems } = await useAdapterConfig()
 
@@ -51,7 +47,7 @@ const dropdown = computed(() => filter('dropdown'))
       v-slot="{ select }"
       :model-value="switcher.rankingSystem"
       variant="bordered"
-      @update:model-value="v => setSwitcher({ rankingSystem: v })"
+      @update:model-value="(v: RankingSystem) => setSwitcher({ rankingSystem: v })"
     >
       <t-tab
         disabled
