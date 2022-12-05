@@ -1,10 +1,10 @@
-import { type H3Event, parseCookies } from 'h3'
+import { type H3Event } from 'h3'
 import type { inferAsyncReturnType } from '@trpc/server'
 export function createContext(e: H3Event) {
-  const cookies = parseCookies(e)
+  const session = getCookie(e, 'session')
   return {
     session: {
-      id: cookies.session as string | undefined,
+      id: session as string | undefined,
     },
     h3Event: e,
   }

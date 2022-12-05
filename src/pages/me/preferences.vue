@@ -2,8 +2,7 @@
 import { ref } from 'vue'
 import md5 from 'md5'
 import { navigateTo } from '#app'
-import { generateJSON } from '@tiptap/core'
-import { useSession } from '~/store/session'
+import { generateJSON } from '@tiptap/html'
 
 const changeAvatar = ref<{
   openModal: () => void
@@ -13,9 +12,9 @@ const changePassword = ref<{
 }>()
 
 const { $client } = useNuxtApp()
-const session = useSession()
-if (!session.$state.loggedIn)
-  await navigateTo({ name: 'auth-login', query: { back: '1' } })
+definePageMeta({
+  middleware: ['auth'],
+})
 
 const _user = await $client.me.fullSecret.query()
 
