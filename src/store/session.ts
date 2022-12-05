@@ -1,6 +1,7 @@
 import type { TRPCError } from '@trpc/server'
 import { defineStore } from 'pinia'
 import md5 from 'md5'
+import { session } from './../server/session/index'
 import type { IdType } from '$/config'
 import type { UserFull } from '~/types/user'
 
@@ -30,6 +31,11 @@ export const useSession = defineStore('session', {
         _data: result.user,
       })
       return true
+    },
+    async destroy() {
+      this.$reset()
+      const cookie = useCookie('session')
+      cookie.value = ''
     },
     async retrieve() {
       try {
