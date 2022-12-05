@@ -22,11 +22,11 @@ const { charging, level } = useBattery()
         MEM {{ size(memory.usedJSHeapSize) }} / {{ size(memory.jsHeapSizeLimit) }} ({{ percent(memory.usedJSHeapSize / memory.jsHeapSizeLimit) }}) | Alloc {{ size(memory.totalJSHeapSize) }}|
       </div>
       <div class="flex gap-1 items-center">
-        <FontAwesomeIcon
+        <font-awesome-icon
           v-if="charging"
           icon="fa-solid fa-charging-station"
         />
-        <FontAwesomeIcon
+        <font-awesome-icon
           :icon="
             level >= 0.875
               ? 'fa-solid fa-battery-full'
