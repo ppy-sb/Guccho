@@ -6,21 +6,19 @@ import { forbiddenMode, forbiddenMods } from '~/common/varkaUtils'
 import type { Mode, RankingSystem, Ruleset } from '~/types/common'
 import { useAdapterConfig } from '#imports'
 
-export interface EmitType {
-  input: {
-    mode?: Mode
-    ruleset?: Ruleset
-    rankingSystem?: RankingSystem
-  }
+interface modelValue {
+  mode?: Mode
+  ruleset?: Ruleset
+  rankingSystem?: RankingSystem
 }
 const props = defineProps<{
   showSort?: boolean
-  modelValue?: EmitType['input']
+  modelValue?: modelValue
 }>()
 
 const emit = defineEmits<{
-  (event: 'input', res: EmitType['input']): void
-  (event: 'update:modelValue', res: EmitType['input']): void
+  (event: 'input', res: modelValue): void
+  (event: 'update:modelValue', res: modelValue): void
 }>()
 const config = useAppConfig()
 const { supportedRankingSystems } = await useAdapterConfig()

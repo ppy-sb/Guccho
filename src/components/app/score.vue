@@ -3,7 +3,7 @@ import { faBan } from '@fortawesome/free-solid-svg-icons'
 import type { RankingSystemScore } from '~/types/score'
 import type { Mode, RankingSystem, Ruleset } from '~/types/common'
 import { ppRankingSystem, scoreRankingSystem } from '~/types/common'
-import { createAddCommasFormatter } from '~~/src/common/varkaUtils'
+import { createAddCommasFormatter } from '~/common/varkaUtils'
 import { useFAIconLib } from '#imports'
 const props = withDefaults(
   defineProps<{
