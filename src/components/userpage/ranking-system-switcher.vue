@@ -16,7 +16,7 @@ const { supportedRankingSystems } = await useAdapterConfig()
 const config = useAppConfig()
 const rankingSystem = config.rankingSystem
 
-const [switcher] = inject('switcher') as SwitcherComposableType
+const [switcher, setSwitcher] = inject('switcher') as SwitcherComposableType
 
 interface RankConf {
   userpage: {
@@ -51,7 +51,7 @@ const dropdown = computed(() => filter('dropdown'))
       v-slot="{ select }"
       :model-value="switcher.rankingSystem"
       variant="bordered"
-      @update:model-value="v => emits('update:modelValue', v)"
+      @update:model-value="v => setSwitcher({ rankingSystem: v })"
     >
       <t-tab
         disabled
