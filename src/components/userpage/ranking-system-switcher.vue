@@ -1,17 +1,22 @@
 <script setup lang="ts">
 // follow server
-import { useAppConfig } from 'nuxt/app'
-import type { Ref } from 'vue'
+import { useAppConfig } from '#app'
 import { computed, inject } from 'vue'
 
 import { useAdapterConfig } from '#imports'
+import type { RankingSystem } from '~/types/common'
+import type { SwitcherComposableType } from '~/composables/useSwitcher'
+
+const emits = defineEmits<{
+  (e: 'update:modelValue', v: RankingSystem): void
+}>()
 
 const { supportedRankingSystems } = await useAdapterConfig()
 
 const config = useAppConfig()
 const rankingSystem = config.rankingSystem
 
-const tab = inject<Ref<keyof typeof rankingSystem>>('rankingSystem')
+const [switcher] = inject('switcher') as SwitcherComposableType
 
 interface RankConf {
   userpage: {
@@ -36,7 +41,6 @@ const filter = (showType: 'tab' | 'dropdown') =>
     acc[key] = value
     return acc
   }, {})
-
 const tabs = computed(() => filter('tab'))
 const dropdown = computed(() => filter('dropdown'))
 </script>
@@ -45,8 +49,9 @@ const dropdown = computed(() => filter('dropdown'))
   <section class="w-full pt-4 mx-auto ">
     <t-tabs
       v-slot="{ select }"
-      v-model="tab"
+      :model-value="switcher.rankingSystem"
       variant="bordered"
+      @update:model-value="v => emits('update:modelValue', v)"
     >
       <t-tab
         disabled
@@ -68,7 +73,7 @@ const dropdown = computed(() => filter('dropdown'))
       <div
         v-if="Object.keys(dropdown).length"
         class="tab f-tab tab-bordered"
-        :active="tab && Object.keys(dropdown).includes(tab)"
+        :active="switcher.rankingSystem && Object.keys(dropdown).includes(switcher.rankingSystem)"
       >
         <div class="dropdown dropdown-end dropdown-hover">
           <div tabindex="0">

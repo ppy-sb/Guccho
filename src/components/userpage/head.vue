@@ -1,4 +1,3 @@
-<!-- TODO: turd pile, refactor later -->
 <script setup lang="ts">
 import { faEnvelope, faHeart, faHeartCrack, faUserGroup } from '@fortawesome/free-solid-svg-icons'
 import type { Ref } from 'vue'
@@ -10,13 +9,15 @@ import type { UserFull as User } from '~/types/user'
 import { useSession } from '~/store/session'
 
 import type { IdType } from '~/server/trpc/config'
-const { $client } = useNuxtApp()
+import type { SwitcherComposableType } from '~/composables/useSwitcher'
 
-const changeFriendStateButton = ref(null)
-const session = useSession()
 const { addToLibrary } = useFAIconLib()
 addToLibrary(faUserGroup, faHeartCrack, faHeart, faEnvelope)
 
+const { $client } = useNuxtApp()
+const session = useSession()
+const changeFriendStateButton = ref(null)
+const [switcher, setSwitcher] = inject('switcher') as SwitcherComposableType
 const user = inject<Ref<User<IdType>>>('user')
 const userFriendCount = await $client.user.countRelations.query({
   handle: user?.value.id as IdType,
@@ -27,7 +28,6 @@ const relationWithSessionUser = session.$state.loggedIn
     target: session.$state.userId as IdType,
   })
   : undefined
-
 const isMutualFriend = ref(relationWithSessionUser?.mutual?.includes('mutual-friend') || false)
 const isFriendButtonHovered = useElementHover(changeFriendStateButton)
 const friendButtonContent = ref<string | number>(userFriendCount || 'Add as friend')
@@ -120,7 +120,7 @@ const friendButtonContent = ref<string | number>(userFriendCount || 'Add as frie
           </div>
         </div>
         <div class="div">
-          <app-mode-switcher class="self-end" />
+          <app-mode-switcher :model-value="switcher" class="self-end" @update:model-value="setSwitcher" />
         </div>
       </div>
       <div class="order-3 user-status">
