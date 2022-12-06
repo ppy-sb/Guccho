@@ -58,6 +58,9 @@ let prevSw = {
   ...switcher,
 }
 watch(switcher, (sw) => {
+  // reset bp page
+  page.value = 0
+  // animate
   const animationDirection = <T extends readonly any[]>(val: T[number], prevVal: T[number], array: T) => {
     const [idx, prevIdx] = [array.indexOf(val), array.indexOf(prevVal)]
     if (idx === prevIdx)
@@ -91,12 +94,12 @@ const nextPage = () => {
 
 <template>
   <section class="custom-container">
-    <div class="shadow-lg card bg-kimberly-300/30" :class="[pending && 'pointer-events-none']">
-      <div class="justify-center p-2 card-title">
+    <div class="card" :class="[pending && 'pointer-events-none']">
+      <div class="justify-center p-1 card-title rounded-2xl bg-kimberly-300/30">
         Top Performance
       </div>
 
-      <div class="p-4 card-body">
+      <div class="px-1 py-2 card-body">
         <div v-if="bp" class="relative">
           <transition :name="transition">
             <ul :key="switcher.mode + switcher.ruleset + switcher.rankingSystem + user.id + bp.page">
@@ -111,7 +114,7 @@ const nextPage = () => {
         </div>
       </div>
 
-      <div class="btn-group d-flex w-full">
+      <div class="btn-group d-flex w-full bg-kimberly-300/30 rounded-2xl shadow-xl" style="--rounded-btn: 1rem">
         <button class="btn btn-ghost !shadow-none" @click="prevPage">
           «
         </button>

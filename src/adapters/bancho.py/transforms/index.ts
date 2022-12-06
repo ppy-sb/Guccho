@@ -13,7 +13,7 @@ import type {
   UserRelationship,
   UserSecrets,
 } from '~/types/user'
-import type { UserModeRulesetStatistics } from '~~/src/types/statistics'
+import type { UserModeRulesetStatistics } from '~/types/statistics'
 
 export function createRulesetData<
   Id,
