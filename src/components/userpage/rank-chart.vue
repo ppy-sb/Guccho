@@ -6,7 +6,7 @@ import { Atropos } from 'atropos/vue'
 import { userpageLineChartOptions } from '~/common/shared-chart-options'
 
 import { hsvRaw } from '~/palette'
-import type { BaseRank } from '~/types/user'
+import type { BaseRank } from '~/types/statistics'
 import type { Mode, RankingSystem, Ruleset } from '~/types/common'
 
 // import 'chart.js/auto/auto.js'

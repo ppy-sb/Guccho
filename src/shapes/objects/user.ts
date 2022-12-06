@@ -1,6 +1,7 @@
 import type { RulesetScore } from '~/types/score'
 import type { Mode, RankingSystem, Ruleset } from '~/types/common'
-import type { PPRank, ScoreRank, UserFull, UserModeRulesetStatistics } from '~/types/user'
+import type { UserFull } from '~/types/user'
+import type { PPRank, ScoreRank, UserModeRulesetStatistics } from '~~/src/types/statistics'
 
 export const createISODate = (date: Date = new Date()) => date.toUTCString()
 
@@ -124,6 +125,7 @@ export const createRulesetData = <M extends Mode, Rs extends Ruleset, R extends 
     playCount: 1,
     playTime: 10000,
     totalHits: 1,
+    level: 0.0,
   }) as UserModeRulesetStatistics<unknown, M, Rs, R>
 export const sampleUserWithSecrets: Required<UserFull<unknown>> = {
   id: '',

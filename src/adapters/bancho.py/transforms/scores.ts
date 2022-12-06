@@ -1,6 +1,6 @@
 import type { IdType as Id } from '../config'
-import { createHitCount } from './createHitCount'
-import { toBeatmap } from './toBeatmapSet'
+import { createHitCount } from './create-hit-count'
+import { toBeatmap } from './to-beatmapset'
 import type { AbleToTransformToScores } from './index'
 import type { Beatmap, RankingStatus } from '~/types/beatmap'
 import type { RankingSystemScore, RulesetScore } from '~/types/score'
