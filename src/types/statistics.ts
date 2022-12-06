@@ -1,5 +1,5 @@
 import type { RulesetScore } from './score'
-import type { Mode, RankingSystem, Ruleset } from './common'
+import type { Mode, PPRankingSystem, RankingSystem, Ruleset } from './common'
 
 export interface BaseRank<
   Id,
@@ -51,5 +51,5 @@ export type UserModeRulesetStatistics<
   totalHits: number
   level: number
 } & {
-  [R in RS]: BaseRank<Id, _Mode, _Ruleset, R>;
+  [R in RS]: R extends PPRankingSystem ? PPRank<Id, _Mode, _Ruleset, R> : ScoreRank<Id, _Mode, _Ruleset, R>;
 }

@@ -1,12 +1,12 @@
 import type { RulesetScore } from '~/types/score'
 import type { Mode, RankingSystem, Ruleset } from '~/types/common'
 import type { UserFull } from '~/types/user'
-import type { PPRank, ScoreRank, UserModeRulesetStatistics } from '~~/src/types/statistics'
+import type { PPRank, ScoreRank, UserModeRulesetStatistics } from '~/types/statistics'
 
 export const createISODate = (date: Date = new Date()) => date.toUTCString()
 
-export const createScoreRank = (
-  initial: ScoreRank<unknown, Mode, Ruleset, RankingSystem> = {
+export const createScoreRank = <M extends Mode>(
+  initial: ScoreRank<unknown, M, Ruleset, RankingSystem> = {
     rankHistory: { [createISODate(new Date('2023-01-01'))]: 1 },
     countryRank: 1,
     // countryRankHistory: {[createISODate(new Date('2023-01-01'))]:1},
@@ -19,9 +19,9 @@ export const createScoreRank = (
       [createISODate(new Date('2022-01-01'))]: BigInt(1_000_000_000),
     },
   },
-): ScoreRank<unknown, Mode, Ruleset, RankingSystem> => JSON.parse(
-  JSON.stringify(initial),
-)
+): ScoreRank<unknown, M, Ruleset, RankingSystem> => JSON.parse(
+    JSON.stringify(initial),
+  )
 export const createBeatmapSet = (initial = {
   id: 1234,
   source: 'bancho',
@@ -87,7 +87,7 @@ export const createPPRank = <_Mode extends Mode>(
   },
   mode: _Mode,
 ): PPRank<unknown, _Mode, Ruleset, RankingSystem> => {
-  const copy = JSON.parse(JSON.stringify(initial)) as PPRank<unknown, _Mode, Ruleset, RankingSystem>
+  const copy = JSON.parse(JSON.stringify(initial))
 
   copy.bests = [{
     id: 13n,
@@ -113,11 +113,11 @@ export const createPPRank = <_Mode extends Mode>(
   return copy
 }
 
-export const createRulesetData = <M extends Mode, Rs extends Ruleset, R extends RankingSystem>(
+export const createRulesetData = <M extends Mode>(
   mode: M,
-  ppRankData: PPRank<unknown, M, Rs, RankingSystem> | undefined = undefined,
-  scoreRankData: ScoreRank<unknown, M, Rs, RankingSystem> | undefined = undefined,
-) => ({
+  ppRankData: PPRank<unknown, M, Ruleset, RankingSystem> | undefined = undefined,
+  scoreRankData: ScoreRank<unknown, M, Ruleset, RankingSystem> | undefined = undefined,
+): UserModeRulesetStatistics<unknown, M, Ruleset, RankingSystem> => ({
     ppv2: createPPRank(ppRankData, mode),
     ppv1: createPPRank(ppRankData, mode),
     rankedScore: createScoreRank(scoreRankData),
@@ -126,7 +126,7 @@ export const createRulesetData = <M extends Mode, Rs extends Ruleset, R extends 
     playTime: 10000,
     totalHits: 1,
     level: 0.0,
-  }) as UserModeRulesetStatistics<unknown, M, Rs, R>
+  })
 export const sampleUserWithSecrets: Required<UserFull<unknown>> = {
   id: '',
   ingameId: 9999,
