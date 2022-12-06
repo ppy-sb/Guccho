@@ -1,5 +1,4 @@
 import type { JSONContent } from '@tiptap/core'
-import type { RulesetScore } from './score'
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type {
   AutopilotAvailable,
@@ -12,7 +11,7 @@ import type {
   Scope,
   StandardAvailable,
 } from './common'
-import type { Maybe } from './frontend-common'
+import type { UserModeRulesetStatistics } from './statistics'
 
 export interface UserStatus {
   Offline: 'offline'
@@ -54,59 +53,6 @@ export type UserPrivilegeString =
 
   // misc
   | 'bot'
-
-export interface BaseRank<
-  Id,
-  _Mode extends Mode,
-  _Ruleset extends Ruleset,
-  _RankingSystem extends RankingSystem,
-> {
-  rank?: number
-  rankHistory?: Record<string, number>
-
-  countryRank?: number
-  countryRankHistory?: number[]
-
-  accuracy?: number
-
-  bests?: Array<Omit<RulesetScore<bigint, Id, _Mode, _Ruleset, _RankingSystem>, 'mode' | 'ruleset'>>
-}
-
-export type PPRank<
-  Id,
-  _Mode extends Mode,
-  _Ruleset extends Ruleset,
-  _RankingSystem extends RankingSystem,
-> = BaseRank<Id, _Mode, _Ruleset, _RankingSystem> & {
-  performance: number
-  performanceHistory?: Record<string, number>
-}
-
-export type ScoreRank<
-  Id,
-  _Mode extends Mode,
-  _Ruleset extends Ruleset,
-  _RankingSystem extends RankingSystem,
-> = BaseRank<Id, _Mode, _Ruleset, _RankingSystem> & {
-  score: bigint | null
-  scoreHistory?: Record<string, bigint>
-}
-
-export type UserModeRulesetStatistics<
-  Id,
-  _Mode extends Mode,
-  _Ruleset extends Ruleset,
-  RS extends RankingSystem,
-> = {
-  // TODO: Achievement
-  // achievements: Achievement[]
-  playCount: number
-  playTime: number
-  totalHits: number
-
-} & {
-  [R in RS]: BaseRank<Id, _Mode, _Ruleset, R>
-}
 
 export interface UserHistoricalName {
   from: Date
@@ -179,18 +125,6 @@ export interface UserExtra<
   relationships: Array<UserRelationship<Id>>
   preferences: UserPreferences
 }
-
-export type ComponentUserExtra<
-  Id,
-  IncludeMode extends Mode = Mode,
-  IncludeRuleset extends Ruleset = Ruleset,
-  Ranking extends RankingSystem = RankingSystem,
-> = Maybe<UserExtra<
-  Id,
-  IncludeMode,
-  IncludeRuleset,
-  Ranking
->, 'statistics'>
 
 export type UserFull<
   Id,

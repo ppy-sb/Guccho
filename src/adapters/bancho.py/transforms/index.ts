@@ -2,17 +2,18 @@ import type { Map as DBMap, Score as DBScore, User as DatabaseUser, Relationship
 import type { IdType as Id } from '../config'
 import type { BanchoPyRankedStatus } from '../enums'
 import { BanchoPyPrivilege, toBanchoRankingStatus } from '../enums'
+import { getLevelWithProgress } from './level-calc'
 import type { RankingStatus } from '~/types/beatmap'
 import { RankingStatusEnum } from '~/types/beatmap'
 import type { Mode, RankingSystem, Ruleset, Scope } from '~/types/common'
 import type {
   BaseUser,
-  UserModeRulesetStatistics,
   UserOptional,
   UserPrivilegeString,
   UserRelationship,
   UserSecrets,
 } from '~/types/user'
+import type { UserModeRulesetStatistics } from '~~/src/types/statistics'
 
 export function createRulesetData<
   Id,
@@ -20,7 +21,7 @@ export function createRulesetData<
   _Ruleset extends Ruleset,
   _RankingSystem extends RankingSystem,
 >({
-  databaseResult,
+  databaseResult: dbResult,
   ranks,
   livePPRank,
 }: {
@@ -35,7 +36,7 @@ export function createRulesetData<
     countryRank: number | null
   }
 }) {
-  if (databaseResult == null) {
+  if (dbResult == null) {
     return {
 
       ppv2: {
@@ -54,6 +55,7 @@ export function createRulesetData<
       playCount: 0,
       playTime: 0,
       totalHits: 0,
+      level: 0,
     } as UserModeRulesetStatistics<Id, _Mode, _Ruleset, _RankingSystem>
   }
   return {
@@ -62,19 +64,20 @@ export function createRulesetData<
           livePPRank?.rank || Number(ranks?.ppv2Rank) || undefined,
       countryRank:
           livePPRank?.countryRank || undefined,
-      performance: databaseResult.pp,
+      performance: dbResult.pp,
     },
     rankedScore: {
       rank: Number(ranks?.rankedScoreRank) || undefined,
-      score: databaseResult.rankedScore,
+      score: dbResult.rankedScore,
     },
     totalScore: {
       rank: Number(ranks?.totalScoreRank) || undefined,
-      score: databaseResult.totalScore,
+      score: dbResult.totalScore,
     },
-    playCount: databaseResult.plays,
-    playTime: databaseResult.playTime,
-    totalHits: databaseResult.totalHits,
+    playCount: dbResult.plays,
+    playTime: dbResult.playTime,
+    totalHits: dbResult.totalHits,
+    level: getLevelWithProgress(dbResult.totalScore),
   } as UserModeRulesetStatistics<Id, _Mode, _Ruleset, _RankingSystem>
 }
 

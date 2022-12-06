@@ -4,7 +4,7 @@ import { useIntersectionObserver } from '@vueuse/core'
 import { useRoute } from '#app'
 import type { Mode, RankingSystem, Ruleset } from '~/types/common'
 import { definePageMeta } from '#imports'
-import type { UserModeRulesetStatistics } from '~/types/user'
+import type { UserModeRulesetStatistics } from '~/types/statistics'
 import type { IdType } from '~/server/trpc/config'
 const route = useRoute()
 const { $client } = useNuxtApp()
