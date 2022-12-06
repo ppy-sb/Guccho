@@ -17,13 +17,16 @@ const {
 } = useAsyncData(async () => await $client.user.userpage.query({
   handle: `${route.params.handle}`,
 }))
+
+// directive is not working: yield error when navigate to other page
 const visible = reactive({
+  top: false,
   statistics: false,
   bests: false,
 })
-const [statistics, bests] = [ref(null), ref(null)]
+const [top, statistics, bests] = [ref(null), ref(null), ref(null)]
 onMounted(() => {
-  const stop = Object.entries({ statistics, bests }).map(([k, v]) => {
+  const stop = Object.entries({ top, statistics, bests }).map(([k, v]) => {
     const { stop } = useIntersectionObserver(
       v,
       ([{ isIntersecting }]) => {
@@ -51,11 +54,9 @@ const currentRankingSystem = computed(
 
 provide('user', user)
 provide('switcher', _switcherContext)
-// provide('mode', selectedMode)
-// provide('ruleset', selectedRuleset)
-// provide('rankingSystem', tab)
-provide('selectedStatisticsData', currentStatistic)
-provide('selectedRankingSystemData', currentRankingSystem)
+
+provide('user.statistics', currentStatistic)
+provide('user.currentRankingSystem', currentRankingSystem)
 </script>
 
 <template>
@@ -100,7 +101,7 @@ provide('selectedRankingSystemData', currentRankingSystem)
       v-else-if="user"
       class="flex flex-col pt-16 justify-stretch md:pt-0 bg"
     >
-      <userpage-head />
+      <userpage-head ref="top" />
       <userpage-profile />
       <userpage-ranking-system-switcher class="z-10 !drop-shadow-xl" />
       <userpage-rank-chart v-if="currentRankingSystem" />

@@ -2,7 +2,7 @@
 import type { Mode, RankingSystem, Ruleset } from '~~/src/types/common'
 import type { UserModeRulesetStatistics } from '~~/src/types/statistics'
 
-const data = inject<UserModeRulesetStatistics<unknown, Mode, Ruleset, RankingSystem>>('selectedStatisticsData')
+const data = inject<UserModeRulesetStatistics<unknown, Mode, Ruleset, RankingSystem>>('user.statistics')
 </script>
 
 <template>

@@ -26,7 +26,7 @@ onMounted(() => {
   }, 100)
 })
 // const user = inject('user')
-const currentRankingSystem = inject<BaseRank<unknown, Mode, Ruleset, RankingSystem>>('selectedRankingSystemData')
+const currentRankingSystem = inject<BaseRank<unknown, Mode, Ruleset, RankingSystem>>('user.currentRankingSystem')
 /* mock */
 const globalRank = {
   labels: ['Paris', 'Nîmes', 'Toulon', 'Perpignan', 'Autre'],
