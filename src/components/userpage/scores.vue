@@ -1,16 +1,25 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
-import type { PPRankingSystem, Range } from '~/types/common'
-import { mode, rankingSystem, ruleset } from '~/types/common'
+import type { PPRankingSystem, Range, RankingSystem, ScoreRankingSystem } from '~/types/common'
+import { mode, rankingSystem, ruleset, scoreRankingSystem } from '~/types/common'
 import type { IdType } from '$/config'
 
 import type { BaseUser } from '~/types/user'
 import type { SwitcherComposableType } from '~/composables/useSwitcher'
 const { $client } = useNuxtApp()
-const user = inject('user') as Ref<BaseUser<IdType>>
 const [switcher] = inject('switcher') as SwitcherComposableType
-
+let prevSwitcherState = {
+  ...switcher,
+}
+const stabilizeScoreRank = (rankingSystem: RankingSystem) => {
+  if (scoreRankingSystem.includes(rankingSystem as ScoreRankingSystem))
+    return 'score'
+  return rankingSystem
+}
+const switchBetweenScoreRanks = () => prevSwitcherState.rankingSystem !== switcher.rankingSystem && stabilizeScoreRank(prevSwitcherState.rankingSystem) === stabilizeScoreRank(switcher.rankingSystem)
 const page = ref<Range<0, 10>>(0)
+
+const user = inject('user') as Ref<BaseUser<IdType>>
 const {
   data: bp,
   error,
@@ -42,43 +51,51 @@ const {
     },
   }
 })
-watch([user, switcher, page], async () => {
-  if (!user.value || !switcher.mode || !switcher.ruleset || !switcher.rankingSystem)
+watch([user, page], async () => {
+  if (!user.value)
     return
   await refresh()
 })
 const transition = ref<'left' | 'right'>('left')
-// transition direction
-const arrayMap = {
-  mode,
-  ruleset,
-  rankingSystem,
-} as const
-let prevSw = {
-  ...switcher,
-}
-watch(switcher, (sw) => {
-  // reset bp page
-  page.value = 0
-  // animate
-  const animationDirection = <T extends readonly any[]>(val: T[number], prevVal: T[number], array: T) => {
-    const [idx, prevIdx] = [array.indexOf(val), array.indexOf(prevVal)]
-    if (idx === prevIdx)
+onMounted(() => {
+  // transition direction
+  const arrayMap = {
+    mode,
+    ruleset,
+    rankingSystem,
+  } as const
+  const computeAnimateDirection = () => {
+    const sw = switcher
+    const animationDirection = <T extends readonly any[]>(val: T[number], prevVal: T[number], array: T) => {
+      const [idx, prevIdx] = [array.indexOf(val), array.indexOf(prevVal)]
+      if (idx === prevIdx)
+        return
+      if (idx > prevIdx)
+        return 'right'
+      else
+        return 'left'
+    }
+    for (const [key, switcherState] of Object.entries(sw)) {
+      const [value, previousValue] = [switcherState, prevSwitcherState[key as keyof typeof prevSwitcherState]]
+      const direction = animationDirection(value, previousValue, arrayMap[key as keyof typeof prevSwitcherState])
+      if (!direction)
+        continue
+      transition.value = direction
+      break
+    }
+  }
+  watch(switcher, (sw) => {
+    if (switchBetweenScoreRanks()) {
+      prevSwitcherState = { ...sw }
       return
-    if (idx > prevIdx)
-      return 'right'
-    else
-      return 'left'
-  }
-  for (const [key, value] of Object.entries(sw)) {
-    const [v, pV] = [value, prevSw[key as keyof typeof prevSw]]
-    const direction = animationDirection(v, pV, arrayMap[key as keyof typeof prevSw])
-    if (!direction)
-      continue
-    transition.value = direction
-    break
-  }
-  prevSw = { ...sw }
+    }
+    // reset bp page
+    page.value = 0
+    // animate
+    computeAnimateDirection()
+    refresh()
+    prevSwitcherState = { ...sw }
+  })
 })
 const prevPage = () => {
   transition.value = 'left'
@@ -102,7 +119,7 @@ const nextPage = () => {
       <div class="px-1 py-2 card-body">
         <div v-if="bp" class="relative">
           <transition :name="transition">
-            <ul :key="switcher.mode + switcher.ruleset + switcher.rankingSystem + user.id + bp.page">
+            <ul :key="switcher.mode + switcher.ruleset + stabilizeScoreRank(switcher.rankingSystem) + user.id + bp.page">
               <li v-for="i in bp.result" :key="`bests-${i.id}`" class="score">
                 <app-score :score="i" :mode="bp.lastSwitcherStatus.mode" :ruleset="bp.lastSwitcherStatus.ruleset" :ranking-system="bp.lastSwitcherStatus.rankingSystem" />
               </li>
