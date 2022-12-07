@@ -16,7 +16,7 @@ const { charging, level } = useBattery()
 </script>
 
 <template>
-  <div class="fixed bottom-0 w-full bg-gradient-to-b from-kimberly-100 to-kimberly-150 dark:from-kimberly-800 dark:to-kimberly-900 px-2 border-t-2 border-kimberly-200 font-mono flex items-end gap-1">
+  <div class="bottom-xp-bar">
     <div class="flex flex-col md:flex-row gap-1">
       <div v-if="isSupported && memory">
         MEM {{ size(memory.usedJSHeapSize) }} / {{ size(memory.jsHeapSizeLimit) }} ({{ percent(memory.usedJSHeapSize / memory.jsHeapSizeLimit) }}) | Alloc {{ size(memory.totalJSHeapSize) }}|
@@ -46,6 +46,10 @@ const { charging, level } = useBattery()
   </div>
 </template>
 
-<style scoped>
-
+<style scoped lang="postcss">
+.bottom-xp-bar {
+  @apply fixed bottom-0 w-full px-2 border-t-2 font-mono flex items-end gap-1 opacity-20;
+  @apply bg-gradient-to-b from-kimberly-100 to-kimberly-150 dark:from-kimberly-800 dark:to-kimberly-900 border-kimberly-200;
+  @apply hover:opacity-100
+}
 </style>
