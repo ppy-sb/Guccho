@@ -1,4 +1,3 @@
-import { onBeforeMount, onBeforeUnmount, ref } from 'vue'
 import { Editor as EditorVue } from '@tiptap/vue-3'
 import type { Editor as EditorCore, JSONContent } from '@tiptap/core'
 
@@ -12,10 +11,10 @@ export default (reactiveConfig: {
   const extensions = useEditorExtensions(reactiveConfig)
   const lazy = useEditorLazyLoadHighlight()
   const editor = ref<EditorVue>()
-  let mounted = false
+  let created = false
   const lazyLoadCodeBlock = ({ editor }: { editor: EditorCore }) => {
     const json = editor.getJSON()
-    lazy(json)
+    return Promise.all(lazy(json))
   }
 
   const subscribedBeforeMounted: CallableFunction[] = []
@@ -25,10 +24,11 @@ export default (reactiveConfig: {
     })
     editor.value.on('beforeCreate', lazyLoadCodeBlock)
     editor.value.on('update', lazyLoadCodeBlock)
-    mounted = true
+    created = true
     subscribedBeforeMounted.forEach(subscriber => editor.value?.on('update', ({ editor }) => subscriber(editor.getJSON())))
   })
-  onBeforeUnmount(() => {
+  onUnmounted(() => {
+    editor.value?.commands.clearContent()
     editor.value?.destroy()
   })
 
@@ -36,7 +36,7 @@ export default (reactiveConfig: {
     editor,
     extensions,
     subscribe: (cb: (content: JSONContent) => void) => {
-      if (mounted) {
+      if (created) {
         return editor.value?.on('update', ({ editor }) => {
           cb(editor.getJSON())
         })

@@ -6,6 +6,11 @@ import type { Mode, RankingSystem, Ruleset } from '~/types/common'
 import { definePageMeta } from '#imports'
 import type { UserModeRulesetStatistics } from '~/types/statistics'
 import type { IdType } from '~/server/trpc/config'
+
+definePageMeta({
+  layout: 'without-bg',
+})
+
 const route = useRoute()
 const { $client } = useNuxtApp()
 const _switcherContext = useSwitcher()
@@ -14,9 +19,21 @@ const {
   data: user,
   error,
   refresh,
-} = useAsyncData(async () => await $client.user.userpage.query({
+} = await useAsyncData(async () => await $client.user.userpage.query({
   handle: `${route.params.handle}`,
 }))
+const currentStatistic = computed<UserModeRulesetStatistics<IdType, Mode, Ruleset, RankingSystem>>(
+  // @ts-expect-error switcher has its logic to not spit out wrong combination
+  () => user.value?.statistics[switcher.mode][switcher.ruleset],
+)
+const currentRankingSystem = computed(
+  () => currentStatistic.value?.[switcher.rankingSystem],
+)
+provide('user', user)
+provide('switcher', _switcherContext)
+
+provide('user.statistics', currentStatistic)
+provide('user.currentRankingSystem', currentRankingSystem)
 
 // directive is not working: yield error when navigate to other page
 const visible = reactive({
@@ -27,6 +44,8 @@ const visible = reactive({
 const [top, statistics, bests] = [ref(null), ref(null), ref(null)]
 onMounted(() => {
   const stop = Object.entries({ top, statistics, bests }).map(([k, v]) => {
+    if (!v.value)
+      return undefined
     const { stop } = useIntersectionObserver(
       v,
       ([{ isIntersecting }]) => {
@@ -36,27 +55,9 @@ onMounted(() => {
     return stop
   })
   onBeforeUnmount(() => {
-    stop.forEach(item => item())
+    stop.forEach(item => item?.())
   })
 })
-
-definePageMeta({
-  layout: 'without-bg',
-})
-
-const currentStatistic = computed<UserModeRulesetStatistics<IdType, Mode, Ruleset, RankingSystem>>(
-  // @ts-expect-error switcher has its logic to not spit out wrong combination
-  () => user.value?.statistics[switcher.mode][switcher.ruleset],
-)
-const currentRankingSystem = computed(
-  () => currentStatistic.value?.[switcher.rankingSystem],
-)
-
-provide('user', user)
-provide('switcher', _switcherContext)
-
-provide('user.statistics', currentStatistic)
-provide('user.currentRankingSystem', currentRankingSystem)
 </script>
 
 <template>
@@ -116,10 +117,10 @@ provide('user.currentRankingSystem', currentRankingSystem)
             id="bests"
             ref="bests"
           />
-          <userpage-json-viewer
+          <!-- <userpage-json-viewer
             id="json"
             ref="json"
-          />
+          /> -->
         </div>
         <div class="hidden self-start lg:block lg:col-span-1 sticky top-[100px]">
           <ul class="menu menu-compact drop-shadow-xl">

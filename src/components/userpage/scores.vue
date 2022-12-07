@@ -16,7 +16,7 @@ const {
   error,
   refresh,
   pending,
-} = useAsyncData(async () => {
+} = await useAsyncData(async () => {
   if (!user.value || !switcher.mode || !switcher.ruleset || !switcher.rankingSystem) {
     return {
       result: [],

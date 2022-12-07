@@ -233,6 +233,18 @@ onUnmounted(() => {
               </nuxt-link>
             </li>
             <li>
+              <nuxt-link
+                :to="{
+                  name: 'user-handle',
+                  params: {
+                    handle: session.$state.userId || 0,
+                  },
+                }"
+              >
+                My userpage
+              </nuxt-link>
+            </li>
+            <li>
               <a
                 href="#"
                 @click="logout"
