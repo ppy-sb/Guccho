@@ -4,11 +4,17 @@ import type { Mode, RankingSystem, Ruleset } from '~/types/common'
 import type { UserModeRulesetStatistics } from '~/types/statistics'
 import { createScoreFormatter, toDuration } from '~/common/varkaUtils'
 
-const chars = [' ', ...[...Array(10).keys()].map(String), ',', '.', 'K', 'M', 'B', 'T', '-']
+const chars = [...[...Array(10).keys()].map(String), ',', '.', 'K', 'M', 'B', 'T', '-']
 
 const data = inject('user.statistics') as Ref<UserModeRulesetStatistics<unknown, Mode, Ruleset, RankingSystem>>
 const scoreFmt = createScoreFormatter({ notation: 'compact', maximumFractionDigits: 2 })
-const playTime = computed(() => data?.value ? toDuration(new Date(data.value.playTime * 1000), new Date(0)) : { hours: 0, minutes: 0, seconds: 0 })
+const deferredRender = ref({ ...data.value })
+const playTime = computed(() => deferredRender?.value ? toDuration(new Date(deferredRender.value.playTime * 1000), new Date(0)) : { hours: 0, minutes: 0, seconds: 0 })
+watch(data, () => {
+  setTimeout(() => {
+    deferredRender.value = { ...data.value }
+  }, 0)
+})
 </script>
 
 <template>
@@ -20,7 +26,7 @@ const playTime = computed(() => data?.value ? toDuration(new Date(data.value.pla
     </div> -->
 
     <div class="card-body p-0 md:p-4 xl:p-3">
-      <div class="stats bg-transparent drop-shadow-xl">
+      <div class="stats bg-transparent drop-shadow-xl grid-cols-3">
         <div class="stat">
           <div class="stat-title">
             Level
@@ -28,39 +34,39 @@ const playTime = computed(() => data?.value ? toDuration(new Date(data.value.pla
           <div class="stat-value">
             <roller
               :char-set="chars"
-              :value="(Math.floor(data.level) || 0).toString()"
+              :value="(Math.floor(deferredRender.level) || 0).toString()"
             />
           </div>
           <div class="stat-desc flex flex-col">
             <div class="flex gap-1 items-center">
               >> <roller
                 :char-set="chars"
-                :value="(data.level % 1).toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 }).slice(0, -1)"
+                :value="(deferredRender.level % 1).toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 }).slice(0, -1)"
                 default-value="0"
               /> %
             </div>
             <progress
               class="progress progress-primary"
-              :value="data.level % 1"
+              :value="deferredRender.level % 1"
               max="1"
             />
           </div>
         </div>
-        <div v-if="data.totalScore" class="stat">
+        <div v-if="deferredRender.totalScore" class="stat">
           <div class="stat-title">
             Score
           </div>
           <div class="stat-value">
             <roller
               :char-set="chars"
-              :value="scoreFmt(data.totalScore.score as bigint)"
+              :value="scoreFmt(deferredRender.totalScore.score as bigint)"
               default-value="-"
             />
           </div>
           <div class="stat-desc flex gap-1 items-center">
             <roller
               :char-set="chars"
-              :value="scoreFmt(data.playCount)"
+              :value="scoreFmt(deferredRender.playCount)"
             /> plays
           </div>
         </div>
@@ -71,7 +77,7 @@ const playTime = computed(() => data?.value ? toDuration(new Date(data.value.pla
           <div class="stat-value flex gap-1 items-center">
             <roller
               :char-set="chars"
-              :value="scoreFmt(data.totalHits)"
+              :value="scoreFmt(deferredRender.totalHits)"
               default-value="-"
             />
             TTH

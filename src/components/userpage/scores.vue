@@ -21,7 +21,7 @@ const page = ref<Range<0, 10>>(0)
 
 const user = inject('user') as Ref<BaseUser<IdType>>
 const {
-  data: bp,
+  data: current,
   error,
   refresh,
   pending,
@@ -117,11 +117,11 @@ const nextPage = () => {
       </div>
 
       <div class="px-1 py-2 card-body">
-        <div v-if="bp" class="relative">
+        <div v-if="current" class="relative">
           <transition :name="transition">
-            <ul :key="switcher.mode + switcher.ruleset + stabilizeScoreRank(switcher.rankingSystem) + user.id + bp.page">
-              <li v-for="i in bp.result" :key="`bests-${i.id}`" class="score">
-                <app-score :score="i" :mode="bp.lastSwitcherStatus.mode" :ruleset="bp.lastSwitcherStatus.ruleset" :ranking-system="bp.lastSwitcherStatus.rankingSystem" />
+            <ul :key="current.lastSwitcherStatus.mode + current.lastSwitcherStatus.ruleset + stabilizeScoreRank(current.lastSwitcherStatus.rankingSystem) + user.id + current.page">
+              <li v-for="i in current.result" :key="`bests-${i.id}`" class="score">
+                <app-score :score="i" :mode="current.lastSwitcherStatus.mode" :ruleset="current.lastSwitcherStatus.ruleset" :ranking-system="current.lastSwitcherStatus.rankingSystem" />
               </li>
             </ul>
           </transition>

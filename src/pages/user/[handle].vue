@@ -102,7 +102,7 @@ onMounted(() => {
       v-else-if="user"
       class="flex flex-col pt-16 justify-stretch md:pt-0 bg"
     >
-      <userpage-head ref="top" />
+      <userpage-head id="top" ref="top" />
       <userpage-profile />
       <userpage-ranking-system-switcher class="z-10 !drop-shadow-xl" />
       <userpage-rank-chart v-if="currentRankingSystem" />
