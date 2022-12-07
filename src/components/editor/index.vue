@@ -24,7 +24,7 @@ const editorConf = reactive({
 const { editor, subscribe } = useEditor(editorConf)
 
 onBeforeMount(async () => {
-  const lazy = useEditorLazyLoadHighlight()
+  const { load: lazy } = useEditorLazyLoadHighlight()
   editor.value?.setEditable(props.editable)
   if (props.editable && props.modelValue) {
     await Promise.all(lazy(props.modelValue))

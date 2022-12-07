@@ -9,7 +9,7 @@ export default (reactiveConfig: {
   indent: '  ',
 }) => {
   const extensions = useEditorExtensions(reactiveConfig)
-  const lazy = useEditorLazyLoadHighlight()
+  const { load: lazy } = useEditorLazyLoadHighlight()
   const editor = ref<EditorVue>()
   let created = false
   const lazyLoadCodeBlock = ({ editor }: { editor: EditorCore }) => {
