@@ -4,15 +4,15 @@ import type { Mode, RankingSystem, Ruleset } from '~/types/common'
 import type { UserModeRulesetStatistics } from '~/types/statistics'
 import { createScoreFormatter, toDuration } from '~/common/varkaUtils'
 
-const chars = [' ', ...[...Array(10).keys()].map(String), ',', '.', 'K', 'M', 'B', 'T']
+const chars = [' ', ...[...Array(10).keys()].map(String), ',', '.', 'K', 'M', 'B', 'T', '-']
 
-const data = inject<Ref<UserModeRulesetStatistics<unknown, Mode, Ruleset, RankingSystem>>>('user.statistics')
+const data = inject('user.statistics') as Ref<UserModeRulesetStatistics<unknown, Mode, Ruleset, RankingSystem>>
 const scoreFmt = createScoreFormatter({ notation: 'compact', maximumFractionDigits: 2 })
 const playTime = computed(() => data?.value ? toDuration(new Date(data.value.playTime * 1000), new Date(0)) : { hours: 0, minutes: 0, seconds: 0 })
 </script>
 
 <template>
-  <div v-if="data" class="card">
+  <div class="card">
     <!-- <div class="radial-progress mx-auto text-primary-content bg-primary/20 border-8 border-primary/20" style="--value:70; --size:12rem; --thickness: 0.66em;">
       <div class="text-3xl">
         Lv. 69
@@ -36,6 +36,7 @@ const playTime = computed(() => data?.value ? toDuration(new Date(data.value.pla
               >> <roller
                 :char-set="chars"
                 :value="(data.level % 1).toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 }).slice(0, -1)"
+                default-value="0"
               /> %
             </div>
             <progress
@@ -53,6 +54,7 @@ const playTime = computed(() => data?.value ? toDuration(new Date(data.value.pla
             <roller
               :char-set="chars"
               :value="scoreFmt(data.totalScore.score as bigint)"
+              default-value="-"
             />
           </div>
           <div class="stat-desc flex gap-1 items-center">
@@ -70,6 +72,7 @@ const playTime = computed(() => data?.value ? toDuration(new Date(data.value.pla
             <roller
               :char-set="chars"
               :value="scoreFmt(data.totalHits)"
+              default-value="-"
             />
             TTH
           </div>

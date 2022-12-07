@@ -11,8 +11,10 @@ const { editor, extensions } = useEditor()
 onBeforeMount(async () => {
   if (!user)
     return
-  const lazy = useEditorLazyLoadHighlight()
-  await Promise.all(lazy(generateJSON(user.value.profile, extensions)))
+  if (user.value.profile) {
+    const lazy = useEditorLazyLoadHighlight()
+    await Promise.all(lazy(generateJSON(user.value.profile, extensions)))
+  }
   editor.value?.setEditable(false)
   editor.value?.commands.setContent(user.value.profile)
   clientTakeover.value = true
@@ -21,11 +23,12 @@ onBeforeMount(async () => {
 
 <template>
   <div class="container mx-auto mt-4 custom-container">
-    <EditorContent
-      v-if="clientTakeover"
-      class="custom-typography"
-      :editor="editor"
-    />
+    <client-only v-if="clientTakeover">
+      <EditorContent
+        class="custom-typography"
+        :editor="editor"
+      />
+    </client-only>
     <!-- eslint-disable-next-line vue/no-v-html -->
     <div
       v-else-if="user?.profile"
