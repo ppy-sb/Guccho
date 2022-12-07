@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { generateJSON } from '@tiptap/html'
 import { EditorContent } from '@tiptap/vue-3'
 import '@/assets/styles/typography.scss'
 import type { Ref } from 'vue'
@@ -8,23 +7,33 @@ const user = inject<Ref<{
   profile: string
 }>>('user')
 const clientTakeover = ref(false)
-const { editor, extensions } = useEditor()
-onBeforeMount(async () => {
+const { editor } = useEditor()
+
+onMounted(async () => {
   if (!user)
     return
   if (user.value.profile) {
-    const lazy = useEditorLazyLoadHighlight()
-    await Promise.all(lazy(generateJSON(user.value.profile, extensions)))
+    // preload highlight.js
+    const { public: { hljs } } = useRuntimeConfig()
+    const { importLib } = useEditorLazyLoadHighlight()
+    const profile = user?.value.profile || ''
+    const ssrCodeLanguages = profile.matchAll(/language-(\w+)/gm)
+    for (const _language of ssrCodeLanguages) {
+      const language = `#${_language[1]}` as keyof typeof hljs
+      if (!hljs[language])
+        continue
+      await importLib(hljs[language].slice(1))
+    }
+    editor.value?.setEditable(false)
+    editor.value?.commands.setContent(user.value.profile)
+    clientTakeover.value = true
   }
-  editor.value?.setEditable(false)
-  editor.value?.commands.setContent(user.value.profile)
-  clientTakeover.value = true
 })
 </script>
 
 <template>
   <div class="container mx-auto mt-4 custom-container">
-    <client-only v-if="clientTakeover">
+    <client-only v-if="(clientTakeover && user?.profile)">
       <EditorContent
         class="custom-typography"
         :editor="editor"
