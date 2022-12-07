@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import md5 from 'md5'
 import { navigateTo } from '#app'
 import { generateJSON } from '@tiptap/html'
+import type { JSONContent } from '@tiptap/core'
 
 const changeAvatar = ref<{
   openModal: () => void
@@ -23,7 +24,7 @@ if (_user == null)
 
 const user = ref({ ..._user } as Exclude<typeof _user, null>)
 const unchanged = ref({ ...user.value })
-const profile = ref(generateJSON(user.value.profile as string, useEditorExtensions()))
+const profile = ref<JSONContent>()
 const uploading = ref(0)
 const saveAvatar = () => {
   uploading.value = 1
@@ -71,7 +72,6 @@ const updatePassword = async (closeModal: () => void) => {
 
   const md5HashedPassword = {
     newPassword: md5(changePasswordForm.newPassword),
-    // TODO: allow empty oldPassword?
     oldPassword: md5(changePasswordForm.oldPassword as string),
   }
 
@@ -87,6 +87,11 @@ const updatePassword = async (closeModal: () => void) => {
     changePasswordError.value = error.message
   }
 }
+onBeforeMount(async () => {
+  const { parseAndImportHighlightLibFromHtml } = useEditorLazyLoadHighlight()
+  await parseAndImportHighlightLibFromHtml(user.value.profile)
+  profile.value = generateJSON(user.value.profile as string, useEditorExtensions())
+})
 </script>
 
 <template>
@@ -133,7 +138,6 @@ const updatePassword = async (closeModal: () => void) => {
                 >
               </label>
             </div>
-            <!-- <div im-just-a-spacer /> -->
             <t-button
               class="grow"
               :loading="uploading === 1"
@@ -424,7 +428,8 @@ const updatePassword = async (closeModal: () => void) => {
     <label class="label">
       <span class="pl-3 label-text">profile</span>
     </label>
-    <lazy-editor
+    <editor
+      v-if="profile"
       v-model.lazy="profile"
       class="safari-performance-boost"
     />

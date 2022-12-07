@@ -8,22 +8,12 @@ const user = inject<Ref<{
 }>>('user')
 const clientTakeover = ref(false)
 const { editor } = useEditor()
-
+const { parseAndImportHighlightLibFromHtml } = useEditorLazyLoadHighlight()
 onMounted(async () => {
   if (!user)
     return
   if (user.value.profile) {
-    // preload highlight.js
-    const { public: { hljs } } = useRuntimeConfig()
-    const { importLib } = useEditorLazyLoadHighlight()
-    const profile = user?.value.profile || ''
-    const ssrCodeLanguages = profile.matchAll(/language-(\w+)/gm)
-    for (const _language of ssrCodeLanguages) {
-      const language = `#${_language[1]}` as keyof typeof hljs
-      if (!hljs[language])
-        continue
-      await importLib(hljs[language].slice(1))
-    }
+    parseAndImportHighlightLibFromHtml(user.value.profile)
     editor.value?.setEditable(false)
     editor.value?.commands.setContent(user.value.profile)
     clientTakeover.value = true

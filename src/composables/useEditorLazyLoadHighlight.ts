@@ -32,5 +32,14 @@ export default () => {
       }) || []
     },
     importLib,
+    async parseAndImportHighlightLibFromHtml(html: string) {
+      const ssrCodeLanguages = html.matchAll(/language-(\w+)/gm)
+      for (const _language of ssrCodeLanguages) {
+        const language = `#${_language[1]}` as keyof typeof hljs
+        if (!hljs[language])
+          continue
+        await importLib(hljs[language].slice(1))
+      }
+    },
   }
 }
