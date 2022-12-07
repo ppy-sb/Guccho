@@ -11,7 +11,7 @@ export function createHitCount<_Mode extends Mode>(mode: _Mode, score: DBScore) 
         100: score.n100,
         50: score.n50,
         miss: score.nmiss,
-      }
+      } as RulesetScore<unknown, unknown, _Mode & 'mania', Ruleset, RankingSystem>['hit']
     : {
         300: score.n300,
         geki: score.ngeki,
@@ -19,5 +19,5 @@ export function createHitCount<_Mode extends Mode>(mode: _Mode, score: DBScore) 
         katu: score.nkatu,
         50: score.n50,
         miss: score.nmiss,
-      }) as unknown as RulesetScore<unknown, unknown, _Mode, Ruleset, RankingSystem>['hit']
+      } as RulesetScore<unknown, unknown, _Mode & Exclude<Mode, 'mania'>, Ruleset, RankingSystem>['hit'])
 }

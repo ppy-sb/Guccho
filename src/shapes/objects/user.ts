@@ -65,7 +65,7 @@ export const createHitObject = <_Mode extends Mode>(mode: _Mode) => (mode === 'm
       100: 0,
       50: 0,
       miss: 0,
-    }
+    } as RulesetScore<unknown, unknown, _Mode & 'mania', Ruleset, RankingSystem>['hit']
   : {
       300: 0,
       geki: 0,
@@ -73,7 +73,7 @@ export const createHitObject = <_Mode extends Mode>(mode: _Mode) => (mode === 'm
       katu: 0,
       50: 0,
       miss: 0,
-    }) as unknown as RulesetScore<unknown, unknown, _Mode, Ruleset, RankingSystem>['hit']
+    } as RulesetScore<unknown, unknown, _Mode & Exclude<Mode, 'mania'>, Ruleset, RankingSystem>['hit'])
 
 export const createPPRank = <_Mode extends Mode>(
   initial: PPRank<unknown, _Mode, Ruleset, RankingSystem> = {
@@ -171,8 +171,10 @@ export const sampleUserWithSecrets: Required<UserFull<unknown>> = {
       standard: createRulesetData('mania'),
     },
   },
-  profile: '<h1>what</h1>',
-  profileJSON: {},
+  profile: {
+    html: '<h1>what</h1>',
+    raw: {},
+  },
 }
 
 export const scoped = {

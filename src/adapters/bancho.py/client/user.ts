@@ -261,6 +261,7 @@ export async function getStatisticsOfUser({
 export async function getFullUser<
   Excludes extends Partial<Record<keyof (UserExtra<Id> & UserOptional<Id>), boolean>>,
 >({ handle, excludes }: { handle: string | Id; excludes?: Excludes }) {
+  type Additional = UserExtra<Id, Mode, Ruleset, RankingSystem> & Required<UserOptional<Id>>
   if (!excludes)
     excludes = <Excludes>{ secrets: true }
   const user = await db.user.findFirst(createUserQuery(handle))
@@ -268,38 +269,36 @@ export async function getFullUser<
   if (user == null)
     return null
 
-  const returnValue = Object.assign(
-    toFullUser(user),
-    {
-      statistics:
-        excludes.statistics === true
+  const baseFullUser = await toFullUser(user)
+  const returnValue = {
+    statistics:
+        (excludes.statistics === true
           ? undefined
-          : await getStatisticsOfUser(user),
-      relationships:
-        excludes.relationships === true
+          : await getStatisticsOfUser(user)) as Excludes['statistics'] extends true ? undefined : Additional['statistics'],
+    relationships:
+        (excludes.relationships === true
           ? undefined
-          : await getRelationships(user),
-      email: excludes.email === true ? undefined : user.email,
-      profile: excludes.profile === true
-        ? undefined
-        : user.userpageContent,
-      secrets: excludes.secrets === false
-        ? {
-            password: user.pwBcrypt,
-            apiKey: user.apiKey ?? undefined,
-          }
-        : undefined,
-    } as unknown as Pick<
-    UserExtra<Id, Mode, Ruleset, RankingSystem> & UserOptional<Id>,
-    | (Excludes['statistics'] extends true ? never : 'statistics')
-    | (Excludes['relationships'] extends true ? never : 'relationships')
-    | (Excludes['profile'] extends true ? never : 'profile')
-    | (Excludes['email'] extends true ? never : 'email')
+          : await getRelationships(user)) as Excludes['relationships'] extends true ? never : Additional['relationships'],
+    email: (excludes.email === true ? undefined : user.email) as Excludes['email'] extends true ? never : Additional['email'],
+    profile: (excludes.profile === true
+      ? undefined
+      : {
+          html: user.userpageContent || '',
+          // TODO: alter database to read/save raw
+          raw: {},
+        }) as Excludes['profile'] extends true ? never : Additional['profile'],
+    secrets: (excludes.secrets === false
+      ? {
+          password: user.pwBcrypt,
+          apiKey: user.apiKey ?? undefined,
+        }
+      : undefined) as Excludes['secrets'] extends false ? Additional['secrets'] : never,
+  }
 
-    | (Excludes['secrets'] extends false ? 'secrets' : never)
-    >,
-  )
-  return returnValue
+  return {
+    ...baseFullUser,
+    ...returnValue,
+  }
 }
 
 export async function updateUser(

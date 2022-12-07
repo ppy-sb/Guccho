@@ -1,10 +1,14 @@
 <script setup lang="ts">
+import type { JSONContent } from '@tiptap/vue-3'
 import { EditorContent } from '@tiptap/vue-3'
 import '@/assets/styles/typography.scss'
 import type { Ref } from 'vue'
 const user = inject<Ref<{
   id: unknown
-  profile: string
+  profile: {
+    html: string
+    raw: JSONContent
+  }
 }>>('user')
 const clientTakeover = ref(false)
 const { editor } = useEditor()
@@ -13,9 +17,9 @@ onMounted(async () => {
   if (!user)
     return
   if (user.value.profile) {
-    parseAndImportHighlightLibFromHtml(user.value.profile)
+    parseAndImportHighlightLibFromHtml(user.value.profile.html)
     editor.value?.setEditable(false)
-    editor.value?.commands.setContent(user.value.profile)
+    editor.value?.commands.setContent(user.value.profile.raw)
     clientTakeover.value = true
   }
 })
@@ -33,7 +37,7 @@ onMounted(async () => {
     <div
       v-else-if="user?.profile"
       class="custom-typography ssr"
-      v-html="user.profile"
+      v-html="user.profile.html"
     />
   </div>
 </template>
