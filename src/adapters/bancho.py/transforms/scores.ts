@@ -52,6 +52,7 @@ export function toRankingSystemScore<_RankingSystem extends RankingSystem>({ sco
   rankingSystem: _RankingSystem
   mode: Mode
 }) {
+  type HasBeatmap = typeof score['beatmap'] extends null ? false : Exclude<typeof score['beatmap'], null>
   const result = Object.assign(
     {
       id: score.id,
@@ -78,7 +79,12 @@ export function toRankingSystemScore<_RankingSystem extends RankingSystem>({ sco
           pp: 0,
         },
   ) satisfies RankingSystemScore<
-    bigint, Id, Mode, _RankingSystem & 'ppv2', typeof score['beatmap'] extends null ? 'unknown' : Exclude<typeof score['beatmap'], null>['server'], typeof score['beatmap'] extends null ? 'notFound' : RankingStatus
+    bigint,
+    Id,
+    Mode,
+    _RankingSystem & 'ppv2',
+    HasBeatmap extends null ? 'unknown' : HasBeatmap['server'],
+    HasBeatmap extends null ? 'notFound' : RankingStatus
   >
   return result
 }
