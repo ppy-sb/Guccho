@@ -10,7 +10,7 @@ export function getFlagURL(flag: string) {
   return url
 }
 
-export function createScoreFormatter(opt: Intl.NumberFormatOptions = { notation: 'compact' }) {
+export function createScoreFormatter(opt: Intl.NumberFormatOptions = { notation: 'compact', maximumFractionDigits: 2 }) {
   const fmt = Intl.NumberFormat(undefined, opt)
   return function scoreFormat(score: bigint | number) {
     return fmt.format(score)
