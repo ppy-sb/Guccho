@@ -4,6 +4,7 @@ import { EditorContent } from '@tiptap/vue-3'
 import '@/assets/styles/typography.scss'
 import type { Ref } from 'vue'
 const user = inject<Ref<{
+  id: unknown
   profile: string
 }>>('user')
 const clientTakeover = ref(false)
