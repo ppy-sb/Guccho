@@ -120,8 +120,10 @@ export interface UserExtra<
 > {
   statistics: UserStatistic<Id, IncludeMode, IncludeRuleset, Ranking>
 
-  profile: string
-  profileJSON?: JSONContent
+  profile: {
+    html: string
+    raw: JSONContent
+  } | undefined
   relationships: Array<UserRelationship<Id>>
   preferences: UserPreferences
 }

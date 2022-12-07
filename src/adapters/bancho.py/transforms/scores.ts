@@ -1,10 +1,10 @@
 import type { IdType as Id } from '../config'
+import type { Grade, Mode, RankingSystem, Ruleset } from './../../../types/common'
 import { createHitCount } from './create-hit-count'
 import { toBeatmap } from './to-beatmapset'
 import type { AbleToTransformToScores } from './index'
 import type { Beatmap, RankingStatus } from '~/types/beatmap'
 import type { RankingSystemScore, RulesetScore } from '~/types/score'
-import type { Mode, RankingSystem, Ruleset } from '~/types/common'
 
 export function toScore<_RankingSystem extends RankingSystem>({ score, mode, ruleset }: {
   score: AbleToTransformToScores
@@ -22,7 +22,7 @@ export function toScore<_RankingSystem extends RankingSystem>({ score, mode, rul
     hit: createHitCount(mode, score),
     beatmap: (score.beatmap !== null && toBeatmap(score.beatmap)) || {
       status: 'notFound',
-    } as Beatmap<'unknown', 'notFound', never, never>,
+    } satisfies Beatmap<'unknown', 'notFound', never, never>,
     // TODO: calculate mods
     mods: [],
     ruleset,
@@ -36,7 +36,7 @@ export function toScore<_RankingSystem extends RankingSystem>({ score, mode, rul
     Id,
     Mode,
     Ruleset,
-    _RankingSystem,
+    _RankingSystem & 'ppv2',
     typeof score['beatmap'] extends null
       ? 'unknown'
       : Exclude<typeof score['beatmap'], null>['server'],
@@ -58,11 +58,11 @@ export function toRankingSystemScore<_RankingSystem extends RankingSystem>({ sco
       // mods: score.mods,
       score: BigInt(score.score),
       accuracy: score.acc,
-      grade: score.grade,
+      grade: score.grade as Grade,
       hit: createHitCount(mode, score),
       beatmap: (score.beatmap !== null && toBeatmap(score.beatmap)) || {
         status: 'notFound',
-      } as Beatmap<'unknown', 'notFound', never, never>,
+      } satisfies Beatmap<'unknown', 'notFound', never, never>,
       // TODO: calculate mods
       mods: [],
       playedAt: score.playTime,
@@ -73,8 +73,11 @@ export function toRankingSystemScore<_RankingSystem extends RankingSystem>({ sco
           rank: 1,
           pp: score.pp,
         }
-      : {},
-  ) as RankingSystemScore<
+      : {
+          rank: 0,
+          pp: 0,
+        },
+  ) satisfies RankingSystemScore<
     bigint, Id, Mode, _RankingSystem & 'ppv2', typeof score['beatmap'] extends null ? 'unknown' : Exclude<typeof score['beatmap'], null>['server'], typeof score['beatmap'] extends null ? 'notFound' : RankingStatus
   >
   return result

@@ -88,9 +88,11 @@ const updatePassword = async (closeModal: () => void) => {
   }
 }
 onBeforeMount(async () => {
+  if (!user.value.profile)
+    return
   const { parseAndImportHighlightLibFromHtml } = useEditorLazyLoadHighlight()
-  await parseAndImportHighlightLibFromHtml(user.value.profile)
-  profile.value = generateJSON(user.value.profile as string, useEditorExtensions())
+  await parseAndImportHighlightLibFromHtml(user.value.profile.html)
+  profile.value = generateJSON(user.value.profile.html as string, useEditorExtensions())
 })
 </script>
 
