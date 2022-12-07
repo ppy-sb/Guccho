@@ -27,7 +27,7 @@ export const router = _router({
     .input(z.object({
       email: z.string().email().optional(),
       name: z.string().optional(),
-      profile: zodTipTapJSONContent,
+      profile: zodTipTapJSONContent.optional(),
     })).mutation(async ({ ctx, input }) => {
       const update: Partial<typeof input & { userpageContent: string }> = {}
       // TODO: check email(should verified by frontend with another request (not impl'd yet ))
