@@ -23,7 +23,6 @@ export async function getLeaderboard({
   if (rankingSystem === 'ppv1')
     return []
   const start = page * pageSize
-  const end = start + pageSize
 
   const result = await db.$queryRawUnsafe<
   Array<{
@@ -95,7 +94,7 @@ export async function getLeaderboard({
   FROM ranks
   WHERE _rank > 0
   ORDER BY _rank ASC
-  LIMIT ${start}, ${end}
+  LIMIT ${start}, ${pageSize}
   `)
 
   return result.map(item => ({

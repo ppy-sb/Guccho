@@ -137,6 +137,7 @@ fetching.value = false
               <t-nuxt-link-button
                 v-for="(i) in 5"
                 :key="`pagination-${i}`"
+                class="!shadow-none"
                 :to="{
                   name: 'leaderboard-mode-ruleset-ranking-page',
                   params: {
