@@ -52,13 +52,13 @@ export interface UserDataProvider<Id = unknown> {
   getFullUser<Excludes extends Partial<Record<keyof UserDataProvider.ComposableProperties<Id>, boolean>>>({ handle, excludes }: { handle: string | Id; excludes?: Excludes }):
   Promise<
     (
+      null |
       BaseUser<Id>
-      & {
-        [K in keyof UserDataProvider.ComposableProperties<Id> as Exclude<Excludes[K], 'secrets'> extends true ? never : K]: UserDataProvider.ComposableProperties<Id>[K];
-      }
-      & Excludes['secrets'] extends true ? { secrets: UserDataProvider.ComposableProperties<Id>['secrets'] } : never
+      & ({
+        [K in keyof UserDataProvider.ComposableProperties<Id> as Exclude<Excludes, 'secrets'>[K] extends true ? never : K]: UserDataProvider.ComposableProperties<Id>[K];
+      })
+      & (Excludes['secrets'] extends true ? { secrets: UserDataProvider.ComposableProperties<Id>['secrets'] } : {})
     )
-    | null
   >
 
   updateUser(
@@ -70,7 +70,7 @@ export interface UserDataProvider<Id = unknown> {
     },
   ): Promise<BaseUser<Id>>
 
-  updateUser(
+  updateUserPassword(
     user: BaseUser<Id>,
     newPasswordMD5: string,
   ): Promise<BaseUser<Id>>
