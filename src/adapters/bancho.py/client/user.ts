@@ -6,9 +6,9 @@ import type { IdType as Id } from '../config'
 import { BanchoPyMode, toBanchoPyMode } from '../enums'
 import { createRulesetData, toBaseUser, toFullUser } from '../transforms'
 import { toRankingSystemScores } from '../transforms/scores'
-import type { UserDataProvider } from '../../base/client/user'
+import { UserDataProvider } from '../../base/client/user'
 import { createUserQuery } from './db-queries'
-import { getRelationships } from './user-relations'
+import BanchoPyUserRelationship from './user-relations'
 import { prismaClient } from './index'
 import type { Mode, Range, RankingSystem, Ruleset } from '~/types/common'
 
@@ -39,14 +39,21 @@ async function getLiveRank(id: number, mode: number, country: string) {
   }
 }
 
-export default class BanchoPyUser implements UserDataProvider<Id> {
-  db: PrismaClient = prismaClient
+export default class BanchoPyUser extends UserDataProvider<Id> implements UserDataProvider<Id> {
+  db: PrismaClient
+  relationships: BanchoPyUserRelationship
 
-  async userExists({ handle, keys }: UserDataProvider.OptType<number, Record<never, never>>): Promise<boolean> {
+  constructor({ client }: { client: PrismaClient } = { client: prismaClient }) {
+    super()
+    this.db = client
+    this.relationships = new BanchoPyUserRelationship()
+  }
+
+  async userExists({ handle, keys }: UserDataProvider.OptType<number, Record<never, never>>) {
     return (await this.db.user.count(createUserQuery(handle, keys || ['id', 'name', 'safeName', 'email']))) > 0
   }
 
-  async getBaseUser<Includes extends Partial<Record<keyof UserOptional<number>, boolean>>>(opt: UserDataProvider.OptType<Id, Includes>): Promise<BaseUser<number> | null> {
+  async getBaseUser<Includes extends Partial<Record<keyof UserOptional<number>, boolean>>>(opt: UserDataProvider.OptType<Id, Includes>) {
     const { handle, includes, keys } = opt
     const user = await this.db.user.findFirst(
       createUserQuery(handle, keys || ['id', 'name', 'safeName', 'email']),
@@ -57,7 +64,7 @@ export default class BanchoPyUser implements UserDataProvider<Id> {
     return toBaseUser({ user, includes })
   }
 
-  async getBaseUsers<Includes extends Partial<Record<keyof UserOptional<Id>, boolean>>>(opt: { handle: string | number; includes?: Includes | undefined }): Promise<BaseUser<number>[]> {
+  async getBaseUsers<Includes extends Partial<Record<keyof UserOptional<Id>, boolean>>>(opt: { handle: string | number; includes?: Includes | undefined }) {
     const { handle, includes } = opt
     const users = await this.db.user.findMany(createUserQuery(handle))
     return users.map(user => toBaseUser({ user, includes }))
@@ -265,7 +272,7 @@ export default class BanchoPyUser implements UserDataProvider<Id> {
       relationships:
         (excludes.relationships === true
           ? undefined as never
-          : await getRelationships(user)),
+          : await this.relationships.getRelationships({ user })),
       email: (excludes.email === true ? undefined as never : user.email),
       profile: (excludes.profile === true
         ? undefined as never

@@ -6,22 +6,17 @@ import { router as _router } from '../trpc'
 import { zodHandle, zodRelationType, zodTipTapJSONContent } from '../shapes'
 import { atLeastOneUserNotExists, oldPasswordMismatch, relationTypeNotFound, userExists, userNotFound } from '../messages'
 import { procedureWithUserLoggedIn as pUser } from '~/server/trpc/middleware/user'
-import {
-  getBaseUser,
-  getFullUser,
-  getOneRelationShip,
-  getRelationships,
-  removeRelationship,
-  updateUser,
-  updateUserPassword,
-} from '$/client'
+import UserDataProvider from '$/client/user'
+import UserRelationshipDataProvider from '$/client/user-relations'
 import { calculateMutualRelationships } from '~/server/transforms'
 
 import useEditorExtensions from '~/composables/useEditorExtensions'
 
+const userProvider = new UserDataProvider()
+const relationProvider = new UserRelationshipDataProvider()
 export const router = _router({
   fullSecret: pUser.query(async ({ ctx }) => {
-    return await getFullUser({ handle: ctx.user.id, excludes: { secrets: false } })
+    return await userProvider.getFullUser({ handle: ctx.user.id, excludes: { secrets: false } })
   }),
   updatePreferences: pUser
     .input(z.object({
@@ -32,10 +27,10 @@ export const router = _router({
       const update: Partial<typeof input & { userpageContent: string }> = {}
       // TODO: check email(should verified by frontend with another request (not impl'd yet ))
       // if (input.email) {
-      //   const user = await getBaseUser({ handle: input.email, includes: { email: true } })
+      //   const user = await provider.getBaseUser({ handle: input.email, includes: { email: true } })
       // }
       if (input.name) {
-        const existedUser = await getBaseUser({
+        const existedUser = await userProvider.getBaseUser({
           handle: input.name,
           keys: ['id', 'name', 'safeName'],
         })
@@ -54,7 +49,7 @@ export const router = _router({
           throw new TRPCError({ code: 'PARSE_ERROR', message: 'unable to parse json content' })
         }
       }
-      const result = await updateUser(ctx.user, update)
+      const result = await userProvider.updateUser(ctx.user, update)
       if (!result)
         throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' })
       ctx.user = result
@@ -64,13 +59,13 @@ export const router = _router({
     oldPassword: z.string(),
     newPassword: z.string(),
   })).mutation(async ({ ctx, input }) => {
-    const userWithPassword = await getBaseUser({ handle: ctx.user.id, includes: { secrets: true } })
+    const userWithPassword = await userProvider.getBaseUser({ handle: ctx.user.id, includes: { secrets: true } })
     if (userWithPassword == null)
       throw new TRPCError({ code: 'NOT_FOUND', message: userNotFound })
     if (!await bcrypt.compare(input.oldPassword, userWithPassword.secrets.password))
       throw new TRPCError({ code: 'UNAUTHORIZED', message: oldPasswordMismatch })
 
-    return await updateUserPassword(userWithPassword, input.newPassword)
+    return await userProvider.updateUserPassword(userWithPassword, input.newPassword)
   }),
   relation: pUser
     .input(
@@ -81,14 +76,14 @@ export const router = _router({
     .query(async ({ input: { target }, ctx }) => {
       const [fromUser, targetUser] = await Promise.all([
         ctx.user,
-        getBaseUser({ handle: target }),
+        userProvider.getBaseUser({ handle: target }),
       ])
       if (!fromUser || (targetUser == null))
         return
 
       const [fromRelationship, targetRelationship] = await Promise.all([
-        getOneRelationShip(fromUser, targetUser),
-        getOneRelationShip(targetUser, fromUser),
+        relationProvider.getOneRelationship(fromUser, targetUser),
+        relationProvider.getOneRelationship(targetUser, fromUser),
       ])
       return {
         from: [fromRelationship],
@@ -103,7 +98,7 @@ export const router = _router({
       }
     }),
   relations: pUser.query(async ({ ctx }) => {
-    return await getRelationships(ctx.user)
+    return await relationProvider.getRelationships({ user: ctx.user })
   }),
   removeOneRelation: pUser
     .input(
@@ -115,7 +110,7 @@ export const router = _router({
     .query(async ({ input, ctx }) => {
       const [fromUser, targetUser] = await Promise.all([
         ctx.user,
-        getBaseUser({ handle: input.target }),
+        userProvider.getBaseUser({ handle: input.target }),
       ])
       if (!fromUser || (targetUser == null)) {
         throw new TRPCError({
@@ -124,7 +119,7 @@ export const router = _router({
         })
       }
       try {
-        await removeRelationship(fromUser, targetUser, input.type)
+        await relationProvider.removeOneRelationship({ fromUser, targetUser, type: input.type })
         return true
       }
       catch (err: any) {

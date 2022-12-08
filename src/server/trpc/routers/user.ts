@@ -6,13 +6,15 @@ import { userNotFound } from '../messages'
 import { supportedRankingSystems } from '../config'
 import type { Range } from '~/types/common'
 import { followUserPreferences } from '~/server/transforms'
-import { countRelationship, getBaseUser, getBests, getFullUser } from '$/client'
+import { UserDataProvider, UserRelationshipDataProvider } from '$/client'
+
+const [userProvider, userRelationshipProvider] = [new UserDataProvider(), new UserRelationshipDataProvider()]
 
 export const router = _router({
   userpage: p.input(z.object({
     handle: zodHandle,
   })).query(async ({ input: { handle } }) => {
-    const user = await getFullUser({ handle, excludes: { relationships: true, secrets: true } })
+    const user = await userProvider.getFullUser({ handle, excludes: { relationships: true, secrets: true } })
     if (user == null) {
       throw new TRPCError({
         code: 'NOT_FOUND',
@@ -24,7 +26,7 @@ export const router = _router({
   full: p.input(z.object({
     handle: zodHandle,
   })).query(async ({ input: { handle } }) => {
-    const user = await getFullUser({ handle, excludes: { email: true } })
+    const user = await userProvider.getFullUser({ handle, excludes: { email: true } })
     if (user == null) {
       throw new TRPCError({
         code: 'NOT_FOUND',
@@ -40,14 +42,14 @@ export const router = _router({
     rankingSystem: zodRankingSystem,
     page: z.number().gte(0).lt(10),
   })).query(async ({ input }) => {
-    const user = await getBaseUser({ handle: input.handle })
+    const user = await userProvider.getBaseUser({ handle: input.handle })
     if (!user)
       throw new TRPCError({ code: 'NOT_FOUND', message: userNotFound })
 
     if (!supportedRankingSystems.includes(input.rankingSystem))
       throw new TRPCError({ code: 'PRECONDITION_FAILED', message: 'ranking system not supported' })
 
-    const returnValue = await getBests({
+    const returnValue = await userProvider.getBests({
       id: user.id,
       mode: input.mode,
       ruleset: input.ruleset,
@@ -62,17 +64,17 @@ export const router = _router({
   base: p.input(z.object({
     handle: zodHandle,
   })).query(async ({ input }) => {
-    const user = await getBaseUser({ handle: input.handle })
+    const user = await userProvider.getBaseUser({ handle: input.handle })
     return user
   }),
   countRelations: p.input(z.object({
     handle: zodHandle,
     type: zodRelationType,
   })).query(async ({ input: { handle, type } }) => {
-    const user = await getBaseUser({ handle })
+    const user = await userProvider.getBaseUser({ handle })
     if (user == null)
       return
-    const count = await countRelationship(user, type)
+    const count = await userRelationshipProvider.countRelationship({ user, type })
     return count
   }),
 })

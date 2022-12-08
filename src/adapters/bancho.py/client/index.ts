@@ -3,6 +3,6 @@ import {
 } from '@prisma/client'
 
 export const prismaClient = new PrismaClient()
-export * from './user'
-export * from './user-relations'
-export * from './leaderboard'
+export { default as UserDataProvider } from './user'
+export { default as UserRelationshipDataProvider } from './user-relations'
+export { default as LeaderboardDataProvider } from './leaderboard'

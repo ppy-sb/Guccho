@@ -1,69 +1,78 @@
+import type { PrismaClient } from '@prisma/client'
 import type { BanchoPyMode } from '../enums'
 import { toBanchoPyMode } from '../enums'
-import { prismaClient as db } from './index'
+import { LeaderboardDataProvider } from '../../base/client/leaderboard'
+import { prismaClient } from './index'
 import type { Mode, Range, RankingSystem, Ruleset } from '~/types/common'
 
 import type {
   IdType,
 } from '$/config'
 
-export async function getLeaderboard({
-  mode,
-  ruleset,
-  rankingSystem,
-  page,
-  pageSize,
-}: {
-  mode: Mode
-  ruleset: Ruleset
-  rankingSystem: RankingSystem
-  page: Range<0, 10>
-  pageSize: Range<20, 51>
-}) {
-  if (rankingSystem === 'ppv1')
-    return []
-  const start = page * pageSize
+export default class BanchoPyLeaderboard extends LeaderboardDataProvider<IdType> implements LeaderboardDataProvider<IdType> {
+  db: PrismaClient
+  constructor({ client }: { client: PrismaClient } = { client: prismaClient }) {
+    super()
+    this.db = client
+  }
 
-  const result = await db.$queryRawUnsafe<
-  Array<{
-    id: IdType
-    name: string
-    safeName: string
-    flag: string
+  async getLeaderboard({
+    mode,
+    ruleset,
+    rankingSystem,
+    page,
+    pageSize,
+  }: {
+    mode: Mode
+    ruleset: Ruleset
+    rankingSystem: RankingSystem
+    page: Range<0, 10>
+    pageSize: Range<20, 51>
+  }) {
+    if (rankingSystem === 'ppv1')
+      return []
+    const start = page * pageSize
 
-    mode: BanchoPyMode
-    _rank: bigint
-    accuracy: number
-    totalScore: bigint
-    rankedScore: bigint
-    ppv2: number
-    playCount: number
-  }>
-  >(/* sql */`
+    const result = await prismaClient.$queryRawUnsafe<
+      Array<{
+        id: IdType
+        name: string
+        safeName: string
+        flag: string
+
+        mode: BanchoPyMode
+        _rank: bigint
+        accuracy: number
+        totalScore: bigint
+        rankedScore: bigint
+        ppv2: number
+        playCount: number
+      }>
+    >(/* sql */`
   WITH ranks AS (
     SELECT
     ${rankingSystem === 'ppv2'
-      ? /* sql */ `
+        ? /* sql */ `
       RANK () OVER (
         PARTITION BY stat.mode
         ORDER BY stat.pp desc
       ) as _rank,`
-      : ''
-    }${rankingSystem === 'totalScore'
-      ? /* sql */ `
+        : ''
+      }${rankingSystem === 'totalScore'
+        ? /* sql */ `
       RANK () OVER (
         PARTITION BY stat.mode
         ORDER BY stat.tscore desc
       ) as _rank,`
-      : ''
-    }${rankingSystem === 'rankedScore'
-      ? /* sql */ `
+        : ''
+      }${rankingSystem === 'rankedScore'
+        ? /* sql */ `
       RANK () OVER (
         PARTITION BY stat.mode
         ORDER BY stat.rscore desc
       ) as _rank,`
-      : ''
-    }
+        : ''
+      }
       user.id,
       user.name,
       user.safe_name as safeName,
@@ -97,22 +106,23 @@ export async function getLeaderboard({
   LIMIT ${start}, ${pageSize}
   `)
 
-  return result.map(item => ({
-    user: {
-      id: item.id,
-      name: item.name,
-      safeName: item.safeName,
-      flag: item.flag,
-      avatarUrl: `https://a.ppy.sb/${item.id}`,
+    return result.map(item => ({
+      user: {
+        id: item.id,
+        name: item.name,
+        safeName: item.safeName,
+        flag: item.flag,
+        avatarUrl: `https://a.ppy.sb/${item.id}`,
 
-      inThisLeaderboard: {
-        ppv2: item.ppv2,
-        accuracy: item.accuracy,
-        totalScore: item.totalScore,
-        rankedScore: item.rankedScore,
-        playCount: item.playCount,
+        inThisLeaderboard: {
+          ppv2: item.ppv2,
+          accuracy: item.accuracy,
+          totalScore: item.totalScore,
+          rankedScore: item.rankedScore,
+          playCount: item.playCount,
+        },
       },
-    },
-    rank: item._rank,
-  }))
+      rank: item._rank,
+    }))
+  }
 }
