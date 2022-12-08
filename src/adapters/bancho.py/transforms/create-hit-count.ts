@@ -2,7 +2,7 @@ import type { Score as DBScore } from '@prisma/client'
 import type { Mode, RankingSystem, Ruleset } from '~/types/common'
 import type { RulesetScore } from '~/types/score'
 
-export function createHitCount<_Mode extends Mode>(mode: _Mode, score: DBScore) {
+export function createHitCount<_Mode extends Mode>(mode: _Mode, score: DBScore): RulesetScore<unknown, unknown, _Mode, Ruleset, RankingSystem>['hit'] {
   return (mode === 'mania'
     ? {
         max: score.ngeki,
