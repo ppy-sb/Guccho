@@ -4,8 +4,10 @@ import { router as _router, publicProcedure } from '../trpc'
 import type { IdType } from '../config'
 import { zodMode, zodRankingSystem, zodRuleset } from '~/server/trpc/shapes'
 import type { ComponentLeaderboardItem } from '~/types/leaderboard'
-import { getLeaderboard } from '$/client/leaderboard'
+import Leaderboard from '$/client/leaderboard'
 import type { Range } from '~/types/common'
+
+const provider = new Leaderboard()
 export const router = _router({
   fetch: publicProcedure
     .input(
@@ -19,7 +21,7 @@ export const router = _router({
     )
     .query(
       async ({ input: { mode, ruleset, rankingSystem, page, pageSize } }) =>
-        (await getLeaderboard({
+        (await provider.getLeaderboard({
           mode,
           ruleset,
           rankingSystem,

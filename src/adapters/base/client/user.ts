@@ -1,4 +1,4 @@
-import type { Mode, Range, RankingSystem, Ruleset } from '~/types/common'
+import type { Awaitable, Mode, Range, RankingSystem, Ruleset } from '~/types/common'
 import type { BaseUser, UserExtra, UserOptional, UserStatistic } from '~~/src/types/user'
 import type { RankingSystemScore } from '~~/src/types/score'
 
@@ -16,11 +16,11 @@ export namespace UserDataProvider {
     keys?: Array<['id', 'name', 'safeName', 'email'][number]>
   }
 }
-export interface UserDataProvider<Id = unknown> {
-  userExists({ handle, keys }: UserDataProvider.OptType<Id>): Promise<boolean>
-  getBaseUser<Includes extends Partial<Record<keyof UserOptional<number>, boolean>>>(opt: UserDataProvider.OptType<Id, Includes>): Promise<BaseUser<Id> | null>
-  getBaseUsers<Includes extends Partial<Record<keyof UserOptional<Id>, boolean>>>(opt: { handle: string | Id; includes?: Includes }): Promise<BaseUser<Id>[]>
-  getBests<_Mode extends Mode, _Ruleset extends Ruleset, _RankingSystem extends RankingSystem>({
+export abstract class UserDataProvider<Id> {
+  abstract userExists({ handle, keys }: UserDataProvider.OptType<Id>): Awaitable<boolean>
+  abstract getBaseUser<Includes extends Partial<Record<keyof UserOptional<Id>, boolean>>>(opt: UserDataProvider.OptType<Id, Includes>): Awaitable<BaseUser<Id> | null>
+  abstract getBaseUsers<Includes extends Partial<Record<keyof UserOptional<Id>, boolean>>>(opt: { handle: string | Id; includes?: Includes }): Awaitable<BaseUser<Id>[]>
+  abstract getBests<_Mode extends Mode, _Ruleset extends Ruleset, _RankingSystem extends RankingSystem>({
     id,
     mode,
     ruleset,
@@ -34,23 +34,23 @@ export interface UserDataProvider<Id = unknown> {
     rankingSystem: _RankingSystem
     page: Range<0, 10>
     perPage: Range<1, 11>
-  }): Promise<RankingSystemScore<
+  }): Awaitable<RankingSystemScore<
     bigint,
     Id,
     _Mode,
     _RankingSystem & 'ppv2'
   >[]>
 
-  getStatisticsOfUser({
+  abstract getStatisticsOfUser({
     id,
     country,
   }: {
     id: Id
     country: string
-  }): Promise<UserStatistic<Id>>
+  }): Awaitable<UserStatistic<Id>>
 
-  getFullUser<Excludes extends Partial<Record<keyof UserDataProvider.ComposableProperties<Id>, boolean>>>({ handle, excludes }: { handle: string | Id; excludes?: Excludes }):
-  Promise<
+  abstract getFullUser<Excludes extends Partial<Record<keyof UserDataProvider.ComposableProperties<Id>, boolean>>>({ handle, excludes }: { handle: string | Id; excludes?: Excludes }):
+  Awaitable<
     (
       null |
       BaseUser<Id>
@@ -61,17 +61,17 @@ export interface UserDataProvider<Id = unknown> {
     )
   >
 
-  updateUser(
+  abstract updateUser(
     user: BaseUser<Id>,
     input: {
       email?: string
       name?: string
       userpageContent?: string
     },
-  ): Promise<BaseUser<Id>>
+  ): Awaitable<BaseUser<Id>>
 
-  updateUserPassword(
+  abstract updateUserPassword(
     user: BaseUser<Id>,
     newPasswordMD5: string,
-  ): Promise<BaseUser<Id>>
+  ): Awaitable<BaseUser<Id>>
 }

@@ -39,7 +39,7 @@ export type Grade = typeof grade[number]
 // export type OmitNever<T> = {
 //   [K in keyof T as T[K] extends never ? never : K]: T[K];
 // }
-export type Awaitable<T> = T | Promise<T>
+export type Awaitable<T> = T | PromiseLike<T>
 
 // export type APIfy<
 //   T extends Record<string, any>,
