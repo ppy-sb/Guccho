@@ -14,7 +14,6 @@ import type { Mode, Range, RankingSystem, Ruleset } from '~/types/common'
 
 import type {
   BaseUser,
-  UserExtra,
   UserOptional,
   UserStatistic,
 } from '~/types/user'
@@ -245,8 +244,7 @@ export default class BanchoPyUser implements UserDataProvider<Id> {
     return statistics
   }
 
-  async getFullUser<Excludes extends Partial<Record<keyof (UserExtra<Id> & UserOptional<Id>), boolean>>>({ handle, excludes }: { handle: string | Id; excludes?: Excludes }) {
-    type Additional = UserExtra<Id, Mode, Ruleset, RankingSystem> & Required<UserOptional<Id>>
+  async getFullUser<Excludes extends Partial<Record<keyof UserDataProvider.ComposableProperties<Id>, boolean>>>({ handle, excludes }: { handle: string | Id; excludes?: Excludes }) {
     if (!excludes)
       excludes = <Excludes>{ secrets: true }
     const user = await this.db.user.findFirst(createUserQuery(handle))
@@ -254,35 +252,34 @@ export default class BanchoPyUser implements UserDataProvider<Id> {
     if (user == null)
       return null
 
-    const baseFullUser = await toFullUser(user)
-    const returnValue = {
+    const fullUser = await toFullUser(user)
+
+    return {
+      ...fullUser,
+      reachable: false,
+      status: 'offline' as const,
       statistics:
         (excludes.statistics === true
-          ? undefined
-          : await this.getStatisticsOfUser(user)) as Excludes['statistics'] extends true ? undefined : Additional['statistics'],
+          ? undefined as never
+          : await this.getStatisticsOfUser(user)),
       relationships:
         (excludes.relationships === true
-          ? undefined
-          : await getRelationships(user)) as Excludes['relationships'] extends true ? never : Additional['relationships'],
-      email: (excludes.email === true ? undefined : user.email) as Excludes['email'] extends true ? never : Additional['email'],
+          ? undefined as never
+          : await getRelationships(user)),
+      email: (excludes.email === true ? undefined as never : user.email),
       profile: (excludes.profile === true
-        ? undefined
+        ? undefined as never
         : {
             html: user.userpageContent || '',
             // TODO: alter database to read/save raw
             raw: {},
-          }) as Excludes['profile'] extends true ? never : Additional['profile'],
+          }),
       secrets: (excludes.secrets === false
         ? {
             password: user.pwBcrypt,
             apiKey: user.apiKey ?? undefined,
           }
-        : undefined) as Excludes['secrets'] extends false ? Additional['secrets'] : never,
-    }
-
-    return {
-      ...baseFullUser,
-      ...returnValue,
+        : undefined as never),
     }
   }
 
