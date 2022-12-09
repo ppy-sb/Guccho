@@ -1,6 +1,6 @@
 import { forbiddenMode, forbiddenMods } from '../common/varkaUtils'
-import type { Mode, RankingSystem, Ruleset } from './../types/common'
 import useAdapterConfig from './useAdapterConfig'
+import type { Mode, RankingSystem, Ruleset } from '~/types/common'
 
 export interface SwitcherPropType {
   mode?: Mode
