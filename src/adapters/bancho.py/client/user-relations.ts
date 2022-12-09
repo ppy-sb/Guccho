@@ -86,6 +86,25 @@ export default class BanchoPyUserRelationship extends UserRelationshipDataProvid
     })
   }
 
+  async createOneRelationship({ fromUser, targetUser, type }: { fromUser: BaseUser<Id>; targetUser: BaseUser<Id>; type: Relationship }) {
+  // bancho.py only allows one relationshipType per direction per one user pair
+  // so cannot delete with where condition due to prisma not allowing it.
+  // So to make sure that we are removing right relationship, we have to compare
+  // relation type against input before remove it.
+    const relationship = await this.getOneRelationship(fromUser, targetUser)
+
+    if (relationship)
+      throw new Error('has-relationship')
+
+    await prismaClient.relationship.create({
+      data: {
+        fromUserId: fromUser.id,
+        toUserId: targetUser.id,
+        type,
+      },
+    })
+  }
+
   // TODO: handle the situation where toUser could be null.
   async countRelationship({ user, type }: { user: BaseUser<Id>; type: Relationship }) {
     return await prismaClient.relationship.count({

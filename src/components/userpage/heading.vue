@@ -19,18 +19,36 @@ const session = useSession()
 const changeFriendStateButton = ref(null)
 const [switcher, setSwitcher] = inject('switcher') as SwitcherComposableType
 const user = inject<Ref<User<IdType>>>('user')
-const userFriendCount = await $client.user.countRelations.query({
-  handle: user?.value.id as IdType,
-  type: 'friend',
-})
-const relationWithSessionUser = session.$state.loggedIn
-  ? await $client.me.relation.query({
-    target: session.$state.userId as IdType,
+const {
+  data,
+  refresh,
+} = await useAsyncData(async () => {
+  const relationWithMe = (session.loggedIn && $client.me.relation.query({
+    target: user?.value.id as IdType,
+  })) || undefined
+  const friendCount = $client.user.countRelations.query({
+    handle: user?.value.id as IdType,
+    type: 'friend',
   })
-  : undefined
-const isMutualFriend = ref(relationWithSessionUser?.mutual?.includes('mutual-friend') || false)
+  return {
+    relationWithMe: await relationWithMe,
+    friendCount: await friendCount,
+  }
+})
+const isMutualFriend = computed(() => data.value?.relationWithMe?.mutual?.includes('mutual-friend') || false)
 const isFriendButtonHovered = useElementHover(changeFriendStateButton)
-const friendButtonContent = ref<string | number>(userFriendCount || 'Add as friend')
+const friendButtonContent = computed(() => data.value?.friendCount || 'Add as friend')
+const toggleFriend = async () => {
+  if (!session.loggedIn)
+    return
+  const input = { type: 'friend', target: user?.value.id as IdType } as const
+  if (isMutualFriend.value)
+    await $client.me.removeOneRelation.mutate(input)
+  else
+    await $client.me.addOneRelation.mutate(input)
+
+  refresh()
+}
 </script>
 
 <template>
@@ -57,6 +75,7 @@ const friendButtonContent = ref<string | number>(userFriendCount || 'Add as frie
           size="sm"
           :variant="isMutualFriend ? 'primary' : 'neutral'"
           class="gap-1"
+          @click="toggleFriend"
         >
           <font-awesome-icon
             :icon="isFriendButtonHovered && isMutualFriend ? 'fas fa-heart-crack' : 'fas fa-heart'"
