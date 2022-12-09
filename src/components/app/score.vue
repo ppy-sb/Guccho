@@ -93,7 +93,7 @@ const meta = computed((): {
           </div>
           <div class="mt-auto map-date">
             <time class="text-xs italic lg:text-sm"> {{ score.playedAt.toLocaleDateString() }} {{
-              score.playedAt.toLocaleTimeString()
+              score.playedAt.toLocaleTimeString('en-us')
             }} </time>
           </div>
         </div>

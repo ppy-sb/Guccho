@@ -1,6 +1,6 @@
 import type { Awaitable, Mode, Range, RankingSystem, Ruleset } from '~/types/common'
-import type { BaseUser, UserExtra, UserOptional, UserStatistic } from '~~/src/types/user'
-import type { RankingSystemScore } from '~~/src/types/score'
+import type { BaseUser, UserExtra, UserOptional, UserStatistic } from '~/types/user'
+import type { RankingSystemScore } from '~/types/score'
 
 export namespace UserDataProvider {
   export type ComposableProperties<Id> = UserExtra<Id> & UserOptional<Id>

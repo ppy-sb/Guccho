@@ -1,8 +1,8 @@
 import type { IdType as Id } from '../config'
-import type { Grade, Mode, RankingSystem, Ruleset } from './../../../types/common'
 import { createHitCount } from './create-hit-count'
 import { toBeatmap } from './to-beatmapset'
 import type { AbleToTransformToScores } from './index'
+import type { Grade, Mode, RankingSystem, Ruleset } from '~/types/common'
 import type { Beatmap, RankingStatus } from '~/types/beatmap'
 import type { RankingSystemScore, RulesetScore } from '~/types/score'
 

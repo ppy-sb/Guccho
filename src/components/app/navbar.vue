@@ -203,7 +203,7 @@ onUnmounted(() => {
           >
             <div class="indicator avatar">
               <img
-                :src="session.$state._data?.avatarUrl"
+                :src="session.$state.user?.avatarUrl"
                 class="rounded-full avatar-img ring ring-kimberly-600/70 ring-offset-base-100 ring-offset-2 pointer-events-none"
                 alt=""
               >
@@ -242,6 +242,16 @@ onUnmounted(() => {
                 }"
               >
                 My userpage
+              </nuxt-link>
+            </li>
+            <li class="disabled">
+              <nuxt-link
+                v-if="session.$state.privilege.hasAdminAccess"
+                :to="{
+                  name: 'index',
+                }"
+              >
+                Admin Panel
               </nuxt-link>
             </li>
             <li>

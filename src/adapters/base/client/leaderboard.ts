@@ -1,6 +1,6 @@
 import type { Mode, Range, RankingSystem, Ruleset } from '~/types/common'
 
-import type { BaseUser } from '~~/src/types/user'
+import type { BaseUser } from '~/types/user'
 
 export abstract class LeaderboardDataProvider<Id> {
   abstract getLeaderboard({
