@@ -5,7 +5,7 @@ import { generateHTML } from '@tiptap/html'
 import { router as _router } from '../trpc'
 import { zodHandle, zodRelationType, zodTipTapJSONContent } from '../shapes'
 import { atLeastOneUserNotExists, oldPasswordMismatch, relationTypeNotFound, userExists, userNotFound } from '../messages'
-import { procedureWithUserLoggedIn as pUser } from '~/server/trpc/middleware/user'
+import { userProcedure as pUser } from '~/server/trpc/middleware/user'
 import UserDataProvider from '$/client/user'
 import UserRelationshipDataProvider from '$/client/user-relations'
 import { calculateMutualRelationships } from '~/server/transforms'
@@ -107,7 +107,7 @@ export const router = _router({
         type: zodRelationType,
       }),
     )
-    .query(async ({ input, ctx }) => {
+    .mutation(async ({ input, ctx }) => {
       const [fromUser, targetUser] = await Promise.all([
         ctx.user,
         userProvider.getBaseUser({ handle: input.target }),
@@ -130,6 +130,37 @@ export const router = _router({
           })
         }
         throw err
+      }
+    }),
+  addOneRelation: pUser
+    .input(
+      z.object({
+        target: zodHandle,
+        type: zodRelationType,
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const [fromUser, targetUser] = await Promise.all([
+        ctx.user,
+        userProvider.getBaseUser({ handle: input.target }),
+      ])
+      if (!fromUser || (targetUser == null)) {
+        throw new TRPCError({
+          code: 'PRECONDITION_FAILED',
+          message: atLeastOneUserNotExists,
+        })
+      }
+      try {
+        await relationProvider.createOneRelationship({ fromUser, targetUser, type: input.type })
+        return true
+      }
+      catch (err: any) {
+        if (err.message === 'has-relationship') {
+          throw new TRPCError({
+            code: 'CONFLICT',
+            message: 'need to delete old relation before create new',
+          })
+        }
       }
     }),
 })

@@ -5,7 +5,7 @@ import { publicProcedure } from '../trpc'
 import { unableToRefreshToken } from '../messages'
 import { createSession, getSession, refresh } from '~/server/session'
 
-export const procedureWithSession = publicProcedure
+export const sessionProcedure = publicProcedure
   .use(async ({ ctx, next }) => {
     if (!ctx.session.id) {
       const sessionId = await createSession()

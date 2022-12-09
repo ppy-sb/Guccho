@@ -1,9 +1,9 @@
 import { TRPCError } from '@trpc/server'
 import { unableToRetrieveSession, userNotFound, youNeedToLogin } from '../messages'
-import { procedureWithSession } from './session'
+import { sessionProcedure } from './session'
 import { UserDataProvider } from '$/client'
 const userProvider = new UserDataProvider()
-export const procedureWithUserLoggedIn = procedureWithSession
+export const userProcedure = sessionProcedure
   .use(async ({ ctx, next }) => {
     const session = await ctx.session.getBinding()
     if (!session) {

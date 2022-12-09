@@ -1,6 +1,7 @@
 import type { TRPCError } from '@trpc/server'
 import { defineStore } from 'pinia'
 import md5 from 'md5'
+import { checkUserPrivilege } from '../helpers/checkUserPrivilege'
 import type { IdType } from '$/config'
 import type { UserFull } from '~/types/user'
 
@@ -8,15 +9,29 @@ export const useSession = defineStore('session', {
   state: (): {
     loggedIn: boolean
     userId?: IdType
-    _data: Partial<Omit<UserFull<IdType>, 'statistics'>>
+    user?: Omit<UserFull<IdType>, 'statistics'>
+    privilege: {
+      hasAdminAccess: boolean
+    }
   } => ({
     loggedIn: false,
-    _data: {},
+    user: undefined,
+    privilege: {
+      hasAdminAccess: false,
+    },
   }),
   actions: {
+    async gotSession() {
+      if (!this.user)
+        return
+      const privilege = checkUserPrivilege(this.user)
+      this.privilege = privilege
+    },
     async login(handle: string, passwordText: string) {
       const md5HashedPassword = md5(passwordText)
-      return await this.loginHashed(handle, md5HashedPassword)
+      const result = await this.loginHashed(handle, md5HashedPassword)
+      await this.gotSession()
+      return result
     },
     async loginHashed(handle: string, md5HashedPassword: string) {
       const { $client } = useNuxtApp()
@@ -27,7 +42,7 @@ export const useSession = defineStore('session', {
       this.$patch({
         loggedIn: true,
         userId: result.user.id,
-        _data: result.user,
+        user: result.user,
       })
       return true
     },
@@ -47,8 +62,9 @@ export const useSession = defineStore('session', {
         this.$patch({
           loggedIn: true,
           userId: result.user.id,
-          _data: result.user,
+          user: result.user,
         })
+        await this.gotSession()
         return true
       }
       catch (err) {
