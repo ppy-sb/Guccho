@@ -3,10 +3,10 @@ import { z } from 'zod'
 import { TRPCError } from '@trpc/server'
 
 import { zodHandle } from '../shapes'
-import { procedureWithSession as pSession } from '../middleware/session'
+import { sessionProcedure as pSession } from '../middleware/session'
 import { router as _router } from '../trpc'
 import { passwordMismatch, sessionNotFound, unableToRetrieveSession, unknownError, userNotFound } from '../messages'
-import { getSession } from './../../session/index'
+import { getSession } from '~/server/session'
 import UserDataProvider from '$/client/user'
 
 const { compare } = bcrypt
