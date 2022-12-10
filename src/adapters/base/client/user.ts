@@ -20,14 +20,7 @@ export abstract class UserDataProvider<Id> {
   abstract userExists({ handle, keys }: UserDataProvider.OptType<Id>): Awaitable<boolean>
   abstract getBaseUser<Includes extends Partial<Record<keyof UserOptional<Id>, boolean>>>(opt: UserDataProvider.OptType<Id, Includes>): Awaitable<BaseUser<Id> | null>
   abstract getBaseUsers<Includes extends Partial<Record<keyof UserOptional<Id>, boolean>>>(opt: { handle: string | Id; includes?: Includes }): Awaitable<BaseUser<Id>[]>
-  abstract getBests<_Mode extends Mode, _Ruleset extends Ruleset, _RankingSystem extends RankingSystem>({
-    id,
-    mode,
-    ruleset,
-    rankingSystem,
-    page,
-    perPage,
-  }: {
+  abstract getBests<_Mode extends Mode, _Ruleset extends Ruleset, _RankingSystem extends RankingSystem>(query: {
     id: Id
     mode: _Mode
     ruleset: _Ruleset
@@ -41,15 +34,12 @@ export abstract class UserDataProvider<Id> {
     _RankingSystem & 'ppv2'
   >[]>
 
-  abstract getStatisticsOfUser({
-    id,
-    country,
-  }: {
+  abstract getStatisticsOfUser(query: {
     id: Id
     country: string
   }): Awaitable<UserStatistic<Id>>
 
-  abstract getFullUser<Excludes extends Partial<Record<keyof UserDataProvider.ComposableProperties<Id>, boolean>>>({ handle, excludes }: { handle: string | Id; excludes?: Excludes }):
+  abstract getFullUser<Excludes extends Partial<Record<keyof UserDataProvider.ComposableProperties<Id>, boolean>>>(query: { handle: string | Id; excludes?: Excludes }):
   Awaitable<
     (
       null |
