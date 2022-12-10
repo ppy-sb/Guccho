@@ -1,4 +1,4 @@
-import type { RulesetScore } from '~/types/score'
+import type { HitCount } from '~/types/score'
 import type { Mode, RankingSystem, Ruleset } from '~/types/common'
 import type { UserFull } from '~/types/user'
 import type { PPRank, ScoreRank, UserModeRulesetStatistics } from '~/types/statistics'
@@ -57,23 +57,24 @@ export const createBeatmap = (initial = {
   beatmapset: createBeatmapSet(),
 }) => JSON.parse(JSON.stringify(initial))
 
-export const createHitObject = <_Mode extends Mode>(mode: _Mode) => (mode === 'mania'
-  ? {
+export const createHitObject = <_Mode extends Mode>(mode: _Mode) =>
+  mode === 'mania'
+    ? {
       max: 0,
       300: 0,
       200: 0,
       100: 0,
       50: 0,
       miss: 0,
-    } as RulesetScore<unknown, unknown, _Mode & 'mania', Ruleset, RankingSystem>['hit']
-  : {
+    } satisfies HitCount<'mania'>
+    : {
       300: 0,
       geki: 0,
       100: 0,
       katu: 0,
       50: 0,
       miss: 0,
-    } as RulesetScore<unknown, unknown, _Mode & Exclude<Mode, 'mania'>, Ruleset, RankingSystem>['hit'])
+    } satisfies HitCount<Exclude<Mode, 'mania'>>
 
 export const createPPRank = <_Mode extends Mode>(
   initial: PPRank<unknown, _Mode, Ruleset, RankingSystem> = {

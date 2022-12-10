@@ -1,7 +1,7 @@
 import type { Beatmap, BeatmapSource, RankingStatus } from './beatmap'
 import type { Grade, PPRankingSystem, Range, RankingSystem, Mode as _Mode, Ruleset as _Ruleset } from './common'
 
-type HitCount<T extends _Mode> = Record<
+export type HitCount<T extends _Mode> = Record<
   300 | 100 | 50 | 'miss' | (T extends 'mania' ? 'max' | 200 : 'geki' | 'katu'),
   number
 >
