@@ -6,5 +6,7 @@ export default defineNuxtRouteMiddleware(async () => {
   const session = useSession()
   if (!sessionId.value)
     return
+  if (session.loggedIn)
+    return
   await session.retrieve()
 })
