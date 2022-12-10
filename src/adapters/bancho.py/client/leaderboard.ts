@@ -16,7 +16,7 @@ export default class BanchoPyLeaderboard extends LeaderboardDataProvider<IdType>
     this.db = client
   }
 
-  async getLeaderboard({
+  async getTotalLeaderboard({
     mode,
     ruleset,
     rankingSystem,
@@ -123,6 +123,53 @@ export default class BanchoPyLeaderboard extends LeaderboardDataProvider<IdType>
         },
       },
       rank: item._rank,
+    }))
+  }
+
+  async getBeatmapLeaderboard(query: LeaderboardDataProvider.BaseQuery & { id: IdType }) {
+    const { mode, ruleset, rankingSystem, id } = query
+    let sort = {}
+    if (['totalScore', 'rankedScore'].includes(rankingSystem)) {
+      sort = {
+        score: 'desc',
+      }
+    }
+    else if (rankingSystem === 'ppv2') {
+      sort = {
+        pp: 'desc',
+      }
+    }
+    else { return [] }
+
+    const scores = await this.db.score.findMany({
+      include: {
+        user: true,
+      },
+      where: {
+        beatmap: {
+          id,
+        },
+        mode: toBanchoPyMode(mode, ruleset),
+        status: {
+          in: [2, 3],
+        },
+      },
+      orderBy: sort,
+    })
+    return scores.map((item, index) => ({
+      user: {
+        id: item.user.id,
+        name: item.user.name,
+        safeName: item.user.safeName,
+        flag: item.user.country,
+        avatarUrl: `https://a.ppy.sb/${item.user.id}`,
+      },
+      score: {
+        ppv2: item.pp,
+        accuracy: item.acc,
+        score: item.score,
+      },
+      rank: index,
     }))
   }
 }
