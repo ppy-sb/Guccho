@@ -40,8 +40,30 @@ export type Beatmapset<Source extends BeatmapSource, LocalId, ForeignId> =
 
     foreignId: ForeignId
   })
+export interface BeatmapEssential<Id, ForeignId = never> {
+  id: Id
+  foreignId: ForeignId
+  properties: {
+    bpm: number
+    // CS
+    circleSize: number
+    // AR
+    approachRate: number
+    // OD
+    accuracy: number
+    // HP
+    hpDrain: number
 
-export type Beatmap<
+    count: {
+      circles: number
+      sliders: number
+      spinners: number
+    }
+  }
+  md5: string
+  version: string
+}
+export type BeatmapWithMeta<
   Source extends BeatmapSource,
   Status extends RankingStatus,
   LocalId,
@@ -51,28 +73,7 @@ export type Beatmap<
 } & (
   Status extends 'notFound' | 'deleted'
     ? {}
-    : {
-        id: LocalId
-        foreignId: Source extends UnknownSource ? never : ForeignId
-        properties: {
-          bpm: number
-          // CS
-          circleSize: number
-          // AR
-          approachRate: number
-          // OD
-          accuracy: number
-          // HP
-          hpDrain: number
-
-          count: {
-            circles: number
-            sliders: number
-            spinners: number
-          }
-        }
-        md5: string
-        version: string
-        beatmapset: Beatmapset<Source, LocalId, ForeignId>
-      }
+    : BeatmapEssential<LocalId, Source extends UnknownSource ? never : ForeignId> & {
+      beatmapset: Beatmapset<Source, LocalId, ForeignId>
+    }
 )
