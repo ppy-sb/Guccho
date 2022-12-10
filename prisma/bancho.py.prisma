@@ -10,9 +10,9 @@ datasource db {
 
 model User {
   id              Int     @id @default(autoincrement())
-  name            String  @unique(map: "User_name_uindex") @db.VarChar(32)
-  safeName        String  @unique(map: "User_safe_name_uindex") @map("safe_name") @db.VarChar(32)
-  email           String  @unique(map: "User_email_uindex") @db.VarChar(254)
+  name            String  @unique(map: "users_name_uindex") @db.VarChar(32)
+  safeName        String  @unique(map: "users_safe_name_uindex") @map("safe_name") @db.VarChar(32)
+  email           String  @unique(map: "users_email_uindex") @db.VarChar(254)
   priv            Int     @default(1)
   pwBcrypt        String  @map("pw_bcrypt") @db.Char(60)
   country         String  @default("xx") @db.Char(2)
@@ -39,8 +39,9 @@ model User {
   ownedClans       Clan[]         @relation("owner")
   relations        Relationship[] @relation("from")
   gotRelations     Relationship[] @relation("to")
-  Stat             Stat[]
+  stat             Stat[]
   userpages        Userpage[]
+  Score            Score[]
 
   @@map("users")
 }
@@ -261,6 +262,7 @@ model Score {
   onlineChecksum String   @map("online_checksum") @db.Char(32)
 
   beatmap Map? @relation(fields: [mapMd5], references: [md5])
+  user    User @relation(fields: [userId], references: [id])
 
   @@index([mapMd5], map: "map_md5")
   @@index([userId], map: "userid")
@@ -295,7 +297,7 @@ model Stat {
   sCount      Int    @default(0) @map("s_count") @db.UnsignedInt
   aCount      Int    @default(0) @map("a_count") @db.UnsignedInt
 
-  User User @relation(fields: [id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "stats_ibfk_1")
+  user User @relation(fields: [id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "stats_ibfk_1")
 
   @@id([id, mode])
   @@map("stats")
@@ -359,13 +361,13 @@ model TourneyPoolMap {
 
 model Userpage {
   id       Int              @id @default(autoincrement())
-  user_id  Int
+  userId   Int              @map("user_id")
   html     String?          @db.Text
   raw      String?          @db.Text
   raw_type UserpageRawType?
-  User     User             @relation(fields: [user_id], references: [id], onUpdate: Restrict, map: "fk_user")
+  user     User             @relation(fields: [userId], references: [id], onUpdate: Restrict, map: "fk_user")
 
-  @@index([user_id], map: "user_id")
+  @@index([userId], map: "user_id")
   @@map("userpages")
 }
 
