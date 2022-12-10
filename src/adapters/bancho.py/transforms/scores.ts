@@ -1,9 +1,9 @@
 import type { IdType as Id } from '../config'
 import { createHitCount } from './create-hit-count'
-import { toBeatmap } from './to-beatmapset'
+import { toBeatmapWithBeatmapset } from './to-beatmapset'
 import type { AbleToTransformToScores } from './index'
 import type { Grade, Mode, RankingSystem, Ruleset } from '~/types/common'
-import type { Beatmap, RankingStatus } from '~/types/beatmap'
+import type { BeatmapWithMeta, RankingStatus } from '~/types/beatmap'
 import type { RankingSystemScore, RulesetScore } from '~/types/score'
 
 export function toScore<_RankingSystem extends RankingSystem>({ score, mode, ruleset }: {
@@ -20,9 +20,9 @@ export function toScore<_RankingSystem extends RankingSystem>({ score, mode, rul
     grade: 'ssh',
     accuracy: 98,
     hit: createHitCount(mode, score),
-    beatmap: (score.beatmap !== null && toBeatmap(score.beatmap)) || {
+    beatmap: (score.beatmap !== null && toBeatmapWithBeatmapset(score.beatmap)) || {
       status: 'notFound',
-    } satisfies Beatmap<'unknown', 'notFound', never, never> as Beatmap<'unknown', 'notFound', never, never>,
+    } satisfies BeatmapWithMeta<'unknown', 'notFound', never, never> as BeatmapWithMeta<'unknown', 'notFound', never, never>,
     // TODO: calculate mods
     mods: [],
     ruleset,
@@ -61,9 +61,9 @@ export function toRankingSystemScore<_RankingSystem extends RankingSystem>({ sco
       accuracy: score.acc,
       grade: score.grade as Grade,
       hit: createHitCount(mode, score),
-      beatmap: (score.beatmap !== null && toBeatmap(score.beatmap)) || {
+      beatmap: (score.beatmap !== null && toBeatmapWithBeatmapset(score.beatmap)) || {
         status: 'notFound',
-      } satisfies Beatmap<'unknown', 'notFound', never, never>,
+      } satisfies BeatmapWithMeta<'unknown', 'notFound', never, never>,
       // TODO: calculate mods
       mods: [],
       playedAt: score.playTime,
