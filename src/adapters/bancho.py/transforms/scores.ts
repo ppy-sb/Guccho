@@ -22,7 +22,7 @@ export function toScore<_RankingSystem extends RankingSystem>({ score, mode, rul
     hit: createHitCount(mode, score),
     beatmap: (score.beatmap !== null && toBeatmap(score.beatmap)) || {
       status: 'notFound',
-    } satisfies Beatmap<'unknown', 'notFound', never, never>,
+    } satisfies Beatmap<'unknown', 'notFound', never, never> as Beatmap<'unknown', 'notFound', never, never>,
     // TODO: calculate mods
     mods: [],
     ruleset,
