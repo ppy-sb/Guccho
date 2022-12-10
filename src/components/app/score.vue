@@ -5,6 +5,7 @@ import type { Mode, RankingSystem, Ruleset } from '~/types/common'
 import { ppRankingSystem, scoreRankingSystem } from '~/types/common'
 import { createAddCommasFormatter } from '~/common/varkaUtils'
 import { useFAIconLib } from '#imports'
+import { assertBeatmapIsVisible } from '~/helpers/map'
 const props = withDefaults(
   defineProps<{
     score?: RankingSystemScore<unknown, unknown, Mode, RankingSystem>
@@ -23,10 +24,7 @@ const numberFmt = createAddCommasFormatter()
 const beatmap = computed(() => {
   if (!props.score)
     return
-  if (props.score.beatmap.status === 'notFound')
-    return props.score.beatmap
-
-  if (props.score.beatmap.status === 'deleted')
+  if (!assertBeatmapIsVisible(props.score.beatmap))
     return
   return props.score.beatmap
 })
@@ -36,7 +34,7 @@ const meta = computed((): {
 } | void => {
   if (!beatmap.value)
     return
-  if (beatmap.value.status === 'notFound')
+  if (!assertBeatmapIsVisible(beatmap.value))
     return
 
   if (props.useIntl) {
@@ -60,7 +58,7 @@ const meta = computed((): {
         <template v-if="beatmap">
           <div class="hidden md:block">
             <img
-              v-if="beatmap.status !== 'notFound' && beatmap.beatmapset.source === 'bancho'"
+              v-if="assertBeatmapIsVisible(beatmap) && beatmap.beatmapset.source === 'bancho'"
               :src="`https://assets.ppy.sh/beatmaps/${beatmap.beatmapset.foreignId}/covers/list.jpg`"
               class="object-cover w-20 h-16 rounded-xl"
             >
@@ -71,7 +69,7 @@ const meta = computed((): {
         </template>
         <div class="flex flex-col min-w-0">
           <a href="#" class="text-sm truncate md:text-md lg:text-lg">
-            <template v-if="beatmap && beatmap.status !== 'notFound' && meta">{{ meta.artist }} - {{ meta.title }} [{{
+            <template v-if="beatmap && assertBeatmapIsVisible(beatmap) && meta">{{ meta.artist }} - {{ meta.title }} [{{
               beatmap.version
             }}]</template>
             <template v-else>

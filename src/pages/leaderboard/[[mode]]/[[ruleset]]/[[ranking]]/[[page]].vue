@@ -4,8 +4,6 @@ import { reactive, ref } from 'vue'
 import { navigateTo, useAppConfig, useRoute } from '#app'
 
 import type { Mode, RankingSystem, Ruleset } from '~/types/common'
-import type { ComponentLeaderboardItem } from '~/types/leaderboard'
-import type { IdType } from '~/server/trpc/config'
 import type { SwitcherPropType } from '~/composables/useSwitcher'
 
 const config = useAppConfig()
@@ -46,7 +44,6 @@ const selected = reactive<Required<SwitcherPropType>>({
   ruleset,
   rankingSystem,
 })
-const table = ref<Array<ComponentLeaderboardItem<IdType, RankingSystem>>>([])
 const fetching = ref(false)
 // const page = ref(0)
 // const perPage = ref(50)
@@ -59,8 +56,8 @@ const result = await $client.leaderboard.fetch.query({
   page: page - 1,
   pageSize: perPage,
 })
+const table = ref(result)
 
-table.value = result
 fetching.value = false
 </script>
 

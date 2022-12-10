@@ -1,9 +1,7 @@
 import z from 'zod'
 // import { createRouter } from '../context'
 import { router as _router, publicProcedure } from '../trpc'
-import type { IdType } from '../config'
 import { zodMode, zodRankingSystem, zodRuleset } from '~/server/trpc/shapes'
-import type { ComponentLeaderboardItem } from '~/types/leaderboard'
 import Leaderboard from '$/client/leaderboard'
 import type { Range } from '~/types/common'
 
@@ -21,12 +19,12 @@ export const router = _router({
     )
     .query(
       async ({ input: { mode, ruleset, rankingSystem, page, pageSize } }) =>
-        (await provider.getLeaderboard({
+        await provider.getTotalLeaderboard({
           mode,
           ruleset,
           rankingSystem,
           page: page as Range<0, 10>,
           pageSize: pageSize as Range<20, 51>,
-        })) as Array<ComponentLeaderboardItem<IdType>>,
+        }),
     ),
 })
