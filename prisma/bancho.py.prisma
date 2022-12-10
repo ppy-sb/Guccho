@@ -8,30 +8,28 @@ datasource db {
   url      = env("DB_DSN")
 }
 
-// User related
-
 model User {
-  id               Int            @id @default(autoincrement())
-  name             String         @unique(map: "User_name_uindex") @db.VarChar(32)
-  safeName         String         @unique(map: "User_safe_name_uindex") @map("safe_name") @db.VarChar(32)
-  email            String         @unique(map: "User_email_uindex") @db.VarChar(254)
-  priv             Int            @default(1)
-  pwBcrypt         String         @map("pw_bcrypt") @db.Char(60)
-  country          String         @default("xx") @db.Char(2)
-  silenceEnd       Int            @default(0) @map("silence_end")
-  donorEnd         Int            @default(0) @map("donor_end")
-  creationTime     Int            @default(0) @map("creation_time")
-  latestActivity   Int            @default(0) @map("latest_activity")
+  id              Int     @id @default(autoincrement())
+  name            String  @unique(map: "User_name_uindex") @db.VarChar(32)
+  safeName        String  @unique(map: "User_safe_name_uindex") @map("safe_name") @db.VarChar(32)
+  email           String  @unique(map: "User_email_uindex") @db.VarChar(254)
+  priv            Int     @default(1)
+  pwBcrypt        String  @map("pw_bcrypt") @db.Char(60)
+  country         String  @default("xx") @db.Char(2)
+  silenceEnd      Int     @default(0) @map("silence_end")
+  donorEnd        Int     @default(0) @map("donor_end")
+  creationTime    Int     @default(0) @map("creation_time")
+  latestActivity  Int     @default(0) @map("latest_activity")
+  preferredMode   Int     @default(0) @map("preferred_mode")
+  playStyle       Int     @default(0) @map("play_style")
+  customBadgeName String? @map("custom_badge_name") @db.VarChar(16)
+  customBadgeIcon String? @map("custom_badge_icon") @db.VarChar(64)
+  userpageContent String? @map("userpage_content") @db.VarChar(2048)
+  clanId          Int     @default(0) @map("clan_id")
+  clanPriv        Boolean @default(false) @map("clan_priv")
+  apiKey          String? @unique(map: "users_api_key_uindex") @map("api_key") @db.Char(36)
+
   clan             Clan           @relation(name: "clan", fields: [clanId], references: [id])
-  clanId           Int            @default(0) @map("clan_id")
-  clanPriv         Boolean        @default(false) @map("clan_priv")
-  preferredMode    Int            @default(0) @map("preferred_mode")
-  playStyle        Int            @default(0) @map("play_style")
-  customBadgeName  String?        @map("custom_badge_name") @db.VarChar(16)
-  customBadgeIcon  String?        @map("custom_badge_icon") @db.VarChar(64)
-  userpageContent  String?        @map("userpage_content") @db.VarChar(2048)
-  apiKey           String?        @unique(map: "users_api_key_uindex") @map("api_key") @db.Char(36)
-  // virtual
   favourites       Favourite[]
   ingameLogins     IngameLogin[]
   receivedMessages Mail[]         @relation("receivedMessages")
@@ -48,7 +46,6 @@ model User {
 }
 
 model ClientHash {
-  user        User     @relation(fields: [userId], references: [id])
   userId      Int      @map("userid")
   osuPath     String   @map("osupath") @db.Char(32)
   iFaces      String   @map("adapters") @db.Char(32)
@@ -57,19 +54,22 @@ model ClientHash {
   latestTime  DateTime @map("latest_time") @db.DateTime(0)
   occurrences Int      @default(0)
 
+  user User @relation(fields: [userId], references: [id])
+
   @@id([userId, osuPath, iFaces, uninstallId, diskSerial])
   @@map("client_hashes")
 }
 
 model Comment {
-  id         Int                @id @default(autoincrement())
-  targetId   Int                @map("target_id")
-  targetType CommentsTargetType @map("target_type")
-  user       User               @relation(fields: [userId], references: [id])
-  userId     Int                @map("userid")
+  id         Int            @id @default(autoincrement())
+  targetId   Int            @map("target_id")
+  targetType CommentsTarget @map("target_type")
+  userId     Int            @map("userid")
   time       Int
-  comment    String             @db.VarChar(80)
-  colour     String?            @db.Char(6)
+  comment    String         @db.VarChar(80)
+  colour     String?        @db.Char(6)
+
+  user User @relation(fields: [userId], references: [id])
 
   @@map("comments")
 }
@@ -78,21 +78,22 @@ model Clan {
   id        Int      @id @default(autoincrement())
   name      String   @unique(map: "clans_name_uindex") @db.VarChar(16)
   tag       String   @unique(map: "clans_tag_uindex") @db.VarChar(6)
-  owner     User     @relation(name: "owner", fields: [ownerId], references: [id])
   ownerId   Int      @unique(map: "clans_owner_uindex")
   createdAt DateTime @map("created_at") @db.DateTime(0)
 
   joinedUsers User[] @relation("clan")
+  owner       User   @relation(name: "owner", fields: [ownerId], references: [id])
 
   @@map("clans")
 }
 
 model Favourite {
-  user      User   @relation(fields: [userId], references: [id])
-  userId    Int    @map("userid")
-  source    Source @relation(fields: [setId], references: [id])
-  setId     Int    @map("setid")
-  createdAt Int    @default(0) @map("created_at")
+  userId    Int @map("userid")
+  setId     Int @map("setid")
+  createdAt Int @default(0) @map("created_at")
+
+  user   User   @relation(fields: [userId], references: [id])
+  source Source @relation(fields: [setId], references: [id])
 
   @@id([userId, setId])
   @@map("favourites")
@@ -100,36 +101,39 @@ model Favourite {
 
 model IngameLogin {
   id        Int      @id @default(autoincrement())
-  user      User     @relation(fields: [userId], references: [id])
   userId    Int      @map("userid")
   ip        String   @db.VarChar(45)
   osuVer    DateTime @map("osu_ver") @db.Date
   osuStream String   @map("osu_stream") @db.VarChar(128)
   datetime  DateTime @db.DateTime(0)
 
+  user User @relation(fields: [userId], references: [id])
+
   @@map("ingame_logins")
 }
 
 model Log {
-  id     Int      @id @default(autoincrement())
-  from   Int
-  to     Int
-  action String   @db.VarChar(32)
-  msg    String?  @db.VarChar(2048)
-  time   DateTime @db.DateTime(0)
+  id   Int      @id @default(autoincrement())
+  from Int
+  to   Int
+  msg  String?  @db.VarChar(2048)
+  time DateTime @db.DateTime(0)
+
+  // action String @db.VarChar(32)
 
   @@map("logs")
 }
 
 model Mail {
-  id         Int     @id @default(autoincrement())
-  fromUser   User    @relation(name: "sentMessages", fields: [fromId], references: [id])
-  fromId     Int     @map("from_id")
-  targetUser User    @relation(name: "receivedMessages", fields: [targetId], references: [id])
-  targetId   Int     @map("to_id")
-  msg        String  @db.VarChar(2048)
-  time       Int?
-  read       Boolean @default(false)
+  id       Int     @id @default(autoincrement())
+  fromId   Int     @map("from_id")
+  targetId Int     @map("to_id")
+  msg      String  @db.VarChar(2048)
+  time     Int?
+  read     Boolean @default(false)
+
+  fromUser   User @relation(name: "sentMessages", fields: [fromId], references: [id])
+  targetUser User @relation(name: "receivedMessages", fields: [targetId], references: [id])
 
   @@map("mail")
 }
@@ -149,7 +153,6 @@ model Map {
   server      SourceEnum @default(bancho)
   id          Int        @unique(map: "maps_id_uindex")
   setId       Int        @map("set_id")
-  source      Source     @relation(fields: [setId, server], references: [id, server])
   status      Int
   md5         String     @unique(map: "maps_md5_uindex") @db.Char(32)
   artist      String     @db.VarChar(128)
@@ -170,7 +173,9 @@ model Map {
   od          Float      @default(0.00) @db.Float
   hp          Float      @default(0.00) @db.Float
   diff        Float      @default(0.000) @db.Float
-  Score       Score[]
+
+  source Source  @relation(fields: [setId, server], references: [id, server])
+  Score  Score[]
 
   @@id([server, id])
   @@index([filename], map: "filename")
@@ -178,35 +183,35 @@ model Map {
 }
 
 model Source {
-  server          SourceEnum  @default(bancho)
-  id              Int         @unique(map: "nmapsets_id_uindex")
-  lastOsuApiCheck DateTime    @default(now()) @map("last_osuapi_check") @db.DateTime(0)
-  // virtual
-  favouredBy      Favourite[]
-  Map             Map[]
+  server          SourceEnum @default(bancho)
+  id              Int        @unique(map: "nmapsets_id_uindex")
+  lastOsuApiCheck DateTime   @default(now()) @map("last_osuapi_check") @db.DateTime(0)
+
+  favouredBy Favourite[]
+  Map        Map[]
 
   @@id([server, id])
   @@map("mapsets")
 }
 
-model PerformanceReports {
-  scoreId          BigInt                   @map("scoreid") @db.UnsignedBigInt
-  modMode          PerformanceReportModMode @default(vanilla) @map("mod_mode")
-  os               String                   @db.VarChar(64)
+model PerformanceReport {
+  scoreId          BigInt  @map("scoreid") @db.UnsignedBigInt
+  ruleset          Ruleset @default(standard) @map("mod_mode")
+  os               String  @db.VarChar(64)
   fullscreen       Boolean
-  fpsCap           String                   @map("fps_cap") @db.VarChar(16)
+  fpsCap           String  @map("fps_cap") @db.VarChar(16)
   compatibility    Boolean
-  version          String                   @db.VarChar(16)
-  startTime        Int                      @map("start_time")
-  endTime          Int                      @map("end_time")
-  frameCount       Int                      @map("frame_count")
-  spikeFrames      Int                      @map("spike_frames")
-  aimRate          Int                      @map("aim_rate")
+  version          String  @db.VarChar(16)
+  startTime        Int     @map("start_time")
+  endTime          Int     @map("end_time")
+  frameCount       Int     @map("frame_count")
+  spikeFrames      Int     @map("spike_frames")
+  aimRate          Int     @map("aim_rate")
   completion       Boolean
-  identifier       String?                  @db.VarChar(128)
-  averageFrametime Int                      @map("average_frametime")
+  identifier       String? @db.VarChar(128)
+  averageFrametime Int     @map("average_frametime")
 
-  @@id([scoreId, modMode])
+  @@id([scoreId, ruleset])
   @@map("performance_reports")
 }
 
@@ -220,11 +225,12 @@ model Rating {
 }
 
 model Relationship {
-  fromUser   User             @relation(name: "from", fields: [fromUserId], references: [id])
   fromUserId Int              @map("user1")
-  toUser     User             @relation(name: "to", fields: [toUserId], references: [id])
   toUserId   Int              @map("user2")
   type       RelationshipType
+
+  fromUser User @relation(name: "from", fields: [fromUserId], references: [id])
+  toUser   User @relation(name: "to", fields: [toUserId], references: [id])
 
   @@id([fromUserId, toUserId])
   @@map("relationships")
@@ -233,7 +239,6 @@ model Relationship {
 model Score {
   id             BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
   mapMd5         String   @map("map_md5") @db.Char(32)
-  beatmap        Map?     @relation(fields: [mapMd5], references: [md5])
   score          Int
   pp             Float    @db.Float
   acc            Float    @db.Float
@@ -254,6 +259,8 @@ model Score {
   userId         Int      @map("userid")
   perfect        Boolean
   onlineChecksum String   @map("online_checksum") @db.Char(32)
+
+  beatmap Map? @relation(fields: [mapMd5], references: [md5])
 
   @@index([mapMd5], map: "map_md5")
   @@index([userId], map: "userid")
@@ -287,7 +294,8 @@ model Stat {
   shCount     Int    @default(0) @map("sh_count") @db.UnsignedInt
   sCount      Int    @default(0) @map("s_count") @db.UnsignedInt
   aCount      Int    @default(0) @map("a_count") @db.UnsignedInt
-  User        User   @relation(fields: [id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "stats_ibfk_1")
+
+  User User @relation(fields: [id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "stats_ibfk_1")
 
   @@id([id, mode])
   @@map("stats")
@@ -304,10 +312,10 @@ model TourneyPool {
 }
 
 model UserAchievement {
-  userId       Int @map("userid")
-  achivementId Int @map("achid")
+  userId        Int @map("userid")
+  achievementId Int @map("achid")
 
-  @@id([userId, achivementId])
+  @@id([userId, achievementId])
   @@map("user_achievements")
 }
 
@@ -337,20 +345,6 @@ model LackMap {
 
   @@map("maps_lack")
 }
-
-// model name_legality {
-//   id                            Int       @id @default(autoincrement()) @map("_id")
-//   name                          String    @db.VarChar(32)
-//   name_safe                     String    @db.VarChar(32)
-//   is_active                     Boolean   @default(true)
-//   create_time                   Int
-//   inappropriate_check_date      DateTime? @db.DateTime(0)
-//   inappropriate_checker_version Int       @default(0)
-//   reject_reason                 String?   @db.Text
-
-//   @@index([id, is_active], map: "name_history_id")
-//   @@index([id], map: "name_legality_id")
-// }
 
 model TourneyPoolMap {
   map_id  Int
@@ -382,16 +376,20 @@ enum SourceEnum {
   @@map("MapSource")
 }
 
-enum PerformanceReportModMode {
-  vanilla
+enum Ruleset {
+  standard  @map("vanilla")
   relax
   autopilot
+
+  @@map("PerformanceReportModMode")
 }
 
-enum CommentsTargetType {
+enum CommentsTarget {
   replay
   map
   song
+
+  @@map("CommentsTargetType")
 }
 
 enum RelationshipType {
