@@ -15,10 +15,10 @@ export interface LeaderboardItem<IdType, _RankingSystem extends RankingSystem = 
     & Record<_RankingSystem & PPRankingSystem, number>
     & Record<_RankingSystem & ScoreRankingSystem, bigint>
   }
-  rank: bigint
+  rank: number | bigint
 }
 
-export interface ComponentLeaderboardItem<IdType, _RankingSystem extends RankingSystem = RankingSystem> {
-  rank: bigint
-  user: Maybe<LeaderboardItem<IdType, _RankingSystem>['user'], 'inThisLeaderboard'>
+export interface ComponentLeaderboardItem<IdType> {
+  rank: number | bigint
+  user: Maybe<LeaderboardItem<IdType>['user'], 'inThisLeaderboard'>
 }

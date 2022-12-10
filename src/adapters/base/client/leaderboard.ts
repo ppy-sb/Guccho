@@ -1,30 +1,34 @@
-import type { Mode, Range, RankingSystem, Ruleset } from '~/types/common'
+import type { Awaitable, Mode, PPRankingSystem, Range, RankingSystem, Ruleset } from '~/types/common'
+import type { ComponentLeaderboardItem } from '~/types/leaderboard'
 
-import type { BaseUser } from '~/types/user'
-
-export abstract class LeaderboardDataProvider<Id> {
-  abstract getLeaderboard({
-    mode,
-    ruleset,
-    rankingSystem,
-    page,
-    pageSize,
-  }: {
+export namespace LeaderboardDataProvider {
+  export interface BaseQuery {
     mode: Mode
     ruleset: Ruleset
     rankingSystem: RankingSystem
     page: Range<0, 10>
     pageSize: Range<20, 51>
-  }): Promise<{
-    user: Omit<BaseUser<Id>, 'ingameId' | 'roles'> & {
-      inThisLeaderboard: {
-        ppv2: number
-        accuracy: number
-        totalScore: bigint
-        rankedScore: bigint
-        playCount: number
-      }
+  }
+
+  export interface BeatmapLeaderboardItem<Id> {
+    user: {
+      id: Id
+      name: string
+      safeName: string
+      flag: string
+      avatarUrl: string
     }
-    rank: bigint
-  }[]>
+    score: {
+      score: number | bigint
+      accuracy: number
+    } & Partial<Record<PPRankingSystem, number>>
+    rank: number
+  }
+}
+export abstract class LeaderboardDataProvider<Id> {
+  abstract getTotalLeaderboard(query: LeaderboardDataProvider.BaseQuery): Awaitable<ComponentLeaderboardItem<Id>[]>
+
+  abstract getBeatmapLeaderboard(query: LeaderboardDataProvider.BaseQuery & {
+    id: Id
+  }): Awaitable<LeaderboardDataProvider.BeatmapLeaderboardItem<Id>[]>
 }
