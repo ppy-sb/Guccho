@@ -1,10 +1,10 @@
 import type { Map as DBMap, Source } from '@prisma/client'
 import type { AbleToTransformToScores } from './index'
 import { toRankingStatus } from './index'
-import type { Beatmap, BeatmapSet } from '~/types/beatmap'
+import type { Beatmap, Beatmapset } from '~/types/beatmap'
 
 // this do not deserves exporting
-function toBeatmapSet(beatmapset: Source, beatmap: AbleToTransformToScores['beatmap']): undefined | BeatmapSet<typeof beatmapset['server'], typeof beatmapset['id'], typeof beatmapset['id']> {
+function toBeatmapset(beatmapset: Source, beatmap: AbleToTransformToScores['beatmap']): undefined | Beatmapset<typeof beatmapset['server'], typeof beatmapset['id'], typeof beatmapset['id']> {
   if (!beatmap)
     return
   return {
@@ -24,7 +24,7 @@ export function toBeatmap(beatmap: DBMap & {
 }): Beatmap<
   typeof beatmap['source']['server'], typeof status, typeof beatmap['id'], typeof beatmap['id']
 > | undefined {
-  const beatmapset = toBeatmapSet(beatmap.source, beatmap)
+  const beatmapset = toBeatmapset(beatmap.source, beatmap)
   if (!beatmapset)
     return
   const status = toRankingStatus(beatmap.status) || 'notFound'

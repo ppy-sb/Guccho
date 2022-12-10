@@ -19,7 +19,7 @@ export enum RankingStatusEnum {
 
 export type RankingStatus = keyof typeof RankingStatusEnum
 
-export type BeatmapSet<Source extends BeatmapSource, LocalId, ForeignId> =
+export type Beatmapset<Source extends BeatmapSource, LocalId, ForeignId> =
   {
     meta: {
       // unicode
@@ -46,14 +46,14 @@ export type Beatmap<
   Status extends RankingStatus,
   LocalId,
   ForeignId,
-> = Status extends 'notFound' | 'deleted'
-  ? {
-      status: Status
-    }
-  : (
-      {
+> = {
+  status: Status
+} & (
+  Status extends 'notFound' | 'deleted'
+    ? {}
+    : {
         id: LocalId
-        status: Status
+        foreignId: Source extends UnknownSource ? never : ForeignId
         properties: {
           bpm: number
           // CS
@@ -73,7 +73,6 @@ export type Beatmap<
         }
         md5: string
         version: string
-        beatmapset: BeatmapSet<Source, LocalId, ForeignId>
+        beatmapset: Beatmapset<Source, LocalId, ForeignId>
       }
-      & (Source extends UnknownSource ? {} : { foreignId: ForeignId })
-    )
+)
