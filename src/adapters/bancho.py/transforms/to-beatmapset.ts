@@ -1,10 +1,9 @@
 import type { Map as DBMap, Source } from '@prisma/client'
-import type { AbleToTransformToScores } from './index'
 import { toRankingStatus } from './index'
-import type { Beatmap, Beatmapset } from '~/types/beatmap'
+import type { BeatmapWithMeta, Beatmapset } from '~/types/beatmap'
 
 // this do not deserves exporting
-function toBeatmapset(beatmapset: Source, beatmap: AbleToTransformToScores['beatmap']): undefined | Beatmapset<typeof beatmapset['server'], typeof beatmapset['id'], typeof beatmapset['id']> {
+export function toBeatmapset(beatmapset: Source, beatmap: DBMap): undefined | Beatmapset<typeof beatmapset['server'], typeof beatmapset['id'], typeof beatmapset['id']> {
   if (!beatmap)
     return
   return {
@@ -19,19 +18,10 @@ function toBeatmapset(beatmapset: Source, beatmap: AbleToTransformToScores['beat
     },
   }
 }
-export function toBeatmap(beatmap: DBMap & {
-  source: Source
-}): Beatmap<
-  typeof beatmap['source']['server'], typeof status, typeof beatmap['id'], typeof beatmap['id']
-> | undefined {
-  const beatmapset = toBeatmapset(beatmap.source, beatmap)
-  if (!beatmapset)
-    return
-  const status = toRankingStatus(beatmap.status) || 'notFound'
+export function toBeatmap(beatmap: DBMap) {
   return {
     id: beatmap.id,
     foreignId: beatmap.id,
-    status,
     version: beatmap.version,
     md5: beatmap.md5,
     properties: {
@@ -47,6 +37,21 @@ export function toBeatmap(beatmap: DBMap & {
         spinners: 0,
       },
     },
+  }
+}
+
+export function toBeatmapWithBeatmapset(beatmap: DBMap & {
+  source: Source
+}): BeatmapWithMeta<
+  typeof beatmap['source']['server'], typeof status, typeof beatmap['id'], typeof beatmap['id']
+> | undefined {
+  const beatmapset = toBeatmapset(beatmap.source, beatmap)
+  if (!beatmapset)
+    return
+  const status = toRankingStatus(beatmap.status) || 'notFound'
+  return {
+    ...toBeatmap(beatmap),
+    status,
     beatmapset,
   }
 }
