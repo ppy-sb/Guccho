@@ -4,7 +4,7 @@ import type {
   AutopilotAvailable,
   Mode,
   MutualRelationship,
-  RankingSystem,
+  GrandLeaderboardRankingSystem,
   Relationship,
   RelaxAvailable,
   Ruleset,
@@ -104,7 +104,7 @@ export type UserStatistic<
   Id,
   IncludeMode extends Mode = Mode,
   IncludeRuleset extends Ruleset = Ruleset,
-  Ranking extends RankingSystem = RankingSystem,
+  Ranking extends GrandLeaderboardRankingSystem = GrandLeaderboardRankingSystem,
 > = {
   [M in IncludeMode]: Record<
     IncludeRuleset & AvailableRuleset<M>,
@@ -116,7 +116,7 @@ export interface UserExtra<
   Id,
   IncludeMode extends Mode = Mode,
   IncludeRuleset extends Ruleset = Ruleset,
-  Ranking extends RankingSystem = RankingSystem,
+  Ranking extends GrandLeaderboardRankingSystem = GrandLeaderboardRankingSystem,
 > {
   statistics: UserStatistic<Id, IncludeMode, IncludeRuleset, Ranking>
 
@@ -132,6 +132,6 @@ export type UserFull<
   Id,
   IncludeMode extends Mode = Mode,
   IncludeRuleset extends Ruleset = Ruleset,
-  Ranking extends RankingSystem = RankingSystem,
+  Ranking extends GrandLeaderboardRankingSystem = GrandLeaderboardRankingSystem,
 > = BaseUser<Id> & Partial<UserOptional<Id>>
 & Partial<UserExtra<Id, IncludeMode, IncludeRuleset, Ranking>>

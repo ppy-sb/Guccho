@@ -10,7 +10,7 @@ import { UserDataProvider } from '../../base/client/user'
 import { createUserQuery } from './db-queries'
 import BanchoPyUserRelationship from './user-relations'
 import { prismaClient } from './index'
-import type { Mode, Range, RankingSystem, Ruleset } from '~/types/common'
+import type { Mode, Range, GrandLeaderboardRankingSystem, Ruleset } from '~/types/common'
 
 import type {
   BaseUser,
@@ -81,7 +81,7 @@ export default class BanchoPyUser extends UserDataProvider<Id> implements UserDa
     id: Id
     mode: Mode
     ruleset: Ruleset
-    rankingSystem: RankingSystem
+    rankingSystem: GrandLeaderboardRankingSystem
     page: Range<0, 10>
     perPage: Range<1, 11>
   }) {
@@ -186,7 +186,7 @@ export default class BanchoPyUser extends UserDataProvider<Id> implements UserDa
         : undefined,
     ])
 
-    const statistics: UserStatistic<Id, Mode, Ruleset, RankingSystem> = {
+    const statistics: UserStatistic<Id, Mode, Ruleset, GrandLeaderboardRankingSystem> = {
       osu: {
         standard: createRulesetData({
           databaseResult: results.find(

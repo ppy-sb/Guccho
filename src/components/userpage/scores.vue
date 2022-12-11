@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
-import type { PPRankingSystem, Range, RankingSystem, ScoreRankingSystem } from '~/types/common'
-import { mode, rankingSystem, ruleset, scoreRankingSystem } from '~/types/common'
+import type { GrandLeaderboardRankingSystem, GrandLeaderboardScoreRankingSystem, PPRankingSystem, Range, ScoreRankingSystem } from '~/types/common'
+import { grandLeaderboardRankingSystem, grandLeaderboardScoreRankingSystem, mode, ruleset } from '~/types/common'
 import type { IdType } from '$/config'
 
 import type { BaseUser } from '~/types/user'
@@ -11,10 +11,10 @@ const [switcher] = inject('switcher') as SwitcherComposableType
 let prevSwitcherState = {
   ...switcher,
 }
-const stabilizeScoreRank = (rankingSystem: RankingSystem) => {
-  if (scoreRankingSystem.includes(rankingSystem as ScoreRankingSystem))
-    return 'score'
-  return rankingSystem
+const stabilizeScoreRank = (rankingSystem: GrandLeaderboardRankingSystem) => {
+  if (grandLeaderboardScoreRankingSystem.includes(rankingSystem as GrandLeaderboardScoreRankingSystem))
+    return 'score' as ScoreRankingSystem
+  return rankingSystem as PPRankingSystem
 }
 const switchBetweenScoreRanks = () => prevSwitcherState.rankingSystem !== switcher.rankingSystem && stabilizeScoreRank(prevSwitcherState.rankingSystem) === stabilizeScoreRank(switcher.rankingSystem)
 const page = ref<Range<0, 10>>(0)
@@ -58,23 +58,25 @@ watch([user, page], async () => {
 })
 const transition = ref<'left' | 'right'>('left')
 onMounted(() => {
+  const animationDirection = <T extends readonly any[]>(val: T[number], prevVal: T[number], array: T) => {
+    const [idx, prevIdx] = [array.indexOf(val), array.indexOf(prevVal)]
+    if (idx === prevIdx)
+      return
+    if (idx > prevIdx)
+      return 'right'
+    else
+      return 'left'
+  }
+
   // transition direction
   const arrayMap = {
     mode,
     ruleset,
-    rankingSystem,
+    rankingSystem: grandLeaderboardRankingSystem,
   } as const
   const computeAnimateDirection = () => {
     const sw = switcher
-    const animationDirection = <T extends readonly any[]>(val: T[number], prevVal: T[number], array: T) => {
-      const [idx, prevIdx] = [array.indexOf(val), array.indexOf(prevVal)]
-      if (idx === prevIdx)
-        return
-      if (idx > prevIdx)
-        return 'right'
-      else
-        return 'left'
-    }
+
     for (const [key, switcherState] of Object.entries(sw)) {
       const [value, previousValue] = [switcherState, prevSwitcherState[key as keyof typeof prevSwitcherState]]
       const direction = animationDirection(value, previousValue, arrayMap[key as keyof typeof prevSwitcherState])

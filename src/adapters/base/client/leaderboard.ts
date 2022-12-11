@@ -1,11 +1,11 @@
-import type { Awaitable, Mode, PPRankingSystem, Range, RankingSystem, Ruleset } from '~/types/common'
+import type { Awaitable, GrandLeaderboardRankingSystem, Mode, PPRankingSystem, Range, Ruleset } from '~/types/common'
 import type { ComponentLeaderboardItem } from '~/types/leaderboard'
 
 export namespace LeaderboardDataProvider {
   export interface BaseQuery {
     mode: Mode
     ruleset: Ruleset
-    rankingSystem: RankingSystem
+    rankingSystem: GrandLeaderboardRankingSystem
     page: Range<0, 10>
     pageSize: Range<20, 51>
   }
