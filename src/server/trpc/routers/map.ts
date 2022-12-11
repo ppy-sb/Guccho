@@ -1,15 +1,17 @@
 import { z } from 'zod'
 import { router as _router, publicProcedure as p } from '../trpc'
 import { zodIdType } from '$/shapes/index'
-import BanchoPyLeaderboard from '$/client/leaderboard'
+import BanchoPyMap from '$/client/map'
 
-const leaderboard = new BanchoPyLeaderboard()
+const map = new BanchoPyMap()
 export const router = _router({
   beatmapset: p.input(z.object({
     id: zodIdType,
-  })).query(({ ctx, input }) => {
-    return {
-      hello: 'hi',
-    }
+  })).query(async ({ input }) => {
+    const { id } = input
+    const bs = await map.getBeatmapset({ id })
+    if (!bs)
+      return
+    return bs
   }),
 })
