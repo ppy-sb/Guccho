@@ -1,18 +1,9 @@
-<script setup>
-const props = defineProps({
-  variant: {
-    type: String,
-    default: undefined,
-  },
-  size: {
-    type: String,
-    default: undefined,
-  },
-  modelValue: {
-    type: [String, Number, Symbol],
-    default: Symbol,
-  },
-})
+<script setup lang="ts">
+const props = defineProps<{
+  variant?: string
+  size?: string
+  modelValue: any
+}>()
 const emit = defineEmits(['update:modelValue'])
 if (props.variant !== 'boxed')
   provide('variant', props.variant)
@@ -20,7 +11,7 @@ if (props.variant !== 'boxed')
 const size = computed(() => props.size)
 const current = computed(() => props.modelValue)
 const disabled = Symbol('disabled tab')
-const select = value => emit('update:modelValue', value)
+const select = (value: unknown) => emit('update:modelValue', value)
 provide('size', size)
 provide('current', current)
 provide('select', select)
