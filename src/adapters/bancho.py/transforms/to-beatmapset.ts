@@ -19,8 +19,10 @@ export function toBeatmapset(beatmapset: Source, beatmap: DBMap): undefined | Be
   }
 }
 export function toBeatmap(beatmap: DBMap) {
+  const status = toRankingStatus(beatmap.status) || 'notFound'
   return {
     id: beatmap.id,
+    status,
     foreignId: beatmap.id,
     version: beatmap.version,
     md5: beatmap.md5,
@@ -43,15 +45,14 @@ export function toBeatmap(beatmap: DBMap) {
 export function toBeatmapWithBeatmapset(beatmap: DBMap & {
   source: Source
 }): BeatmapWithMeta<
-  typeof beatmap['source']['server'], typeof status, typeof beatmap['id'], typeof beatmap['id']
+  typeof beatmap['source']['server'], typeof imOnlyHereForTypescript['status'], typeof beatmap['id'], typeof beatmap['id']
 > | undefined {
   const beatmapset = toBeatmapset(beatmap.source, beatmap)
+  const imOnlyHereForTypescript = toBeatmap(beatmap)
   if (!beatmapset)
     return
-  const status = toRankingStatus(beatmap.status) || 'notFound'
   return {
-    ...toBeatmap(beatmap),
-    status,
+    ...imOnlyHereForTypescript,
     beatmapset,
   }
 }
