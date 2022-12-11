@@ -1,4 +1,6 @@
-<script setup>
+<script setup lang="ts">
+import type { Ref } from 'vue'
+
 const props = defineProps({
   value: {
     type: [String, Number, Symbol, Array, Object],
@@ -9,14 +11,14 @@ const props = defineProps({
     default: undefined,
   },
 })
-const variant = inject('variant')
-const size = inject('size')
-const current = inject('current')
-const clickTab = inject('select')
+const variant = inject<string>('variant')
+const size = inject<string>('size')
+const current = inject<Ref<unknown>>('current')
+const clickTab = inject<(value: unknown) => void>('select')
 const disabledSymbol = inject('disabled')
 
 const disabled = computed(() => (props.value === disabledSymbol) || props.disabled === '')
-const active = computed(() => !disabled.value && current.value === props.value)
+const active = computed(() => !disabled.value && current?.value === props.value)
 </script>
 
 <template>
@@ -28,7 +30,7 @@ const active = computed(() => !disabled.value && current.value === props.value)
       active && 'tab-active',
       disabled && 'cursor-default',
     ]"
-    @click="!active && !disabled && clickTab(value)"
+    @click="!active && !disabled && clickTab?.(value)"
   >
     <slot />
   </div>
