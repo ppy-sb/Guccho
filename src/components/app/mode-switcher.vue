@@ -3,13 +3,13 @@
 import { toRaw, watch } from 'vue'
 import { useAppConfig } from '#app'
 import { forbiddenMode, forbiddenMods } from '~/common/varkaUtils'
-import type { Mode, RankingSystem, Ruleset } from '~/types/common'
+import type { GrandLeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
 import { useAdapterConfig } from '#imports'
 
 interface modelValue {
   mode?: Mode
   ruleset?: Ruleset
-  rankingSystem?: RankingSystem
+  rankingSystem?: GrandLeaderboardRankingSystem
 }
 const props = defineProps<{
   showSort?: boolean
@@ -21,7 +21,7 @@ const emit = defineEmits<{
   (event: 'update:modelValue', res: modelValue): void
 }>()
 const config = useAppConfig()
-const { supportedRankingSystems } = await useAdapterConfig()
+const { supportedGrandLeaderboardRankingSystems } = await useAdapterConfig()
 
 const [switcher, setSwitcher] = useSwitcher(toRaw(props.modelValue) || {})
 const emitData = () => {
@@ -73,7 +73,7 @@ watch(switcher, () => emitData())
         :key="rankingSystem"
       >
         <a
-          v-if="supportedRankingSystems.includes(rankingSystem)"
+          v-if="supportedGrandLeaderboardRankingSystems.includes(rankingSystem)"
           class="text-sm h-mode"
           :class="{ '!opacity-80 pointer-events-none': switcher.rankingSystem === rankingSystem }"
           @click="setSwitcher({ rankingSystem })"

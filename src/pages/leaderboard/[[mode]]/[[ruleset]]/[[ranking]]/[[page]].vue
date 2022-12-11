@@ -3,7 +3,7 @@
 import { reactive, ref } from 'vue'
 import { navigateTo, useAppConfig, useRoute } from '#app'
 
-import type { Mode, RankingSystem, Ruleset } from '~/types/common'
+import type { GrandLeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
 import type { SwitcherPropType } from '~/composables/useSwitcher'
 
 const config = useAppConfig()
@@ -22,7 +22,7 @@ const ruleset = (availableRulesets.includes(route.params.ruleset as string)
   : availableRulesets[0]) as Ruleset
 const rankingSystem = (availableRankingSystems.includes(route.params.ranking as string)
   ? route.params.ranking
-  : availableRankingSystems[0]) as RankingSystem
+  : availableRankingSystems[0]) as GrandLeaderboardRankingSystem
 const page = parseInt(route.params.page as string) || 1
 
 const perPage = 20

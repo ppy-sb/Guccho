@@ -5,9 +5,9 @@ import { computed, inject } from 'vue'
 
 import { useAdapterConfig } from '#imports'
 import type { SwitcherComposableType } from '~/composables/useSwitcher'
-import { RankingSystem } from '~/types/common'
+import { GrandLeaderboardRankingSystem } from '~/types/common'
 
-const { supportedRankingSystems } = await useAdapterConfig()
+const { supportedGrandLeaderboardRankingSystems } = await useAdapterConfig()
 
 const config = useAppConfig()
 const rankingSystem = config.rankingSystem
@@ -32,7 +32,7 @@ const filter = (showType: 'tab' | 'dropdown') =>
   >((acc, [key, value]) => {
     if (value.userpage.show !== showType)
       return acc
-    if (!supportedRankingSystems.includes(key))
+    if (!supportedGrandLeaderboardRankingSystems.includes(key))
       return acc
     acc[key] = value
     return acc
@@ -47,7 +47,7 @@ const dropdown = computed(() => filter('dropdown'))
       v-slot="{ select }"
       :model-value="switcher.rankingSystem"
       variant="bordered"
-      @update:model-value="(v: RankingSystem) => setSwitcher({ rankingSystem: v })"
+      @update:model-value="(v: GrandLeaderboardRankingSystem) => setSwitcher({ rankingSystem: v })"
     >
       <t-tab
         disabled

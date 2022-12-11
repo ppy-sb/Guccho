@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import { faBan } from '@fortawesome/free-solid-svg-icons'
 import type { RankingSystemScore } from '~/types/score'
-import type { Mode, RankingSystem, Ruleset } from '~/types/common'
+import type { GrandLeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
 import { ppRankingSystem, scoreRankingSystem } from '~/types/common'
 import { createAddCommasFormatter } from '~/common/varkaUtils'
 import { useFAIconLib } from '#imports'
 import { assertBeatmapIsVisible } from '~/helpers/map'
 const props = withDefaults(
   defineProps<{
-    score?: RankingSystemScore<unknown, unknown, Mode, RankingSystem>
+    score?: RankingSystemScore<unknown, unknown, Mode, GrandLeaderboardRankingSystem>
     mode: Mode
     ruleset: Ruleset
-    rankingSystem: RankingSystem
+    rankingSystem: GrandLeaderboardRankingSystem
     useIntl?: boolean
   }>(),
   {

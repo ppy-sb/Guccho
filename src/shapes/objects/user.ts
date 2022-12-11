@@ -1,12 +1,12 @@
 import type { HitCount } from '~/types/score'
-import type { Mode, RankingSystem, Ruleset } from '~/types/common'
+import type { Mode, GrandLeaderboardRankingSystem, Ruleset } from '~/types/common'
 import type { UserFull } from '~/types/user'
 import type { PPRank, ScoreRank, UserModeRulesetStatistics } from '~/types/statistics'
 
 export const createISODate = (date: Date = new Date()) => date.toUTCString()
 
 export const createScoreRank = <M extends Mode>(
-  initial: ScoreRank<unknown, M, Ruleset, RankingSystem> = {
+  initial: ScoreRank<unknown, M, Ruleset, GrandLeaderboardRankingSystem> = {
     rankHistory: { [createISODate(new Date('2023-01-01'))]: 1 },
     countryRank: 1,
     // countryRankHistory: {[createISODate(new Date('2023-01-01'))]:1},
@@ -19,7 +19,7 @@ export const createScoreRank = <M extends Mode>(
       [createISODate(new Date('2022-01-01'))]: BigInt(1_000_000_000),
     },
   },
-): ScoreRank<unknown, M, Ruleset, RankingSystem> => JSON.parse(
+): ScoreRank<unknown, M, Ruleset, GrandLeaderboardRankingSystem> => JSON.parse(
     JSON.stringify(initial),
   )
 export const createBeatmapSet = (initial = {
@@ -77,7 +77,7 @@ export const createHitObject = <_Mode extends Mode>(mode: _Mode) =>
     } satisfies HitCount<Exclude<Mode, 'mania'>>
 
 export const createPPRank = <_Mode extends Mode>(
-  initial: PPRank<unknown, _Mode, Ruleset, RankingSystem> = {
+  initial: PPRank<unknown, _Mode, Ruleset, GrandLeaderboardRankingSystem> = {
     rank: 1,
     rankHistory: { [createISODate(new Date('2023-01-01'))]: 1 },
     countryRank: 1,
@@ -87,7 +87,7 @@ export const createPPRank = <_Mode extends Mode>(
     performanceHistory: { [createISODate(new Date('2022-01-01'))]: 0, [createISODate(new Date('2023-01-01'))]: 100 },
   },
   mode: _Mode,
-): PPRank<unknown, _Mode, Ruleset, RankingSystem> => {
+): PPRank<unknown, _Mode, Ruleset, GrandLeaderboardRankingSystem> => {
   const copy = JSON.parse(JSON.stringify(initial))
 
   copy.bests = [{
@@ -116,9 +116,9 @@ export const createPPRank = <_Mode extends Mode>(
 
 export const createRulesetData = <M extends Mode>(
   mode: M,
-  ppRankData: PPRank<unknown, M, Ruleset, RankingSystem> | undefined = undefined,
-  scoreRankData: ScoreRank<unknown, M, Ruleset, RankingSystem> | undefined = undefined,
-): UserModeRulesetStatistics<unknown, M, Ruleset, RankingSystem> => ({
+  ppRankData: PPRank<unknown, M, Ruleset, GrandLeaderboardRankingSystem> | undefined = undefined,
+  scoreRankData: ScoreRank<unknown, M, Ruleset, GrandLeaderboardRankingSystem> | undefined = undefined,
+): UserModeRulesetStatistics<unknown, M, Ruleset, GrandLeaderboardRankingSystem> => ({
     ppv2: createPPRank(ppRankData, mode),
     ppv1: createPPRank(ppRankData, mode),
     rankedScore: createScoreRank(scoreRankData),

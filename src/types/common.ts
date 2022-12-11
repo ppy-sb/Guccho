@@ -20,14 +20,23 @@ export type RelaxAvailable = typeof relaxAvailable[number]
 export const autopilotAvailable = ['osu'] as const
 export type AutopilotAvailable = typeof autopilotAvailable[number]
 
-export const scoreRankingSystem = ['rankedScore', 'totalScore'] as const
-export type ScoreRankingSystem = typeof scoreRankingSystem[number]
-
 export const ppRankingSystem = ['ppv2', 'ppv1'] as const
 export type PPRankingSystem = typeof ppRankingSystem[number]
 
+export const scoreRankingSystem = ['score'] as const
+export type ScoreRankingSystem = typeof scoreRankingSystem[number]
+
 export const rankingSystem = [...ppRankingSystem, ...scoreRankingSystem] as const
 export type RankingSystem = typeof rankingSystem[number]
+
+export const grandLeaderboardPPRankingSystem = ppRankingSystem
+export type GrandLeaderboardPPRankingSystem = PPRankingSystem
+
+export const grandLeaderboardScoreRankingSystem = ['rankedScore', 'totalScore'] as const
+export type GrandLeaderboardScoreRankingSystem = typeof grandLeaderboardScoreRankingSystem[number]
+
+export const grandLeaderboardRankingSystem = [...ppRankingSystem, ...grandLeaderboardScoreRankingSystem] as const
+export type GrandLeaderboardRankingSystem = typeof grandLeaderboardRankingSystem[number]
 
 export const scope = ['self', 'friends', 'public'] as const
 export type Scope = typeof scope[number]
@@ -58,7 +67,7 @@ Enumerate<F>
 >
 
 export type UserpageShowType = 'tab' | 'dropdown' | 'hidden'
-export type ServerConfig<AvailableRankingSystem extends RankingSystem> = Record<AvailableRankingSystem, {
+export type ServerConfig<AvailableRankingSystem extends GrandLeaderboardRankingSystem> = Record<AvailableRankingSystem, {
   userpage: {
     show: UserpageShowType
   }

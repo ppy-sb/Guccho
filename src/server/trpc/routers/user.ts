@@ -3,7 +3,7 @@ import { TRPCError } from '@trpc/server'
 import { zodHandle, zodMode, zodRankingSystem, zodRelationType, zodRuleset } from '../shapes'
 import { router as _router, publicProcedure as p } from '../trpc'
 import { userNotFound } from '../messages'
-import { supportedRankingSystems } from '../config'
+import { supportedGrandLeaderboardRankingSystems } from '../config'
 import type { Range } from '~/types/common'
 import { followUserPreferences } from '~/server/transforms'
 import { UserDataProvider, UserRelationshipDataProvider } from '$/client'
@@ -46,7 +46,7 @@ export const router = _router({
     if (!user)
       throw new TRPCError({ code: 'NOT_FOUND', message: userNotFound })
 
-    if (!supportedRankingSystems.includes(input.rankingSystem))
+    if (!supportedGrandLeaderboardRankingSystems.includes(input.rankingSystem))
       throw new TRPCError({ code: 'PRECONDITION_FAILED', message: 'ranking system not supported' })
 
     const returnValue = await userProvider.getBests({

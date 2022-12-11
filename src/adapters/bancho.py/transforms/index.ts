@@ -5,7 +5,7 @@ import { BanchoPyPrivilege, toBanchoRankingStatus } from '../enums'
 import { getLevelWithProgress } from './level-calc'
 import type { RankingStatus } from '~/types/beatmap'
 import { RankingStatusEnum } from '~/types/beatmap'
-import type { Mode, RankingSystem, Ruleset, Scope } from '~/types/common'
+import type { Mode, GrandLeaderboardRankingSystem, Ruleset, Scope } from '~/types/common'
 import type {
   BaseUser,
   UserOptional,
@@ -19,7 +19,7 @@ export function createRulesetData<
   Id,
   _Mode extends Mode,
   _Ruleset extends Ruleset,
-  _RankingSystem extends RankingSystem,
+  _RankingSystem extends GrandLeaderboardRankingSystem,
 >({
   databaseResult: dbResult,
   ranks,

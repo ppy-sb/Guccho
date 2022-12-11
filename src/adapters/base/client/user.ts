@@ -1,4 +1,4 @@
-import type { Awaitable, Mode, Range, RankingSystem, Ruleset } from '~/types/common'
+import type { Awaitable, GrandLeaderboardRankingSystem, Mode, Range, Ruleset } from '~/types/common'
 import type { BaseUser, UserExtra, UserOptional, UserStatistic } from '~/types/user'
 import type { RankingSystemScore } from '~/types/score'
 
@@ -20,7 +20,7 @@ export abstract class UserDataProvider<Id> {
   abstract userExists({ handle, keys }: UserDataProvider.OptType<Id>): Awaitable<boolean>
   abstract getBaseUser<Includes extends Partial<Record<keyof UserOptional<Id>, boolean>>>(opt: UserDataProvider.OptType<Id, Includes>): Awaitable<BaseUser<Id> | null>
   abstract getBaseUsers<Includes extends Partial<Record<keyof UserOptional<Id>, boolean>>>(opt: { handle: string | Id; includes?: Includes }): Awaitable<BaseUser<Id>[]>
-  abstract getBests<_Mode extends Mode, _Ruleset extends Ruleset, _RankingSystem extends RankingSystem>(query: {
+  abstract getBests<_Mode extends Mode, _Ruleset extends Ruleset, _RankingSystem extends GrandLeaderboardRankingSystem>(query: {
     id: Id
     mode: _Mode
     ruleset: _Ruleset

@@ -3,7 +3,7 @@ import type { BanchoPyMode } from '../enums'
 import { toBanchoPyMode } from '../enums'
 import { LeaderboardDataProvider } from '../../base/client/leaderboard'
 import { prismaClient } from './index'
-import type { Mode, Range, RankingSystem, Ruleset } from '~/types/common'
+import type { GrandLeaderboardRankingSystem, Mode, Range, Ruleset } from '~/types/common'
 
 import type {
   IdType,
@@ -25,7 +25,7 @@ export default class BanchoPyLeaderboard extends LeaderboardDataProvider<IdType>
   }: {
     mode: Mode
     ruleset: Ruleset
-    rankingSystem: RankingSystem
+    rankingSystem: GrandLeaderboardRankingSystem
     page: Range<0, 10>
     pageSize: Range<20, 51>
   }) {
