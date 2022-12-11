@@ -1,4 +1,4 @@
-import type { Mode, GrandLeaderboardRankingSystem, Ruleset } from '~/types/common'
+import type { GrandLeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
 
 export type IdType = number
 

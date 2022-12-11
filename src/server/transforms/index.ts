@@ -1,4 +1,4 @@
-import type { Mode, MutualRelationship, GrandLeaderboardRankingSystem, Relationship, Ruleset, Scope } from '~/types/common'
+import type { GrandLeaderboardRankingSystem, Mode, MutualRelationship, Relationship, Ruleset, Scope } from '~/types/common'
 import { compareScope } from '$/transforms'
 import type { BaseUser, UserExtra, UserOptional, UserPreferences } from '~/types/user'
 

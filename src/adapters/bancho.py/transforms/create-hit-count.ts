@@ -1,5 +1,5 @@
 import type { Score as DBScore } from '@prisma/client'
-import type { Mode, GrandLeaderboardRankingSystem, Ruleset } from '~/types/common'
+import type { GrandLeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
 import type { RulesetScore } from '~/types/score'
 
 export function createHitCount<_Mode extends Mode>(mode: _Mode, score: DBScore): RulesetScore<unknown, unknown, _Mode, Ruleset, GrandLeaderboardRankingSystem>['hit'] {
