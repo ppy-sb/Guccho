@@ -7,7 +7,7 @@ import type { Range } from '~/types/common'
 
 const provider = new Leaderboard()
 export const router = _router({
-  fetch: publicProcedure
+  totalLeaderboard: publicProcedure
     .input(
       z.object({
         mode: zodMode,
