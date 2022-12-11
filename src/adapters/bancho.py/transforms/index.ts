@@ -5,7 +5,7 @@ import { BanchoPyPrivilege, toBanchoRankingStatus } from '../enums'
 import { getLevelWithProgress } from './level-calc'
 import type { RankingStatus } from '~/types/beatmap'
 import { RankingStatusEnum } from '~/types/beatmap'
-import type { Mode, GrandLeaderboardRankingSystem, Ruleset, Scope } from '~/types/common'
+import type { GrandLeaderboardRankingSystem, Mode, Ruleset, Scope } from '~/types/common'
 import type {
   BaseUser,
   UserOptional,

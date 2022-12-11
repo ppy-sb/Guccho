@@ -10,7 +10,7 @@ import { UserDataProvider } from '../../base/client/user'
 import { createUserQuery } from './db-queries'
 import BanchoPyUserRelationship from './user-relations'
 import { prismaClient } from './index'
-import type { Mode, Range, GrandLeaderboardRankingSystem, Ruleset } from '~/types/common'
+import type { GrandLeaderboardRankingSystem, Mode, Range, Ruleset } from '~/types/common'
 
 import type {
   BaseUser,
