@@ -42,11 +42,18 @@ async function getLiveRank(id: number, mode: number, country: string) {
   }
 }
 
+export interface DatabaseModel {
+  user: PrismaClient['user']
+  stat: PrismaClient['stat']
+  score: PrismaClient['score']
+  $queryRaw: PrismaClient['$queryRaw']
+}
 export default class BanchoPyUser implements UserDataProvider<Id> {
-  db: PrismaClient
+  db: DatabaseModel
+
   relationships: BanchoPyUserRelationship
 
-  constructor({ client }: { client: PrismaClient } = { client: prismaClient }) {
+  constructor({ client }: { client: DatabaseModel } = { client: prismaClient }) {
     this.db = client
     this.relationships = new BanchoPyUserRelationship()
   }
@@ -328,7 +335,10 @@ export default class BanchoPyUser implements UserDataProvider<Id> {
           userpageContent: html,
         },
       })
-      return toUserEssential({ user: result })
+      return {
+        html: result.userpageContent as string,
+        raw: input.profile,
+      }
     }
     catch (err) {
       throw new TRPCError({ code: 'PARSE_ERROR', message: 'unable to parse json content' })

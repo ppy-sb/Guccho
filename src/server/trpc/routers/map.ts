@@ -1,6 +1,6 @@
 import { string, z } from 'zod'
 import { router as _router, publicProcedure as p } from '../trpc'
-import { MapDataProvider } from '~~/src/adapters/ppy.sb@bancho.py/client'
+import { MapDataProvider } from '~/adapters/ppy.sb@bancho.py/client'
 
 const map = new MapDataProvider()
 export const router = _router({

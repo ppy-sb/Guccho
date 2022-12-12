@@ -65,7 +65,10 @@ export interface UserDataProvider<Id> {
     input: {
       profile: JSONContent
     },
-  ): Awaitable<UserEssential<Id>>
+  ): Awaitable<{
+    html: string
+    raw: JSONContent
+  }>
 
   changeVisibility?(
     user: { id: Id },

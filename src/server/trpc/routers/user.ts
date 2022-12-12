@@ -6,7 +6,7 @@ import { userNotFound } from '../messages'
 import { supportedGrandLeaderboardRankingSystems } from '../config'
 import type { Range } from '~/types/common'
 import { followUserPreferences } from '~/server/transforms'
-import { UserDataProvider, UserRelationshipDataProvider } from '~~/src/adapters/ppy.sb@bancho.py/client'
+import { UserDataProvider, UserRelationshipDataProvider } from '~/adapters/ppy.sb@bancho.py/client'
 
 const [userProvider, userRelationshipProvider] = [new UserDataProvider(), new UserRelationshipDataProvider()]
 

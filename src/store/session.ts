@@ -2,7 +2,7 @@ import type { TRPCError } from '@trpc/server'
 import { defineStore } from 'pinia'
 import md5 from 'md5'
 import { checkUserPrivilege } from '../helpers/checkUserPrivilege'
-import type { Id } from '~~/src/adapters/ppy.sb@bancho.py/config'
+import type { Id } from '~/adapters/ppy.sb@bancho.py/config'
 import type { UserFull } from '~/types/user'
 
 export const useSession = defineStore('session', {
