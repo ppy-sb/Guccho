@@ -35,87 +35,6 @@ const selectedMap = computed(() => beatmapset.value?.beatmaps.find(bm => bm.id =
           </t-tab>
         </t-tabs>
       </div>
-      <!-- <div class="overflow-hidden bg-white shadow sm:rounded-lg">
-        <div class="px-4 py-5 sm:px-6">
-          <h3 class="text-lg font-medium leading-6 text-gray-900">
-            Applicant Information
-          </h3>
-          <p class="mt-1 max-w-2xl text-sm text-gray-500">
-            Personal details and application.
-          </p>
-        </div>
-        <div class="border-t border-gray-200">
-          <dl>
-            <div class="bg-gray-50 stripe-odd">
-              <dt class="text-sm font-medium text-gray-500">
-                Full name
-              </dt>
-              <dd class="stripe-even">
-                Margot Foster
-              </dd>
-            </div>
-            <div class="bg-white stripe-odd">
-              <dt class="text-sm font-medium text-gray-500">
-                Application for
-              </dt>
-              <dd class="stripe-even">
-                Backend Developer
-              </dd>
-            </div>
-            <div class="bg-gray-50 stripe-odd">
-              <dt class="text-sm font-medium text-gray-500">
-                Email address
-              </dt>
-              <dd class="stripe-even">
-                margotfoster@example.com
-              </dd>
-            </div>
-            <div class="bg-white stripe-odd">
-              <dt class="text-sm font-medium text-gray-500">
-                Salary expectation
-              </dt>
-              <dd class="stripe-even">
-                $120,000
-              </dd>
-            </div>
-            <div class="bg-gray-50 stripe-odd">
-              <dt class="text-sm font-medium text-gray-500">
-                About
-              </dt>
-              <dd class="stripe-even">
-                Fugiat ipsum ipsum deserunt culpa aute sint do nostrud anim incididunt cillum culpa consequat. Excepteur qui ipsum aliquip consequat sint. Sit id mollit nulla mollit nostrud in ea officia proident. Irure nostrud pariatur mollit ad adipisicing reprehenderit deserunt qui eu.
-              </dd>
-            </div>
-            <div class="bg-white stripe-odd">
-              <dt class="text-sm font-medium text-gray-500">
-                Attachments
-              </dt>
-              <dd class="stripe-even">
-                <ul role="list" class="divide-y divide-gray-200 rounded-md border border-gray-200">
-                  <li class="flex items-center justify-between py-3 pl-3 pr-4 text-sm">
-                    <div class="flex w-0 flex-1 items-center">
-                      <PaperClipIcon class="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
-                      <span class="ml-2 w-0 flex-1 truncate">resume_back_end_developer.pdf</span>
-                    </div>
-                    <div class="ml-4 flex-shrink-0">
-                      <a href="#" class="font-medium text-indigo-600 hover:text-indigo-500">Download</a>
-                    </div>
-                  </li>
-                  <li class="flex items-center justify-between py-3 pl-3 pr-4 text-sm">
-                    <div class="flex w-0 flex-1 items-center">
-                      <PaperClipIcon class="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
-                      <span class="ml-2 w-0 flex-1 truncate">coverletter_back_end_developer.pdf</span>
-                    </div>
-                    <div class="ml-4 flex-shrink-0">
-                      <a href="#" class="font-medium text-indigo-600 hover:text-indigo-500">Download</a>
-                    </div>
-                  </li>
-                </ul>
-              </dd>
-            </div>
-          </dl>
-        </div>
-      </div> -->
       <div
         v-if="selectedMap"
         class="card bg-base-100" :class="{
@@ -225,7 +144,6 @@ const selectedMap = computed(() => beatmapset.value?.beatmaps.find(bm => bm.id =
 <style scoped lang="postcss">
 .header-with-maps {
   @apply sm:flex mt-2 items-center justify-between text-center text-kimberly-900 dark:text-kimberly-100;
-  /* @apply sm:flex sm:w-full mt-2 items-center justify-between text-center text-kimberly-900 dark:text-kimberly-100 ; */
   transition: 0.3s ease;
   @apply pb-0;
 

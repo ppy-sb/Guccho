@@ -1,9 +1,6 @@
 import z from 'zod'
 
-import { zodIdType } from '$active/shapes'
-export { zodIdType } from '$active/shapes'
-
-export const zodHandle = z.union([z.string(), z.number(), zodIdType])
+export const zodHandle = z.union([z.string(), z.number()])
 export const zodRelationType = z.union([z.literal('friend'), z.literal('block')])
 
 export const zodMode = z.union([z.literal('osu'), z.literal('taiko'), z.literal('fruits'), z.literal('mania')])

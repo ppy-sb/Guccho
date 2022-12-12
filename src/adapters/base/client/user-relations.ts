@@ -1,4 +1,5 @@
-import type { UserEssential, UserRelationship } from '~/types/user'
+import type { UserEssential } from '~/types/user'
+import type { UserRelationship } from '~/types/user-relationship'
 import type { Awaitable, Relationship } from '~/types/common'
 
 export abstract class UserRelationshipDataProvider<Id> {
