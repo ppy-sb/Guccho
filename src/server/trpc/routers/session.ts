@@ -7,17 +7,17 @@ import { sessionProcedure as pSession } from '../middleware/session'
 import { router as _router } from '../trpc'
 import { passwordMismatch, sessionNotFound, unableToRetrieveSession, unknownError, userNotFound } from '../messages'
 import { getSession } from '~/server/session'
-import UserDataProvider from '$active/client/user'
+import { UserDataProvider } from '~~/src/adapters/ppy.sb@bancho.py/client'
 
 const { compare } = bcrypt
-const provider = new UserDataProvider()
+const userProvider = new UserDataProvider()
 export const router = _router({
   login: pSession.input(z.object({
     handle: zodHandle,
     md5HashedPassword: z.string(),
   })).query(async ({ input: { handle, md5HashedPassword }, ctx }) => {
     try {
-      const user = await provider.getEssential({ handle, includes: { secrets: true } })
+      const user = await userProvider.getEssential({ handle, includes: { secrets: true } })
       if (user == null) {
         throw new TRPCError({
           code: 'NOT_FOUND',
@@ -69,7 +69,7 @@ export const router = _router({
       })
     }
     return {
-      user: (session.userId && await provider.getEssential({ handle: session.userId })) ?? undefined,
+      user: (session.userId && await userProvider.getEssential({ handle: session.userId })) ?? undefined,
     }
   }),
 })
