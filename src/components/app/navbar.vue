@@ -45,6 +45,7 @@ const root = ref<HTMLElement>()
 const shownMenu = reactive({
   left: false,
   right: false,
+  user: false,
 })
 const handleScroll = () => {
   if (root.value == null)
@@ -196,10 +197,17 @@ onUnmounted(() => {
             </div>
           </template>
         </v-dropdown>
-        <div class="dropdown dropdown-bottom">
+        <v-dropdown
+          v-model:shown="shownMenu.user"
+          theme="guweb-dropdown"
+          placement="bottom"
+          :distance="8"
+          strategy="fixed"
+        >
           <button
             v-if="session.$state.loggedIn"
             class="btn btn-ghost !shadow-none btn-circle"
+            @click="shownMenu.user = true"
           >
             <div class="indicator avatar">
               <img
@@ -210,58 +218,62 @@ onUnmounted(() => {
               <span class="badge badge-xs badge-success indicator-item" />
             </div>
           </button>
-          <ul
-            tabindex="0"
-            class="right-0 p-2 mt-2 shadow-xl menu menu-compact dropdown-content bg-kimberly-100 dark:bg-kimberly-600 rounded-br-2xl rounded-bl-2xl w-52"
-          >
-            <li>
-              <nuxt-link
-                :to="{
-                  name: 'me-preferences',
-                }"
+          <template #popper>
+            <div class="menu bg-kimberly-150/70 dark:bg-kimberly-700/80">
+              <ul
+                tabindex="0"
+                class="right-0 p-2 mt-2 shadow-xl menu menu-compact dropdown-content rounded-br-2xl rounded-bl-2xl w-52"
               >
-                Preferences
-              </nuxt-link>
-            </li>
-            <li>
-              <nuxt-link
-                :to="{
-                  name: 'me-friends',
-                }"
-              >
-                Friends & Blocks
-              </nuxt-link>
-            </li>
-            <li>
-              <nuxt-link
-                :to="{
-                  name: 'user-handle',
-                  params: {
-                    handle: session.$state.userId || 0,
-                  },
-                }"
-              >
-                My userpage
-              </nuxt-link>
-            </li>
-            <li class="disabled">
-              <nuxt-link
-                v-if="session.$state.privilege.hasAdminAccess"
-                :to="{
-                  name: 'index',
-                }"
-              >
-                Admin Panel
-              </nuxt-link>
-            </li>
-            <li>
-              <a
-                href="#"
-                @click="logout"
-              >log out</a>
-            </li>
-          </ul>
-        </div>
+                <li>
+                  <nuxt-link
+                    :to="{
+                      name: 'me-preferences',
+                    }"
+                  >
+                    Preferences
+                  </nuxt-link>
+                </li>
+                <li>
+                  <nuxt-link
+                    :to="{
+                      name: 'me-friends',
+                    }"
+                  >
+                    Friends & Blocks
+                  </nuxt-link>
+                </li>
+                <li>
+                  <nuxt-link
+                    :to="{
+                      name: 'user-handle',
+                      params: {
+                        handle: session.$state.userId || 0,
+                      },
+                    }"
+                  >
+                    My userpage
+                  </nuxt-link>
+                </li>
+                <li class="disabled">
+                  <nuxt-link
+                    v-if="session.$state.privilege.hasAdminAccess"
+                    :to="{
+                      name: 'index',
+                    }"
+                  >
+                    Admin Panel
+                  </nuxt-link>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    @click="logout"
+                  >log out</a>
+                </li>
+              </ul>
+            </div>
+          </template>
+        </v-dropdown>
       </div>
     </div>
   </div>

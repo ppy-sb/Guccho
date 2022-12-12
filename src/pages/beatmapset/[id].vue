@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// @ts-expect-error no we do not have declaration
 import { JsonViewer } from 'vue3-json-viewer'
 import 'vue3-json-viewer/dist/index.css'
 const { $client } = useNuxtApp()
