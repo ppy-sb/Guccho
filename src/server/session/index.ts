@@ -1,13 +1,13 @@
 import { v4 } from 'uuid'
-import type { IdType } from '$active/config'
+import type { Id } from '$active/config'
 import type { Awaitable } from '~/types/common'
 
-export const session = new Map<string, { userId?: IdType; lastActivity: number }>()
+export const session = new Map<string, { userId?: Id; lastActivity: number }>()
 export const config = {
   expire: 1000 * 60 * 60,
 }
 
-export const createSession = async (data?: { id: IdType }) => {
+export const createSession = async (data?: { id: Id }) => {
   const sessionId = v4()
   const _session = {
     userId: data?.id,

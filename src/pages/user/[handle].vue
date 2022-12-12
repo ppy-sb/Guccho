@@ -5,7 +5,7 @@ import { useRoute } from '#app'
 import type { GrandLeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
 import { definePageMeta } from '#imports'
 import type { UserModeRulesetStatistics } from '~/types/statistics'
-import type { IdType } from '~/server/trpc/config'
+import type { Id } from '~/server/trpc/config'
 
 definePageMeta({
   layout: 'without-bg',
@@ -22,7 +22,7 @@ const {
 } = await useAsyncData(async () => await $client.user.userpage.query({
   handle: `${route.params.handle}`,
 }))
-const currentStatistic = computed<UserModeRulesetStatistics<IdType, Mode, Ruleset, GrandLeaderboardRankingSystem>>(
+const currentStatistic = computed<UserModeRulesetStatistics<Id, Mode, Ruleset, GrandLeaderboardRankingSystem>>(
   // @ts-expect-error switcher has its logic to not spit out wrong combination
   () => user.value?.statistics[switcher.mode][switcher.ruleset],
 )

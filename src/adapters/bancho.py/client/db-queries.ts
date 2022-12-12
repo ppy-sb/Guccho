@@ -1,6 +1,6 @@
-import type { IdType } from '$active/config'
+import type { Id } from '$active/config'
 
-export const createUserQuery = (handle: string | IdType, selectAgainst: Array<'id' | 'name' | 'safeName' | 'email'> = ['id', 'name', 'safeName']) => {
+export const createUserQuery = (handle: string | Id, selectAgainst: Array<'id' | 'name' | 'safeName' | 'email'> = ['id', 'name', 'safeName']) => {
   let handleNum = handle
   const handleStr = handle.toString().trim()
   if (typeof handleNum === 'string') {
@@ -34,7 +34,7 @@ export const createUserQuery = (handle: string | IdType, selectAgainst: Array<'i
                   email: handleStr,
                 }
               : undefined,
-          ].filter(Boolean) as Array<{ id: IdType } | { name: string } | { safeName: string } | { email: string }>,
+          ].filter(Boolean) as Array<{ id: Id } | { name: string } | { safeName: string } | { email: string }>,
         },
         {
           priv: {

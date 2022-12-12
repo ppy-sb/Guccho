@@ -2,7 +2,7 @@
 import type { Ref } from 'vue'
 import type { GrandLeaderboardRankingSystem, GrandLeaderboardScoreRankingSystem, PPRankingSystem, Range, ScoreRankingSystem } from '~/types/common'
 import { grandLeaderboardRankingSystem, grandLeaderboardScoreRankingSystem, mode, ruleset } from '~/types/common'
-import type { IdType } from '$active/config'
+import type { Id } from '$active/config'
 
 import type { UserEssential } from '~/types/user'
 import type { SwitcherComposableType } from '~/composables/useSwitcher'
@@ -19,7 +19,7 @@ const stabilizeScoreRank = (rankingSystem: GrandLeaderboardRankingSystem) => {
 const switchBetweenScoreRanks = () => prevSwitcherState.rankingSystem !== switcher.rankingSystem && stabilizeScoreRank(prevSwitcherState.rankingSystem) === stabilizeScoreRank(switcher.rankingSystem)
 const page = ref<Range<0, 10>>(0)
 
-const user = inject('user') as Ref<UserEssential<IdType>>
+const user = inject('user') as Ref<UserEssential<Id>>
 const {
   data: current,
   error,
