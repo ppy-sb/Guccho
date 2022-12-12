@@ -7,7 +7,7 @@ import { sessionProcedure as pSession } from '../middleware/session'
 import { router as _router } from '../trpc'
 import { passwordMismatch, sessionNotFound, unableToRetrieveSession, unknownError, userNotFound } from '../messages'
 import { getSession } from '~/server/session'
-import { UserDataProvider } from '~~/src/adapters/ppy.sb@bancho.py/client'
+import { UserDataProvider } from '~/adapters/ppy.sb@bancho.py/client'
 
 const { compare } = bcrypt
 const userProvider = new UserDataProvider()

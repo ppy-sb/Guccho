@@ -1,7 +1,7 @@
 generator client {
   provider      = "prisma-client-js"
   binaryTargets = ["native"]
-  output        = "../src/.prisma/bancho.py"
+  output        = "../src/.prisma/ppy.sb"
 }
 
 datasource db {
@@ -41,6 +41,7 @@ model User {
   relations        Relationship[] @relation("from")
   gotRelations     Relationship[] @relation("to")
   stat             Stat[]
+  userpages        Userpage[]
   Score            Score[]
 
   @@map("users")
@@ -341,6 +342,13 @@ model MapRequest {
   @@map("map_requests")
 }
 
+model LackMap {
+  md5       String @id @db.VarChar(255)
+  lack_type String @db.VarChar(255)
+
+  @@map("maps_lack")
+}
+
 model TourneyPoolMap {
   map_id  Int
   pool_id Int
@@ -350,6 +358,18 @@ model TourneyPoolMap {
   @@id([map_id, pool_id])
   @@index([pool_id], map: "tourney_pool_maps_tourney_pools_id_fk")
   @@map("tourney_pool_maps")
+}
+
+model Userpage {
+  id      Int              @id @default(autoincrement())
+  userId  Int              @map("user_id")
+  html    String?          @db.Text
+  raw     String?          @db.Text
+  rawType UserpageRawType? @map("raw_type")
+  user    User             @relation(fields: [userId], references: [id], onUpdate: Restrict, map: "fk_user")
+
+  @@index([userId], map: "user_id")
+  @@map("userpages")
 }
 
 enum SourceEnum {

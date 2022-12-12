@@ -1,5 +1,5 @@
 import { v4 } from 'uuid'
-import type { Id } from '~~/src/adapters/ppy.sb@bancho.py/config'
+import type { Id } from '~/adapters/ppy.sb@bancho.py/config'
 import type { Awaitable } from '~/types/common'
 
 export const session = new Map<string, { userId?: Id; lastActivity: number }>()

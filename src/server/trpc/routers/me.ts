@@ -7,7 +7,7 @@ import { router as _router } from '../trpc'
 import { zodHandle, zodRelationType, zodTipTapJSONContent } from '../shapes'
 import { atLeastOneUserNotExists, oldPasswordMismatch, relationTypeNotFound, userExists, userNotFound } from '../messages'
 import { userProcedure as pUser } from '~/server/trpc/middleware/user'
-import { UserDataProvider, UserRelationshipDataProvider } from '~~/src/adapters/ppy.sb@bancho.py/client'
+import { UserDataProvider, UserRelationshipDataProvider } from '~/adapters/ppy.sb@bancho.py/client'
 import { calculateMutualRelationships } from '~/server/transforms'
 
 const userProvider = new UserDataProvider()

@@ -2,7 +2,7 @@ import z from 'zod'
 // import { createRouter } from '../context'
 import { router as _router, publicProcedure } from '../trpc'
 import { zodMode, zodRankingSystem, zodRuleset } from '~/server/trpc/shapes'
-import { LeaderboardDataProvider } from '~~/src/adapters/ppy.sb@bancho.py/client'
+import { LeaderboardDataProvider } from '~/adapters/ppy.sb@bancho.py/client'
 import type { Range } from '~/types/common'
 
 const provider = new LeaderboardDataProvider()
