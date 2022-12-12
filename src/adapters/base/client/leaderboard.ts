@@ -1,5 +1,5 @@
 import type { Awaitable, GrandLeaderboardRankingSystem, Mode, PPRankingSystem, Range, Ruleset } from '~/types/common'
-import type { ComponentLeaderboardItem } from '~/types/leaderboard'
+import type { ComponentLeaderboard } from '~/types/leaderboard'
 
 export namespace LeaderboardDataProvider {
   export interface BaseQuery {
@@ -10,7 +10,7 @@ export namespace LeaderboardDataProvider {
     pageSize: Range<20, 51>
   }
 
-  export interface BeatmapLeaderboardItem<Id> {
+  export interface BeatmapLeaderboard<Id> {
     user: {
       id: Id
       name: string
@@ -26,9 +26,9 @@ export namespace LeaderboardDataProvider {
   }
 }
 export abstract class LeaderboardDataProvider<Id> {
-  abstract getTotalLeaderboard(query: LeaderboardDataProvider.BaseQuery): Awaitable<ComponentLeaderboardItem<Id>[]>
+  abstract getGrand(query: LeaderboardDataProvider.BaseQuery): Awaitable<ComponentLeaderboard<Id>[]>
 
-  abstract getBeatmapLeaderboard(query: LeaderboardDataProvider.BaseQuery & {
+  abstract getBeatmap(query: LeaderboardDataProvider.BaseQuery & {
     id: Id
-  }): Awaitable<LeaderboardDataProvider.BeatmapLeaderboardItem<Id>[]>
+  }): Awaitable<LeaderboardDataProvider.BeatmapLeaderboard<Id>[]>
 }

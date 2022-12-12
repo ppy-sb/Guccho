@@ -1,7 +1,7 @@
 import type { Maybe } from './frontend-common'
 import type { GrandLeaderboardRankingSystem, GrandLeaderboardScoreRankingSystem, PPRankingSystem } from './common'
 
-export interface LeaderboardItem<IdType, _RankingSystem extends GrandLeaderboardRankingSystem = GrandLeaderboardRankingSystem> {
+export interface Leaderboard<IdType, _RankingSystem extends GrandLeaderboardRankingSystem = GrandLeaderboardRankingSystem> {
   user: {
     id: IdType
     name: string
@@ -18,7 +18,7 @@ export interface LeaderboardItem<IdType, _RankingSystem extends GrandLeaderboard
   rank: number | bigint
 }
 
-export interface ComponentLeaderboardItem<IdType> {
+export interface ComponentLeaderboard<IdType> {
   rank: number | bigint
-  user: Maybe<LeaderboardItem<IdType>['user'], 'inThisLeaderboard'>
+  user: Maybe<Leaderboard<IdType>['user'], 'inThisLeaderboard'>
 }

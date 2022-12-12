@@ -14,7 +14,7 @@ export const router = _router({
   userpage: p.input(z.object({
     handle: zodHandle,
   })).query(async ({ input: { handle } }) => {
-    const user = await userProvider.getFullUser({ handle, excludes: { relationships: true, secrets: true } })
+    const user = await userProvider.getFull({ handle, excludes: { relationships: true, secrets: true } })
     if (user == null) {
       throw new TRPCError({
         code: 'NOT_FOUND',
@@ -26,7 +26,7 @@ export const router = _router({
   full: p.input(z.object({
     handle: zodHandle,
   })).query(async ({ input: { handle } }) => {
-    const user = await userProvider.getFullUser({ handle, excludes: { email: true } })
+    const user = await userProvider.getFull({ handle, excludes: { email: true } })
     if (user == null) {
       throw new TRPCError({
         code: 'NOT_FOUND',
@@ -42,7 +42,7 @@ export const router = _router({
     rankingSystem: zodRankingSystem,
     page: z.number().gte(0).lt(10),
   })).query(async ({ input }) => {
-    const user = await userProvider.getBaseUser({ handle: input.handle })
+    const user = await userProvider.getEssential({ handle: input.handle })
     if (!user)
       throw new TRPCError({ code: 'NOT_FOUND', message: userNotFound })
 
@@ -64,17 +64,17 @@ export const router = _router({
   base: p.input(z.object({
     handle: zodHandle,
   })).query(async ({ input }) => {
-    const user = await userProvider.getBaseUser({ handle: input.handle })
+    const user = await userProvider.getEssential({ handle: input.handle })
     return user
   }),
   countRelations: p.input(z.object({
     handle: zodHandle,
     type: zodRelationType,
   })).query(async ({ input: { handle, type } }) => {
-    const user = await userProvider.getBaseUser({ handle })
+    const user = await userProvider.getEssential({ handle })
     if (user == null)
       return
-    const count = await userRelationshipProvider.countRelationship({ user, type })
+    const count = await userRelationshipProvider.count({ user, type })
     return count
   }),
 })

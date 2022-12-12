@@ -1,5 +1,5 @@
 import type { Awaitable, GrandLeaderboardRankingSystem, Mode, Range, Ruleset } from '~/types/common'
-import type { BaseUser, UserExtra, UserOptional, UserStatistic } from '~/types/user'
+import type { UserEssential, UserExtra, UserOptional, UserStatistic } from '~/types/user'
 import type { RankingSystemScore } from '~/types/score'
 
 export namespace UserDataProvider {
@@ -17,9 +17,9 @@ export namespace UserDataProvider {
   }
 }
 export abstract class UserDataProvider<Id> {
-  abstract userExists({ handle, keys }: UserDataProvider.OptType<Id>): Awaitable<boolean>
-  abstract getBaseUser<Includes extends Partial<Record<keyof UserOptional<Id>, boolean>>>(opt: UserDataProvider.OptType<Id, Includes>): Awaitable<BaseUser<Id> | null>
-  abstract getBaseUsers<Includes extends Partial<Record<keyof UserOptional<Id>, boolean>>>(opt: { handle: string | Id; includes?: Includes }): Awaitable<BaseUser<Id>[]>
+  abstract exists({ handle, keys }: UserDataProvider.OptType<Id>): Awaitable<boolean>
+  abstract getEssential<Includes extends Partial<Record<keyof UserOptional<Id>, boolean>>>(opt: UserDataProvider.OptType<Id, Includes>): Awaitable<UserEssential<Id> | null>
+  abstract getEssentials<Includes extends Partial<Record<keyof UserOptional<Id>, boolean>>>(opt: { handle: string | Id; includes?: Includes }): Awaitable<UserEssential<Id>[]>
   abstract getBests<_Mode extends Mode, _Ruleset extends Ruleset, _RankingSystem extends GrandLeaderboardRankingSystem>(query: {
     id: Id
     mode: _Mode
@@ -34,16 +34,16 @@ export abstract class UserDataProvider<Id> {
     _RankingSystem & 'ppv2'
   >[]>
 
-  abstract getStatisticsOfUser(query: {
+  abstract getStatistics(query: {
     id: Id
     country: string
   }): Awaitable<UserStatistic<Id>>
 
-  abstract getFullUser<Excludes extends Partial<Record<keyof UserDataProvider.ComposableProperties<Id>, boolean>>>(query: { handle: string | Id; excludes?: Excludes }):
+  abstract getFull<Excludes extends Partial<Record<keyof UserDataProvider.ComposableProperties<Id>, boolean>>>(query: { handle: string | Id; excludes?: Excludes }):
   Awaitable<
     (
       null |
-      BaseUser<Id>
+      UserEssential<Id>
       & ({
         [K in keyof UserDataProvider.ComposableProperties<Id> as Exclude<Excludes, 'secrets'>[K] extends true ? never : K]: UserDataProvider.ComposableProperties<Id>[K];
       })
@@ -51,17 +51,17 @@ export abstract class UserDataProvider<Id> {
     )
   >
 
-  abstract updateUser(
-    user: BaseUser<Id>,
+  abstract changePreferences(
+    user: UserEssential<Id>,
     input: {
       email?: string
       name?: string
       userpageContent?: string
     },
-  ): Awaitable<BaseUser<Id>>
+  ): Awaitable<UserEssential<Id>>
 
-  abstract updateUserPassword(
-    user: BaseUser<Id>,
+  abstract changePassword(
+    user: UserEssential<Id>,
     newPasswordMD5: string,
-  ): Awaitable<BaseUser<Id>>
+  ): Awaitable<UserEssential<Id>>
 }

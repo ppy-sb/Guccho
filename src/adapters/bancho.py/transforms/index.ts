@@ -7,7 +7,7 @@ import type { RankingStatus } from '~/types/beatmap'
 import { RankingStatusEnum } from '~/types/beatmap'
 import type { GrandLeaderboardRankingSystem, Mode, Ruleset, Scope } from '~/types/common'
 import type {
-  BaseUser,
+  UserEssential,
   UserOptional,
   UserPrivilegeString,
   UserRelationship,
@@ -122,13 +122,13 @@ export function toRoles(priv: number): UserPrivilegeString[] {
   return roles
 }
 
-export function toBaseUser<
+export function toUserEssential<
   Includes extends Partial<Record<keyof UserOptional<Id>, boolean>> = Record<
     never,
     never
   >,
 >({ user, includes }: { user: DatabaseUser; includes?: Includes }) {
-  const returnValue: BaseUser<Id> & Partial<UserOptional<Id>> = {
+  const returnValue: UserEssential<Id> & Partial<UserOptional<Id>> = {
     id: user.id,
     ingameId: user.id,
     name: user.name,
@@ -149,15 +149,15 @@ export function toBaseUser<
     returnValue.email = user.email
 
   return returnValue as Includes['secrets'] extends true
-    ? BaseUser<Id> & { secrets: UserSecrets }
-    : BaseUser<Id>
+    ? UserEssential<Id> & { secrets: UserSecrets }
+    : UserEssential<Id>
 }
 
 export function dedupeUserRelationship(
   relations: Array<{
     type: RelationshipType
     toUserId: Id
-    toUser: BaseUser<Id>
+    toUser: UserEssential<Id>
   }>,
 ) {
   const reduceUserRelationships = relations.reduce((acc, cur) => {

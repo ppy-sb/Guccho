@@ -4,7 +4,7 @@ import { TRPCError } from '@trpc/server'
 import type { Prisma, PrismaClient } from '@prisma/client'
 import type { IdType as Id } from '../config'
 import { BanchoPyMode, toBanchoPyMode } from '../enums'
-import { createRulesetData, toBaseUser, toFullUser } from '../transforms'
+import { createRulesetData, toUserEssential, toFullUser } from '../transforms'
 import { toRankingSystemScores } from '../transforms/scores'
 import { createUserQuery } from './db-queries'
 import BanchoPyUserRelationship from './user-relations'
@@ -13,7 +13,7 @@ import { UserDataProvider } from '$def/client/user'
 import type { GrandLeaderboardRankingSystem, Mode, Range, Ruleset } from '~/types/common'
 
 import type {
-  BaseUser,
+  UserEssential,
   UserOptional,
   UserStatistic,
 } from '~/types/user'
@@ -49,11 +49,11 @@ export default class BanchoPyUser extends UserDataProvider<Id> implements UserDa
     this.relationships = new BanchoPyUserRelationship()
   }
 
-  async userExists({ handle, keys }: UserDataProvider.OptType<number, Record<never, never>>) {
+  async exists({ handle, keys }: UserDataProvider.OptType<number, Record<never, never>>) {
     return (await this.db.user.count(createUserQuery(handle, keys || ['id', 'name', 'safeName', 'email']))) > 0
   }
 
-  async getBaseUser<Includes extends Partial<Record<keyof UserOptional<number>, boolean>>>(opt: UserDataProvider.OptType<Id, Includes>) {
+  async getEssential<Includes extends Partial<Record<keyof UserOptional<number>, boolean>>>(opt: UserDataProvider.OptType<Id, Includes>) {
     const { handle, includes, keys } = opt
     const user = await this.db.user.findFirst(
       createUserQuery(handle, keys || ['id', 'name', 'safeName', 'email']),
@@ -61,13 +61,13 @@ export default class BanchoPyUser extends UserDataProvider<Id> implements UserDa
     if (user == null)
       return null
 
-    return toBaseUser({ user, includes })
+    return toUserEssential({ user, includes })
   }
 
-  async getBaseUsers<Includes extends Partial<Record<keyof UserOptional<Id>, boolean>>>(opt: { handle: string | number; includes?: Includes | undefined }) {
+  async getEssentials<Includes extends Partial<Record<keyof UserOptional<Id>, boolean>>>(opt: { handle: string | number; includes?: Includes | undefined }) {
     const { handle, includes } = opt
     const users = await this.db.user.findMany(createUserQuery(handle))
-    return users.map(user => toBaseUser({ user, includes }))
+    return users.map(user => toUserEssential({ user, includes }))
   }
 
   async getBests({
@@ -119,7 +119,7 @@ export default class BanchoPyUser extends UserDataProvider<Id> implements UserDa
     return toRankingSystemScores({ scores, rankingSystem, mode })
   }
 
-  async getStatisticsOfUser({
+  async getStatistics({
     id,
     country,
   }: {
@@ -251,7 +251,7 @@ export default class BanchoPyUser extends UserDataProvider<Id> implements UserDa
     return statistics
   }
 
-  async getFullUser<Excludes extends Partial<Record<keyof UserDataProvider.ComposableProperties<Id>, boolean>>>({ handle, excludes }: { handle: string | Id; excludes?: Excludes }) {
+  async getFull<Excludes extends Partial<Record<keyof UserDataProvider.ComposableProperties<Id>, boolean>>>({ handle, excludes }: { handle: string | Id; excludes?: Excludes }) {
     if (!excludes)
       excludes = <Excludes>{ secrets: true }
     const user = await this.db.user.findFirst(createUserQuery(handle))
@@ -268,11 +268,11 @@ export default class BanchoPyUser extends UserDataProvider<Id> implements UserDa
       statistics:
         (excludes.statistics === true
           ? undefined as never
-          : await this.getStatisticsOfUser(user)),
+          : await this.getStatistics(user)),
       relationships:
         (excludes.relationships === true
           ? undefined as never
-          : await this.relationships.getRelationships({ user })),
+          : await this.relationships.get({ user })),
       email: (excludes.email === true ? undefined as never : user.email),
       profile: (excludes.profile === true
         ? undefined as never
@@ -290,8 +290,8 @@ export default class BanchoPyUser extends UserDataProvider<Id> implements UserDa
     }
   }
 
-  async updateUser(
-    user: BaseUser<Id>,
+  async changePreferences(
+    user: UserEssential<Id>,
     input: {
       email?: string
       name?: string
@@ -308,11 +308,11 @@ export default class BanchoPyUser extends UserDataProvider<Id> implements UserDa
         userpageContent: input.userpageContent,
       },
     })
-    return toBaseUser({ user: result })
+    return toUserEssential({ user: result })
   }
 
-  async updateUserPassword(
-    user: BaseUser<Id>,
+  async changePassword(
+    user: UserEssential<Id>,
     newPasswordMD5: string,
   ) {
   // TODO: gen salt round
@@ -326,6 +326,6 @@ export default class BanchoPyUser extends UserDataProvider<Id> implements UserDa
         pwBcrypt,
       },
     })
-    return toBaseUser({ user: result })
+    return toUserEssential({ user: result })
   }
 }
