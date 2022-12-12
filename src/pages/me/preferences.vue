@@ -25,6 +25,7 @@ if (_user == null)
 const user = ref({ ..._user } as Exclude<typeof _user, null>)
 const unchanged = ref({ ...user.value })
 const profile = ref<JSONContent>()
+const profileEdited = ref(false)
 const uploading = ref(0)
 const saveAvatar = () => {
   uploading.value = 1
@@ -36,14 +37,15 @@ const changePreferences = async () => {
   const updateData = {
     name: user.value.name !== unchanged.value.name ? user.value.name : undefined,
     email: user.value.email !== unchanged.value.email ? user.value.email : undefined,
-    profile: profile.value,
   }
 
-  const result = await $client.me.changePreferences.mutate(updateData)
+  const [result, profileResult] = await Promise.all([$client.me.changePreferences.mutate(updateData), profile.value && $client.me.changeUserpage.mutate({ profile: profile.value })])
   if (!result)
     return
-
   unchanged.value = { ...unchanged.value, ...result }
+  if (!profileResult)
+    return
+  profile.value = profileResult.raw
 }
 
 const changePasswordForm = reactive<{
@@ -434,6 +436,7 @@ onBeforeMount(async () => {
       v-if="profile"
       v-model.lazy="profile"
       class="safari-performance-boost"
+      @update:model-value="profileEdited = true"
     />
   </section>
 </template>
