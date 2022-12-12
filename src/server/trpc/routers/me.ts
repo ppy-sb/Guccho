@@ -16,9 +16,9 @@ const userProvider = new UserDataProvider()
 const relationProvider = new UserRelationshipDataProvider()
 export const router = _router({
   fullSecret: pUser.query(async ({ ctx }) => {
-    return await userProvider.getFullUser({ handle: ctx.user.id, excludes: { secrets: false } })
+    return await userProvider.getFull({ handle: ctx.user.id, excludes: { secrets: false } })
   }),
-  updatePreferences: pUser
+  changePreferences: pUser
     .input(z.object({
       email: z.string().email().optional(),
       name: z.string().optional(),
@@ -27,10 +27,10 @@ export const router = _router({
       const update: Partial<typeof input & { userpageContent: string }> = {}
       // TODO: check email(should verified by frontend with another request (not impl'd yet ))
       // if (input.email) {
-      //   const user = await provider.getBaseUser({ handle: input.email, includes: { email: true } })
+      //   const user = await provider.essential({ handle: input.email, includes: { email: true } })
       // }
       if (input.name) {
-        const existedUser = await userProvider.getBaseUser({
+        const existedUser = await userProvider.getEssential({
           handle: input.name,
           keys: ['id', 'name', 'safeName'],
         })
@@ -49,7 +49,7 @@ export const router = _router({
           throw new TRPCError({ code: 'PARSE_ERROR', message: 'unable to parse json content' })
         }
       }
-      const result = await userProvider.updateUser(ctx.user, update)
+      const result = await userProvider.changePreferences(ctx.user, update)
       if (!result)
         throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' })
       ctx.user = result
@@ -59,13 +59,13 @@ export const router = _router({
     oldPassword: z.string(),
     newPassword: z.string(),
   })).mutation(async ({ ctx, input }) => {
-    const userWithPassword = await userProvider.getBaseUser({ handle: ctx.user.id, includes: { secrets: true } })
+    const userWithPassword = await userProvider.getEssential({ handle: ctx.user.id, includes: { secrets: true } })
     if (userWithPassword == null)
       throw new TRPCError({ code: 'NOT_FOUND', message: userNotFound })
     if (!await bcrypt.compare(input.oldPassword, userWithPassword.secrets.password))
       throw new TRPCError({ code: 'UNAUTHORIZED', message: oldPasswordMismatch })
 
-    return await userProvider.updateUserPassword(userWithPassword, input.newPassword)
+    return await userProvider.changePassword(userWithPassword, input.newPassword)
   }),
   relation: pUser
     .input(
@@ -76,14 +76,14 @@ export const router = _router({
     .query(async ({ input: { target }, ctx }) => {
       const [fromUser, targetUser] = await Promise.all([
         ctx.user,
-        userProvider.getBaseUser({ handle: target }),
+        userProvider.getEssential({ handle: target }),
       ])
       if (!fromUser || (targetUser == null))
         return
 
       const [fromRelationship, targetRelationship] = await Promise.all([
-        relationProvider.getOneRelationship(fromUser, targetUser),
-        relationProvider.getOneRelationship(targetUser, fromUser),
+        relationProvider.getOne(fromUser, targetUser),
+        relationProvider.getOne(targetUser, fromUser),
       ])
       return {
         from: [fromRelationship],
@@ -98,7 +98,7 @@ export const router = _router({
       }
     }),
   relations: pUser.query(async ({ ctx }) => {
-    return await relationProvider.getRelationships({ user: ctx.user })
+    return await relationProvider.get({ user: ctx.user })
   }),
   removeOneRelation: pUser
     .input(
@@ -110,7 +110,7 @@ export const router = _router({
     .mutation(async ({ input, ctx }) => {
       const [fromUser, targetUser] = await Promise.all([
         ctx.user,
-        userProvider.getBaseUser({ handle: input.target }),
+        userProvider.getEssential({ handle: input.target }),
       ])
       if (!fromUser || (targetUser == null)) {
         throw new TRPCError({
@@ -119,7 +119,7 @@ export const router = _router({
         })
       }
       try {
-        await relationProvider.removeOneRelationship({ fromUser, targetUser, type: input.type })
+        await relationProvider.removeOne({ fromUser, targetUser, type: input.type })
         return true
       }
       catch (err: any) {
@@ -142,7 +142,7 @@ export const router = _router({
     .mutation(async ({ input, ctx }) => {
       const [fromUser, targetUser] = await Promise.all([
         ctx.user,
-        userProvider.getBaseUser({ handle: input.target }),
+        userProvider.getEssential({ handle: input.target }),
       ])
       if (!fromUser || (targetUser == null)) {
         throw new TRPCError({

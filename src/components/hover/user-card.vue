@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { RouterLinkProps } from 'vue-router'
 import { useAppConfig } from '#app'
-import type { BaseUser } from '~/types/user'
+import type { UserEssential } from '~/types/user'
 import type { IdType } from '~/server/trpc/config'
 import { getFlagURL } from '~/common/varkaUtils'
 
 const props = defineProps<{
-  user: BaseUser<IdType>
+  user: UserEssential<IdType>
   to: RouterLinkProps['to']
 }>()
 // const runtimeConfig = useAppConfig()

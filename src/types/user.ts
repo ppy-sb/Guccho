@@ -64,7 +64,7 @@ export interface UserSecrets {
   password: string
   apiKey?: string
 }
-export interface BaseUser<Id> {
+export interface UserEssential<Id> {
   id: Id
   ingameId: number
   name: string
@@ -89,7 +89,7 @@ export interface UserPreferences {
     Scope
   >
 }
-export interface UserRelationship<Id> extends BaseUser<Id> {
+export interface UserRelationship<Id> extends UserEssential<Id> {
   relationship: Relationship[]
   relationshipFromTarget: Relationship[]
   mutualRelationship: MutualRelationship[]
@@ -133,5 +133,5 @@ export type UserFull<
   IncludeMode extends Mode = Mode,
   IncludeRuleset extends Ruleset = Ruleset,
   Ranking extends GrandLeaderboardRankingSystem = GrandLeaderboardRankingSystem,
-> = BaseUser<Id> & Partial<UserOptional<Id>>
+> = UserEssential<Id> & Partial<UserOptional<Id>>
 & Partial<UserExtra<Id, IncludeMode, IncludeRuleset, Ranking>>

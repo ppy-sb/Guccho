@@ -4,7 +4,7 @@ import type { GrandLeaderboardRankingSystem, GrandLeaderboardScoreRankingSystem,
 import { grandLeaderboardRankingSystem, grandLeaderboardScoreRankingSystem, mode, ruleset } from '~/types/common'
 import type { IdType } from '$active/config'
 
-import type { BaseUser } from '~/types/user'
+import type { UserEssential } from '~/types/user'
 import type { SwitcherComposableType } from '~/composables/useSwitcher'
 const { $client } = useNuxtApp()
 const [switcher] = inject('switcher') as SwitcherComposableType
@@ -19,7 +19,7 @@ const stabilizeScoreRank = (rankingSystem: GrandLeaderboardRankingSystem) => {
 const switchBetweenScoreRanks = () => prevSwitcherState.rankingSystem !== switcher.rankingSystem && stabilizeScoreRank(prevSwitcherState.rankingSystem) === stabilizeScoreRank(switcher.rankingSystem)
 const page = ref<Range<0, 10>>(0)
 
-const user = inject('user') as Ref<BaseUser<IdType>>
+const user = inject('user') as Ref<UserEssential<IdType>>
 const {
   data: current,
   error,

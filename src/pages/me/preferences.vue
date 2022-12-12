@@ -32,14 +32,14 @@ const saveAvatar = () => {
     uploading.value = 2
   }, 1000)
 }
-const updateUser = async () => {
+const changePreferences = async () => {
   const updateData = {
     name: user.value.name !== unchanged.value.name ? user.value.name : undefined,
     email: user.value.email !== unchanged.value.email ? user.value.email : undefined,
     profile: profile.value,
   }
 
-  const result = await $client.me.updatePreferences.mutate(updateData)
+  const result = await $client.me.changePreferences.mutate(updateData)
   if (!result)
     return
 
@@ -249,7 +249,7 @@ onBeforeMount(async () => {
       <button
         class="self-end btn btn-sm btn-warning"
         type="button"
-        @click="updateUser"
+        @click="changePreferences"
       >
         update
       </button>

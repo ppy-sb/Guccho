@@ -16,7 +16,7 @@ export default class BanchoPyLeaderboard extends LeaderboardDataProvider<IdType>
     this.db = client
   }
 
-  async getTotalLeaderboard({
+  async getGrand({
     mode,
     ruleset,
     rankingSystem,
@@ -126,7 +126,7 @@ export default class BanchoPyLeaderboard extends LeaderboardDataProvider<IdType>
     }))
   }
 
-  async getBeatmapLeaderboard(query: LeaderboardDataProvider.BaseQuery & { id: IdType }) {
+  async getBeatmap(query: LeaderboardDataProvider.BaseQuery & { id: IdType }) {
     const { mode, ruleset, rankingSystem, id } = query
     let sort = {}
     if (['totalScore', 'rankedScore'].includes(rankingSystem)) {
