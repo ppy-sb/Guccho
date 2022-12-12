@@ -1,4 +1,4 @@
-import type { IdType } from '$/config'
+import type { IdType } from '$active/config'
 
 export const createUserQuery = (handle: string | IdType, selectAgainst: Array<'id' | 'name' | 'safeName' | 'email'> = ['id', 'name', 'safeName']) => {
   let handleNum = handle

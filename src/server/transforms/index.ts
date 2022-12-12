@@ -1,5 +1,5 @@
 import type { GrandLeaderboardRankingSystem, Mode, MutualRelationship, Relationship, Ruleset, Scope } from '~/types/common'
-import { compareScope } from '$/transforms'
+import { compareScope } from '$active/transforms'
 import type { BaseUser, UserExtra, UserOptional, UserPreferences } from '~/types/user'
 
 export function followUserPreferences<Id, _Mode extends Mode, _Ruleset extends Ruleset, _RankingSystem extends GrandLeaderboardRankingSystem>({ user, scope = 'public' }: {

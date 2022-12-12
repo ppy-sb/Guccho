@@ -1,5 +1,5 @@
 import { v4 } from 'uuid'
-import type { IdType } from '$/config'
+import type { IdType } from '$active/config'
 import type { Awaitable } from '~/types/common'
 
 export const session = new Map<string, { userId?: IdType; lastActivity: number }>()

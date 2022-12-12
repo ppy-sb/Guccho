@@ -6,10 +6,10 @@ import type { IdType as Id } from '../config'
 import { BanchoPyMode, toBanchoPyMode } from '../enums'
 import { createRulesetData, toBaseUser, toFullUser } from '../transforms'
 import { toRankingSystemScores } from '../transforms/scores'
-import { UserDataProvider } from '../../base/client/user'
 import { createUserQuery } from './db-queries'
 import BanchoPyUserRelationship from './user-relations'
 import { prismaClient } from './index'
+import { UserDataProvider } from '$def/client/user'
 import type { GrandLeaderboardRankingSystem, Mode, Range, Ruleset } from '~/types/common'
 
 import type {
