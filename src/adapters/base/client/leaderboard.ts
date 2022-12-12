@@ -26,9 +26,9 @@ export namespace LeaderboardDataProvider {
   }
 }
 export abstract class LeaderboardDataProvider<Id> {
-  abstract getGrand(query: LeaderboardDataProvider.BaseQuery): Awaitable<ComponentLeaderboard<Id>[]>
+  abstract getGrandLeaderboard(query: LeaderboardDataProvider.BaseQuery): Awaitable<ComponentLeaderboard<Id>[]>
 
-  abstract getBeatmap(query: LeaderboardDataProvider.BaseQuery & {
+  abstract getBeatmapLeaderboard(query: LeaderboardDataProvider.BaseQuery & {
     id: Id
   }): Awaitable<LeaderboardDataProvider.BeatmapLeaderboard<Id>[]>
 }

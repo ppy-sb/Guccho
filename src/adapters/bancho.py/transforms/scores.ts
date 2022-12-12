@@ -13,8 +13,8 @@ export function toScore<_RankingSystem extends GrandLeaderboardRankingSystem>({ 
 }) {
   const rtn1 = {
     id: score.id,
-    playedAt: new Date(0),
-    maxCombo: 0,
+    playedAt: score.playTime,
+    maxCombo: score.maxCombo,
     // mods: score.mods,
     score: BigInt(score.score),
     grade: 'ssh',
@@ -47,10 +47,11 @@ export function toScore<_RankingSystem extends GrandLeaderboardRankingSystem>({ 
   return rtn1
 }
 
-export function toRankingSystemScore<_RankingSystem extends GrandLeaderboardRankingSystem>({ score, rankingSystem, mode }: {
+export function toRankingSystemScore<_RankingSystem extends GrandLeaderboardRankingSystem>({ score, rankingSystem, mode, rank }: {
   score: AbleToTransformToScores
   rankingSystem: _RankingSystem
   mode: Mode
+  rank: number
 }) {
   type HasBeatmap = typeof score['beatmap'] extends null ? false : Exclude<typeof score['beatmap'], null>
   const result = Object.assign(
@@ -71,11 +72,12 @@ export function toRankingSystemScore<_RankingSystem extends GrandLeaderboardRank
     },
     rankingSystem === 'ppv2'
       ? {
-          rank: 1,
+        // TODO get rank of play
+          rank,
           pp: score.pp,
         }
       : {
-          rank: 0,
+          rank,
           pp: 0,
         },
   ) satisfies RankingSystemScore<
@@ -102,6 +104,6 @@ export function toRankingSystemScores<RS extends GrandLeaderboardRankingSystem>(
   rankingSystem: RS
   mode: Mode
 }) {
-  return scores.map(score => toRankingSystemScore({ score, rankingSystem, mode }))
+  return scores.map((score, index) => toRankingSystemScore({ score, rankingSystem, mode, rank: index + 1 }))
 }
 // : Flavor extends 'ranking-system' ? :
