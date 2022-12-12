@@ -6,7 +6,7 @@ export namespace MapDataProvider {
     id: string
   }
 }
-export abstract class MapDataProvider<Id> {
-  abstract getBeatmapset(query: MapDataProvider.IdQuery): Awaitable<Beatmapset<BeatmapSource, Id, unknown> & { beatmaps: BeatmapEssential<Id, unknown>[] } | null>
-  abstract getBeatmap(query: MapDataProvider.IdQuery): Awaitable<BeatmapWithMeta<BeatmapSource, RankingStatus, Id, unknown> | null>
+export interface MapDataProvider<Id> {
+  getBeatmapset(query: MapDataProvider.IdQuery): Awaitable<Beatmapset<BeatmapSource, Id, unknown> & { beatmaps: BeatmapEssential<Id, unknown>[] } | null>
+  getBeatmap(query: MapDataProvider.IdQuery): Awaitable<BeatmapWithMeta<BeatmapSource, RankingStatus, Id, unknown> | null>
 }

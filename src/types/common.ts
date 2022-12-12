@@ -46,7 +46,7 @@ export type Grade = typeof grades[number]
 
 export const features = [
   'user.userpage',
-  'scope',
+  'visibility-scope',
 ] as const
 export type Feature = typeof features[number]
 // utils
