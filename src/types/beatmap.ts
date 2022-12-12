@@ -37,7 +37,6 @@ export type Beatmapset<Source extends BeatmapSource, LocalId, ForeignId> =
   } | {
     source: Exclude<Source, UnknownSource>
     id: LocalId
-
     foreignId: ForeignId
   })
 export interface BeatmapEssential<Id, ForeignId = never> {
@@ -59,21 +58,27 @@ export interface BeatmapEssential<Id, ForeignId = never> {
       sliders: number
       spinners: number
     }
+    totalLength: number
+    maxCombo: number
+    starRate: number
   }
   md5: string
   version: string
+  creator: string
+  lastUpdate: Date
 }
 export type BeatmapWithMeta<
   Source extends BeatmapSource,
   Status extends RankingStatus,
   LocalId,
   ForeignId,
-> = {
-  status: Status
-} & (
+> = (
   Status extends 'notFound' | 'deleted'
     ? {}
     : BeatmapEssential<LocalId, Source extends UnknownSource ? never : ForeignId> & {
+      source?: Source
       beatmapset: Beatmapset<Source, LocalId, ForeignId>
     }
-)
+) & {
+  status: Status
+}

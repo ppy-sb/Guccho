@@ -1,6 +1,7 @@
 import type { PrismaClient } from '@prisma/client'
-import { toBeatmap, toBeatmapWithBeatmapset, toBeatmapset } from '../transforms/to-beatmapset'
+import { toBeatmapEssential, toBeatmapWithBeatmapset, toBeatmapset } from '../transforms/to-beatmapset'
 import { stringToId } from '../transforms/string-to-id'
+import { toRankingStatus } from '../transforms'
 import type { Id } from './../config'
 import { prismaClient } from '.'
 import { MapDataProvider } from '$def/client/map'
@@ -59,6 +60,11 @@ export default class BanchoPyMap extends MapDataProvider<Id> implements MapDataP
     if (!beatmapset)
       return null
 
-    return Object.assign(beatmapset, { beatmaps: beatmaps.map(toBeatmap) })
+    return Object.assign(beatmapset, {
+      beatmaps: beatmaps.map(bm => ({
+        ...toBeatmapEssential(bm),
+        status: toRankingStatus(bm.status) || 'notFound',
+      })),
+    })
   }
 }

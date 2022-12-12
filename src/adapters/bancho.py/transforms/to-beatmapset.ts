@@ -1,6 +1,7 @@
 import type { Map as DBMap, Source } from '@prisma/client'
+import type { Id } from '../config'
 import { toRankingStatus } from './index'
-import type { BeatmapWithMeta, Beatmapset } from '~/types/beatmap'
+import type { BeatmapEssential, BeatmapWithMeta, Beatmapset } from '~/types/beatmap'
 
 // this do not deserves exporting
 export function toBeatmapset(beatmapset: Source, beatmap: DBMap): undefined | Beatmapset<typeof beatmapset['server'], typeof beatmapset['id'], typeof beatmapset['id']> {
@@ -18,20 +19,23 @@ export function toBeatmapset(beatmapset: Source, beatmap: DBMap): undefined | Be
     },
   }
 }
-export function toBeatmap(beatmap: DBMap) {
-  const status = toRankingStatus(beatmap.status) || 'notFound'
+export function toBeatmapEssential(beatmap: DBMap): BeatmapEssential<Id, Id> {
   return {
     id: beatmap.id,
-    status,
     foreignId: beatmap.id,
     version: beatmap.version,
     md5: beatmap.md5,
+    creator: beatmap.creator,
+    lastUpdate: beatmap.lastUpdate,
     properties: {
       bpm: beatmap.bpm,
       circleSize: beatmap.cs,
       approachRate: beatmap.ar,
       accuracy: beatmap.od,
       hpDrain: beatmap.hp,
+      totalLength: beatmap.totalLength,
+      maxCombo: beatmap.maxCombo,
+      starRate: beatmap.diff,
       // TODO: count data not available?
       count: {
         circles: 0,
@@ -45,14 +49,15 @@ export function toBeatmap(beatmap: DBMap) {
 export function toBeatmapWithBeatmapset(beatmap: DBMap & {
   source: Source
 }): BeatmapWithMeta<
-  typeof beatmap['source']['server'], typeof imOnlyHereForTypescript['status'], typeof beatmap['id'], typeof beatmap['id']
+  typeof beatmap['source']['server'], typeof status, typeof beatmap['id'], typeof beatmap['id']
 > | undefined {
+  const status = toRankingStatus(beatmap.status) || 'notFound'
   const beatmapset = toBeatmapset(beatmap.source, beatmap)
-  const imOnlyHereForTypescript = toBeatmap(beatmap)
   if (!beatmapset)
     return
   return {
-    ...imOnlyHereForTypescript,
+    ...toBeatmapEssential(beatmap),
+    status,
     beatmapset,
   }
 }
