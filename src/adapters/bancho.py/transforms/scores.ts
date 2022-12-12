@@ -1,4 +1,4 @@
-import type { Id as Id } from '../config'
+import type { Id } from '../config'
 import { createHitCount } from './create-hit-count'
 import { toBeatmapWithBeatmapset } from './to-beatmapset'
 import type { AbleToTransformToScores } from './index'
