@@ -2,17 +2,18 @@ import type { Map as DBMap, Score as DBScore, User as DatabaseUser, Relationship
 import type { Id } from '../config'
 import type { BanchoPyRankedStatus } from '../enums'
 import { BanchoPyPrivilege, toBanchoRankingStatus } from '../enums'
+import type {
+  UserEssential,
+  UserExtra,
+  UserOptional,
+  UserPrivilegeString,
+  UserSecrets,
+} from './../../../types/user'
 import { getLevelWithProgress } from './level-calc'
 import type { RankingStatus } from '~/types/beatmap'
 import { RankingStatusEnum } from '~/types/beatmap'
 import type { GrandLeaderboardRankingSystem, Mode, Ruleset, Scope } from '~/types/common'
-import type {
-  UserEssential,
-  UserOptional,
-  UserPrivilegeString,
-  UserRelationship,
-  UserSecrets,
-} from '~/types/user'
+import type { UserRelationship } from '~/types/user-relationship'
 import type { UserModeRulesetStatistics } from '~/types/statistics'
 
 export function createRulesetData<
@@ -178,7 +179,7 @@ export function dedupeUserRelationship(
   return [...reduceUserRelationships.values()]
 }
 
-export function toFullUser(user: DatabaseUser) {
+export function toFullUser(user: DatabaseUser): UserEssential<Id> & Pick<UserExtra<Id>, 'preferences'> & Pick<UserOptional, 'oldNames'> {
   return {
     id: user.id,
     ingameId: user.id,
@@ -188,27 +189,27 @@ export function toFullUser(user: DatabaseUser) {
     avatarUrl: `https://a.ppy.sb/${user.id}`,
     roles: toRoles(user.priv),
     preferences: {
-      scope: {
-        reachable: 'public',
-        status: 'public',
-        privateMessage: 'public',
-        email: 'self',
-        oldNames: 'public',
+      visibility: {
+        reachable: { public: true },
+        status: { public: true },
+        privateMessage: { public: true },
+        email: { },
+        oldNames: { public: true },
       } as const,
     },
     oldNames: [],
   }
 }
 
-export function compareScope(scope: Scope, requiredScope: Scope) {
-  if (requiredScope === 'public')
+export function compareScope(scope: Scope, requiredScope: Partial<Record<Scope, boolean>>) {
+  if (scope === 'public')
+    return requiredScope.public
+
+  if (scope === 'friends')
+    return requiredScope.friends || requiredScope.public
+
+  if (scope === 'self')
     return true
-
-  if (requiredScope === 'friends')
-    return scope === 'friends'
-
-  if (requiredScope === 'self')
-    return scope === 'self'
 }
 
 export function capitalizeFirstLetter<T extends string>(string: T) {

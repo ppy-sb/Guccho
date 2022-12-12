@@ -142,12 +142,12 @@ export const sampleUserWithSecrets: Required<UserFull<unknown>> = {
   roles: ['normal', 'supported', 'supporter'],
   relationships: [],
   preferences: {
-    scope: {
-      reachable: 'public',
-      status: 'public',
-      privateMessage: 'friends',
-      email: 'public',
-      oldNames: 'public',
+    visibility: {
+      reachable: { public: true },
+      status: { public: true },
+      privateMessage: { friends: true },
+      email: { public: true },
+      oldNames: { public: true },
     },
   },
   secrets: {

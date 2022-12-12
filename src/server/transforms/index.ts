@@ -8,13 +8,15 @@ export function followUserPreferences<Id, _Mode extends Mode, _Ruleset extends R
   }
   scope?: Scope
 }) {
-  // "reachable" | "oldNames" | "email" | "status"
+  if (scope === 'self')
+    return user
+
   return {
     ...user,
-    email: compareScope(scope, user.preferences.scope.email) ? user.email : undefined,
-    oldNames: compareScope(scope, user.preferences.scope.oldNames) ? user.oldNames : undefined,
-    reachable: compareScope(scope, user.preferences.scope.reachable) ? user.reachable : undefined,
-    status: compareScope(scope, user.preferences.scope.status) ? user.status : undefined,
+    email: compareScope(scope, user.preferences.visibility.email) ? user.email : undefined,
+    oldNames: compareScope(scope, user.preferences.visibility.oldNames) ? user.oldNames : undefined,
+    reachable: compareScope(scope, user.preferences.visibility.reachable) ? user.reachable : undefined,
+    status: compareScope(scope, user.preferences.visibility.status) ? user.status : undefined,
   }
 }
 

@@ -38,7 +38,7 @@ export type GrandLeaderboardScoreRankingSystem = typeof grandLeaderboardScoreRan
 export const grandLeaderboardRankingSystem = [...ppRankingSystem, ...grandLeaderboardScoreRankingSystem] as const
 export type GrandLeaderboardRankingSystem = typeof grandLeaderboardRankingSystem[number]
 
-export const scope = ['self', 'friends', 'public'] as const
+export const scope = ['self', 'friends', 'public', 'blocked'] as const
 export type Scope = typeof scope[number]
 
 export const grade = ['f', 'd', 'c', 'b', 'a', 's', 'sh', 'ss', 'ssh'] as const

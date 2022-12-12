@@ -4,14 +4,13 @@ import type {
   AutopilotAvailable,
   GrandLeaderboardRankingSystem,
   Mode,
-  MutualRelationship,
-  Relationship,
   RelaxAvailable,
   Ruleset,
   Scope,
   StandardAvailable,
 } from './common'
 import type { UserModeRulesetStatistics } from './statistics'
+import type { UserRelationship } from './user-relationship'
 
 export interface UserStatus {
   Offline: 'offline'
@@ -84,17 +83,11 @@ export interface UserOptional<Id = unknown> {
 }
 
 export interface UserPreferences {
-  scope: Record<
+  visibility: Record<
     Exclude<keyof UserOptional | 'privateMessage', 'secrets'>,
-    Scope
+    Partial<Record<Exclude<Scope, 'self'>, boolean>>
   >
 }
-export interface UserRelationship<Id> extends UserEssential<Id> {
-  relationship: Relationship[]
-  relationshipFromTarget: Relationship[]
-  mutualRelationship: MutualRelationship[]
-}
-
 type AvailableRuleset<R extends Mode> =
 | (R extends StandardAvailable ? 'standard' : never)
 | (R extends RelaxAvailable ? 'relax' : never)
