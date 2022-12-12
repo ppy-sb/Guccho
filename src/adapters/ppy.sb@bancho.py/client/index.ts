@@ -1,6 +1,6 @@
-import * as BanchoPY from '../../bancho.py/client'
+import * as BanchoPy from '../../bancho.py/client'
 
-export const LeaderboardDataProvider = BanchoPY.LeaderboardDataProvider
-export const UserRelationshipDataProvider = BanchoPY.UserRelationshipDataProvider
-export const UserDataProvider = BanchoPY.UserDataProvider
-export const MapDataProvider = BanchoPY.MapDataProvider
+export const LeaderboardDataProvider = BanchoPy.LeaderboardDataProvider
+export const UserRelationshipDataProvider = BanchoPy.UserRelationshipDataProvider
+export const UserDataProvider = BanchoPy.UserDataProvider
+export const MapDataProvider = BanchoPy.MapDataProvider

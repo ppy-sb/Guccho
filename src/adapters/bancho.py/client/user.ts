@@ -1,7 +1,9 @@
+import type { JSONContent } from '@tiptap/core'
 import bcrypt from 'bcryptjs'
 import { createClient } from 'redis'
 import { TRPCError } from '@trpc/server'
 import type { Prisma, PrismaClient } from '@prisma/client'
+import { generateHTML } from '@tiptap/html'
 import type { Id } from '../config'
 import { BanchoPyMode, toBanchoPyMode } from '../enums'
 import { createRulesetData, toFullUser, toUserEssential } from '../transforms'
@@ -9,8 +11,9 @@ import { toRankingSystemScores } from '../transforms/scores'
 import { createUserQuery } from '../transforms/db-queries'
 import BanchoPyUserRelationship from './user-relations'
 import { prismaClient } from './index'
-import { UserDataProvider } from '$def/client/user'
+import type { UserDataProvider } from '$def/client/user'
 import type { GrandLeaderboardRankingSystem, Mode, Range, Ruleset } from '~/types/common'
+import useEditorExtensions from '~/composables/useEditorExtensions'
 
 import type {
   UserEssential,
@@ -39,12 +42,11 @@ async function getLiveRank(id: number, mode: number, country: string) {
   }
 }
 
-export default class BanchoPyUser extends UserDataProvider<Id> implements UserDataProvider<Id> {
+export default class BanchoPyUser implements UserDataProvider<Id> {
   db: PrismaClient
   relationships: BanchoPyUserRelationship
 
   constructor({ client }: { client: PrismaClient } = { client: prismaClient }) {
-    super()
     this.db = client
     this.relationships = new BanchoPyUserRelationship()
   }
@@ -290,12 +292,11 @@ export default class BanchoPyUser extends UserDataProvider<Id> implements UserDa
     }
   }
 
-  async changePreferences(
+  async changeSettings(
     user: UserEssential<Id>,
     input: {
       email?: string
       name?: string
-      userpageContent?: string
     },
   ) {
     const result = await this.db.user.update({
@@ -305,10 +306,33 @@ export default class BanchoPyUser extends UserDataProvider<Id> implements UserDa
       data: {
         email: input.email,
         name: input.name,
-        userpageContent: input.userpageContent,
       },
     })
     return toUserEssential({ user: result })
+  }
+
+  async changeUserpage(
+    user: UserEssential<Id>,
+    input: {
+      profile: JSONContent
+    },
+  ) {
+    const renderExtensions = useEditorExtensions()
+    try {
+      const html = generateHTML(input.profile, renderExtensions)
+      const result = await this.db.user.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          userpageContent: html,
+        },
+      })
+      return toUserEssential({ user: result })
+    }
+    catch (err) {
+      throw new TRPCError({ code: 'PARSE_ERROR', message: 'unable to parse json content' })
+    }
   }
 
   async changePassword(

@@ -1,7 +1,8 @@
+import type { JSONContent } from '@tiptap/core'
 import bcrypt from 'bcryptjs'
 import { TRPCError } from '@trpc/server'
 import z from 'zod'
-import { generateHTML } from '@tiptap/html'
+
 import { router as _router } from '../trpc'
 import { zodHandle, zodRelationType, zodTipTapJSONContent } from '../shapes'
 import { atLeastOneUserNotExists, oldPasswordMismatch, relationTypeNotFound, userExists, userNotFound } from '../messages'
@@ -9,19 +10,22 @@ import { userProcedure as pUser } from '~/server/trpc/middleware/user'
 import { UserDataProvider, UserRelationshipDataProvider } from '~~/src/adapters/ppy.sb@bancho.py/client'
 import { calculateMutualRelationships } from '~/server/transforms'
 
-import useEditorExtensions from '~/composables/useEditorExtensions'
-
 const userProvider = new UserDataProvider()
 const relationProvider = new UserRelationshipDataProvider()
 export const router = _router({
   fullSecret: pUser.query(async ({ ctx }) => {
     return await userProvider.getFull({ handle: ctx.user.id, excludes: { secrets: false } })
   }),
+  changeUserpage: pUser.input(z.object({
+    profile: zodTipTapJSONContent,
+  })).mutation(async ({ ctx, input }) => {
+    const result = await userProvider.changeUserpage?.(ctx.user, { profile: input.profile as JSONContent })
+    return result
+  }),
   changePreferences: pUser
     .input(z.object({
       email: z.string().email().optional(),
       name: z.string().optional(),
-      profile: zodTipTapJSONContent.optional(),
     })).mutation(async ({ ctx, input }) => {
       const update: Partial<typeof input & { userpageContent: string }> = {}
       // TODO: check email(should verified by frontend with another request (not impl'd yet ))
@@ -38,17 +42,8 @@ export const router = _router({
 
         update.name = input.name
       }
-      if (input.profile) {
-        const renderExtensions = useEditorExtensions()
-        try {
-          const html = generateHTML(input.profile, renderExtensions)
-          update.userpageContent = html
-        }
-        catch (err) {
-          throw new TRPCError({ code: 'PARSE_ERROR', message: 'unable to parse json content' })
-        }
-      }
-      const result = await userProvider.changePreferences(ctx.user, update)
+
+      const result = await userProvider.changeSettings(ctx.user, update)
       if (!result)
         throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' })
       ctx.user = result

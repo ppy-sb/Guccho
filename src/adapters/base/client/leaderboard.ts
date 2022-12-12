@@ -25,10 +25,10 @@ export namespace LeaderboardDataProvider {
     rank: number
   }
 }
-export abstract class LeaderboardDataProvider<Id> {
-  abstract getGrandLeaderboard(query: LeaderboardDataProvider.BaseQuery): Awaitable<ComponentLeaderboard<Id>[]>
+export interface LeaderboardDataProvider<Id> {
+  getGrandLeaderboard(query: LeaderboardDataProvider.BaseQuery): Awaitable<ComponentLeaderboard<Id>[]>
 
-  abstract getBeatmapLeaderboard(query: LeaderboardDataProvider.BaseQuery & {
+  getBeatmapLeaderboard(query: LeaderboardDataProvider.BaseQuery & {
     id: Id
   }): Awaitable<LeaderboardDataProvider.BeatmapLeaderboard<Id>[]>
 }
