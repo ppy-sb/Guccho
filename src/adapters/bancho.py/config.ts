@@ -1,4 +1,4 @@
-import type { Feature, GrandLeaderboardRankingSystem, Mode, RankingSystem, Ruleset } from './../../types/common'
+import type { Feature, GrandLeaderboardRankingSystem, Mode, RankingSystem, Ruleset } from '~/types/common'
 
 export type Id = number
 

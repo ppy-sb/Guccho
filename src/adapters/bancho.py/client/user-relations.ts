@@ -1,8 +1,8 @@
-import type { PrismaClient } from '@prisma/client'
 import type { Id } from '../config'
 import { dedupeUserRelationship, toUserEssential } from '../transforms'
 
-import { prismaClient } from './index'
+import { prismaClient } from '.'
+import type { PrismaClient } from '~/.prisma/bancho.py/index'
 import type { UserRelationshipDataProvider } from '$def/client/user-relations'
 import type { UserEssential } from '~/types/user'
 import type { Relationship } from '~/types/common'
