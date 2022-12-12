@@ -12,7 +12,7 @@ import type {
 import { getLevelWithProgress } from './level-calc'
 import type { RankingStatus } from '~/types/beatmap'
 import { RankingStatusEnum } from '~/types/beatmap'
-import type { GrandLeaderboardRankingSystem, Mode, Ruleset, Scope } from '~/types/common'
+import type { GrandLeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
 import type { UserRelationship } from '~/types/user-relationship'
 import type { UserModeRulesetStatistics } from '~/types/statistics'
 
@@ -199,17 +199,6 @@ export function toFullUser(user: DatabaseUser): UserEssential<Id> & Pick<UserExt
     },
     oldNames: [],
   }
-}
-
-export function compareScope(scope: Scope, requiredScope: Partial<Record<Scope, boolean>>) {
-  if (scope === 'public')
-    return requiredScope.public
-
-  if (scope === 'friends')
-    return requiredScope.friends || requiredScope.public
-
-  if (scope === 'self')
-    return true
 }
 
 export function capitalizeFirstLetter<T extends string>(string: T) {

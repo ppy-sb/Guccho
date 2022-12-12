@@ -1,6 +1,16 @@
 import type { GrandLeaderboardRankingSystem, Mode, MutualRelationship, Relationship, Ruleset, Scope } from '~/types/common'
-import { compareScope } from '$active/transforms'
 import type { UserEssential, UserExtra, UserOptional, UserPreferences } from '~/types/user'
+
+export function compareScope(scope: Scope, requiredScope: Partial<Record<Scope, boolean>>) {
+  if (scope === 'public')
+    return requiredScope.public
+
+  if (scope === 'friends')
+    return requiredScope.friends || requiredScope.public
+
+  if (scope === 'self')
+    return true
+}
 
 export function followUserPreferences<Id, _Mode extends Mode, _Ruleset extends Ruleset, _RankingSystem extends GrandLeaderboardRankingSystem>({ user, scope = 'public' }: {
   user: UserEssential<Id> & Partial<UserExtra<Id, _Mode, _Ruleset, _RankingSystem> & Partial<UserOptional<Id>>> & {

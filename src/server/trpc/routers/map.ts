@@ -1,8 +1,8 @@
 import { string, z } from 'zod'
 import { router as _router, publicProcedure as p } from '../trpc'
-import BanchoPyMap from '$active/client/map'
+import { MapDataProvider } from '~~/src/adapters/ppy.sb@bancho.py/client'
 
-const map = new BanchoPyMap()
+const map = new MapDataProvider()
 export const router = _router({
   beatmapset: p.input(z.object({
     id: string(),

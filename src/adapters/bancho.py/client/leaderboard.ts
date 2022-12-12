@@ -7,7 +7,7 @@ import type { GrandLeaderboardRankingSystem, Mode, Range, Ruleset } from '~/type
 
 import type {
   Id,
-} from '$active/config'
+} from '~~/src/adapters/ppy.sb@bancho.py/config'
 
 export default class BanchoPyLeaderboard extends LeaderboardDataProvider<Id> implements LeaderboardDataProvider<Id> {
   db: PrismaClient

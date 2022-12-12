@@ -1,4 +1,4 @@
-import type { Id } from '$active/config'
+import type { Id } from '~~/src/adapters/ppy.sb@bancho.py/config'
 
 export const createUserQuery = (handle: string | Id, selectAgainst: Array<'id' | 'name' | 'safeName' | 'email'> = ['id', 'name', 'safeName']) => {
   let handleNum = handle

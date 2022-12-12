@@ -1,5 +1,5 @@
+import * as Active from '../bancho.py/config'
 import type { Feature, GrandLeaderboardRankingSystem, Mode, RankingSystem, Ruleset } from '~/types/common'
-import * as Active from '~~/src/adapters/ppy.sb@bancho.py/config'
 // defaults
 export type Id = Active.Id
 export const supportedModes: Mode[] = Active.supportedModes || []
@@ -7,4 +7,7 @@ export const supportedRulesets: Ruleset[] = Active.supportedRulesets || []
 export const supportedGrandLeaderboardRankingSystems: GrandLeaderboardRankingSystem[] = Active.supportedGrandLeaderboardRankingSystems || []
 export const supportedRankingSystems: RankingSystem[] = Active.supportedRankingSystems || []
 
-export const supportedFeatures: Feature[] = Active.supportedFeatures || []
+export const supportedFeatures: Feature[] = [
+  ...Active.supportedFeatures,
+  'scope',
+]

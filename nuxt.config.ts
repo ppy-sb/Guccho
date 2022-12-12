@@ -58,7 +58,7 @@ export default defineNuxtConfig({
   ],
 
   alias: {
-    $active: fileURLToPath(new URL('./src/adapters/bancho.py', import.meta.url)),
+    $active: fileURLToPath(new URL('./src/adapters/ppy.sb@bancho.py', import.meta.url)),
     $def: fileURLToPath(new URL('./src/adapters/base', import.meta.url)),
   },
 
