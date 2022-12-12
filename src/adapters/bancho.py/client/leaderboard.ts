@@ -1,13 +1,13 @@
 import type { PrismaClient } from '@prisma/client'
 import type { BanchoPyMode } from '../enums'
 import { toBanchoPyMode } from '../enums'
-import { LeaderboardDataProvider } from '../../base/client/leaderboard'
 import { prismaClient } from './index'
+import { LeaderboardDataProvider } from '$def/client/leaderboard'
 import type { GrandLeaderboardRankingSystem, Mode, Range, Ruleset } from '~/types/common'
 
 import type {
   IdType,
-} from '$/config'
+} from '$active/config'
 
 export default class BanchoPyLeaderboard extends LeaderboardDataProvider<IdType> implements LeaderboardDataProvider<IdType> {
   db: PrismaClient

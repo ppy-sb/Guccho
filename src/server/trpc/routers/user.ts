@@ -6,7 +6,7 @@ import { userNotFound } from '../messages'
 import { supportedGrandLeaderboardRankingSystems } from '../config'
 import type { Range } from '~/types/common'
 import { followUserPreferences } from '~/server/transforms'
-import { UserDataProvider, UserRelationshipDataProvider } from '$/client'
+import { UserDataProvider, UserRelationshipDataProvider } from '$active/client'
 
 const [userProvider, userRelationshipProvider] = [new UserDataProvider(), new UserRelationshipDataProvider()]
 

@@ -1,6 +1,6 @@
 import { string, z } from 'zod'
 import { router as _router, publicProcedure as p } from '../trpc'
-import BanchoPyMap from '$/client/map'
+import BanchoPyMap from '$active/client/map'
 
 const map = new BanchoPyMap()
 export const router = _router({

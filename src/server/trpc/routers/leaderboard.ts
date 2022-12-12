@@ -2,7 +2,7 @@ import z from 'zod'
 // import { createRouter } from '../context'
 import { router as _router, publicProcedure } from '../trpc'
 import { zodMode, zodRankingSystem, zodRuleset } from '~/server/trpc/shapes'
-import Leaderboard from '$/client/leaderboard'
+import Leaderboard from '$active/client/leaderboard'
 import type { Range } from '~/types/common'
 
 const provider = new Leaderboard()
