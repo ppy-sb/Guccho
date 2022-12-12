@@ -1,6 +1,7 @@
 generator client {
   provider      = "prisma-client-js"
   binaryTargets = ["native"]
+  output        = "../src/.prisma/bancho.py"
 }
 
 datasource db {
@@ -360,12 +361,12 @@ model TourneyPoolMap {
 }
 
 model Userpage {
-  id       Int              @id @default(autoincrement())
-  userId   Int              @map("user_id")
-  html     String?          @db.Text
-  raw      String?          @db.Text
-  raw_type UserpageRawType?
-  user     User             @relation(fields: [userId], references: [id], onUpdate: Restrict, map: "fk_user")
+  id      Int              @id @default(autoincrement())
+  userId  Int              @map("user_id")
+  html    String?          @db.Text
+  raw     String?          @db.Text
+  rawType UserpageRawType? @map("raw_type")
+  user    User             @relation(fields: [userId], references: [id], onUpdate: Restrict, map: "fk_user")
 
   @@index([userId], map: "user_id")
   @@map("userpages")
