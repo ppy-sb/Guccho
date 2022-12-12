@@ -27,9 +27,3 @@ html {
 
   @apply [--tab-bg:theme('colors.kimberly.700')];
 }
-
-.dv-tab.tab-active::before,
-.dv-tab.tab-active::after {
-  // background-color: theme('bg-kimberly-500');
-  // color: theme('colors.kimberly.500')
-}
