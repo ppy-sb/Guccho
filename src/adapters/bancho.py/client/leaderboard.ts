@@ -6,10 +6,10 @@ import { LeaderboardDataProvider } from '$def/client/leaderboard'
 import type { GrandLeaderboardRankingSystem, Mode, Range, Ruleset } from '~/types/common'
 
 import type {
-  IdType,
+  Id,
 } from '$active/config'
 
-export default class BanchoPyLeaderboard extends LeaderboardDataProvider<IdType> implements LeaderboardDataProvider<IdType> {
+export default class BanchoPyLeaderboard extends LeaderboardDataProvider<Id> implements LeaderboardDataProvider<Id> {
   db: PrismaClient
   constructor({ client }: { client: PrismaClient } = { client: prismaClient }) {
     super()
@@ -35,7 +35,7 @@ export default class BanchoPyLeaderboard extends LeaderboardDataProvider<IdType>
 
     const result = await prismaClient.$queryRawUnsafe<
       Array<{
-        id: IdType
+        id: Id
         name: string
         safeName: string
         flag: string
@@ -126,7 +126,7 @@ export default class BanchoPyLeaderboard extends LeaderboardDataProvider<IdType>
     }))
   }
 
-  async getBeatmap(query: LeaderboardDataProvider.BaseQuery & { id: IdType }) {
+  async getBeatmap(query: LeaderboardDataProvider.BaseQuery & { id: Id }) {
     const { mode, ruleset, rankingSystem, id } = query
     let sort = {}
     if (['totalScore', 'rankedScore'].includes(rankingSystem)) {

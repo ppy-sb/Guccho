@@ -1,11 +1,11 @@
 import type { PrismaClient } from '@prisma/client'
 import { toBeatmap, toBeatmapWithBeatmapset, toBeatmapset } from '../transforms/to-beatmapset'
 import { stringToId } from '../transforms/string-to-id'
-import type { IdType } from './../config'
+import type { Id } from './../config'
 import { prismaClient } from '.'
 import { MapDataProvider } from '$def/client/map'
 
-export default class BanchoPyMap extends MapDataProvider<IdType> implements MapDataProvider<IdType> {
+export default class BanchoPyMap extends MapDataProvider<Id> implements MapDataProvider<Id> {
   db: PrismaClient
 
   constructor({ client }: { client: PrismaClient } = { client: prismaClient }) {

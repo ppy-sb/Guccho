@@ -1,4 +1,4 @@
-import type { IdType } from '../config'
-export function stringToId(input: string): IdType {
+import type { Id } from '../config'
+export function stringToId(input: string): Id {
   return parseInt(input)
 }

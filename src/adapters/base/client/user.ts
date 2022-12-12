@@ -5,13 +5,13 @@ import type { RankingSystemScore } from '~/types/score'
 export namespace UserDataProvider {
   export type ComposableProperties<Id> = UserExtra<Id> & UserOptional<Id>
   export interface OptType<
-  IdType,
-  Includes extends Partial<Record<keyof UserOptional<IdType>, boolean>> = Record<
+  Id,
+  Includes extends Partial<Record<keyof UserOptional<Id>, boolean>> = Record<
     never,
     never
   >,
 > {
-    handle: string | IdType
+    handle: string | Id
     includes?: Includes
     keys?: Array<['id', 'name', 'safeName', 'email'][number]>
   }

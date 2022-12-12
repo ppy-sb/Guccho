@@ -1,5 +1,5 @@
 import type { PrismaClient } from '@prisma/client'
-import type { IdType as Id } from '../config'
+import type { Id as Id } from '../config'
 import { dedupeUserRelationship, toUserEssential } from '../transforms'
 
 import { prismaClient } from './index'
