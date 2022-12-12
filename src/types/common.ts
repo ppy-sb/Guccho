@@ -38,12 +38,17 @@ export type GrandLeaderboardScoreRankingSystem = typeof grandLeaderboardScoreRan
 export const grandLeaderboardRankingSystem = [...ppRankingSystem, ...grandLeaderboardScoreRankingSystem] as const
 export type GrandLeaderboardRankingSystem = typeof grandLeaderboardRankingSystem[number]
 
-export const scope = ['self', 'friends', 'public', 'blocked'] as const
-export type Scope = typeof scope[number]
+export const scopes = ['self', 'friends', 'public', 'blocked'] as const
+export type Scope = typeof scopes[number]
 
-export const grade = ['f', 'd', 'c', 'b', 'a', 's', 'sh', 'ss', 'ssh'] as const
-export type Grade = typeof grade[number]
+export const grades = ['f', 'd', 'c', 'b', 'a', 's', 'sh', 'ss', 'ssh'] as const
+export type Grade = typeof grades[number]
 
+export const features = [
+  'user.userpage',
+  'scope',
+] as const
+export type Feature = typeof features[number]
 // utils
 // export type OmitNever<T> = {
 //   [K in keyof T as T[K] extends never ? never : K]: T[K];

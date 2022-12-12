@@ -19,7 +19,7 @@ export const router = _router({
     )
     .query(
       async ({ input: { mode, ruleset, rankingSystem, page, pageSize } }) =>
-        await provider.getGrand({
+        await provider.getGrandLeaderboard({
           mode,
           ruleset,
           rankingSystem,
