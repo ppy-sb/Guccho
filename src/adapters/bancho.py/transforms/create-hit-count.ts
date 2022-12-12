@@ -1,4 +1,4 @@
-import type { Score as DBScore } from '@prisma/client'
+import type { Score as DBScore } from '~/.prisma/bancho.py/index'
 import type { GrandLeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
 import type { RulesetScore } from '~/types/score'
 
