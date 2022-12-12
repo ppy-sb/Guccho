@@ -19,7 +19,7 @@ const {
   data: user,
   error,
   refresh,
-} = await useAsyncData(async () => await $client.user.userpage.query({
+} = await useAsyncData(async () => await $client.userpage.query({
   handle: `${route.params.handle}`,
 }))
 const currentStatistic = computed<UserModeRulesetStatistics<Id, Mode, Ruleset, GrandLeaderboardRankingSystem>>(

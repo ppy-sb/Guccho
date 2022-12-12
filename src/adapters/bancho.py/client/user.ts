@@ -279,7 +279,7 @@ export default class BanchoPyUser implements UserDataProvider<Id> {
       profile: (excludes.profile === true
         ? undefined as never
         : {
-            html: user.userpageContent || '',
+            html: userpageContent || '',
             // TODO: alter database to read/save raw
             raw: {},
           }),

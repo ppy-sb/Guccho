@@ -45,7 +45,7 @@ export const grades = ['f', 'd', 'c', 'b', 'a', 's', 'sh', 'ss', 'ssh'] as const
 export type Grade = typeof grades[number]
 
 export const features = [
-  'user.userpage',
+  'userpage',
   'visibility-scope',
 ] as const
 export type Feature = typeof features[number]
