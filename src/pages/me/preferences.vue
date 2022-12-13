@@ -2,7 +2,6 @@
 import { ref } from 'vue'
 import md5 from 'md5'
 import { navigateTo } from '#app'
-import { generateJSON } from '@tiptap/html'
 import type { JSONContent } from '@tiptap/core'
 
 const changeAvatar = ref<{
@@ -92,9 +91,7 @@ const updatePassword = async (closeModal: () => void) => {
 onBeforeMount(async () => {
   if (!user.value.profile)
     return
-  const { parseAndImportHighlightLibFromHtml } = useEditorLazyLoadHighlight()
-  await parseAndImportHighlightLibFromHtml(user.value.profile.html)
-  profile.value = generateJSON(user.value.profile.html as string, useEditorExtensions())
+  profile.value = user.value.profile.raw
 })
 </script>
 
