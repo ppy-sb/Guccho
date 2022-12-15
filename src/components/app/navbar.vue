@@ -37,6 +37,15 @@ const menu = computed(() => [
       },
     },
   },
+  {
+    name: 'Beatmapset(1888000)',
+    route: {
+      name: 'beatmapset-id',
+      params: {
+        id: 1888000,
+      },
+    },
+  },
 ])
 const config = useAppConfig()
 const detached = ref(false)
