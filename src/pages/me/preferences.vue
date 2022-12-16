@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import md5 from 'md5'
-import { navigateTo } from '#app'
 import type { JSONContent } from '@tiptap/core'
+
+definePageMeta({
+  middleware: ['auth'],
+})
 
 const changeAvatar = ref<{
   openModal: () => void
@@ -17,9 +20,6 @@ definePageMeta({
 })
 
 const _user = await $client.me.fullSecret.query()
-
-if (_user == null)
-  await navigateTo({ name: 'auth-login', query: { back: '1' } })
 
 const user = ref({ ..._user } as Exclude<typeof _user, null>)
 const unchanged = ref({ ...user.value })
@@ -73,7 +73,7 @@ const updatePassword = async (closeModal: () => void) => {
 
   const md5HashedPassword = {
     newPassword: md5(changePasswordForm.newPassword),
-    oldPassword: md5(changePasswordForm.oldPassword as string),
+    oldPassword: md5(changePasswordForm.oldPassword || ''),
   }
 
   try {
