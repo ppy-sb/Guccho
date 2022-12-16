@@ -4,7 +4,7 @@ export function createContext(e: H3Event) {
   const session = getCookie(e, 'session')
   return {
     session: {
-      id: session as string | undefined,
+      id: session,
     },
     h3Event: e,
   }

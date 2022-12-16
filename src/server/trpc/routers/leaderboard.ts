@@ -3,7 +3,7 @@ import z from 'zod'
 import { router as _router, publicProcedure } from '../trpc'
 import { zodMode, zodRankingSystem, zodRuleset } from '~/server/trpc/shapes'
 import { LeaderboardDataProvider } from '~/adapters/ppy.sb@bancho.py/client'
-import type { Range } from '~/types/common'
+import type { NumberRange } from '~/types/common'
 
 const provider = new LeaderboardDataProvider()
 export const router = _router({
@@ -23,8 +23,8 @@ export const router = _router({
           mode,
           ruleset,
           rankingSystem,
-          page: page as Range<0, 10>,
-          pageSize: pageSize as Range<20, 51>,
+          page: page as NumberRange<0, 10>,
+          pageSize: pageSize as NumberRange<20, 51>,
         }),
     ),
 })

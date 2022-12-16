@@ -49,10 +49,6 @@ export const features = [
   'visibility-scope',
 ] as const
 export type Feature = typeof features[number]
-// utils
-// export type OmitNever<T> = {
-//   [K in keyof T as T[K] extends never ? never : K]: T[K];
-// }
 export type Awaitable<T> = T | PromiseLike<T>
 
 // export type APIfy<
@@ -66,7 +62,7 @@ export type Awaitable<T> = T | PromiseLike<T>
 //       : K]: K extends Keys ? () => Awaitable<T[Uncapitalize<string & K>]> : T[K];
 // }
 
-export type Range<F extends number, T extends number> = Exclude<
+export type NumberRange<F extends number, T extends number> = Exclude<
 Enumerate<T>,
 Enumerate<F>
 >

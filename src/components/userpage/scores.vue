@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
-import type { GrandLeaderboardRankingSystem, GrandLeaderboardScoreRankingSystem, PPRankingSystem, Range, ScoreRankingSystem } from '~/types/common'
+import type { GrandLeaderboardRankingSystem, GrandLeaderboardScoreRankingSystem, NumberRange, PPRankingSystem, ScoreRankingSystem } from '~/types/common'
 import { grandLeaderboardRankingSystem, grandLeaderboardScoreRankingSystem, mode, ruleset } from '~/types/common'
 import type { Id } from '$active/config'
 
@@ -17,7 +17,7 @@ const stabilizeScoreRank = (rankingSystem: GrandLeaderboardRankingSystem) => {
   return rankingSystem as PPRankingSystem
 }
 const switchBetweenScoreRanks = () => prevSwitcherState.rankingSystem !== switcher.rankingSystem && stabilizeScoreRank(prevSwitcherState.rankingSystem) === stabilizeScoreRank(switcher.rankingSystem)
-const page = ref<Range<0, 10>>(0)
+const page = ref<NumberRange<0, 10>>(0)
 
 const user = inject('user') as Ref<UserEssential<Id>>
 const {

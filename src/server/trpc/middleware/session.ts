@@ -12,12 +12,11 @@ export const sessionProcedure = publicProcedure
       // TODO: not sure if it needs await but got several code: 'ERR_HTTP_HEADERS_SENT' reports
       await setCookie(ctx.h3Event, 'session', sessionId)
       return await next({
-        ctx: {
-          ...ctx,
+        ctx: Object.assign(ctx, {
           session: {
-            id: sessionId,
+            id: ctx.session.id,
           },
-        },
+        }),
       })
     }
     const session = await getSession(ctx.session.id)
@@ -25,12 +24,11 @@ export const sessionProcedure = publicProcedure
       const sessionId = await createSession()
       await setCookie(ctx.h3Event, 'session', sessionId)
       return await next({
-        ctx: {
-          ...ctx,
+        ctx: Object.assign(ctx, {
           session: {
-            id: sessionId,
+            id: ctx.session.id,
           },
-        },
+        }),
       })
     }
     else {
@@ -45,12 +43,11 @@ export const sessionProcedure = publicProcedure
         await setCookie(ctx.h3Event, 'session', refreshed)
 
       return await next({
-        ctx: {
-          ...ctx,
+        ctx: Object.assign(ctx, {
           session: {
             id: ctx.session.id,
           },
-        },
+        }),
       })
     }
   })
@@ -58,15 +55,16 @@ export const sessionProcedure = publicProcedure
     return await next({
       ctx: {
         ...ctx,
-        session: {
-          ...ctx.session,
+        session: Object.assign(ctx.session, {
           async getBinding<Additional extends Record<string, any>>() {
             type _ReturnType = Awaited<ReturnType<typeof getSession>> & Partial<Additional>
+            if (!ctx.session.id)
+              return null
             return await getSession(ctx.session.id) as {
               [K in keyof _ReturnType]: _ReturnType[K]
             }
           },
-        },
+        }),
       },
     })
   })

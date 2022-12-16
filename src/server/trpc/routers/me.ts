@@ -1,4 +1,3 @@
-import type { JSONContent } from '@tiptap/core'
 import bcrypt from 'bcryptjs'
 import { TRPCError } from '@trpc/server'
 import z from 'zod'
@@ -19,7 +18,7 @@ export const router = _router({
   changeUserpage: pUser.input(z.object({
     profile: zodTipTapJSONContent,
   })).mutation(async ({ ctx, input }) => {
-    const result = await userProvider.changeUserpage?.(ctx.user, { profile: input.profile as JSONContent })
+    const result = await userProvider.changeUserpage?.(ctx.user, { profile: input.profile })
     return result
   }),
   changePreferences: pUser
