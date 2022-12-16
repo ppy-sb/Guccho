@@ -1,8 +1,8 @@
 import type { BeatmapSource, BeatmapWithMeta, RankingStatus } from './beatmap'
-import type { Grade, GrandLeaderboardRankingSystem, PPRankingSystem, Range, Mode as _Mode, Ruleset as _Ruleset } from './common'
+import type { Grade, GrandLeaderboardRankingSystem, Mode, NumberRange, PPRankingSystem, Ruleset } from './common'
 
-export type HitCount<T extends _Mode> = Record<
-  300 | 100 | 50 | 'miss' | (T extends 'mania' ? 'max' | 200 : 'geki' | 'katu'),
+export type HitCount<_Mode extends Mode> = Record<
+  300 | 100 | 50 | 'miss' | (_Mode extends 'mania' ? 'max' | 200 : 'geki' | 'katu'),
   number
 >
 
@@ -12,34 +12,34 @@ export type Mod =
   | /* 'relax' | 'auto-pilot' | */ 'spun-out' | 'auto' | 'cinema'
 
 export type ManiaMod =
-  | `${Range<4, 10>}k`
+  | `${NumberRange<4, 10>}k`
   | 'fade-in' | 'co-op' | 'random'
 
 export interface ScoreEssential<
   ScoreId,
-  Mode extends _Mode,
+  _Mode extends Mode,
 > {
   id: ScoreId
   playedAt: Date
-  mods: Mode extends 'mania' ? ManiaMod[] : Mod[]
+  mods: _Mode extends 'mania' ? ManiaMod[] : Mod[]
   score: bigint
   accuracy: number
   maxCombo: number
   grade: Grade
-  hit: HitCount<Mode>
+  hit: HitCount<_Mode>
 }
 
 export type RulesetScore<
   ScoreId,
   BeatmapId,
-  Mode extends _Mode,
-  Ruleset extends _Ruleset,
+  _Mode extends Mode,
+  _Ruleset extends Ruleset,
   Rank extends GrandLeaderboardRankingSystem = never,
   BMSrc extends BeatmapSource = BeatmapSource,
   Status extends RankingStatus = RankingStatus,
-> = ScoreEssential<ScoreId, Mode> & {
-  mode: Mode
-  ruleset: Ruleset
+> = ScoreEssential<ScoreId, _Mode> & {
+  mode: _Mode
+  ruleset: _Ruleset
   beatmap: BeatmapWithMeta<BMSrc, Status, BeatmapId, unknown>
   scoreRank?: number
 } & Record<PPRankingSystem & Rank, {
@@ -50,11 +50,11 @@ export type RulesetScore<
 export interface RankingSystemScore<
   ScoreId,
   BeatmapId,
-  Mode extends _Mode,
+  _Mode extends Mode,
   Rank extends GrandLeaderboardRankingSystem = never,
   BMSrc extends BeatmapSource = BeatmapSource,
   BMStatus extends RankingStatus = RankingStatus,
-> extends ScoreEssential<ScoreId, Mode> {
+> extends ScoreEssential<ScoreId, _Mode> {
   pp: Rank extends PPRankingSystem ? number : never
   rank?: number
   beatmap: BeatmapWithMeta<BMSrc, BMStatus, BeatmapId, unknown>

@@ -1,3 +1,4 @@
+import type { JSONContent } from '@tiptap/core'
 import z from 'zod'
 
 export const zodHandle = z.union([z.string(), z.number()])
@@ -9,4 +10,13 @@ export const zodPPRankingSystem = z.union([z.literal('ppv2'), z.literal('ppv1')]
 export const zodScoreRankingSystem = z.union([z.literal('rankedScore'), z.literal('totalScore')])
 export const zodRankingSystem = z.union([zodPPRankingSystem, zodScoreRankingSystem])
 
-export const zodTipTapJSONContent = z.record(z.string(), z.any())
+export const zodTipTapJSONContent = z.record(z.string(), z.any()).transform((input, ctx) => {
+  if (!('content' in input) || !Array.isArray(input.content)) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'has on content',
+    })
+    return z.NEVER
+  }
+  return input as JSONContent
+})

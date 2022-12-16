@@ -6,7 +6,7 @@ import type {
 import { prismaClient } from '.'
 import type { PrismaClient } from '~/.prisma/bancho.py/index'
 import type { LeaderboardDataProvider } from '$def/client/leaderboard'
-import type { GrandLeaderboardRankingSystem, Mode, Range, Ruleset } from '~/types/common'
+import type { GrandLeaderboardRankingSystem, Mode, NumberRange, Ruleset } from '~/types/common'
 
 export default class BanchoPyLeaderboard implements LeaderboardDataProvider<Id> {
   db: PrismaClient
@@ -24,8 +24,8 @@ export default class BanchoPyLeaderboard implements LeaderboardDataProvider<Id> 
     mode: Mode
     ruleset: Ruleset
     rankingSystem: GrandLeaderboardRankingSystem
-    page: Range<0, 10>
-    pageSize: Range<20, 51>
+    page: NumberRange<0, 10>
+    pageSize: NumberRange<20, 51>
   }) {
     if (rankingSystem === 'ppv1')
       return []

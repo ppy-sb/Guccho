@@ -1,4 +1,4 @@
-import type { Awaitable, GrandLeaderboardRankingSystem, Mode, PPRankingSystem, Range, Ruleset } from '~/types/common'
+import type { Awaitable, GrandLeaderboardRankingSystem, Mode, NumberRange, PPRankingSystem, Ruleset } from '~/types/common'
 import type { ComponentLeaderboard } from '~/types/leaderboard'
 
 export namespace LeaderboardDataProvider {
@@ -6,8 +6,8 @@ export namespace LeaderboardDataProvider {
     mode: Mode
     ruleset: Ruleset
     rankingSystem: GrandLeaderboardRankingSystem
-    page: Range<0, 10>
-    pageSize: Range<20, 51>
+    page: NumberRange<0, 10>
+    pageSize: NumberRange<20, 51>
   }
 
   export interface BeatmapLeaderboard<Id> {

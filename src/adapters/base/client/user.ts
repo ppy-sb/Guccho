@@ -1,5 +1,5 @@
 import type { JSONContent } from '@tiptap/core'
-import type { Awaitable, GrandLeaderboardRankingSystem, Mode, Range, Ruleset } from '~/types/common'
+import type { Awaitable, GrandLeaderboardRankingSystem, Mode, NumberRange, Ruleset } from '~/types/common'
 import type { UserEssential, UserExtra, UserOptional, UserStatistic } from '~/types/user'
 import type { RankingSystemScore } from '~/types/score'
 
@@ -26,8 +26,8 @@ export interface UserDataProvider<Id> {
     mode: _Mode
     ruleset: _Ruleset
     rankingSystem: _RankingSystem
-    page: Range<0, 10>
-    perPage: Range<1, 11>
+    page: NumberRange<0, 10>
+    perPage: NumberRange<1, 11>
   }): Awaitable<RankingSystemScore<
     bigint,
     Id,

@@ -15,7 +15,7 @@ import type { UserDataProvider as Base } from '$def/client/user'
 
 import type { Prisma, PrismaClient } from '~/.prisma/ppy.sb/index'
 import type { UserEssential, UserOptional, UserStatistic } from '~/types/user'
-import type { GrandLeaderboardRankingSystem, Mode, Range, Ruleset } from '~/types/common'
+import type { GrandLeaderboardRankingSystem, Mode, NumberRange, Ruleset } from '~/types/common'
 
 const redisClient
   = Boolean(process.env.REDIS_URI)
@@ -117,7 +117,7 @@ export class UserDataProvider implements Base<Id> {
 
         return {
           html: inserted.html as string,
-          raw: JSON.parse(inserted.raw ?? '') as JSONContent,
+          raw: JSON.parse(inserted.raw ?? '') || {},
         }
       }
       else {
@@ -132,7 +132,7 @@ export class UserDataProvider implements Base<Id> {
         })
         return {
           html: updated.html as string,
-          raw: JSON.parse(updated.raw ?? '') as JSONContent,
+          raw: JSON.parse(updated.raw ?? '') || {},
         }
       }
     }
@@ -174,8 +174,8 @@ export class UserDataProvider implements Base<Id> {
     mode: Mode
     ruleset: Ruleset
     rankingSystem: GrandLeaderboardRankingSystem
-    page: Range<0, 10>
-    perPage: Range<1, 11>
+    page: NumberRange<0, 10>
+    perPage: NumberRange<1, 11>
   }) {
     const start = page * perPage
     const _mode = toBanchoPyMode(mode, ruleset)

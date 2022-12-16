@@ -30,12 +30,9 @@ export function followUserPreferences<Id, _Mode extends Mode, _Ruleset extends R
   }
 }
 
-const rel: Record<
-Relationship,
-{
+const rel: Record<Relationship, {
   mutual: MutualRelationship
-}
-> = {
+}> = {
   friend: {
     mutual: 'mutual-friend',
   },

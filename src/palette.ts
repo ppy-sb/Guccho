@@ -1,5 +1,3 @@
-// follow the following rules will break the app
-
 import convert from 'color-convert'
 
 export const hex = {

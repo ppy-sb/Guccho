@@ -12,7 +12,7 @@ import BanchoPyUserRelationship from './user-relations'
 import { prismaClient } from '.'
 import type { Prisma, PrismaClient } from '~/.prisma/bancho.py/index'
 import type { UserDataProvider } from '$def/client/user'
-import type { GrandLeaderboardRankingSystem, Mode, Range, Ruleset } from '~/types/common'
+import type { GrandLeaderboardRankingSystem, Mode, NumberRange, Ruleset } from '~/types/common'
 import useEditorExtensions from '~/composables/useEditorExtensions'
 
 import type {
@@ -91,8 +91,8 @@ export default class BanchoPyUser implements UserDataProvider<Id> {
     mode: Mode
     ruleset: Ruleset
     rankingSystem: GrandLeaderboardRankingSystem
-    page: Range<0, 10>
-    perPage: Range<1, 11>
+    page: NumberRange<0, 10>
+    perPage: NumberRange<1, 11>
   }) {
     const start = page * perPage
     const _mode = toBanchoPyMode(mode, ruleset)
@@ -336,7 +336,7 @@ export default class BanchoPyUser implements UserDataProvider<Id> {
         },
       })
       return {
-        html: result.userpageContent as string,
+        html: result.userpageContent || '',
         raw: input.profile,
       }
     }
@@ -349,7 +349,7 @@ export default class BanchoPyUser implements UserDataProvider<Id> {
     user: UserEssential<Id>,
     newPasswordMD5: string,
   ) {
-  // TODO: gen salt round
+    // TODO: gen salt round
     const salt = await bcrypt.genSalt()
     const pwBcrypt = await bcrypt.hash(newPasswordMD5, salt)
     const result = await this.db.user.update({

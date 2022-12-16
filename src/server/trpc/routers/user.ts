@@ -4,7 +4,7 @@ import { zodHandle, zodMode, zodRankingSystem, zodRelationType, zodRuleset } fro
 import { router as _router, publicProcedure as p } from '../trpc'
 import { userNotFound } from '../messages'
 import { supportedGrandLeaderboardRankingSystems } from '../config'
-import type { Range } from '~/types/common'
+import type { NumberRange } from '~/types/common'
 import { followUserPreferences } from '~/server/transforms'
 import { UserDataProvider, UserRelationshipDataProvider } from '$active/client'
 
@@ -54,7 +54,7 @@ export const router = _router({
       mode: input.mode,
       ruleset: input.ruleset,
       rankingSystem: input.rankingSystem,
-      page: input.page as Range<0, 10>,
+      page: input.page as NumberRange<0, 10>,
       perPage: 10,
     })
     if (!returnValue)
