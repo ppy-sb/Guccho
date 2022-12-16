@@ -5,25 +5,28 @@ import { navigateTo, useAppConfig, useRoute } from '#app'
 
 import type { GrandLeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
 import type { SwitcherPropType } from '~/composables/useSwitcher'
+import { assertIsString } from '~/helpers'
 
 const config = useAppConfig()
 
 const route = useRoute()
 const { $client } = useNuxtApp()
 
+const { mode: pMode, ruleset: pRuleset, ranking: pRankingSystem, page: pPage } = route.params
+
 const availableModes = Object.keys(config.mode)
 const availableRulesets = Object.keys(config.ruleset)
 const availableRankingSystems = Object.keys(config.rankingSystem)
-const mode = (availableModes.includes(route.params.mode as string)
+const mode = (assertIsString(pMode) && availableModes.includes(pMode)
   ? route.params.mode
   : availableModes[0]) as Mode
-const ruleset = (availableRulesets.includes(route.params.ruleset as string)
+const ruleset = (assertIsString(pRuleset) && availableRulesets.includes(pRuleset)
   ? route.params.ruleset
   : availableRulesets[0]) as Ruleset
-const rankingSystem = (availableRankingSystems.includes(route.params.ranking as string)
+const rankingSystem = (assertIsString(pRankingSystem) && availableRankingSystems.includes(pRankingSystem)
   ? route.params.ranking
   : availableRankingSystems[0]) as GrandLeaderboardRankingSystem
-const page = parseInt(route.params.page as string) || 1
+const page = (assertIsString(pPage) && parseInt(pPage)) || 1
 
 const perPage = 20
 
