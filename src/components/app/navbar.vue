@@ -289,8 +289,12 @@ onUnmounted(() => {
 </template>
 
 <style lang="postcss">
+.navbar {
+  @apply border-2 border-kimberly-50/0 dark:border-kimberly-500/0;
+}
 .detached {
   & .navbar {
+    @apply  border-kimberly-50/50 dark:border-kimberly-500/50;
     & .btn {
       height: 2.5rem;
       min-height: 2.5rem;

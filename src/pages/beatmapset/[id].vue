@@ -5,11 +5,16 @@ import 'vue3-json-viewer/dist/index.css'
 const { $client } = useNuxtApp()
 const route = useRoute()
 const { data: beatmapset, error } = await useAsyncData(
-  async () => await $client.map.beatmapset.query({ id: route.params.id.toString() }),
+  async () =>
+    await $client.map.beatmapset.query({ id: route.params.id.toString() }),
 )
-const selectedMapId = ref<unknown>(beatmapset.value?.beatmaps[0].id)
+const selectedMapId = ref<unknown>(
+  route.hash?.slice(1) || beatmapset.value?.beatmaps[0].id.toString(),
+)
 const selectedMap = computed(() =>
-  beatmapset.value?.beatmaps.find(bm => bm.id === selectedMapId?.value),
+  beatmapset.value?.beatmaps.find(
+    bm => bm.id.toString() === selectedMapId?.value,
+  ),
 )
 </script>
 
@@ -23,7 +28,9 @@ const selectedMap = computed(() =>
     <div class="container custom-container mx-auto">
       <div class="header-with-maps flex-wrap">
         <div class="text-center">
-          <h1 class="text-3xl font-bold text-center sm:text-left whitespace-nowrap">
+          <h1
+            class="text-3xl font-bold text-center sm:text-left whitespace-nowrap"
+          >
             {{ beatmapset.meta.intl.title }}
           </h1>
           <h2
@@ -33,30 +40,26 @@ const selectedMap = computed(() =>
           </h2>
         </div>
         <!-- eslint-disable-next-line vue/no-deprecated-v-on-native-modifier -->
-        <div class="self-end overflow-x-auto overflow-y-show diff snap-x">
-          <t-tabs
-            v-model="selectedMapId"
-            variant="lifted"
-            size="md"
-            class="justify-end w-max mx-4"
+        <!-- <div class="self-end overflow-x-auto overflow-y-show diff snap-x">
+        </div> -->
+        <t-tabs
+          v-model="selectedMapId"
+          variant="lifted"
+          size="md"
+          class="justify-between"
+        >
+          <t-tab
+            v-for="bm in beatmapset.beatmaps"
+            ref="tabs"
+            :key="bm.id"
+            :value="bm.id.toString()"
+            class="whitespace-nowrap [--tab-border-color:transparent] grow"
           >
-            <t-tab
-              v-for="bm in beatmapset.beatmaps"
-              ref="tabs"
-              :key="bm.id"
-              :value="bm.id"
-              class="whitespace-nowrap [--tab-border-color:transparent] snap-center"
-            >
-              {{ bm.version }}
-            </t-tab>
-          </t-tabs>
-        </div>
+            {{ bm.version }}
+          </t-tab>
+        </t-tabs>
       </div>
-      <div
-        v-if="selectedMap"
-        ref="mapCard"
-        class="card bg-base-100"
-      >
+      <div v-if="selectedMap" ref="mapCard" class="card bg-base-100 rounded-none border-[1px] border-t-0 border-kimberly-200 w-full">
         <dl>
           <div class="stripe-odd">
             <dt class="text-sm font-medium text-kimberly-500">
@@ -150,7 +153,16 @@ const selectedMap = computed(() =>
           </div>
         </dl>
         <div class="card-body">
-          <JsonViewer :value="selectedMap" class="rounded-xl" />
+          <JsonViewer
+            :value="{
+              beatmap: selectedMap,
+              beatmapset: {
+                ...beatmapset,
+                beatmaps: 'hidden from json viewer',
+              },
+            }"
+            class="rounded-xl"
+          />
         </div>
       </div>
     </div>
@@ -159,7 +171,7 @@ const selectedMap = computed(() =>
 
 <style scoped lang="postcss">
 .header-with-maps {
-  @apply sm:flex mt-2 items-center justify-between text-center text-kimberly-900 dark:text-kimberly-100;
+  @apply sm:flex mt-2 items-center justify-between text-kimberly-900 dark:text-kimberly-100;
   transition: 0.3s ease;
   @apply pb-0;
 
@@ -173,29 +185,22 @@ const selectedMap = computed(() =>
 .stripe-even {
   @apply mt-1 text-sm text-kimberly-900 dark:text-kimberly-100 sm:col-span-2 sm:mt-0;
 }
+.tab.tab-lifted {
+  @apply bg-gradient-to-b from-gray-50 to-gray-100;
+  @apply border-[1px] border-kimberly-200 border-b-0;
+  @apply -order-1;
+  &.tab-active {
+    @apply bg-gradient-to-b from-kimberly-50 to-kimberly-100;
+    @apply order-1;
+    &:before, &:after {
+      background-image: none;
+    }
+  }
+}
 
 .diff {
   &::-webkit-scrollbar {
     display: none;
-  }
-
-  .tab-lifted.tab-active {
-    &:first-child {
-      &:before {
-        left: calc(0.5rem * -1);
-        left: calc(var(--tab-radius, 0.5rem) * -1);
-        --circle-pos: top left;
-        background-image: var(--tab-corner-bg);
-      }
-    }
-    &:last-child {
-      &:after {
-        right: calc(0.5rem * -1);
-        right: calc(var(--tab-radius, 0.5rem) * -1);
-        --circle-pos: top right;
-        background-image: var(--tab-corner-bg);
-      }
-    }
   }
 }
 </style>
