@@ -59,7 +59,7 @@ const selectedMap = computed(() =>
           </t-tab>
         </t-tabs>
       </div>
-      <div v-if="selectedMap" ref="mapCard" class="card bg-base-100 rounded-none border-[1px] border-t-0 border-kimberly-200 w-full">
+      <div v-if="selectedMap" ref="mapCard" class="card bg-kimberly-100 dark:bg-kimberly-900 rounded-t-none border-[1px] border-t-0 border-kimberly-200 dark:border-kimberly-700 w-full">
         <dl>
           <div class="stripe-odd">
             <dt class="text-sm font-medium text-kimberly-500">
@@ -186,12 +186,14 @@ const selectedMap = computed(() =>
   @apply mt-1 text-sm text-kimberly-900 dark:text-kimberly-100 sm:col-span-2 sm:mt-0;
 }
 .tab.tab-lifted {
-  @apply bg-gradient-to-b from-gray-50 to-gray-100;
-  @apply border-[1px] border-kimberly-200 border-b-0;
-  @apply -order-1;
+  @apply bg-gradient-to-b -order-1;
+  @apply from-gray-50 to-gray-100 border-kimberly-200;
+  @apply dark:from-gray-800 dark:to-gray-900 border-kimberly-700;
+  @apply border-[1px] border-b-0;
   &.tab-active {
-    @apply bg-gradient-to-b from-kimberly-50 to-kimberly-100;
-    @apply order-1;
+    @apply bg-gradient-to-b border-b-0;
+    @apply from-kimberly-50 via-kimberly-100 to-kimberly-100;
+    @apply dark:from-kimberly-700 via-kimberly-800 to-kimberly-800;
     &:before, &:after {
       background-image: none;
     }
