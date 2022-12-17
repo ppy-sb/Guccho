@@ -46,7 +46,7 @@ const selectedMap = computed(() =>
           v-model="selectedMapId"
           variant="lifted"
           size="md"
-          class="justify-between"
+          class="justify-between self-end"
         >
           <t-tab
             v-for="bm in beatmapset.beatmaps"
