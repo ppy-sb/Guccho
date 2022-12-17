@@ -34,32 +34,32 @@ const selectedMap = computed(() =>
             {{ beatmapset.meta.intl.title }}
           </h1>
           <h2
-            class="text-lg font-semibold text-center whitespace-pre opacity-40 sm:text-left"
+            class="text-lg font-semibold text-center whitespace-pre opacity-40 sm:text-left pb-2"
           >
             Song by {{ beatmapset.meta.intl.artist }}
           </h2>
         </div>
         <!-- eslint-disable-next-line vue/no-deprecated-v-on-native-modifier -->
-        <!-- <div class="self-end overflow-x-auto overflow-y-show diff snap-x">
+        <!-- <div class="self-end mx-4 overflow-x-auto diff snap-x">
         </div> -->
         <t-tabs
           v-model="selectedMapId"
-          variant="lifted"
+          variant="bordered"
           size="md"
-          class="justify-between self-end"
+          class="mx-4 self-end bg-transparent"
         >
           <t-tab
             v-for="bm in beatmapset.beatmaps"
             ref="tabs"
             :key="bm.id"
             :value="bm.id.toString()"
-            class="whitespace-nowrap [--tab-border-color:transparent] grow"
+            class="whitespace-nowrap grow"
           >
             {{ bm.version }}
           </t-tab>
         </t-tabs>
       </div>
-      <div v-if="selectedMap" ref="mapCard" class="card bg-kimberly-100 dark:bg-kimberly-900 rounded-t-none border-[1px] border-t-0 border-kimberly-200 dark:border-kimberly-700 w-full">
+      <div v-if="selectedMap" ref="mapCard" class="card bg-kimberly-100 dark:bg-kimberly-900">
         <dl>
           <div class="stripe-odd">
             <dt class="text-sm font-medium text-kimberly-500">
@@ -171,7 +171,7 @@ const selectedMap = computed(() =>
 
 <style scoped lang="postcss">
 .header-with-maps {
-  @apply sm:flex mt-2 items-center justify-between text-kimberly-900 dark:text-kimberly-100;
+  @apply sm:flex pt-20 lg:pt-0 mt-2 items-center justify-between text-kimberly-900 dark:text-kimberly-100;
   transition: 0.3s ease;
   @apply pb-0;
 
@@ -185,7 +185,7 @@ const selectedMap = computed(() =>
 .stripe-even {
   @apply mt-1 text-sm text-kimberly-900 dark:text-kimberly-100 sm:col-span-2 sm:mt-0;
 }
-.tab.tab-lifted {
+/* .tab.tab-lifted {
   @apply bg-gradient-to-b -order-1;
   @apply from-gray-50 to-gray-100 border-kimberly-200;
   @apply dark:from-gray-800 dark:to-gray-900 border-kimberly-700;
@@ -198,11 +198,14 @@ const selectedMap = computed(() =>
       background-image: none;
     }
   }
-}
-
+} */
 .diff {
   &::-webkit-scrollbar {
-    display: none;
+    height: 0.5em;
+    @apply bg-transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    @apply bg-kimberly-500/50
   }
 }
 </style>
