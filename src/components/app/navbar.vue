@@ -290,7 +290,7 @@ onUnmounted(() => {
 
 <style lang="postcss">
 .navbar {
-  @apply border-2 border-kimberly-50/0 dark:border-kimberly-500/0;
+  @apply border-[1px] border-kimberly-50/0 dark:border-kimberly-500/0;
 }
 .detached {
   & .navbar {
