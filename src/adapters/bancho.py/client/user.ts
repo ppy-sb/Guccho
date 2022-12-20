@@ -8,11 +8,12 @@ import { BanchoPyMode, toBanchoPyMode } from '../enums'
 import { createRulesetData, toFullUser, toUserEssential } from '../transforms'
 import { toRankingSystemScores } from '../transforms/scores'
 import { createUserQuery } from '../transforms/db-queries'
+import { idToString } from '../transforms/id-conversion'
 import BanchoPyUserRelationship from './user-relations'
 import { prismaClient } from '.'
 import type { Prisma, PrismaClient } from '~/.prisma/bancho.py/index'
 import type { UserDataProvider } from '$def/client/user'
-import type { OverallLeaderboardRankingSystem, Mode, NumberRange, Ruleset } from '~/types/common'
+import type { Mode, NumberRange, OverallLeaderboardRankingSystem, Ruleset } from '~/types/common'
 import useEditorExtensions from '~/composables/useEditorExtensions'
 
 import type {
@@ -32,11 +33,11 @@ async function getLiveRank(id: number, mode: number, country: string) {
     return {
       rank: await redisClient.zRevRank(
         `bancho:leaderboard:${mode}`,
-        id.toString(),
+        idToString(id),
       ),
       countryRank: await redisClient.zRevRank(
         `bancho:leaderboard:${mode}:${country}`,
-        id.toString(),
+        idToString(id),
       ),
     }
   }
@@ -62,6 +63,20 @@ export default class BanchoPyUser implements UserDataProvider<Id> {
     return (await this.db.user.count(createUserQuery(handle, keys || ['id', 'name', 'safeName', 'email']))) > 0
   }
 
+  async getEssentialById<Includes extends Partial<Record<keyof UserOptional<number>, boolean>>>({ id, includes }: { id: Id; includes: Includes }) {
+    const user = await this.db.user.findFirst(
+      {
+        where: {
+          id,
+        },
+      },
+    )
+    if (user == null)
+      return null
+
+    return toUserEssential({ user, includes })
+  }
+
   async getEssential<Includes extends Partial<Record<keyof UserOptional<number>, boolean>>>(opt: UserDataProvider.OptType<Id, Includes>) {
     const { handle, includes, keys } = opt
     const user = await this.db.user.findFirst(
@@ -73,7 +88,7 @@ export default class BanchoPyUser implements UserDataProvider<Id> {
     return toUserEssential({ user, includes })
   }
 
-  async getEssentials<Includes extends Partial<Record<keyof UserOptional<Id>, boolean>>>(opt: { handle: string | number; includes?: Includes | undefined }) {
+  async getEssentials<Includes extends Partial<Record<keyof UserOptional<Id>, boolean>>>(opt: { handle: string; includes?: Includes | undefined }) {
     const { handle, includes } = opt
     const users = await this.db.user.findMany(createUserQuery(handle))
     return users.map(user => toUserEssential({ user, includes }))
@@ -125,7 +140,9 @@ export default class BanchoPyUser implements UserDataProvider<Id> {
       skip: start,
       take: perPage,
     })
-    return toRankingSystemScores({ scores, rankingSystem, mode })
+    return toRankingSystemScores({ scores, rankingSystem, mode }).map(score => Object.assign(score, {
+      id: score.id.toString(),
+    }))
   }
 
   async getStatistics({
@@ -260,7 +277,7 @@ export default class BanchoPyUser implements UserDataProvider<Id> {
     return statistics
   }
 
-  async getFull<Excludes extends Partial<Record<keyof UserDataProvider.ComposableProperties<Id>, boolean>>>({ handle, excludes }: { handle: string | Id; excludes?: Excludes }) {
+  async getFull<Excludes extends Partial<Record<keyof UserDataProvider.ComposableProperties<Id>, boolean>>>({ handle, excludes }: { handle: string; excludes?: Excludes }) {
     if (!excludes)
       excludes = <Excludes>{ secrets: true }
     const user = await this.db.user.findFirst(createUserQuery(handle))

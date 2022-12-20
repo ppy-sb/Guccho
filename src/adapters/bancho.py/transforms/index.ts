@@ -12,7 +12,7 @@ import type {
 import type { Map as DBMap, Score as DBScore, User as DatabaseUser, RelationshipType, Source, Stat } from '~/.prisma/bancho.py/index'
 import type { RankingStatus } from '~/types/beatmap'
 import { RankingStatusEnum } from '~/types/beatmap'
-import type { OverallLeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
+import type { Mode, OverallLeaderboardRankingSystem, Ruleset } from '~/types/common'
 import type { UserRelationship } from '~/types/user-relationship'
 import type { UserModeRulesetStatistics } from '~/types/statistics'
 

@@ -1,13 +1,12 @@
-import type { Awaitable, OverallLeaderboardRankingSystem, Mode, NumberRange, PPRankingSystem, Ruleset } from '~/types/common'
+import type { Awaitable, Mode, OverallLeaderboardRankingSystem, PPRankingSystem, RankingSystem, Ruleset } from '~/types/common'
 import type { ComponentLeaderboard } from '~/types/leaderboard'
 
 export namespace LeaderboardDataProvider {
   export interface BaseQuery {
-    mode: Mode
+    mode?: Mode
     ruleset: Ruleset
-    rankingSystem: OverallLeaderboardRankingSystem
-    page: NumberRange<0, 10>
-    pageSize: NumberRange<20, 51>
+    page: number
+    pageSize: number
   }
 
   export interface BeatmapLeaderboard<Id> {
@@ -19,6 +18,7 @@ export namespace LeaderboardDataProvider {
       avatarUrl: string
     }
     score: {
+      id: unknown
       score: number | bigint
       accuracy: number
     } & Partial<Record<PPRankingSystem, number>>
@@ -26,9 +26,10 @@ export namespace LeaderboardDataProvider {
   }
 }
 export interface LeaderboardDataProvider<Id> {
-  getOverallLeaderboard(query: LeaderboardDataProvider.BaseQuery): Awaitable<ComponentLeaderboard<Id>[]>
+  getOverallLeaderboard(query: Required<LeaderboardDataProvider.BaseQuery> & { rankingSystem: OverallLeaderboardRankingSystem }): Awaitable<ComponentLeaderboard<Id>[]>
 
   getBeatmapLeaderboard(query: LeaderboardDataProvider.BaseQuery & {
+    rankingSystem: RankingSystem
     id: Id
   }): Awaitable<LeaderboardDataProvider.BeatmapLeaderboard<Id>[]>
 }

@@ -8,6 +8,7 @@ import { router as _router } from '../trpc'
 import { passwordMismatch, sessionNotFound, unableToRetrieveSession, unknownError, userNotFound } from '../messages'
 import { getSession } from '~/server/session'
 import { UserDataProvider } from '~/adapters/ppy.sb@bancho.py/client'
+import { idToString } from '~~/src/adapters/ppy.sb@bancho.py/config'
 
 const { compare } = bcrypt
 const userProvider = new UserDataProvider()
@@ -40,7 +41,7 @@ export const router = _router({
       }
       session.userId = user.id
       return {
-        user,
+        user: Object.assign(user, { id: idToString(user.id) }),
       }
     }
     catch (err) {
@@ -68,8 +69,19 @@ export const router = _router({
         message: sessionNotFound,
       })
     }
+    if (session.userId) {
+      const user = await userProvider.getEssentialById({ id: session.userId })
+      if (!user) {
+        return {
+          user: null,
+        }
+      }
+      return {
+        user: Object.assign(user, { id: idToString(user.id) }),
+      }
+    }
     return {
-      user: (session.userId && await userProvider.getEssential({ handle: session.userId })) ?? undefined,
+      user: null,
     }
   }),
 })

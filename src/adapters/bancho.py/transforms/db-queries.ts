@@ -1,13 +1,9 @@
 import type { Id } from '~/adapters/ppy.sb@bancho.py/config'
 
-export const createUserQuery = (handle: string | Id, selectAgainst: Array<'id' | 'name' | 'safeName' | 'email'> = ['id', 'name', 'safeName']) => {
-  let handleNum = handle
-  const handleStr = handle.toString().trim()
-  if (typeof handleNum === 'string') {
-    handleNum = parseInt(handleNum)
-    if (isNaN(handleNum))
-      handleNum = -1
-  }
+export const createUserQuery = (handle: string, selectAgainst: Array<'id' | 'name' | 'safeName' | 'email'> = ['id', 'name', 'safeName']) => {
+  let handleNum = parseInt(handle)
+  if (isNaN(handleNum))
+    handleNum = -1
 
   return {
     where: {
@@ -21,17 +17,17 @@ export const createUserQuery = (handle: string | Id, selectAgainst: Array<'id' |
               : undefined,
             selectAgainst.includes('name')
               ? {
-                  name: handleStr,
+                  name: handle,
                 }
               : undefined,
             selectAgainst.includes('safeName')
               ? {
-                  safeName: handleStr.startsWith('@') ? handleStr.slice(1) : handleStr,
+                  safeName: handle.startsWith('@') ? handle.slice(1) : handle,
                 }
               : undefined,
             selectAgainst.includes('email')
               ? {
-                  email: handleStr,
+                  email: handle,
                 }
               : undefined,
           ].filter(Boolean) as Array<{ id: Id } | { name: string } | { safeName: string } | { email: string }>,

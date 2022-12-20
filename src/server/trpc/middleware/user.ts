@@ -18,7 +18,7 @@ export const userProcedure = sessionProcedure
         message: youNeedToLogin,
       })
     }
-    const user = await userProvider.getEssential({ handle: session.userId })
+    const user = await userProvider.getEssentialById({ id: session.userId })
     if (user == null) {
       throw new TRPCError({
         code: 'NOT_FOUND',

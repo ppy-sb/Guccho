@@ -4,6 +4,7 @@ import { JsonViewer } from 'vue3-json-viewer'
 import 'vue3-json-viewer/dist/index.css'
 const { $client } = useNuxtApp()
 const route = useRoute()
+const adapterConfig = useAdapterConfig()
 const { data: beatmapset, error } = await useAsyncData(
   async () =>
     await $client.map.beatmapset.query({ id: route.params.id.toString() }),
@@ -16,7 +17,20 @@ const selectedMap = computed(() =>
     bm => bm.id.toString() === selectedMapId?.value,
   ),
 )
-const rankTable = useAsyncData(() => await $client.leaderboard.)
+const {
+  data: leaderboard,
+} = await useAsyncData(async () => {
+  if (!selectedMap.value)
+    return null
+
+  return await $client.leaderboard.beatmap.query({
+    ruleset: adapterConfig.supportedRulesets[0],
+    rankingSystem: adapterConfig.supportedRankingSystems[0],
+    page: 0,
+    pageSize: 20,
+    beatmapId: selectedMap.value.id.toString(),
+  })
+})
 </script>
 
 <template>
@@ -161,6 +175,7 @@ const rankTable = useAsyncData(() => await $client.leaderboard.)
                 ...beatmapset,
                 beatmaps: 'hidden from json viewer',
               },
+              leaderboard,
             }"
             class="rounded-xl"
           />

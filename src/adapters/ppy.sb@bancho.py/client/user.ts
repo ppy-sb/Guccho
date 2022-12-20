@@ -15,7 +15,7 @@ import type { UserDataProvider as Base } from '$def/client/user'
 
 import type { Prisma, PrismaClient } from '~/.prisma/ppy.sb/index'
 import type { UserEssential, UserOptional, UserStatistic } from '~/types/user'
-import type { OverallLeaderboardRankingSystem, Mode, NumberRange, Ruleset } from '~/types/common'
+import type { Mode, OverallLeaderboardRankingSystem, Ruleset } from '~/types/common'
 
 const redisClient
   = Boolean(process.env.REDIS_URI)
@@ -46,7 +46,7 @@ export class UserDataProvider implements Base<Id> {
     this.relationships = new BanchoPyUserRelationship()
   }
 
-  async getFull<Excludes extends Partial<Record<keyof Base.ComposableProperties<Id>, boolean>>>({ handle, excludes }: { handle: string | Id; excludes?: Excludes }) {
+  async getFull<Excludes extends Partial<Record<keyof Base.ComposableProperties<Id>, boolean>>>({ handle, excludes }: { handle: string; excludes?: Excludes }) {
     if (!excludes)
       excludes = <Excludes>{ secrets: true }
     const user = await this.db.user.findFirst(createUserQuery(handle))
@@ -54,7 +54,7 @@ export class UserDataProvider implements Base<Id> {
     if (user == null)
       return null
 
-    const fullUser = await toFullUser(user)
+    const fullUser = toFullUser(user)
     const profile = await this.db.userpage.findFirst({
       where: {
         userId: user.id,
@@ -145,6 +145,20 @@ export class UserDataProvider implements Base<Id> {
     return (await this.db.user.count(createUserQuery(handle, keys || ['id', 'name', 'safeName', 'email']))) > 0
   }
 
+  async getEssentialById<Includes extends Partial<Record<keyof UserOptional<number>, boolean>>>({ id, includes }: { id: Id; includes?: Includes }) {
+    const user = await this.db.user.findFirst(
+      {
+        where: {
+          id,
+        },
+      },
+    )
+    if (user == null)
+      return null
+
+    return toUserEssential({ user, includes })
+  }
+
   async getEssential<Includes extends Partial<Record<keyof UserOptional<number>, boolean>>>(opt: Base.OptType<Id, Includes>) {
     const { handle, includes, keys } = opt
     const user = await this.db.user.findFirst(
@@ -156,7 +170,7 @@ export class UserDataProvider implements Base<Id> {
     return toUserEssential({ user, includes })
   }
 
-  async getEssentials<Includes extends Partial<Record<keyof UserOptional<Id>, boolean>>>(opt: { handle: string | number; includes?: Includes | undefined }) {
+  async getEssentials<Includes extends Partial<Record<keyof UserOptional<Id>, boolean>>>(opt: { handle: string; includes?: Includes | undefined }) {
     const { handle, includes } = opt
     const users = await this.db.user.findMany(createUserQuery(handle))
     return users.map(user => toUserEssential({ user, includes }))
@@ -174,8 +188,8 @@ export class UserDataProvider implements Base<Id> {
     mode: Mode
     ruleset: Ruleset
     rankingSystem: OverallLeaderboardRankingSystem
-    page: NumberRange<0, 10>
-    perPage: NumberRange<1, 11>
+    page: number
+    perPage: number
   }) {
     const start = page * perPage
     const _mode = toBanchoPyMode(mode, ruleset)
@@ -208,7 +222,10 @@ export class UserDataProvider implements Base<Id> {
       skip: start,
       take: perPage,
     })
-    return toRankingSystemScores({ scores, rankingSystem, mode })
+    return toRankingSystemScores({ scores, rankingSystem, mode }).map(scores => ({
+      ...scores,
+      id: scores.id.toString(),
+    }))
   }
 
   async getStatistics({

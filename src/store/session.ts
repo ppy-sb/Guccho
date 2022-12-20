@@ -2,14 +2,13 @@ import type { TRPCError } from '@trpc/server'
 import { defineStore } from 'pinia'
 import md5 from 'md5'
 import { checkUserPrivilege } from '../helpers/checkUserPrivilege'
-import type { Id } from '~/adapters/ppy.sb@bancho.py/config'
 import type { UserFull } from '~/types/user'
 
 export const useSession = defineStore('session', {
   state: (): {
     loggedIn: boolean
-    userId?: Id
-    user?: Omit<UserFull<Id>, 'statistics'>
+    userId?: string
+    user?: Omit<UserFull<string>, 'statistics'>
     privilege: {
       hasAdminAccess: boolean
     }

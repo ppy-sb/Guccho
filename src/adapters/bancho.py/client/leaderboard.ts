@@ -4,9 +4,10 @@ import type {
   Id,
 } from '../config'
 import { prismaClient } from '.'
+import { mode as _modes } from '~/types/common'
 import type { PrismaClient } from '~/.prisma/bancho.py/index'
 import type { LeaderboardDataProvider } from '$def/client/leaderboard'
-import type { OverallLeaderboardRankingSystem, Mode, NumberRange, Ruleset } from '~/types/common'
+import type { Mode, OverallLeaderboardRankingSystem, RankingSystem, Ruleset } from '~/types/common'
 
 export default class BanchoPyLeaderboard implements LeaderboardDataProvider<Id> {
   db: PrismaClient
@@ -24,8 +25,8 @@ export default class BanchoPyLeaderboard implements LeaderboardDataProvider<Id> 
     mode: Mode
     ruleset: Ruleset
     rankingSystem: OverallLeaderboardRankingSystem
-    page: NumberRange<0, 10>
-    pageSize: NumberRange<20, 51>
+    page: number
+    pageSize: number
   }) {
     if (rankingSystem === 'ppv1')
       return []
@@ -124,8 +125,16 @@ export default class BanchoPyLeaderboard implements LeaderboardDataProvider<Id> 
     }))
   }
 
-  async getBeatmapLeaderboard(query: LeaderboardDataProvider.BaseQuery & { id: Id }) {
-    const { mode, ruleset, rankingSystem, id } = query
+  async getBeatmapLeaderboard(query: LeaderboardDataProvider.BaseQuery & { rankingSystem: RankingSystem; id: Id }) {
+    const { ruleset, rankingSystem, id } = query
+    let { mode } = query
+    if (!mode) {
+      const beatmap = await this.db.map.findFirst({ where: { id } })
+      if (!beatmap)
+        mode = 'osu'
+      else
+        mode = _modes[beatmap.mode]
+    }
     let sort = {}
     if (['totalScore', 'rankedScore'].includes(rankingSystem)) {
       sort = {
@@ -163,6 +172,7 @@ export default class BanchoPyLeaderboard implements LeaderboardDataProvider<Id> 
         avatarUrl: `https://a.ppy.sb/${item.user.id}`,
       },
       score: {
+        id: item.id.toString(),
         ppv2: item.pp,
         accuracy: item.acc,
         score: item.score,

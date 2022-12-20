@@ -2,7 +2,7 @@ import type { Id } from '../config'
 import { createHitCount } from './create-hit-count'
 import { toBeatmapWithBeatmapset } from './to-beatmapset'
 import type { AbleToTransformToScores } from './index'
-import type { Grade, OverallLeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
+import type { Grade, Mode, OverallLeaderboardRankingSystem, Ruleset } from '~/types/common'
 import type { BeatmapWithMeta, RankingStatus } from '~/types/beatmap'
 import type { RankingSystemScore, RulesetScore } from '~/types/score'
 
