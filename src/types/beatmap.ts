@@ -32,11 +32,11 @@ export type Beatmapset<Source extends BeatmapSource, LocalId, ForeignId> =
         title: string
       }
     }
+    id: LocalId
   } & ({
     source: UnknownSource
   } | {
     source: Exclude<Source, UnknownSource>
-    id: LocalId
     foreignId: ForeignId
   })
 export interface BeatmapEssential<Id, ForeignId = never> {
