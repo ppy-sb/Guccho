@@ -2,8 +2,8 @@ import z from 'zod'
 // import { createRouter } from '../context'
 import { router as _router, publicProcedure } from '../trpc'
 import { zodMode, zodOverallRankingSystem, zodRankingSystem, zodRuleset } from './../shapes/index'
+import { idToString, stringToId } from '~~/src/adapters/ppy.sb@bancho.py/config'
 import { LeaderboardDataProvider } from '$active/client'
-import { idToString, stringToId } from '$active/config'
 
 const provider = new LeaderboardDataProvider()
 export const router = _router({
@@ -42,7 +42,7 @@ export const router = _router({
       beatmapId: z.string(),
     }))
     .query(async ({ input: { mode, ruleset, rankingSystem, page, pageSize, beatmapId } }) => {
-      return await provider.getBeatmapLeaderboard({
+      const result = await provider.getBeatmapLeaderboard({
         mode,
         ruleset,
         rankingSystem,
@@ -50,5 +50,9 @@ export const router = _router({
         pageSize,
         id: stringToId(beatmapId),
       })
+      return result.map(item => ({
+        ...item,
+        user: Object.assign(item.user, { id: idToString(item.user.id) }),
+      }))
     }),
 })
