@@ -16,6 +16,7 @@ const selectedMap = computed(() =>
     bm => bm.id.toString() === selectedMapId?.value,
   ),
 )
+const rankTable = useAsyncData(() => await $client.leaderboard.)
 </script>
 
 <template>

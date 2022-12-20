@@ -7,7 +7,7 @@ import type { NumberRange } from '~/types/common'
 
 const provider = new LeaderboardDataProvider()
 export const router = _router({
-  totalLeaderboard: publicProcedure
+  overall: publicProcedure
     .input(
       z.object({
         mode: zodMode,
@@ -19,7 +19,7 @@ export const router = _router({
     )
     .query(
       async ({ input: { mode, ruleset, rankingSystem, page, pageSize } }) =>
-        await provider.getGrandLeaderboard({
+        await provider.getOverallLeaderboard({
           mode,
           ruleset,
           rankingSystem,

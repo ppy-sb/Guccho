@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
-import type { GrandLeaderboardRankingSystem, GrandLeaderboardScoreRankingSystem, NumberRange, PPRankingSystem, ScoreRankingSystem } from '~/types/common'
-import { grandLeaderboardRankingSystem, grandLeaderboardScoreRankingSystem, mode, ruleset } from '~/types/common'
+import type { OverallLeaderboardRankingSystem, OverallLeaderboardScoreRankingSystem, NumberRange, PPRankingSystem, ScoreRankingSystem } from '~/types/common'
+import { overallLeaderboardRankingSystem, overallLeaderboardScoreRankingSystem, mode, ruleset } from '~/types/common'
 import type { Id } from '$active/config'
 
 import type { UserEssential } from '~/types/user'
@@ -11,8 +11,8 @@ const [switcher] = inject('switcher') as SwitcherComposableType
 let prevSwitcherState = {
   ...switcher,
 }
-const stabilizeScoreRank = (rankingSystem: GrandLeaderboardRankingSystem) => {
-  if (grandLeaderboardScoreRankingSystem.includes(rankingSystem as GrandLeaderboardScoreRankingSystem))
+const stabilizeScoreRank = (rankingSystem: OverallLeaderboardRankingSystem) => {
+  if (overallLeaderboardScoreRankingSystem.includes(rankingSystem as OverallLeaderboardScoreRankingSystem))
     return 'score' as ScoreRankingSystem
   return rankingSystem as PPRankingSystem
 }
@@ -72,7 +72,7 @@ onMounted(() => {
   const arrayMap = {
     mode,
     ruleset,
-    rankingSystem: grandLeaderboardRankingSystem,
+    rankingSystem: overallLeaderboardRankingSystem,
   } as const
   const computeAnimateDirection = () => {
     const sw = switcher

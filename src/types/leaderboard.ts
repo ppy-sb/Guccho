@@ -1,7 +1,7 @@
 import type { Maybe } from './frontend-common'
-import type { GrandLeaderboardRankingSystem, GrandLeaderboardScoreRankingSystem, PPRankingSystem } from './common'
+import type { OverallLeaderboardRankingSystem, OverallLeaderboardScoreRankingSystem, PPRankingSystem } from './common'
 
-export interface Leaderboard<IdType, _RankingSystem extends GrandLeaderboardRankingSystem = GrandLeaderboardRankingSystem> {
+export interface Leaderboard<IdType, _RankingSystem extends OverallLeaderboardRankingSystem = OverallLeaderboardRankingSystem> {
   user: {
     id: IdType
     name: string
@@ -13,7 +13,7 @@ export interface Leaderboard<IdType, _RankingSystem extends GrandLeaderboardRank
       playCount: number
     }
     & Record<_RankingSystem & PPRankingSystem, number>
-    & Record<_RankingSystem & GrandLeaderboardScoreRankingSystem, bigint>
+    & Record<_RankingSystem & OverallLeaderboardScoreRankingSystem, bigint>
   }
   rank: number | bigint
 }

@@ -12,7 +12,7 @@ import BanchoPyUserRelationship from './user-relations'
 import { prismaClient } from '.'
 import type { Prisma, PrismaClient } from '~/.prisma/bancho.py/index'
 import type { UserDataProvider } from '$def/client/user'
-import type { GrandLeaderboardRankingSystem, Mode, NumberRange, Ruleset } from '~/types/common'
+import type { OverallLeaderboardRankingSystem, Mode, NumberRange, Ruleset } from '~/types/common'
 import useEditorExtensions from '~/composables/useEditorExtensions'
 
 import type {
@@ -90,7 +90,7 @@ export default class BanchoPyUser implements UserDataProvider<Id> {
     id: Id
     mode: Mode
     ruleset: Ruleset
-    rankingSystem: GrandLeaderboardRankingSystem
+    rankingSystem: OverallLeaderboardRankingSystem
     page: NumberRange<0, 10>
     perPage: NumberRange<1, 11>
   }) {
@@ -195,7 +195,7 @@ export default class BanchoPyUser implements UserDataProvider<Id> {
         : undefined,
     ])
 
-    const statistics: UserStatistic<Id, Mode, Ruleset, GrandLeaderboardRankingSystem> = {
+    const statistics: UserStatistic<Id, Mode, Ruleset, OverallLeaderboardRankingSystem> = {
       osu: {
         standard: createRulesetData({
           databaseResult: results.find(

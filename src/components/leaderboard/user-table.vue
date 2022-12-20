@@ -1,12 +1,12 @@
 <script lang="ts" setup>
 import { createAddCommasFormatter, createScoreFormatter, getFlagURL } from '~/common/varkaUtils'
-import type { GrandLeaderboardRankingSystem } from '~/types/common'
+import type { OverallLeaderboardRankingSystem } from '~/types/common'
 import type { Id } from '~/server/trpc/config'
 import type { ComponentLeaderboard } from '~/types/leaderboard'
 const props = defineProps<{
   user: ComponentLeaderboard<Id>['user']
   place: bigint
-  sort: GrandLeaderboardRankingSystem
+  sort: OverallLeaderboardRankingSystem
 }>()
 const addCommas = createAddCommasFormatter()
 const scoreFormat = createScoreFormatter()

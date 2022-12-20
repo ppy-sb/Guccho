@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
-import type { GrandLeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
+import type { OverallLeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
 import type { UserModeRulesetStatistics } from '~/types/statistics'
 import { createScoreFormatter, toDuration } from '~/common/varkaUtils'
 
 const chars = [...[...Array(10).keys()].map(String), ',', '.', 'K', 'M', 'B', 'T', '-']
 
-const data = inject('user.statistics') as Ref<UserModeRulesetStatistics<unknown, Mode, Ruleset, GrandLeaderboardRankingSystem>>
+const data = inject('user.statistics') as Ref<UserModeRulesetStatistics<unknown, Mode, Ruleset, OverallLeaderboardRankingSystem>>
 const scoreFmt = createScoreFormatter({ notation: 'compact', maximumFractionDigits: 2 })
 const deferredRender = ref({ ...data.value })
 const playTime = computed(() => deferredRender?.value ? toDuration(new Date(deferredRender.value.playTime * 1000), new Date(0)) : { hours: 0, minutes: 0, seconds: 0 })

@@ -1,20 +1,20 @@
 import { forbiddenMode, forbiddenMods } from '../common/varkaUtils'
 import useAdapterConfig from './useAdapterConfig'
-import type { GrandLeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
+import type { OverallLeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
 
 export interface SwitcherPropType {
   mode?: Mode
   ruleset?: Ruleset
-  rankingSystem?: GrandLeaderboardRankingSystem
+  rankingSystem?: OverallLeaderboardRankingSystem
 }
 
 export default function useSwitcher(initial?: SwitcherPropType) {
   const { mode, ruleset, rankingSystem } = initial || {}
-  const { supportedModes, supportedGrandLeaderboardRankingSystems, supportedRulesets } = useAdapterConfig()
+  const { supportedModes, supportedOverallLeaderboardRankingSystems, supportedRulesets } = useAdapterConfig()
   const data = reactive({
     mode: mode || supportedModes[0],
     ruleset: ruleset || supportedRulesets[0],
-    rankingSystem: rankingSystem || supportedGrandLeaderboardRankingSystems[0],
+    rankingSystem: rankingSystem || supportedOverallLeaderboardRankingSystems[0],
   })
   return [
     data,
@@ -23,7 +23,7 @@ export default function useSwitcher(initial?: SwitcherPropType) {
         data.mode = mode
       if (ruleset && supportedRulesets.includes(ruleset) && !forbiddenMods(mode || data.mode, ruleset))
         data.ruleset = ruleset
-      if (rankingSystem && supportedGrandLeaderboardRankingSystems.includes(rankingSystem))
+      if (rankingSystem && supportedOverallLeaderboardRankingSystems.includes(rankingSystem))
         data.rankingSystem = rankingSystem
     },
   ] as const
