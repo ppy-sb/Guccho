@@ -1,5 +1,5 @@
 import type { JSONContent } from '@tiptap/core'
-import type { Awaitable, OverallLeaderboardRankingSystem, Mode, NumberRange, Ruleset } from '~/types/common'
+import type { Awaitable, Mode, NumberRange, OverallLeaderboardRankingSystem, Ruleset } from '~/types/common'
 import type { UserEssential, UserExtra, UserOptional, UserStatistic } from '~/types/user'
 import type { RankingSystemScore } from '~/types/score'
 
@@ -12,7 +12,7 @@ export namespace UserDataProvider {
     never
   >,
 > {
-    handle: string | Id
+    handle: string
     includes?: Includes
     keys?: Array<['id', 'name', 'safeName', 'email'][number]>
   }
@@ -20,6 +20,7 @@ export namespace UserDataProvider {
 export interface UserDataProvider<Id> {
   exists({ handle, keys }: UserDataProvider.OptType<Id>): Awaitable<boolean>
   getEssential<Includes extends Partial<Record<keyof UserOptional<Id>, boolean>>>(opt: UserDataProvider.OptType<Id, Includes>): Awaitable<UserEssential<Id> | null>
+  getEssentialById<Includes extends Partial<Record<keyof UserOptional<Id>, boolean>>>(opt: { id: Id; includes: Includes }): Awaitable<UserEssential<Id> | null>
   getEssentials<Includes extends Partial<Record<keyof UserOptional<Id>, boolean>>>(opt: { handle: string | Id; includes?: Includes }): Awaitable<UserEssential<Id>[]>
   getBests<_Mode extends Mode, _Ruleset extends Ruleset, _RankingSystem extends OverallLeaderboardRankingSystem>(query: {
     id: Id
@@ -29,7 +30,7 @@ export interface UserDataProvider<Id> {
     page: NumberRange<0, 10>
     perPage: NumberRange<1, 11>
   }): Awaitable<RankingSystemScore<
-    bigint,
+    string,
     Id,
     _Mode,
     _RankingSystem & 'ppv2'

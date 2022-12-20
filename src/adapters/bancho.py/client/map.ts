@@ -1,5 +1,4 @@
 import { toBeatmapEssential, toBeatmapWithBeatmapset, toBeatmapset } from '../transforms/to-beatmapset'
-import { stringToId } from '../transforms/string-to-id'
 import { toRankingStatus } from '../transforms'
 import type { Id } from './../config'
 import { prismaClient } from '.'
@@ -13,9 +12,8 @@ export default class BanchoPyMap implements MapDataProvider<Id> {
     this.db = client
   }
 
-  async getBeatmap(query: { id: string }) {
-    const { id: _idString } = query
-    const id = stringToId(_idString)
+  async getBeatmap(query: { id: Id }) {
+    const { id } = query
     if (!id)
       return null
     const beatmap = await this.db.map.findFirst({
@@ -31,9 +29,8 @@ export default class BanchoPyMap implements MapDataProvider<Id> {
     return toBeatmapWithBeatmapset(beatmap) || null
   }
 
-  async getBeatmapset(query: { id: string }) {
-    const { id: _idString } = query
-    const id = stringToId(_idString)
+  async getBeatmapset(query: { id: Id }) {
+    const { id } = query
     if (!id)
       return null
     const source = await this.db.source.findFirst({

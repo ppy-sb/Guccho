@@ -1,12 +1,13 @@
 import { z } from 'zod'
 import { TRPCError } from '@trpc/server'
-import { zodHandle, zodMode, zodRankingSystem, zodRelationType, zodRuleset } from '../shapes'
+import { zodHandle, zodMode, zodOverallRankingSystem, zodRelationType, zodRuleset } from '../shapes'
 import { router as _router, publicProcedure as p } from '../trpc'
 import { userNotFound } from '../messages'
 import { supportedOverallLeaderboardRankingSystems } from '../config'
 import type { NumberRange } from '~/types/common'
 import { followUserPreferences } from '~/server/transforms'
 import { UserDataProvider, UserRelationshipDataProvider } from '$active/client'
+import { idToString } from '$active/config'
 
 const [userProvider, userRelationshipProvider] = [new UserDataProvider(), new UserRelationshipDataProvider()]
 
@@ -21,7 +22,7 @@ export const router = _router({
         message: userNotFound,
       })
     }
-    return followUserPreferences({ user, scope: 'public' })
+    return Object.assign(followUserPreferences({ user, scope: 'public' }), { id: idToString(user.id) })
   }),
   full: p.input(z.object({
     handle: zodHandle,
@@ -33,13 +34,13 @@ export const router = _router({
         message: userNotFound,
       })
     }
-    return followUserPreferences({ user, scope: 'public' })
+    return Object.assign(followUserPreferences({ user, scope: 'public' }), { id: idToString(user.id) })
   }),
   best: p.input(z.object({
     handle: zodHandle,
     mode: zodMode,
     ruleset: zodRuleset,
-    rankingSystem: zodRankingSystem,
+    rankingSystem: zodOverallRankingSystem,
     page: z.number().gte(0).lt(10),
   })).query(async ({ input }) => {
     const user = await userProvider.getEssential({ handle: input.handle })
@@ -61,11 +62,13 @@ export const router = _router({
       throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' })
     return returnValue
   }),
-  base: p.input(z.object({
+  essential: p.input(z.object({
     handle: zodHandle,
   })).query(async ({ input }) => {
     const user = await userProvider.getEssential({ handle: input.handle })
-    return user
+    if (!user)
+      return null
+    return Object.assign(user, { id: idToString(user.id) })
   }),
   countRelations: p.input(z.object({
     handle: zodHandle,

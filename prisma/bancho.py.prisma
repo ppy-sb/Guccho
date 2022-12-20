@@ -27,7 +27,7 @@ model User {
   customBadgeIcon String? @map("custom_badge_icon") @db.VarChar(64)
   userpageContent String? @map("userpage_content") @db.VarChar(2048)
   clanId          Int     @default(0) @map("clan_id")
-  clanPriv        Boolean @default(false) @map("clan_priv")
+  clanPriv        Int     @default(0) @map("clan_priv") @db.TinyInt
   apiKey          String? @unique(map: "users_api_key_uindex") @map("api_key") @db.Char(36)
 
   clan             Clan           @relation(name: "clan", fields: [clanId], references: [id])
@@ -167,7 +167,7 @@ model Map {
   frozen      Boolean    @default(false)
   plays       Int        @default(0)
   passes      Int        @default(0)
-  mode        Boolean    @default(false)
+  mode        Int        @default(0) @db.TinyInt
   bpm         Float      @default(0.00) @db.Float
   cs          Float      @default(0.00) @db.Float
   ar          Float      @default(0.00) @db.Float

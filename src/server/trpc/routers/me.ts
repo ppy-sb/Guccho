@@ -6,14 +6,15 @@ import { router as _router } from '../trpc'
 import { zodHandle, zodRelationType, zodTipTapJSONContent } from '../shapes'
 import { atLeastOneUserNotExists, oldPasswordMismatch, relationTypeNotFound, userExists, userNotFound } from '../messages'
 import { userProcedure as pUser } from '~/server/trpc/middleware/user'
-import { UserDataProvider, UserRelationshipDataProvider } from '~/adapters/ppy.sb@bancho.py/client'
+import { UserDataProvider, UserRelationshipDataProvider } from '$active/client'
 import { calculateMutualRelationships } from '~/server/transforms'
+import { idToString } from '$active/config'
 
 const userProvider = new UserDataProvider()
 const relationProvider = new UserRelationshipDataProvider()
 export const router = _router({
   fullSecret: pUser.query(async ({ ctx }) => {
-    return await userProvider.getFull({ handle: ctx.user.id, excludes: { secrets: false } })
+    return await userProvider.getFull({ handle: idToString(ctx.user.id), excludes: { secrets: false } })
   }),
   changeUserpage: pUser.input(z.object({
     profile: zodTipTapJSONContent,
@@ -52,7 +53,7 @@ export const router = _router({
     oldPassword: z.string(),
     newPassword: z.string(),
   })).mutation(async ({ ctx, input }) => {
-    const userWithPassword = await userProvider.getEssential({ handle: ctx.user.id, includes: { secrets: true } })
+    const userWithPassword = await userProvider.getEssentialById({ id: ctx.user.id, includes: { secrets: true } })
     if (userWithPassword == null)
       throw new TRPCError({ code: 'NOT_FOUND', message: userNotFound })
     if (!await bcrypt.compare(input.oldPassword, userWithPassword.secrets.password))

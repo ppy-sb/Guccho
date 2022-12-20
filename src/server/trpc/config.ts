@@ -1,4 +1,4 @@
-import type { Feature, OverallLeaderboardRankingSystem, Mode, RankingSystem, Ruleset } from '~/types/common'
+import type { Feature, Mode, OverallLeaderboardRankingSystem, RankingSystem, Ruleset } from '~/types/common'
 import * as Active from '$active/config'
 // defaults
 export type Id = Active.Id

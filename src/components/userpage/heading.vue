@@ -8,7 +8,6 @@ import { useFAIconLib } from '#imports'
 import type { UserFull as User } from '~/types/user'
 import { useSession } from '~/store/session'
 
-import type { Id } from '~/server/trpc/config'
 import type { SwitcherComposableType } from '~/composables/useSwitcher'
 
 const { addToLibrary } = useFAIconLib()
@@ -18,16 +17,20 @@ const { $client } = useNuxtApp()
 const session = useSession()
 const changeFriendStateButton = ref(null)
 const [switcher, setSwitcher] = inject('switcher') as SwitcherComposableType
-const user = inject<Ref<User<Id>>>('user')
+const user = inject<Ref<User<string>>>('user')
 const {
   data,
   refresh,
 } = await useAsyncData(async () => {
+  if (!user?.value) {
+    return {
+    }
+  }
   const relationWithMe = (session.loggedIn && $client.me.relation.query({
-    target: user?.value.id as Id,
+    target: user.value.id,
   })) || undefined
   const friendCount = $client.user.countRelations.query({
-    handle: user?.value.id as Id,
+    handle: user.value.id,
     type: 'friend',
   })
   return {
@@ -41,7 +44,9 @@ const friendButtonContent = computed(() => data.value?.friendCount || 'Add as fr
 const toggleFriend = async () => {
   if (!session.loggedIn)
     return
-  const input = { type: 'friend', target: user?.value.id as Id } as const
+  if (!user?.value)
+    return
+  const input = { type: 'friend', target: user.value.id } as const
   if (isMutualFriend.value)
     await $client.me.removeOneRelation.mutate(input)
   else
