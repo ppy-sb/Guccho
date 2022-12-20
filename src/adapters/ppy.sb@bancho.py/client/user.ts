@@ -15,7 +15,7 @@ import type { UserDataProvider as Base } from '$def/client/user'
 
 import type { Prisma, PrismaClient } from '~/.prisma/ppy.sb/index'
 import type { UserEssential, UserOptional, UserStatistic } from '~/types/user'
-import type { GrandLeaderboardRankingSystem, Mode, NumberRange, Ruleset } from '~/types/common'
+import type { OverallLeaderboardRankingSystem, Mode, NumberRange, Ruleset } from '~/types/common'
 
 const redisClient
   = Boolean(process.env.REDIS_URI)
@@ -173,7 +173,7 @@ export class UserDataProvider implements Base<Id> {
     id: Id
     mode: Mode
     ruleset: Ruleset
-    rankingSystem: GrandLeaderboardRankingSystem
+    rankingSystem: OverallLeaderboardRankingSystem
     page: NumberRange<0, 10>
     perPage: NumberRange<1, 11>
   }) {
@@ -278,7 +278,7 @@ export class UserDataProvider implements Base<Id> {
         : undefined,
     ])
 
-    const statistics: UserStatistic<Id, Mode, Ruleset, GrandLeaderboardRankingSystem> = {
+    const statistics: UserStatistic<Id, Mode, Ruleset, OverallLeaderboardRankingSystem> = {
       osu: {
         standard: createRulesetData({
           databaseResult: results.find(

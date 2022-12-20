@@ -3,7 +3,7 @@
 import { reactive, ref } from 'vue'
 import { navigateTo, useAppConfig, useRoute } from '#app'
 
-import type { GrandLeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
+import type { Mode, OverallLeaderboardRankingSystem, Ruleset } from '~/types/common'
 import type { SwitcherPropType } from '~/composables/useSwitcher'
 import { assertIsString } from '~/helpers'
 
@@ -25,7 +25,7 @@ const ruleset = (assertIsString(pRuleset) && availableRulesets.includes(pRuleset
   : availableRulesets[0]) as Ruleset
 const rankingSystem = (assertIsString(pRankingSystem) && availableRankingSystems.includes(pRankingSystem)
   ? route.params.ranking
-  : availableRankingSystems[0]) as GrandLeaderboardRankingSystem
+  : availableRankingSystems[0]) as OverallLeaderboardRankingSystem
 const page = (assertIsString(pPage) && parseInt(pPage)) || 1
 
 const perPage = 20
@@ -52,7 +52,7 @@ const fetching = ref(false)
 // const perPage = ref(50)
 
 fetching.value = true
-const result = await $client.leaderboard.totalLeaderboard.query({
+const result = await $client.leaderboard.overall.query({
   mode: selected.mode,
   ruleset: selected.ruleset,
   rankingSystem: selected.rankingSystem,

@@ -1,9 +1,9 @@
-import { supportedGrandLeaderboardRankingSystems, supportedModes, supportedRulesets } from '~/server/trpc/config'
+import { supportedOverallLeaderboardRankingSystems, supportedModes, supportedRulesets } from '~/server/trpc/config'
 
 export default () => {
   return {
     supportedModes,
     supportedRulesets,
-    supportedGrandLeaderboardRankingSystems,
+    supportedOverallLeaderboardRankingSystems,
   }
 }

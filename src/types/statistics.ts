@@ -1,11 +1,11 @@
 import type { RulesetScore } from './score'
-import type { GrandLeaderboardRankingSystem, Mode, PPRankingSystem, Ruleset } from './common'
+import type { OverallLeaderboardRankingSystem, Mode, PPRankingSystem, Ruleset } from './common'
 
 export interface BaseRank<
   Id,
   _Mode extends Mode,
   _Ruleset extends Ruleset,
-  _RankingSystem extends GrandLeaderboardRankingSystem,
+  _RankingSystem extends OverallLeaderboardRankingSystem,
 > {
   rank?: number
   rankHistory?: Record<string, number>
@@ -22,7 +22,7 @@ export type PPRank<
   Id,
   _Mode extends Mode,
   _Ruleset extends Ruleset,
-  _RankingSystem extends GrandLeaderboardRankingSystem,
+  _RankingSystem extends OverallLeaderboardRankingSystem,
 > = BaseRank<Id, _Mode, _Ruleset, _RankingSystem> & {
   performance: number
   performanceHistory?: Record<string, number>
@@ -32,7 +32,7 @@ export type ScoreRank<
   Id,
   _Mode extends Mode,
   _Ruleset extends Ruleset,
-  _RankingSystem extends GrandLeaderboardRankingSystem,
+  _RankingSystem extends OverallLeaderboardRankingSystem,
 > = BaseRank<Id, _Mode, _Ruleset, _RankingSystem> & {
   score: bigint | null
   scoreHistory?: Record<string, bigint>
@@ -42,7 +42,7 @@ export type UserModeRulesetStatistics<
   Id,
   _Mode extends Mode,
   _Ruleset extends Ruleset,
-  RS extends GrandLeaderboardRankingSystem,
+  RS extends OverallLeaderboardRankingSystem,
 > = {
   // TODO: Achievement
   // achievements: Achievement[]

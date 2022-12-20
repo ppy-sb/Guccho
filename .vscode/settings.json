@@ -84,5 +84,20 @@
   "eslint.packageManager": "yarn",
   "eslint.useESLintClass": true,
   "eslint.codeActionsOnSave.rules": null,
-  "vue3snippets.enable-compile-vue-file-on-did-save-code": false
+  "vue3snippets.enable-compile-vue-file-on-did-save-code": false,
+  "sqltools.connections": [
+    {
+      "mysqlOptions": {
+        "authProtocol": "default"
+      },
+      "previewLimit": 50,
+      "server": "127.0.0.1",
+      "port": 3306,
+      "driver": "MySQL",
+      "name": "localhost mac",
+      "database": "bancho.py",
+      "username": "root",
+      "password": "Ndgvadbsfagj.35"
+    }
+  ]
 }

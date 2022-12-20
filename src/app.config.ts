@@ -1,6 +1,6 @@
 import { defineAppConfig } from 'nuxt/app'
 
-import type { GrandLeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
+import type { OverallLeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
 
 interface AppConfigItemBase {
   name: string
@@ -23,7 +23,7 @@ const config: {
   AppConfigItemBase
   >
   rankingSystem: Record<
-  GrandLeaderboardRankingSystem,
+  OverallLeaderboardRankingSystem,
   AppConfigItemBase & {
     userpage: {
       show: 'tab' | 'dropdown'

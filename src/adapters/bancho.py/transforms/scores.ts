@@ -2,11 +2,11 @@ import type { Id } from '../config'
 import { createHitCount } from './create-hit-count'
 import { toBeatmapWithBeatmapset } from './to-beatmapset'
 import type { AbleToTransformToScores } from './index'
-import type { Grade, GrandLeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
+import type { Grade, OverallLeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
 import type { BeatmapWithMeta, RankingStatus } from '~/types/beatmap'
 import type { RankingSystemScore, RulesetScore } from '~/types/score'
 
-export function toScore<_RankingSystem extends GrandLeaderboardRankingSystem>({ score, mode, ruleset }: {
+export function toScore<_RankingSystem extends OverallLeaderboardRankingSystem>({ score, mode, ruleset }: {
   score: AbleToTransformToScores
   mode: Mode
   ruleset: Ruleset
@@ -47,7 +47,7 @@ export function toScore<_RankingSystem extends GrandLeaderboardRankingSystem>({ 
   return rtn1
 }
 
-export function toRankingSystemScore<_RankingSystem extends GrandLeaderboardRankingSystem>({ score, rankingSystem, mode, rank }: {
+export function toRankingSystemScore<_RankingSystem extends OverallLeaderboardRankingSystem>({ score, rankingSystem, mode, rank }: {
   score: AbleToTransformToScores
   rankingSystem: _RankingSystem
   mode: Mode
@@ -99,7 +99,7 @@ export function toScores({ scores, mode, ruleset }: {
   return scores.map(score => toScore({ score, mode, ruleset }))
 }
 
-export function toRankingSystemScores<RS extends GrandLeaderboardRankingSystem>({ scores, mode, rankingSystem }: {
+export function toRankingSystemScores<RS extends OverallLeaderboardRankingSystem>({ scores, mode, rankingSystem }: {
   scores: AbleToTransformToScores[]
   rankingSystem: RS
   mode: Mode
