@@ -2,10 +2,9 @@
 import { computed, provide, reactive, ref } from 'vue'
 import { useIntersectionObserver } from '@vueuse/core'
 import { useRoute } from '#app'
-import type { OverallLeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
+import type { Mode, OverallLeaderboardRankingSystem, Ruleset } from '~/types/common'
 import { definePageMeta } from '#imports'
 import type { UserModeRulesetStatistics } from '~/types/statistics'
-import type { Id } from '~/server/trpc/config'
 
 definePageMeta({
   layout: 'without-bg',
@@ -22,7 +21,7 @@ const {
 } = await useAsyncData(async () => await $client.user.userpage.query({
   handle: `${route.params.handle}`,
 }))
-const currentStatistic = computed<UserModeRulesetStatistics<Id, Mode, Ruleset, OverallLeaderboardRankingSystem>>(
+const currentStatistic = computed<UserModeRulesetStatistics<string, Mode, Ruleset, OverallLeaderboardRankingSystem>>(
   // @ts-expect-error switcher has its logic to not spit out wrong combination
   () => user.value?.statistics[switcher.mode][switcher.ruleset],
 )
