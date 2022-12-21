@@ -122,7 +122,7 @@ const nextPage = () => {
           <transition :name="transition">
             <ul :key="current.lastSwitcherStatus.mode + current.lastSwitcherStatus.ruleset + stabilizeScoreRank(current.lastSwitcherStatus.rankingSystem) + user.id + current.page">
               <li v-for="i in current.result" :key="`bests-${i.id}`" class="score">
-                <app-score :score="i" :mode="current.lastSwitcherStatus.mode" :ruleset="current.lastSwitcherStatus.ruleset" :ranking-system="current.lastSwitcherStatus.rankingSystem" />
+                <app-best-score-list-item :score="i" :mode="current.lastSwitcherStatus.mode" :ruleset="current.lastSwitcherStatus.ruleset" :ranking-system="current.lastSwitcherStatus.rankingSystem" />
               </li>
             </ul>
           </transition>
@@ -133,13 +133,13 @@ const nextPage = () => {
       </div>
 
       <div class="btn-group d-flex w-full bg-kimberly-300/30 rounded-2xl shadow-xl" style="--rounded-btn: 1rem">
-        <button class="btn btn-ghost !shadow-none" @click="prevPage">
+        <button class="btn btn-ghost" @click="prevPage">
           «
         </button>
-        <button class="btn btn-ghost !shadow-none grow" @click="() => refresh()">
+        <button class="btn btn-ghost grow" @click="() => refresh()">
           Page {{ page + 1 }}
         </button>
-        <button class="btn btn-ghost !shadow-none" @click="nextPage">
+        <button class="btn btn-ghost" @click="nextPage">
           »
         </button>
       </div>

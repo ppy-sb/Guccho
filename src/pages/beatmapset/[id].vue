@@ -9,16 +9,19 @@ const { data: beatmapset, error } = await useAsyncData(
   async () =>
     await $client.map.beatmapset.query({ id: route.params.id.toString() }),
 )
-const selectedMapId = ref<unknown>(
-  route.hash?.slice(1) || beatmapset.value?.beatmaps[0].id.toString(),
+
+const hashed = beatmapset.value?.beatmaps.find(
+  bm => bm.id === route.hash?.slice(1),
 )
+const selectedMapId = ref<unknown>(hashed?.id || beatmapset.value?.beatmaps[0].id)
 const selectedMap = computed(() =>
   beatmapset.value?.beatmaps.find(
-    bm => bm.id.toString() === selectedMapId?.value,
+    bm => bm.id === selectedMapId.value,
   ),
 )
 const {
   data: leaderboard,
+  refresh,
 } = await useAsyncData(async () => {
   if (!selectedMap.value)
     return null
@@ -31,6 +34,14 @@ const {
     beatmapId: selectedMap.value.id.toString(),
   })
 })
+
+function addHashToLocation(params: Parameters<typeof encodeURIComponent>[number]) {
+  history.pushState(
+    {},
+    '',
+    `${route.path}#${encodeURIComponent(params)}`,
+  )
+}
 </script>
 
 <template>
@@ -62,12 +73,16 @@ const {
           variant="bordered"
           size="md"
           class="mx-4 self-end bg-transparent"
+          @update:model-value="(value) => {
+            refresh()
+            addHashToLocation(value)
+          }"
         >
           <t-tab
             v-for="bm in beatmapset.beatmaps"
             ref="tabs"
             :key="bm.id"
-            :value="bm.id.toString()"
+            :value="bm.id"
             class="whitespace-nowrap grow"
           >
             {{ bm.version }}
@@ -167,20 +182,23 @@ const {
             </dd>
           </div>
         </dl>
-        <div class="card-body">
-          <JsonViewer
-            :value="{
-              beatmap: selectedMap,
-              beatmapset: {
-                ...beatmapset,
-                beatmaps: 'hidden from json viewer',
-              },
-              leaderboard,
-            }"
-            class="rounded-xl"
-          />
-        </div>
       </div>
+    </div>
+    <div class="container custom-container mx-auto mt-4">
+      <app-scores-table v-if="leaderboard" :scores="leaderboard" class="w-full" />
+    </div>
+    <div class="container custom-container mx-auto mt-4">
+      <JsonViewer
+        :value="{
+          beatmap: selectedMap,
+          beatmapset: {
+            ...beatmapset,
+            beatmaps: 'hidden from json viewer',
+          },
+          leaderboard,
+        }"
+        class="rounded-xl"
+      />
     </div>
   </div>
 </template>
@@ -195,7 +213,7 @@ const {
 }
 
 .stripe-odd {
-  @apply px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6;
+  @apply px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6;
 }
 
 .stripe-even {

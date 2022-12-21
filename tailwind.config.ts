@@ -65,6 +65,21 @@ module.exports = {
   theme: {
     extend: {
       colors: palette,
+      animation: {
+        text: 'text 7s ease infinite',
+      },
+      keyframes: {
+        text: {
+          '0%, 100%': {
+            'background-size': '100% 120%',
+            'background-position': 'top center',
+          },
+          '50%': {
+            'background-size': '100% 120%',
+            'background-position': 'bottom center',
+          },
+        },
+      },
     },
     hljs: {
       theme: 'night-owl',

@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import { createAddCommasFormatter, createScoreFormatter, getFlagURL } from '~/common/varkaUtils'
 import type { OverallLeaderboardRankingSystem } from '~/types/common'
-import type { ComponentLeaderboard } from '~/types/leaderboard'
+import type { ComponentLeaderboard, Leaderboard } from '~/types/leaderboard'
 const props = defineProps<{
-  user: ComponentLeaderboard<string>['user']
-  place: bigint
+  user: Leaderboard<string>['user']
+  inThisLeaderboard: ComponentLeaderboard<string>['inThisLeaderboard']
   sort: OverallLeaderboardRankingSystem
 }>()
 const addCommas = createAddCommasFormatter()
@@ -21,7 +21,7 @@ const formatter = new Intl.NumberFormat(undefined, option)
   <tr class="font-medium">
     <th class="px-4 py-3 font-bold">
       <p class="text-kimberly-900 dark:text-kimberly-100">
-        #{{ props.place }}
+        #{{ props.inThisLeaderboard.rank }}
       </p>
     </th>
     <th>
@@ -44,25 +44,27 @@ const formatter = new Intl.NumberFormat(undefined, option)
             width="30"
           >
         </div>
-        {{ user.name }}
+        <div :class="useUserRoleColor(user)">
+          {{ user.name }}
+        </div>
       </div>
     </th>
     <td class="font-bold text-right">
       <template v-if="sort === 'ppv2'">
-        {{ addCommas(props.user.inThisLeaderboard.ppv2 || 0) }}pp
+        {{ addCommas(props.inThisLeaderboard.ppv2 || 0) }}pp
       </template>
       <template v-else-if="sort === 'ppv1'">
-        {{ addCommas(props.user.inThisLeaderboard.ppv1 || 0) }}pp
+        {{ addCommas(props.inThisLeaderboard.ppv1 || 0) }}pp
       </template>
-      <template v-else-if="sort in props.user.inThisLeaderboard">
-        {{ scoreFormat(props.user.inThisLeaderboard[sort] || 0) }}
+      <template v-else-if="sort in props.inThisLeaderboard">
+        {{ scoreFormat(props.inThisLeaderboard[sort] || 0) }}
       </template>
     </td>
     <td class="text-right opacity-80">
-      {{ formatter.format((props.user.inThisLeaderboard.accuracy || 0) / 100) }}
+      {{ formatter.format((props.inThisLeaderboard.accuracy || 0) / 100) }}
     </td>
     <td class="text-right opacity-80">
-      {{ addCommas(props.user.inThisLeaderboard.playCount || 0) }}
+      {{ addCommas(props.inThisLeaderboard.playCount || 0) }}
     </td>
   </tr>
 </template>

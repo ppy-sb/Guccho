@@ -1,5 +1,5 @@
 import type { BeatmapSource, BeatmapWithMeta, RankingStatus } from './beatmap'
-import type { Grade, OverallLeaderboardRankingSystem, Mode, NumberRange, PPRankingSystem, Ruleset } from './common'
+import type { Grade, Mode, NumberRange, OverallLeaderboardRankingSystem, PPRankingSystem, Ruleset } from './common'
 
 export type HitCount<_Mode extends Mode> = Record<
   300 | 100 | 50 | 'miss' | (_Mode extends 'mania' ? 'max' | 200 : 'geki' | 'katu'),

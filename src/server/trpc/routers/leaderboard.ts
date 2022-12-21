@@ -2,7 +2,7 @@ import z from 'zod'
 // import { createRouter } from '../context'
 import { router as _router, publicProcedure } from '../trpc'
 import { zodMode, zodOverallRankingSystem, zodRankingSystem, zodRuleset } from './../shapes/index'
-import { idToString, stringToId } from '~~/src/adapters/ppy.sb@bancho.py/config'
+import { idToString, stringToId } from '~/adapters/ppy.sb@bancho.py/config'
 import { LeaderboardDataProvider } from '$active/client'
 
 const provider = new LeaderboardDataProvider()

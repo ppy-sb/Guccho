@@ -1,3 +1,4 @@
+import type { UserEssential } from './../../../types/user'
 import type { Awaitable, Mode, OverallLeaderboardRankingSystem, PPRankingSystem, RankingSystem, Ruleset } from '~/types/common'
 import type { ComponentLeaderboard } from '~/types/leaderboard'
 
@@ -10,17 +11,12 @@ export namespace LeaderboardDataProvider {
   }
 
   export interface BeatmapLeaderboard<Id> {
-    user: {
-      id: Id
-      name: string
-      safeName: string
-      flag: string
-      avatarUrl: string
-    }
+    user: UserEssential<Id>
     score: {
       id: unknown
       score: number | bigint
       accuracy: number
+      playedAt: Date
     } & Partial<Record<PPRankingSystem, number>>
     rank: number
   }
