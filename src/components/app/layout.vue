@@ -43,7 +43,7 @@ onMounted(() => {
 <style lang="postcss">
 .screen {
   &.has-bg {
-    @apply bg-gradient-to-b from-white to-kimberly-50 dark:from-kimberly-800 dark:to-kimberly-900
+    @apply bg-gradient-to-b from-kimberly-50/50 to-kimberly-50/90 dark:from-kimberly-800 dark:to-kimberly-900
   }
 }
 
