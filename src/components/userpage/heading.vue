@@ -123,9 +123,9 @@ const toggleFriend = async () => {
       <div class="container mx-auto sm:order-2 sm:flex sm:gap-1 sm:items-end sm:justify-between md:pb-2">
         <div>
           <div>
-            <h1 class="text-5xl items-center md:items-left flex flex-col md:flex-row gap-1">
+            <h1 class="text-5xl xl:text-6xl items-center md:items-left flex flex-col md:flex-row gap-1 pb-1" :class="useUserRoleColor(user)">
               {{ user.name }}
-              <div class="flex flex-row gap-1 md:self-end">
+              <!-- <div class="flex flex-row gap-1 md:self-end">
                 <div
                   v-for="role in user.roles.filter(role => !['normal', 'registered'].includes(role))"
                   :key="role"
@@ -133,7 +133,7 @@ const toggleFriend = async () => {
                 >
                   {{ role }}
                 </div>
-              </div>
+              </div> -->
             </h1>
             <h2
               class="text-3xl text-center underline md:text-left decoration-sky-500 text-kimberly-600 dark:text-kimberly-300"
