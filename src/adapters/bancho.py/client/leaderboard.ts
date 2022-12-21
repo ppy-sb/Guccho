@@ -3,6 +3,7 @@ import { toBanchoPyMode } from '../enums'
 import type {
   Id,
 } from '../config'
+import { toRoles, toUserEssential } from '../transforms'
 import { prismaClient } from '.'
 import { mode as _modes } from '~/types/common'
 import type { PrismaClient } from '~/.prisma/bancho.py/index'
@@ -38,6 +39,7 @@ export default class BanchoPyLeaderboard implements LeaderboardDataProvider<Id> 
         name: string
         safeName: string
         flag: string
+        priv: number
 
         mode: BanchoPyMode
         _rank: bigint
@@ -76,6 +78,7 @@ export default class BanchoPyLeaderboard implements LeaderboardDataProvider<Id> 
       user.name,
       user.safe_name as safeName,
       user.country as flag,
+      user.priv,
       stat.pp as ppv2,
       stat.acc as accuracy,
       stat.rscore as rankedScore,
@@ -93,6 +96,7 @@ export default class BanchoPyLeaderboard implements LeaderboardDataProvider<Id> 
     safeName,
     flag,
     _rank,
+    priv,
 
     ppv2,
     accuracy,
@@ -108,20 +112,21 @@ export default class BanchoPyLeaderboard implements LeaderboardDataProvider<Id> 
     return result.map(item => ({
       user: {
         id: item.id,
+        ingameId: item.id,
         name: item.name,
         safeName: item.safeName,
         flag: item.flag,
         avatarUrl: `https://a.ppy.sb/${item.id}`,
-
-        inThisLeaderboard: {
-          ppv2: item.ppv2,
-          accuracy: item.accuracy,
-          totalScore: item.totalScore,
-          rankedScore: item.rankedScore,
-          playCount: item.playCount,
-        },
+        roles: toRoles(item.priv),
       },
-      rank: item._rank,
+      inThisLeaderboard: {
+        ppv2: item.ppv2,
+        accuracy: item.accuracy,
+        totalScore: item.totalScore,
+        rankedScore: item.rankedScore,
+        playCount: item.playCount,
+        rank: item._rank,
+      },
     }))
   }
 
@@ -164,18 +169,13 @@ export default class BanchoPyLeaderboard implements LeaderboardDataProvider<Id> 
       orderBy: sort,
     })
     return scores.map((item, index) => ({
-      user: {
-        id: item.user.id,
-        name: item.user.name,
-        safeName: item.user.safeName,
-        flag: item.user.country,
-        avatarUrl: `https://a.ppy.sb/${item.user.id}`,
-      },
+      user: toUserEssential({ user: item.user }),
       score: {
         id: item.id.toString(),
         ppv2: item.pp,
         accuracy: item.acc,
         score: item.score,
+        playedAt: item.playTime,
       },
       rank: index,
     }))

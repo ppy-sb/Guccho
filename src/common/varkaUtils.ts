@@ -17,6 +17,13 @@ export function createScoreFormatter(opt: Intl.NumberFormatOptions = { notation:
   }
 }
 
+export function createPPFormatter(opt: Intl.NumberFormatOptions = { maximumFractionDigits: 2 }) {
+  const fmt = Intl.NumberFormat(undefined, opt)
+  return function scoreFormat(score: bigint | number) {
+    return fmt.format(score)
+  }
+}
+
 export function createAddCommasFormatter() {
   const fmt = Intl.NumberFormat()
   return function addCommas(nStr: number | bigint) {

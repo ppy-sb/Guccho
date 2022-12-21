@@ -12,6 +12,10 @@ html {
       @apply shadow-#{$variant}/40 dark:shadow-#{$variant}/20;
     }
   }
+
+  &.btn-ghost {
+    @apply shadow-none;
+  }
 }
 .input {
   @each $variant in $variants {

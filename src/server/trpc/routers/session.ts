@@ -8,7 +8,7 @@ import { router as _router } from '../trpc'
 import { passwordMismatch, sessionNotFound, unableToRetrieveSession, unknownError, userNotFound } from '../messages'
 import { getSession } from '~/server/session'
 import { UserDataProvider } from '~/adapters/ppy.sb@bancho.py/client'
-import { idToString } from '~~/src/adapters/ppy.sb@bancho.py/config'
+import { idToString } from '~/adapters/ppy.sb@bancho.py/config'
 
 const { compare } = bcrypt
 const userProvider = new UserDataProvider()

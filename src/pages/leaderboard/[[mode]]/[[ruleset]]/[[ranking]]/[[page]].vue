@@ -125,7 +125,7 @@ fetching.value = false
                     v-for="(item, index) in table"
                     :key="index"
                     :user="item.user"
-                    :place="item.rank"
+                    :in-this-leaderboard="item.inThisLeaderboard"
                     :sort="selected.rankingSystem"
                   />
                 </tbody>

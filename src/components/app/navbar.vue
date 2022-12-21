@@ -98,7 +98,7 @@ onUnmounted(() => {
         >
           <label
             tabindex="0"
-            class="btn btn-ghost btn-circle !shadow-none"
+            class="btn btn-ghost btn-circle"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -138,7 +138,7 @@ onUnmounted(() => {
       <div class="navbar-center lg:hidden">
         <nuxt-link
           :to="{ name: 'index' }"
-          class="btn btn-ghost !shadow-none normal-case text-xl"
+          class="btn btn-ghost normal-case text-xl"
         >
           {{ config.title }}
         </nuxt-link>
@@ -148,7 +148,7 @@ onUnmounted(() => {
           v-for="menuItem in menu"
           :key="`menu-${menuItem.name}`"
           :to="menuItem.route"
-          class="btn btn-ghost !shadow-none normal-case attach:text-lg"
+          class="btn btn-ghost normal-case attach:text-lg"
         >
           {{ menuItem.name }}
         </nuxt-link>
@@ -160,7 +160,7 @@ onUnmounted(() => {
           :distance="8"
           strategy="fixed"
         >
-          <button class="btn btn-ghost !shadow-none btn-circle">
+          <button class="btn btn-ghost btn-circle">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               class="w-5 h-5"
@@ -215,7 +215,7 @@ onUnmounted(() => {
         >
           <button
             v-if="session.$state.loggedIn"
-            class="btn btn-ghost !shadow-none btn-circle"
+            class="btn btn-ghost btn-circle"
             @click="shownMenu.user = true"
           >
             <div class="indicator avatar">
