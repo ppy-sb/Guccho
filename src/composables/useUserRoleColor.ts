@@ -6,7 +6,7 @@ export default function (user: UserEssential<unknown>) {
   const classNames = ['text-transparent bg-clip-text animate-text']
 
   if (roles.includes('owner'))
-    return [...classNames, 'bg-gradient-to-b from-red-300 via-red-500 to-yellow-400 dark:from-red-200 dark:via-red-300 dark:to-yellow-200']
+    return [...classNames, 'bg-gradient-to-b from-yellow-300 via-pink-500 to-red-400 dark:from-yellow-200 dark:via-pink-300 dark:to-red-400']
 
   if (roles.includes('admin'))
     return [...classNames, 'bg-gradient-to-b from-purple-200 via-purple-400 to-purple-800']
