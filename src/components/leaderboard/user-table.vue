@@ -44,9 +44,9 @@ const formatter = new Intl.NumberFormat(undefined, option)
             width="30"
           >
         </div>
-        <div :class="useUserRoleColor(user)">
+        <nuxt-link :to="{ name: 'user-handle', params: { handle: `@${user.safeName}` } }" :class="useUserRoleColor(user)">
           {{ user.name }}
-        </div>
+        </nuxt-link>
       </div>
     </th>
     <td class="font-bold text-right">
