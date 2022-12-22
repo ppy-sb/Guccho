@@ -2,8 +2,8 @@ import type { JSONContent } from '@tiptap/core'
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type {
   AutopilotAvailable,
-  OverallLeaderboardRankingSystem,
   Mode,
+  OverallLeaderboardRankingSystem,
   RelaxAvailable,
   Ruleset,
   Scope,
@@ -113,10 +113,10 @@ export interface UserExtra<
 > {
   statistics: UserStatistic<Id, IncludeMode, IncludeRuleset, Ranking>
 
-  profile: {
+  profile?: {
     html: string
-    raw: JSONContent
-  } | undefined
+    raw?: JSONContent
+  }
   relationships: Array<UserRelationship<Id>>
   preferences: UserPreferences
 }

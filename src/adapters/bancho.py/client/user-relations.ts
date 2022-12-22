@@ -104,7 +104,6 @@ export default class BanchoPyUserRelationship implements UserRelationshipDataPro
     })
   }
 
-  // TODO: handle the situation where toUser could be null.
   async count({ user, type }: { user: UserEssential<Id>; type: Relationship }) {
     return await prismaClient.relationship.count({
       where: {

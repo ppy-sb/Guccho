@@ -269,7 +269,7 @@ onBeforeMount(async () => {
             </button>
             <img
               :src="user.avatarUrl"
-              class="pointer-events-none "
+              class="pointer-events-none"
               style="min-width:150px; width:150px;"
             >
           </div>
@@ -444,6 +444,9 @@ onBeforeMount(async () => {
   .btn {
     transition: opacity 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
     overflow: hidden;
+    border: none;
+  }
+  .btn {
     opacity: 0;
   }
   &:hover {
