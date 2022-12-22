@@ -7,7 +7,7 @@ import { userpageLineChartOptions } from '~/common/shared-chart-options'
 
 import { hsvRaw } from '~/palette'
 import type { BaseRank } from '~/types/statistics'
-import type { OverallLeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
+import type { Mode, OverallLeaderboardRankingSystem, Ruleset } from '~/types/common'
 
 // import 'chart.js/auto/auto.js'
 
@@ -17,7 +17,6 @@ const cRankFill = hsl(hsvRaw.kimberly[500], 30)
 
 const chars = [' ', ...[...Array(10).keys()].map(String), ',', '#', 'N', '/', 'A', 'a']
 
-// TODO: fix bug: roller-item can not find out the correct size
 const update = ref(0)
 
 onMounted(() => {

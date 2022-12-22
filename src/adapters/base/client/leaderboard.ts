@@ -1,4 +1,5 @@
 import type { UserEssential } from './../../../types/user'
+import type { Mod } from '~/types/score'
 import type { Awaitable, Mode, OverallLeaderboardRankingSystem, PPRankingSystem, RankingSystem, Ruleset } from '~/types/common'
 import type { ComponentLeaderboard } from '~/types/leaderboard'
 
@@ -17,6 +18,7 @@ export namespace LeaderboardDataProvider {
       score: number | bigint
       accuracy: number
       playedAt: Date
+      mods: Mod[]
     } & Partial<Record<PPRankingSystem, number>>
     rank: number
   }

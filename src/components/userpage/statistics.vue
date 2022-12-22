@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
-import type { OverallLeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
+import type { Mode, OverallLeaderboardRankingSystem, Ruleset } from '~/types/common'
 import type { UserModeRulesetStatistics } from '~/types/statistics'
 import { createScoreFormatter, toDuration } from '~/common/varkaUtils'
 

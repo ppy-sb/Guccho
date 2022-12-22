@@ -19,6 +19,9 @@ const pp = createPPFormatter()
           Score
         </th>
         <th class="text-right">
+          Mods
+        </th>
+        <th class="text-right">
           PP
         </th>
         <th>Played At</th>
@@ -44,13 +47,16 @@ const pp = createPPFormatter()
             </nuxt-link>
           </div>
         </th>
-        <td class="text-right">
+        <td class="text-right font-mono">
           {{ comma(item.score.score) }}
         </td>
-        <td class="text-right">
+        <td class="text-right font-mono">
+          {{ item.score.mods.join(' ') }}
+        </td>
+        <td class="text-right font-mono">
           {{ pp(item.score.ppv2 || 0) }}
         </td>
-        <td>
+        <td class="font-mono">
           {{ item.score.playedAt.toLocaleDateString() }}
           {{ item.score.playedAt.toLocaleTimeString() }}
         </td>

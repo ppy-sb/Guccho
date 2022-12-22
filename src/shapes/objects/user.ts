@@ -1,5 +1,5 @@
 import type { HitCount } from '~/types/score'
-import type { OverallLeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
+import type { Mode, OverallLeaderboardRankingSystem, Ruleset } from '~/types/common'
 import type { UserFull } from '~/types/user'
 import type { PPRank, ScoreRank, UserModeRulesetStatistics } from '~/types/statistics'
 

@@ -1,4 +1,6 @@
+import { type StableMod, stableMod } from './../../types/score'
 import { capitalizeFirstLetter } from './transforms'
+
 import { RankingStatusEnum } from '~/types/beatmap'
 import type { Mode, Ruleset } from '~/types/common'
 //  privileges intended for all normal players.
@@ -111,4 +113,16 @@ export function toBanchoRankingStatus(input: BanchoPyRankedStatus): RankingStatu
     case BanchoPyRankedStatus.Loved:
       return RankingStatusEnum.loved
   }
+}
+
+export function toMods(e: number): Array<StableMod> {
+  const returnValue: Array<StableMod> = []
+  if (e === 0)
+    return returnValue
+
+  for (const [mod, bit] of Object.entries(stableMod)) {
+    if (bit & e)
+      returnValue.push(mod as StableMod)
+  }
+  return returnValue
 }

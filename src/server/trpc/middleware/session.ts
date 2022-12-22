@@ -9,8 +9,7 @@ export const sessionProcedure = publicProcedure
   .use(async ({ ctx, next }) => {
     if (!ctx.session.id) {
       const sessionId = await createSession()
-      // TODO: not sure if it needs await but got several code: 'ERR_HTTP_HEADERS_SENT' reports
-      await setCookie(ctx.h3Event, 'session', sessionId)
+      setCookie(ctx.h3Event, 'session', sessionId)
       return await next({
         ctx: Object.assign(ctx, {
           session: {
@@ -22,7 +21,7 @@ export const sessionProcedure = publicProcedure
     const session = await getSession(ctx.session.id)
     if (session == null) {
       const sessionId = await createSession()
-      await setCookie(ctx.h3Event, 'session', sessionId)
+      setCookie(ctx.h3Event, 'session', sessionId)
       return await next({
         ctx: Object.assign(ctx, {
           session: {
@@ -40,7 +39,7 @@ export const sessionProcedure = publicProcedure
         })
       }
       if (refreshed !== ctx.session.id)
-        await setCookie(ctx.h3Event, 'session', refreshed)
+        setCookie(ctx.h3Event, 'session', refreshed)
 
       return await next({
         ctx: Object.assign(ctx, {

@@ -19,7 +19,6 @@ onMounted(async () => {
   if (user.value.profile) {
     await parseAndImportHighlightLibFromHtml(user.value.profile.html)
     editor.value?.setEditable(false)
-    // TODO: bind raw
     editor.value?.commands.setContent(user.value.profile.html)
     clientTakeover.value = true
   }

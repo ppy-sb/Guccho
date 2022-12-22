@@ -373,8 +373,7 @@ export default class BanchoPyUser implements UserDataProvider<Id> {
     user: UserEssential<Id>,
     newPasswordMD5: string,
   ) {
-    // TODO: gen salt round
-    const salt = await bcrypt.genSalt()
+    const salt = await bcrypt.genSalt(11)
     const pwBcrypt = await bcrypt.hash(newPasswordMD5, salt)
     const result = await this.db.user.update({
       where: {

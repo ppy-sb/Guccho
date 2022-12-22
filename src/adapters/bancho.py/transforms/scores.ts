@@ -72,7 +72,6 @@ export function toRankingSystemScore<_RankingSystem extends OverallLeaderboardRa
     },
     rankingSystem === 'ppv2'
       ? {
-        // TODO get rank of play
           rank,
           pp: score.pp,
         }

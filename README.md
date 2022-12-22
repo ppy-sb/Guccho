@@ -103,8 +103,6 @@ TODO standardize error string
 
 ## AppConfig and ServerConfig
 
-TODO AppConfig's type is not generating properly from Nuxt. Type of AppConfig has to be Manually export/imported. Fix it if you can.
-
 An adapter should export configs that has the same structure as AppConfig.
 For now an adapter will export 3 objects while AppConfig is providing one object contains the 3 objects mentioned.
 
