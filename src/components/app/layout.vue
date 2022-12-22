@@ -42,7 +42,13 @@ onMounted(() => {
 
 <style lang="postcss">
 .screen {
-  &.has-bg {
+  &.has-bg:before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     @apply bg-gradient-to-b from-kimberly-50/50 to-kimberly-50/90 dark:from-kimberly-800 dark:to-kimberly-900
   }
 }
