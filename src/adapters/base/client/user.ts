@@ -45,11 +45,13 @@ export interface UserDataProvider<Id> {
   Awaitable<
     (
       null |
-      UserEssential<Id>
-      & ({
-        [K in keyof UserDataProvider.ComposableProperties<Id> as Exclude<Excludes, 'secrets'>[K] extends true ? never : K]: UserDataProvider.ComposableProperties<Id>[K];
-      })
-      & (Excludes['secrets'] extends true ? { secrets: UserDataProvider.ComposableProperties<Id>['secrets'] } : {})
+      (
+        UserEssential<Id>
+        & ({
+          [K in keyof UserDataProvider.ComposableProperties<Id> as Exclude<Excludes, 'secrets'>[K] extends true ? never : K]: UserDataProvider.ComposableProperties<Id>[K];
+        })
+        & (Excludes['secrets'] extends true ? { secrets: UserDataProvider.ComposableProperties<Id>['secrets'] } : {})
+      )
     )
   >
 

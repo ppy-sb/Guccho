@@ -61,33 +61,42 @@ export class UserDataProvider implements Base<Id> {
       },
     })
 
-    return {
-      ...fullUser,
-      reachable: false,
-      status: 'offline' as const,
-      statistics:
-        (excludes.statistics === true
-          ? undefined as never
-          : await this.getStatistics(user)),
-      relationships:
-        (excludes.relationships === true
-          ? undefined as never
-          : await this.relationships.get({ user })),
-      email: (excludes.email === true ? undefined as never : user.email),
-      profile: (excludes.profile === true
-        ? undefined as never
-        : {
-            html: profile?.html || '',
-            // TODO: alter database to read/save raw
-            raw: JSON.parse(profile?.raw || '{}'),
-          }),
-      secrets: (excludes.secrets === false
-        ? {
-            password: user.pwBcrypt,
-            apiKey: user.apiKey ?? undefined,
-          }
-        : undefined as never),
+    // type check will not find any missing params here.
+    const returnValue = <Exclude<Awaited<ReturnType<Base<Id>['getFull']>>, null>>fullUser
+    const parallels: Promise<any>[] = []
+
+    returnValue.reachable = false
+    returnValue.status = 'offline'
+
+    if (excludes.statistics !== true) {
+      parallels.push(this.getStatistics(user).then((res) => {
+        returnValue.statistics = res
+      }))
     }
+    if (excludes.relationships !== true) {
+      parallels.push(this.relationships.get({ user }).then((res) => {
+        returnValue.relationships = res
+      }))
+    }
+    if (excludes.email !== true)
+      returnValue.email = user.email
+
+    if (excludes.profile !== true) {
+      returnValue.profile = {
+        html: profile?.html || '',
+        raw: JSON.parse(profile?.raw || '{}'),
+      }
+    }
+
+    if (excludes.secrets === false) {
+      returnValue.secrets = {
+        password: user.pwBcrypt,
+        apiKey: user.apiKey ?? undefined,
+      }
+    }
+
+    await Promise.all(parallels)
+    return returnValue
   }
 
   async changeUserpage(user: UserEssential<number>, input: { profile: JSONContent }) {
