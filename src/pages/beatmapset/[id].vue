@@ -2,24 +2,30 @@
 // @ts-expect-error no we do not have declaration
 import { JsonViewer } from 'vue3-json-viewer'
 import 'vue3-json-viewer/dist/index.css'
+import type { RankingSystem } from '~/types/common'
 const { $client } = useNuxtApp()
 const route = useRoute()
 const adapterConfig = useAdapterConfig()
+
 const { data: beatmapset, error } = await useAsyncData(
   async () =>
     await $client.map.beatmapset.query({ id: route.params.id.toString() }),
 )
 
+const rankingSystem = ref<RankingSystem>(adapterConfig.supportedRankingSystems[0])
+const queryRs = route.query.rank?.toString()
+if (adapterConfig.supportedRankingSystems.includes(queryRs as RankingSystem))
+  rankingSystem.value = queryRs as RankingSystem
+
 const hashed = beatmapset.value?.beatmaps.find(
-  bm => bm.id === route.hash?.slice(1),
+  bm => bm.id === route.query.beatmap,
 )
-const selectedMapId = ref<unknown>(hashed?.id || beatmapset.value?.beatmaps[0].id)
+const selectedMapId = ref<string>(hashed?.id || beatmapset.value?.beatmaps[0].id || '')
 const selectedMap = computed(() =>
   beatmapset.value?.beatmaps.find(
     bm => bm.id === selectedMapId.value,
   ),
 )
-const rankingSystem = ref(adapterConfig.supportedRankingSystems[0])
 const {
   data: leaderboard,
   refresh,
@@ -36,11 +42,14 @@ const {
   })
 })
 
-function addHashToLocation(params: Parameters<typeof encodeURIComponent>[number]) {
+function rewriteAnchor() {
+  const url = new URL(window.location.toString())
+  if (selectedMap.value)
+    url.searchParams.set('beatmap', selectedMap.value.id)
+
+  url.searchParams.set('rank', rankingSystem.value)
   history.pushState(
-    {},
-    '',
-    `${route.path}#${encodeURIComponent(params)}`,
+    {}, '', url,
   )
 }
 </script>
@@ -74,9 +83,9 @@ function addHashToLocation(params: Parameters<typeof encodeURIComponent>[number]
           variant="bordered"
           size="md"
           class="mx-4 self-end bg-transparent"
-          @update:model-value="(value) => {
+          @update:model-value="() => {
             refresh()
-            addHashToLocation(value)
+            rewriteAnchor()
           }"
         >
           <t-tab
@@ -186,7 +195,7 @@ function addHashToLocation(params: Parameters<typeof encodeURIComponent>[number]
       </div>
     </div>
     <div class="container custom-container mx-auto mt-4">
-      <app-scores-ranking-system-switcher v-model="rankingSystem" class="mx-auto" @update:model-value="refresh()" />
+      <app-scores-ranking-system-switcher v-model="rankingSystem" class="mx-auto" @update:model-value="refresh(); rewriteAnchor()" />
       <app-scores-table
         v-if="leaderboard" :scores="leaderboard" class="w-full" :class="{
           'clear-rounded-tl': adapterConfig.supportedRankingSystems[0] === rankingSystem,
