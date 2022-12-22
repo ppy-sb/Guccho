@@ -33,7 +33,7 @@ const config = useAppConfig()
               :to="{ name: 'user-handle', params: { handle: session.$state.userId } }"
               variant="primary"
             >
-              to my userpage
+              to my profile
             </t-nuxt-link-button>
             <t-nuxt-link-button
               :to="{ name: 'me-preferences' }"
