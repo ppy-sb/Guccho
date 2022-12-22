@@ -1,5 +1,5 @@
 import type { BanchoPyMode } from '../enums'
-import { toBanchoPyMode } from '../enums'
+import { toBanchoPyMode, toMods } from '../enums'
 import type {
   Id,
 } from '../config'
@@ -176,6 +176,7 @@ export default class BanchoPyLeaderboard implements LeaderboardDataProvider<Id> 
         accuracy: item.acc,
         score: item.score,
         playedAt: item.playTime,
+        mods: toMods(item.mods),
       },
       rank: index,
     }))

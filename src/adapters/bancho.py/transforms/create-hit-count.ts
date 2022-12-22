@@ -1,5 +1,5 @@
 import type { Score as DBScore } from '~/.prisma/bancho.py/index'
-import type { OverallLeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
+import type { Mode, OverallLeaderboardRankingSystem, Ruleset } from '~/types/common'
 import type { RulesetScore } from '~/types/score'
 
 export function createHitCount<_Mode extends Mode>(mode: _Mode, score: DBScore): RulesetScore<unknown, unknown, _Mode, Ruleset, OverallLeaderboardRankingSystem>['hit'] {

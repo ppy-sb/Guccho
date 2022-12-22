@@ -1,6 +1,6 @@
 import { defineAppConfig } from 'nuxt/app'
 
-import type { OverallLeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
+import type { Mode, OverallLeaderboardRankingSystem, Ruleset } from '~/types/common'
 
 interface AppConfigItemBase {
   name: string

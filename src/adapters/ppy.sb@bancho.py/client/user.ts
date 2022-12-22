@@ -84,7 +84,7 @@ export class UserDataProvider implements Base<Id> {
     if (excludes.profile !== true) {
       returnValue.profile = {
         html: profile?.html || '',
-        raw: JSON.parse(profile?.raw || '{}'),
+        raw: (profile?.raw && JSON.parse(profile.raw)) || undefined,
       }
     }
 
@@ -392,8 +392,7 @@ export class UserDataProvider implements Base<Id> {
     user: UserEssential<Id>,
     newPasswordMD5: string,
   ) {
-  // TODO: gen salt round
-    const salt = await bcrypt.genSalt()
+    const salt = await bcrypt.genSalt(10)
     const pwBcrypt = await bcrypt.hash(newPasswordMD5, salt)
     const result = await this.db.user.update({
       where: {

@@ -17,7 +17,7 @@ export function createScoreFormatter(opt: Intl.NumberFormatOptions = { notation:
   }
 }
 
-export function createPPFormatter(opt: Intl.NumberFormatOptions = { maximumFractionDigits: 2 }) {
+export function createPPFormatter(opt: Intl.NumberFormatOptions = { maximumFractionDigits: 2, minimumFractionDigits: 2 }) {
   const fmt = Intl.NumberFormat(undefined, opt)
   return function scoreFormat(score: bigint | number) {
     return fmt.format(score)

@@ -3,7 +3,7 @@
 import { toRaw, watch } from 'vue'
 import { useAppConfig } from '#app'
 import { forbiddenMode, forbiddenMods } from '~/common/varkaUtils'
-import type { OverallLeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
+import type { Mode, OverallLeaderboardRankingSystem, Ruleset } from '~/types/common'
 import { useAdapterConfig } from '#imports'
 
 interface modelValue {

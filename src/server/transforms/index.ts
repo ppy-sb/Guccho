@@ -1,4 +1,4 @@
-import type { OverallLeaderboardRankingSystem, Mode, MutualRelationship, Relationship, Ruleset, Scope } from '~/types/common'
+import type { Mode, MutualRelationship, OverallLeaderboardRankingSystem, Relationship, Ruleset, Scope } from '~/types/common'
 import type { UserEssential, UserExtra, UserOptional, UserPreferences } from '~/types/user'
 
 export function compareScope(scope: Scope, requiredScope: Partial<Record<Scope, boolean>>) {

@@ -1,5 +1,5 @@
 import type { RulesetScore } from './score'
-import type { OverallLeaderboardRankingSystem, Mode, PPRankingSystem, Ruleset } from './common'
+import type { Mode, OverallLeaderboardRankingSystem, PPRankingSystem, Ruleset } from './common'
 
 export interface BaseRank<
   Id,
