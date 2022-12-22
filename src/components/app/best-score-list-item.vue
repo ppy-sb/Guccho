@@ -68,14 +68,30 @@ const meta = computed((): {
           </div>
         </template>
         <div class="flex flex-col min-w-0">
-          <a href="#" class="text-sm truncate md:text-md lg:text-lg">
-            <template v-if="beatmap && assertBeatmapIsVisible(beatmap) && meta">{{ meta.artist }} - {{ meta.title }} [{{
-              beatmap.version
-            }}]</template>
+          <router-link
+            v-if="beatmap && assertBeatmapIsVisible(beatmap)"
+            :to="{
+              name: 'beatmapset-id',
+              params: {
+                id: beatmap.beatmapset.id,
+              },
+              query: {
+                beatmap: beatmap.id,
+                mode: props.mode,
+                ruleset: props.ruleset,
+                rank: ['totalScore', 'rankedScore'].includes(props.rankingSystem) ? 'score' : props.rankingSystem,
+              },
+            }" class="text-sm truncate md:text-md lg:text-lg"
+          >
+            <template v-if="meta">
+              {{ meta.artist }} - {{ meta.title }} [{{
+                beatmap.version
+              }}]
+            </template>
             <template v-else>
               Unknown Beatmap
             </template>
-          </a>
+          </router-link>
           <div class="flex text-xs gap-2 md:text-sm lg:text-md">
             <div class="text-semibold">
               {{ score.mods.join(',') || 'noMod' }}

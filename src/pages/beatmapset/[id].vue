@@ -48,7 +48,7 @@ function rewriteAnchor() {
     url.searchParams.set('beatmap', selectedMap.value.id)
 
   url.searchParams.set('rank', rankingSystem.value)
-  history.pushState(
+  history.replaceState(
     {}, '', url,
   )
 }
@@ -197,7 +197,7 @@ function rewriteAnchor() {
     <div class="container custom-container mx-auto mt-4">
       <app-scores-ranking-system-switcher v-model="rankingSystem" class="mx-auto" @update:model-value="refresh(); rewriteAnchor()" />
       <app-scores-table
-        v-if="leaderboard" :scores="leaderboard" class="w-full" :class="{
+        v-if="leaderboard" :scores="leaderboard" :ranking-system="rankingSystem" class="w-full" :class="{
           'clear-rounded-tl': adapterConfig.supportedRankingSystems[0] === rankingSystem,
         }"
       />
