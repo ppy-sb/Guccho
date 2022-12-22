@@ -141,7 +141,7 @@ export default class BanchoPyLeaderboard implements LeaderboardDataProvider<Id> 
         mode = _modes[beatmap.mode]
     }
     let sort = {}
-    if (['totalScore', 'rankedScore'].includes(rankingSystem)) {
+    if (rankingSystem === 'score') {
       sort = {
         score: 'desc',
       }

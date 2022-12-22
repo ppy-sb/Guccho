@@ -1,6 +1,6 @@
 import { defineAppConfig } from 'nuxt/app'
 
-import type { Mode, OverallLeaderboardRankingSystem, Ruleset } from '~/types/common'
+import type { Mode, OverallLeaderboardRankingSystem, RankingSystem, Ruleset } from '~/types/common'
 
 interface AppConfigItemBase {
   name: string
@@ -23,6 +23,10 @@ const config: {
   AppConfigItemBase
   >
   rankingSystem: Record<
+  RankingSystem,
+  { name: string }
+  >
+  overallRankingSystem: Record<
   OverallLeaderboardRankingSystem,
   AppConfigItemBase & {
     userpage: {
@@ -70,7 +74,7 @@ const config: {
       icon: 'autopilot',
     },
   },
-  rankingSystem: {
+  overallRankingSystem: {
     ppv2: {
       userpage: {
         show: 'tab',
@@ -98,6 +102,17 @@ const config: {
       },
       name: 'Total Score',
       icon: 'score',
+    },
+  },
+  rankingSystem: {
+    ppv2: {
+      name: 'Performance(v2)',
+    },
+    ppv1: {
+      name: 'Performance(v1)',
+    },
+    score: {
+      name: 'Score',
     },
   },
   appModalTeleportTargetId: 'app-modal-portal',

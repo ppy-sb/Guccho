@@ -16,7 +16,7 @@ const { mode: pMode, ruleset: pRuleset, ranking: pRankingSystem, page: pPage } =
 
 const availableModes = Object.keys(config.mode)
 const availableRulesets = Object.keys(config.ruleset)
-const availableRankingSystems = Object.keys(config.rankingSystem)
+const availableRankingSystems = Object.keys(config.overallRankingSystem)
 const mode = (assertIsString(pMode) && availableModes.includes(pMode)
   ? route.params.mode
   : availableModes[0]) as Mode
@@ -75,7 +75,7 @@ fetching.value = false
           && selected.rankingSystem
           && `${config.mode[selected.mode].name} - ${
             config.ruleset[selected.ruleset].name
-          } | ${config.rankingSystem[selected.rankingSystem].name}`)
+          } | ${config.overallRankingSystem[selected.rankingSystem].name}`)
           || ''
       "
     >
@@ -110,7 +110,7 @@ fetching.value = false
                     <th>flag</th>
                     <th>player</th>
                     <th class="px-4 font-semibold text-center">
-                      {{ config.rankingSystem[selected.rankingSystem].name }}
+                      {{ config.overallRankingSystem[selected.rankingSystem].name }}
                     </th>
                     <th class="px-4 font-medium text-center">
                       Accuracy
