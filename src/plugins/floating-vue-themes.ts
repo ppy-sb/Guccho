@@ -1,4 +1,6 @@
-import { options } from 'floating-vue'
+import floatingVue from 'floating-vue'
+
+const { options } = floatingVue
 
 export default defineNuxtPlugin(() => {
   options.themes['guweb-dropdown'] = {

@@ -6,7 +6,7 @@ import { TaskList } from '@tiptap/extension-task-list'
 import { TextAlign } from '@tiptap/extension-text-align'
 import { CodeBlockLowlight } from '@tiptap/extension-code-block-lowlight'
 
-import { lowlight } from 'lowlight/lib/core'
+import { lowlight } from 'lowlight/lib/core.js'
 
 export default (config?: {
   indent?: string
