@@ -7,10 +7,11 @@ export default () => {
     try {
       const f = await import(`../../node_modules/highlight.js/es/languages/${language}.js`)
       lowlight.registerLanguage(language, f.default)
+      // eslint-disable-next-line no-console
       console.info('loaded hljs lib:', language)
     }
     catch (e) {
-      console.info(e)
+      console.error('error on loading hljs lib:', e)
     }
   }
   return {
