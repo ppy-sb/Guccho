@@ -246,7 +246,7 @@ onBeforeMount(async () => {
         class="text-left"
       />
       <button
-        class="self-end btn btn-sm btn-warning"
+        class="self-end btn btn-sm btn-accent"
         type="button"
         @click="changePreferences"
       >
@@ -330,7 +330,7 @@ onBeforeMount(async () => {
               }"
             >
             <button
-              class="btn btn-sm btn-warning"
+              class="btn btn-sm btn-secondary"
               type="button"
             >
               request change
@@ -383,7 +383,7 @@ onBeforeMount(async () => {
               }"
             >
             <button
-              class="btn btn-sm btn-primary"
+              class="btn btn-sm btn-secondary"
               type="button"
               @click="changePassword?.openModal"
             >
@@ -400,7 +400,7 @@ onBeforeMount(async () => {
               v-model="user.secrets.apiKey"
               type="text"
               placeholder="Your API Key"
-              class="input input-sm grow"
+              class="input input-sm grow blur-sm hover:blur-none"
               disabled
               :class="{
                 'input-bordered input-primary': unchanged.secrets.apiKey !== user.secrets.apiKey,
