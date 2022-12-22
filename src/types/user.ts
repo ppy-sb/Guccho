@@ -82,7 +82,7 @@ export interface UserOptional<Id = unknown> {
   status: UserActivityStatus
 }
 
-export interface UserPreferences {
+export interface UserSettings {
   visibility: Record<
     Exclude<keyof UserOptional | 'privateMessage', 'secrets'>,
     Partial<Record<Exclude<Scope, 'self'>, boolean>>
@@ -118,7 +118,7 @@ export interface UserExtra<
     raw?: JSONContent
   }
   relationships: Array<UserRelationship<Id>>
-  preferences: UserPreferences
+  settings: UserSettings
 }
 
 export type UserFull<

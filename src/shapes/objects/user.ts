@@ -141,7 +141,7 @@ export const sampleUserWithSecrets: Required<UserFull<unknown>> = {
   status: 'idle',
   roles: ['normal', 'supported', 'supporter'],
   relationships: [],
-  preferences: {
+  settings: {
     visibility: {
       reachable: { public: true },
       status: { public: true },

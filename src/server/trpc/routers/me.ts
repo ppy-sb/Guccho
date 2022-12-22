@@ -22,7 +22,7 @@ export const router = _router({
     const result = await userProvider.changeUserpage?.(ctx.user, { profile: input.profile })
     return result
   }),
-  changePreferences: pUser
+  changeSettings: pUser
     .input(z.object({
       email: z.string().email().optional(),
       name: z.string().optional(),

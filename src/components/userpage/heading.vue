@@ -114,7 +114,7 @@ const toggleFriend = async () => {
           size="sm"
           variant="accent"
           :to="{
-            name: 'me-preferences',
+            name: 'me-settings',
           }"
         >
           Edit

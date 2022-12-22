@@ -32,13 +32,13 @@ const saveAvatar = () => {
     uploading.value = 2
   }, 1000)
 }
-const changePreferences = async () => {
+const changeSettings = async () => {
   const updateData = {
     name: user.value.name !== unchanged.value.name ? user.value.name : undefined,
     email: user.value.email !== unchanged.value.email ? user.value.email : undefined,
   }
 
-  const [result, profileResult] = await Promise.all([$client.me.changePreferences.mutate(updateData), profile.value && $client.me.changeUserpage.mutate({ profile: profile.value })])
+  const [result, profileResult] = await Promise.all([$client.me.changeSettings.mutate(updateData), profile.value && $client.me.changeUserpage.mutate({ profile: profile.value })])
   if (!result)
     return
   unchanged.value = { ...unchanged.value, ...result }
@@ -242,13 +242,13 @@ onBeforeMount(async () => {
     </t-modal-root>
     <header-default class="!pb-2 !pt-4">
       <header-simple-title-with-sub
-        title="preferences"
+        title="settings"
         class="text-left"
       />
       <button
         class="self-end btn btn-sm btn-accent"
         type="button"
-        @click="changePreferences"
+        @click="changeSettings"
       >
         update
       </button>

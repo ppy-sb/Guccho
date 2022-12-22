@@ -179,7 +179,7 @@ export function dedupeUserRelationship(
   return [...reduceUserRelationships.values()]
 }
 
-export function toFullUser(user: DatabaseUser): UserEssential<Id> & Pick<UserExtra<Id>, 'preferences'> & Pick<UserOptional, 'oldNames'> {
+export function toFullUser(user: DatabaseUser): UserEssential<Id> & Pick<UserExtra<Id>, 'settings'> & Pick<UserOptional, 'oldNames'> {
   return {
     id: user.id,
     ingameId: user.id,
@@ -188,7 +188,7 @@ export function toFullUser(user: DatabaseUser): UserEssential<Id> & Pick<UserExt
     flag: user.country,
     avatarUrl: `https://a.ppy.sb/${user.id}`,
     roles: toRoles(user.priv),
-    preferences: {
+    settings: {
       visibility: {
         reachable: { public: true },
         status: { public: true },
