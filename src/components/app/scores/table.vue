@@ -14,7 +14,9 @@ const pp = createPPFormatter()
   <table class="table table-compact table-zebra">
     <thead>
       <tr>
-        <th>Player</th>
+        <th>
+          Player
+        </th>
         <th class="text-right">
           Score
         </th>

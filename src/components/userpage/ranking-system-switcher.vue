@@ -10,7 +10,7 @@ import { OverallLeaderboardRankingSystem } from '~/types/common'
 const { supportedOverallLeaderboardRankingSystems } = await useAdapterConfig()
 
 const config = useAppConfig()
-const rankingSystem = config.rankingSystem
+const rankingSystem = config.overallRankingSystem
 
 const [switcher, setSwitcher] = inject('switcher') as SwitcherComposableType
 

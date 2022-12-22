@@ -69,7 +69,7 @@ watch(switcher, () => emitData())
       class="flex justify-center gap-3 md:gap-3 lg:gap-3"
     >
       <template
-        v-for="(s, rankingSystem) in config.rankingSystem"
+        v-for="(s, rankingSystem) in config.overallRankingSystem"
         :key="rankingSystem"
       >
         <a

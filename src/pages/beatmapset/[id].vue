@@ -19,6 +19,7 @@ const selectedMap = computed(() =>
     bm => bm.id === selectedMapId.value,
   ),
 )
+const rankingSystem = ref(adapterConfig.supportedRankingSystems[0])
 const {
   data: leaderboard,
   refresh,
@@ -28,7 +29,7 @@ const {
 
   return await $client.leaderboard.beatmap.query({
     ruleset: adapterConfig.supportedRulesets[0],
-    rankingSystem: adapterConfig.supportedRankingSystems[0],
+    rankingSystem: rankingSystem.value,
     page: 0,
     pageSize: 20,
     beatmapId: selectedMap.value.id.toString(),
@@ -185,7 +186,12 @@ function addHashToLocation(params: Parameters<typeof encodeURIComponent>[number]
       </div>
     </div>
     <div class="container custom-container mx-auto mt-4">
-      <app-scores-table v-if="leaderboard" :scores="leaderboard" class="w-full" />
+      <app-scores-ranking-system-switcher v-model="rankingSystem" class="mx-auto" @update:model-value="refresh()" />
+      <app-scores-table
+        v-if="leaderboard" :scores="leaderboard" class="w-full" :class="{
+          'clear-rounded-tl': adapterConfig.supportedRankingSystems[0] === rankingSystem,
+        }"
+      />
     </div>
     <div class="container custom-container mx-auto mt-4">
       <JsonViewer
@@ -240,6 +246,18 @@ function addHashToLocation(params: Parameters<typeof encodeURIComponent>[number]
   }
   &::-webkit-scrollbar-thumb {
     @apply bg-kimberly-500/50
+  }
+}
+</style>
+
+<style lang="postcss">
+table.table.clear-rounded-tl {
+    > thead {
+      > tr:first-child {
+        > th:first-child {
+          @apply rounded-tl-none;
+        }
+      }
   }
 }
 </style>
