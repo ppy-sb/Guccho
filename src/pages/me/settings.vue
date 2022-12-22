@@ -25,20 +25,36 @@ const user = ref({ ..._user } as Exclude<typeof _user, null>)
 const unchanged = ref({ ...user.value })
 const profile = ref<JSONContent>()
 const profileEdited = ref(false)
-const uploading = ref(0)
+const uploadingAvatar = ref(0)
 const saveAvatar = () => {
-  uploading.value = 1
+  uploadingAvatar.value = 1
   setTimeout(() => {
-    uploading.value = 2
+    uploadingAvatar.value = 2
   }, 1000)
 }
-const changeSettings = async () => {
+
+const errorMessage = ref<string[]>([])
+const updateResult = ref(false)
+const posting = ref(false)
+const updateUserSettings = async () => {
+  errorMessage.value = []
   const updateData = {
     name: user.value.name !== unchanged.value.name ? user.value.name : undefined,
     email: user.value.email !== unchanged.value.email ? user.value.email : undefined,
   }
+  posting.value = true
 
-  const [result, profileResult] = await Promise.all([$client.me.changeSettings.mutate(updateData), profile.value && $client.me.changeUserpage.mutate({ profile: profile.value })])
+  const [result, profileResult] = await Promise.all([
+    $client.me.changeSettings.mutate(updateData).catch((error) => {
+      errorMessage.value.push(error.message)
+    }),
+    profile.value && $client.me.changeUserpage.mutate({ profile: profile.value }).catch((error) => {
+      errorMessage.value.push(error.message)
+    }),
+  ])
+  updateResult.value = true
+  posting.value = false
+  setTimeout(() => updateResult.value = false, 3000)
   if (!result)
     return
   unchanged.value = { ...unchanged.value, ...result }
@@ -141,17 +157,17 @@ onBeforeMount(async () => {
             </div>
             <t-button
               class="grow"
-              :loading="uploading === 1"
-              :variant="uploading === 2 ? 'success' : 'neutral'"
+              :loading="uploadingAvatar === 1"
+              :variant="uploadingAvatar === 2 ? 'success' : 'neutral'"
               @click="saveAvatar"
             >
-              {{ uploading === 0 ? 'Save' : uploading === 1 ? 'Uploading' : uploading === 2 ? 'done' : '' }}
+              {{ uploadingAvatar === 0 ? 'Save' : uploadingAvatar === 1 ? 'Uploading' : uploadingAvatar === 2 ? 'done' : '' }}
             </t-button>
             <t-button
               class="grow"
               @click="() => {
                 closeModal()
-                uploading = 0
+                uploadingAvatar = 0
               }"
             >
               close
@@ -242,15 +258,16 @@ onBeforeMount(async () => {
     </t-modal-root>
     <header-default class="!pb-2 !pt-4">
       <header-simple-title-with-sub
-        title="settings"
+        title="preferences"
         class="text-left"
       />
       <button
-        class="self-end btn btn-sm btn-accent"
+        class="self-end btn btn-sm"
+        :class="[updateResult ? 'btn-success' : 'btn-accent', posting ? 'loading' : '']"
         type="button"
-        @click="changeSettings"
+        @click="updateUserSettings"
       >
-        update
+        {{ updateResult ? "done!" : 'update' }}
       </button>
     </header-default>
 
@@ -285,6 +302,9 @@ onBeforeMount(async () => {
         </div>
       </div>
       <div class="grow lg:[max-width:50%] mt-4 lg:mt-0 lg:ml-4">
+        <div class="text-red-500">
+          {{ errorMessage.join(',') }}
+        </div>
         <div class="form-control">
           <label class="label">
             <span class="pl-3 label-text">Username</span>
@@ -332,6 +352,7 @@ onBeforeMount(async () => {
             <button
               class="btn btn-sm btn-secondary"
               type="button"
+              disabled
             >
               request change
             </button>
@@ -411,6 +432,7 @@ onBeforeMount(async () => {
               v-if="!user.secrets.apiKey"
               class="btn btn-sm btn-primary"
               type="button"
+              disabled
             >
               Request one
             </button>
@@ -418,6 +440,7 @@ onBeforeMount(async () => {
               v-else
               class="btn btn-sm btn-secondary"
               type="button"
+              disabled
             >
               request a new one
             </button>
