@@ -3,12 +3,12 @@ import { computed, provide, reactive, ref } from 'vue'
 import { useIntersectionObserver } from '@vueuse/core'
 import { useRoute } from '#app'
 import type { Mode, OverallLeaderboardRankingSystem, Ruleset } from '~/types/common'
-import { definePageMeta } from '#imports'
+
 import type { UserModeRulesetStatistics } from '~/types/statistics'
 
-// definePageMeta({
-//   layout: 'without-bg',
-// })
+definePageMeta({
+  layout: 'without-footer',
+})
 
 const route = useRoute()
 const { $client } = useNuxtApp()
