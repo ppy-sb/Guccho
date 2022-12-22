@@ -236,10 +236,10 @@ onUnmounted(() => {
                 <li>
                   <nuxt-link
                     :to="{
-                      name: 'me-preferences',
+                      name: 'me-settings',
                     }"
                   >
-                    Preferences
+                    Settings
                   </nuxt-link>
                 </li>
                 <li>
