@@ -88,7 +88,8 @@ html {
   .v-popper__popper[data-popper-placement^="top"] .v-popper__arrow {
     top: -1px;
   }
-  .v-popper__popper[data-popper-placement^="bottom"] .v-popper__arrow-container {
+  .v-popper__popper[data-popper-placement^="bottom"]
+    .v-popper__arrow-container {
     top: 0;
   }
   .v-popper__popper[data-popper-placement^="bottom"] .v-popper__arrow,
@@ -146,4 +147,14 @@ html {
     border-radius: 0px;
     padding: 7px 12px 0px;
   }
+}
+
+body:before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  @apply bg-gradient-to-b from-kimberly-50/50 to-kimberly-50/90 dark:from-kimberly-800 dark:to-kimberly-900;
 }
