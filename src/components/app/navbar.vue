@@ -260,7 +260,7 @@ onUnmounted(() => {
                       },
                     }"
                   >
-                    My userpage
+                    My Profile
                   </nuxt-link>
                 </li>
                 <li class="disabled">

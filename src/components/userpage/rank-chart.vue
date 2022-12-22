@@ -82,7 +82,7 @@ const countryRank = {
             data-atropos-offset="-3"
           >
             <div class="mt-8 mr-40 text-xl">
-              rank history not available
+              rank history is not available
             </div>
           </div>
           <LineChart
@@ -99,7 +99,7 @@ const countryRank = {
             data-atropos-offset="3"
           >
             <div class="mt-20 text-xl ms-40">
-              country rank history not available
+              country rank history is not available
             </div>
           </div>
           <div

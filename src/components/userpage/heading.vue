@@ -104,12 +104,12 @@ const toggleFriend = async () => {
         v-else
         class="container flex justify-around order-3 gap-3 pb-4 mx-auto md:order-1 md:justify-end md:pb-0"
       >
-        <t-button
+        <!-- <t-button
           size="sm"
           variant="primary"
         >
           add as friend
-        </t-button>
+        </t-button> -->
         <t-nuxt-link-button
           size="sm"
           variant="accent"
@@ -117,7 +117,7 @@ const toggleFriend = async () => {
             name: 'me-preferences',
           }"
         >
-          change preferences
+          Edit
         </t-nuxt-link-button>
       </div>
       <div class="container mx-auto sm:order-2 sm:flex sm:gap-1 sm:items-end sm:justify-between md:pb-2">
