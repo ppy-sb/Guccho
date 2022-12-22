@@ -6,9 +6,9 @@ import type { Mode, OverallLeaderboardRankingSystem, Ruleset } from '~/types/com
 import { definePageMeta } from '#imports'
 import type { UserModeRulesetStatistics } from '~/types/statistics'
 
-definePageMeta({
-  layout: 'without-bg',
-})
+// definePageMeta({
+//   layout: 'without-bg',
+// })
 
 const route = useRoute()
 const { $client } = useNuxtApp()
@@ -63,7 +63,7 @@ onMounted(() => {
   <div class="absolute w-full">
     <section
       v-if="error"
-      class="min-h-screen grid bg"
+      class="min-h-screen grid"
     >
       <div class="mx-auto my-auto flex flex-col justify-between gap-3">
         <h1 class="self-center text-3xl">
@@ -99,7 +99,7 @@ onMounted(() => {
     </section>
     <div
       v-else-if="user"
-      class="flex flex-col pt-16 justify-stretch md:pt-0 bg"
+      class="flex flex-col pt-16 justify-stretch md:pt-0"
     >
       <userpage-heading id="top" ref="top" />
       <userpage-profile />
