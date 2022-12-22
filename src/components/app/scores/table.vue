@@ -2,10 +2,12 @@
 import type { LeaderboardDataProvider } from '~/adapters/base/client/leaderboard'
 import type { RankingSystem } from '~/types/common'
 import { createAddCommasFormatter, createPPFormatter } from '~/common/varkaUtils'
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   scores: LeaderboardDataProvider.BeatmapLeaderboard<string>[]
-  rankingSystem?: RankingSystem
-}>()
+  rankingSystem: RankingSystem
+}>(), {
+  rankingSystem: 'ppv2',
+})
 const comma = createAddCommasFormatter()
 const pp = createPPFormatter()
 </script>
@@ -18,13 +20,16 @@ const pp = createPPFormatter()
           Player
         </th>
         <th class="text-right">
-          Score
-        </th>
-        <th class="text-right">
           Mods
         </th>
         <th class="text-right">
-          PP
+          Score
+        </th>
+        <th v-if="rankingSystem === 'ppv2'" class="text-right">
+          Performance ( v2 )
+        </th>
+        <th v-else-if="rankingSystem === 'ppv1'" class="text-right">
+          Performance ( v2 )
         </th>
         <th>Played At</th>
         <th class="text-center">
@@ -50,12 +55,15 @@ const pp = createPPFormatter()
           </div>
         </th>
         <td class="text-right font-mono">
-          {{ comma(item.score.score) }}
-        </td>
-        <td class="text-right font-mono">
           {{ item.score.mods.join(' ') }}
         </td>
         <td class="text-right font-mono">
+          {{ comma(item.score.score) }}
+        </td>
+        <td v-if="rankingSystem === 'ppv2'" class="text-right font-mono">
+          {{ pp(item.score.ppv2 || 0) }}
+        </td>
+        <td v-else-if="rankingSystem === 'ppv1'" class="text-right font-mono">
           {{ pp(item.score.ppv2 || 0) }}
         </td>
         <td class="font-mono">
