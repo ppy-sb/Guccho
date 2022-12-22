@@ -36,10 +36,10 @@ const config = useAppConfig()
               to my profile
             </t-nuxt-link-button>
             <t-nuxt-link-button
-              :to="{ name: 'me-preferences' }"
+              :to="{ name: 'me-settings' }"
               variant="secondary"
             >
-              preferences
+              settings
             </t-nuxt-link-button>
           </div>
           <div
@@ -55,6 +55,7 @@ const config = useAppConfig()
             <t-nuxt-link-button
               :to="{ name: 'auth-register' }"
               variant="secondary"
+              class="btn-disabled"
             >
               Register
             </t-nuxt-link-button>

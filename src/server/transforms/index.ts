@@ -1,5 +1,5 @@
 import type { Mode, MutualRelationship, OverallLeaderboardRankingSystem, Relationship, Ruleset, Scope } from '~/types/common'
-import type { UserEssential, UserExtra, UserOptional, UserPreferences } from '~/types/user'
+import type { UserEssential, UserExtra, UserOptional, UserSettings } from '~/types/user'
 
 export function compareScope(scope: Scope, requiredScope: Partial<Record<Scope, boolean>>) {
   if (scope === 'public')
@@ -12,9 +12,9 @@ export function compareScope(scope: Scope, requiredScope: Partial<Record<Scope, 
     return true
 }
 
-export function followUserPreferences<Id, _Mode extends Mode, _Ruleset extends Ruleset, _RankingSystem extends OverallLeaderboardRankingSystem>({ user, scope = 'public' }: {
+export function followUserSettings<Id, _Mode extends Mode, _Ruleset extends Ruleset, _RankingSystem extends OverallLeaderboardRankingSystem>({ user, scope = 'public' }: {
   user: UserEssential<Id> & Partial<UserExtra<Id, _Mode, _Ruleset, _RankingSystem> & Partial<UserOptional<Id>>> & {
-    preferences: UserPreferences
+    settings: UserSettings
   }
   scope?: Scope
 }) {
@@ -23,10 +23,10 @@ export function followUserPreferences<Id, _Mode extends Mode, _Ruleset extends R
 
   return {
     ...user,
-    email: compareScope(scope, user.preferences.visibility.email) ? user.email : undefined,
-    oldNames: compareScope(scope, user.preferences.visibility.oldNames) ? user.oldNames : undefined,
-    reachable: compareScope(scope, user.preferences.visibility.reachable) ? user.reachable : undefined,
-    status: compareScope(scope, user.preferences.visibility.status) ? user.status : undefined,
+    email: compareScope(scope, user.settings.visibility.email) ? user.email : undefined,
+    oldNames: compareScope(scope, user.settings.visibility.oldNames) ? user.oldNames : undefined,
+    reachable: compareScope(scope, user.settings.visibility.reachable) ? user.reachable : undefined,
+    status: compareScope(scope, user.settings.visibility.status) ? user.status : undefined,
   }
 }
 

@@ -5,7 +5,7 @@ import { router as _router, publicProcedure as p } from '../trpc'
 import { userNotFound } from '../messages'
 import { supportedOverallLeaderboardRankingSystems } from '../config'
 import type { NumberRange } from '~/types/common'
-import { followUserPreferences } from '~/server/transforms'
+import { followUserSettings } from '~/server/transforms'
 import { UserDataProvider, UserRelationshipDataProvider } from '$active/client'
 import { idToString } from '$active/config'
 
@@ -22,7 +22,7 @@ export const router = _router({
         message: userNotFound,
       })
     }
-    return Object.assign(followUserPreferences({ user, scope: 'public' }), { id: idToString(user.id) })
+    return Object.assign(followUserSettings({ user, scope: 'public' }), { id: idToString(user.id) })
   }),
   full: p.input(z.object({
     handle: zodHandle,
@@ -34,7 +34,7 @@ export const router = _router({
         message: userNotFound,
       })
     }
-    return Object.assign(followUserPreferences({ user, scope: 'public' }), { id: idToString(user.id) })
+    return Object.assign(followUserSettings({ user, scope: 'public' }), { id: idToString(user.id) })
   }),
   best: p.input(z.object({
     handle: zodHandle,
