@@ -2,7 +2,7 @@ import * as BanchoPy from '~/adapters/bancho.py/client'
 
 import {
   PrismaClient,
-} from '~/.prisma/ppy.sb/index'
+} from '~~/.prisma/ppy.sb/index'
 
 export const prismaClient = new PrismaClient()
 
