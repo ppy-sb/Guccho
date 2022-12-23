@@ -8,8 +8,8 @@ import type { MapDataProvider } from '$def/client/map'
 export default class BanchoPyMap implements MapDataProvider<Id> {
   db: PrismaClient
 
-  constructor({ client }: { client: PrismaClient } = { client: prismaClient }) {
-    this.db = client
+  constructor() {
+    this.db = prismaClient
   }
 
   async getBeatmap(query: { id: Id }) {

@@ -12,8 +12,8 @@ import type { Mode, OverallLeaderboardRankingSystem, RankingSystem, Ruleset } fr
 
 export default class BanchoPyLeaderboard implements LeaderboardDataProvider<Id> {
   db: PrismaClient
-  constructor({ client }: { client: PrismaClient } = { client: prismaClient }) {
-    this.db = client
+  constructor() {
+    this.db = prismaClient
   }
 
   async getOverallLeaderboard({

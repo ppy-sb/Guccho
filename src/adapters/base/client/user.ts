@@ -21,7 +21,7 @@ export interface UserDataProvider<Id> {
   exists({ handle, keys }: UserDataProvider.OptType<Id>): Awaitable<boolean>
   getEssential<Includes extends Partial<Record<keyof UserOptional<Id>, boolean>>>(opt: UserDataProvider.OptType<Id, Includes>): Awaitable<UserEssential<Id> | null>
   getEssentialById<Includes extends Partial<Record<keyof UserOptional<Id>, boolean>>>(opt: { id: Id; includes: Includes }): Awaitable<UserEssential<Id> | null>
-  getEssentials<Includes extends Partial<Record<keyof UserOptional<Id>, boolean>>>(opt: { handle: string | Id; includes?: Includes }): Awaitable<UserEssential<Id>[]>
+  getEssentials<Includes extends Partial<Record<keyof UserOptional<Id>, boolean>>>(opt: { handle: string; includes?: Includes }): Awaitable<UserEssential<Id>[]>
   getBests<_Mode extends Mode, _Ruleset extends Ruleset, _RankingSystem extends OverallLeaderboardRankingSystem>(query: {
     id: Id
     mode: _Mode
@@ -41,7 +41,7 @@ export interface UserDataProvider<Id> {
     country: string
   }): Awaitable<UserStatistic<Id>>
 
-  getFull<Excludes extends Partial<Record<keyof UserDataProvider.ComposableProperties<Id>, boolean>>>(query: { handle: string | Id; excludes?: Excludes }):
+  getFull<Excludes extends Partial<Record<keyof UserDataProvider.ComposableProperties<Id>, boolean>>>(query: { handle: string; excludes?: Excludes }):
   Awaitable<
     (
       null |
