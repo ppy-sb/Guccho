@@ -13,10 +13,10 @@ const config = useAppConfig()
     >
       <div class="content">
         <div class="mb-6">
-          <h1 class="mb-2 text-4xl font-bold text-center sm:text-left">
+          <h1 class="mb-2 text-4xl font-bold text-center">
             {{ config.title.toUpperCase() }}
           </h1>
-          <h2 class="font-semibold text-center h-sub text-md sm:text-left">
+          <h2 class="font-semibold px-2 sm:px-0 h-sub text-md sm:text-left">
             We are an osu! private server built from the ground up with many
             unique features not seen elsewhere!<br>
             - for more information, check out gulag and guweb-next on GitHub <br>
@@ -24,50 +24,47 @@ const config = useAppConfig()
           </h2>
         </div>
 
-        <client-only>
-          <div
-            v-if="session.$state.loggedIn"
-            class="flex gap-2"
+        <div
+          v-if="session.$state.loggedIn"
+          class="flex gap-2 px-2 sm:px-0"
+        >
+          <t-nuxt-link-button
+            :to="{ name: 'user-handle', params: { handle: session.$state.userId } }"
+            variant="primary"
           >
-            <t-nuxt-link-button
-              :to="{ name: 'user-handle', params: { handle: session.$state.userId } }"
-              variant="primary"
-            >
-              to my profile
-            </t-nuxt-link-button>
-            <t-nuxt-link-button
-              :to="{ name: 'me-settings' }"
-              variant="secondary"
-            >
-              settings
-            </t-nuxt-link-button>
-          </div>
-          <div
-            v-else
-            class="flex gap-2"
+            to my profile
+          </t-nuxt-link-button>
+          <t-nuxt-link-button
+            :to="{ name: 'me-settings' }"
+            variant="secondary"
           >
-            <t-nuxt-link-button
-              :to="{ name: 'auth-login' }"
-              variant="primary"
-            >
-              Login
-            </t-nuxt-link-button>
-            <t-nuxt-link-button
-              :to="{ name: 'auth-register' }"
-              variant="secondary"
-              class="btn-disabled"
-            >
-              Register
-            </t-nuxt-link-button>
-          </div>
-        </client-only>
+            settings
+          </t-nuxt-link-button>
+        </div>
+        <div
+          v-else
+          class="flex gap-2"
+        >
+          <t-nuxt-link-button
+            :to="{ name: 'auth-login' }"
+            variant="primary"
+          >
+            Login
+          </t-nuxt-link-button>
+          <t-nuxt-link-button
+            :to="{ name: 'auth-register' }"
+            variant="secondary"
+            class="btn-disabled"
+          >
+            Register
+          </t-nuxt-link-button>
+        </div>
       </div>
       <div class="hidden mascot lg:block">
         <img
           src="/mascot/riru.png"
           style="max-height:70vmin"
           alt="riru Mascot"
-          m="l-auto"
         >
       </div>
     </div>
