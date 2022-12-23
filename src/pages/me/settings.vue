@@ -453,7 +453,6 @@ onBeforeMount(async () => {
       <span class="pl-3 label-text">profile</span>
     </label>
     <editor
-      v-if="profile"
       v-model.lazy="profile"
       class="safari-performance-boost"
       @update:model-value="profileEdited = true"
