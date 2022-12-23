@@ -236,29 +236,6 @@ function rewriteAnchor() {
 .stripe-even {
   @apply mt-1 text-sm text-kimberly-900 dark:text-kimberly-100 sm:col-span-2 sm:mt-0;
 }
-/* .tab.tab-lifted {
-  @apply bg-gradient-to-b -order-1;
-  @apply from-gray-50 to-gray-100 border-kimberly-200;
-  @apply dark:from-gray-800 dark:to-gray-900 border-kimberly-700;
-  @apply border-[1px] border-b-0;
-  &.tab-active {
-    @apply bg-gradient-to-b border-b-0;
-    @apply from-kimberly-50 via-kimberly-100 to-kimberly-100;
-    @apply dark:from-kimberly-700 via-kimberly-800 to-kimberly-800;
-    &:before, &:after {
-      background-image: none;
-    }
-  }
-} */
-.diff {
-  &::-webkit-scrollbar {
-    height: 0.5em;
-    @apply bg-transparent;
-  }
-  &::-webkit-scrollbar-thumb {
-    @apply bg-kimberly-500/50
-  }
-}
 </style>
 
 <style lang="postcss">
