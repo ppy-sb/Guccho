@@ -41,7 +41,7 @@ watch(data, () => {
             <div class="flex gap-1 items-center">
               >> <roller
                 :char-set="chars"
-                :value="(deferredRender.level % 1).toLocaleString(undefined, { style: 'percent', maximumFractionDigits: 2 }).slice(0, -1)"
+                :value="(deferredRender.level % 1).toLocaleString('en-US', { style: 'percent', maximumFractionDigits: 2 }).slice(0, -1)"
                 default-value="0"
               /> %
             </div>
