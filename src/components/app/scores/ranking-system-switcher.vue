@@ -20,4 +20,3 @@ const { supportedRankingSystems } = useAdapterConfig()
     </template>
   </t-tabs>
 </template>
-
