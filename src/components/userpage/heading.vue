@@ -120,7 +120,7 @@ const toggleFriend = async () => {
           Edit
         </t-nuxt-link-button>
       </div>
-      <div class="container mx-auto sm:order-2 sm:flex sm:gap-1 sm:items-end sm:justify-between md:pb-2">
+      <div class="container mx-auto sm:order-2 sm:flex sm:gap-1 sm:items-end sm:justify-around md:justify-between md:pb-2">
         <div>
           <div>
             <h1 class="text-5xl xl:text-6xl items-center md:items-left flex flex-col md:flex-row gap-1 pb-1" :class="useUserRoleColor(user)">

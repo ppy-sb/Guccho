@@ -26,7 +26,7 @@ watch(data, () => {
     </div> -->
 
     <div class="card-body p-0 md:p-4 xl:p-3">
-      <div class="stats bg-transparent drop-shadow-xl grid-cols-3">
+      <div class="stats bg-transparent grid drop-shadow-xl md:grid-cols-3 stats-vertical md:stats-horizontal">
         <div class="stat">
           <div class="stat-title">
             Level
