@@ -99,7 +99,7 @@ onMounted(() => {
     </section>
     <div
       v-else-if="user"
-      class="flex flex-col pt-16 justify-stretch md:pt-0"
+      class="flex flex-col pt-20 justify-stretch md:pt-0"
     >
       <userpage-heading id="top" ref="top" />
       <userpage-profile />

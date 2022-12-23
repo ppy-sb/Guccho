@@ -46,6 +46,6 @@ export default {
   transition: 0.3s ease;
   @apply pb-2;
 
-  @apply md:pt-20;
+  @apply pt-20;
 }
 </style>
