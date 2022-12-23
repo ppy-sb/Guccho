@@ -1,6 +1,6 @@
 import {
   PrismaClient,
-} from '@prisma/client'
+} from '@prisma/client' // bancho.py
 
 export const prismaClient = new PrismaClient()
 export { default as UserDataProvider } from './user'

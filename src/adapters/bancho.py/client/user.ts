@@ -11,7 +11,7 @@ import { createUserQuery } from '../transforms/db-queries'
 import { idToString } from '../transforms/id-conversion'
 import BanchoPyUserRelationship from './user-relations'
 import { prismaClient } from '.'
-import type { Prisma, PrismaClient } from '@prisma/client'
+import type { Prisma, PrismaClient } from '@prisma/client' // bancho.py
 import type { UserDataProvider } from '$def/client/user'
 import type { Mode, NumberRange, OverallLeaderboardRankingSystem, Ruleset } from '~/types/common'
 import useEditorExtensions from '~/composables/useEditorExtensions'

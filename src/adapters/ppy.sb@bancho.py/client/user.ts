@@ -13,7 +13,7 @@ import { toRankingSystemScores } from '~/adapters/bancho.py/transforms/scores'
 import useEditorExtensions from '~/composables/useEditorExtensions'
 import type { UserDataProvider as Base } from '$def/client/user'
 
-import type { Prisma, PrismaClient } from '~~/.prisma/ppy.sb/index'
+import type { Prisma, PrismaClient } from '@prisma/client' // ppy.sb
 import type { UserEssential, UserOptional, UserStatistic } from '~/types/user'
 import type { Mode, OverallLeaderboardRankingSystem, Ruleset } from '~/types/common'
 
