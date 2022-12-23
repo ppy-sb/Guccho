@@ -196,11 +196,13 @@ function rewriteAnchor() {
     </div>
     <div class="container custom-container mx-auto mt-4">
       <app-scores-ranking-system-switcher v-model="rankingSystem" class="mx-auto" @update:model-value="refresh(); rewriteAnchor()" />
-      <app-scores-table
-        v-if="leaderboard" :scores="leaderboard" :ranking-system="rankingSystem" class="w-full" :class="{
-          'clear-rounded-tl': adapterConfig.supportedRankingSystems[0] === rankingSystem,
-        }"
-      />
+      <div class="overflow-auto">
+        <app-scores-table
+          v-if="leaderboard" :scores="leaderboard" :ranking-system="rankingSystem" class="w-full" :class="{
+            'clear-rounded-tl': adapterConfig.supportedRankingSystems[0] === rankingSystem,
+          }"
+        />
+      </div>
     </div>
     <div class="container custom-container mx-auto mt-4">
       <JsonViewer
