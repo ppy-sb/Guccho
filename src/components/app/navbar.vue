@@ -86,6 +86,7 @@ onUnmounted(() => {
       :class="[
         props.disabled && 'disabled',
         shownMenu.left && '!rounded-bl-none',
+        shownMenu.user && '!rounded-br-none',
       ]"
     >
       <div class="navbar-start">

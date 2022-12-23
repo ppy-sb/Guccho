@@ -15,5 +15,6 @@
 }
 
 .v-popper--theme-guweb-dropdown .v-popper__inner {
-  @apply backdrop-blur-md shadow-xl ml-2;
+  @apply backdrop-blur-md shadow-xl mx-2 border-[1px] border-t-0;
+  @apply border-kimberly-50/50 dark:border-kimberly-500/50;
 }
