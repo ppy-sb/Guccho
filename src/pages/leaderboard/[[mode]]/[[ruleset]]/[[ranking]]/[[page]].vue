@@ -74,7 +74,7 @@ const navigate = (selected: SwitcherPropType) => navigateTo({
 </script>
 
 <template>
-  <div class="flex flex-col h-full pt-16 leaderboard custom-container md:pt-0">
+  <div class="flex flex-col h-full leaderboard custom-container">
     <header-simple-title-with-sub
       class="container mx-auto custom-container lg:px-4"
       title="Leaderboard"
