@@ -62,6 +62,15 @@ const result = await $client.leaderboard.overall.query({
 const table = ref(result)
 
 fetching.value = false
+
+const navigate = (selected: SwitcherPropType) => navigateTo({
+  name: 'leaderboard-mode-ruleset-ranking-page',
+  params: {
+    mode: selected.mode,
+    ruleset: selected.ruleset,
+    ranking: selected.rankingSystem,
+  },
+})
 </script>
 
 <template>
@@ -79,17 +88,11 @@ fetching.value = false
           || ''
       "
     >
+      <!-- TODO replaceHistoryState? like what we did in beatmapset/[id] -->
       <app-mode-switcher
-        v-model="selected"
+        :model-value="selected"
         :show-sort="true"
-        @input="(selected: SwitcherPropType) => navigateTo({
-          name: 'leaderboard-mode-ruleset-ranking-page',
-          params: {
-            mode: selected.mode,
-            ruleset: selected.ruleset,
-            ranking: selected.rankingSystem,
-          },
-        })"
+        @input="navigate"
       />
     </header-simple-title-with-sub>
     <div
