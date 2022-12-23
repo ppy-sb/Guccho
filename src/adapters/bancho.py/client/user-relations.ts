@@ -10,8 +10,8 @@ import { calculateMutualRelationships } from '~/server/transforms'
 
 export default class BanchoPyUserRelationship implements UserRelationshipDataProvider<Id> {
   db: PrismaClient
-  constructor({ client }: { client: PrismaClient } = { client: prismaClient }) {
-    this.db = client
+  constructor() {
+    this.db = prismaClient
   }
 
   async getOne(fromUser: { id: Id }, toUser: { id: Id }) {

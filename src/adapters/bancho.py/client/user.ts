@@ -13,7 +13,7 @@ import { idToString } from '../transforms/id-conversion'
 import BanchoPyUserRelationship from './user-relations'
 import { prismaClient } from '.'
 import type { UserDataProvider } from '$def/client/user'
-import type { Mode, NumberRange, OverallLeaderboardRankingSystem, Ruleset } from '~/types/common'
+import type { Mode, OverallLeaderboardRankingSystem, Ruleset } from '~/types/common'
 import useEditorExtensions from '~/composables/useEditorExtensions'
 
 import type {
@@ -54,8 +54,8 @@ export default class BanchoPyUser implements UserDataProvider<Id> {
 
   relationships: BanchoPyUserRelationship
 
-  constructor({ client }: { client: DatabaseModel } = { client: prismaClient }) {
-    this.db = client
+  constructor() {
+    this.db = prismaClient
     this.relationships = new BanchoPyUserRelationship()
   }
 
@@ -63,7 +63,7 @@ export default class BanchoPyUser implements UserDataProvider<Id> {
     return (await this.db.user.count(createUserQuery(handle, keys || ['id', 'name', 'safeName', 'email']))) > 0
   }
 
-  async getEssentialById<Includes extends Partial<Record<keyof UserOptional<number>, boolean>>>({ id, includes }: { id: Id; includes: Includes }) {
+  async getEssentialById<Includes extends Partial<Record<keyof UserOptional<unknown>, boolean>>>({ id, includes }: { id: Id; includes: Includes }) {
     const user = await this.db.user.findFirst(
       {
         where: {
@@ -77,7 +77,7 @@ export default class BanchoPyUser implements UserDataProvider<Id> {
     return toUserEssential({ user, includes })
   }
 
-  async getEssential<Includes extends Partial<Record<keyof UserOptional<number>, boolean>>>(opt: UserDataProvider.OptType<Id, Includes>) {
+  async getEssential<Includes extends Partial<Record<keyof UserOptional<unknown>, boolean>>>(opt: UserDataProvider.OptType<Id, Includes>) {
     const { handle, includes, keys } = opt
     const user = await this.db.user.findFirst(
       createUserQuery(handle, keys || ['id', 'name', 'safeName', 'email']),
@@ -106,8 +106,8 @@ export default class BanchoPyUser implements UserDataProvider<Id> {
     mode: Mode
     ruleset: Ruleset
     rankingSystem: OverallLeaderboardRankingSystem
-    page: NumberRange<0, 10>
-    perPage: NumberRange<1, 11>
+    page: number
+    perPage: number
   }) {
     const start = page * perPage
     const _mode = toBanchoPyMode(mode, ruleset)
