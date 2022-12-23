@@ -1,3 +1,4 @@
+import type { PrismaClient } from '@prisma/client'
 import type { BanchoPyMode } from '../enums'
 import { toBanchoPyMode, toMods } from '../enums'
 import type {
@@ -6,7 +7,6 @@ import type {
 import { toRoles, toUserEssential } from '../transforms'
 import { prismaClient } from '.'
 import { mode as _modes } from '~/types/common'
-import type { PrismaClient } from '~/.prisma/bancho.py/index'
 import type { LeaderboardDataProvider } from '$def/client/leaderboard'
 import type { Mode, OverallLeaderboardRankingSystem, RankingSystem, Ruleset } from '~/types/common'
 
