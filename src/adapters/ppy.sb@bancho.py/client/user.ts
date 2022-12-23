@@ -3,6 +3,7 @@ import { generateHTML } from '@tiptap/html'
 import { TRPCError } from '@trpc/server'
 import bcrypt from 'bcryptjs'
 import { createClient } from 'redis'
+import type { Prisma, PrismaClient } from '@prisma/client' // ppy.sb
 import type { Id } from '../config'
 import { prismaClient } from '.'
 import { createRulesetData, toFullUser, toUserEssential } from '~/adapters/bancho.py/transforms'
@@ -13,7 +14,6 @@ import { toRankingSystemScores } from '~/adapters/bancho.py/transforms/scores'
 import useEditorExtensions from '~/composables/useEditorExtensions'
 import type { UserDataProvider as Base } from '$def/client/user'
 
-import type { Prisma, PrismaClient } from '@prisma/client' // ppy.sb
 import type { UserEssential, UserOptional, UserStatistic } from '~/types/user'
 import type { Mode, OverallLeaderboardRankingSystem, Ruleset } from '~/types/common'
 

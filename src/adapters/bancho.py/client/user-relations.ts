@@ -1,8 +1,8 @@
+import type { PrismaClient } from '@prisma/client' // bancho.py
 import type { Id } from '../config'
 import { dedupeUserRelationship, toUserEssential } from '../transforms'
 
 import { prismaClient } from '.'
-import type { PrismaClient } from '@prisma/client' // bancho.py
 import type { UserRelationshipDataProvider } from '$def/client/user-relations'
 import type { UserEssential } from '~/types/user'
 import type { Relationship } from '~/types/common'
@@ -113,4 +113,3 @@ export default class BanchoPyUserRelationship implements UserRelationshipDataPro
     })
   }
 }
-
