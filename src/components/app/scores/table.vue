@@ -20,6 +20,9 @@ const pp = createPPFormatter()
           Player
         </th>
         <th class="text-right">
+          Rank
+        </th>
+        <th class="text-right">
           Mods
         </th>
         <th class="text-right">
@@ -32,9 +35,9 @@ const pp = createPPFormatter()
           Performance ( v2 )
         </th>
         <th>Played At</th>
-        <th class="text-center">
+        <!-- <th class="text-center">
           Actions
-        </th>
+        </th> -->
       </tr>
     </thead>
     <tbody>
@@ -54,6 +57,9 @@ const pp = createPPFormatter()
             </nuxt-link>
           </div>
         </th>
+        <td class="text-right">
+          #{{ index + 1 }}
+        </td>
         <td class="text-right font-mono">
           {{ item.score.mods.join(' ') }}
         </td>
@@ -70,7 +76,7 @@ const pp = createPPFormatter()
           {{ item.score.playedAt.toLocaleDateString() }}
           {{ item.score.playedAt.toLocaleTimeString() }}
         </td>
-        <td class="text-center">
+        <!-- <td class="text-center">
           <div class="btn-group">
             <t-button size="sm" variant="ghost">
               download replay
@@ -79,7 +85,7 @@ const pp = createPPFormatter()
               detail
             </t-button>
           </div>
-        </td>
+        </td> -->
       </tr>
     </tbody>
   </table>
