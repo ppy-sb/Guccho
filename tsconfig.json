@@ -18,12 +18,6 @@
     "resolveJsonModule": true,
     "allowJs": true,
     "strictNullChecks": true
-    // "paths": {
-    //   "~/*": ["./src/*"],
-    //   "@/*": ["./src/*"],
-    //   "~~/*": ["./src/*"],
-    //   "@@/*": ["./src/*"]
-    // }
   },
   "exclude": ["node_modules", "dist", ".prisma"]
 }
