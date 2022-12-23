@@ -1,3 +1,4 @@
+import type { Map as DBMap, Score as DBScore, User as DatabaseUser, RelationshipType, Source, Stat } from '@prisma/client' // bancho.py
 import type { Id } from '../config'
 import type { BanchoPyRankedStatus } from '../enums'
 import { BanchoPyPrivilege, toBanchoRankingStatus } from '../enums'
@@ -9,7 +10,6 @@ import type {
   UserPrivilegeString,
   UserSecrets,
 } from '~/types/user'
-import type { Map as DBMap, Score as DBScore, User as DatabaseUser, RelationshipType, Source, Stat } from '@prisma/client' // bancho.py
 import type { RankingStatus } from '~/types/beatmap'
 import { RankingStatusEnum } from '~/types/beatmap'
 import type { Mode, OverallLeaderboardRankingSystem, Ruleset } from '~/types/common'
@@ -214,4 +214,3 @@ export type AbleToTransformToScores = (DBScore & {
     source: Source
   } | null
 })
-

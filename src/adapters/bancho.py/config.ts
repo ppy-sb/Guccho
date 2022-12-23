@@ -10,4 +10,3 @@ export const supportedRankingSystems: RankingSystem[] = ['ppv2', 'score']
 export const supportedFeatures: Set<Feature> = new Set([
   'userpage',
 ])
-
