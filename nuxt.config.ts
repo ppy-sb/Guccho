@@ -9,6 +9,10 @@ export default defineNuxtConfig({
 
   srcDir: 'src/',
 
+  build: {
+    transpile: ['trpc-nuxt'],
+  },
+
   // Global page headers: https://go.nuxtjs.dev/config-head
   // head: {
   //   title: 'guweb-nuxt',
