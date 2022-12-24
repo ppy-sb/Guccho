@@ -79,7 +79,7 @@ function rewriteAnchor() {
       <div class="header-with-maps flex-wrap">
         <div class="text-center">
           <h1
-            class="text-3xl font-bold text-center sm:text-left whitespace-nowrap"
+            class="text-3xl font-bold text-center sm:text-left lg:whitespace-nowrap"
           >
             {{ beatmapset.meta.intl.title }}
           </h1>
