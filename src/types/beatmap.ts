@@ -19,26 +19,22 @@ export enum RankingStatusEnum {
 
 export type RankingStatus = keyof typeof RankingStatusEnum
 
-export type Beatmapset<Source extends BeatmapSource, LocalId, ForeignId> =
-  {
-    meta: {
-      // unicode
-      artist?: string
-      title?: string
+export interface Beatmapset<Source extends BeatmapSource, LocalId, ForeignId> {
+  meta: {
+    // unicode
+    artist?: string
+    title?: string
 
-      // (Probably) ASCII Based
-      intl: {
-        artist: string
-        title: string
-      }
+    // (Probably) ASCII Based
+    intl: {
+      artist: string
+      title: string
     }
-    id: LocalId
-  } & ({
-    source: UnknownSource
-  } | {
-    source: Exclude<Source, UnknownSource>
-    foreignId: ForeignId
-  })
+  }
+  id: LocalId
+  source: Source
+  foreignId: Source extends ForeignSource ? ForeignId : never
+}
 export interface BeatmapEssential<Id, ForeignId = never> {
   id: Id
   foreignId: ForeignId

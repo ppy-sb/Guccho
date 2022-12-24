@@ -83,11 +83,6 @@ export default class BanchoPyMap implements MapDataProvider<Id> {
               contains: keyword,
             },
           },
-          {
-            creator: {
-              contains: keyword,
-            },
-          },
         ].filter(TSFilter),
       },
       include: {
@@ -115,6 +110,11 @@ export default class BanchoPyMap implements MapDataProvider<Id> {
           },
           {
             artist: {
+              contains: keyword,
+            },
+          },
+          {
+            creator: {
               contains: keyword,
             },
           },
