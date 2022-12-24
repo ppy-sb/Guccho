@@ -1,8 +1,6 @@
 <script setup lang="ts">
-// @ts-expect-error no we do not have declaration
-import { JsonViewer } from 'vue3-json-viewer'
-import 'vue3-json-viewer/dist/index.css'
 import type { RankingSystem } from '~/types/common'
+import type { BeatmapSource, Beatmapset } from '~/types/beatmap'
 const { $client } = useNuxtApp()
 const route = useRoute()
 const adapterConfig = useAdapterConfig()
@@ -11,6 +9,15 @@ const { data: beatmapset, error } = await useAsyncData(
   async () =>
     await $client.map.beatmapset.query({ id: route.params.id.toString() }),
 )
+
+const assertIsBanchoBeatmapset = (test: Beatmapset<BeatmapSource, any, unknown>): test is Beatmapset<'bancho', any, string | number> => {
+  return test.source === 'bancho'
+}
+
+const bgCover = beatmapset.value && assertIsBanchoBeatmapset(beatmapset.value) && {
+  cover: `url('https://assets.ppy.sh/beatmaps/${beatmapset.value.foreignId}/covers/cover.jpg?${Math.floor(new Date().getTime() / 1000)}')`,
+  listUrl: `https://assets.ppy.sh/beatmaps/${beatmapset.value.foreignId}/covers/list@2x.jpg?${Math.floor(new Date().getTime() / 1000)}`,
+}
 
 const rankingSystem = ref<RankingSystem>(adapterConfig.supportedRankingSystems[0])
 const queryRs = route.query.rank?.toString()
@@ -60,8 +67,15 @@ function rewriteAnchor() {
       {{ error?.message }}
     </div>
   </section>
-  <div v-else-if="beatmapset">
-    <div class="container custom-container mx-auto">
+  <div
+    v-else-if="beatmapset"
+    :class="[
+      assertIsBanchoBeatmapset(beatmapset) && `pre-bg-cover`,
+    ]"
+  >
+    <div
+      class="container custom-container mx-auto"
+    >
       <div class="header-with-maps flex-wrap">
         <div class="text-center">
           <h1
@@ -99,99 +113,127 @@ function rewriteAnchor() {
           </t-tab>
         </t-tabs>
       </div>
-      <div v-if="selectedMap" ref="mapCard" class="card bg-kimberly-100 dark:bg-kimberly-900">
-        <dl>
-          <div class="stripe-odd">
-            <dt class="text-sm font-medium text-kimberly-500">
-              Creator
-            </dt>
-            <dd class="stripe-even">
-              {{ selectedMap.creator }}
-            </dd>
+      <div v-if="selectedMap" class="flex flex-col md:flex-row card bg-kimberly-100 dark:bg-kimberly-900">
+        <div class="w-full md:w-1/3 grow">
+          <div class="p-8 h-full flex flex-col justify-around">
+            <img v-if="bgCover" class="rounded-lg w-full" :src="bgCover.listUrl" alt="list">
+            <div class="pt-4">
+              <div class="w-min">
+                <v-dropdown theme="guweb-dropdown" placement="auto" :distance="6">
+                  <button class="btn btn-sm btn-accent">
+                    download
+                  </button>
+                  <template #popper>
+                    <ul class="menu p-2 menu-compact border-[1px] border-base-300/20 bg-base-200/80 w-56 rounded-box">
+                      <template v-if="assertIsBanchoBeatmapset(beatmapset)">
+                        <li class="menu-title">
+                          <span>External Sources</span>
+                        </li>
+                        <li><a :href="`https://osu.ppy.sh/s/${beatmapset.foreignId}`">Bancho</a></li>
+                        <li><a :href="`https://api.chimu.moe/v1/download/${beatmapset.foreignId}`">Chimu.moe</a></li>
+                        <li><a :href="`https://kitsu.moe/api/d/${beatmapset.foreignId}`">Kitsu.moe</a></li>
+                      </template>
+                    </ul>
+                  </template>
+                </v-dropdown>
+              </div>
+            </div>
           </div>
-          <div class="bg-kimberly-50 dark:bg-kimberly-800 stripe-odd">
-            <dt class="text-sm font-medium text-kimberly-500">
-              Status
-            </dt>
-            <dd class="stripe-even">
-              {{ selectedMap.status }}
-            </dd>
-          </div>
-          <div class="stripe-odd">
-            <dt class="text-sm font-medium text-kimberly-500">
-              Beatmap ID
-            </dt>
-            <dd class="stripe-even">
-              {{ selectedMap.id }}
-            </dd>
-          </div>
-          <div class="bg-kimberly-50 dark:bg-kimberly-800 stripe-odd">
-            <dt class="text-sm font-medium text-kimberly-500">
-              Source | ID
-            </dt>
-            <dd class="stripe-even">
-              {{ beatmapset.source }} | {{ selectedMap.foreignId }}
-            </dd>
-          </div>
-          <div class="stripe-odd">
-            <dt class="text-sm font-medium text-kimberly-500">
-              Last Update
-            </dt>
-            <dd class="stripe-even">
-              {{ selectedMap.lastUpdate }}
-            </dd>
-          </div>
-          <div class="bg-kimberly-50 dark:bg-kimberly-800 stripe-odd">
-            <dt class="text-sm font-medium text-kimberly-500">
-              BPM
-            </dt>
-            <dd class="stripe-even">
-              {{ selectedMap.properties.bpm }}
-            </dd>
-          </div>
-          <div class="stripe-odd">
-            <dt class="text-sm font-medium text-kimberly-500">
-              Star Rate
-            </dt>
-            <dd class="stripe-even">
-              {{ selectedMap.properties.starRate }}
-            </dd>
-          </div>
-          <div class="bg-kimberly-50 dark:bg-kimberly-800 stripe-odd">
-            <dt class="text-sm font-medium text-kimberly-500">
-              Circle Size
-            </dt>
-            <dd class="stripe-even">
-              {{ selectedMap.properties.circleSize }}
-            </dd>
-          </div>
-          <div class="stripe-odd">
-            <dt class="text-sm font-medium text-kimberly-500">
-              HP Drain
-            </dt>
-            <dd class="stripe-even">
-              {{ selectedMap.properties.hpDrain }}
-            </dd>
-          </div>
-          <div class="bg-kimberly-50 dark:bg-kimberly-800 stripe-odd">
-            <dt class="text-sm font-medium text-kimberly-500">
-              Duration
-            </dt>
-            <dd class="stripe-even">
-              {{ selectedMap.properties.totalLength }} seconds
-            </dd>
-          </div>
-          <div class="stripe-odd">
-            <dt class="text-sm font-medium text-kimberly-500">
-              Hit Object
-            </dt>
-            <dd class="stripe-even">
-              {{ selectedMap.properties.count.circles }} circles,<br>
-              {{ selectedMap.properties.count.sliders }} sliders,<br>
-              {{ selectedMap.properties.count.spinners }} spinners,<br>
-            </dd>
-          </div>
-        </dl>
+        </div>
+        <div class="w-full md:w-2/3">
+          <dl>
+            <div class="stripe-odd">
+              <dt class="text-sm font-medium text-kimberly-500">
+                Creator
+              </dt>
+              <dd class="stripe-even">
+                {{ selectedMap.creator }}
+              </dd>
+            </div>
+            <div class="bg-kimberly-50 dark:bg-kimberly-800 stripe-odd">
+              <dt class="text-sm font-medium text-kimberly-500">
+                Status
+              </dt>
+              <dd class="stripe-even">
+                {{ selectedMap.status }}
+              </dd>
+            </div>
+            <div class="stripe-odd">
+              <dt class="text-sm font-medium text-kimberly-500">
+                Beatmap ID
+              </dt>
+              <dd class="stripe-even">
+                {{ selectedMap.id }}
+              </dd>
+            </div>
+            <div class="bg-kimberly-50 dark:bg-kimberly-800 stripe-odd">
+              <dt class="text-sm font-medium text-kimberly-500">
+                Source | ID
+              </dt>
+              <dd class="stripe-even">
+                {{ beatmapset.source }} | {{ selectedMap.foreignId }}
+              </dd>
+            </div>
+            <div class="stripe-odd">
+              <dt class="text-sm font-medium text-kimberly-500">
+                Last Update
+              </dt>
+              <dd class="stripe-even">
+                {{ selectedMap.lastUpdate }}
+              </dd>
+            </div>
+            <div class="bg-kimberly-50 dark:bg-kimberly-800 stripe-odd">
+              <dt class="text-sm font-medium text-kimberly-500">
+                BPM
+              </dt>
+              <dd class="stripe-even">
+                {{ selectedMap.properties.bpm }}
+              </dd>
+            </div>
+            <div class="stripe-odd">
+              <dt class="text-sm font-medium text-kimberly-500">
+                Star Rate
+              </dt>
+              <dd class="stripe-even">
+                {{ selectedMap.properties.starRate }}
+              </dd>
+            </div>
+            <div class="bg-kimberly-50 dark:bg-kimberly-800 stripe-odd">
+              <dt class="text-sm font-medium text-kimberly-500">
+                Circle Size
+              </dt>
+              <dd class="stripe-even">
+                {{ selectedMap.properties.circleSize }}
+              </dd>
+            </div>
+            <div class="stripe-odd">
+              <dt class="text-sm font-medium text-kimberly-500">
+                HP Drain
+              </dt>
+              <dd class="stripe-even">
+                {{ selectedMap.properties.hpDrain }}
+              </dd>
+            </div>
+            <div class="bg-kimberly-50 dark:bg-kimberly-800 stripe-odd">
+              <dt class="text-sm font-medium text-kimberly-500">
+                Duration
+              </dt>
+              <dd class="stripe-even">
+                {{ selectedMap.properties.totalLength }} seconds
+              </dd>
+            </div>
+            <div class="stripe-odd">
+              <dt class="text-sm font-medium text-kimberly-500">
+                Hit Object
+              </dt>
+              <dd class="stripe-even">
+                {{ selectedMap.properties.count.circles }} circles,<br>
+                {{ selectedMap.properties.count.sliders }} sliders,<br>
+                {{ selectedMap.properties.count.spinners }} spinners,<br>
+              </dd>
+            </div>
+          </dl>
+        </div>
       </div>
     </div>
     <div class="container custom-container mx-auto mt-4">
@@ -203,19 +245,6 @@ function rewriteAnchor() {
           }"
         />
       </div>
-    </div>
-    <div class="container custom-container mx-auto mt-4">
-      <JsonViewer
-        :value="{
-          beatmap: selectedMap,
-          beatmapset: {
-            ...beatmapset,
-            beatmaps: 'hidden from json viewer',
-          },
-          leaderboard,
-        }"
-        class="rounded-xl"
-      />
     </div>
   </div>
 </template>
@@ -238,7 +267,7 @@ function rewriteAnchor() {
 }
 </style>
 
-<style lang="postcss">
+<style lang="scss">
 table.table.clear-rounded-tl {
     > thead {
       > tr:first-child {
@@ -247,5 +276,13 @@ table.table.clear-rounded-tl {
         }
       }
   }
+}
+.pre-bg-cover::before {
+    content: '';
+    position: absolute;
+    @apply top-20 left-0 right-0 bg-cover;
+    height: 30vmin;
+    background-image: v-bind('bgCover && bgCover.cover');
+    filter: opacity(30%) blur(2em);
 }
 </style>

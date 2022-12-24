@@ -115,7 +115,7 @@ onUnmounted(() => {
       >
         <t-modal>
           <template #root>
-            <div class="card w-1/2 max-h-screen bg-gradient-to-b from-base-300 to-base-200 shadow-md">
+            <div class="card w-11/12 lg:w-1/2 max-h-[calc(100vh-2em)] bg-gradient-to-b from-base-300 to-base-200 shadow-md">
               <div class="card-actions justify-end pt-2 px-1">
                 <button class="btn btn-ghost btn-sm" @click="() => closeModal()">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
@@ -192,12 +192,16 @@ onUnmounted(() => {
                       </ul>
                     </template>
                   </template>
-                  <div v-else class="p-5">
-                    No Result
-                  </div>
+                  <template v-else>
+                    <div class="divider" />
+                    <div class="p-5 pt-0">
+                      No Result
+                    </div>
+                  </template>
                 </template>
                 <template v-else-if="kw">
-                  <div class="p-5">
+                  <div class="divider" />
+                  <div class="p-5 pt-0">
                     searching "{{ kw }}"...
                   </div>
                 </template>
@@ -218,7 +222,7 @@ onUnmounted(() => {
       <div class="navbar-start">
         <v-dropdown
           v-model:shown="shownMenu.left"
-          theme="guweb-dropdown"
+          theme="guweb-dropdown-b"
           placement="bottom"
           :distance="8"
           strategy="fixed"
@@ -300,7 +304,7 @@ onUnmounted(() => {
 
         <v-dropdown
           v-model:shown="shownMenu.user"
-          theme="guweb-dropdown"
+          theme="guweb-dropdown-b"
           placement="bottom"
           :distance="8"
           strategy="fixed"
