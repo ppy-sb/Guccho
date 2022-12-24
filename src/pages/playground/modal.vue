@@ -83,6 +83,8 @@ onMounted(() => {
           </template>
         </t-modal-container>
       </t-modal-wrapper>
+    </t-modal-root>
+    <t-modal-root>
       <t-modal-wrapper
         ref="wrapper2"
         v-slot="{ closeModal }"

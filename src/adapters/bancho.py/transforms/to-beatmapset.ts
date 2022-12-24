@@ -1,7 +1,7 @@
 import type { Map as DBMap, Source } from '@prisma/client' // bancho.py
 import type { Id } from '../config'
 import { toRankingStatus } from './index'
-import type { BeatmapEssential, BeatmapWithMeta, Beatmapset } from '~/types/beatmap'
+import type { BeatmapEssential, Beatmapset } from '~/types/beatmap'
 
 // this do not deserves exporting
 export function toBeatmapset(beatmapset: Source, beatmap: DBMap): undefined | Beatmapset<typeof beatmapset['server'], typeof beatmapset['id'], typeof beatmapset['id']> {
@@ -48,16 +48,13 @@ export function toBeatmapEssential(beatmap: DBMap): BeatmapEssential<Id, Id> {
 
 export function toBeatmapWithBeatmapset(beatmap: DBMap & {
   source: Source
-}): BeatmapWithMeta<
-  typeof beatmap['source']['server'], typeof status, typeof beatmap['id'], typeof beatmap['id']
-> | undefined {
-  const status = toRankingStatus(beatmap.status) || 'notFound'
+}) {
+  const status = toRankingStatus(beatmap.status) || 'WIP'
   const beatmapset = toBeatmapset(beatmap.source, beatmap)
   if (!beatmapset)
     return
-  return {
-    ...toBeatmapEssential(beatmap),
+  return Object.assign(toBeatmapEssential(beatmap), {
     status,
     beatmapset,
-  }
+  })
 }

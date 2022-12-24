@@ -1,9 +1,13 @@
 import type { PrismaClient } from '@prisma/client' // bancho.py
 import { toBeatmapEssential, toBeatmapWithBeatmapset, toBeatmapset } from '../transforms/to-beatmapset'
 import { toRankingStatus } from '../transforms'
+import { stringToId } from '../transforms/id-conversion'
+import type { BeatmapSource, Beatmapset } from './../../../types/beatmap'
 import type { Id } from './../config'
 import { prismaClient } from '.'
 import type { MapDataProvider } from '$def/client/map'
+
+const TSFilter = <T>(item: T): item is Exclude<T, undefined> => item !== undefined
 
 export default class BanchoPyMap implements MapDataProvider<Id> {
   db: PrismaClient
@@ -62,5 +66,74 @@ export default class BanchoPyMap implements MapDataProvider<Id> {
         status: toRankingStatus(bm.status) || 'notFound',
       })),
     })
+  }
+
+  async #searchBeatmap({ keyword, limit }: { keyword: string; limit: number }) {
+    const idKw = stringToId(keyword)
+    const result = await this.db.map.findMany({
+      where: {
+        OR: [
+          isNaN(idKw)
+            ? undefined
+            : {
+                setId: idKw,
+              },
+          {
+            version: {
+              contains: keyword,
+            },
+          },
+          {
+            creator: {
+              contains: keyword,
+            },
+          },
+        ].filter(TSFilter),
+      },
+      include: {
+        source: true,
+      },
+      take: limit,
+    })
+    return result.map(toBeatmapWithBeatmapset).filter(TSFilter)
+  }
+
+  async #searchBeatmapset({ keyword, limit }: { keyword: string; limit: number }): Promise<Beatmapset<BeatmapSource, number, unknown>[]> {
+    const idKw = stringToId(keyword)
+    const beatmaps = await this.db.map.findMany({
+      where: {
+        OR: [
+          isNaN(idKw)
+            ? undefined
+            : {
+                setId: idKw,
+              },
+          {
+            title: {
+              contains: keyword,
+            },
+          },
+          {
+            artist: {
+              contains: keyword,
+            },
+          },
+        ].filter(TSFilter),
+      },
+      distinct: ['setId'],
+      include: {
+        source: true,
+      },
+      take: limit,
+    })
+    return beatmaps.map(bs => toBeatmapset(bs.source, bs)).filter(TSFilter)
+  }
+
+  async search(opt: { keyword: string; limit: number }) {
+    const [beatmaps, beatmapsets] = await Promise.all([this.#searchBeatmap(opt), this.#searchBeatmapset(opt)])
+    return {
+      beatmaps,
+      beatmapsets,
+    }
   }
 }

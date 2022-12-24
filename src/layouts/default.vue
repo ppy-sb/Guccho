@@ -10,9 +10,11 @@ onMounted(() => {
 </script>
 
 <template>
-  <app-layout :has-bg="true">
-    <slot />
-    <template #footer>
+  <div class="flex flex-col overflow-y-hidden">
+    <div class="flex flex-col min-h-screen overflow-auto">
+      <div class="flex flex-col flex-grow">
+        <slot />
+      </div>
       <footer class="py-4 text-center bottom-1">
         <h3 v-if="safari">
           dev note: some visual effects are disabled for safari to improve performance.
@@ -25,6 +27,6 @@ onMounted(() => {
           <span class="text-yellow-600 dark:text-yellow-400">FRONT</span> {{ config.version.front }}
         </h2> -->
       </footer>
-    </template>
-  </app-layout>
+    </div>
+  </div>
 </template>
