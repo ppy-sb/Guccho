@@ -3,7 +3,9 @@ const config = useAppConfig()
 </script>
 
 <template>
-  <teleport :to="`#${config.appModalTeleportTargetId}`">
-    <slot />
-  </teleport>
+  <client-only>
+    <teleport :to="`#${config.appModalTeleportTargetId}`">
+      <slot />
+    </teleport>
+  </client-only>
 </template>
