@@ -151,7 +151,7 @@ export default {
 </script>
 
 <template>
-  <div>
+  <div class="menubar">
     <template v-for="(item, index) in items">
       <div
         v-if="item.type === 'divider'"
@@ -213,8 +213,9 @@ export default {
   </div>
 </template>
 
-<style lang="scss" scoped>
-.divider {
+<style lang="scss">
+.menubar {
+  .divider {
   width: 2px;
   height: 1.25rem;
   background-color: rgba(#000, 0.1);
@@ -247,5 +248,6 @@ export default {
 .icon {
   width: 1.75rem !important;
   height: 1.75rem !important;
+}
 }
 </style>
