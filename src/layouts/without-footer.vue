@@ -1,13 +1,9 @@
-<script setup lang="ts">
-import { onMounted, ref } from 'vue'
-const safari = ref(true)
-onMounted(() => {
-  safari.value = useSafariDetector()
-})
-</script>
-
 <template>
-  <app-layout :has-bg="true">
-    <slot />
-  </app-layout>
+  <div class="flex flex-col overflow-y-hidden">
+    <div class="flex flex-col min-h-screen overflow-auto">
+      <div class="flex flex-col flex-grow">
+        <slot />
+      </div>
+    </div>
+  </div>
 </template>

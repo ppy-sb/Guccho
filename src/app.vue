@@ -18,18 +18,15 @@ onMounted(() => {
       safari ? 'safari' : 'not-safari',
     ]"
   >
-    <app-navbar :disabled="modalContainer?.stat === 'show'" />
     <app-experience class="z-50" />
     <t-modal-container ref="modalContainer" :teleport-id="config.appModalTeleportTargetId">
-      <!-- bg-kimberly-50 dark:bg-kimberly-800 -->
-      <div class="flex flex-col overflow-y-hidden">
-        <div class="flex flex-col min-h-screen overflow-auto">
-          <div class="flex flex-col flex-grow">
-            <slot />
-          </div>
-          <slot name="footer" />
-        </div>
-      </div>
+      <teleport to="body">
+        <app-navbar :disabled="modalContainer?.stat === 'show'" />
+      </teleport>
+
+      <NuxtLayout>
+        <NuxtPage />
+      </NuxtLayout>
     </t-modal-container>
   </div>
 </template>

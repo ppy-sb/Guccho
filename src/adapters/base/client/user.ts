@@ -1,6 +1,6 @@
 import type { JSONContent } from '@tiptap/core'
+import type { UserEssential, UserExtra, UserOptional, UserStatistic } from './../../../types/user'
 import type { Awaitable, Mode, NumberRange, OverallLeaderboardRankingSystem, Ruleset } from '~/types/common'
-import type { UserEssential, UserExtra, UserOptional, UserStatistic } from '~/types/user'
 import type { RankingSystemScore } from '~/types/score'
 
 export namespace UserDataProvider {
@@ -21,7 +21,6 @@ export interface UserDataProvider<Id> {
   exists({ handle, keys }: UserDataProvider.OptType<Id>): Awaitable<boolean>
   getEssential<Includes extends Partial<Record<keyof UserOptional<Id>, boolean>>>(opt: UserDataProvider.OptType<Id, Includes>): Awaitable<UserEssential<Id> | null>
   getEssentialById<Includes extends Partial<Record<keyof UserOptional<Id>, boolean>>>(opt: { id: Id; includes: Includes }): Awaitable<UserEssential<Id> | null>
-  getEssentials<Includes extends Partial<Record<keyof UserOptional<Id>, boolean>>>(opt: { handle: string; includes?: Includes }): Awaitable<UserEssential<Id>[]>
   getBests<_Mode extends Mode, _Ruleset extends Ruleset, _RankingSystem extends OverallLeaderboardRankingSystem>(query: {
     id: Id
     mode: _Mode
@@ -86,5 +85,7 @@ export interface UserDataProvider<Id> {
     user: { id: Id },
     newPasswordMD5: string,
   ): Awaitable<UserEssential<Id>>
+
+  search(opt: { keyword: string; limit: number }): Awaitable<UserEssential<Id>[]>
 
 }

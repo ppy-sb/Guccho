@@ -1,13 +1,18 @@
 <script setup lang="ts">
 import { computed, onBeforeMount, onUnmounted, ref } from 'vue'
 import { useAppConfig } from '#app'
+import type { inferProcedureOutput } from '@trpc/server'
+import { useDebounceFn } from '@vueuse/core'
 import { useSession } from '~/store/session'
+import type { AppRouter } from '~~/src/server/trpc/routers'
 
 const props
   = defineProps<{
     disabled?: boolean
   }>()
 const session = useSession()
+
+const { $client } = useNuxtApp()
 
 const menu = computed(() => [
   {
@@ -51,6 +56,9 @@ const config = useAppConfig()
 const detached = ref(false)
 
 const root = ref<HTMLElement>()
+const searchModal = ref<{
+  openModal: () => void
+}>()
 const shownMenu = reactive({
   left: false,
   right: false,
@@ -63,6 +71,25 @@ const handleScroll = () => {
   detached.value = window.pageYOffset > 0
 }
 
+const kw = ref<string>('')
+const searchResult = ref<inferProcedureOutput<AppRouter['search']['search']>>()
+
+const debouncedSearch = useDebounceFn(async () => {
+  if (!kw.value) {
+    searchResult.value = undefined
+    return
+  }
+  const result = await $client.search.search.query({ keyword: kw.value })
+  searchResult.value = result
+}, 300)
+const search = () => {
+  if (!kw.value) {
+    searchResult.value = undefined
+    return
+  }
+
+  debouncedSearch()
+}
 const logout = async () => {
   await session.destroy()
   navigateTo('/')
@@ -78,9 +105,108 @@ onUnmounted(() => {
 <template>
   <div
     ref="root"
-    class="w-full z-50 transition-[padding] fixed navbar-container"
-    :class="[detached && 'detached']"
+    class="w-full transition-[padding] fixed navbar-container"
+    :class="[detached && 'detached', !disabled && 'z-50']"
   >
+    <t-modal-root>
+      <t-modal-wrapper
+        ref="searchModal"
+        v-slot="{ closeModal }"
+      >
+        <t-modal>
+          <template #root>
+            <div class="card w-1/2 max-h-screen bg-gradient-to-b from-base-300 to-base-200 shadow-md">
+              <div class="card-actions justify-end pt-2 px-1">
+                <button class="btn btn-ghost btn-sm" @click="() => closeModal()">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+              </div>
+              <input
+                v-model="kw"
+                type="text"
+                placeholder="Search User and Beatmaps..."
+                class="input input-bordered input-ghost shadow-xl m-4"
+                @input="search"
+              >
+              <div class="pt-0 overflow-auto menus">
+                <template v-if="searchResult">
+                  <template v-if="searchResult.beatmapsets.length || searchResult.beatmaps.length || searchResult.users.length">
+                    <template v-if="searchResult?.beatmapsets.length">
+                      <div class="divider">
+                        beatmapsets
+                      </div>
+                      <ul class="menu">
+                        <li v-for="bs in searchResult.beatmapsets" :key="`searchResult-bs-${bs.id}`">
+                          <nuxt-link
+                            :to="{
+                              name: 'beatmapset-id',
+                              params: {
+                                id: bs.id,
+                              },
+                            }"
+                            @click="() => closeModal()"
+                          >
+                            {{ bs.meta.intl.artist }} - {{ bs.meta.intl.title }}
+                          </nuxt-link>
+                        </li>
+                      </ul>
+                    </template>
+                    <template v-if="searchResult?.beatmaps.length">
+                      <div class="divider w-full">
+                        beatmaps
+                      </div>
+                      <ul class="menu">
+                        <li v-for="bm in searchResult.beatmaps" :key="`searchResult-bm-${bm.id}`">
+                          <nuxt-link
+                            :to="{
+                              name: 'beatmapset-id',
+                              params: {
+                                id: bm.beatmapset.id,
+                              },
+                            }"
+                            @click="() => closeModal()"
+                          >
+                            {{ bm.beatmapset.meta.intl.artist }} - {{ bm.beatmapset.meta.intl.title }} [{{ bm.version }}]
+                          </nuxt-link>
+                        </li>
+                      </ul>
+                    </template>
+                    <template v-if="searchResult?.users.length">
+                      <div class="divider">
+                        users
+                      </div>
+                      <ul class="menu">
+                        <li v-for="user in searchResult.users" :key="`searchResult-user-${user.safeName}`">
+                          <nuxt-link
+                            :to="{
+                              name: 'user-handle',
+                              params: {
+                                handle: `@${user.safeName}`,
+                              },
+                            }"
+                            @click="() => closeModal()"
+                          >
+                            {{ user.name }}
+                          </nuxt-link>
+                        </li>
+                      </ul>
+                    </template>
+                  </template>
+                  <div v-else class="p-5">
+                    No Result
+                  </div>
+                </template>
+                <template v-else-if="kw">
+                  <div class="p-5">
+                    searching "{{ kw }}"...
+                  </div>
+                </template>
+              </div>
+            </div>
+          </template>
+        </t-modal>
+      </t-modal-wrapper>
+    </t-modal-root>
     <div
       class="navbar navbar-tint transition-[border-radius]"
       :class="[
@@ -155,58 +281,23 @@ onUnmounted(() => {
         </nuxt-link>
       </div>
       <div class="navbar-end">
-        <v-dropdown
-          theme="guweb-dropdown"
-          placement="left"
-          :distance="8"
-          strategy="fixed"
-        >
-          <button class="btn btn-ghost btn-circle">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="w-5 h-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-          </button>
-          <template #popper>
-            <div class="overflow-hidden">
-              <div class="form-control">
-                <div class="input-group">
-                  <input
-                    type="text"
-                    placeholder="Search…"
-                    class="input input-bordered input-sm shadow-md"
-                  >
-                  <button class="btn btn-sm btn-primary">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-4 w-4"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                      />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </template>
-        </v-dropdown>
+        <button class="btn btn-ghost btn-circle" @click="() => searchModal?.openModal()">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-5 h-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
+          </svg>
+        </button>
+
         <v-dropdown
           v-model:shown="shownMenu.user"
           theme="guweb-dropdown"
@@ -365,6 +456,11 @@ onUnmounted(() => {
         @apply w-6 !important;
       }
     }
+  }
+}
+.menus {
+  .menu:last-of-type {
+    @apply rounded-b-box
   }
 }
 </style>

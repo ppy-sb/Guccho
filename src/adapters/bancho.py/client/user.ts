@@ -9,7 +9,7 @@ import { BanchoPyMode, toBanchoPyMode } from '../enums'
 import { createRulesetData, toFullUser, toUserEssential } from '../transforms'
 import { toRankingSystemScores } from '../transforms/scores'
 import { createUserQuery } from '../transforms/db-queries'
-import { idToString } from '../transforms/id-conversion'
+import { idToString, stringToId } from '../transforms/id-conversion'
 import BanchoPyUserRelationship from './user-relations'
 import { prismaClient } from '.'
 import type { UserDataProvider } from '$def/client/user'
@@ -43,14 +43,10 @@ async function getLiveRank(id: number, mode: number, country: string) {
   }
 }
 
-export interface DatabaseModel {
-  user: PrismaClient['user']
-  stat: PrismaClient['stat']
-  score: PrismaClient['score']
-  $queryRaw: PrismaClient['$queryRaw']
-}
+const TSFilter = <T>(item: T): item is Exclude<T, undefined> => item !== undefined
+
 export default class BanchoPyUser implements UserDataProvider<Id> {
-  db: DatabaseModel
+  db: PrismaClient
 
   relationships: BanchoPyUserRelationship
 
@@ -63,7 +59,7 @@ export default class BanchoPyUser implements UserDataProvider<Id> {
     return (await this.db.user.count(createUserQuery(handle, keys || ['id', 'name', 'safeName', 'email']))) > 0
   }
 
-  async getEssentialById<Includes extends Partial<Record<keyof UserOptional<unknown>, boolean>>>({ id, includes }: { id: Id; includes: Includes }) {
+  async getEssentialById<Includes extends Partial<Record<keyof UserOptional<unknown>, boolean>>>({ id, includes }: { id: Id; includes?: Includes }) {
     const user = await this.db.user.findFirst(
       {
         where: {
@@ -86,12 +82,6 @@ export default class BanchoPyUser implements UserDataProvider<Id> {
       return null
 
     return toUserEssential({ user, includes })
-  }
-
-  async getEssentials<Includes extends Partial<Record<keyof UserOptional<Id>, boolean>>>(opt: { handle: string; includes?: Includes | undefined }) {
-    const { handle, includes } = opt
-    const users = await this.db.user.findMany(createUserQuery(handle))
-    return users.map(user => toUserEssential({ user, includes }))
   }
 
   async getBests({
@@ -384,5 +374,46 @@ export default class BanchoPyUser implements UserDataProvider<Id> {
       },
     })
     return toUserEssential({ user: result })
+  }
+
+  async search({ keyword, limit }: { keyword: string; limit: number }) {
+    const idKw = stringToId(keyword)
+    const result = await this.db.user.findMany({
+      where: {
+        OR: [
+          isNaN(idKw)
+            ? undefined
+            : {
+                id: idKw,
+              },
+          {
+            name: {
+              contains: keyword,
+            },
+          },
+          {
+            safeName: {
+              contains: keyword,
+            },
+          },
+          keyword.startsWith('@')
+            ? {
+                safeName: {
+                  contains: keyword.slice(1),
+                },
+              }
+            : undefined,
+          // TODO: search by email after preferences implemented
+          // {
+          //   email: {
+          //     contains: keyword,
+          //   },
+          // },
+        ].filter(TSFilter),
+      },
+      take: limit,
+    })
+
+    return result.map(user => toUserEssential({ user }))
   }
 }
