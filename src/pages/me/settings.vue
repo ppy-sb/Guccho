@@ -104,7 +104,7 @@ const updatePassword = async (closeModal: () => void) => {
     changePasswordError.value = error.message
   }
 }
-onBeforeMount(async () => {
+onBeforeMount(() => {
   if (!user.value.profile)
     return
   profile.value = user.value.profile.raw
