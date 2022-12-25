@@ -3,6 +3,8 @@ import { generateHTML } from '@tiptap/html'
 import { TRPCError } from '@trpc/server'
 import type { PrismaClient } from '@prisma/client' // ppy.sb
 import type { Id } from '../config'
+import { toFullUser } from '../../bancho.py/transforms'
+import { createUserQuery } from '../../bancho.py/transforms/db-queries'
 import { prismaClient } from './index'
 import type { UserEssential } from '~/types/user'
 import { UserDataProvider as BanchoPyUser } from '~/adapters/bancho.py/client'
@@ -65,6 +67,50 @@ export class UserDataProvider extends BanchoPyUser implements Base<Id> {
     }
     catch (err) {
       throw new TRPCError({ code: 'PARSE_ERROR', message: 'unable to parse json content' })
+    }
+  }
+
+  async getFull<Excludes extends Partial<Record<keyof Base.ComposableProperties<Id>, boolean>>>({ handle, excludes }: { handle: string; excludes?: Excludes }) {
+    if (!excludes)
+      excludes = <Excludes>{ secrets: true }
+    const user = await this.sbDb.user.findFirst(createUserQuery(handle))
+
+    if (user == null)
+      return null
+
+    const fullUser = await toFullUser(user)
+    const profile = await this.db.userpage.findFirst({
+      where: {
+        userId: user.id,
+      },
+    })
+
+    return {
+      ...fullUser,
+      reachable: false,
+      status: 'offline' as const,
+      statistics:
+        (excludes.statistics === true
+          ? undefined as never
+          : await this.getStatistics(user)),
+      relationships:
+        (excludes.relationships === true
+          ? undefined as never
+          : await this.relationships.get({ user })),
+      email: (excludes.email === true ? undefined as never : user.email),
+      profile: (excludes.profile === true
+        ? undefined as never
+        : {
+            html: profile?.html || '',
+            // TODO: alter database to read/save raw
+            raw: JSON.parse(profile?.raw || '{}'),
+          }),
+      secrets: (excludes.secrets === false
+        ? {
+            password: user.pwBcrypt,
+            apiKey: user.apiKey ?? undefined,
+          }
+        : undefined as never),
     }
   }
 }
