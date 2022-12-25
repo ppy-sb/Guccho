@@ -154,7 +154,12 @@ const placeholder = (e: Event & { target: HTMLImageElement }) => {
                             <div
                               class="drop-shadow-lg flex gap-2 items-center"
                             >
-                              <img v-if="assertIsBanchoBeatmapset(bs)" :src="`https://b.ppy.sh/thumb/${bs.foreignId}.jpg`" :onerror="placeholder" class="h-[30px] mask mask-squircle">
+                              <img
+                                v-if="assertIsBanchoBeatmapset(bs)"
+                                class="h-[30px] mask mask-squircle"
+                                :src="`https://b.ppy.sh/thumb/${bs.foreignId}.jpg`"
+                                :onerror="placeholder"
+                              >
                               <span>{{ bs.meta.intl.artist }} - {{ bs.meta.intl.title }}</span>
                             </div>
                           </nuxt-link>
@@ -168,7 +173,6 @@ const placeholder = (e: Event & { target: HTMLImageElement }) => {
                       <ul class="menu">
                         <li v-for="bm in searchResult.beatmaps" :key="`searchResult-bm-${bm.id}`">
                           <nuxt-link
-                            class="py-2"
                             :to="{
                               name: 'beatmapset-id',
                               params: {
@@ -180,7 +184,12 @@ const placeholder = (e: Event & { target: HTMLImageElement }) => {
                             <div
                               class="drop-shadow-lg flex gap-2 items-center"
                             >
-                              <img v-if="assertIsBanchoBeatmapset(bm.beatmapset)" :src="`https://b.ppy.sh/thumb/${bm.beatmapset.foreignId}.jpg`" class="h-[30px] mask mask-squircle">
+                              <img
+                                v-if="assertIsBanchoBeatmapset(bm.beatmapset)"
+                                class="h-[30px] mask mask-squircle"
+                                :src="`https://b.ppy.sh/thumb/${bm.beatmapset.foreignId}.jpg`"
+                                :onerror="placeholder"
+                              >
                               <span>{{ bm.beatmapset.meta.intl.artist }} - {{ bm.beatmapset.meta.intl.title }} [{{ bm.version }}]</span>
                             </div>
                           </nuxt-link>
@@ -194,7 +203,6 @@ const placeholder = (e: Event & { target: HTMLImageElement }) => {
                       <ul class="menu">
                         <li v-for="user in searchResult.users" :key="`searchResult-user-${user.safeName}`">
                           <nuxt-link
-                            class="py-2"
                             :to="{
                               name: 'user-handle',
                               params: {
