@@ -88,6 +88,12 @@ export default class BanchoPyMap implements MapDataProvider<Id> {
       include: {
         source: true,
       },
+      orderBy: [
+        {
+          setId: 'desc',
+          id: 'asc',
+        },
+      ],
       take: limit,
     })
     return result.map(toBeatmapWithBeatmapset).filter(TSFilter)
@@ -121,6 +127,12 @@ export default class BanchoPyMap implements MapDataProvider<Id> {
         ].filter(TSFilter),
       },
       distinct: ['setId'],
+      orderBy: [
+        {
+          setId: 'desc',
+          id: 'asc',
+        },
+      ],
       include: {
         source: true,
       },
