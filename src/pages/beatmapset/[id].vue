@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { RankingSystem } from '~/types/common'
-import type { BeatmapSource, Beatmapset } from '~/types/beatmap'
+import { assertIsBanchoBeatmapset } from '~/helpers'
 const { $client } = useNuxtApp()
 const route = useRoute()
 const adapterConfig = useAdapterConfig()
@@ -9,10 +9,6 @@ const { data: beatmapset, error } = await useAsyncData(
   async () =>
     await $client.map.beatmapset.query({ id: route.params.id.toString() }),
 )
-
-const assertIsBanchoBeatmapset = (test: Beatmapset<BeatmapSource, any, unknown>): test is Beatmapset<'bancho', any, string | number> => {
-  return test.source === 'bancho'
-}
 
 const bgCover = beatmapset.value && assertIsBanchoBeatmapset(beatmapset.value) && {
   cover: `url('https://assets.ppy.sh/beatmaps/${beatmapset.value.foreignId}/covers/cover.jpg?${Math.floor(new Date().getTime() / 1000)}')`,
