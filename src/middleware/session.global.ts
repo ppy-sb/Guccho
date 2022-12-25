@@ -8,5 +8,11 @@ export default defineNuxtRouteMiddleware(async () => {
     return
   if (session.loggedIn)
     return
-  await session.retrieve()
+  try {
+    await session.retrieve()
+  }
+  catch (error) {
+    // server restarted probably, will have to re-login again
+    session.$reset()
+  }
 })
