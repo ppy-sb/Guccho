@@ -91,7 +91,6 @@ export default class BanchoPyMap implements MapDataProvider<Id> {
       orderBy: [
         {
           setId: 'desc',
-          id: 'asc',
         },
       ],
       take: limit,
@@ -130,7 +129,6 @@ export default class BanchoPyMap implements MapDataProvider<Id> {
       orderBy: [
         {
           setId: 'desc',
-          id: 'asc',
         },
       ],
       include: {
