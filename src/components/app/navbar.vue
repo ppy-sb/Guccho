@@ -120,7 +120,7 @@ const placeholder = (e: Event & { target: HTMLImageElement }) => {
       >
         <t-modal>
           <template #root>
-            <div class="card w-11/12 lg:w-1/2 max-h-[calc(100vh-2em)] bg-gradient-to-b from-base-300 to-base-200 shadow-md">
+            <div class="card w-11/12 lg:w-1/2 max-h-[calc(100vh-2em)] bg-gradient-to-b from-kimberly-100 to-kimberly-200 dark:from-base-300 dark:to-base-200 shadow-md">
               <div class="card-actions justify-end pt-2 px-1">
                 <button class="btn btn-ghost btn-sm" @click="() => closeModal()">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
