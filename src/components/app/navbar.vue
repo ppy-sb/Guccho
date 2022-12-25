@@ -5,6 +5,7 @@ import type { inferProcedureOutput } from '@trpc/server'
 import { useDebounceFn } from '@vueuse/core'
 import { useSession } from '~/store/session'
 import type { AppRouter } from '~~/src/server/trpc/routers'
+import { assertIsBanchoBeatmapset } from '~~/src/helpers'
 
 const props
   = defineProps<{
@@ -100,6 +101,10 @@ onBeforeMount(() => {
 onUnmounted(() => {
   document.removeEventListener('scroll', handleScroll)
 })
+
+const placeholder = (e: Event & { target: HTMLImageElement }) => {
+  e.target.src = '/images/image-placeholder.svg'
+}
 </script>
 
 <template>
@@ -146,7 +151,12 @@ onUnmounted(() => {
                             }"
                             @click="() => closeModal()"
                           >
-                            {{ bs.meta.intl.artist }} - {{ bs.meta.intl.title }}
+                            <div
+                              class="drop-shadow-lg flex gap-2 items-center"
+                            >
+                              <img v-if="assertIsBanchoBeatmapset(bs)" :src="`https://b.ppy.sh/thumb/${bs.foreignId}.jpg`" :onerror="placeholder" class="h-[30px] mask mask-squircle">
+                              <span>{{ bs.meta.intl.artist }} - {{ bs.meta.intl.title }}</span>
+                            </div>
                           </nuxt-link>
                         </li>
                       </ul>
@@ -158,6 +168,7 @@ onUnmounted(() => {
                       <ul class="menu">
                         <li v-for="bm in searchResult.beatmaps" :key="`searchResult-bm-${bm.id}`">
                           <nuxt-link
+                            class="py-2"
                             :to="{
                               name: 'beatmapset-id',
                               params: {
@@ -166,7 +177,12 @@ onUnmounted(() => {
                             }"
                             @click="() => closeModal()"
                           >
-                            {{ bm.beatmapset.meta.intl.artist }} - {{ bm.beatmapset.meta.intl.title }} [{{ bm.version }}]
+                            <div
+                              class="drop-shadow-lg flex gap-2 items-center"
+                            >
+                              <img v-if="assertIsBanchoBeatmapset(bm.beatmapset)" :src="`https://b.ppy.sh/thumb/${bm.beatmapset.foreignId}.jpg`" class="h-[30px] mask mask-squircle">
+                              <span>{{ bm.beatmapset.meta.intl.artist }} - {{ bm.beatmapset.meta.intl.title }} [{{ bm.version }}]</span>
+                            </div>
                           </nuxt-link>
                         </li>
                       </ul>
@@ -178,6 +194,7 @@ onUnmounted(() => {
                       <ul class="menu">
                         <li v-for="user in searchResult.users" :key="`searchResult-user-${user.safeName}`">
                           <nuxt-link
+                            class="py-2"
                             :to="{
                               name: 'user-handle',
                               params: {
@@ -186,7 +203,12 @@ onUnmounted(() => {
                             }"
                             @click="() => closeModal()"
                           >
-                            {{ user.name }}
+                            <div
+                              class="drop-shadow-lg flex gap-2 items-center"
+                            >
+                              <img :src="user.avatarUrl" class="w-[30px] mask mask-squircle" :onerror="placeholder">
+                              <span>{{ user.name }}</span>
+                            </div>
                           </nuxt-link>
                         </li>
                       </ul>
