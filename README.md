@@ -31,7 +31,7 @@ guweb-next has multi-platform support in mind. It's modular but not hot-swapable
 
 ```bash
 # make sure you did run `yarn install`
-yarn prisma generate --schema=prisma/bancho.py.prisma
+yarn prisma:gen:dev --schema=prisma/bancho.py.prisma
 ```
 
 ## Development Server
@@ -85,9 +85,7 @@ Checkout the [deployment documentation](https://v3.nuxtjs.org/guide/deploy/prese
 
 Plan: deprecate Python api server and use Nuxt 3 only.
 
-- phase 1: migrate to nuxt 3 with typescript support [x]
-- phase 2: define tRPC schema for both frontend and backend [x]
-- phase 3: ~~migrate legacy python server to nuxt 3 api.~~ No we don't we create a new one instead.
+migration done
 
 todo: search 'TODO' in repo.
 
