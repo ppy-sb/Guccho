@@ -1,32 +1,46 @@
 import type {
   Id,
 } from '../config'
+
 import { prismaClient } from '.'
-import type { BanchoPyMode } from '~/adapters/bancho.py/enums'
+
 import { toBanchoPyMode } from '~/adapters/bancho.py/enums'
 import { LeaderboardDataProvider as BanchoPyLeaderboardDataProvider } from '~/adapters/bancho.py/client'
 import { toRoles } from '~/adapters/bancho.py/transforms'
+
 import type { Mode, OverallLeaderboardRankingSystem, Ruleset } from '~/types/common'
 
 export class LeaderboardDataProvider extends BanchoPyLeaderboardDataProvider {
-  async getOverallLeaderboard({
-    mode,
-    ruleset,
-    rankingSystem,
-    page,
-    pageSize,
-  }: {
+  async getPPv2LiveLeaderboard(banchoPyMode: number, start: number, end: number, country?: string) {
+    if (this.redisClient) {
+      await this.redisReady
+      return await this.redisClient.zRange(
+        country ? `bancho:leaderboard:${banchoPyMode}:${country}` : `bancho:leaderboard:${banchoPyMode}`,
+        '+inf',
+        1,
+        {
+          BY: 'SCORE',
+          REV: true,
+          LIMIT: {
+            offset: start,
+            count: end,
+          },
+        },
+      )
+    }
+    return []
+  }
+
+  async overallLeaderboardFromDatabase(opt: {
     mode: Mode
     ruleset: Ruleset
     rankingSystem: OverallLeaderboardRankingSystem
     page: number
     pageSize: number
   }) {
-    if (rankingSystem === 'ppv1')
-      return []
+    const { rankingSystem, mode, ruleset, page, pageSize } = opt
     const start = page * pageSize
-
-    const result = await prismaClient.$queryRawUnsafe<
+    return await prismaClient.$queryRawUnsafe<
       Array<{
         id: Id
         name: string
@@ -34,7 +48,6 @@ export class LeaderboardDataProvider extends BanchoPyLeaderboardDataProvider {
         flag: string
         priv: number
 
-        mode: BanchoPyMode
         _rank: bigint
         accuracy: number
         totalScore: bigint
@@ -44,6 +57,9 @@ export class LeaderboardDataProvider extends BanchoPyLeaderboardDataProvider {
       }>
     >(/* sql */`
   SELECT 
+  ${rankingSystem === 'ppv2' ? '(SELECT COUNT(*) + 1 FROM stats s WHERE s.mode = stat.mode AND s.pp > stat.pp) as _rank,' : ''}
+  ${rankingSystem === 'totalScore' ? '(SELECT COUNT(*) + 1 FROM stats s WHERE s.mode = stat.mode AND s.tscore > stat.tscore) as _rank,' : ''}
+  ${rankingSystem === 'rankedScore' ? '(SELECT COUNT(*) + 1 FROM stats s WHERE s.mode = stat.mode AND s.rscore > stat.rscore) as _rank,' : ''}
   user.id,
   user.name,
   user.safe_name AS safeName,
@@ -54,10 +70,7 @@ export class LeaderboardDataProvider extends BanchoPyLeaderboardDataProvider {
   stat.rscore AS rankedScore,
   stat.tscore AS totalScore,
   stat.plays AS playCount,
-  stat.mode,
-  ${rankingSystem === 'ppv2' ? '(SELECT COUNT(*) + 1 FROM stats s WHERE s.mode = stat.mode AND s.pp > stat.pp) as _rank' : ''}
-  ${rankingSystem === 'totalScore' ? '(SELECT COUNT(*) + 1 FROM stats s WHERE s.mode = stat.mode AND s.tscore > stat.tscore) as _rank' : ''}
-  ${rankingSystem === 'rankedScore' ? '(SELECT COUNT(*) + 1 FROM stats s WHERE s.mode = stat.mode AND s.rscore > stat.rscore) as _rank' : ''}
+  stat.mode
 FROM stats stat
 LEFT JOIN users user
 ON stat.id = user.id 
@@ -65,6 +78,86 @@ WHERE stat.mode = ${toBanchoPyMode(mode, ruleset)} AND user.priv > 2
 HAVING _rank > 0
 ORDER BY _rank ASC
 LIMIT ${start}, ${pageSize}`)
+  }
+
+  async getOverallLeaderboard(opt: {
+    mode: Mode
+    ruleset: Ruleset
+    rankingSystem: OverallLeaderboardRankingSystem
+    page: number
+    pageSize: number
+  }) {
+    const {
+      mode,
+      ruleset,
+      rankingSystem,
+      page,
+      pageSize,
+    } = opt
+    if (rankingSystem === 'ppv1')
+      return []
+    const start = page * pageSize
+
+    let result: Awaited<ReturnType<LeaderboardDataProvider['overallLeaderboardFromDatabase']>> = []
+
+    if (rankingSystem === 'ppv2') {
+      try {
+        const bPyMode = toBanchoPyMode(mode, ruleset)
+        if (bPyMode === undefined)
+          throw new Error('no mode')
+        // TODO: banned players are included
+        const rank = await this.getPPv2LiveLeaderboard(bPyMode, start, start + pageSize * 2).then(res => res.map(Number))
+
+        const [users, stats] = await Promise.all([
+          this.db.user.findMany({
+            where: {
+              id: {
+                in: rank,
+              },
+            },
+          }),
+          this.db.stat.findMany({
+            where: {
+              id: {
+                in: rank,
+              },
+              mode: bPyMode,
+            },
+          }),
+        ])
+        for (const index in rank) {
+          if (result.length >= pageSize)
+            break
+          const id = rank[index]
+          const user = users.find(u => u.id === id)
+          const stat = stats.find(s => s.id === id)
+
+          if (!user || !stat || user.priv <= 2)
+            continue
+
+          result.push({
+            id: user.id,
+            name: user.name,
+            safeName: user.safeName,
+            flag: user.country,
+            ppv2: stat.pp,
+            priv: user.priv,
+            _rank: BigInt(start + parseInt(index) + 1),
+            accuracy: stat.accuracy,
+            totalScore: stat.totalScore,
+            rankedScore: stat.rankedScore,
+            playCount: stat.plays,
+          })
+        }
+      }
+      catch (e) {
+        console.error(e)
+        result = await this.overallLeaderboardFromDatabase(opt)
+      }
+    }
+    else {
+      result = await this.overallLeaderboardFromDatabase(opt)
+    }
 
     return result.map((item, index) => ({
       user: {

@@ -1,6 +1,7 @@
 import {
   PrismaClient,
 } from '@prisma/client' // ppy.sb
+
 import * as BanchoPy from '~/adapters/bancho.py/client'
 
 export const prismaClient = new PrismaClient()

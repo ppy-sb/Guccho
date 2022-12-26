@@ -1,5 +1,6 @@
 import type { JSONContent } from '@tiptap/core'
 import bcrypt from 'bcryptjs'
+import type { RedisClientType } from 'redis'
 import { createClient } from 'redis'
 import { TRPCError } from '@trpc/server'
 import { generateHTML } from '@tiptap/html'
@@ -22,37 +23,41 @@ import type {
   UserStatistic,
 } from '~/types/user'
 
-const redisClient
-  = Boolean(process.env.REDIS_URI)
-  && createClient({
-    url: process.env.REDIS_URI,
-  })
-
-async function getLiveRank(id: number, mode: number, country: string) {
-  if (redisClient) {
-    return {
-      rank: await redisClient.zRevRank(
-        `bancho:leaderboard:${mode}`,
-        idToString(id),
-      ),
-      countryRank: await redisClient.zRevRank(
-        `bancho:leaderboard:${mode}:${country}`,
-        idToString(id),
-      ),
-    }
-  }
-}
-
 const TSFilter = <T>(item: T): item is Exclude<T, undefined> => item !== undefined
 
 export default class BanchoPyUser implements UserDataProvider<Id> {
   db: PrismaClient
 
   relationships: BanchoPyUserRelationship
+  redisClient?: RedisClientType
 
   constructor() {
     this.db = prismaClient
     this.relationships = new BanchoPyUserRelationship()
+    this.redisClient = process.env.BANCHO_PY_REDIS_URI !== ''
+      ? createClient({
+        url: process.env.BANCHO_PY_REDIS_URI,
+      })
+      : undefined
+    if (this.redisClient) {
+      this.redisClient.on('error', err => console.error('Redis Client Error', err))
+      this.redisClient.connect()
+    }
+  }
+
+  async getLiveRank(id: number, mode: number, country: string) {
+    if (this.redisClient?.isReady) {
+      return {
+        rank: await this.redisClient.zRevRank(
+        `bancho:leaderboard:${mode}`,
+        idToString(id),
+        ),
+        countryRank: await this.redisClient.zRevRank(
+        `bancho:leaderboard:${mode}:${country}`,
+        idToString(id),
+        ),
+      }
+    }
   }
 
   async exists({ handle, keys }: UserDataProvider.OptType<number, Record<never, never>>) {
@@ -180,23 +185,23 @@ export default class BanchoPyUser implements UserDataProvider<Id> {
   WHERE id = ${id}
   `.catch(_ => []),
 
-      redisClient
+      this.redisClient
         ? {
             osu: {
-              standard: await getLiveRank(id, BanchoPyMode.osuStandard, country),
-              relax: await getLiveRank(id, BanchoPyMode.osuRelax, country),
-              autopilot: await getLiveRank(id, BanchoPyMode.osuAutopilot, country),
+              standard: await this.getLiveRank(id, BanchoPyMode.osuStandard, country),
+              relax: await this.getLiveRank(id, BanchoPyMode.osuRelax, country),
+              autopilot: await this.getLiveRank(id, BanchoPyMode.osuAutopilot, country),
             },
             taiko: {
-              standard: await getLiveRank(id, BanchoPyMode.osuStandard, country),
-              relax: await getLiveRank(id, BanchoPyMode.osuRelax, country),
+              standard: await this.getLiveRank(id, BanchoPyMode.osuStandard, country),
+              relax: await this.getLiveRank(id, BanchoPyMode.osuRelax, country),
             },
             fruits: {
-              standard: await getLiveRank(id, BanchoPyMode.osuStandard, country),
-              relax: await getLiveRank(id, BanchoPyMode.osuRelax, country),
+              standard: await this.getLiveRank(id, BanchoPyMode.osuStandard, country),
+              relax: await this.getLiveRank(id, BanchoPyMode.osuRelax, country),
             },
             mania: {
-              standard: await getLiveRank(id, BanchoPyMode.osuStandard, country),
+              standard: await this.getLiveRank(id, BanchoPyMode.osuStandard, country),
             },
           }
         : undefined,

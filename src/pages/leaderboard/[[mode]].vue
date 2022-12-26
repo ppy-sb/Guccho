@@ -82,7 +82,6 @@ function reloadPage(i?: number) {
 
 <template>
   <div class="flex flex-col h-full leaderboard custom-container">
-    <fetch-overlay :fetching="pending" />
     <header-simple-title-with-sub
       class="container mx-auto custom-container lg:px-4"
       title="Leaderboard"
@@ -110,6 +109,7 @@ function reloadPage(i?: number) {
         content: table.length,
       }"
     >
+      <fetch-overlay :fetching="pending" />
       <template v-if="table.length">
         <div class="relative mx-auto overflow-hidden xl:rounded-lg">
           <div class="px-8 pt-2">
