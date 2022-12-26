@@ -28,7 +28,7 @@ const emitData = () => {
   emit('input', toRaw(switcher))
   emit('update:modelValue', toRaw(switcher))
 }
-watch(switcher, () => emitData(), { immediate: true })
+watch(switcher, () => emitData())
 </script>
 
 <template>
