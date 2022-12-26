@@ -13,8 +13,8 @@ import { idToString } from '$active/config'
 const userProvider = new UserDataProvider()
 const relationProvider = new UserRelationshipDataProvider()
 export const router = _router({
-  fullSecret: pUser.query(async ({ ctx }) => {
-    return await userProvider.getFull({ handle: idToString(ctx.user.id), excludes: { secrets: false } })
+  settings: pUser.query(async ({ ctx }) => {
+    return await userProvider.getFull({ handle: idToString(ctx.user.id), excludes: { statistics: true, relationships: true, secrets: false } })
   }),
   changeUserpage: pUser.input(z.object({
     profile: zodTipTapJSONContent,

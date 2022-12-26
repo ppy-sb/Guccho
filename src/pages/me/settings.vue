@@ -19,7 +19,7 @@ definePageMeta({
   middleware: ['auth'],
 })
 
-const _user = await $client.me.fullSecret.query()
+const _user = await $client.me.settings.query()
 
 const user = ref({ ..._user } as Exclude<typeof _user, null>)
 const unchanged = ref({ ...user.value })
