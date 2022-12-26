@@ -298,18 +298,25 @@ table.table.clear-rounded-tl {
   }
   &.ready::before {
       background-image: v-bind('lazyBgCover');
-      animation: fadeIn 1s ease-out forwards;
+      animation: fadeIn 0.5s ease-out forwards;
     }
 }
-
 @keyframes fadeIn {
   0% {
-    @apply opacity-0;
-    filter: blur(5em)
+    filter: opacity(0) contrast(0.5) brightness(1) blur(5em);
   }
   100% {
-    @apply opacity-10 dark:opacity-30;
-    filter: blur(2em)
+    filter: opacity(0.4) contrast(0.2) brightness(1.5) blur(3em);
   }
+}
+[data-theme="dark"] {
+  @keyframes fadeIn {
+  0% {
+    filter: opacity(0) contrast(0.5) brightness(1) blur(5em);
+  }
+  100% {
+    filter: opacity(1) contrast(0.5) brightness(0.5) blur(3em);
+  }
+}
 }
 </style>
