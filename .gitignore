@@ -247,3 +247,5 @@ yarn.lock
 fix-permission.sh
 # generated prisma client
 .prisma
+
+.mock

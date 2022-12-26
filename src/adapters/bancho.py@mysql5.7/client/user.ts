@@ -1,10 +1,8 @@
-import { createClient } from 'redis'
 import type { PrismaClient } from '@prisma/client' // bancho.py
 import type { Id } from '../config'
 import { prismaClient } from '.'
 import { BanchoPyMode } from '~/adapters/bancho.py/enums'
 import { createRulesetData } from '~/adapters/bancho.py/transforms'
-import { idToString } from '~/adapters/bancho.py/transforms/id-conversion'
 
 import type { UserDataProvider as Base } from '$def/client/user'
 import type { Mode, OverallLeaderboardRankingSystem, Ruleset } from '~/types/common'
@@ -14,27 +12,6 @@ import type {
 } from '~/types/user'
 
 import { UserDataProvider as BanchoPyUser } from '~/adapters/bancho.py/client'
-
-const redisClient
-  = Boolean(process.env.REDIS_URI)
-  && createClient({
-    url: process.env.REDIS_URI,
-  })
-
-async function getLiveRank(id: number, mode: number, country: string) {
-  if (redisClient) {
-    return {
-      rank: await redisClient.zRevRank(
-        `bancho:leaderboard:${mode}`,
-        idToString(id),
-      ),
-      countryRank: await redisClient.zRevRank(
-        `bancho:leaderboard:${mode}:${country}`,
-        idToString(id),
-      ),
-    }
-  }
-}
 
 export class UserDataProvider extends BanchoPyUser implements Base<Id> {
   sbDb: PrismaClient
@@ -101,23 +78,23 @@ WHERE id = ${id}
           return []
         }),
 
-      redisClient
+      this.redisClient
         ? {
             osu: {
-              standard: await getLiveRank(id, BanchoPyMode.osuStandard, country),
-              relax: await getLiveRank(id, BanchoPyMode.osuRelax, country),
-              autopilot: await getLiveRank(id, BanchoPyMode.osuAutopilot, country),
+              standard: await this.getLiveRank(id, BanchoPyMode.osuStandard, country),
+              relax: await this.getLiveRank(id, BanchoPyMode.osuRelax, country),
+              autopilot: await this.getLiveRank(id, BanchoPyMode.osuAutopilot, country),
             },
             taiko: {
-              standard: await getLiveRank(id, BanchoPyMode.osuStandard, country),
-              relax: await getLiveRank(id, BanchoPyMode.osuRelax, country),
+              standard: await this.getLiveRank(id, BanchoPyMode.osuStandard, country),
+              relax: await this.getLiveRank(id, BanchoPyMode.osuRelax, country),
             },
             fruits: {
-              standard: await getLiveRank(id, BanchoPyMode.osuStandard, country),
-              relax: await getLiveRank(id, BanchoPyMode.osuRelax, country),
+              standard: await this.getLiveRank(id, BanchoPyMode.osuStandard, country),
+              relax: await this.getLiveRank(id, BanchoPyMode.osuRelax, country),
             },
             mania: {
-              standard: await getLiveRank(id, BanchoPyMode.osuStandard, country),
+              standard: await this.getLiveRank(id, BanchoPyMode.osuStandard, country),
             },
           }
         : undefined,
