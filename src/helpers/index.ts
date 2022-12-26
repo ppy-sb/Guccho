@@ -11,3 +11,14 @@ export function assertIsString(input: unknown): input is string {
 export function assertIsBanchoBeatmapset(test: Beatmapset<BeatmapSource, any, unknown>): test is Beatmapset<'bancho', any, string | number> {
   return test.source === 'bancho'
 }
+
+export function loadImage(src: string) {
+  return new Promise((resolve, reject) => {
+    const image = new Image()
+    image.addEventListener('load', resolve)
+    image.addEventListener('error', reject)
+    image.src = src
+  })
+}
+
+export function noop() {}

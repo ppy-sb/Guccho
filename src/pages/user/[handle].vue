@@ -120,6 +120,7 @@ onMounted(() => {
             id="json"
             ref="json"
           /> -->
+          <div class="pt-4" />
         </div>
         <div class="hidden self-start lg:block lg:col-span-1 sticky top-[100px]">
           <ul class="menu menu-compact drop-shadow-xl">

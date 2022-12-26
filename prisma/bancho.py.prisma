@@ -6,7 +6,7 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = env("DB_DSN")
+  url      = env("BANCHO_PY_DB_DSN")
 }
 
 model User {

@@ -1,6 +1,8 @@
 <script setup lang="ts">
+// @ts-expect-error no d.ts
+import VLazyImage from 'v-lazy-image'
 import type { RankingSystem } from '~/types/common'
-import { assertIsBanchoBeatmapset } from '~/helpers'
+import { assertIsBanchoBeatmapset, loadImage, noop } from '~/helpers'
 const { $client } = useNuxtApp()
 const route = useRoute()
 const adapterConfig = useAdapterConfig()
@@ -11,9 +13,18 @@ const { data: beatmapset, error } = await useAsyncData(
 )
 
 const bgCover = beatmapset.value && assertIsBanchoBeatmapset(beatmapset.value) && {
-  cover: `url('https://assets.ppy.sh/beatmaps/${beatmapset.value.foreignId}/covers/cover.jpg?${Math.floor(new Date().getTime() / 1000)}')`,
+  cover: `https://assets.ppy.sh/beatmaps/${beatmapset.value.foreignId}/covers/cover.jpg?${Math.floor(new Date().getTime() / 1000)}`,
   listUrl: `https://assets.ppy.sh/beatmaps/${beatmapset.value.foreignId}/covers/list@2x.jpg?${Math.floor(new Date().getTime() / 1000)}`,
 }
+const lazyBgCover = ref('')
+
+onBeforeMount(() => {
+  bgCover && loadImage(bgCover.cover)
+    .then(() => {
+      lazyBgCover.value = `url(${bgCover.cover})`
+    })
+    .catch(noop)
+})
 
 const rankingSystem = ref<RankingSystem>(adapterConfig.supportedRankingSystems[0])
 const queryRs = route.query.rank?.toString()
@@ -71,6 +82,7 @@ const placeholder = (e: Event & { target: HTMLImageElement }) => {
     v-else-if="beatmapset"
     :class="[
       assertIsBanchoBeatmapset(beatmapset) && `pre-bg-cover`,
+      (lazyBgCover !== '') && 'ready',
     ]"
   >
     <div
@@ -116,7 +128,7 @@ const placeholder = (e: Event & { target: HTMLImageElement }) => {
       <div v-if="selectedMap" class="flex flex-col md:flex-row card bg-kimberly-100 dark:bg-kimberly-900">
         <div class="w-full md:w-1/3 grow">
           <div class="p-8 h-full flex flex-col justify-around">
-            <img v-if="bgCover" class="rounded-lg w-full shadow-md" :src="bgCover.listUrl" alt="list" :onerror="placeholder">
+            <VLazyImage v-if="bgCover" class="rounded-lg w-full shadow-md" src-placeholder="/images/image-placeholder.svg" :src="bgCover.listUrl" alt="list" :onerror="placeholder" />
             <div class="pt-4">
               <div class="w-min">
                 <v-dropdown theme="guweb-dropdown" placement="auto" :distance="6">
@@ -277,12 +289,27 @@ table.table.clear-rounded-tl {
       }
   }
 }
-.pre-bg-cover::before {
-    content: '';
-    position: absolute;
-    @apply top-20 left-0 right-0 bg-cover;
-    height: 30vmin;
-    background-image: v-bind('bgCover && bgCover.cover');
-    filter: opacity(30%) blur(2em);
+.pre-bg-cover {
+  &:before {
+      content: '';
+      position: absolute;
+      @apply top-20 left-0 right-0 bg-cover;
+      height: 30vmin;
+  }
+  &.ready::before {
+      background-image: v-bind('lazyBgCover');
+      animation: fadeIn 1s ease-out forwards;
+    }
+}
+
+@keyframes fadeIn {
+  0% {
+    @apply opacity-0;
+    filter: blur(5em)
+  }
+  100% {
+    @apply opacity-10 dark:opacity-30;
+    filter: blur(2em)
+  }
 }
 </style>
