@@ -178,7 +178,7 @@ export default class BanchoPyUser implements UserDataProvider<Id> {
   )
   SELECT * FROM ranks
   WHERE id = ${id}
-  `,
+  `.catch(_ => []),
 
       redisClient
         ? {
