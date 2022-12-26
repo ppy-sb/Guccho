@@ -83,6 +83,8 @@ LIMIT ${start}, ${pageSize}`)
         rankedScore: item.rankedScore,
         playCount: item.playCount,
         // rank: item._rank,
+        // order is correct but rank contains banned user, since we didn't check user priv before when selecting count.
+        // calculate rank based on page size * index of this page.
         rank: BigInt(start + index + 1),
       },
     }))

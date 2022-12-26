@@ -70,13 +70,33 @@ export class UserDataProvider extends BanchoPyUser implements Base<Id> {
 SELECT 
   id,
   mode,
-  (SELECT COUNT(*) + 1 FROM stats s WHERE s.mode = r.mode AND s.pp > r.pp) AS ppv2Rank,
-  (SELECT COUNT(*) + 1 FROM stats s WHERE s.mode = r.mode AND s.tscore > r.tscore) AS totalScoreRank,
-  (SELECT COUNT(*) + 1 FROM stats s WHERE s.mode = r.mode AND s.rscore > r.rscore) AS rankedScoreRank
+  (
+    SELECT COUNT(*) + 1
+    FROM stats s
+      LEFT JOIN users u on s.id = u.id
+    WHERE s.mode = r.mode
+      AND s.pp > r.pp
+  ) AS ppv2Rank,
+  (
+    SELECT COUNT(*) + 1
+    FROM stats s
+      LEFT JOIN users u on s.id = u.id
+    WHERE s.mode = r.mode
+      AND s.tscore > r.tscore
+  ) AS totalScoreRank,
+  (
+    SELECT COUNT(*) + 1
+    FROM stats s
+      LEFT JOIN users u on s.id = u.id
+    WHERE s.mode = r.mode
+      AND s.rscore > r.rscore
+  ) AS rankedScoreRank
 FROM stats r
-  SELECT * FROM r
-  WHERE id = ${id}
-  `.catch(_ => []),
+WHERE id = ${id}
+  `.catch((_) => {
+          console.error(_)
+          return []
+        }),
 
       redisClient
         ? {
