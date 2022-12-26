@@ -12,8 +12,7 @@ import type { Mode, OverallLeaderboardRankingSystem, Ruleset } from '~/types/com
 
 export class LeaderboardDataProvider extends BanchoPyLeaderboardDataProvider {
   async getPPv2LiveLeaderboard(banchoPyMode: number, start: number, end: number, country?: string) {
-    if (this.redisClient) {
-      await this.redisReady
+    if (this.redisClient?.isReady) {
       return await this.redisClient.zRange(
         country ? `bancho:leaderboard:${banchoPyMode}:${country}` : `bancho:leaderboard:${banchoPyMode}`,
         '+inf',
@@ -28,7 +27,7 @@ export class LeaderboardDataProvider extends BanchoPyLeaderboardDataProvider {
         },
       )
     }
-    return []
+    throw new Error('redis not ready')
   }
 
   async overallLeaderboardFromDatabase(opt: {

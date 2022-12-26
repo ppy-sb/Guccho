@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { reactive } from 'vue'
 import { navigateTo, useAppConfig, useRoute } from '#app'
 
 import type { Mode, OverallLeaderboardRankingSystem, Ruleset } from '~/types/common'
@@ -9,6 +8,7 @@ import { assertIsString } from '~/helpers'
 const config = useAppConfig()
 
 const route = useRoute()
+const router = useRouter()
 const { $client } = useNuxtApp()
 
 const { mode: pMode } = route.params
@@ -44,7 +44,7 @@ if (!pMode || !pRuleset || !pRankingSystem) {
   })
 }
 
-const selected = reactive<Required<SwitcherPropType>>({
+const selected = ref<Required<SwitcherPropType>>({
   mode,
   ruleset,
   rankingSystem,
@@ -54,29 +54,39 @@ const {
   pending,
   refresh,
 } = await useAsyncData(async () => await $client.leaderboard.overall.query({
-  mode: selected.mode,
-  ruleset: selected.ruleset,
-  rankingSystem: selected.rankingSystem,
+  mode: selected.value.mode,
+  ruleset: selected.value.ruleset,
+  rankingSystem: selected.value.rankingSystem,
   page: page.value - 1,
   pageSize: perPage,
 }))
 
 function rewriteHistory() {
-  const url = new URL(window.location.toString())
+  const l = window.location
+  const r = router.resolve({
+    name: 'leaderboard-mode',
+    params: {
+      mode: selected.value.mode,
+    },
+    query: {
+      ranking: selected.value.rankingSystem,
+      ruleset: selected.value.ruleset,
+      page: page.value,
+    },
+  })
 
-  url.searchParams.set('rank', rankingSystem)
-  url.searchParams.set('ruleset', ruleset)
-  url.searchParams.set('page', page.value.toString())
+  const rewrite = l.origin + r.fullPath
   history.replaceState(
-    {}, '', url,
+    {}, '', rewrite,
   )
 }
 
 function reloadPage(i?: number) {
   if (i)
     page.value = i
-  refresh()
+  // console.log(selected)
   rewriteHistory()
+  refresh()
 }
 </script>
 
@@ -97,7 +107,7 @@ function reloadPage(i?: number) {
     >
       <!-- TODO replaceHistoryState? like what we did in beatmapset/[id] -->
       <app-mode-switcher
-        :model-value="selected"
+        v-model="selected"
         :show-sort="true"
         @input="reloadPage()"
       />
