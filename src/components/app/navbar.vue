@@ -25,7 +25,7 @@ const menu = computed(() => [
   {
     name: 'Leaderboard',
     route: {
-      name: 'leaderboard-mode-ruleset-ranking-page',
+      name: 'leaderboard-mode',
     },
   },
   {

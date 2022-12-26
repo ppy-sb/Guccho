@@ -1,6 +1,5 @@
 <script setup lang="ts">
-// follow component | server
-import { reactive, ref } from 'vue'
+import { reactive } from 'vue'
 import { navigateTo, useAppConfig, useRoute } from '#app'
 
 import type { Mode, OverallLeaderboardRankingSystem, Ruleset } from '~/types/common'
@@ -12,30 +11,33 @@ const config = useAppConfig()
 const route = useRoute()
 const { $client } = useNuxtApp()
 
-const { mode: pMode, ruleset: pRuleset, ranking: pRankingSystem, page: pPage } = route.params
+const { mode: pMode } = route.params
+const { ruleset: pRuleset, ranking: pRankingSystem, page: pPage } = route.query
 
 const availableModes = Object.keys(config.mode)
 const availableRulesets = Object.keys(config.ruleset)
 const availableRankingSystems = Object.keys(config.overallRankingSystem)
 const mode = (assertIsString(pMode) && availableModes.includes(pMode)
-  ? route.params.mode
+  ? pMode
   : availableModes[0]) as Mode
 const ruleset = (assertIsString(pRuleset) && availableRulesets.includes(pRuleset)
-  ? route.params.ruleset
+  ? pRuleset
   : availableRulesets[0]) as Ruleset
 const rankingSystem = (assertIsString(pRankingSystem) && availableRankingSystems.includes(pRankingSystem)
-  ? route.params.ranking
+  ? pRankingSystem
   : availableRankingSystems[0]) as OverallLeaderboardRankingSystem
-const page = (assertIsString(pPage) && parseInt(pPage)) || 1
+const page = ref((assertIsString(pPage) && parseInt(pPage)) || 1)
 
 const perPage = 20
 
-if (!route.params.mode || !route.params.ruleset || !route.params.ranking) {
+if (!pMode || !pRuleset || !pRankingSystem) {
   // rewrite url to show stat of the page
   await navigateTo({
-    name: 'leaderboard-mode-ruleset-ranking-page',
+    name: 'leaderboard-mode',
     params: {
       mode,
+    },
+    query: {
       ruleset,
       ranking: rankingSystem,
     },
@@ -47,34 +49,40 @@ const selected = reactive<Required<SwitcherPropType>>({
   ruleset,
   rankingSystem,
 })
-const fetching = ref(false)
-// const page = ref(0)
-// const perPage = ref(50)
-
-fetching.value = true
-const result = await $client.leaderboard.overall.query({
+const {
+  data: table,
+  pending,
+  refresh,
+} = await useAsyncData(async () => await $client.leaderboard.overall.query({
   mode: selected.mode,
   ruleset: selected.ruleset,
   rankingSystem: selected.rankingSystem,
-  page: page - 1,
+  page: page.value - 1,
   pageSize: perPage,
-})
-const table = ref(result)
+}))
 
-fetching.value = false
+function rewriteHistory() {
+  const url = new URL(window.location.toString())
 
-const navigate = (selected: SwitcherPropType) => navigateTo({
-  name: 'leaderboard-mode-ruleset-ranking-page',
-  params: {
-    mode: selected.mode,
-    ruleset: selected.ruleset,
-    ranking: selected.rankingSystem,
-  },
-})
+  url.searchParams.set('rank', rankingSystem)
+  url.searchParams.set('ruleset', ruleset)
+  url.searchParams.set('page', page.value.toString())
+  history.replaceState(
+    {}, '', url,
+  )
+}
+
+function reloadPage(i?: number) {
+  if (i)
+    page.value = i
+  refresh()
+  rewriteHistory()
+}
 </script>
 
 <template>
   <div class="flex flex-col h-full leaderboard custom-container">
+    <fetch-overlay :fetching="pending" />
     <header-simple-title-with-sub
       class="container mx-auto custom-container lg:px-4"
       title="Leaderboard"
@@ -92,10 +100,11 @@ const navigate = (selected: SwitcherPropType) => navigateTo({
       <app-mode-switcher
         :model-value="selected"
         :show-sort="true"
-        @input="navigate"
+        @input="reloadPage()"
       />
     </header-simple-title-with-sub>
     <div
+      v-if="table"
       class="container flex mx-auto grow"
       :class="{
         content: table.length,
@@ -103,7 +112,6 @@ const navigate = (selected: SwitcherPropType) => navigateTo({
     >
       <template v-if="table.length">
         <div class="relative mx-auto overflow-hidden xl:rounded-lg">
-          <fetch-overlay :fetching="fetching" />
           <div class="px-8 pt-2">
             <div class="relative overflow-x-auto">
               <table class="table table-compact w-full border-separate whitespace-nowrap">
@@ -124,35 +132,32 @@ const navigate = (selected: SwitcherPropType) => navigateTo({
                   </tr>
                 </thead>
                 <tbody>
-                  <leaderboard-user-table
-                    v-for="(item, index) in table"
-                    :key="index"
-                    :user="item.user"
-                    :in-this-leaderboard="item.inThisLeaderboard"
-                    :sort="selected.rankingSystem"
-                  />
+                  <template v-if="!pending">
+                    <leaderboard-user-table
+                      v-for="(item, index) in table"
+                      :key="index"
+                      :user="item.user"
+                      :in-this-leaderboard="item.inThisLeaderboard"
+                      :sort="selected.rankingSystem"
+                    />
+                  </template>
+                  <template v-else>
+                    Loading...
+                  </template>
                 </tbody>
               </table>
             </div>
           </div>
           <div class="flex py-4">
-            <div class="btn-group mx-auto">
-              <t-nuxt-link-button
+            <div class="btn-group btn-base-100 mx-auto">
+              <t-button
                 v-for="(i) in 5"
                 :key="`pagination-${i}`"
                 class="!shadow-none"
-                :to="{
-                  name: 'leaderboard-mode-ruleset-ranking-page',
-                  params: {
-                    mode,
-                    ruleset,
-                    ranking: rankingSystem,
-                    page: i,
-                  },
-                }"
+                @click="reloadPage(i)"
               >
                 {{ i }}
-              </t-nuxt-link-button>
+              </t-button>
             </div>
           </div>
         </div>
