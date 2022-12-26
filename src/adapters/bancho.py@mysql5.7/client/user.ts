@@ -75,6 +75,7 @@ SELECT
     FROM stats s
       LEFT JOIN users u on s.id = u.id
     WHERE s.mode = r.mode
+      AND u.priv > 2
       AND s.pp > r.pp
   ) AS ppv2Rank,
   (
@@ -82,6 +83,7 @@ SELECT
     FROM stats s
       LEFT JOIN users u on s.id = u.id
     WHERE s.mode = r.mode
+      AND u.priv > 2
       AND s.tscore > r.tscore
   ) AS totalScoreRank,
   (
@@ -89,6 +91,7 @@ SELECT
     FROM stats s
       LEFT JOIN users u on s.id = u.id
     WHERE s.mode = r.mode
+      AND u.priv > 2
       AND s.rscore > r.rscore
   ) AS rankedScoreRank
 FROM stats r
