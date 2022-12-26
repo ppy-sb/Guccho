@@ -4,8 +4,8 @@ import { useAppConfig } from '#app'
 import type { inferProcedureOutput } from '@trpc/server'
 import { useDebounceFn } from '@vueuse/core'
 import { useSession } from '~/store/session'
-import type { AppRouter } from '~~/src/server/trpc/routers'
-import { assertIsBanchoBeatmapset } from '~~/src/helpers'
+import type { AppRouter } from '~/server/trpc/routers'
+import { assertIsBanchoBeatmapset } from '~/helpers'
 
 const props
   = defineProps<{
