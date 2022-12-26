@@ -7,7 +7,7 @@ import { toFullUser } from '../../bancho.py/transforms'
 import { createUserQuery } from '../../bancho.py/transforms/db-queries'
 import { prismaClient } from './index'
 import type { UserEssential } from '~/types/user'
-import { UserDataProvider as BanchoPyUser } from '~/adapters/bancho.py/client'
+import { UserDataProvider as BanchoPyUser } from '~/adapters/bancho.py@mysql5.7/client'
 import useEditorExtensions from '~/composables/useEditorExtensions'
 import type { UserDataProvider as Base } from '$def/client/user'
 
