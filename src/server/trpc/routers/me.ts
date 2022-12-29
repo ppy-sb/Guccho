@@ -81,7 +81,7 @@ export const router = _router({
       ])
       return {
         self: [fromRelationship],
-        counterPart: [targetRelationship],
+        counterpart: [targetRelationship],
         mutual:
           fromRelationship
           && targetRelationship
