@@ -80,8 +80,8 @@ export const router = _router({
         relationProvider.getOne(targetUser, fromUser),
       ])
       return {
-        from: [fromRelationship],
-        target: [targetRelationship],
+        self: [fromRelationship],
+        counterPart: [targetRelationship],
         mutual:
           fromRelationship
           && targetRelationship
