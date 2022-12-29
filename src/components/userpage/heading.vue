@@ -39,7 +39,7 @@ const {
   }
 })
 const isMutualFriend = computed(() => data.value?.relationWithMe?.mutual?.includes('mutual-friend') || false)
-const isFriend = computed(() => data.value?.relationWithMe?.target.includes('friend'))
+const isFriend = computed(() => data.value?.relationWithMe?.self.includes('friend'))
 const isFriendButtonHovered = useElementHover(changeFriendStateButton)
 const friendButtonContent = computed(() => data.value?.friendCount || 'Add as friend')
 const toggleFriend = async () => {
