@@ -39,6 +39,7 @@ const {
   }
 })
 const isMutualFriend = computed(() => data.value?.relationWithMe?.mutual?.includes('mutual-friend') || false)
+const isFriend = computed(() => data.value?.relationWithMe?.target.includes('friend'))
 const isFriendButtonHovered = useElementHover(changeFriendStateButton)
 const friendButtonContent = computed(() => data.value?.friendCount || 'Add as friend')
 const toggleFriend = async () => {
@@ -47,7 +48,7 @@ const toggleFriend = async () => {
   if (!user?.value)
     return
   const input = { type: 'friend', target: user.value.id } as const
-  if (isMutualFriend.value)
+  if (isFriend.value)
     await $client.me.removeOneRelation.mutate(input)
   else
     await $client.me.addOneRelation.mutate(input)
