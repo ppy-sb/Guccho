@@ -101,7 +101,7 @@ export type UserStatistic<
 > = {
   [M in IncludeMode]: Record<
     IncludeRuleset & AvailableRuleset<M>,
-    UserModeRulesetStatistics<Id, M, AvailableRuleset<M>, Ranking>
+    UserModeRulesetStatistics<Ranking>
   >;
 }
 

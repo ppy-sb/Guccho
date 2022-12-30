@@ -1,12 +1,6 @@
-import type { RulesetScore } from './score'
-import type { Mode, OverallLeaderboardRankingSystem, PPRankingSystem, Ruleset } from './common'
+import type { OverallLeaderboardRankingSystem, PPRankingSystem } from './common'
 
-export interface BaseRank<
-  Id,
-  _Mode extends Mode,
-  _Ruleset extends Ruleset,
-  _RankingSystem extends OverallLeaderboardRankingSystem,
-> {
+export interface BaseRank {
   rank?: number
   rankHistory?: Record<string, number>
 
@@ -14,34 +8,19 @@ export interface BaseRank<
   countryRankHistory?: number[]
 
   accuracy?: number
-
-  bests?: Array<Omit<RulesetScore<bigint, Id, _Mode, _Ruleset, _RankingSystem>, 'mode' | 'ruleset'>>
 }
 
-export type PPRank<
-  Id,
-  _Mode extends Mode,
-  _Ruleset extends Ruleset,
-  _RankingSystem extends OverallLeaderboardRankingSystem,
-> = BaseRank<Id, _Mode, _Ruleset, _RankingSystem> & {
+export type PPRank = BaseRank & {
   performance: number
   performanceHistory?: Record<string, number>
 }
 
-export type ScoreRank<
-  Id,
-  _Mode extends Mode,
-  _Ruleset extends Ruleset,
-  _RankingSystem extends OverallLeaderboardRankingSystem,
-> = BaseRank<Id, _Mode, _Ruleset, _RankingSystem> & {
+export type ScoreRank = BaseRank & {
   score: bigint | null
   scoreHistory?: Record<string, bigint>
 }
 
 export type UserModeRulesetStatistics<
-  Id,
-  _Mode extends Mode,
-  _Ruleset extends Ruleset,
   RS extends OverallLeaderboardRankingSystem,
 > = {
   // TODO: Achievement
@@ -51,5 +30,6 @@ export type UserModeRulesetStatistics<
   totalHits: number
   level: number
 } & {
-  [R in RS]: R extends PPRankingSystem ? PPRank<Id, _Mode, _Ruleset, R> : ScoreRank<Id, _Mode, _Ruleset, R>;
+  // [R in RS]: R extends PPRankingSystem ? PPRank<Id, _Mode, _Ruleset, R> : ScoreRank<Id, _Mode, _Ruleset, R>;
+  [R in RS]: R extends PPRankingSystem ? PPRank : ScoreRank;
 }

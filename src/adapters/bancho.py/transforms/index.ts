@@ -12,14 +12,11 @@ import type {
 } from '~/types/user'
 import type { RankingStatus } from '~/types/beatmap'
 import { RankingStatusEnum } from '~/types/beatmap'
-import type { Mode, OverallLeaderboardRankingSystem, Ruleset } from '~/types/common'
+import type { OverallLeaderboardRankingSystem } from '~/types/common'
 import type { UserRelationship } from '~/types/user-relationship'
 import type { UserModeRulesetStatistics } from '~/types/statistics'
 
 export function createRulesetData<
-  Id,
-  _Mode extends Mode,
-  _Ruleset extends Ruleset,
   _RankingSystem extends OverallLeaderboardRankingSystem,
 >({
   databaseResult: dbResult,
@@ -57,7 +54,7 @@ export function createRulesetData<
       playTime: 0,
       totalHits: 0,
       level: 0,
-    } as UserModeRulesetStatistics<Id, _Mode, _Ruleset, _RankingSystem>
+    } as UserModeRulesetStatistics<_RankingSystem>
   }
   return {
     ppv2: {
@@ -79,7 +76,7 @@ export function createRulesetData<
     playTime: dbResult.playTime,
     totalHits: dbResult.totalHits,
     level: getLevelWithProgress(dbResult.totalScore),
-  } as UserModeRulesetStatistics<Id, _Mode, _Ruleset, _RankingSystem>
+  } as UserModeRulesetStatistics<_RankingSystem>
 }
 
 export function toRoles(priv: number): UserPrivilegeString[] {
