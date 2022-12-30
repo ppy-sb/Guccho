@@ -2,7 +2,7 @@
 import { computed, provide, reactive, ref } from 'vue'
 import { useIntersectionObserver } from '@vueuse/core'
 import { useRoute } from '#app'
-import type { Mode, OverallLeaderboardRankingSystem, Ruleset } from '~/types/common'
+import type { OverallLeaderboardRankingSystem } from '~/types/common'
 
 import type { UserModeRulesetStatistics } from '~/types/statistics'
 
@@ -21,7 +21,7 @@ const {
 } = await useAsyncData(async () => await $client.user.userpage.query({
   handle: `${route.params.handle}`,
 }))
-const currentStatistic = computed<UserModeRulesetStatistics<string, Mode, Ruleset, OverallLeaderboardRankingSystem>>(
+const currentStatistic = computed<UserModeRulesetStatistics<OverallLeaderboardRankingSystem>>(
   // @ts-expect-error switcher has its logic to not spit out wrong combination
   () => user.value?.statistics[switcher.mode][switcher.ruleset],
 )

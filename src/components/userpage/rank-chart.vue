@@ -7,7 +7,6 @@ import { userpageLineChartOptions } from '~/common/shared-chart-options'
 
 import { hsvRaw } from '~/palette'
 import type { BaseRank } from '~/types/statistics'
-import type { Mode, OverallLeaderboardRankingSystem, Ruleset } from '~/types/common'
 
 // import 'chart.js/auto/auto.js'
 
@@ -25,7 +24,7 @@ onMounted(() => {
   }, 100)
 })
 // const user = inject('user')
-const currentRankingSystem = inject<BaseRank<unknown, Mode, Ruleset, OverallLeaderboardRankingSystem>>('user.currentRankingSystem')
+const currentRankingSystem = inject<BaseRank>('user.currentRankingSystem')
 /* mock */
 const globalRank = {
   labels: ['Paris', 'Nîmes', 'Toulon', 'Perpignan', 'Autre'],

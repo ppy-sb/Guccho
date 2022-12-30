@@ -1,12 +1,12 @@
 import type { HitCount } from '~/types/score'
-import type { Mode, OverallLeaderboardRankingSystem, Ruleset } from '~/types/common'
+import type { Mode, OverallLeaderboardRankingSystem } from '~/types/common'
 import type { UserFull } from '~/types/user'
 import type { PPRank, ScoreRank, UserModeRulesetStatistics } from '~/types/statistics'
 
 export const createISODate = (date: Date = new Date()) => date.toUTCString()
 
-export const createScoreRank = <M extends Mode>(
-  initial: ScoreRank<unknown, M, Ruleset, OverallLeaderboardRankingSystem> = {
+export const createScoreRank = (
+  initial: ScoreRank = {
     rankHistory: { [createISODate(new Date('2023-01-01'))]: 1 },
     countryRank: 1,
     // countryRankHistory: {[createISODate(new Date('2023-01-01'))]:1},
@@ -19,9 +19,9 @@ export const createScoreRank = <M extends Mode>(
       [createISODate(new Date('2022-01-01'))]: BigInt(1_000_000_000),
     },
   },
-): ScoreRank<unknown, M, Ruleset, OverallLeaderboardRankingSystem> => JSON.parse(
-    JSON.stringify(initial),
-  )
+): ScoreRank => JSON.parse(
+  JSON.stringify(initial),
+)
 export const createBeatmapSet = (initial = {
   id: 1234,
   source: 'bancho',
@@ -76,8 +76,8 @@ export const createHitObject = <_Mode extends Mode>(mode: _Mode) =>
       miss: 0,
     } satisfies HitCount<Exclude<Mode, 'mania'>>
 
-export const createPPRank = <_Mode extends Mode>(
-  initial: PPRank<unknown, _Mode, Ruleset, OverallLeaderboardRankingSystem> = {
+export const createPPRank = (
+  initial: PPRank = {
     rank: 1,
     rankHistory: { [createISODate(new Date('2023-01-01'))]: 1 },
     countryRank: 1,
@@ -86,41 +86,19 @@ export const createPPRank = <_Mode extends Mode>(
     performance: 100,
     performanceHistory: { [createISODate(new Date('2022-01-01'))]: 0, [createISODate(new Date('2023-01-01'))]: 100 },
   },
-  mode: _Mode,
-): PPRank<unknown, _Mode, Ruleset, OverallLeaderboardRankingSystem> => {
+): PPRank => {
   const copy = JSON.parse(JSON.stringify(initial))
-
-  copy.bests = [{
-    id: 13n,
-    mods: [],
-    score: 999_999_999_999n,
-    scoreRank: 0,
-    grade: 'ssh',
-    ppv2: {
-      pp: 0,
-      rank: 0,
-    },
-    ppv1: {
-      pp: 0,
-      rank: 0,
-    },
-    playedAt: new Date(0),
-    maxCombo: 0,
-    hit: createHitObject(mode),
-    beatmap: createBeatmap(),
-    accuracy: 98,
-  }]
 
   return copy
 }
 
 export const createRulesetData = <M extends Mode>(
   mode: M,
-  ppRankData: PPRank<unknown, M, Ruleset, OverallLeaderboardRankingSystem> | undefined = undefined,
-  scoreRankData: ScoreRank<unknown, M, Ruleset, OverallLeaderboardRankingSystem> | undefined = undefined,
-): UserModeRulesetStatistics<unknown, M, Ruleset, OverallLeaderboardRankingSystem> => ({
-    ppv2: createPPRank(ppRankData, mode),
-    ppv1: createPPRank(ppRankData, mode),
+  ppRankData: PPRank | undefined = undefined,
+  scoreRankData: ScoreRank | undefined = undefined,
+): UserModeRulesetStatistics<OverallLeaderboardRankingSystem> => ({
+    ppv2: createPPRank(ppRankData),
+    ppv1: createPPRank(ppRankData),
     rankedScore: createScoreRank(scoreRankData),
     totalScore: createScoreRank(scoreRankData),
     playCount: 1,
