@@ -89,7 +89,8 @@ export default class BanchoPyUser implements UserDataProvider<Id> {
     return toUserEssential({ user, includes })
   }
 
-  async getBests({
+  // https://github.com/prisma/prisma/issues/6570 need two separate query to get count for now
+  async getBests<_RS extends OverallLeaderboardRankingSystem>({
     id,
     mode,
     ruleset,
@@ -100,7 +101,7 @@ export default class BanchoPyUser implements UserDataProvider<Id> {
     id: Id
     mode: Mode
     ruleset: Ruleset
-    rankingSystem: OverallLeaderboardRankingSystem
+    rankingSystem: _RS
     page: number
     perPage: number
   }) {
@@ -138,6 +139,88 @@ export default class BanchoPyUser implements UserDataProvider<Id> {
     return toRankingSystemScores({ scores, rankingSystem, mode }).map(score => Object.assign(score, {
       id: score.id.toString(),
     }))
+  }
+
+  // https://github.com/prisma/prisma/issues/6570 need two separate query to get count for now
+  async getTops<_RS extends OverallLeaderboardRankingSystem>(opt: {
+    id: Id
+    mode: Mode
+    ruleset: Ruleset
+    rankingSystem: _RS
+    page: number
+    perPage: number
+  }) {
+    const {
+      id,
+      mode,
+      ruleset,
+      rankingSystem,
+      page,
+      perPage,
+    } = opt
+
+    const start = page * perPage
+
+    let scoreIds: number[]
+    if (rankingSystem === 'rankedScore' || rankingSystem === 'totalScore') {
+      scoreIds = await this.db.$queryRaw<{ id: string }[]>`
+SELECT s2.id
+FROM scores s2
+INNER JOIN (
+  SELECT s.map_md5 AS md5, MAX(s.score) AS maxScore
+  FROM users u
+  INNER JOIN scores s ON s.userid = u.id
+  WHERE u.priv > 2 AND s.mode = ${toBanchoPyMode(mode, ruleset)} AND s.score > 0 AND s.status >= 2
+  GROUP BY s.map_md5
+) tmp ON tmp.maxScore = s2.score AND tmp.md5 = s2.map_md5
+WHERE s2.userid = ${id}
+`.then(res => res.map(res => parseInt(res.id)))
+    }
+    else if (rankingSystem === 'ppv2') {
+      scoreIds = await this.db.$queryRaw<{ id: string }[]>`
+SELECT s2.id
+FROM scores AS s2
+INNER JOIN (
+    SELECT s.map_md5 AS md5, MAX(s.pp) AS maxPP
+    FROM users AS u
+    INNER JOIN scores AS s ON s.userid = u.id
+    WHERE u.priv > 2 AND s.mode = ${toBanchoPyMode(mode, ruleset)} AND s.pp > 0 AND s.status >= 2
+    GROUP BY s.map_md5
+) AS tmp ON tmp.maxPP = s2.pp AND tmp.md5 = s2.map_md5
+WHERE s2.userid = ${id}
+`.then(res => res.map(res => parseInt(res.id)))
+    }
+    else {
+      return {
+        count: 0,
+        scores: [],
+      }
+    }
+    const scores = await this.db.score.findMany({
+      where: {
+        id: {
+          in: scoreIds,
+        },
+      },
+      include: {
+        beatmap: {
+          include: {
+            source: true,
+          },
+        },
+      },
+      orderBy: {
+        id: 'desc',
+      },
+      skip: start,
+      take: perPage,
+    })
+    return {
+      count: scoreIds.length,
+      scores: toRankingSystemScores({ scores, rankingSystem, mode }).map(score => Object.assign(score, {
+        id: score.id.toString(),
+      })),
+    }
   }
 
   async getStatistics({

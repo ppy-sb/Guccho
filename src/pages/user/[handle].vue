@@ -36,13 +36,13 @@ provide('user.currentRankingSystem', currentRankingSystem)
 
 // directive is not working: yield error when navigate to other page
 const visible = reactive({
-  top: false,
+  heading: false,
   statistics: false,
-  bests: false,
+  scores: false,
 })
-const [top, statistics, bests] = [ref(null), ref(null), ref(null)]
+const [heading, statistics, scores] = [ref(null), ref(null), ref(null)]
 onMounted(() => {
-  const stop = Object.entries({ top, statistics, bests }).map(([k, v]) => {
+  const stop = Object.entries({ heading, statistics, scores }).map(([k, v]) => {
     if (!v.value)
       return undefined
     const { stop } = useIntersectionObserver(
@@ -101,7 +101,7 @@ onMounted(() => {
       v-else-if="user"
       class="flex flex-col pt-20 justify-stretch md:pt-0"
     >
-      <userpage-heading id="top" ref="top" />
+      <userpage-heading id="heading" ref="heading" />
       <userpage-profile />
       <userpage-ranking-system-switcher class="z-10 !drop-shadow-xl" />
       <userpage-rank-chart v-if="currentRankingSystem" />
@@ -114,7 +114,7 @@ onMounted(() => {
           <userpage-scores
             v-if="currentRankingSystem"
             id="bests"
-            ref="bests"
+            ref="scores"
           />
           <!-- <userpage-json-viewer
             id="json"

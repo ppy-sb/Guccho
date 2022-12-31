@@ -1,8 +1,9 @@
 import type { Id } from '../config'
+import { toMods } from '../enums'
+import type { Grade, Mode, OverallLeaderboardRankingSystem, PPRankingSystem, Ruleset } from './../../../types/common'
 import { createHitCount } from './create-hit-count'
 import { toBeatmapWithBeatmapset } from './to-beatmapset'
 import type { AbleToTransformToScores } from './index'
-import type { Grade, Mode, OverallLeaderboardRankingSystem, Ruleset } from '~/types/common'
 import type { BeatmapWithMeta, RankingStatus } from '~/types/beatmap'
 import type { RankingSystemScore, RulesetScore } from '~/types/score'
 
@@ -23,8 +24,7 @@ export function toScore<_RankingSystem extends OverallLeaderboardRankingSystem>(
     beatmap: (score.beatmap !== null && toBeatmapWithBeatmapset(score.beatmap)) || {
       status: 'notFound',
     } satisfies BeatmapWithMeta<'unknown', 'notFound', never, never> as BeatmapWithMeta<'unknown', 'notFound', never, never>,
-    // TODO: calculate mods
-    mods: [],
+    mods: toMods(score.mods),
     ruleset,
     mode,
     ppv2: {
@@ -36,7 +36,7 @@ export function toScore<_RankingSystem extends OverallLeaderboardRankingSystem>(
     Id,
     Mode,
     Ruleset,
-    _RankingSystem & 'ppv2',
+    _RankingSystem,
     typeof score['beatmap'] extends null
       ? 'unknown'
       : Exclude<typeof score['beatmap'], null>['server'],
@@ -54,36 +54,27 @@ export function toRankingSystemScore<_RankingSystem extends OverallLeaderboardRa
   rank: number
 }) {
   type HasBeatmap = typeof score['beatmap'] extends null ? false : Exclude<typeof score['beatmap'], null>
-  const result = Object.assign(
-    {
-      id: score.id,
-      // mods: score.mods,
-      score: BigInt(score.score),
-      accuracy: score.acc,
-      grade: score.grade as Grade,
-      hit: createHitCount(mode, score),
-      beatmap: (score.beatmap !== null && toBeatmapWithBeatmapset(score.beatmap)) || {
-        status: 'notFound',
-      } satisfies BeatmapWithMeta<'unknown', 'notFound', never, never>,
-      // TODO: calculate mods
-      mods: [],
-      playedAt: score.playTime,
-      maxCombo: score.maxCombo,
-    },
-    rankingSystem === 'ppv2'
-      ? {
-          rank,
-          pp: score.pp,
-        }
-      : {
-          rank,
-          pp: 0,
-        },
-  ) satisfies RankingSystemScore<
+
+  const result = {
+    id: score.id,
+    // mods: score.mods,
+    score: BigInt(score.score),
+    accuracy: score.acc,
+    grade: score.grade as Grade,
+    hit: createHitCount(mode, score),
+    beatmap: (score.beatmap !== null && toBeatmapWithBeatmapset(score.beatmap)) || {
+      status: 'notFound',
+    } satisfies BeatmapWithMeta<'unknown', 'notFound', never, never>,
+    mods: toMods(score.mods),
+    playedAt: score.playTime,
+    maxCombo: score.maxCombo,
+    rank,
+    pp: (rankingSystem === 'ppv1' || rankingSystem === 'ppv2' ? score.pp : undefined) as _RankingSystem extends PPRankingSystem ? number : never,
+  } satisfies RankingSystemScore<
     bigint,
     Id,
     Mode,
-    _RankingSystem & 'ppv2',
+    _RankingSystem,
     HasBeatmap extends null ? 'unknown' : HasBeatmap['server'],
     HasBeatmap extends null ? 'notFound' : RankingStatus
   >
