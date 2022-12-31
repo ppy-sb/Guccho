@@ -16,44 +16,83 @@ const stabilizeScoreRank = (rankingSystem: OverallLeaderboardRankingSystem) => {
   return rankingSystem as PPRankingSystem
 }
 const switchBetweenScoreRanks = () => prevSwitcherState.rankingSystem !== switcher.rankingSystem && stabilizeScoreRank(prevSwitcherState.rankingSystem) === stabilizeScoreRank(switcher.rankingSystem)
-const page = ref<NumberRange<0, 10>>(0)
+const bpPage = ref<NumberRange<0, 10>>(0)
+const topPage = ref<NumberRange<0, 10>>(0)
 
 const user = inject('user') as Ref<UserEssential<string>>
 const {
-  data: current,
-  error,
-  refresh,
-  pending,
+  data: bp,
+  error: bpError,
+  refresh: refreshBP,
+  pending: pendingBP,
 } = await useAsyncData(async () => {
   if (!user.value || !switcher.mode || !switcher.ruleset || !switcher.rankingSystem) {
     return {
-      result: [],
+      scores: [],
       handle: user.value.id,
-      page: page.value,
+      bpPage: bpPage.value,
       lastSwitcherStatus: {
         ...switcher,
       },
     }
   }
   return {
-    result: await $client.user.best.query({
+    scores: await $client.user.best.query({
       handle: user.value.id,
       mode: switcher.mode,
       ruleset: switcher.ruleset,
       rankingSystem: switcher.rankingSystem as PPRankingSystem,
-      page: page.value,
+      page: bpPage.value,
     }),
+    page: bpPage.value,
     handle: user.value.id,
-    page: page.value,
     lastSwitcherStatus: {
       ...switcher,
     },
   }
 })
-watch([user, page], async () => {
+const {
+  data: top,
+  error: errorTop,
+  refresh: refreshTop,
+  pending: pendingTop,
+} = await useAsyncData(async () => {
+  if (!user.value || !switcher.mode || !switcher.ruleset || !switcher.rankingSystem) {
+    return {
+      count: 0,
+      scores: [],
+      handle: user.value.id,
+      page: bpPage.value,
+      lastSwitcherStatus: {
+        ...switcher,
+      },
+    }
+  }
+  return {
+    ...await $client.user.tops.query({
+      handle: user.value.id,
+      mode: switcher.mode,
+      ruleset: switcher.ruleset,
+      rankingSystem: switcher.rankingSystem as PPRankingSystem,
+      page: topPage.value,
+    }),
+
+    page: topPage.value,
+    handle: user.value.id,
+    lastSwitcherStatus: {
+      ...switcher,
+    },
+  }
+})
+watch([user, bpPage], async () => {
   if (!user.value)
     return
-  await refresh()
+  await refreshBP()
+})
+watch([user, topPage], async () => {
+  if (!user.value)
+    return
+  await refreshTop()
 })
 const transition = ref<'left' | 'right'>('left')
 onMounted(() => {
@@ -91,60 +130,98 @@ onMounted(() => {
       return
     }
     // reset bp page
-    page.value = 0
+    bpPage.value = 0
+    topPage.value = 0
     // animate
     computeAnimateDirection()
-    refresh()
+    refreshBP()
+    refreshTop()
     prevSwitcherState = { ...sw }
   })
 })
-const prevPage = () => {
+const prevPage = (val: Ref<any>) => () => {
   transition.value = 'left'
-  if (page.value > 0)
-    page.value -= 1
+  if (val.value > 0)
+    val.value -= 1
 }
-const nextPage = () => {
+const nextPage = (val: Ref<any>) => () => {
   transition.value = 'right'
-  if (page.value < 9)
-    page.value += 1
+  if (val.value < 9)
+    val.value += 1
 }
+
+const prevBp = prevPage(bpPage)
+const nextBp = nextPage(bpPage)
+const prevTop = prevPage(topPage)
+const nextTop = nextPage(topPage)
 </script>
 
 <template>
-  <section class="custom-container">
-    <div class="card" :class="[pending && 'pointer-events-none']">
-      <div class="justify-center p-1 card-title rounded-2xl bg-kimberly-300/30">
-        Top Performance
-      </div>
-
-      <div class="px-1 py-2 card-body">
-        <div v-if="current" class="relative">
-          <transition :name="transition">
-            <ul :key="current.lastSwitcherStatus.mode + current.lastSwitcherStatus.ruleset + stabilizeScoreRank(current.lastSwitcherStatus.rankingSystem) + user.id + current.page">
-              <li v-for="i in current.result" :key="`bests-${i.id}`" class="score">
-                <app-best-score-list-item :score="i" :mode="current.lastSwitcherStatus.mode" :ruleset="current.lastSwitcherStatus.ruleset" :ranking-system="current.lastSwitcherStatus.rankingSystem" />
-              </li>
-            </ul>
-          </transition>
+  <div v-if="bpError || errorTop">
+    {{ bpError || errorTop }}
+  </div>
+  <template v-else>
+    <div class="flex flex-col gap-6">
+      <section v-if="bp?.scores?.length" class="custom-container">
+        <div class="card" :class="[pendingBP && 'pointer-events-none']">
+          <div class="justify-center p-1 card-title rounded-2xl bg-kimberly-300/30">
+            Best Performances
+          </div>
+          <div class="px-1 py-2 card-body">
+            <div class="relative">
+              <transition :name="transition">
+                <ul :key="bp.lastSwitcherStatus.mode + bp.lastSwitcherStatus.ruleset + stabilizeScoreRank(bp.lastSwitcherStatus.rankingSystem) + user.id + bp.page">
+                  <li v-for="i in bp.scores" :key="`bests-${i.id}`" class="score">
+                    <app-score-list-item :score="i" :mode="bp.lastSwitcherStatus.mode" :ruleset="bp.lastSwitcherStatus.ruleset" :ranking-system="bp.lastSwitcherStatus.rankingSystem" />
+                  </li>
+                </ul>
+              </transition>
+            </div>
+          </div>
+          <div class="btn-group d-flex w-full bg-kimberly-300/30 rounded-2xl shadow-xl" style="--rounded-btn: 1rem">
+            <button class="btn btn-ghost" @click="prevBp">
+              «
+            </button>
+            <button class="btn btn-ghost grow" @click="() => refreshBP()">
+              Page {{ bpPage + 1 }}
+            </button>
+            <button class="btn btn-ghost" @click="nextBp">
+              »
+            </button>
+          </div>
         </div>
-        <div v-else-if="error">
-          {{ error }}
+      </section>
+      <section v-if="top?.count" class="custom-container">
+        <div class="card" :class="[pendingTop && 'pointer-events-none']">
+          <div class="justify-center p-1 card-title rounded-2xl bg-kimberly-300/30">
+            First Places ({{ top.count }})
+          </div>
+          <div class="px-1 py-2 card-body">
+            <div class="relative">
+              <transition :name="transition">
+                <ul :key="top.lastSwitcherStatus.mode + top.lastSwitcherStatus.ruleset + stabilizeScoreRank(top.lastSwitcherStatus.rankingSystem) + user.id + top.page">
+                  <li v-for="i in top.scores" :key="`bests-${i.id}`" class="score">
+                    <app-score-list-item :score="i" :mode="top.lastSwitcherStatus.mode" :ruleset="top.lastSwitcherStatus.ruleset" :ranking-system="top.lastSwitcherStatus.rankingSystem" />
+                  </li>
+                </ul>
+              </transition>
+            </div>
+          </div>
+          <div class="btn-group d-flex w-full bg-kimberly-300/30 rounded-2xl shadow-xl" style="--rounded-btn: 1rem">
+            <button class="btn btn-ghost" @click="prevTop">
+              «
+            </button>
+            <button class="btn btn-ghost grow" @click="() => refreshBP()">
+              Page {{ topPage + 1 }}
+            </button>
+            <button class="btn btn-ghost" @click="nextTop">
+              »
+            </button>
+          </div>
         </div>
-      </div>
-
-      <div class="btn-group d-flex w-full bg-kimberly-300/30 rounded-2xl shadow-xl" style="--rounded-btn: 1rem">
-        <button class="btn btn-ghost" @click="prevPage">
-          «
-        </button>
-        <button class="btn btn-ghost grow" @click="() => refresh()">
-          Page {{ page + 1 }}
-        </button>
-        <button class="btn btn-ghost" @click="nextPage">
-          »
-        </button>
-      </div>
+      </section>
     </div>
-  </section>
+  </template>
 </template>
 
 <style scoped lang="postcss">

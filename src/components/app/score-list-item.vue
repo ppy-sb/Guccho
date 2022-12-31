@@ -94,7 +94,7 @@ const meta = computed((): {
           </router-link>
           <div class="flex text-xs gap-2 md:text-sm lg:text-md">
             <div class="text-semibold">
-              {{ score.mods.join(',') || 'noMod' }}
+              {{ score.mods.join(', ') || 'noMod' }}
             </div>
             <div class="flex">
               <div class="font-semibold">
