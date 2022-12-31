@@ -55,43 +55,42 @@ const meta = computed((): {
   <div v-if="score" class="score">
     <div class="flex justify-between">
       <div class="flex min-w-0 gap-4">
-        <template v-if="beatmap">
-          <div class="hidden md:block">
-            <img
-              v-if="assertBeatmapIsVisible(beatmap) && beatmap.beatmapset.source === 'bancho'"
-              :src="`https://assets.ppy.sh/beatmaps/${beatmap.beatmapset.foreignId}/covers/list.jpg`"
-              class="object-cover w-20 h-16 rounded-xl"
-            >
-            <div v-else class="w-20 h-16">
-              <font-awesome-icon icon="fa-solid fa-ban" size="4x" class="w-full" />
-            </div>
-          </div>
-        </template>
-        <div class="flex flex-col min-w-0">
-          <router-link
-            v-if="beatmap && assertBeatmapIsVisible(beatmap)"
-            :to="{
-              name: 'beatmapset-id',
-              params: {
-                id: beatmap.beatmapset.id,
-              },
-              query: {
-                beatmap: beatmap.id,
-                mode: props.mode,
-                ruleset: props.ruleset,
-                rank: ['totalScore', 'rankedScore'].includes(props.rankingSystem) ? 'score' : props.rankingSystem,
-              },
-            }" class="text-sm truncate md:text-md lg:text-lg"
+        <div class="hidden md:block">
+          <img
+            v-if="beatmap && assertBeatmapIsVisible(beatmap) && beatmap.beatmapset.source === 'bancho'"
+            :src="`https://assets.ppy.sh/beatmaps/${beatmap.beatmapset.foreignId}/covers/list.jpg`"
+            class="object-cover w-20 h-16 rounded-xl"
           >
-            <template v-if="meta">
-              {{ meta.artist }} - {{ meta.title }} [{{
-                beatmap.version
-              }}]
-            </template>
-            <template v-else>
-              Unknown Beatmap
-            </template>
-          </router-link>
+          <div v-else class="w-20 h-16">
+            <font-awesome-icon icon="fa-solid fa-ban" size="4x" class="w-full" />
+          </div>
+        </div>
+        <div class="flex flex-col min-w-0">
+          <template v-if="beatmap && assertBeatmapIsVisible(beatmap)">
+            <router-link
+              :to="{
+                name: 'beatmapset-id',
+                params: {
+                  id: beatmap.beatmapset.id,
+                },
+                query: {
+                  beatmap: beatmap.id,
+                  mode: props.mode,
+                  ruleset: props.ruleset,
+                  rank: ['totalScore', 'rankedScore'].includes(props.rankingSystem) ? 'score' : props.rankingSystem,
+                },
+              }" class="text-sm truncate md:text-md lg:text-lg"
+            >
+              <template v-if="meta">
+                {{ meta.artist }} - {{ meta.title }} [{{
+                  beatmap.version
+                }}]
+              </template>
+            </router-link>
+          </template>
+          <div v-else>
+            Unknown Beatmap
+          </div>
           <div class="flex text-xs gap-2 md:text-sm lg:text-md">
             <div class="text-semibold">
               {{ score.mods.join(', ') || 'noMod' }}

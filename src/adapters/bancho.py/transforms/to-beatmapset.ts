@@ -5,12 +5,10 @@ import type { BeatmapEssential, Beatmapset } from '~/types/beatmap'
 
 // this do not deserves exporting
 export function toBeatmapset(beatmapset: Source, beatmap: DBMap): undefined | Beatmapset<typeof beatmapset['server'], typeof beatmapset['id'], typeof beatmapset['id']> {
-  if (!beatmap)
-    return
   return {
     id: beatmap.setId,
-    foreignId: beatmapset.id,
-    source: beatmapset.server === 'privateServer' ? 'privateServer' : 'bancho',
+    foreignId: beatmapset.id || beatmap.setId,
+    source: beatmapset.server || 'unknown',
     meta: {
       intl: {
         artist: beatmap.artist,
