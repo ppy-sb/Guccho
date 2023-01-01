@@ -35,6 +35,7 @@ const config: {
   }
   >
   appModalTeleportTargetId: string
+  needConfirmWebsite: boolean
 } = {
   baseUrl: 'dev.ppy.sb',
   version: {
@@ -116,6 +117,7 @@ const config: {
     },
   },
   appModalTeleportTargetId: 'app-modal-portal',
+  needConfirmWebsite: false,
 }
 export default defineAppConfig(config)
 
