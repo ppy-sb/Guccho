@@ -8,7 +8,7 @@ import { useFAIconLib } from '#imports'
 import type { UserFull as User } from '~/types/user'
 import { useSession } from '~/store/session'
 
-import type { SwitcherComposableType } from '~/composables/useSwitcher'
+import type { SwitcherComposableType } from '~/composables/useOverallSwitcher'
 
 const { addToLibrary } = useFAIconLib()
 addToLibrary(faUserGroup, faHeartCrack, faHeart, faEnvelope)

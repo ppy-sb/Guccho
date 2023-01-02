@@ -4,7 +4,7 @@ import type { NumberRange, OverallLeaderboardRankingSystem, OverallLeaderboardSc
 import { mode, overallLeaderboardRankingSystem, overallLeaderboardScoreRankingSystem, ruleset } from '~/types/common'
 
 import type { UserEssential } from '~/types/user'
-import type { SwitcherComposableType } from '~/composables/useSwitcher'
+import type { SwitcherComposableType } from '~/composables/useOverallSwitcher'
 const { $client } = useNuxtApp()
 const [switcher] = inject('switcher') as SwitcherComposableType
 let prevSwitcherState = {

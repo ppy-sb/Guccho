@@ -31,18 +31,18 @@ export function createAddCommasFormatter() {
   }
 }
 
-export function forbiddenMode(mods: Ruleset, mode: Mode) {
-  if (mods === 'relax' && mode === 'mania')
+export function forbiddenMode(ruleset: Ruleset, mode: Mode) {
+  if (ruleset === 'relax' && mode === 'mania')
     return true
-  else if (mods === 'autopilot' && mode !== 'osu')
+  else if (ruleset === 'autopilot' && mode !== 'osu')
     return true
   else return false
 }
 
-export function forbiddenMods(mode: Mode, mods: Ruleset) {
-  if (mode === 'mania' && mods === 'relax')
+export function forbiddenMods(mode: Mode, ruleset: Ruleset) {
+  if (mode === 'mania' && ruleset === 'relax')
     return true
-  else if (mode !== 'osu' && mods === 'autopilot')
+  else if (mode !== 'osu' && ruleset === 'autopilot')
     return true
   else return false
 }

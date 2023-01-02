@@ -4,7 +4,7 @@ import { useAppConfig } from '#app'
 import { computed, inject } from 'vue'
 
 import { useAdapterConfig } from '#imports'
-import type { SwitcherComposableType } from '~/composables/useSwitcher'
+import type { SwitcherComposableType } from '~/composables/useOverallSwitcher'
 import { OverallLeaderboardRankingSystem } from '~/types/common'
 
 const { supportedOverallLeaderboardRankingSystems } = await useAdapterConfig()
