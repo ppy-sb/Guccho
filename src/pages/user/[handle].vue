@@ -12,7 +12,7 @@ definePageMeta({
 
 const route = useRoute()
 const { $client } = useNuxtApp()
-const _switcherContext = useSwitcher()
+const _switcherContext = useOverallSwitcher()
 const [switcher] = _switcherContext
 const {
   data: user,

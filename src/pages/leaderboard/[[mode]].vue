@@ -2,7 +2,7 @@
 import { navigateTo, useAppConfig, useRoute } from '#app'
 
 import type { Mode, OverallLeaderboardRankingSystem, Ruleset } from '~/types/common'
-import type { SwitcherPropType } from '~/composables/useSwitcher'
+import type { SwitcherPropType } from '~/composables/useOverallSwitcher'
 import { assertIsString } from '~/helpers'
 
 const config = useAppConfig()

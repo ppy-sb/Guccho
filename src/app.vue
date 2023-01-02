@@ -26,10 +26,10 @@ onMounted(() => {
       safari ? 'safari' : 'not-safari',
     ]"
   >
-    <teleport to="body">
-      <app-navbar :disabled="modalContainer?.stat === 'show'" />
-    </teleport>
     <t-modal-container ref="modalContainer" :teleport-id="config.appModalTeleportTargetId">
+      <teleport to="body">
+        <app-navbar :disabled="modalContainer?.stat === 'show'" />
+      </teleport>
       <div v-if="appConfig.needConfirmWebsite && !confirmedWebsite" class="flex h-screen items-center">
         <div class="card bg-base-200 shadow-xl px-16 mx-auto gap-8">
           <div class="card-body">

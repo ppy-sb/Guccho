@@ -23,7 +23,7 @@ const emit = defineEmits<{
 const config = useAppConfig()
 const { supportedOverallLeaderboardRankingSystems } = await useAdapterConfig()
 
-const [switcher, setSwitcher] = useSwitcher(toRaw(props.modelValue) || {})
+const [switcher, setSwitcher] = useOverallSwitcher(toRaw(props.modelValue) || {})
 const emitData = () => {
   emit('input', toRaw(switcher))
   emit('update:modelValue', toRaw(switcher))

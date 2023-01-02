@@ -3,6 +3,7 @@
 import VLazyImage from 'v-lazy-image'
 import type { RankingSystem } from '~/types/common'
 import { assertIsBanchoBeatmapset, loadImage, noop } from '~/helpers'
+import { forbiddenMode, forbiddenMods } from '~~/src/common/varkaUtils'
 const { $client } = useNuxtApp()
 const route = useRoute()
 const adapterConfig = useAdapterConfig()
@@ -26,10 +27,10 @@ onBeforeMount(() => {
     .catch(noop)
 })
 
-const rankingSystem = ref<RankingSystem>(adapterConfig.supportedRankingSystems[0])
+const [switcher, setSwitcher] = useSwitcher()
 const queryRs = route.query.rank?.toString()
 if (adapterConfig.supportedRankingSystems.includes(queryRs as RankingSystem))
-  rankingSystem.value = queryRs as RankingSystem
+  setSwitcher({ rankingSystem: queryRs as RankingSystem })
 
 const hashed = beatmapset.value?.beatmaps.find(
   bm => bm.id === route.query.beatmap,
@@ -48,8 +49,7 @@ const {
     return null
 
   return await $client.leaderboard.beatmap.query({
-    ruleset: adapterConfig.supportedRulesets[0],
-    rankingSystem: rankingSystem.value,
+    ...switcher,
     page: 0,
     pageSize: 20,
     beatmapId: selectedMap.value.id.toString(),
@@ -61,7 +61,7 @@ function rewriteAnchor() {
   if (selectedMap.value)
     url.searchParams.set('beatmap', selectedMap.value.id)
 
-  url.searchParams.set('rank', rankingSystem.value)
+  url.searchParams.set('rank', switcher.rankingSystem)
   history.replaceState(
     {}, '', url,
   )
@@ -69,6 +69,11 @@ function rewriteAnchor() {
 
 const placeholder = (e: Event & { target: HTMLImageElement }) => {
   e.target.src = '/images/image-placeholder.svg'
+}
+
+const update = () => {
+  refresh()
+  rewriteAnchor()
 }
 </script>
 
@@ -101,18 +106,12 @@ const placeholder = (e: Event & { target: HTMLImageElement }) => {
             Song by {{ beatmapset.meta.intl.artist }}
           </h2>
         </div>
-        <!-- eslint-disable-next-line vue/no-deprecated-v-on-native-modifier -->
-        <!-- <div class="self-end mx-4 overflow-x-auto diff snap-x">
-        </div> -->
         <t-tabs
           v-model="selectedMapId"
           variant="bordered"
           size="md"
           class="mx-4 self-end bg-transparent"
-          @update:model-value="() => {
-            refresh()
-            rewriteAnchor()
-          }"
+          @update:model-value="update"
         >
           <t-tab
             v-for="bm in beatmapset.beatmaps"
@@ -128,7 +127,7 @@ const placeholder = (e: Event & { target: HTMLImageElement }) => {
       <div v-if="selectedMap" class="flex flex-col md:flex-row card bg-kimberly-100 dark:bg-kimberly-900">
         <div class="w-full md:w-1/3 grow">
           <div class="p-8 h-full flex flex-col justify-around">
-            <VLazyImage v-if="bgCover" class="rounded-lg w-full shadow-md" src-placeholder="/images/image-placeholder.svg" :src="bgCover.listUrl" alt="list" :onerror="placeholder" />
+            <VLazyImage v-if="bgCover" class="rounded-xl w-full shadow-md" src-placeholder="/images/image-placeholder.svg" :src="bgCover.listUrl" alt="list" :onerror="placeholder" />
             <div class="pt-4">
               <div class="w-min">
                 <v-dropdown theme="guweb-dropdown" placement="auto" :distance="6">
@@ -153,6 +152,18 @@ const placeholder = (e: Event & { target: HTMLImageElement }) => {
           </div>
         </div>
         <div class="w-full md:w-2/3">
+          <div class="p-2 flex justify-between">
+            <t-tabs v-model="switcher.mode" variant="" @update:model-value="update">
+              <t-tab v-for="m in adapterConfig.supportedModes" :key="`sw-${m}`" :value="m" :disabled="forbiddenMode(switcher.ruleset, m) === true">
+                {{ m }}
+              </t-tab>
+            </t-tabs>
+            <t-tabs v-model="switcher.ruleset" variant="" @update:model-value="update">
+              <t-tab v-for="r in adapterConfig.supportedRulesets" :key="`sw-${r}`" :value="r" :disabled="forbiddenMods(switcher.mode, r) === true">
+                {{ r }}
+              </t-tab>
+            </t-tabs>
+          </div>
           <dl>
             <div class="stripe-odd">
               <dt class="text-sm font-medium text-kimberly-500">
@@ -249,11 +260,11 @@ const placeholder = (e: Event & { target: HTMLImageElement }) => {
       </div>
     </div>
     <div class="container custom-container mx-auto mt-4">
-      <app-scores-ranking-system-switcher v-model="rankingSystem" class="mx-auto" @update:model-value="refresh(); rewriteAnchor()" />
+      <app-scores-ranking-system-switcher v-model="switcher.rankingSystem" class="mx-auto" />
       <div class="overflow-auto">
         <app-scores-table
-          v-if="leaderboard" :scores="leaderboard" :ranking-system="rankingSystem" class="w-full" :class="{
-            'clear-rounded-tl': adapterConfig.supportedRankingSystems[0] === rankingSystem,
+          v-if="leaderboard" :scores="leaderboard" :ranking-system="switcher.rankingSystem" class="w-full" :class="{
+            'clear-rounded-tl': adapterConfig.supportedRankingSystems[0] === switcher.rankingSystem,
           }"
         />
       </div>
