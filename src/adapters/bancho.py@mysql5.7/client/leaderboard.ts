@@ -105,7 +105,7 @@ LIMIT ${start}, ${pageSize}`)
         if (bPyMode === undefined)
           throw new Error('no mode')
         // TODO: banned players are included
-        const rank = await this.getPPv2LiveLeaderboard(bPyMode, start, start + pageSize * 2).then(res => res.map(Number))
+        const rank = await this.getPPv2LiveLeaderboard(bPyMode, 0, start + pageSize * 2).then(res => res.map(Number))
 
         const [users, stats] = await Promise.all([
           this.db.user.findMany({
@@ -125,7 +125,7 @@ LIMIT ${start}, ${pageSize}`)
           }),
         ])
         for (const index in rank) {
-          if (result.length >= pageSize)
+          if (result.length >= start + pageSize)
             break
           const id = rank[index]
           const user = users.find(u => u.id === id)
@@ -158,7 +158,7 @@ LIMIT ${start}, ${pageSize}`)
       result = await this.overallLeaderboardFromDatabase(opt)
     }
 
-    return result.map((item, index) => ({
+    return result.slice(start, start + pageSize).map((item, index) => ({
       user: {
         id: item.id,
         ingameId: item.id,
