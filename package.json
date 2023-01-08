@@ -31,6 +31,7 @@
     "@headlessui/vue": "^1.7.7",
     "@nuxtjs/auth-next": "5.0.0-1667386184.dfbbb54",
     "@nuxtjs/color-mode": "^3.2.0",
+    "@nuxtjs/robots": "^3.0.0",
     "@pinia/nuxt": "^0.4.6",
     "@prisma/client": "^4.8.0",
     "@tailwindcss/typography": "^0.5.8",

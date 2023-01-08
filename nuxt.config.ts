@@ -59,6 +59,7 @@ export default defineNuxtConfig({
     // 'floating-vue/nuxt',
     '@nuxtjs/tailwindcss',
     '@pinia/nuxt',
+    '@nuxtjs/robots',
   ],
 
   alias: {
