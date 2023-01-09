@@ -4,7 +4,7 @@ import { useAppConfig } from '#app'
 import { computed, inject } from 'vue'
 
 import { useAdapterConfig } from '#imports'
-import type { SwitcherComposableType } from '~/composables/useOverallSwitcher'
+import type { OverallSwitcherComposableType } from '~/composables/useSwitcher'
 import { OverallLeaderboardRankingSystem } from '~/types/common'
 
 const { supportedOverallLeaderboardRankingSystems } = await useAdapterConfig()
@@ -12,7 +12,7 @@ const { supportedOverallLeaderboardRankingSystems } = await useAdapterConfig()
 const config = useAppConfig()
 const rankingSystem = config.overallRankingSystem
 
-const [switcher, setSwitcher] = inject('switcher') as SwitcherComposableType
+const [switcher, setSwitcher] = inject('switcher') as OverallSwitcherComposableType
 
 interface RankConf {
   userpage: {

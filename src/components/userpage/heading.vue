@@ -8,7 +8,7 @@ import { useFAIconLib } from '#imports'
 import type { UserFull as User } from '~/types/user'
 import { useSession } from '~/store/session'
 
-import type { SwitcherComposableType } from '~/composables/useOverallSwitcher'
+import type { OverallSwitcherComposableType } from '~/composables/useSwitcher'
 
 const { addToLibrary } = useFAIconLib()
 addToLibrary(faUserGroup, faHeartCrack, faHeart, faEnvelope)
@@ -16,7 +16,7 @@ addToLibrary(faUserGroup, faHeartCrack, faHeart, faEnvelope)
 const { $client } = useNuxtApp()
 const session = useSession()
 const changeFriendStateButton = ref(null)
-const [switcher, setSwitcher] = inject('switcher') as SwitcherComposableType
+const [switcher, setSwitcher] = inject('switcher') as OverallSwitcherComposableType
 const user = inject<Ref<User<string>>>('user')
 const {
   data,
