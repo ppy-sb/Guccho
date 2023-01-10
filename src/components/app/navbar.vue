@@ -28,30 +28,30 @@ const menu = computed(() => [
       name: 'leaderboard-mode',
     },
   },
-  {
-    name: '[dev] components',
-    route: {
-      name: 'playground',
-    },
-  },
-  {
-    name: 'user(1000)',
-    route: {
-      name: 'user-handle',
-      params: {
-        handle: 1000,
-      },
-    },
-  },
-  {
-    name: 'Beatmapset(1888000)',
-    route: {
-      name: 'beatmapset-id',
-      params: {
-        id: 1888000,
-      },
-    },
-  },
+  // {
+  //   name: '[dev] components',
+  //   route: {
+  //     name: 'playground',
+  //   },
+  // },
+  // {
+  //   name: 'user(1000)',
+  //   route: {
+  //     name: 'user-handle',
+  //     params: {
+  //       handle: 1000,
+  //     },
+  //   },
+  // },
+  // {
+  //   name: 'Beatmapset(1888000)',
+  //   route: {
+  //     name: 'beatmapset-id',
+  //     params: {
+  //       id: 1888000,
+  //     },
+  //   },
+  // },
 ])
 const config = useAppConfig()
 const detached = ref(false)
