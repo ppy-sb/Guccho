@@ -1,4 +1,6 @@
 <script setup lang="ts">
+// @ts-expect-error There's no such declaration file for me to include, nor do I felt to declare it myself. It's a Vue SFC How do you expecting me to declare it myself... by hand? Are you really respecting my time?
+import VLazyImage from 'v-lazy-image'
 import { faBan } from '@fortawesome/free-solid-svg-icons'
 import type { RankingSystemScore } from '~/types/score'
 import type { Mode, OverallLeaderboardRankingSystem, Ruleset } from '~/types/common'
@@ -6,6 +8,7 @@ import { ppRankingSystem, scoreRankingSystem } from '~/types/common'
 import { createAddCommasFormatter } from '~/common/varkaUtils'
 import { useFAIconLib } from '#imports'
 import { assertBeatmapIsVisible } from '~/helpers/map'
+import { placeholder } from '~/helpers'
 const props = withDefaults(
   defineProps<{
     score?: RankingSystemScore<unknown, unknown, Mode, OverallLeaderboardRankingSystem>
@@ -56,11 +59,7 @@ const meta = computed((): {
     <div class="flex justify-between">
       <div class="flex min-w-0 gap-4">
         <div class="hidden md:block">
-          <img
-            v-if="beatmap && assertBeatmapIsVisible(beatmap) && beatmap.beatmapset.source === 'bancho'"
-            :src="`https://assets.ppy.sh/beatmaps/${beatmap.beatmapset.foreignId}/covers/list.jpg`"
-            class="object-cover w-20 h-16 rounded-xl"
-          >
+          <VLazyImage v-if="beatmap && assertBeatmapIsVisible(beatmap) && beatmap.beatmapset.source === 'bancho'" class="object-cover w-20 h-16 rounded-xl" src-placeholder="/images/image-placeholder.svg" :src="`https://assets.ppy.sh/beatmaps/${beatmap.beatmapset.foreignId}/covers/list.jpg`" alt="list" :onerror="placeholder" />
           <div v-else class="w-20 h-16">
             <font-awesome-icon icon="fa-solid fa-ban" size="4x" class="w-full" />
           </div>

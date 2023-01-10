@@ -21,4 +21,8 @@ export function loadImage(src: string) {
   })
 }
 
-export function noop() {}
+export function noop() { }
+
+export function placeholder(e: Event & { target: HTMLImageElement }) {
+  e.target.src = '/images/image-placeholder.svg'
+}

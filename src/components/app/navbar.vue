@@ -5,7 +5,7 @@ import type { inferProcedureOutput } from '@trpc/server'
 import { useDebounceFn } from '@vueuse/core'
 import { useSession } from '~/store/session'
 import type { AppRouter } from '~/server/trpc/routers'
-import { assertIsBanchoBeatmapset } from '~/helpers'
+import { assertIsBanchoBeatmapset, placeholder } from '~/helpers'
 
 const props
   = defineProps<{
@@ -101,10 +101,6 @@ onBeforeMount(() => {
 onUnmounted(() => {
   document.removeEventListener('scroll', handleScroll)
 })
-
-const placeholder = (e: Event & { target: HTMLImageElement }) => {
-  e.target.src = '/images/image-placeholder.svg'
-}
 </script>
 
 <template>
