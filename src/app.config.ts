@@ -117,7 +117,7 @@ const config: {
     },
   },
   appModalTeleportTargetId: 'app-modal-portal',
-  needConfirmWebsite: false,
+  needConfirmWebsite: true,
 }
 export default defineAppConfig(config)
 
