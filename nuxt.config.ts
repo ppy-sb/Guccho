@@ -1,8 +1,9 @@
 import { fileURLToPath } from 'url'
-
 import hljs from './configs/hljs'
-
 import postcss from './postcss.config'
+
+const activeAdapter = 'ppy.sb@bancho.py'
+
 export default defineNuxtConfig({
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
   ssr: true,
@@ -63,7 +64,7 @@ export default defineNuxtConfig({
   ],
 
   alias: {
-    $active: fileURLToPath(new URL('./src/adapters/ppy.sb@bancho.py', import.meta.url)),
+    $active: fileURLToPath(new URL(`./src/adapters/${activeAdapter}`, import.meta.url)),
     $def: fileURLToPath(new URL('./src/adapters/base', import.meta.url)),
   },
 
