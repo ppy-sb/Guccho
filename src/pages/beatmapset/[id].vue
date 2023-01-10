@@ -2,8 +2,8 @@
 // @ts-expect-error no d.ts
 import VLazyImage from 'v-lazy-image'
 import type { RankingSystem } from '~/types/common'
-import { assertIsBanchoBeatmapset, loadImage, noop } from '~/helpers'
-import { forbiddenMode, forbiddenMods } from '~~/src/common/varkaUtils'
+import { assertIsBanchoBeatmapset, loadImage, noop, placeholder } from '~/helpers'
+import { forbiddenMode, forbiddenMods } from '~/common/varkaUtils'
 const { $client } = useNuxtApp()
 const route = useRoute()
 const adapterConfig = useAdapterConfig()
@@ -65,10 +65,6 @@ function rewriteAnchor() {
   history.replaceState(
     {}, '', url,
   )
-}
-
-const placeholder = (e: Event & { target: HTMLImageElement }) => {
-  e.target.src = '/images/image-placeholder.svg'
 }
 
 const update = () => {
