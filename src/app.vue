@@ -40,7 +40,7 @@ onMounted(() => {
             <div class="form-control">
               <label class="cursor-pointer label">
                 <input v-model="checked" type="checkbox" class="checkbox checkbox-error mx-2">
-                <span class="label-text text-4xl">I understand this is not the <a class="link" href="https://osu.ppt.sh">Official Osu Website</a></span>
+                <span class="label-text text-4xl">I understand this is not the <a class="link" href="https://osu.ppy.sh">Official Osu Website</a></span>
               </label>
             </div>
             <div class="grid grid-cols-2 items-baseline">
