@@ -10,3 +10,5 @@ export const supportedRankingSystems: RankingSystem[] = ['ppv2', 'score']
 export const supportedFeatures: Set<Feature> = new Set([
   'userpage',
 ])
+
+export * from '~/adapters/bancho.py/transforms/id-conversion'
