@@ -256,7 +256,7 @@ const update = () => {
       </div>
     </div>
     <div class="container custom-container mx-auto mt-4">
-      <app-scores-ranking-system-switcher v-model="switcher.rankingSystem" class="mx-auto" />
+      <app-scores-ranking-system-switcher v-model="switcher.rankingSystem" class="mx-auto" @update:model-value="update" />
       <div class="overflow-auto">
         <app-scores-table
           v-if="leaderboard" :scores="leaderboard" :ranking-system="switcher.rankingSystem" class="w-full" :class="{
