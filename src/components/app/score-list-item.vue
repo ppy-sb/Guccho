@@ -4,7 +4,7 @@ import VLazyImage from 'v-lazy-image'
 import { faBan } from '@fortawesome/free-solid-svg-icons'
 import type { RankingSystemScore } from '~/types/score'
 import type { Mode, OverallLeaderboardRankingSystem, Ruleset } from '~/types/common'
-import { ppRankingSystem, scoreRankingSystem } from '~/types/common'
+import { overallLeaderboardScoreRankingSystem, ppRankingSystem } from '~/types/common'
 import { createAddCommasFormatter } from '~/common/varkaUtils'
 import { useFAIconLib } from '#imports'
 import { assertBeatmapIsVisible } from '~/helpers/map'
@@ -78,12 +78,10 @@ const meta = computed((): {
                   ruleset: props.ruleset,
                   rank: ['totalScore', 'rankedScore'].includes(props.rankingSystem) ? 'score' : props.rankingSystem,
                 },
-              }" class="text-sm truncate md:text-md lg:text-lg"
+              }"
             >
               <template v-if="meta">
-                {{ meta.artist }} - {{ meta.title }} [{{
-                  beatmap.version
-                }}]
+                <span class="text-sm truncate md:text-md lg:text-lg font-bold">{{ meta.artist }} - {{ meta.title }}</span>
               </template>
             </router-link>
           </template>
@@ -91,11 +89,19 @@ const meta = computed((): {
             Unknown Beatmap
           </div>
           <div class="flex text-xs gap-2 md:text-sm lg:text-md">
-            <div class="text-semibold">
-              {{ score.mods.join(', ') || 'noMod' }}
+            <div class="flex gap-2">
+              <span v-if="beatmap" class="font-semibold">
+                {{ beatmap.version }}
+              </span>
+              <span class="font-light">
+                {{ score.mods.join(', ') || 'noMod' }}
+              </span>
             </div>
             <div class="flex">
-              <div class="font-semibold">
+              <div v-if="beatmap" class="font-semibold">
+                {{ score.maxCombo }} / {{ beatmap.properties.maxCombo }}
+              </div>
+              <div v-else class="font-semibold">
                 {{ score.maxCombo }}
               </div>
               <div class="font-light">
@@ -104,7 +110,7 @@ const meta = computed((): {
             </div>
           </div>
           <div class="mt-auto map-date">
-            <time class="text-xs italic lg:text-sm"> {{ score.playedAt.toLocaleDateString() }} {{
+            <time class="text-xs italic lg:text-sm font-extralight"> {{ score.playedAt.toLocaleDateString() }} {{
               score.playedAt.toLocaleTimeString('en-us')
             }} </time>
           </div>
@@ -119,7 +125,7 @@ const meta = computed((): {
               </div>
               <span class="font-light">pp</span>
             </template>
-            <template v-else-if="(scoreRankingSystem as readonly string[]).includes(props.rankingSystem)">
+            <template v-else-if="(overallLeaderboardScoreRankingSystem as readonly string[]).includes(props.rankingSystem)">
               <div class="font-bold font-mono">
                 {{ numberFmt(score.score) }}
               </div>
@@ -133,7 +139,7 @@ const meta = computed((): {
           </div>
         </div>
         <div class="flex items-center justify-center">
-          <div class="text-5xl font-bold lg:text-6xl font-mono w-16 text-center">
+          <div class="text-5xl lg:text-6xl font-mono w-16 text-center">
             {{ score.grade }}
           </div>
         </div>

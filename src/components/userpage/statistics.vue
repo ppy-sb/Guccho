@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
 import type { OverallLeaderboardRankingSystem } from '~/types/common'
-import type { UserModeRulesetStatistics } from '~/types/statistics'
+import type { BaseRank, UserModeRulesetStatistics } from '~/types/statistics'
 import { createScoreFormatter, toDuration } from '~/common/varkaUtils'
 
-const chars = [...[...Array(10).keys()].map(String), ',', '.', 'K', 'M', 'B', 'T', '-']
+const chars = [...[...Array(10).keys()].map(String), ',', '.', 'K', 'M', 'B', 'T', '-', '#', '/', 'N', 'A']
 
 const data = inject('user.statistics') as Ref<UserModeRulesetStatistics<OverallLeaderboardRankingSystem>>
+const currentRankingSystem = inject<BaseRank>('user.currentRankingSystem')
 const scoreFmt = createScoreFormatter({ notation: 'compact', maximumFractionDigits: 2 })
 const deferredRender = ref({ ...data.value })
 const playTime = computed(() => deferredRender?.value ? toDuration(new Date(deferredRender.value.playTime * 1000), new Date(0)) : { hours: 0, minutes: 0, seconds: 0 })
@@ -26,7 +27,7 @@ watch(data, () => {
     </div> -->
 
     <div class="card-body p-0 md:p-4 xl:p-3">
-      <div class="stats bg-transparent grid drop-shadow-xl md:grid-cols-3 stats-vertical md:stats-horizontal">
+      <div class="stats bg-transparent grid drop-shadow-xl md:grid-rows-2 xl:grid-rows-1 stats-vertical md:stats-horizontal">
         <div class="stat">
           <div class="stat-title">
             Level
@@ -102,6 +103,23 @@ watch(data, () => {
               </span>
               sec
             </div>
+          </div>
+        </div>
+        <div v-if="currentRankingSystem" class="stat">
+          <div class="stat-title">
+            Rank
+          </div>
+          <div class="stat-value flex gap-1 items-center">
+            <Roller
+              :char-set="chars"
+              :value="`#${Intl.NumberFormat().format(currentRankingSystem.rank || 0)}`"
+            />
+          </div>
+          <div class="stat-desc flex gap-2 items-center">
+            country rank: <Roller
+              :char-set="chars"
+              :value="`#${Intl.NumberFormat().format(currentRankingSystem.countryRank || 0)}`"
+            />
           </div>
         </div>
       </div>
