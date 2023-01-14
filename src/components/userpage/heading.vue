@@ -136,8 +136,9 @@ const toggleFriend = async () => {
                 </div>
               </div> -->
             </h1>
+            <!-- underline -->
             <h2
-              class="text-3xl text-center underline md:text-left decoration-sky-500 text-kimberly-600 dark:text-kimberly-300"
+              class="text-3xl text-center md:text-left decoration-sky-500 text-kimberly-600 dark:text-kimberly-300"
             >
               @{{ user.safeName }}
             </h2>

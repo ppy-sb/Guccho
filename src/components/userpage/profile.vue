@@ -26,7 +26,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="container mx-auto mt-4 custom-container">
+  <div v-if="user?.profile.html" class="container mx-auto mt-4 custom-container">
     <client-only v-if="(clientTakeover && user?.profile)">
       <EditorContent
         class="custom-typography"

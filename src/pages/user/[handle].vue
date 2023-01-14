@@ -104,23 +104,24 @@ onMounted(() => {
       <userpage-heading id="heading" ref="heading" />
       <userpage-profile />
       <userpage-ranking-system-switcher class="z-10 !drop-shadow-xl" />
-      <userpage-rank-chart v-if="currentRankingSystem" />
-      <div class="lg:grid lg:grid-cols-7 xl:container xl:mx-auto">
+      <div class="container custom-container mx-auto">
+        <userpage-statistics
+          id="statistics"
+          ref="statistics"
+        />
+      </div>
+      <div class="container custom-container mx-auto px-2 lg:px-0">
+        <userpage-scores
+          v-if="currentRankingSystem"
+          id="bests"
+          ref="scores"
+        />
+      </div>
+      <div class="pt-4" />
+      <!-- <userpage-rank-chart v-if="currentRankingSystem" /> -->
+      <!-- <div class="lg:grid lg:grid-cols-7 xl:container xl:mx-auto lg:px-4">
         <div class="lg:col-span-6">
-          <userpage-statistics
-            id="statistics"
-            ref="statistics"
-          />
-          <userpage-scores
-            v-if="currentRankingSystem"
-            id="bests"
-            ref="scores"
-          />
-          <!-- <userpage-json-viewer
-            id="json"
-            ref="json"
-          /> -->
-          <div class="pt-4" />
+
         </div>
         <div class="hidden self-start lg:block lg:col-span-1 sticky top-[100px]">
           <ul class="menu menu-compact drop-shadow-xl">
@@ -129,7 +130,7 @@ onMounted(() => {
               :key="el"
             >
               <a
-                class="border-kimberly-500/20 border-l-4"
+                class="border-kimberly-500/20 w-full grow border-r-4"
                 :class="{
                   'border-secondary dark:border-accent': isVisible,
                 }"
@@ -138,7 +139,7 @@ onMounted(() => {
             </li>
           </ul>
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
