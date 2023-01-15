@@ -88,7 +88,7 @@ const meta = computed((): {
           <div v-else>
             Unknown Beatmap
           </div>
-          <div class="flex text-xs gap-2 md:text-sm lg:text-md">
+          <div class="flex text-xs gap-2 md:text-sm lg:text-md flex-wrap">
             <div class="flex gap-2">
               <span v-if="beatmap" class="font-semibold">
                 {{ beatmap.version }}
@@ -149,7 +149,10 @@ const meta = computed((): {
 </template>
 
 <style lang="scss">
+.score {
+  @apply py-2
+}
 .score + .score {
-  @apply border-t-2 border-kimberly-300/50 pt-2
+  @apply border-t-2 border-kimberly-300/50
 }
 </style>

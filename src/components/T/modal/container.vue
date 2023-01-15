@@ -106,8 +106,8 @@ defineExpose({
 
 <style lang="scss">
 @import './shared.scss';
-$content-stage1: blur(0.6em) opacity(0.5) saturate(0.9);
-$content-stage2: blur(1.2em) opacity(0.2) saturate(0.8);
+$content-stage1: blur(0.3em) opacity(0.4) saturate(0.7);
+$content-stage2: blur(1em) opacity(0.2) saturate(0.3);
 
 $scale: scale(0.97);
 $scale2: scale(0.95);

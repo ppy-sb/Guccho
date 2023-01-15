@@ -36,7 +36,6 @@ export function createRulesetData<
 }) {
   if (dbResult == null) {
     return {
-
       ppv2: {
         rank: 0,
         performance: 0,
@@ -54,6 +53,8 @@ export function createRulesetData<
       playTime: 0,
       totalHits: 0,
       level: 0,
+      maxCombo: 0,
+      replayWatchedByOthers: 0,
     } as UserModeRulesetStatistics<_RankingSystem>
   }
   return {
@@ -76,6 +77,8 @@ export function createRulesetData<
     playTime: dbResult.playTime,
     totalHits: dbResult.totalHits,
     level: getLevelWithProgress(dbResult.totalScore),
+    maxCombo: dbResult.maxCombo,
+    replayWatchedByOthers: dbResult.replayViews,
   } as UserModeRulesetStatistics<_RankingSystem>
 }
 
