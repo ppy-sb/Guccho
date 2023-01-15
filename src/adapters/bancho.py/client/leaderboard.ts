@@ -121,7 +121,7 @@ export default class BanchoPyLeaderboard implements LeaderboardDataProvider<Id> 
         name: item.name,
         safeName: item.safeName,
         flag: item.flag,
-        avatarSrc: process.env.BANCHO_PY_AVATAR_DOMAIN && `https://${process.env.BANCHO_PY_AVATAR_DOMAIN}/${item.id}`,
+        avatarSrc: (process.env.BANCHO_PY_AVATAR_DOMAIN && `https://${process.env.BANCHO_PY_AVATAR_DOMAIN}/${item.id}`) || '',
         roles: toRoles(item.priv),
       },
       inThisLeaderboard: {
