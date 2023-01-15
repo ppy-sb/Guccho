@@ -111,7 +111,7 @@ export const sampleUserWithSecrets: Required<UserFull<unknown>> = {
   ingameId: 9999,
   name: 'ppy.sb',
   safeName: 'demo-user',
-  avatarUrl: '/images/1.png',
+  avatarSrc: '/images/1.png',
   oldNames: [],
   flag: 'us',
   email: 'user@example.com',

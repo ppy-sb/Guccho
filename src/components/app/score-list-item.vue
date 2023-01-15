@@ -139,7 +139,7 @@ const meta = computed((): {
           </div>
         </div>
         <div class="flex items-center justify-center">
-          <div class="text-5xl lg:text-6xl font-mono w-16 text-center">
+          <div class="text-5xl font-mono w-16 text-center">
             {{ score.grade }}
           </div>
         </div>

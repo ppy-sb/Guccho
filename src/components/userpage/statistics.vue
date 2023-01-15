@@ -4,42 +4,43 @@ import type { OverallLeaderboardRankingSystem } from '~/types/common'
 import type { BaseRank, UserModeRulesetStatistics } from '~/types/statistics'
 import { createScoreFormatter, toDuration } from '~/common/varkaUtils'
 
-const chars = [...[...Array(10).keys()].map(String), ',', '.', 'K', 'M', 'B', 'T', '-', '#', '/', 'N', 'A']
+const chars = [...[...Array(10).keys()].map(String), ',', '.', 'K', 'M', 'B', 'T', '-']
 
 const data = inject('user.statistics') as Ref<UserModeRulesetStatistics<OverallLeaderboardRankingSystem>>
 const currentRankingSystem = inject<BaseRank>('user.currentRankingSystem')
-const scoreFmt = createScoreFormatter({ notation: 'compact', maximumFractionDigits: 2 })
-const deferredRender = ref({ ...data.value })
-const playTime = computed(() => deferredRender?.value ? toDuration(new Date(deferredRender.value.playTime * 1000), new Date(0)) : { hours: 0, minutes: 0, seconds: 0 })
+const scoreFmtCompact = createScoreFormatter({ notation: 'compact', maximumFractionDigits: 2 })
+const scoreFmt = createScoreFormatter({ notation: undefined })
+const deferredRender = reactive({ ...data.value })
+const playTime = computed(() => deferredRender ? toDuration(new Date(deferredRender.playTime * 1000), new Date(0)) : { hours: 0, minutes: 0, seconds: 0 })
+
 watch(data, () => {
-  setTimeout(() => {
-    deferredRender.value = { ...data.value }
-  }, 0)
+  let count = 0
+  for (const key in deferredRender) {
+    setTimeout(() => {
+      // @ts-expect-error it's fine
+      deferredRender[key] = data.value[key]
+    }, (count += 1) * 100)
+  }
 })
 </script>
 
 <template>
   <div class="card">
-    <!-- <div class="radial-progress mx-auto text-primary-content bg-primary/20 border-8 border-primary/20" style="--value:70; --size:12rem; --thickness: 0.66em;">
-      <div class="text-3xl">
-        Lv. 69
-      </div>
-    </div> -->
-
     <div class="card-body p-0 md:p-4 xl:p-3">
-      <div class="stats bg-transparent grid drop-shadow-xl md:grid-rows-2 xl:grid-rows-1 stats-vertical md:stats-horizontal">
+      <div class="stats bg-transparent grid drop-shadow-xl md:grid-cols-2 md:grid-rows-2 xl:grid-cols-4 xl:grid-rows-1 stats-vertical md:stats-horizontal">
         <div class="stat">
           <div class="stat-title">
             Level
           </div>
           <div class="stat-value">
             <roller
+              class="font-mono"
               :char-set="chars"
               :value="(Math.floor(deferredRender.level) || 0).toString()"
             />
           </div>
           <div class="stat-desc flex flex-col">
-            <div class="flex gap-1 items-center">
+            <div class="flex gap-1 items-center font-mono">
               >> <roller
                 :char-set="chars"
                 :value="(deferredRender.level % 1).toLocaleString('en-US', { style: 'percent', maximumFractionDigits: 2 }).slice(0, -1)"
@@ -60,15 +61,19 @@ watch(data, () => {
           <div class="stat-value">
             <roller
               :char-set="chars"
-              :value="scoreFmt(deferredRender.totalScore.score as bigint)"
+              class="font-mono"
+              :value="scoreFmtCompact(deferredRender.totalScore.score as bigint)"
               default-value="-"
+              :title="deferredRender.totalScore.score"
             />
           </div>
           <div class="stat-desc flex gap-1 items-center">
             <roller
               :char-set="chars"
-              :value="scoreFmt(deferredRender.playCount)"
-            /> plays
+              class="font-mono"
+              :value="scoreFmt(deferredRender.totalHits)"
+              default-value="-"
+            /> total hits
           </div>
         </div>
         <div class="stat">
@@ -77,15 +82,14 @@ watch(data, () => {
           </div>
           <div class="stat-value flex gap-1 items-center">
             <roller
+              class="font-mono"
               :char-set="chars"
-              :value="scoreFmt(deferredRender.totalHits)"
-              default-value="-"
-            />
-            TTH
+              :value="scoreFmt(deferredRender.playCount)"
+            /> <span class="font-normal">plays</span>
           </div>
           <div class="stat-desc flex gap-2">
-            <!-- {{ playTime.hours }} H, {{ playTime.minutes }} M, {{ playTime.seconds }} S -->
-            <div>
+            {{ playTime.hours }} H, {{ playTime.minutes }} M, {{ playTime.seconds }} S
+            <!-- <div>
               <span class="countdown font-mono text-lg">
                 <span :style="`--value:${playTime.hours};`" />
               </span>
@@ -102,24 +106,27 @@ watch(data, () => {
                 <span :style="`--value:${playTime.seconds};`" />
               </span>
               sec
-            </div>
+            </div> -->
           </div>
         </div>
         <div v-if="currentRankingSystem" class="stat">
           <div class="stat-title">
             Rank
           </div>
-          <div class="stat-value flex gap-1 items-center">
-            <Roller
+          <div class="stat-value flex gap-1 items-center font-mono">
+            # <Roller
               :char-set="chars"
-              :value="`#${Intl.NumberFormat().format(currentRankingSystem.rank || 0)}`"
+              :value="`${Intl.NumberFormat().format(currentRankingSystem.rank || 0)}`"
             />
           </div>
           <div class="stat-desc flex gap-2 items-center">
-            country rank: <Roller
-              :char-set="chars"
-              :value="`#${Intl.NumberFormat().format(currentRankingSystem.countryRank || 0)}`"
-            />
+            country rank: <div class="font-mono flex items-center gap-[0.1em]">
+              #
+              <Roller
+                :char-set="chars"
+                :value="`${Intl.NumberFormat().format(currentRankingSystem.countryRank || 0)}`"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -130,5 +137,11 @@ watch(data, () => {
 <style>
 ::-webkit-progress-value {
   transition: width 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+</style>
+
+<style scoped>
+.stats > .stat {
+  border: 0
 }
 </style>

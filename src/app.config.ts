@@ -15,27 +15,25 @@ const config: {
   }
   title: string
   mode: Record<
-  Mode,
-  AppConfigItemBase
+    Mode,
+    AppConfigItemBase
   >
   ruleset: Record<
-  Ruleset,
-  AppConfigItemBase
+    Ruleset,
+    AppConfigItemBase
   >
   rankingSystem: Record<
-  RankingSystem,
-  { name: string }
+    RankingSystem,
+    { name: string }
   >
   overallRankingSystem: Record<
-  OverallLeaderboardRankingSystem,
-  AppConfigItemBase & {
-    userpage: {
-      show: 'tab' | 'dropdown'
+    OverallLeaderboardRankingSystem,
+    AppConfigItemBase & {
+      userpage: {
+        show: 'tab' | 'dropdown'
+      }
     }
-  }
   >
-  appModalTeleportTargetId: string
-  needConfirmWebsite: boolean
 } = {
   baseUrl: 'dev.ppy.sb',
   version: {
@@ -116,9 +114,9 @@ const config: {
       name: 'Score',
     },
   },
+}
+export default defineAppConfig({
+  ...config,
   appModalTeleportTargetId: 'app-modal-portal',
   needConfirmWebsite: true,
-}
-export default defineAppConfig(config)
-
-export type AppConfig = typeof config
+})
