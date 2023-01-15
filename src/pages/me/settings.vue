@@ -285,7 +285,7 @@ onBeforeMount(() => {
               change
             </button>
             <img
-              :src="user.avatarUrl"
+              :src="user.avatarSrc"
               class="pointer-events-none"
               style="min-width:150px; width:150px;"
             >

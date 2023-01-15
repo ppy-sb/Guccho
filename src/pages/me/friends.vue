@@ -64,7 +64,7 @@ const layout = ref('list')
           <div class="flex items-center justify-center gap-2 md:justify-start face">
             <div class="relative z-10 mask mask-squircle hoverable">
               <img
-                :src="user.avatarUrl"
+                :src="user.avatarSrc"
                 class="pointer-events-none w-14 md:w-[4em]"
               >
             </div>

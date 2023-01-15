@@ -39,7 +39,7 @@ const formatter = new Intl.NumberFormat(undefined, option)
         <div class="aspect-square mask mask-squircle flex">
           <img
             class="m-auto"
-            :src="user.avatarUrl"
+            :src="user.avatarSrc"
             :alt="user.name"
             width="30"
           >

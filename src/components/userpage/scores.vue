@@ -165,7 +165,7 @@ const nextTop = nextPage(topPage)
       <section v-if="bp?.scores?.length" class="custom-container">
         <div class="card" :class="[pendingBP && 'pointer-events-none']">
           <div class="justify-center p-1 card-title rounded-2xl bg-kimberly-300/30">
-            Best Performances
+            Best Scores
           </div>
           <div class="px-1 py-2 card-body">
             <div class="relative">
@@ -179,13 +179,13 @@ const nextTop = nextPage(topPage)
             </div>
           </div>
           <div class="btn-group d-flex w-full bg-kimberly-300/30 rounded-2xl shadow-xl" style="--rounded-btn: 1rem">
-            <button class="btn btn-ghost" @click="prevBp">
+            <button class="btn btn-ghost" :disabled="bpPage === 0" @click="prevBp">
               «
             </button>
             <button class="btn btn-ghost grow" @click="() => refreshBP()">
               Page {{ bpPage + 1 }}
             </button>
-            <button class="btn btn-ghost" @click="nextBp">
+            <button class="btn btn-ghost" :disabled="bp.scores.length < 10" @click="nextBp">
               »
             </button>
           </div>
@@ -208,13 +208,13 @@ const nextTop = nextPage(topPage)
             </div>
           </div>
           <div class="btn-group d-flex w-full bg-kimberly-300/30 rounded-2xl shadow-xl" style="--rounded-btn: 1rem">
-            <button class="btn btn-ghost" @click="prevTop">
+            <button class="btn btn-ghost" :disabled="topPage === 0" @click="prevTop">
               «
             </button>
             <button class="btn btn-ghost grow" @click="() => refreshBP()">
               Page {{ topPage + 1 }}
             </button>
-            <button class="btn btn-ghost" @click="nextTop">
+            <button class="btn btn-ghost" :disabled="top.scores.length < 10" @click="nextTop">
               »
             </button>
           </div>

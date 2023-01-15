@@ -132,7 +132,7 @@ export function toUserEssential<
     name: user.name,
     safeName: user.safeName,
     flag: user.country,
-    avatarUrl: `https://a.ppy.sb/${user.id}`,
+    avatarSrc: (process.env.BANCHO_PY_AVATAR_DOMAIN && `https://${process.env.BANCHO_PY_AVATAR_DOMAIN}/${user.id}`) || '',
     roles: toRoles(user.priv),
   }
 
@@ -183,7 +183,7 @@ export function toFullUser(user: DatabaseUser): UserEssential<Id> & Pick<UserExt
     name: user.name,
     safeName: user.safeName,
     flag: user.country,
-    avatarUrl: `https://a.ppy.sb/${user.id}`,
+    avatarSrc: (process.env.BANCHO_PY_AVATAR_DOMAIN && `https://${process.env.BANCHO_PY_AVATAR_DOMAIN}/${user.id}`) || '',
     roles: toRoles(user.priv),
     settings: {
       visibility: {

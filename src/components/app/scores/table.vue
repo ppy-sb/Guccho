@@ -48,7 +48,7 @@ const pp = createPPFormatter()
               <div class="aspect-square mask mask-squircle flex">
                 <img
                   class="m-auto"
-                  :src="item.user.avatarUrl"
+                  :src="item.user.avatarSrc"
                   :alt="item.user.name"
                   width="30"
                 >

@@ -210,7 +210,7 @@ onUnmounted(() => {
                             <div
                               class="drop-shadow-lg flex gap-2 items-center"
                             >
-                              <img :src="user.avatarUrl" class="w-[30px] mask mask-squircle" :onerror="placeholder">
+                              <img :src="user.avatarSrc" class="w-[30px] mask mask-squircle" :onerror="placeholder">
                               <span>{{ user.name }}</span>
                             </div>
                           </nuxt-link>
@@ -342,7 +342,7 @@ onUnmounted(() => {
           >
             <div class="indicator avatar">
               <img
-                :src="session.$state.user?.avatarUrl"
+                :src="session.$state.user?.avatarSrc"
                 class="rounded-full avatar-img ring ring-kimberly-600/70 ring-offset-base-100 ring-offset-2 pointer-events-none"
                 alt=""
               >
