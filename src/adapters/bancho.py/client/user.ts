@@ -1,7 +1,5 @@
 import type { JSONContent } from '@tiptap/core'
 import bcrypt from 'bcryptjs'
-import type { RedisClientType } from 'redis'
-import { createClient } from 'redis'
 import { TRPCError } from '@trpc/server'
 import { generateHTML } from '@tiptap/html'
 import type { Prisma, PrismaClient } from '@prisma/client' // bancho.py
@@ -11,6 +9,7 @@ import { createRulesetData, toFullUser, toUserEssential } from '../transforms'
 import { toRankingSystemScores } from '../transforms/scores'
 import { createUserQuery } from '../transforms/db-queries'
 import { idToString, stringToId } from '../transforms/id-conversion'
+import { client as redisClient } from '../redis-client'
 import BanchoPyUserRelationship from './user-relations'
 import { prismaClient } from '.'
 import type { UserDataProvider } from '$def/client/user'
@@ -29,20 +28,12 @@ export default class BanchoPyUser implements UserDataProvider<Id> {
   db: PrismaClient
 
   relationships: BanchoPyUserRelationship
-  redisClient?: RedisClientType
+  redisClient?: ReturnType<typeof redisClient>
 
   constructor() {
     this.db = prismaClient
     this.relationships = new BanchoPyUserRelationship()
-    this.redisClient = process.env.BANCHO_PY_REDIS_URI !== ''
-      ? createClient({
-        url: process.env.BANCHO_PY_REDIS_URI,
-      })
-      : undefined
-    if (this.redisClient) {
-      this.redisClient.on('error', err => console.error('Redis Client Error', err))
-      this.redisClient.connect()
-    }
+    this.redisClient = redisClient()
   }
 
   async getLiveRank(id: number, mode: number, country: string) {
