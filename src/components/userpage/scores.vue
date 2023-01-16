@@ -203,7 +203,7 @@ const nextTop = nextPage(topPage)
       <section v-if="top?.count" class="custom-container">
         <div class="card" :class="[pendingTop && 'pointer-events-none']">
           <div class="justify-center p-1 card-title rounded-2xl bg-kimberly-300/30">
-            Top Ranks ({{ top.count }})
+            First Ranks ({{ top.count }})
           </div>
           <div
             class="px-1 py-2 card-body transition-[filter] transition-opacity duration-200"
