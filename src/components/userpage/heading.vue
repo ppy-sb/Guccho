@@ -150,7 +150,7 @@ const toggleFriend = async () => {
         </div>
       </div>
       <div class="order-3 user-status">
-        currently offline.
+        <!-- currently offline. -->
       </div>
     </div>
   </section>
