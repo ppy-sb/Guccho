@@ -77,11 +77,11 @@ watch(data, () => {
           </div>
         </div>
         <div class="stat relative">
-          <!-- <progress
-            class="progress progress-primary pt-[1px] absolute top-0 bottom-0 h-full opacity-10 bg-kimberly-500/30"
-            :value="deferredRender.level % 1"
-            max="1"
-          /> -->
+          <div class="stat-figure">
+            <div class="radial-progress" style="--value:70;">
+              70%
+            </div>
+          </div>
           <div class="stat-title">
             Level
           </div>
@@ -92,8 +92,10 @@ watch(data, () => {
               :value="Intl.NumberFormat(undefined, { style: 'percent', minimumFractionDigits: 2 }).format(deferredRender.level / 100 || 0)"
             />
           </div>
-          <div class="stat-desc invisible">
-            1
+          <div class="stat-desc">
+            <div class="invisible">
+              1
+            </div>
           </div>
         </div>
         <div class="stat">
@@ -138,6 +140,10 @@ watch(data, () => {
 </style>
 
 <style scoped lang="postcss">
+.stats {
+  /* grid-auto-flow: row dense; */
+  grid-auto-rows: auto;
+}
 .stats > .stat {
   border: 0;
 }
