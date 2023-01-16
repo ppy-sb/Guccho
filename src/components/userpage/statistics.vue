@@ -32,7 +32,7 @@ watch(data, () => {
 })
 
 const userLevelInt = computed(() => Math.floor(deferredRender.level) || 0)
-const userLevelPercent = computed(() => ((deferredRender.level % 1 / 100)).toLocaleString('en-US', { style: 'percent', maximumFractionDigits: 2 }))
+const userLevelPercent = computed(() => ((deferredRender.level % 1) / 100).toLocaleString('en-US', { style: 'percent', maximumFractionDigits: 2 }))
 const ScoreToNextLevel = computed(() => getRequiredScoreForLevel(userLevelInt.value + 1) - getRequiredScoreForLevel(userLevelInt.value))
 </script>
 
