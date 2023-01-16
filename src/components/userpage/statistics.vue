@@ -151,7 +151,7 @@ const ScoreToNextLevel = computed(() => getRequiredScoreForLevel(userLevelInt.va
 <style scoped lang="postcss">
 .stats {
   /* @apply grid-flow-row sm:grid sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 */
-  @apply flex flex-wrap justify-center
+  @apply flex flex-wrap justify-between
 }
 .stats > .stat {
   @apply sm:w-1/2 md:w-min;
