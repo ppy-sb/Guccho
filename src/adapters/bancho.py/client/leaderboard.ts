@@ -1,6 +1,5 @@
 import type { PrismaClient } from '@prisma/client' // bancho.py
-import type { RedisClientType } from 'redis'
-import { createClient } from 'redis'
+import { client as redisClient } from '../redis-client'
 import type { BanchoPyMode } from '../enums'
 import { toBanchoPyMode, toMods } from '../enums'
 import type {
@@ -14,20 +13,12 @@ import type { Mode, OverallLeaderboardRankingSystem, RankingSystem, Ruleset } fr
 
 export default class BanchoPyLeaderboard implements LeaderboardDataProvider<Id> {
   db: PrismaClient
-  redisClient?: RedisClientType
+  redisClient?: ReturnType<typeof redisClient>
   redisReady: Promise<void> = Promise.resolve()
   constructor() {
     this.db = prismaClient
 
-    this.redisClient = process.env.BANCHO_PY_REDIS_URI !== ''
-      ? createClient({
-        url: process.env.BANCHO_PY_REDIS_URI,
-      })
-      : undefined
-    if (this.redisClient) {
-      this.redisClient.on('error', err => console.error('Redis Client Error', err))
-      this.redisClient.connect()
-    }
+    this.redisClient = redisClient()
   }
 
   async getOverallLeaderboard({
