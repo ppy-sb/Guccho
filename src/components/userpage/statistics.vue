@@ -4,9 +4,12 @@ import { OverallLeaderboardRankingSystem, PPRankingSystem, ppRankingSystem } fro
 import { PPRank, ScoreRank } from '~/types/statistics'
 import type { BaseRank, UserModeRulesetStatistics } from '~/types/statistics'
 import { createScoreFormatter, toDuration } from '~/common/varkaUtils'
-import type { OverallSwitcherComposableType } from '~~/src/composables/useSwitcher'
+import type { OverallSwitcherComposableType } from '~/composables/useSwitcher'
+import { getRequiredScoreForLevel } from '~/helpers/level-calc'
 
-const chars = [...[...Array(10).keys()].map(String), ',', '.', 'K', 'M', 'B', 'T', '-', '%']
+const numbers = [...Array(10).keys()].map(String)
+const chars = [...numbers, ',', '.', 'K', 'M', 'B', 'T', '-']
+const percent = [...numbers, ',', '.', '%']
 
 const data = inject('user.statistics') as Ref<UserModeRulesetStatistics<OverallLeaderboardRankingSystem>>
 const currentRankingSystem = inject<BaseRank>('user.currentRankingSystem')
@@ -27,6 +30,10 @@ watch(data, () => {
     }, (count += 1) * 100)
   }
 })
+
+const userLevelInt = computed(() => Math.floor(deferredRender.level) || 0)
+const userLevelPercent = computed(() => ((deferredRender.level % 1 / 100)).toLocaleString('en-US', { style: 'percent', maximumFractionDigits: 2 }))
+const ScoreToNextLevel = computed(() => getRequiredScoreForLevel(userLevelInt.value + 1) - getRequiredScoreForLevel(userLevelInt.value))
 </script>
 
 <template>
@@ -76,12 +83,7 @@ watch(data, () => {
             /> total hits
           </div>
         </div>
-        <div class="stat relative">
-          <div class="stat-figure">
-            <div class="radial-progress" style="--value:70;">
-              70%
-            </div>
-          </div>
+        <div class="stat relative gap-0">
           <div class="stat-title">
             Level
           </div>
@@ -89,13 +91,20 @@ watch(data, () => {
             <roller
               class="font-mono"
               :char-set="chars"
-              :value="Intl.NumberFormat(undefined, { style: 'percent', minimumFractionDigits: 2 }).format(deferredRender.level / 100 || 0)"
+              :value="userLevelInt.toString()"
+            />
+            <roller
+              class="font-mono text-lg self-end pb-1"
+              :char-set="percent"
+              :value="`${userLevelPercent.slice(1)}`"
             />
           </div>
-          <div class="stat-desc">
-            <div class="invisible">
-              1
-            </div>
+          <div class="stat-desc flex gap-1 items-center">
+            <roller
+              class="font-mono"
+              :char-set="chars"
+              :value="scoreFmt(ScoreToNextLevel)"
+            /> to Lv.{{ userLevelInt + 1 }}
           </div>
         </div>
         <div class="stat">
@@ -122,7 +131,7 @@ watch(data, () => {
               class="font-mono"
               :char-set="chars"
               :value="scoreFmt(deferredRender.maxCombo)"
-            /> <span class="font-normal">x</span>
+            /> <span class="font-light">x</span>
           </div>
           <div class="stat-desc invisible">
             1
@@ -141,10 +150,11 @@ watch(data, () => {
 
 <style scoped lang="postcss">
 .stats {
-  /* grid-auto-flow: row dense; */
-  grid-auto-rows: auto;
+  /* @apply grid-flow-row sm:grid sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 */
+  @apply flex flex-wrap justify-center
 }
 .stats > .stat {
+  @apply sm:w-1/2 md:w-min;
   border: 0;
 }
 .stat-value,

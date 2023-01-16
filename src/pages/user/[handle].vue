@@ -104,7 +104,7 @@ onMounted(() => {
       <userpage-heading id="heading" ref="heading" />
       <userpage-profile />
       <userpage-ranking-system-switcher class="z-10 !drop-shadow-xl" />
-      <div class="lg:container custom-container lg:mx-auto">
+      <div class="container custom-container mx-auto">
         <userpage-statistics
           id="statistics"
           ref="statistics"

@@ -167,7 +167,12 @@ const nextTop = nextPage(topPage)
           <div class="justify-center p-1 card-title rounded-2xl bg-kimberly-300/30">
             Best Scores
           </div>
-          <div class="px-1 py-2 card-body">
+          <div
+            class="px-1 py-2 card-body transition-[filter] transition-opacity duration-200"
+            :class="{
+              'saturate-50 opacity-30 blur-sm': pendingBP,
+            }"
+          >
             <div class="relative">
               <transition :name="transition">
                 <ul :key="bp.lastSwitcherStatus.mode + bp.lastSwitcherStatus.ruleset + stabilizeScoreRank(bp.lastSwitcherStatus.rankingSystem) + user.id + bp.page">
@@ -191,12 +196,21 @@ const nextTop = nextPage(topPage)
           </div>
         </div>
       </section>
+      <div v-else-if="!bp?.scores.length && pendingBP" class="custom-container">
+        Loading Best Scores...
+      </div>
+
       <section v-if="top?.count" class="custom-container">
         <div class="card" :class="[pendingTop && 'pointer-events-none']">
           <div class="justify-center p-1 card-title rounded-2xl bg-kimberly-300/30">
             First Places ({{ top.count }})
           </div>
-          <div class="px-1 py-2 card-body">
+          <div
+            class="px-1 py-2 card-body transition-[filter] transition-opacity duration-200"
+            :class="{
+              'saturate-50 opacity-30 blur-sm': pendingTop,
+            }"
+          >
             <div class="relative">
               <transition :name="transition">
                 <ul :key="top.lastSwitcherStatus.mode + top.lastSwitcherStatus.ruleset + stabilizeScoreRank(top.lastSwitcherStatus.rankingSystem) + user.id + top.page">
@@ -220,6 +234,9 @@ const nextTop = nextPage(topPage)
           </div>
         </div>
       </section>
+      <div v-else-if="!top?.scores.length && pendingTop" class="custom-container">
+        Loading Top Scores...
+      </div>
     </div>
   </template>
 </template>
