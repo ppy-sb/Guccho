@@ -82,7 +82,6 @@
     "v-lazy-image": "^2.1.1",
     "vue": "^3.2.45",
     "vue-chart-3": "^3.1.8",
-    "vue-roller": "^2.0.3",
     "vue3-json-viewer": "^2.2.2",
     "zod": "^3.20.2"
   },
