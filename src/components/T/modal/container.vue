@@ -113,8 +113,7 @@ $scale: scale(0.97);
 $scale2: scale(0.95);
 
 .content {
-  will-change: transform;
-  will-change: opacity;
+  will-change: transform, filter;
 }
 
 .zoom-modal-container {
