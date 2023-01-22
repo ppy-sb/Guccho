@@ -12,6 +12,10 @@ export function assertIsBanchoBeatmapset(test: Beatmapset<BeatmapSource, any, un
   return test.source === 'bancho'
 }
 
+export function assertIncludes<T>(input: any, array: T[]): input is T {
+  return array.includes(input)
+}
+
 export function loadImage(src: string) {
   return new Promise((resolve, reject) => {
     const image = new Image()

@@ -5,7 +5,7 @@ import { PPRank, ScoreRank } from '~/types/statistics'
 import type { BaseRank, UserModeRulesetStatistics } from '~/types/statistics'
 import { createScoreFormatter, toDuration } from '~/common/varkaUtils'
 import type { OverallSwitcherComposableType } from '~/composables/useSwitcher'
-import { getRequiredScoreForLevel } from '~/helpers/level-calc'
+import { getRequiredScoreForLevel } from '~/utils/level-calc'
 
 const numbers = [...Array(10).keys()].map(String)
 const chars = [...numbers, ',', '.', 'K', 'M', 'B', 'T', '-']
