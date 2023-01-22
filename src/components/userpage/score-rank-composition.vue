@@ -60,31 +60,24 @@ const createStyleObject = (count: number) => ({
           SSH x {{ composition.xh }}
         </div>
         <div v-if="composition.x">
-          |
           SS x {{ composition.x }}
         </div>
         <div v-if="composition.sh">
-          |
           SH x {{ composition.sh }}
         </div>
         <div v-if="composition.s">
-          |
           S x {{ composition.s }}
         </div>
         <div v-if="composition.a">
-          |
           A x {{ composition.a }}
         </div>
         <div v-if="composition.b">
-          |
           B x {{ composition.b }}
         </div>
         <div v-if="composition.c">
-          |
           C x {{ composition.c }}
         </div>
         <div v-if="composition.d">
-          |
           D x {{ composition.d }}
         </div>
       </div>
