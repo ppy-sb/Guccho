@@ -109,13 +109,7 @@ onMounted(() => {
           id="statistics"
           ref="statistics"
         />
-      </div>
-      <div class="relative pt-1 mx-5">
-        <div class="overflow-hidden h-4 mb-4 text-xs flex rounded bg-emerald-200">
-          <div style="width: 10%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-red-500" />
-          <div style="width: 15%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-orange-500" />
-          <div style="width: 25%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-emerald-500" />
-        </div>
+        <userpage-score-rank-composition />
       </div>
       <div class="container custom-container mx-auto px-2 lg:px-0">
         <userpage-scores
