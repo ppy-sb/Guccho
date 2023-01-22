@@ -31,6 +31,17 @@ export type UserModeRulesetStatistics<
   level: number
   maxCombo: number
   replayWatchedByOthers: number
+  scoreRankComposition: {
+    xh: number
+    x: number
+    sh: number
+    s: number
+    a: number
+    b: number
+    c: number
+    d: number
+    f: number
+  }
 } & {
   // [R in RS]: R extends PPRankingSystem ? PPRank<Id, _Mode, _Ruleset, R> : ScoreRank<Id, _Mode, _Ruleset, R>;
   [R in RS]: R extends PPRankingSystem ? PPRank : ScoreRank;

@@ -55,6 +55,17 @@ export function createRulesetData<
       level: 0,
       maxCombo: 0,
       replayWatchedByOthers: 0,
+      scoreRankComposition: {
+        xh: 0,
+        x: 0,
+        sh: 0,
+        s: 0,
+        a: 0,
+        b: 0,
+        c: 0,
+        d: 0,
+        f: 0,
+      },
     } as UserModeRulesetStatistics<_RankingSystem>
   }
   return {
@@ -79,6 +90,17 @@ export function createRulesetData<
     level: getLevelWithProgress(dbResult.totalScore),
     maxCombo: dbResult.maxCombo,
     replayWatchedByOthers: dbResult.replayViews,
+    scoreRankComposition: {
+      xh: dbResult.xhCount,
+      x: dbResult.xCount,
+      sh: dbResult.shCount,
+      s: dbResult.sCount,
+      a: dbResult.aCount,
+      b: 0,
+      c: 0,
+      d: 0,
+      f: 0,
+    },
   } as UserModeRulesetStatistics<_RankingSystem>
 }
 

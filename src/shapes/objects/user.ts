@@ -105,6 +105,19 @@ export const createRulesetData = <M extends Mode>(
     playTime: 10000,
     totalHits: 1,
     level: 0.0,
+    maxCombo: 999,
+    replayWatchedByOthers: 9,
+    scoreRankComposition: {
+      xh: 0,
+      x: 0,
+      sh: 0,
+      s: 0,
+      a: 0,
+      b: 0,
+      c: 0,
+      d: 0,
+      f: 0,
+    },
   })
 export const sampleUserWithSecrets: Required<UserFull<unknown>> = {
   id: '',
