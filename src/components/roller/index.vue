@@ -65,7 +65,7 @@ onBeforeMount(() => {
 }
 .roller-list-enter-active,
 .roller-list-leave-active {
-    transition: 0.5s;
+    transition: 0.5s ease-out;
 }
 .roller-list-enter-from {
     opacity: 0;
