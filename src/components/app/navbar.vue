@@ -5,7 +5,7 @@ import type { inferProcedureOutput } from '@trpc/server'
 import { useDebounceFn } from '@vueuse/core'
 import { useSession } from '~/store/session'
 import type { AppRouter } from '~/server/trpc/routers'
-import { assertIsBanchoBeatmapset, placeholder } from '~/helpers'
+import { assertIsBanchoBeatmapset, placeholder } from '~/utils'
 
 const props
   = defineProps<{

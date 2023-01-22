@@ -7,8 +7,8 @@ import type { Mode, OverallLeaderboardRankingSystem, Ruleset } from '~/types/com
 import { overallLeaderboardScoreRankingSystem, ppRankingSystem } from '~/types/common'
 import { createAddCommasFormatter } from '~/common/varkaUtils'
 import { useFAIconLib } from '#imports'
-import { assertBeatmapIsVisible } from '~/helpers/map'
-import { placeholder } from '~/helpers'
+import { assertBeatmapIsVisible } from '~/utils/map'
+import { placeholder } from '~/utils'
 const props = withDefaults(
   defineProps<{
     score?: RankingSystemScore<unknown, unknown, Mode, OverallLeaderboardRankingSystem>

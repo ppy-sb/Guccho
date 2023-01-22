@@ -1,50 +1,59 @@
 <script setup lang="ts">
 // @ts-expect-error no d.ts
 import VLazyImage from 'v-lazy-image'
-import type { RankingSystem } from '~/types/common'
-import { assertIsBanchoBeatmapset, loadImage, noop, placeholder } from '~/helpers'
+import {
+  assertIncludes,
+  assertIsBanchoBeatmapset,
+  loadImage,
+  noop,
+  placeholder,
+} from '~/utils'
 import { forbiddenMode, forbiddenMods } from '~/common/varkaUtils'
+
 const { $client } = useNuxtApp()
 const route = useRoute()
-const adapterConfig = useAdapterConfig()
-
-const { data: beatmapset, error } = await useAsyncData(
-  async () =>
-    await $client.map.beatmapset.query({ id: route.params.id.toString() }),
-)
-
-const bgCover = beatmapset.value && assertIsBanchoBeatmapset(beatmapset.value) && {
-  cover: `https://assets.ppy.sh/beatmaps/${beatmapset.value.foreignId}/covers/cover.jpg?${Math.floor(new Date().getTime() / 1000)}`,
-  listUrl: `https://assets.ppy.sh/beatmaps/${beatmapset.value.foreignId}/covers/list@2x.jpg?${Math.floor(new Date().getTime() / 1000)}`,
-}
+const {
+  supportedModes,
+  supportedRankingSystems,
+  supportedRulesets,
+} = useAdapterConfig()
+const [switcher, setSwitcher] = useSwitcher()
 const lazyBgCover = ref('')
 
-onBeforeMount(() => {
-  bgCover && loadImage(bgCover.cover)
-    .then(() => {
-      lazyBgCover.value = `url(${bgCover.cover})`
-    })
-    .catch(noop)
-})
-
-const [switcher, setSwitcher] = useSwitcher()
-const queryRs = route.query.rank?.toString()
-if (adapterConfig.supportedRankingSystems.includes(queryRs as RankingSystem))
-  setSwitcher({ rankingSystem: queryRs as RankingSystem })
-
-const hashed = beatmapset.value?.beatmaps.find(
-  bm => bm.id === route.query.beatmap,
+const { data: beatmapset, error } = await useAsyncData(
+  async () => await $client.map.beatmapset.query({ id: route.params.id.toString() }),
 )
+const hashed = beatmapset.value?.beatmaps.find(bm => bm.id === route.query.beatmap?.toString())
 const selectedMapId = ref<string>(hashed?.id || beatmapset.value?.beatmaps[0].id || '')
 const selectedMap = computed(() =>
-  beatmapset.value?.beatmaps.find(
-    bm => bm.id === selectedMapId.value,
-  ),
+  beatmapset.value?.beatmaps.find(bm => bm.id === selectedMapId.value),
 )
-const {
-  data: leaderboard,
-  refresh,
-} = await useAsyncData(async () => {
+const bgCover = beatmapset.value
+  && assertIsBanchoBeatmapset(beatmapset.value) && {
+  cover: `https://assets.ppy.sh/beatmaps/${
+      beatmapset.value.foreignId
+    }/covers/cover.jpg?${Math.floor(new Date().getTime() / 1000)}`,
+  listUrl: `https://assets.ppy.sh/beatmaps/${
+      beatmapset.value.foreignId
+    }/covers/list@2x.jpg?${Math.floor(new Date().getTime() / 1000)}`,
+}
+const queryRankingSystem = route.query.rank?.toString()
+const queryMode = route.query.mode?.toString()
+const queryRuleset = route.query.ruleset?.toString()
+
+setSwitcher({
+  rankingSystem: assertIncludes(queryRankingSystem, supportedRankingSystems)
+    ? queryRankingSystem
+    : undefined,
+  mode: assertIncludes(queryMode, supportedModes)
+    ? queryMode
+    : undefined,
+  ruleset: assertIncludes(queryRuleset, supportedRulesets)
+    ? queryRuleset
+    : undefined,
+})
+
+const { data: leaderboard, refresh } = await useAsyncData(async () => {
   if (!selectedMap.value)
     return null
 
@@ -62,15 +71,24 @@ function rewriteAnchor() {
     url.searchParams.set('beatmap', selectedMap.value.id)
 
   url.searchParams.set('rank', switcher.rankingSystem)
-  history.replaceState(
-    {}, '', url,
-  )
+  url.searchParams.set('mode', switcher.mode)
+  url.searchParams.set('ruleset', switcher.ruleset)
+  history.replaceState({}, '', url)
 }
 
 const update = () => {
   refresh()
   rewriteAnchor()
 }
+
+onBeforeMount(() => {
+  bgCover
+    && loadImage(bgCover.cover)
+      .then(() => {
+        lazyBgCover.value = `url(${bgCover.cover})`
+      })
+      .catch(noop)
+})
 </script>
 
 <template>
@@ -83,17 +101,13 @@ const update = () => {
     v-else-if="beatmapset"
     :class="[
       assertIsBanchoBeatmapset(beatmapset) && `pre-bg-cover`,
-      (lazyBgCover !== '') && 'ready',
+      lazyBgCover !== '' && 'ready',
     ]"
   >
-    <div
-      class="container custom-container mx-auto"
-    >
+    <div class="container custom-container mx-auto">
       <div class="header-with-maps flex-wrap">
         <div class="text-center">
-          <h1
-            class="text-3xl font-bold text-center sm:text-left lg:whitespace-nowrap"
-          >
+          <h1 class="text-3xl font-bold text-center sm:text-left lg:whitespace-nowrap">
             {{ beatmapset.meta.intl.title }}
           </h1>
           <h2
@@ -120,10 +134,20 @@ const update = () => {
           </t-tab>
         </t-tabs>
       </div>
-      <div v-if="selectedMap" class="flex flex-col md:flex-row card bg-kimberly-100 dark:bg-kimberly-900">
+      <div
+        v-if="selectedMap"
+        class="flex flex-col md:flex-row card bg-kimberly-100 dark:bg-kimberly-900"
+      >
         <div class="w-full md:w-1/3 grow">
           <div class="p-8 h-full flex flex-col justify-around">
-            <VLazyImage v-if="bgCover" class="rounded-xl w-full shadow-md" src-placeholder="/images/image-placeholder.svg" :src="bgCover.listUrl" alt="list" :onerror="placeholder" />
+            <VLazyImage
+              v-if="bgCover"
+              class="rounded-xl w-full shadow-md"
+              src-placeholder="/images/image-placeholder.svg"
+              :src="bgCover.listUrl"
+              alt="list"
+              :onerror="placeholder"
+            />
             <div class="pt-4">
               <div class="w-min">
                 <v-dropdown theme="guweb-dropdown" placement="auto" :distance="6">
@@ -131,14 +155,24 @@ const update = () => {
                     download
                   </button>
                   <template #popper>
-                    <ul class="menu p-2 menu-compact border-[1px] border-base-300/20 bg-base-200/80 w-56 rounded-box">
+                    <ul
+                      class="menu p-2 menu-compact border-[1px] border-base-300/20 bg-base-200/80 w-56 rounded-box"
+                    >
                       <template v-if="assertIsBanchoBeatmapset(beatmapset)">
                         <li class="menu-title">
                           <span>External Sources</span>
                         </li>
-                        <li><a :href="`https://osu.ppy.sh/s/${beatmapset.foreignId}`">Bancho</a></li>
-                        <li><a :href="`https://api.chimu.moe/v1/download/${beatmapset.foreignId}`">Chimu.moe</a></li>
-                        <li><a :href="`https://kitsu.moe/api/d/${beatmapset.foreignId}`">Kitsu.moe</a></li>
+                        <li>
+                          <a :href="`https://osu.ppy.sh/s/${beatmapset.foreignId}`">Bancho</a>
+                        </li>
+                        <li>
+                          <a
+                            :href="`https://api.chimu.moe/v1/download/${beatmapset.foreignId}`"
+                          >Chimu.moe</a>
+                        </li>
+                        <li>
+                          <a :href="`https://kitsu.moe/api/d/${beatmapset.foreignId}`">Kitsu.moe</a>
+                        </li>
                       </template>
                     </ul>
                   </template>
@@ -150,12 +184,22 @@ const update = () => {
         <div class="w-full md:w-2/3">
           <div class="p-2 flex justify-between">
             <t-tabs v-model="switcher.mode" variant="" @update:model-value="update">
-              <t-tab v-for="m in adapterConfig.supportedModes" :key="`sw-${m}`" :value="m" :disabled="forbiddenMode(switcher.ruleset, m) === true">
+              <t-tab
+                v-for="m in supportedModes"
+                :key="`sw-${m}`"
+                :value="m"
+                :disabled="forbiddenMode(switcher.ruleset, m) === true"
+              >
                 {{ m }}
               </t-tab>
             </t-tabs>
             <t-tabs v-model="switcher.ruleset" variant="" @update:model-value="update">
-              <t-tab v-for="r in adapterConfig.supportedRulesets" :key="`sw-${r}`" :value="r" :disabled="forbiddenMods(switcher.mode, r) === true">
+              <t-tab
+                v-for="r in supportedRulesets"
+                :key="`sw-${r}`"
+                :value="r"
+                :disabled="forbiddenMods(switcher.mode, r) === true"
+              >
                 {{ r }}
               </t-tab>
             </t-tabs>
@@ -256,11 +300,19 @@ const update = () => {
       </div>
     </div>
     <div class="container custom-container mx-auto mt-4">
-      <app-scores-ranking-system-switcher v-model="switcher.rankingSystem" class="mx-auto" @update:model-value="update" />
+      <app-scores-ranking-system-switcher
+        v-model="switcher.rankingSystem"
+        class="mx-auto"
+        @update:model-value="update"
+      />
       <div class="overflow-auto">
         <app-scores-table
-          v-if="leaderboard" :scores="leaderboard" :ranking-system="switcher.rankingSystem" class="w-full" :class="{
-            'clear-rounded-tl': adapterConfig.supportedRankingSystems[0] === switcher.rankingSystem,
+          v-if="leaderboard"
+          :scores="leaderboard"
+          :ranking-system="switcher.rankingSystem"
+          class="w-full"
+          :class="{
+            'clear-rounded-tl': supportedRankingSystems[0] === switcher.rankingSystem,
           }"
         />
       </div>
@@ -288,25 +340,25 @@ const update = () => {
 
 <style lang="scss">
 table.table.clear-rounded-tl {
-    > thead {
-      > tr:first-child {
-        > th:first-child {
-          @apply rounded-tl-none;
-        }
+  > thead {
+    > tr:first-child {
+      > th:first-child {
+        @apply rounded-tl-none;
       }
+    }
   }
 }
 .pre-bg-cover {
   &:before {
-      content: '';
-      position: absolute;
-      @apply top-20 left-0 right-0 bg-cover;
-      height: 30vmin;
+    content: "";
+    position: absolute;
+    @apply top-20 left-0 right-0 bg-cover;
+    height: 30vmin;
   }
   &.ready::before {
-      background-image: v-bind('lazyBgCover');
-      animation: fadeIn 0.5s ease-out forwards;
-    }
+    background-image: v-bind("lazyBgCover");
+    animation: fadeIn 0.5s ease-out forwards;
+  }
 }
 @keyframes fadeIn {
   0% {

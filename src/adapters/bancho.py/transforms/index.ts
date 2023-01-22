@@ -2,7 +2,7 @@ import type { Map as DBMap, Score as DBScore, User as DatabaseUser, Relationship
 import type { Id } from '../config'
 import type { BanchoPyRankedStatus } from '../enums'
 import { BanchoPyPrivilege, toBanchoRankingStatus } from '../enums'
-import { getLevelWithProgress } from '~/helpers/level-calc'
+import { getLevelWithProgress } from '~/utils/level-calc'
 import type {
   UserEssential,
   UserExtra,
