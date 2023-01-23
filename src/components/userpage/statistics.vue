@@ -156,6 +156,7 @@ const ScoreToNextLevel = computed(() => getRequiredScoreForLevel(userLevelInt.va
 .stats > .stat {
   @apply sm:w-1/2 md:w-min;
   border: 0;
+  @apply py-2;
 }
 .stat-value,
 .stat-desc {
