@@ -79,6 +79,7 @@ const meta = computed((): {
                   rank: ['totalScore', 'rankedScore'].includes(props.rankingSystem) ? 'score' : props.rankingSystem,
                 },
               }"
+              class="truncate"
             >
               <template v-if="meta">
                 <span class="text-sm truncate md:text-md lg:text-lg font-bold">{{ meta.artist }} - {{ meta.title }}</span>
