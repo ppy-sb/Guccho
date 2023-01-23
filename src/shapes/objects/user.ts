@@ -108,8 +108,8 @@ export const createRulesetData = <M extends Mode>(
     maxCombo: 999,
     replayWatchedByOthers: 9,
     scoreRankComposition: {
-      xh: 0,
-      x: 0,
+      ssh: 0,
+      ss: 0,
       sh: 0,
       s: 0,
       a: 0,

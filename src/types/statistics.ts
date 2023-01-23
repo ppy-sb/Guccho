@@ -1,4 +1,4 @@
-import type { OverallLeaderboardRankingSystem, PPRankingSystem } from './common'
+import type { Grade, OverallLeaderboardRankingSystem, PPRankingSystem } from './common'
 
 export interface BaseRank {
   rank?: number
@@ -31,17 +31,7 @@ export type UserModeRulesetStatistics<
   level: number
   maxCombo: number
   replayWatchedByOthers: number
-  scoreRankComposition: {
-    xh: number
-    x: number
-    sh: number
-    s: number
-    a: number
-    b: number
-    c: number
-    d: number
-    f: number
-  }
+  scoreRankComposition: Record<Grade, number>
 } & {
   [R in RS]: R extends PPRankingSystem ? PPRank : ScoreRank;
 }
