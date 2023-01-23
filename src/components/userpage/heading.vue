@@ -60,21 +60,20 @@ const toggleFriend = async () => {
 <template>
   <section
     v-if="user"
-    class="flex flex-col items-center w-full gap-5 mx-auto mt-5 md:container custom-container md:mt-20 md:flex-row md:items-end root"
+    class="flex flex-col items-center w-full gap-5 mx-auto mt-2 md:container custom-container md:mt-24 md:flex-row md:items-end root"
   >
     <!-- Logo -->
     <div>
       <img
         :src="user.avatarSrc"
-        class="mask mask-squircle"
-        width="300"
+        class="mask mask-squircle w-[150px] md:w-[300px]"
       >
     </div>
     <!-- info -->
-    <div class="flex flex-col w-full pt-4 md:p-0 bg-kimberly-200 dark:bg-kimberly-700 md:bg-transparent md:grow">
+    <div class="flex flex-col w-full pt-2 md:p-0 bg-kimberly-200 dark:bg-kimberly-700 md:bg-transparent md:grow">
       <div
         v-if="session.$state.userId !== user.id"
-        class="container flex justify-around order-3 gap-3 pb-4 mx-auto md:order-1 md:justify-end md:pb-0"
+        class="container flex justify-around order-3 gap-3 pb-2 mx-auto md:order-1 md:justify-end md:pb-0"
       >
         <t-button
           ref="changeFriendStateButton"
@@ -142,7 +141,7 @@ const toggleFriend = async () => {
             >
               @{{ user.safeName }}
             </h2>
-            <div class="pb-2" />
+            <div class="lg:pb-2" />
           </div>
         </div>
         <div class="div">
