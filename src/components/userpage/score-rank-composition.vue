@@ -22,13 +22,13 @@ const createStyleObject = (count: number) => ({
     <div v-if="totalCount" class="relative">
       <div class="multi-progress-bar-container bg-emerald-200">
         <div
-          v-if="composition.xh"
-          :style="createStyleObject(composition.xh)"
+          v-if="composition.ssh"
+          :style="createStyleObject(composition.ssh)"
           class="multi-progress-bar bg-gray-500"
         />
         <div
-          v-if="composition.x"
-          :style="createStyleObject(composition.x)"
+          v-if="composition.ss"
+          :style="createStyleObject(composition.ss)"
           class="multi-progress-bar bg-yellow-500"
         />
         <div
@@ -56,11 +56,11 @@ const createStyleObject = (count: number) => ({
     </div>
     <template #popper>
       <div class="flex gap-2 p-2">
-        <div v-if="composition.xh">
-          SSH x {{ composition.xh }}
+        <div v-if="composition.ssh">
+          SSH x {{ composition.ssh }}
         </div>
-        <div v-if="composition.x">
-          SS x {{ composition.x }}
+        <div v-if="composition.ss">
+          SS x {{ composition.ss }}
         </div>
         <div v-if="composition.sh">
           SH x {{ composition.sh }}

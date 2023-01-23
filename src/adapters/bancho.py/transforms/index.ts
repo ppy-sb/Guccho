@@ -56,8 +56,8 @@ export function createRulesetData<
       maxCombo: 0,
       replayWatchedByOthers: 0,
       scoreRankComposition: {
-        xh: 0,
-        x: 0,
+        ssh: 0,
+        ss: 0,
         sh: 0,
         s: 0,
         a: 0,
@@ -91,8 +91,8 @@ export function createRulesetData<
     maxCombo: dbResult.maxCombo,
     replayWatchedByOthers: dbResult.replayViews,
     scoreRankComposition: {
-      xh: dbResult.xhCount,
-      x: dbResult.xCount,
+      ssh: dbResult.xhCount,
+      ss: dbResult.xCount,
       sh: dbResult.shCount,
       s: dbResult.sCount,
       a: dbResult.aCount,
