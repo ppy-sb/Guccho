@@ -21,37 +21,6 @@ const topPage = ref<NumberRange<0, 10>>(0)
 
 const user = inject('user') as Ref<UserEssential<string>>
 const {
-  data: bp,
-  error: bpError,
-  refresh: refreshBP,
-  pending: pendingBP,
-} = await useAsyncData(async () => {
-  if (!user.value || !switcher.mode || !switcher.ruleset || !switcher.rankingSystem) {
-    return {
-      scores: [],
-      handle: user.value.id,
-      bpPage: bpPage.value,
-      lastSwitcherStatus: {
-        ...switcher,
-      },
-    }
-  }
-  return {
-    scores: await $client.user.best.query({
-      handle: user.value.id,
-      mode: switcher.mode,
-      ruleset: switcher.ruleset,
-      rankingSystem: switcher.rankingSystem as PPRankingSystem,
-      page: bpPage.value,
-    }),
-    page: bpPage.value,
-    handle: user.value.id,
-    lastSwitcherStatus: {
-      ...switcher,
-    },
-  }
-})
-const {
   data: top,
   error: errorTop,
   refresh: refreshTop,
@@ -83,11 +52,6 @@ const {
       ...switcher,
     },
   }
-})
-watch([user, bpPage], async () => {
-  if (!user.value)
-    return
-  await refreshBP()
 })
 watch([user, topPage], async () => {
   if (!user.value)
@@ -134,7 +98,6 @@ onMounted(() => {
     topPage.value = 0
     // animate
     computeAnimateDirection()
-    refreshBP()
     refreshTop()
     prevSwitcherState = { ...sw }
   })
@@ -150,56 +113,16 @@ const nextPage = (val: Ref<any>) => () => {
     val.value += 1
 }
 
-const prevBp = prevPage(bpPage)
-const nextBp = nextPage(bpPage)
 const prevTop = prevPage(topPage)
 const nextTop = nextPage(topPage)
 </script>
 
 <template>
-  <div v-if="bpError || errorTop">
-    {{ bpError || errorTop }}
+  <div v-if="errorTop">
+    {{ errorTop }}
   </div>
   <template v-else>
     <div class="flex flex-col gap-6">
-      <section v-if="bp?.scores?.length" class="custom-container">
-        <div class="card" :class="[pendingBP && 'pointer-events-none']">
-          <div class="justify-center p-1 card-title rounded-2xl bg-kimberly-300/30">
-            Best Scores
-          </div>
-          <div
-            class="px-1 py-2 card-body transition-[filter] transition-opacity duration-200"
-            :class="{
-              'saturate-50 opacity-30 blur-sm': pendingBP,
-            }"
-          >
-            <div class="relative">
-              <transition :name="transition">
-                <ul :key="bp.lastSwitcherStatus.mode + bp.lastSwitcherStatus.ruleset + stabilizeScoreRank(bp.lastSwitcherStatus.rankingSystem) + user.id + bp.page">
-                  <li v-for="i in bp.scores" :key="`bests-${i.id}`" class="score">
-                    <app-score-list-item :score="i" :mode="bp.lastSwitcherStatus.mode" :ruleset="bp.lastSwitcherStatus.ruleset" :ranking-system="bp.lastSwitcherStatus.rankingSystem" />
-                  </li>
-                </ul>
-              </transition>
-            </div>
-          </div>
-          <div class="btn-group d-flex w-full bg-kimberly-300/30 rounded-2xl shadow-xl" style="--rounded-btn: 1rem">
-            <button class="btn btn-ghost" :disabled="bpPage === 0" @click="prevBp">
-              «
-            </button>
-            <button class="btn btn-ghost grow" @click="() => refreshBP()">
-              Page {{ bpPage + 1 }}
-            </button>
-            <button class="btn btn-ghost" :disabled="bp.scores.length < 10" @click="nextBp">
-              »
-            </button>
-          </div>
-        </div>
-      </section>
-      <div v-else-if="!bp?.scores.length && pendingBP" class="custom-container">
-        Loading Best Scores...
-      </div>
-
       <section v-if="top?.count" class="custom-container">
         <div class="card" :class="[pendingTop && 'pointer-events-none']">
           <div class="justify-center p-1 card-title rounded-2xl bg-kimberly-300/30">
@@ -225,7 +148,7 @@ const nextTop = nextPage(topPage)
             <button class="btn btn-ghost" :disabled="topPage === 0" @click="prevTop">
               «
             </button>
-            <button class="btn btn-ghost grow" @click="() => refreshBP()">
+            <button class="btn btn-ghost grow" @click="() => refreshTop()">
               Page {{ topPage + 1 }}
             </button>
             <button class="btn btn-ghost" :disabled="top.scores.length < 10" @click="nextTop">
