@@ -27,7 +27,7 @@ export class LeaderboardDataProvider extends BanchoPyLeaderboardDataProvider {
         },
       )
     }
-    throw new Error('redis not ready')
+    throw new Error('redis is not ready')
   }
 
   async overallLeaderboardFromDatabase(opt: {
