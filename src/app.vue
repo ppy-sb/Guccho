@@ -8,7 +8,13 @@ import { useSafariDetector } from '#imports'
 const appConfig = useAppConfig()
 const safari = ref(true)
 const modalContainer = ref()
-const confirmed = useCookie('confirmed-website')
+
+const oneYearLater = new Date()
+oneYearLater.setFullYear(oneYearLater.getFullYear() + 1)
+
+const confirmed = useCookie('confirmed-website', {
+  expires: oneYearLater,
+})
 
 const confirmedWebsite = computed(() => confirmed.value === 'ok')
 
@@ -43,7 +49,7 @@ onMounted(() => {
                 <span class="label-text text-4xl">I understand this is not the <a class="link" href="https://osu.ppy.sh">Official Osu Website</a></span>
               </label>
             </div>
-            <div class="grid grid-cols-2 items-baseline">
+            <div class="text-center lg:text-left lg:grid lg:grid-cols-2 items-baseline">
               <div>
                 <t-button
                   :class=" {
