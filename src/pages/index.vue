@@ -75,10 +75,4 @@ const config = useAppConfig()
 .h-sub {
   max-width: 32rem;
 }
-
-/* a.btn {
-  @apply inline-flex justify-center w-full px-6 py-2 text-base font-medium
-  text-kimberly-900 dark:text-kimberly-100 border border-transparent rounded-md shadow-md
-  focus:outline-none w-auto
-} */
 </style>

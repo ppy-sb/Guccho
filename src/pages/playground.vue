@@ -17,20 +17,7 @@ definePageMeta({
 <template>
   <div>
     <section class="container pt-20 pb-8 mx-auto custom-container lg:px-2">
-      <!-- <t-nuxt-link-button v-for="route in children" :key="route.name" :to="route">
-        {{ route.name }}
-      </t-nuxt-link-button> -->
       <t-tabs variant="bordered">
-        <!-- <t-tab
-          class="tab-lg"
-          :class="{
-            'tab-active': currentRoute.path === root.path
-          }"
-          :value="currentRoute"
-          @click="navigateTo(root)"
-        >
-          Index
-        </t-tab> -->
         <t-tab
           v-for="route in children"
           :key="route.name"
