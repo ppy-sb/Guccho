@@ -43,6 +43,5 @@ export type UserModeRulesetStatistics<
     f: number
   }
 } & {
-  // [R in RS]: R extends PPRankingSystem ? PPRank<Id, _Mode, _Ruleset, R> : ScoreRank<Id, _Mode, _Ruleset, R>;
   [R in RS]: R extends PPRankingSystem ? PPRank : ScoreRank;
 }
