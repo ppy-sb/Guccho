@@ -237,39 +237,14 @@ onUnmounted(() => {
 </template>
 
 <style lang="postcss">
-.navbar {
-  @apply border-[1px] border-kimberly-50/0 dark:border-kimberly-500/0;
-}
-.detached {
-  & .navbar {
-    @apply  border-kimberly-50/50 dark:border-kimberly-500/50;
-    & .btn {
-      height: 2.5rem;
-      min-height: 2.5rem;
-
-      &.btn-circle {
-        width: 2.5rem;
-        min-width: 2.5rem;
-      }
-
-      &.attach:text-lg {
-        @apply text-base !important;
-      }
-    }
-  }
-}
-</style>
-
-<style lang="postcss" scoped>
 .navbar-tint,
 .detached > .navbar {
     @apply bg-kimberly-150/70 dark:bg-kimberly-700/80;
     @apply backdrop-blur-md shadow-xl;
 }
-
 .navbar {
+  @apply border-[1px] border-kimberly-50/0 dark:border-kimberly-500/0;
   transition: all 0.5s cubic-bezier(0.05, 1, 0.4, 0.95);
-
   .btn {
     @apply transition-all;
 
@@ -294,11 +269,10 @@ onUnmounted(() => {
     }
   }
 }
-
 .detached {
   @apply px-2 pt-2;
-
   & .navbar {
+    @apply  border-kimberly-50/30 dark:border-kimberly-500/30;
     @apply rounded-2xl;
     @apply min-h-0;
 
@@ -313,8 +287,24 @@ onUnmounted(() => {
         @apply w-6 !important;
       }
     }
+    & .btn {
+      height: 2.5rem;
+      min-height: 2.5rem;
+
+      &.btn-circle {
+        width: 2.5rem;
+        min-width: 2.5rem;
+      }
+
+      &.attach:text-lg {
+        @apply text-base !important;
+      }
+    }
   }
 }
+</style>
+
+<style lang="postcss" scoped>
 .menus {
   .menu:last-of-type {
     @apply rounded-b-box

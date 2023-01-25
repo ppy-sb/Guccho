@@ -137,31 +137,29 @@ onMounted(() => {
       <!-- placeholder for bottom nav -->
       <div class="py-8 -z-50" />
     </div>
-    <teleport to="body">
-      <div class="btm-nav z-10">
-        <template
-          v-for="(isVisible, el) of visible"
-          :key="el"
+    <div class="btm-nav sticky">
+      <template
+        v-for="(isVisible, el) of visible"
+        :key="el"
+      >
+        <a
+          v-if="icons[el]" :class="{
+            active: isVisible,
+          }" :href="`#${el}`"
         >
-          <a
-            v-if="icons[el]" :class="{
-              active: isVisible,
-            }" :href="`#${el}`"
-          >
-            <font-awesome-icon :icon="icons[el]" class="fa-xl" />
-          </a>
-          <a
-            v-else
-            :class="{
-              active: isVisible,
-            }"
-            :href="`#${el}`"
-          >
-            {{ el }}
-          </a>
-        </template>
-      </div>
-    </teleport>
+          <font-awesome-icon :icon="icons[el]" class="fa-xl" />
+        </a>
+        <a
+          v-else
+          :class="{
+            active: isVisible,
+          }"
+          :href="`#${el}`"
+        >
+          {{ el }}
+        </a>
+      </template>
+    </div>
   </div>
 </template>
 
