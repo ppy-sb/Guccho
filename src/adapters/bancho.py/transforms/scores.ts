@@ -1,9 +1,9 @@
 import type { Id } from '../config'
 import { toMods } from '../enums'
-import type { Grade, Mode, OverallLeaderboardRankingSystem, PPRankingSystem, Ruleset } from './../../../types/common'
 import { createHitCount } from './create-hit-count'
 import { toBeatmapWithBeatmapset } from './to-beatmapset'
 import type { AbleToTransformToScores } from './index'
+import type { Grade, Mode, OverallLeaderboardRankingSystem, PPRankingSystem, Ruleset } from '~/types/common'
 import type { BeatmapWithMeta, RankingStatus } from '~/types/beatmap'
 import type { RankingSystemScore, RulesetScore } from '~/types/score'
 
