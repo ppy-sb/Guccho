@@ -30,3 +30,5 @@ export function noop() { }
 export function placeholder(e: Event & { target: HTMLImageElement }) {
   e.target.src = '/images/image-placeholder.svg'
 }
+
+export const TSFilter = <T>(item: T): item is Exclude<T, undefined | null> => item !== undefined && item !== null
