@@ -68,7 +68,7 @@ export default class BanchoPyMap implements MapDataProvider<Id> {
     })
   }
 
-  async #searchBeatmap({ keyword, limit }: { keyword: string; limit: number }) {
+  async searchBeatmap({ keyword, limit }: { keyword: string; limit: number }) {
     const idKw = stringToId(keyword)
     const result = await this.db.map.findMany({
       where: {
@@ -98,7 +98,7 @@ export default class BanchoPyMap implements MapDataProvider<Id> {
     return result.map(toBeatmapWithBeatmapset).filter(TSFilter)
   }
 
-  async #searchBeatmapset({ keyword, limit }: { keyword: string; limit: number }): Promise<Beatmapset<BeatmapSource, number, unknown>[]> {
+  async searchBeatmapset({ keyword, limit }: { keyword: string; limit: number }): Promise<Beatmapset<BeatmapSource, number, unknown>[]> {
     const idKw = stringToId(keyword)
     const beatmaps = await this.db.map.findMany({
       where: {
@@ -139,11 +139,11 @@ export default class BanchoPyMap implements MapDataProvider<Id> {
     return beatmaps.map(bs => toBeatmapset(bs.source, bs)).filter(TSFilter)
   }
 
-  async search(opt: { keyword: string; limit: number }) {
-    const [beatmaps, beatmapsets] = await Promise.all([this.#searchBeatmap(opt), this.#searchBeatmapset(opt)])
-    return {
-      beatmaps,
-      beatmapsets,
-    }
-  }
+  // async search(opt: { keyword: string; limit: number }) {
+  //   const [beatmaps, beatmapsets] = await Promise.all([this.searchBeatmap(opt), this.searchBeatmapset(opt)])
+  //   return {
+  //     beatmaps,
+  //     beatmapsets,
+  //   }
+  // }
 }

@@ -12,6 +12,40 @@ const replaceId = <T extends { id: Parameters<typeof idToString>[number] }>(bs: 
 })
 
 export const router = _router({
+  searchUser: p.input(z.object({
+    keyword: z.string(),
+    limit: z.number().optional().default(10),
+  })).query(async ({ input: { keyword, limit } }) => {
+    const users = await user.search({
+      keyword,
+      limit,
+    })
+
+    return users.map(replaceId)
+  }),
+  searchBeatmap: p.input(z.object({
+    keyword: z.string(),
+    limit: z.number().optional().default(5),
+  })).query(async ({ input: { keyword, limit } }) => {
+    const beatmaps = await map.searchBeatmap({
+      keyword,
+      limit,
+    })
+
+    return beatmaps.map(replaceId)
+  }),
+  searchBeatmapset: p.input(z.object({
+    keyword: z.string(),
+    limit: z.number().optional().default(5),
+  })).query(async ({ input: { keyword, limit } }) => {
+    const beatmapsets = await map.searchBeatmapset({
+      keyword,
+      limit,
+    })
+
+    return beatmapsets.map(replaceId)
+  }),
+  // TODO deprecate
   search: p.input(z.object({
     keyword: z.string(),
     limit: z.object({
@@ -22,13 +56,19 @@ export const router = _router({
       beatmaps: 5,
     }),
   })).query(async ({ input: { keyword, limit: { user: userLimit, beatmaps: bmLimit } } }) => {
-    const [{ beatmaps, beatmapsets }, users] = await Promise.all([map.search({
-      keyword,
-      limit: bmLimit,
-    }), user.search({
-      keyword,
-      limit: userLimit,
-    })])
+    const [beatmaps, beatmapsets, users] = await Promise.all([
+      map.searchBeatmap({
+        keyword,
+        limit: bmLimit,
+      }),
+      map.searchBeatmapset({
+        keyword,
+        limit: bmLimit,
+      }),
+      user.search({
+        keyword,
+        limit: userLimit,
+      })])
 
     return {
       beatmaps: beatmaps.map(replaceId),

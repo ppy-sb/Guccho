@@ -10,10 +10,8 @@ export namespace MapDataProvider {
 export interface MapDataProvider<Id> {
   getBeatmapset(query: MapDataProvider.IdQuery<Id>): Awaitable<Beatmapset<BeatmapSource, Id, unknown> & { beatmaps: BeatmapEssential<Id, unknown>[] } | null>
   getBeatmap(query: MapDataProvider.IdQuery<Id>): Awaitable<BeatmapWithMeta<BeatmapSource, RankingStatus, Id, unknown> | null>
-  search(opt: { keyword: string }): Awaitable<{
-    beatmaps: (BeatmapEssential<Id, unknown> & {
-      beatmapset: Beatmapset<BeatmapSource, Id, unknown>
-    })[]
-    beatmapsets: Beatmapset<BeatmapSource, Id, unknown>[]
-  }>
+  searchBeatmap(opt: { keyword: string }): Awaitable<(BeatmapEssential<Id, unknown> & {
+    beatmapset: Beatmapset<BeatmapSource, Id, unknown>
+  })[]>
+  searchBeatmapset(opt: { keyword: string }): Awaitable<Beatmapset<BeatmapSource, Id, unknown>[]>
 }
