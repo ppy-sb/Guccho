@@ -14,7 +14,6 @@ import type { Mode, OverallLeaderboardRankingSystem, RankingSystem, Ruleset } fr
 export default class BanchoPyLeaderboard implements LeaderboardDataProvider<Id> {
   db: PrismaClient
   redisClient?: ReturnType<typeof redisClient>
-  redisReady: Promise<void> = Promise.resolve()
   constructor() {
     this.db = prismaClient
 

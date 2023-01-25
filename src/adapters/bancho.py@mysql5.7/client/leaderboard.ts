@@ -30,6 +30,7 @@ export class LeaderboardDataProvider extends BanchoPyLeaderboardDataProvider {
     throw new Error('redis is not ready')
   }
 
+  // TODO: now broken
   async overallLeaderboardFromDatabase(opt: {
     mode: Mode
     ruleset: Ruleset
@@ -93,69 +94,73 @@ LIMIT ${start}, ${pageSize}`)
       page,
       pageSize,
     } = opt
-    if (rankingSystem === 'ppv1')
-      return []
-    const start = page * pageSize
-
     let result: Awaited<ReturnType<LeaderboardDataProvider['overallLeaderboardFromDatabase']>> = []
-
-    if (rankingSystem === 'ppv2') {
-      try {
-        const bPyMode = toBanchoPyMode(mode, ruleset)
-        if (bPyMode === undefined)
-          throw new Error('no mode')
-        // TODO: banned players are included
-        const rank = await this.getPPv2LiveLeaderboard(bPyMode, 0, start + pageSize * 2).then(res => res.map(Number))
-
-        const [users, stats] = await Promise.all([
-          this.db.user.findMany({
-            where: {
-              id: {
-                in: rank,
-              },
-            },
-          }),
-          this.db.stat.findMany({
-            where: {
-              id: {
-                in: rank,
-              },
-              mode: bPyMode,
-            },
-          }),
-        ])
-        for (const index in rank) {
-          if (result.length >= start + pageSize)
-            break
-          const id = rank[index]
-          const user = users.find(u => u.id === id)
-          const stat = stats.find(s => s.id === id)
-
-          if (!user || !stat || user.priv <= 2)
-            continue
-
-          result.push({
-            id: user.id,
-            name: user.name,
-            safeName: user.safeName,
-            flag: user.country,
-            ppv2: stat.pp,
-            priv: user.priv,
-            _rank: BigInt(start + parseInt(index) + 1),
-            accuracy: stat.accuracy,
-            totalScore: stat.totalScore,
-            rankedScore: stat.rankedScore,
-            playCount: stat.plays,
-          })
-        }
-      }
-      catch (e) {
-        console.error(e)
-        result = await this.overallLeaderboardFromDatabase(opt)
-      }
+    const start = page * pageSize
+    if (!this.redisClient?.isReady) {
+      result = await this.overallLeaderboardFromDatabase(opt)
     }
     else {
-      result = await this.overallLeaderboardFromDatabase(opt)
+      if (rankingSystem === 'ppv1')
+        return []
+
+      if (rankingSystem === 'ppv2') {
+        try {
+          const bPyMode = toBanchoPyMode(mode, ruleset)
+          if (bPyMode === undefined)
+            throw new Error('no mode')
+          // TODO: banned players are included
+          const rank = await this.getPPv2LiveLeaderboard(bPyMode, 0, start + pageSize * 2).then(res => res.map(Number))
+
+          const [users, stats] = await Promise.all([
+            this.db.user.findMany({
+              where: {
+                id: {
+                  in: rank,
+                },
+              },
+            }),
+            this.db.stat.findMany({
+              where: {
+                id: {
+                  in: rank,
+                },
+                mode: bPyMode,
+              },
+            }),
+          ])
+          for (const index in rank) {
+            if (result.length >= start + pageSize)
+              break
+            const id = rank[index]
+            const user = users.find(u => u.id === id)
+            const stat = stats.find(s => s.id === id)
+
+            if (!user || !stat || user.priv <= 2)
+              continue
+
+            result.push({
+              id: user.id,
+              name: user.name,
+              safeName: user.safeName,
+              flag: user.country,
+              ppv2: stat.pp,
+              priv: user.priv,
+              _rank: BigInt(start + parseInt(index) + 1),
+              accuracy: stat.accuracy,
+              totalScore: stat.totalScore,
+              rankedScore: stat.rankedScore,
+              playCount: stat.plays,
+            })
+          }
+        }
+        catch (e) {
+          console.error(e)
+          result = await this.overallLeaderboardFromDatabase(opt)
+        }
+      }
+      else {
+        result = await this.overallLeaderboardFromDatabase(opt)
+      }
     }
 
     return result.slice(start, start + pageSize).map((item, index) => ({
