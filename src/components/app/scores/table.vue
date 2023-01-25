@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { LeaderboardDataProvider } from '~/adapters/base/client/leaderboard'
 import type { RankingSystem } from '~/types/common'
 import { createAddCommasFormatter, createPPFormatter } from '~/common/varkaUtils'
+import type { BeatmapLeaderboard } from '~/types/leaderboard'
 const props = withDefaults(defineProps<{
-  scores: LeaderboardDataProvider.BeatmapLeaderboard<string>[]
+  scores: BeatmapLeaderboard<string>[]
   rankingSystem: RankingSystem
 }>(), {
   rankingSystem: 'ppv2',
