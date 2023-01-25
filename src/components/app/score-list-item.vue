@@ -95,7 +95,7 @@ const meta = computed((): {
                 {{ beatmap.version }}
               </span>
               <span class="font-light">
-                {{ score.mods.join(', ') || 'noMod' }}
+                {{ score.mods.join(', ') || 'NoMod' }}
               </span>
             </div>
             <div class="flex">

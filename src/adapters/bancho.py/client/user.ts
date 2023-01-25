@@ -22,7 +22,7 @@ import type {
   UserStatistic,
 } from '~/types/user'
 
-const TSFilter = <T>(item: T): item is Exclude<T, undefined> => item !== undefined
+import { TSFilter } from '~/utils'
 
 export default class BanchoPyUser implements UserDataProvider<Id> {
   db: PrismaClient
