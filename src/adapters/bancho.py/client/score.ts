@@ -8,7 +8,7 @@ import { prismaClient } from '.'
 
 import { TSFilter } from '~/utils'
 
-export class BanchoPyScore implements ScoreProvider<bigint, Id> {
+export default class BanchoPyScore implements ScoreProvider<bigint, Id> {
   db: PrismaClient
 
   constructor() {

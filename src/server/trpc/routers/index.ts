@@ -7,6 +7,7 @@ import { router as me } from './me'
 import { router as leaderboard } from './leaderboard'
 import { router as map } from './map'
 import { router as search } from './search'
+import { router as score } from './score'
 
 export const appRouter = router({
   session,
@@ -16,6 +17,7 @@ export const appRouter = router({
   leaderboard,
   map,
   search,
+  score,
 })
 
 // export type definition of API

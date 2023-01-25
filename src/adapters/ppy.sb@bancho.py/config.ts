@@ -3,6 +3,8 @@ import * as Active from '../bancho.py/config'
 import type { Feature, Mode, OverallLeaderboardRankingSystem, RankingSystem, Ruleset } from '~/types/common'
 // defaults
 export type Id = Active.Id
+export type ScoreId = Active.ScoreId
+
 export const supportedModes: Mode[] = Active.supportedModes || []
 export const supportedRulesets: Ruleset[] = Active.supportedRulesets || []
 export const supportedOverallLeaderboardRankingSystems: OverallLeaderboardRankingSystem[] = Active.supportedOverallLeaderboardRankingSystems || []

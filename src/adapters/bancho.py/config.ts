@@ -1,6 +1,7 @@
 import type { Feature, Mode, OverallLeaderboardRankingSystem, RankingSystem, Ruleset } from '~/types/common'
 
 export type Id = number
+export type ScoreId = bigint
 
 export const supportedModes: Mode[] = ['osu', 'taiko', 'fruits', 'mania']
 export const supportedRulesets: Ruleset[] = ['standard', 'relax', 'autopilot']
