@@ -1,5 +1,6 @@
 import type { RulesetScore } from '~/types/score'
 import type { Awaitable, Mode, PPRankingSystem, Ruleset } from '~/types/common'
+import type { UserEssential } from '~/types/user'
 
 export interface SearchQueryMany<TId> {
   beatmap: {
@@ -19,7 +20,7 @@ export interface SearchId<TScroreId> {
 }
 
 export interface ScoreProvider<TScoreId, TId> {
-  id(id: TScoreId): Awaitable<RulesetScore<TScoreId, TId, Mode, Ruleset, PPRankingSystem> | null>
-  findOne(opt: SearchQueryMany<TId> | SearchId<TScoreId>): Awaitable<RulesetScore<TScoreId, TId, Mode, Ruleset, PPRankingSystem> | null>
-  findMany(opt: SearchQueryMany<TId>): Awaitable<RulesetScore<TScoreId, TId, Mode, Ruleset, PPRankingSystem>[]>
+  id(id: TScoreId): Awaitable<RulesetScore<TScoreId, TId, Mode, Ruleset, PPRankingSystem> & { user: UserEssential<TId> } | null>
+  findOne(opt: SearchQueryMany<TId> | SearchId<TScoreId>): Awaitable<RulesetScore<TScoreId, TId, Mode, Ruleset, PPRankingSystem> & { user: UserEssential<TId> } | null>
+  findMany(opt: SearchQueryMany<TId>): Awaitable<(RulesetScore<TScoreId, TId, Mode, Ruleset, PPRankingSystem> & { user: UserEssential<TId> })[]>
 }
