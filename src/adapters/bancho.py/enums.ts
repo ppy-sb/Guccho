@@ -1,5 +1,5 @@
-import { type StableMod, stableMod } from './../../types/score'
 import { capitalizeFirstLetter } from './transforms'
+import { type StableMod, stableMod } from '~/types/score'
 
 import { RankingStatusEnum } from '~/types/beatmap'
 import type { Mode, Ruleset } from '~/types/common'

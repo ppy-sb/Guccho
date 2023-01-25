@@ -1,4 +1,4 @@
-import type { UserEssential } from './../../../types/user'
+import type { UserEssential } from '~/types/user'
 import type { Mod } from '~/types/score'
 import type { Awaitable, Mode, OverallLeaderboardRankingSystem, PPRankingSystem, RankingSystem, Ruleset } from '~/types/common'
 import type { ComponentLeaderboard } from '~/types/leaderboard'
