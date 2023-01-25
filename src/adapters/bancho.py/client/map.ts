@@ -6,8 +6,7 @@ import type { Id } from './../config'
 import { prismaClient } from '.'
 import type { BeatmapSource, Beatmapset } from '~/types/beatmap'
 import type { MapDataProvider } from '$def/client/map'
-
-const TSFilter = <T>(item: T): item is Exclude<T, undefined> => item !== undefined
+import { TSFilter } from '~/utils'
 
 export default class BanchoPyMap implements MapDataProvider<Id> {
   db: PrismaClient
