@@ -3,10 +3,12 @@ import { generateHTML } from '@tiptap/html'
 import { TRPCError } from '@trpc/server'
 import type { PrismaClient } from '@prisma/client' // ppy.sb
 import type { Id } from '../config'
-import { toFullUser } from '../../bancho.py/transforms'
-import { createUserQuery } from '../../bancho.py/transforms/db-queries'
-import { prismaClient } from './index'
+import { prismaClient } from './'
+
 import type { UserEssential } from '~/types/user'
+
+import { toFullUser } from '~/adapters/bancho.py/transforms'
+import { createUserQuery } from '~/adapters/bancho.py/transforms/db-queries'
 import { UserDataProvider as BanchoPyUser } from '~/adapters/bancho.py@mysql5.7/client'
 import useEditorExtensions from '~/composables/useEditorExtensions'
 import type { UserDataProvider as Base } from '$def/client/user'
