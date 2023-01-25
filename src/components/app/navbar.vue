@@ -64,11 +64,11 @@ onUnmounted(() => {
     :class="[detached && 'detached', !disabled && 'z-50']"
   >
     <div
-      class="navbar navbar-tint transition-[border-radius]"
+      class="navbar transition-[border-radius]"
       :class="[
         props.disabled && 'disabled',
-        shownMenu.left && '!rounded-bl-none',
-        shownMenu.user && '!rounded-br-none',
+        shownMenu.left && '!rounded-bl-none navbar-tint',
+        shownMenu.user && '!rounded-br-none navbar-tint',
       ]"
     >
       <div class="navbar-start">
@@ -261,9 +261,10 @@ onUnmounted(() => {
 </style>
 
 <style lang="postcss" scoped>
-.navbar-tint {
-  @apply bg-kimberly-150/70 dark:bg-kimberly-700/80;
-  @apply backdrop-blur-md shadow-xl;
+.navbar-tint,
+.detached > .navbar {
+    @apply bg-kimberly-150/70 dark:bg-kimberly-700/80;
+    @apply backdrop-blur-md shadow-xl;
 }
 
 .navbar {
