@@ -71,7 +71,7 @@ export type RulesetScore<
   BeatmapId,
   _Mode extends Mode,
   _Ruleset extends Ruleset,
-  Rank extends OverallLeaderboardRankingSystem = never,
+  PPRank extends PPRankingSystem = never,
   BMSrc extends BeatmapSource = BeatmapSource,
   Status extends RankingStatus = RankingStatus,
 > = ScoreEssential<ScoreId, _Mode> & {
@@ -79,7 +79,7 @@ export type RulesetScore<
   ruleset: _Ruleset
   beatmap: BeatmapWithMeta<BMSrc, Status, BeatmapId, unknown>
   scoreRank?: number
-} & Record<PPRankingSystem & Rank, {
+} & Record<PPRankingSystem & PPRank, {
   rank?: number
   pp: number
 }>
@@ -88,11 +88,11 @@ export interface RankingSystemScore<
   ScoreId,
   BeatmapId,
   _Mode extends Mode,
-  Rank extends OverallLeaderboardRankingSystem = never,
+  PPRank extends OverallLeaderboardRankingSystem = never,
   BMSrc extends BeatmapSource = BeatmapSource,
   BMStatus extends RankingStatus = RankingStatus,
 > extends ScoreEssential<ScoreId, _Mode> {
-  pp: Rank extends PPRankingSystem ? number : never
+  pp: PPRank extends PPRankingSystem ? number : never
   rank?: number
   beatmap: BeatmapWithMeta<BMSrc, BMStatus, BeatmapId, unknown>
 }

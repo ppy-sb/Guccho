@@ -1,8 +1,8 @@
 import type { Score as DBScore } from '@prisma/client' // bancho.py
-import type { Mode, OverallLeaderboardRankingSystem, Ruleset } from '~/types/common'
+import type { Mode, PPRankingSystem, Ruleset } from '~/types/common'
 import type { RulesetScore } from '~/types/score'
 
-export function createHitCount<_Mode extends Mode>(mode: _Mode, score: DBScore): RulesetScore<unknown, unknown, _Mode, Ruleset, OverallLeaderboardRankingSystem>['hit'] {
+export function createHitCount<_Mode extends Mode>(mode: _Mode, score: DBScore): RulesetScore<unknown, unknown, _Mode, Ruleset, PPRankingSystem>['hit'] {
   return (mode === 'mania'
     ? {
         max: score.ngeki,
@@ -11,7 +11,7 @@ export function createHitCount<_Mode extends Mode>(mode: _Mode, score: DBScore):
         100: score.n100,
         50: score.n50,
         miss: score.nmiss,
-      } as RulesetScore<unknown, unknown, _Mode & 'mania', Ruleset, OverallLeaderboardRankingSystem>['hit']
+      } as RulesetScore<unknown, unknown, _Mode & 'mania', Ruleset, PPRankingSystem>['hit']
     : {
         300: score.n300,
         geki: score.ngeki,
@@ -19,5 +19,5 @@ export function createHitCount<_Mode extends Mode>(mode: _Mode, score: DBScore):
         katu: score.nkatu,
         50: score.n50,
         miss: score.nmiss,
-      } as RulesetScore<unknown, unknown, _Mode & Exclude<Mode, 'mania'>, Ruleset, OverallLeaderboardRankingSystem>['hit'])
+      } as RulesetScore<unknown, unknown, _Mode & Exclude<Mode, 'mania'>, Ruleset, PPRankingSystem>['hit'])
 }
