@@ -4,7 +4,7 @@ import { createHitCount } from './create-hit-count'
 import { toBeatmapWithBeatmapset } from './to-beatmapset'
 import type { AbleToTransformToScores } from './index'
 import type { Grade, Mode, OverallLeaderboardRankingSystem, PPRankingSystem, Ruleset } from '~/types/common'
-import type { BeatmapWithMeta, RankingStatus } from '~/types/beatmap'
+import type { RankingStatus } from '~/types/beatmap'
 import type { RankingSystemScore, RulesetScore } from '~/types/score'
 
 export function toScore<_RankingSystem extends PPRankingSystem>({ score, mode, ruleset }: {
@@ -23,7 +23,7 @@ export function toScore<_RankingSystem extends PPRankingSystem>({ score, mode, r
     hit: createHitCount(mode, score),
     beatmap: (score.beatmap !== null && toBeatmapWithBeatmapset(score.beatmap)) || {
       status: 'notFound',
-    } satisfies BeatmapWithMeta<'unknown', 'notFound', never, never> as BeatmapWithMeta<'unknown', 'notFound', never, never>,
+    },
     mods: toMods(score.mods),
     ruleset,
     mode,
@@ -64,7 +64,7 @@ export function toRankingSystemScore<_RankingSystem extends OverallLeaderboardRa
     hit: createHitCount(mode, score),
     beatmap: (score.beatmap !== null && toBeatmapWithBeatmapset(score.beatmap)) || {
       status: 'notFound',
-    } satisfies BeatmapWithMeta<'unknown', 'notFound', never, never>,
+    },
     mods: toMods(score.mods),
     playedAt: score.playTime,
     maxCombo: score.maxCombo,
