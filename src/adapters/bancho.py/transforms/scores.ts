@@ -7,7 +7,7 @@ import type { Grade, Mode, OverallLeaderboardRankingSystem, PPRankingSystem, Rul
 import type { BeatmapWithMeta, RankingStatus } from '~/types/beatmap'
 import type { RankingSystemScore, RulesetScore } from '~/types/score'
 
-export function toScore<_RankingSystem extends OverallLeaderboardRankingSystem>({ score, mode, ruleset }: {
+export function toScore<_RankingSystem extends PPRankingSystem>({ score, mode, ruleset }: {
   score: AbleToTransformToScores
   mode: Mode
   ruleset: Ruleset
