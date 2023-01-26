@@ -88,7 +88,7 @@ export interface UserSettings {
     Partial<Record<Exclude<Scope, 'self'>, boolean>>
   >
 }
-type AvailableRuleset<R extends Mode> =
+export type AvailableRuleset<R extends Mode> =
 | (R extends StandardAvailable ? 'standard' : never)
 | (R extends RelaxAvailable ? 'relax' : never)
 | (R extends AutopilotAvailable ? 'autopilot' : never)

@@ -5,8 +5,8 @@ export type ScoreId = bigint
 
 export const supportedModes: Mode[] = ['osu', 'taiko', 'fruits', 'mania']
 export const supportedRulesets: Ruleset[] = ['standard', 'relax', 'autopilot']
-export const supportedOverallLeaderboardRankingSystems: OverallLeaderboardRankingSystem[] = ['ppv2', 'rankedScore', 'totalScore']
-export const supportedRankingSystems: RankingSystem[] = ['ppv2', 'score']
+// export const supportedOverallLeaderboardRankingSystems: OverallLeaderboardRankingSystem[] = ['ppv2', 'rankedScore', 'totalScore']
+// export const supportedRankingSystems: RankingSystem[] = ['ppv2', 'score']
 
 export const supportedFeatures: Set<Feature> = new Set([
   'userpage',
