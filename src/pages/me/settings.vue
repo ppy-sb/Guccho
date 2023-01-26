@@ -8,10 +8,10 @@ definePageMeta({
 })
 
 const changeAvatar = ref<{
-  openModal: () => void
+  openModal: (arg0?: CallableFunction) => void
 }>()
 const changePassword = ref<{
-  openModal: () => void
+  openModal: (arg0?: CallableFunction) => void
 }>()
 
 const { $client } = useNuxtApp()
@@ -280,7 +280,7 @@ onBeforeMount(() => {
             <button
               class="absolute top-0 z-20 w-full h-full btn btn-primary hover:bg-wewak-500/30 hover:active:border-wewak-500/30 no-animation"
               type="button"
-              @click="changeAvatar?.openModal"
+              @click="() => changeAvatar?.openModal()"
             >
               change
             </button>
@@ -406,7 +406,7 @@ onBeforeMount(() => {
             <button
               class="btn btn-sm btn-secondary"
               type="button"
-              @click="changePassword?.openModal"
+              @click="() => changePassword?.openModal()"
             >
               Change
             </button>
