@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs'
 import { TRPCError } from '@trpc/server'
 import { generateHTML } from '@tiptap/html'
 import type { Prisma, PrismaClient } from '@prisma/client' // bancho.py
-import type { Id } from '../config'
+import type { Id } from '../exports'
 import { BanchoPyMode, toBanchoPyMode } from '../enums'
 import { createRulesetData, toFullUser, toUserEssential } from '../transforms'
 import { toRankingSystemScores } from '../transforms/scores'
@@ -13,7 +13,7 @@ import { client as redisClient } from '../redis-client'
 import BanchoPyUserRelationship from './user-relations'
 import { prismaClient } from '.'
 import type { UserDataProvider } from '$def/client/user'
-import type { Mode, OverallLeaderboardRankingSystem, Ruleset } from '~/types/common'
+import type { LeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
 import useEditorExtensions from '~/composables/useEditorExtensions'
 
 import type {
@@ -81,7 +81,7 @@ export default class BanchoPyUser implements UserDataProvider<Id> {
   }
 
   // https://github.com/prisma/prisma/issues/6570 need two separate query to get count for now
-  async getBests<_RS extends OverallLeaderboardRankingSystem>({
+  async getBests<_RS extends LeaderboardRankingSystem>({
     id,
     mode,
     ruleset,
@@ -133,7 +133,7 @@ export default class BanchoPyUser implements UserDataProvider<Id> {
   }
 
   // https://github.com/prisma/prisma/issues/6570 need two separate query to get count for now
-  async getTops<_RS extends OverallLeaderboardRankingSystem>(opt: {
+  async getTops<_RS extends LeaderboardRankingSystem>(opt: {
     id: Id
     mode: Mode
     ruleset: Ruleset
@@ -281,7 +281,7 @@ WHERE s2.userid = ${id}
         : undefined,
     ])
 
-    const statistics: UserStatistic<Id, Mode, Ruleset, OverallLeaderboardRankingSystem> = {
+    const statistics: UserStatistic<Id, Mode, Ruleset, LeaderboardRankingSystem> = {
       osu: {
         standard: createRulesetData({
           databaseResult: results.find(

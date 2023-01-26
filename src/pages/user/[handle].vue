@@ -3,7 +3,7 @@ import { computed, provide, reactive, ref } from 'vue'
 import { useIntersectionObserver } from '@vueuse/core'
 import { faBarsStaggered, faHouseUser, faRankingStar } from '@fortawesome/free-solid-svg-icons'
 import { faPiedPiperPp } from '@fortawesome/free-brands-svg-icons'
-import type { OverallLeaderboardRankingSystem } from '~/types/common'
+import type { LeaderboardRankingSystem } from '~/types/common'
 import type { UserModeRulesetStatistics } from '~/types/statistics'
 
 const { addToLibrary } = useFAIconLib()
@@ -25,7 +25,7 @@ const {
 } = await useAsyncData(async () => await $client.user.userpage.query({
   handle: `${route.params.handle}`,
 }))
-const currentStatistic = computed<UserModeRulesetStatistics<OverallLeaderboardRankingSystem>>(
+const currentStatistic = computed<UserModeRulesetStatistics<LeaderboardRankingSystem>>(
   // @ts-expect-error switcher has its logic to not allow wrong combination
   () => user.value?.statistics[switcher.mode][switcher.ruleset],
 )

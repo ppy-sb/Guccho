@@ -1,6 +1,6 @@
 import type {
   Id,
-} from '../config'
+} from '../exports'
 
 import { prismaClient } from '.'
 
@@ -8,7 +8,7 @@ import { toBanchoPyMode } from '~/adapters/bancho.py/enums'
 import { LeaderboardDataProvider as BanchoPyLeaderboardDataProvider } from '~/adapters/bancho.py/client'
 import { toRoles } from '~/adapters/bancho.py/transforms'
 
-import type { Mode, OverallLeaderboardRankingSystem, Ruleset } from '~/types/common'
+import type { LeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
 
 export class LeaderboardDataProvider extends BanchoPyLeaderboardDataProvider {
   async getPPv2LiveLeaderboard(banchoPyMode: number, start: number, end: number, country?: string) {
@@ -30,10 +30,11 @@ export class LeaderboardDataProvider extends BanchoPyLeaderboardDataProvider {
     throw new Error('redis is not ready')
   }
 
-  async overallLeaderboardFromDatabase(opt: {
+  // TODO: now broken
+  async leaderboardFromDatabase(opt: {
     mode: Mode
     ruleset: Ruleset
-    rankingSystem: OverallLeaderboardRankingSystem
+    rankingSystem: LeaderboardRankingSystem
     page: number
     pageSize: number
   }) {
@@ -79,10 +80,10 @@ ORDER BY _rank ASC
 LIMIT ${start}, ${pageSize}`)
   }
 
-  async getOverallLeaderboard(opt: {
+  async getLeaderboard(opt: {
     mode: Mode
     ruleset: Ruleset
-    rankingSystem: OverallLeaderboardRankingSystem
+    rankingSystem: LeaderboardRankingSystem
     page: number
     pageSize: number
   }) {
@@ -93,69 +94,73 @@ LIMIT ${start}, ${pageSize}`)
       page,
       pageSize,
     } = opt
-    if (rankingSystem === 'ppv1')
-      return []
+    let result: Awaited<ReturnType<LeaderboardDataProvider['leaderboardFromDatabase']>> = []
     const start = page * pageSize
-
-    let result: Awaited<ReturnType<LeaderboardDataProvider['overallLeaderboardFromDatabase']>> = []
-
-    if (rankingSystem === 'ppv2') {
-      try {
-        const bPyMode = toBanchoPyMode(mode, ruleset)
-        if (bPyMode === undefined)
-          throw new Error('no mode')
-        // TODO: banned players are included
-        const rank = await this.getPPv2LiveLeaderboard(bPyMode, 0, start + pageSize * 2).then(res => res.map(Number))
-
-        const [users, stats] = await Promise.all([
-          this.db.user.findMany({
-            where: {
-              id: {
-                in: rank,
-              },
-            },
-          }),
-          this.db.stat.findMany({
-            where: {
-              id: {
-                in: rank,
-              },
-              mode: bPyMode,
-            },
-          }),
-        ])
-        for (const index in rank) {
-          if (result.length >= start + pageSize)
-            break
-          const id = rank[index]
-          const user = users.find(u => u.id === id)
-          const stat = stats.find(s => s.id === id)
-
-          if (!user || !stat || user.priv <= 2)
-            continue
-
-          result.push({
-            id: user.id,
-            name: user.name,
-            safeName: user.safeName,
-            flag: user.country,
-            ppv2: stat.pp,
-            priv: user.priv,
-            _rank: BigInt(start + parseInt(index) + 1),
-            accuracy: stat.accuracy,
-            totalScore: stat.totalScore,
-            rankedScore: stat.rankedScore,
-            playCount: stat.plays,
-          })
-        }
-      }
-      catch (e) {
-        console.error(e)
-        result = await this.overallLeaderboardFromDatabase(opt)
-      }
+    if (!this.redisClient?.isReady) {
+      result = await this.leaderboardFromDatabase(opt)
     }
     else {
-      result = await this.overallLeaderboardFromDatabase(opt)
+      if (rankingSystem === 'ppv1')
+        return []
+
+      if (rankingSystem === 'ppv2') {
+        try {
+          const bPyMode = toBanchoPyMode(mode, ruleset)
+          if (bPyMode === undefined)
+            throw new Error('no mode')
+          // TODO: banned players are included
+          const rank = await this.getPPv2LiveLeaderboard(bPyMode, 0, start + pageSize * 2).then(res => res.map(Number))
+
+          const [users, stats] = await Promise.all([
+            this.db.user.findMany({
+              where: {
+                id: {
+                  in: rank,
+                },
+              },
+            }),
+            this.db.stat.findMany({
+              where: {
+                id: {
+                  in: rank,
+                },
+                mode: bPyMode,
+              },
+            }),
+          ])
+          for (const index in rank) {
+            if (result.length >= start + pageSize)
+              break
+            const id = rank[index]
+            const user = users.find(u => u.id === id)
+            const stat = stats.find(s => s.id === id)
+
+            if (!user || !stat || user.priv <= 2)
+              continue
+
+            result.push({
+              id: user.id,
+              name: user.name,
+              safeName: user.safeName,
+              flag: user.country,
+              ppv2: stat.pp,
+              priv: user.priv,
+              _rank: BigInt(start + parseInt(index) + 1),
+              accuracy: stat.accuracy,
+              totalScore: stat.totalScore,
+              rankedScore: stat.rankedScore,
+              playCount: stat.plays,
+            })
+          }
+        }
+        catch (e) {
+          console.error(e)
+          result = await this.leaderboardFromDatabase(opt)
+        }
+      }
+      else {
+        result = await this.leaderboardFromDatabase(opt)
+      }
     }
 
     return result.slice(start, start + pageSize).map((item, index) => ({

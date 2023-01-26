@@ -2,7 +2,7 @@ import type { JSONContent } from '@tiptap/core'
 import { generateHTML } from '@tiptap/html'
 import { TRPCError } from '@trpc/server'
 import type { PrismaClient } from '@prisma/client' // ppy.sb
-import type { Id } from '../config'
+import type { Id } from '../exports'
 import { prismaClient } from './'
 
 import type { UserEssential } from '~/types/user'

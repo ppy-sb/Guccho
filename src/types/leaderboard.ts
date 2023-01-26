@@ -1,9 +1,9 @@
 import type { UserEssential } from './user'
 import type { Maybe } from './frontend-common'
-import type { OverallLeaderboardRankingSystem, OverallLeaderboardScoreRankingSystem, PPRankingSystem } from './common'
+import type { LeaderboardRankingSystem, LeaderboardScoreRankingSystem, PPRankingSystem } from './common'
 import type { Mod } from './score'
 
-export interface Leaderboard<IdType, _RankingSystem extends OverallLeaderboardRankingSystem = OverallLeaderboardRankingSystem> {
+export interface Leaderboard<IdType, _RankingSystem extends LeaderboardRankingSystem = LeaderboardRankingSystem> {
   user: UserEssential<IdType>
   inThisLeaderboard: {
     accuracy: number
@@ -11,7 +11,18 @@ export interface Leaderboard<IdType, _RankingSystem extends OverallLeaderboardRa
     rank: number | bigint
   }
   & Record<_RankingSystem & PPRankingSystem, number>
-  & Record<_RankingSystem & OverallLeaderboardScoreRankingSystem, bigint>
+  & Record<_RankingSystem & LeaderboardScoreRankingSystem, bigint>
+}
+export interface BeatmapLeaderboard<Id> {
+  user: UserEssential<Id>
+  score: {
+    id: unknown
+    score: number | bigint
+    accuracy: number
+    playedAt: Date
+    mods: Mod[]
+  } & Partial<Record<PPRankingSystem, number>>
+  rank: number
 }
 export interface BeatmapLeaderboard<Id> {
   user: UserEssential<Id>

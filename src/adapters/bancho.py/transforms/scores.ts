@@ -1,9 +1,9 @@
-import type { Id } from '../config'
+import type { Id } from '../exports'
 import { toMods } from '../enums'
 import { createHitCount } from './create-hit-count'
 import { toBeatmapWithBeatmapset } from './to-beatmapset'
 import type { AbleToTransformToScores } from './index'
-import type { Grade, Mode, OverallLeaderboardRankingSystem, PPRankingSystem, Ruleset } from '~/types/common'
+import type { Grade, LeaderboardRankingSystem, Mode, PPRankingSystem, Ruleset } from '~/types/common'
 import type { RankingStatus } from '~/types/beatmap'
 import type { RankingSystemScore, RulesetScore } from '~/types/score'
 
@@ -47,7 +47,7 @@ export function toScore<_RankingSystem extends PPRankingSystem>({ score, mode, r
   return rtn1
 }
 
-export function toRankingSystemScore<_RankingSystem extends OverallLeaderboardRankingSystem>({ score, rankingSystem, mode, rank }: {
+export function toRankingSystemScore<_RankingSystem extends LeaderboardRankingSystem>({ score, rankingSystem, mode, rank }: {
   score: AbleToTransformToScores
   rankingSystem: _RankingSystem
   mode: Mode
@@ -89,7 +89,7 @@ export function toScores({ scores, mode, ruleset }: {
   return scores.map(score => toScore({ score, mode, ruleset }))
 }
 
-export function toRankingSystemScores<RS extends OverallLeaderboardRankingSystem>({ scores, mode, rankingSystem }: {
+export function toRankingSystemScores<RS extends LeaderboardRankingSystem>({ scores, mode, rankingSystem }: {
   scores: AbleToTransformToScores[]
   rankingSystem: RS
   mode: Mode

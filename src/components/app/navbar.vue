@@ -288,13 +288,13 @@ onUnmounted(() => {
       }
     }
     & .btn {
-      height: 2.5rem;
+      /* height: 2.5rem;
       min-height: 2.5rem;
 
       &.btn-circle {
         width: 2.5rem;
         min-width: 2.5rem;
-      }
+      } */
 
       &.attach:text-lg {
         @apply text-base !important;

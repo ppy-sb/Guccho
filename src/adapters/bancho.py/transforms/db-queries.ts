@@ -1,4 +1,4 @@
-import type { Id } from '../config'
+import type { Id } from '../exports'
 
 export const createUserQuery = (handle: string, selectAgainst: Array<'id' | 'name' | 'safeName' | 'email'> = ['id', 'name', 'safeName']) => {
   let handleNum = parseInt(handle)

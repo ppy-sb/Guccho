@@ -9,12 +9,12 @@ const config = useAppConfig()
 <template>
   <div class="flex items-center grow">
     <div
-      class="container flex items-center justify-between mx-auto my-auto text-left custom-container w-max text-kimberly-900 dark:text-kimberly-100"
+      class="container custom-container heading"
     >
-      <div class="content">
+      <div class="content p-8">
         <div class="mb-6">
           <h1 class="mb-2 text-4xl font-bold text-center">
-            {{ config.title.toUpperCase() }}
+            {{ config.title }}
           </h1>
           <h2 class="font-semibold px-2 sm:px-0 h-sub text-md sm:text-left">
             We are an osu! private server built from the ground up with many
@@ -43,7 +43,7 @@ const config = useAppConfig()
         </div>
         <div
           v-else
-          class="flex gap-2"
+          class="grid grid-cols-2 gap-2 justify-center"
         >
           <t-nuxt-link-button
             :to="{ name: 'auth-login' }"
@@ -71,8 +71,18 @@ const config = useAppConfig()
   </div>
 </template>
 
-<style lang="postcss">
+<style lang="postcss" scoped>
 .h-sub {
   max-width: 32rem;
+}
+.heading {
+  @apply flex items-center justify-between px-4 lg:px-0 mx-auto my-auto text-left w-max text-kimberly-900 dark:text-kimberly-100;
+  &::before {
+    content: "";
+    @apply -z-10;
+    @apply lg:absolute lg:top-[30%] lg:bottom-[30%] lg:left-0 lg:right-0;
+    @apply lg:bg-gradient-to-r lg:from-kimberly-500/30 lg:to-transparent;
+    @apply lg:rounded-3xl lg:drop-shadow-lg;
+  }
 }
 </style>

@@ -241,7 +241,6 @@ cython_debug/
 
 .output
 
-yarn.lock
 .DS_Store
 
 fix-permission.sh

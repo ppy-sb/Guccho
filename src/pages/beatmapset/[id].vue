@@ -9,13 +9,14 @@ import {
   placeholder,
 } from '~/utils'
 import { forbiddenMode, forbiddenMods } from '~/common/varkaUtils'
+import type { RankingSystem } from '~/types/common'
 
 const { $client } = useNuxtApp()
 const route = useRoute()
 const {
   supportedModes,
-  supportedRankingSystems,
   supportedRulesets,
+  assertHasRankingSystem,
 } = useAdapterConfig()
 const [switcher, setSwitcher] = useSwitcher()
 const lazyBgCover = ref('')
@@ -42,9 +43,6 @@ const queryMode = route.query.mode?.toString()
 const queryRuleset = route.query.ruleset?.toString()
 
 setSwitcher({
-  rankingSystem: assertIncludes(queryRankingSystem, supportedRankingSystems)
-    ? queryRankingSystem
-    : undefined,
   mode: assertIncludes(queryMode, supportedModes)
     ? queryMode
     : undefined,
@@ -52,6 +50,14 @@ setSwitcher({
     ? queryRuleset
     : undefined,
 })
+
+if (queryRankingSystem) {
+  setSwitcher({
+    rankingSystem: assertHasRankingSystem(queryRankingSystem, { mode: switcher.mode, ruleset: switcher.ruleset })
+      ? queryRankingSystem
+      : undefined,
+  })
+}
 
 const { data: leaderboard, refresh } = await useAsyncData(async () => {
   if (!selectedMap.value)
@@ -80,6 +86,8 @@ const update = () => {
   refresh()
   rewriteAnchor()
 }
+
+const beatmapRankingSystems = ref<RankingSystem[]>([])
 
 onBeforeMount(() => {
   bgCover
@@ -302,6 +310,9 @@ onBeforeMount(() => {
     <div class="container custom-container mx-auto mt-4">
       <app-scores-ranking-system-switcher
         v-model="switcher.rankingSystem"
+        v-model:ranking-system-list="beatmapRankingSystems"
+        :mode="switcher.mode"
+        :ruleset="switcher.ruleset"
         class="mx-auto"
         @update:model-value="update"
       />
@@ -312,7 +323,7 @@ onBeforeMount(() => {
           :ranking-system="switcher.rankingSystem"
           class="w-full"
           :class="{
-            'clear-rounded-tl': supportedRankingSystems[0] === switcher.rankingSystem,
+            'clear-rounded-tl': beatmapRankingSystems[0] === switcher.rankingSystem,
           }"
         />
       </div>

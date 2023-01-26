@@ -1,5 +1,5 @@
 import type { BeatmapSource, BeatmapWithMeta, RankingStatus } from './beatmap'
-import type { Grade, Mode, OverallLeaderboardRankingSystem, PPRankingSystem, Ruleset } from './common'
+import type { Grade, LeaderboardRankingSystem, Mode, PPRankingSystem, Ruleset } from './common'
 
 export type HitCount<_Mode extends Mode> = Record<
   300 | 100 | 50 | 'miss' | (_Mode extends 'mania' ? 'max' | 200 : 'geki' | 'katu'),
@@ -88,7 +88,7 @@ export interface RankingSystemScore<
   ScoreId,
   BeatmapId,
   _Mode extends Mode,
-  PPRank extends OverallLeaderboardRankingSystem = never,
+  PPRank extends LeaderboardRankingSystem = never,
   BMSrc extends BeatmapSource = BeatmapSource,
   BMStatus extends RankingStatus = RankingStatus,
 > extends ScoreEssential<ScoreId, _Mode> {

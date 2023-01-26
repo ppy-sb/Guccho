@@ -2,7 +2,7 @@ import z from 'zod'
 // import { createRouter } from '../context'
 import { router as _router, publicProcedure } from '../trpc'
 import { zodMode, zodOverallRankingSystem, zodRankingSystem, zodRuleset } from './../shapes/index'
-import { idToString, stringToId } from '$active/config'
+import { idToString, stringToId } from '$active/exports'
 import { LeaderboardDataProvider } from '$active/client'
 
 const provider = new LeaderboardDataProvider()
@@ -19,7 +19,7 @@ export const router = _router({
     )
     .query(
       async ({ input: { mode, ruleset, rankingSystem, page, pageSize } }) => {
-        const result = await provider.getOverallLeaderboard({
+        const result = await provider.getLeaderboard({
           mode,
           ruleset,
           rankingSystem,

@@ -1,5 +1,5 @@
 import type { Map as DBMap, Source } from '@prisma/client' // bancho.py
-import type { Id } from '../config'
+import type { Id } from '../exports'
 import { toRankingStatus } from './index'
 import type { BeatmapEssential, Beatmapset } from '~/types/beatmap'
 
