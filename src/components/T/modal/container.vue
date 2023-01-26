@@ -97,7 +97,7 @@ defineExpose({
 
     <div
       ref="content"
-      class="content"
+      class="content notify-safari-something-will-change"
     >
       <slot v-bind="{ openModal, closeModal }" />
     </div>
@@ -112,8 +112,10 @@ $content-stage2: blur(1em) opacity(0.2) saturate(0.3);
 $scale: scale(0.97);
 $scale2: scale(0.95);
 
-.content {
-  will-change: transform, filter;
+.safari {
+  .notify-safari-something-will-change {
+    will-change: transform, filter;
+  }
 }
 
 .zoom-modal-container {
