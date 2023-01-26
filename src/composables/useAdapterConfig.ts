@@ -1,10 +1,10 @@
-import { supportedModes, supportedOverallLeaderboardRankingSystems, supportedRankingSystems, supportedRulesets } from '~/server/trpc/config'
+import { assertHasOverallRankingSystem, assertHasRankingSystem, modes as supportedModes, rulesets as supportedRulesets } from '~/server/trpc/config'
 
 export default () => {
   return {
     supportedModes,
     supportedRulesets,
-    supportedOverallLeaderboardRankingSystems,
-    supportedRankingSystems,
+    assertHasOverallRankingSystem,
+    assertHasRankingSystem,
   }
 }

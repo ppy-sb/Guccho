@@ -12,7 +12,7 @@ export function assertIsBanchoBeatmapset(test: Beatmapset<BeatmapSource, any, un
   return test.source === 'bancho'
 }
 
-export function assertIncludes<T>(input: any, array: T[]): input is T {
+export function assertIncludes<T>(input: any, array: readonly T[]): input is T {
   return array.includes(input)
 }
 

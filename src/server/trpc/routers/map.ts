@@ -1,6 +1,6 @@
 import { string, z } from 'zod'
 import { router as _router, publicProcedure as p } from '../trpc'
-import { idToString, stringToId } from '$active/config'
+import { idToString, stringToId } from '$active/exports'
 import { MapDataProvider } from '$active/client'
 
 const map = new MapDataProvider()

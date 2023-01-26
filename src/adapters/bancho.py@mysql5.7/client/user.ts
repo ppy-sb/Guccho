@@ -1,11 +1,11 @@
 import type { PrismaClient } from '@prisma/client' // bancho.py
-import type { Id } from '../config'
+import type { Id } from '../exports'
 import { prismaClient } from '.'
 import { BanchoPyMode } from '~/adapters/bancho.py/enums'
 import { createRulesetData } from '~/adapters/bancho.py/transforms'
 
 import type { UserDataProvider as Base } from '$def/client/user'
-import type { Mode, OverallLeaderboardRankingSystem, Ruleset } from '~/types/common'
+import type { LeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
 
 import type {
   UserStatistic,
@@ -100,7 +100,7 @@ WHERE id = ${id}
         : undefined,
     ])
 
-    const statistics: UserStatistic<Id, Mode, Ruleset, OverallLeaderboardRankingSystem> = {
+    const statistics: UserStatistic<Id, Mode, Ruleset, LeaderboardRankingSystem> = {
       osu: {
         standard: createRulesetData({
           databaseResult: results.find(

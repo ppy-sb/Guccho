@@ -1,11 +1,11 @@
 <script lang="ts" setup>
 import { createAddCommasFormatter, createScoreFormatter, getFlagURL } from '~/common/varkaUtils'
-import type { OverallLeaderboardRankingSystem } from '~/types/common'
+import type { LeaderboardRankingSystem } from '~/types/common'
 import type { ComponentLeaderboard, Leaderboard } from '~/types/leaderboard'
 const props = defineProps<{
   user: Leaderboard<string>['user']
   inThisLeaderboard: ComponentLeaderboard<string>['inThisLeaderboard']
-  sort: OverallLeaderboardRankingSystem
+  sort: LeaderboardRankingSystem
 }>()
 const addCommas = createAddCommasFormatter()
 const scoreFormat = createScoreFormatter()

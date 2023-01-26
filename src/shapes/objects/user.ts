@@ -1,5 +1,5 @@
 import type { HitCount } from '~/types/score'
-import type { Mode, OverallLeaderboardRankingSystem } from '~/types/common'
+import type { LeaderboardRankingSystem, Mode } from '~/types/common'
 import type { UserFull } from '~/types/user'
 import type { PPRank, ScoreRank, UserModeRulesetStatistics } from '~/types/statistics'
 
@@ -96,7 +96,7 @@ export const createRulesetData = <M extends Mode>(
   mode: M,
   ppRankData: PPRank | undefined = undefined,
   scoreRankData: ScoreRank | undefined = undefined,
-): UserModeRulesetStatistics<OverallLeaderboardRankingSystem> => ({
+): UserModeRulesetStatistics<LeaderboardRankingSystem> => ({
     ppv2: createPPRank(ppRankData),
     ppv1: createPPRank(ppRankData),
     rankedScore: createScoreRank(scoreRankData),
