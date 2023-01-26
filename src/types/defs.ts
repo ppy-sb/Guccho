@@ -20,14 +20,14 @@ export const rankingSystem = [
   ...scoreRankingSystem,
 ] as const
 
-export const overallLeaderboardPPRankingSystem = ppRankingSystem
-export const overallLeaderboardScoreRankingSystem = [
+export const leaderboardPPRankingSystem = ppRankingSystem
+export const leaderboardScoreRankingSystem = [
   'rankedScore',
   'totalScore',
 ] as const
-export const overallLeaderboardRankingSystem = [
+export const leaderboardRankingSystem = [
   ...ppRankingSystem,
-  ...overallLeaderboardScoreRankingSystem,
+  ...leaderboardScoreRankingSystem,
 ] as const
 
 export const mode = ['osu', 'taiko', 'fruits', 'mania'] as const

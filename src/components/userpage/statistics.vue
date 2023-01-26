@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
-import { OverallLeaderboardRankingSystem, PPRankingSystem, ppRankingSystem } from '~/types/common'
+import { LeaderboardRankingSystem, PPRankingSystem, ppRankingSystem } from '~/types/common'
 import { PPRank, ScoreRank } from '~/types/statistics'
 import type { BaseRank, UserModeRulesetStatistics } from '~/types/statistics'
 import { createScoreFormatter, toDuration } from '~/common/varkaUtils'
@@ -11,7 +11,7 @@ const numbers = [...Array(10).keys()].map(String)
 const chars = [...numbers, ',', '.', 'K', 'M', 'B', 'T', '-']
 const percent = [...numbers, ',', '.', '%']
 
-const data = inject('user.statistics') as Ref<UserModeRulesetStatistics<OverallLeaderboardRankingSystem>>
+const data = inject('user.statistics') as Ref<UserModeRulesetStatistics<LeaderboardRankingSystem>>
 const currentRankingSystem = inject<BaseRank>('user.currentRankingSystem')
 const scoreFmtCompact = createScoreFormatter({ notation: 'compact', maximumFractionDigits: 2 })
 const scoreFmt = createScoreFormatter({ notation: undefined })
@@ -69,7 +69,7 @@ const ScoreToNextLevel = computed(() => getRequiredScoreForLevel(userLevelInt.va
             <roller
               :char-set="chars"
               class="font-mono"
-              :value="ppRankingSystem.includes(sw as PPRankingSystem) ? `${scoreFmt((currentRankingSystem as PPRank)?.performance)}` : scoreFmtCompact((deferredRender[sw as OverallLeaderboardRankingSystem] as ScoreRank).score as bigint)"
+              :value="ppRankingSystem.includes(sw as PPRankingSystem) ? `${scoreFmt((currentRankingSystem as PPRank)?.performance)}` : scoreFmtCompact((deferredRender[sw as LeaderboardRankingSystem] as ScoreRank).score as bigint)"
               default-value="-"
               :title="deferredRender.totalScore.score"
             />

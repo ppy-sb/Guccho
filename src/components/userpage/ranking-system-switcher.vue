@@ -5,7 +5,7 @@ import { computed, inject } from 'vue'
 
 import { useAdapterConfig } from '#imports'
 import type { OverallSwitcherComposableType } from '~/composables/useSwitcher'
-import { OverallLeaderboardRankingSystem } from '~/types/common'
+import { LeaderboardRankingSystem } from '~/types/common'
 
 const { assertHasOverallRankingSystem } = await useAdapterConfig()
 
@@ -47,7 +47,7 @@ const dropdown = computed(() => filter('dropdown'))
       v-slot="{ select }"
       :model-value="switcher.rankingSystem"
       variant="bordered"
-      @update:model-value="(v: OverallLeaderboardRankingSystem) => setSwitcher({ rankingSystem: v })"
+      @update:model-value="(v: LeaderboardRankingSystem) => setSwitcher({ rankingSystem: v })"
     >
       <t-tab
         disabled

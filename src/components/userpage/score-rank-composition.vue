@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { ComputedRef } from 'vue'
 import type { UserModeRulesetStatistics } from '~/types/statistics'
-import type { OverallLeaderboardRankingSystem } from '~/types/common'
+import type { LeaderboardRankingSystem } from '~/types/common'
 
-const currentRankingSystem = inject('user.statistics') as ComputedRef<UserModeRulesetStatistics<OverallLeaderboardRankingSystem>>
+const currentRankingSystem = inject('user.statistics') as ComputedRef<UserModeRulesetStatistics<LeaderboardRankingSystem>>
 
 const totalCount = computed(() => {
   return Object.values(currentRankingSystem.value.scoreRankComposition).reduce((acc, cur) => acc + cur, 0)

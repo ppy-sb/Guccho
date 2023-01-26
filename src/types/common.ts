@@ -1,4 +1,4 @@
-import type { autopilotAvailable, features, grades, mode, mutualRelationship, overallLeaderboardRankingSystem, overallLeaderboardScoreRankingSystem, ppRankingSystem, rankingSystem, relationship, relaxAvailable, ruleset, scopes, scoreRankingSystem } from './defs'
+import type { autopilotAvailable, features, grades, leaderboardRankingSystem, leaderboardScoreRankingSystem, mode, mutualRelationship, ppRankingSystem, rankingSystem, relationship, relaxAvailable, ruleset, scopes, scoreRankingSystem } from './defs'
 import type { Enumerate } from './internal-utils'
 export * from './defs'
 export type Mode = typeof mode[number]
@@ -11,9 +11,9 @@ export type AutopilotAvailable = typeof autopilotAvailable[number]
 export type PPRankingSystem = typeof ppRankingSystem[number]
 export type ScoreRankingSystem = typeof scoreRankingSystem[number]
 export type RankingSystem = typeof rankingSystem[number]
-export type OverallLeaderboardPPRankingSystem = PPRankingSystem
-export type OverallLeaderboardScoreRankingSystem = typeof overallLeaderboardScoreRankingSystem[number]
-export type OverallLeaderboardRankingSystem = typeof overallLeaderboardRankingSystem[number]
+export type LeaderboardPPRankingSystem = PPRankingSystem
+export type LeaderboardScoreRankingSystem = typeof leaderboardScoreRankingSystem[number]
+export type LeaderboardRankingSystem = typeof leaderboardRankingSystem[number]
 export type Scope = typeof scopes[number]
 export type Grade = typeof grades[number]
 export type Feature = typeof features[number]
@@ -24,7 +24,7 @@ Enumerate<T>,
 Enumerate<F>
 >
 export type UserpageShowType = 'tab' | 'dropdown' | 'hidden'
-export type ServerConfig<AvailableRankingSystem extends OverallLeaderboardRankingSystem> = Record<AvailableRankingSystem, {
+export type ServerConfig<AvailableRankingSystem extends LeaderboardRankingSystem> = Record<AvailableRankingSystem, {
   userpage: {
     show: UserpageShowType
   }

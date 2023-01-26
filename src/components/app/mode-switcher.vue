@@ -3,13 +3,13 @@
 import { toRaw, watch } from 'vue'
 import { useAppConfig } from '#app'
 import { forbiddenMode, forbiddenMods } from '~/common/varkaUtils'
-import type { Mode, OverallLeaderboardRankingSystem, Ruleset } from '~/types/common'
+import type { LeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
 import { useAdapterConfig } from '#imports'
 
 interface modelValue {
   mode?: Mode
   ruleset?: Ruleset
-  rankingSystem?: OverallLeaderboardRankingSystem
+  rankingSystem?: LeaderboardRankingSystem
 }
 const props = defineProps<{
   showSort?: boolean

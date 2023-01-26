@@ -19,7 +19,7 @@ export const router = _router({
     )
     .query(
       async ({ input: { mode, ruleset, rankingSystem, page, pageSize } }) => {
-        const result = await provider.getOverallLeaderboard({
+        const result = await provider.getLeaderboard({
           mode,
           ruleset,
           rankingSystem,

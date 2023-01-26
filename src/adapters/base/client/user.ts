@@ -7,8 +7,8 @@ import type {
 } from '~/types/user'
 import type {
   Awaitable,
+  LeaderboardRankingSystem,
   Mode,
-  OverallLeaderboardRankingSystem,
   Ruleset,
 } from '~/types/common'
 import type { RankingSystemScore } from '~/types/score'
@@ -46,7 +46,7 @@ export interface UserDataProvider<Id> {
   getBests<
     _Mode extends Mode,
     _Ruleset extends Ruleset,
-    _RankingSystem extends OverallLeaderboardRankingSystem,
+    _RankingSystem extends LeaderboardRankingSystem,
   >(query: {
     id: Id
     mode: _Mode
@@ -59,7 +59,7 @@ export interface UserDataProvider<Id> {
   getTops<
     _Mode extends Mode,
     _Ruleset extends Ruleset,
-    _RankingSystem extends OverallLeaderboardRankingSystem,
+    _RankingSystem extends LeaderboardRankingSystem,
   >(query: {
     id: Id
     mode: _Mode

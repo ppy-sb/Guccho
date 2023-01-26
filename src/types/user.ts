@@ -2,8 +2,8 @@ import type { JSONContent } from '@tiptap/core'
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type {
   AutopilotAvailable,
+  LeaderboardRankingSystem,
   Mode,
-  OverallLeaderboardRankingSystem,
   RelaxAvailable,
   Ruleset,
   Scope,
@@ -97,7 +97,7 @@ export type UserStatistic<
   Id,
   IncludeMode extends Mode = Mode,
   IncludeRuleset extends Ruleset = Ruleset,
-  Ranking extends OverallLeaderboardRankingSystem = OverallLeaderboardRankingSystem,
+  Ranking extends LeaderboardRankingSystem = LeaderboardRankingSystem,
 > = {
   [M in IncludeMode]: Record<
     IncludeRuleset & AvailableRuleset<M>,
@@ -109,7 +109,7 @@ export interface UserExtra<
   Id,
   IncludeMode extends Mode = Mode,
   IncludeRuleset extends Ruleset = Ruleset,
-  Ranking extends OverallLeaderboardRankingSystem = OverallLeaderboardRankingSystem,
+  Ranking extends LeaderboardRankingSystem = LeaderboardRankingSystem,
 > {
   statistics: UserStatistic<Id, IncludeMode, IncludeRuleset, Ranking>
 
@@ -125,6 +125,6 @@ export type UserFull<
   Id,
   IncludeMode extends Mode = Mode,
   IncludeRuleset extends Ruleset = Ruleset,
-  Ranking extends OverallLeaderboardRankingSystem = OverallLeaderboardRankingSystem,
+  Ranking extends LeaderboardRankingSystem = LeaderboardRankingSystem,
 > = UserEssential<Id> & Partial<UserOptional<Id>>
 & Partial<UserExtra<Id, IncludeMode, IncludeRuleset, Ranking>>
