@@ -9,6 +9,7 @@ import {
   placeholder,
 } from '~/utils'
 import { forbiddenMode, forbiddenMods } from '~/common/varkaUtils'
+import type { RankingSystem } from '~~/src/types/common'
 
 const { $client } = useNuxtApp()
 const route = useRoute()
@@ -85,6 +86,8 @@ const update = () => {
   refresh()
   rewriteAnchor()
 }
+
+const beatmapRankingSystems = ref<RankingSystem[]>([])
 
 onBeforeMount(() => {
   bgCover
@@ -307,20 +310,21 @@ onBeforeMount(() => {
     <div class="container custom-container mx-auto mt-4">
       <app-scores-ranking-system-switcher
         v-model="switcher.rankingSystem"
+        v-model:ranking-system-list="beatmapRankingSystems"
         :mode="switcher.mode"
         :ruleset="switcher.ruleset"
         class="mx-auto"
         @update:model-value="update"
       />
       <div class="overflow-auto">
-        <!-- :class="{
-          'clear-rounded-tl': supportedRankingSystems[0] === switcher.rankingSystem,
-        }" -->
         <app-scores-table
           v-if="leaderboard"
           :scores="leaderboard"
           :ranking-system="switcher.rankingSystem"
           class="w-full"
+          :class="{
+            'clear-rounded-tl': beatmapRankingSystems[0] === switcher.rankingSystem,
+          }"
         />
       </div>
     </div>
