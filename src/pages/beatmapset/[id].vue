@@ -9,7 +9,7 @@ import {
   placeholder,
 } from '~/utils'
 import { forbiddenMode, forbiddenMods } from '~/common/varkaUtils'
-import type { RankingSystem } from '~~/src/types/common'
+import type { RankingSystem } from '~/types/common'
 
 const { $client } = useNuxtApp()
 const route = useRoute()

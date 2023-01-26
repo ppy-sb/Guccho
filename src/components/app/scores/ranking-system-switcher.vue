@@ -14,15 +14,15 @@ const emit = defineEmits<{
 const app = useAppConfig()
 const { assertHasRankingSystem } = useAdapterConfig()
 
-const shown = computed(() => {
+const show = computed(() => {
   return rankingSystem.filter(rs => assertHasRankingSystem(rs, { mode: props.mode, ruleset: props.ruleset }))
 })
-watch(props, () => emit('update:rankingSystemList', shown.value))
+watch(props, () => emit('update:rankingSystemList', show.value))
 </script>
 
 <template>
   <t-tabs :model-value="props.modelValue" variant="lifted" @update:model-value="v => emit('update:modelValue', v)">
-    <t-tab v-for="rs in shown" :key="`rs-${rs}`" :value="rs" class="[--tab-border-color:transparent]">
+    <t-tab v-for="rs in show" :key="`rs-${rs}`" :value="rs" class="[--tab-border-color:transparent]">
       {{ app.rankingSystem[rs].name }}
     </t-tab>
   </t-tabs>
