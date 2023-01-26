@@ -1,6 +1,8 @@
-import { overallLeaderboardRankingSystem, rankingSystem } from '~/types/common'
 import type { OverallLeaderboardRankingSystem, RankingSystem } from '~/types/common'
 import type { AssertHasOverallRankingSystem, AssertHasRankingSystem, ServerOverallRankingSystemDef, ServerRankingSystemDef } from '~/types/server'
+
+const rankingSystem = ['ppv2', 'score'] as const
+const overallLeaderboardRankingSystem = ['ppv2', 'rankedScore', 'totalScore'] as const
 
 const havingRankingSystem: ServerRankingSystemDef = {
   osu: {
