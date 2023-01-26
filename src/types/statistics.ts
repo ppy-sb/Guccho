@@ -1,4 +1,4 @@
-import type { Grade, OverallLeaderboardRankingSystem, OverallLeaderboardScoreRankingSystem, PPRankingSystem } from './common'
+import type { Grade, LeaderboardRankingSystem, LeaderboardScoreRankingSystem, PPRankingSystem } from './common'
 
 export interface BaseRank {
   rank?: number
@@ -21,7 +21,7 @@ export type ScoreRank = BaseRank & {
 }
 
 export type UserModeRulesetStatistics<
-  RS extends OverallLeaderboardRankingSystem,
+  RS extends LeaderboardRankingSystem,
 > = {
   // TODO: Achievement
   // achievements: Achievement[]
@@ -34,4 +34,4 @@ export type UserModeRulesetStatistics<
   scoreRankComposition: Record<Grade, number>
 }
 & Record<RS & PPRankingSystem, PPRank>
-& Record<RS & OverallLeaderboardScoreRankingSystem, ScoreRank>
+& Record<RS & LeaderboardScoreRankingSystem, ScoreRank>

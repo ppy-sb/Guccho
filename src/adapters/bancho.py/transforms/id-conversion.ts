@@ -1,4 +1,4 @@
-import type { Id, ScoreId } from '../config'
+import type { Id, ScoreId } from '../exports'
 export function stringToId(input: string): Id {
   return parseInt(input)
 }

@@ -3,18 +3,18 @@
 import VLazyImage from 'v-lazy-image'
 import { faBan } from '@fortawesome/free-solid-svg-icons'
 import type { RankingSystemScore } from '~/types/score'
-import type { Mode, OverallLeaderboardRankingSystem, Ruleset } from '~/types/common'
-import { overallLeaderboardScoreRankingSystem, ppRankingSystem } from '~/types/common'
+import type { LeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
+import { leaderboardScoreRankingSystem, ppRankingSystem } from '~/types/common'
 import { createAddCommasFormatter } from '~/common/varkaUtils'
 import { useFAIconLib } from '#imports'
 import { assertBeatmapIsVisible } from '~/utils/map'
 import { placeholder } from '~/utils'
 const props = withDefaults(
   defineProps<{
-    score?: RankingSystemScore<unknown, unknown, Mode, OverallLeaderboardRankingSystem>
+    score?: RankingSystemScore<unknown, unknown, Mode, LeaderboardRankingSystem>
     mode: Mode
     ruleset: Ruleset
-    rankingSystem: OverallLeaderboardRankingSystem
+    rankingSystem: LeaderboardRankingSystem
     useIntl?: boolean
   }>(),
   {
@@ -126,7 +126,7 @@ const meta = computed((): {
               </div>
               <span class="font-light">pp</span>
             </template>
-            <template v-else-if="(overallLeaderboardScoreRankingSystem as readonly string[]).includes(props.rankingSystem)">
+            <template v-else-if="(leaderboardScoreRankingSystem as readonly string[]).includes(props.rankingSystem)">
               <div class="font-bold font-mono">
                 {{ numberFmt(score.score) }}
               </div>

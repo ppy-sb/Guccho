@@ -1,5 +1,5 @@
 import type { Map as DBMap, Score as DBScore, User as DatabaseUser, RelationshipType, Source, Stat } from '@prisma/client' // bancho.py
-import type { Id } from '../config'
+import type { Id } from '../exports'
 import type { BanchoPyRankedStatus } from '../enums'
 import { BanchoPyPrivilege, toBanchoRankingStatus } from '../enums'
 import { getLevelWithProgress } from '~/utils/level-calc'
@@ -12,12 +12,12 @@ import type {
 } from '~/types/user'
 import type { RankingStatus } from '~/types/beatmap'
 import { RankingStatusEnum } from '~/types/beatmap'
-import type { OverallLeaderboardRankingSystem } from '~/types/common'
+import type { LeaderboardRankingSystem } from '~/types/common'
 import type { UserRelationship } from '~/types/user-relationship'
 import type { UserModeRulesetStatistics } from '~/types/statistics'
 
 export function createRulesetData<
-  _RankingSystem extends OverallLeaderboardRankingSystem,
+  _RankingSystem extends LeaderboardRankingSystem,
 >({
   databaseResult: dbResult,
   ranks,

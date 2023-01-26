@@ -1,6 +1,6 @@
 import type {
   Id,
-} from '../config'
+} from '../exports'
 
 import { prismaClient } from '.'
 
@@ -8,7 +8,7 @@ import { toBanchoPyMode } from '~/adapters/bancho.py/enums'
 import { LeaderboardDataProvider as BanchoPyLeaderboardDataProvider } from '~/adapters/bancho.py/client'
 import { toRoles } from '~/adapters/bancho.py/transforms'
 
-import type { Mode, OverallLeaderboardRankingSystem, Ruleset } from '~/types/common'
+import type { LeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
 
 export class LeaderboardDataProvider extends BanchoPyLeaderboardDataProvider {
   async getPPv2LiveLeaderboard(banchoPyMode: number, start: number, end: number, country?: string) {
@@ -31,10 +31,10 @@ export class LeaderboardDataProvider extends BanchoPyLeaderboardDataProvider {
   }
 
   // TODO: now broken
-  async overallLeaderboardFromDatabase(opt: {
+  async leaderboardFromDatabase(opt: {
     mode: Mode
     ruleset: Ruleset
-    rankingSystem: OverallLeaderboardRankingSystem
+    rankingSystem: LeaderboardRankingSystem
     page: number
     pageSize: number
   }) {
@@ -80,10 +80,10 @@ ORDER BY _rank ASC
 LIMIT ${start}, ${pageSize}`)
   }
 
-  async getOverallLeaderboard(opt: {
+  async getLeaderboard(opt: {
     mode: Mode
     ruleset: Ruleset
-    rankingSystem: OverallLeaderboardRankingSystem
+    rankingSystem: LeaderboardRankingSystem
     page: number
     pageSize: number
   }) {
@@ -94,10 +94,10 @@ LIMIT ${start}, ${pageSize}`)
       page,
       pageSize,
     } = opt
-    let result: Awaited<ReturnType<LeaderboardDataProvider['overallLeaderboardFromDatabase']>> = []
+    let result: Awaited<ReturnType<LeaderboardDataProvider['leaderboardFromDatabase']>> = []
     const start = page * pageSize
     if (!this.redisClient?.isReady) {
-      result = await this.overallLeaderboardFromDatabase(opt)
+      result = await this.leaderboardFromDatabase(opt)
     }
     else {
       if (rankingSystem === 'ppv1')
@@ -155,11 +155,11 @@ LIMIT ${start}, ${pageSize}`)
         }
         catch (e) {
           console.error(e)
-          result = await this.overallLeaderboardFromDatabase(opt)
+          result = await this.leaderboardFromDatabase(opt)
         }
       }
       else {
-        result = await this.overallLeaderboardFromDatabase(opt)
+        result = await this.leaderboardFromDatabase(opt)
       }
     }
 

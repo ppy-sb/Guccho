@@ -8,7 +8,7 @@ import { router as _router } from '../trpc'
 import { passwordMismatch, sessionNotFound, unableToRetrieveSession, unknownError, userNotFound } from '../messages'
 import { getSession } from '~/server/session'
 import { UserDataProvider } from '$active/client'
-import { idToString } from '$active/config'
+import { idToString } from '$active/exports'
 
 const { compare } = bcrypt
 const userProvider = new UserDataProvider()

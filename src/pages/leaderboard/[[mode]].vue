@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { navigateTo, useAppConfig, useRoute } from '#app'
 
-import type { Mode, OverallLeaderboardRankingSystem, Ruleset } from '~/types/common'
+import type { LeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
 import type { SwitcherPropType } from '~/composables/useSwitcher'
 import { assertIsString } from '~/utils'
 
@@ -25,7 +25,7 @@ const ruleset = (assertIsString(pRuleset) && availableRulesets.includes(pRuleset
   : availableRulesets[0]) as Ruleset
 const rankingSystem = (assertIsString(pRankingSystem) && availableRankingSystems.includes(pRankingSystem)
   ? pRankingSystem
-  : availableRankingSystems[0]) as OverallLeaderboardRankingSystem
+  : availableRankingSystems[0]) as LeaderboardRankingSystem
 const page = ref((assertIsString(pPage) && parseInt(pPage)) || 1)
 
 const perPage = 20
@@ -44,7 +44,7 @@ if (!pMode || !pRuleset || !pRankingSystem) {
   })
 }
 
-const selected = ref<Required<SwitcherPropType<OverallLeaderboardRankingSystem>>>({
+const selected = ref<Required<SwitcherPropType<LeaderboardRankingSystem>>>({
   mode,
   ruleset,
   rankingSystem,

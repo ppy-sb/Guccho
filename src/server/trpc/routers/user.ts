@@ -3,11 +3,11 @@ import { TRPCError } from '@trpc/server'
 import { zodHandle, zodMode, zodOverallRankingSystem, zodRelationType, zodRuleset } from '../shapes'
 import { router as _router, publicProcedure as p } from '../trpc'
 import { userNotFound } from '../messages'
-import { supportedOverallLeaderboardRankingSystems } from '../config'
+import { assertHasOverallRankingSystem } from '../config'
 import type { NumberRange } from '~/types/common'
 import { followUserSettings } from '~/server/transforms'
 import { UserDataProvider, UserRelationshipDataProvider } from '$active/client'
-import { idToString } from '$active/config'
+import { idToString } from '$active/exports'
 
 const [userProvider, userRelationshipProvider] = [new UserDataProvider(), new UserRelationshipDataProvider()]
 
@@ -47,7 +47,8 @@ export const router = _router({
     if (!user)
       throw new TRPCError({ code: 'NOT_FOUND', message: userNotFound })
 
-    if (!supportedOverallLeaderboardRankingSystems.includes(input.rankingSystem))
+    const { mode, ruleset, rankingSystem } = input
+    if (!assertHasOverallRankingSystem(rankingSystem, { mode, ruleset }))
       throw new TRPCError({ code: 'PRECONDITION_FAILED', message: 'ranking system not supported' })
 
     const returnValue = await userProvider.getBests({
@@ -73,7 +74,8 @@ export const router = _router({
     if (!user)
       throw new TRPCError({ code: 'NOT_FOUND', message: userNotFound })
 
-    if (!supportedOverallLeaderboardRankingSystems.includes(input.rankingSystem))
+    const { mode, ruleset, rankingSystem } = input
+    if (!assertHasOverallRankingSystem(rankingSystem, { mode, ruleset }))
       throw new TRPCError({ code: 'PRECONDITION_FAILED', message: 'ranking system not supported' })
 
     const returnValue = await userProvider.getTops({

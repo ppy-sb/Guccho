@@ -104,6 +104,6 @@ TODO standardize error string
 An adapter should export configs that has the same structure as AppConfig.
 For now an adapter will export 3 objects while AppConfig is providing one object contains the 3 objects mentioned.
 
-see `src/app.config.ts` and `src/adapters/bancho.py/config.ts`
+see `src/app.config.ts` and `src/adapters/bancho.py/exports.ts`
 
 it's still in draft and everything might change in the future.

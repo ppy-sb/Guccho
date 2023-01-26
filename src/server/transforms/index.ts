@@ -1,4 +1,4 @@
-import type { Mode, MutualRelationship, OverallLeaderboardRankingSystem, Relationship, Ruleset, Scope } from '~/types/common'
+import type { LeaderboardRankingSystem, Mode, MutualRelationship, Relationship, Ruleset, Scope } from '~/types/common'
 import type { UserEssential, UserExtra, UserOptional, UserSettings } from '~/types/user'
 
 export function compareScope(scope: Scope, requiredScope: Partial<Record<Scope, boolean>>) {
@@ -12,7 +12,7 @@ export function compareScope(scope: Scope, requiredScope: Partial<Record<Scope, 
     return true
 }
 
-export function followUserSettings<Id, _Mode extends Mode, _Ruleset extends Ruleset, _RankingSystem extends OverallLeaderboardRankingSystem>({ user, scope = 'public' }: {
+export function followUserSettings<Id, _Mode extends Mode, _Ruleset extends Ruleset, _RankingSystem extends LeaderboardRankingSystem>({ user, scope = 'public' }: {
   user: UserEssential<Id> & Partial<UserExtra<Id, _Mode, _Ruleset, _RankingSystem> & Partial<UserOptional<Id>>> & {
     settings: UserSettings
   }

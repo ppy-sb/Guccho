@@ -1,5 +1,5 @@
 import type { PrismaClient } from '@prisma/client' // bancho.py
-import type { Id } from '../config'
+import type { Id } from '../exports'
 import { dedupeUserRelationship, toUserEssential } from '../transforms'
 
 import { prismaClient } from '.'
