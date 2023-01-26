@@ -24,16 +24,5 @@ export interface BeatmapLeaderboard<Id> {
   } & Partial<Record<PPRankingSystem, number>>
   rank: number
 }
-export interface BeatmapLeaderboard<Id> {
-  user: UserEssential<Id>
-  score: {
-    id: unknown
-    score: number | bigint
-    accuracy: number
-    playedAt: Date
-    mods: Mod[]
-  } & Partial<Record<PPRankingSystem, number>>
-  rank: number
-}
 
 export type ComponentLeaderboard<IdType> = Maybe<Leaderboard<IdType>, 'inThisLeaderboard'>
