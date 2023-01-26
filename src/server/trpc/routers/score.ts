@@ -1,6 +1,6 @@
 import { string, z } from 'zod'
 import { router as _router, publicProcedure as p } from '../trpc'
-import { idToString, scoreIdToString, stringToScoreId } from '$active/config'
+import { idToString, scoreIdToString, stringToScoreId } from '$active/exports'
 import { ScoreDataProvider } from '$active/client'
 import { assertBeatmapIsVisible } from '~/utils/map'
 

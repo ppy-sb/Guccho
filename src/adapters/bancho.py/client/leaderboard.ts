@@ -4,7 +4,7 @@ import type { BanchoPyMode } from '../enums'
 import { toBanchoPyMode, toMods } from '../enums'
 import type {
   Id,
-} from '../config'
+} from '../exports'
 import { toRoles, toUserEssential } from '../transforms'
 import { prismaClient } from '.'
 import { mode as _modes } from '~/types/common'

@@ -1,4 +1,4 @@
-import type { Id } from '../config'
+import type { Id } from '../exports'
 import { toMods } from '../enums'
 import { createHitCount } from './create-hit-count'
 import { toBeatmapWithBeatmapset } from './to-beatmapset'

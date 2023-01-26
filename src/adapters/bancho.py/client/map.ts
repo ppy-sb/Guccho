@@ -2,7 +2,7 @@ import type { PrismaClient } from '@prisma/client' // bancho.py
 import { toBeatmapEssential, toBeatmapWithBeatmapset, toBeatmapset } from '../transforms/to-beatmapset'
 import { toRankingStatus } from '../transforms'
 import { stringToId } from '../transforms/id-conversion'
-import type { Id } from './../config'
+import type { Id } from '../exports'
 import { prismaClient } from '.'
 import type { BeatmapSource, Beatmapset } from '~/types/beatmap'
 import type { MapDataProvider } from '$def/client/map'

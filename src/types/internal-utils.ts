@@ -15,3 +15,5 @@ export type Enumerate<
 //       ? K | `fetch${Capitalize<string & K>}`
 //       : K]: K extends Keys ? () => Awaitable<T[Uncapitalize<string & K>]> : T[K];
 // }
+
+export type Brand<T> = T & {}

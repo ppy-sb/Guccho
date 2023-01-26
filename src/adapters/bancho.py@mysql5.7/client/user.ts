@@ -1,5 +1,5 @@
 import type { PrismaClient } from '@prisma/client' // bancho.py
-import type { Id } from '../config'
+import type { Id } from '../exports'
 import { prismaClient } from '.'
 import { BanchoPyMode } from '~/adapters/bancho.py/enums'
 import { createRulesetData } from '~/adapters/bancho.py/transforms'

@@ -8,7 +8,7 @@ import { atLeastOneUserNotExists, oldPasswordMismatch, relationTypeNotFound, use
 import { userProcedure as pUser } from '~/server/trpc/middleware/user'
 import { UserDataProvider, UserRelationshipDataProvider } from '$active/client'
 import { calculateMutualRelationships } from '~/server/transforms'
-import { idToString } from '$active/config'
+import { idToString } from '$active/exports'
 
 const userProvider = new UserDataProvider()
 const relationProvider = new UserRelationshipDataProvider()

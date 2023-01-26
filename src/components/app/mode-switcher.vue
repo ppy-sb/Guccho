@@ -21,7 +21,7 @@ const emit = defineEmits<{
   (event: 'update:modelValue', res: modelValue): void
 }>()
 const config = useAppConfig()
-const { supportedOverallLeaderboardRankingSystems } = await useAdapterConfig()
+const { assertHasOverallRankingSystem } = await useAdapterConfig()
 
 const [switcher, setSwitcher] = useOverallSwitcher(toRaw(props.modelValue) || {})
 const emitData = () => {
@@ -73,7 +73,7 @@ watch(switcher, () => emitData())
         :key="rankingSystem"
       >
         <a
-          v-if="supportedOverallLeaderboardRankingSystems.includes(rankingSystem)"
+          v-if="assertHasOverallRankingSystem(rankingSystem, { mode: switcher.mode, ruleset: switcher.ruleset })"
           class="text-sm h-mode"
           :class="{ '!opacity-80 pointer-events-none': switcher.rankingSystem === rankingSystem }"
           @click="setSwitcher({ rankingSystem })"

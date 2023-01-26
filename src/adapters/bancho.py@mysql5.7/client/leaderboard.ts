@@ -1,6 +1,6 @@
 import type {
   Id,
-} from '../config'
+} from '../exports'
 
 import { prismaClient } from '.'
 

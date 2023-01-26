@@ -10,11 +10,11 @@ export interface SwitcherPropType<TRS> {
 
 export function useOverallSwitcher(initial?: SwitcherPropType<OverallLeaderboardRankingSystem>) {
   const { mode, ruleset, rankingSystem } = initial || {}
-  const { supportedModes, supportedOverallLeaderboardRankingSystems, supportedRulesets } = useAdapterConfig()
+  const { supportedModes, supportedRulesets, assertHasOverallRankingSystem } = useAdapterConfig()
   const data = reactive({
     mode: mode || supportedModes[0],
     ruleset: ruleset || supportedRulesets[0],
-    rankingSystem: rankingSystem || supportedOverallLeaderboardRankingSystems[0],
+    rankingSystem: rankingSystem || 'ppv2',
   })
   return [
     data,
@@ -23,7 +23,7 @@ export function useOverallSwitcher(initial?: SwitcherPropType<OverallLeaderboard
         data.mode = mode
       if (ruleset && supportedRulesets.includes(ruleset) && !forbiddenMods(mode || data.mode, ruleset))
         data.ruleset = ruleset
-      if (rankingSystem && supportedOverallLeaderboardRankingSystems.includes(rankingSystem))
+      if (rankingSystem && assertHasOverallRankingSystem(rankingSystem, { mode: data.mode, ruleset: data.ruleset }))
         data.rankingSystem = rankingSystem
     },
   ] as const
@@ -32,11 +32,11 @@ export type OverallSwitcherComposableType = ReturnType<typeof useOverallSwitcher
 
 export function useSwitcher(initial?: SwitcherPropType<RankingSystem>) {
   const { mode, ruleset, rankingSystem } = initial || {}
-  const { supportedModes, supportedRankingSystems, supportedRulesets } = useAdapterConfig()
+  const { supportedModes, supportedRulesets, assertHasRankingSystem } = useAdapterConfig()
   const data = reactive({
     mode: mode || supportedModes[0],
     ruleset: ruleset || supportedRulesets[0],
-    rankingSystem: rankingSystem || supportedRankingSystems[0],
+    rankingSystem: rankingSystem || 'ppv2',
   })
   return [
     data,
@@ -45,7 +45,7 @@ export function useSwitcher(initial?: SwitcherPropType<RankingSystem>) {
         data.mode = mode
       if (ruleset && supportedRulesets.includes(ruleset) && !forbiddenMods(mode || data.mode, ruleset))
         data.ruleset = ruleset
-      if (rankingSystem && supportedRankingSystems.includes(rankingSystem))
+      if (rankingSystem && assertHasRankingSystem(rankingSystem, { mode: data.mode, ruleset: data.ruleset }))
         data.rankingSystem = rankingSystem
     },
   ] as const

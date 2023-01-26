@@ -1,5 +1,5 @@
 import type { Map as DBMap, Score as DBScore, User as DatabaseUser, RelationshipType, Source, Stat } from '@prisma/client' // bancho.py
-import type { Id } from '../config'
+import type { Id } from '../exports'
 import type { BanchoPyRankedStatus } from '../enums'
 import { BanchoPyPrivilege, toBanchoRankingStatus } from '../enums'
 import { getLevelWithProgress } from '~/utils/level-calc'

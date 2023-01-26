@@ -7,7 +7,7 @@ import { useAdapterConfig } from '#imports'
 import type { OverallSwitcherComposableType } from '~/composables/useSwitcher'
 import { OverallLeaderboardRankingSystem } from '~/types/common'
 
-const { supportedOverallLeaderboardRankingSystems } = await useAdapterConfig()
+const { assertHasOverallRankingSystem } = await useAdapterConfig()
 
 const config = useAppConfig()
 const rankingSystem = config.overallRankingSystem
@@ -32,7 +32,7 @@ const filter = (showType: 'tab' | 'dropdown') =>
   >((acc, [key, value]) => {
     if (value.userpage.show !== showType)
       return acc
-    if (!supportedOverallLeaderboardRankingSystems.includes(key))
+    if (!assertHasOverallRankingSystem(key, { mode: switcher.mode, ruleset: switcher.ruleset }))
       return acc
     acc[key] = value
     return acc
