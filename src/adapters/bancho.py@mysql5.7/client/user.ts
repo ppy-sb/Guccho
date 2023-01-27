@@ -1,4 +1,4 @@
-import type { PrismaClient } from '@prisma/client' // bancho.py
+import type { PrismaClient } from '.prisma/bancho.py'
 import type { Id } from '../exports'
 import { prismaClient } from '.'
 import { BanchoPyMode } from '~/adapters/bancho.py/enums'
@@ -12,11 +12,11 @@ import type { UserStatistic } from '~/types/user'
 import { UserDataProvider as BanchoPyUser } from '~/adapters/bancho.py/client'
 
 export class UserDataProvider extends BanchoPyUser implements Base<Id> {
-  sbDb: PrismaClient
+  db: PrismaClient
 
   constructor() {
     super()
-    this.sbDb = prismaClient
+    this.db = prismaClient
   }
 
   async getStatistics({ id, country }: { id: Id; country: string }) {

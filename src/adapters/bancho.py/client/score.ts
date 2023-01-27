@@ -1,4 +1,4 @@
-import type { PrismaClient, User } from '@prisma/client'
+import type { PrismaClient, User } from '.prisma/bancho.py'
 import type { Id } from '../exports'
 import { toScore } from '../transforms/scores'
 import { fromBanchoPyMode, toBanchoPyMode } from '../enums'

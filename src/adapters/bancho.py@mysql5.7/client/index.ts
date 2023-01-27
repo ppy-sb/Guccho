@@ -1,8 +1,5 @@
-import { PrismaClient } from '@prisma/client'
-
 import * as Parent from '~/adapters/bancho.py/client'
-
-export const prismaClient = new PrismaClient()
+export { prismaClient } from '~/adapters/bancho.py/client'
 
 export const UserRelationshipDataProvider = Parent.UserRelationshipDataProvider
 export const ScoreDataProvider = Parent.ScoreDataProvider

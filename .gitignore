@@ -248,3 +248,4 @@ fix-permission.sh
 .prisma
 
 .mock
+dump.rdb
