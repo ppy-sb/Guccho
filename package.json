@@ -12,6 +12,7 @@
     "start:dev:inspect": "dotenv -e .env.development node -- --inspect .output/server/index.mjs",
     "analyze": "nuxt analyze",
     "postinstall": "nuxt prepare",
+    "build:schemas": "ts-node scripts/build-schema",
     "lint:ts": "eslint --ext '.js,.vue,.ts,.jsx,.tsx' --ignore-path .gitignore .",
     "lint": "yarn lint:ts",
     "lint:fix": "yarn lint:ts --fix",
@@ -19,9 +20,7 @@
     "ts-node": "ts-node",
     "sync-from-lock": "yarn upgrade && npx syncyarnlock --save --keepPrefix && yarn install",
     "check-update": "npx npm-check-updates",
-    "update-dep": "npx npm-check-updates -u && yarn install",
-    "prisma:gen:dev": "dotenv -e .env.development yarn prisma generate -- ",
-    "prisma:gen:prod": "yarn prisma generate"
+    "update-dep": "npx npm-check-updates -u && yarn install"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.2.1",
