@@ -20,7 +20,10 @@ const {
   if (!kw.value) {
     return []
   }
-  return await $client.search.searchUser.query({ keyword: kw.value, limit: 10 })
+  return await $client.search.searchUser.query({
+    keyword: kw.value,
+    limit: 10,
+  })
 })
 
 const {
@@ -31,7 +34,10 @@ const {
   if (!kw.value) {
     return []
   }
-  return await $client.search.searchBeatmap.query({ keyword: kw.value, limit: 10 })
+  return await $client.search.searchBeatmap.query({
+    keyword: kw.value,
+    limit: 10,
+  })
 })
 
 const {
@@ -42,7 +48,10 @@ const {
   if (!kw.value) {
     return
   }
-  return await $client.search.searchBeatmapset.query({ keyword: kw.value, limit: 10 })
+  return await $client.search.searchBeatmapset.query({
+    keyword: kw.value,
+    limit: 10,
+  })
 })
 
 const search = useDebounceFn(() => {

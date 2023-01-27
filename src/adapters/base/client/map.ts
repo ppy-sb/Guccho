@@ -14,9 +14,7 @@ export namespace MapDataProvider {
   }
 }
 export interface MapDataProvider<Id> {
-  getBeatmapset(
-    query: MapDataProvider.IdQuery<Id>
-  ): Awaitable<
+  getBeatmapset(query: MapDataProvider.IdQuery<Id>): Awaitable<
     | (Beatmapset<BeatmapSource, Id, unknown> & {
       beatmaps: BeatmapEssential<Id, unknown>[]
     })

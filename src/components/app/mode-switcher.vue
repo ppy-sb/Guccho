@@ -21,7 +21,8 @@ const emit = defineEmits<{
   (event: 'update:modelValue', res: modelValue): void
 }>()
 const config = useAppConfig()
-const { assertHasOverallRankingSystem, assertHasRuleset } = await useAdapterConfig()
+const { assertHasOverallRankingSystem, assertHasRuleset }
+  = await useAdapterConfig()
 
 const [switcher, setSwitcher] = useOverallSwitcher(
   toRaw(props.modelValue) || {},
@@ -79,7 +80,11 @@ watch(switcher, () => emitData())
         <a
           v-if="
             assertHasRuleset(switcher.mode, switcher.ruleset)
-              && assertHasOverallRankingSystem(switcher.mode, switcher.ruleset, rankingSystem)
+              && assertHasOverallRankingSystem(
+                switcher.mode,
+                switcher.ruleset,
+                rankingSystem,
+              )
           "
           class="text-sm h-mode"
           :class="{

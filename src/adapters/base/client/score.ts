@@ -22,25 +22,19 @@ export interface SearchId<TScroreId> {
 }
 
 export interface ScoreProvider<TScoreId, TId> {
-  id(
-    id: TScoreId
-  ): Awaitable<
+  id(id: TScoreId): Awaitable<
     | (RulesetScore<TScoreId, TId, Mode, Ruleset, PPRankingSystem> & {
       user: UserEssential<TId>
     })
     | null
   >
-  findOne(
-    opt: SearchQueryMany<TId> | SearchId<TScoreId>
-  ): Awaitable<
+  findOne(opt: SearchQueryMany<TId> | SearchId<TScoreId>): Awaitable<
     | (RulesetScore<TScoreId, TId, Mode, Ruleset, PPRankingSystem> & {
       user: UserEssential<TId>
     })
     | null
   >
-  findMany(
-    opt: SearchQueryMany<TId>
-  ): Awaitable<
+  findMany(opt: SearchQueryMany<TId>): Awaitable<
     (RulesetScore<TScoreId, TId, Mode, Ruleset, PPRankingSystem> & {
       user: UserEssential<TId>
     })[]
