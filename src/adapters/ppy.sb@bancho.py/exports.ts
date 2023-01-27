@@ -6,6 +6,7 @@ export {
   stringToId,
   stringToScoreId,
   idToString,
+  assertHasRuleset,
   assertHasOverallRankingSystem,
   assertHasRankingSystem,
   features,

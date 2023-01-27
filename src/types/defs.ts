@@ -17,17 +17,9 @@ export const grades = [
 
 const basePPRankingSystem = ['ppv2', 'ppv1'] as const
 const baseScoreRankingSystem = ['score'] as const
-// const rankingSystem = [
-//   ...ppRankingSystem,
-//   ...scoreRankingSystem,
-// ] as const
 
 const baseLeaderboardPPRankingSystem = basePPRankingSystem
 const baseLeaderboardScoreRankingSystem = ['rankedScore', 'totalScore'] as const
-// const leaderboardRankingSystem = [
-//   ...ppRankingSystem,
-//   ...leaderboardScoreRankingSystem,
-// ] as const
 
 const defaultConfigure = {
   leaderboardRankingSystem: {

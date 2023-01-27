@@ -1,13 +1,11 @@
 import type { JSONContent } from '@tiptap/core'
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type {
-  AutopilotAvailable,
+  AvailableRuleset,
   LeaderboardRankingSystem,
   Mode,
-  RelaxAvailable,
   Ruleset,
   Scope,
-  StandardAvailable,
 } from './common'
 import type { UserModeRulesetStatistics } from './statistics'
 import type { UserRelationship } from './user-relationship'
@@ -88,10 +86,6 @@ export interface UserSettings {
     Partial<Record<Exclude<Scope, 'self'>, boolean>>
   >
 }
-export type AvailableRuleset<R extends Mode> =
-  | (R extends StandardAvailable ? 'standard' : never)
-  | (R extends RelaxAvailable ? 'relax' : never)
-  | (R extends AutopilotAvailable ? 'autopilot' : never)
 
 export type UserStatistic<
   Id,

@@ -1,11 +1,11 @@
 import type {
+  AvailableRuleset,
   LeaderboardRankingSystem,
   Mode,
   RankingSystem,
   Ruleset,
 } from './common'
 import type { Brand } from './internal-utils'
-import type { AvailableRuleset } from './user'
 
 export type ServerOverallRankingSystemDef = {
   [M in Mode]: Record<
@@ -17,11 +17,14 @@ export type ServerRankingSystemDef = {
   [M in Mode]: Record<Ruleset & AvailableRuleset<M>, readonly RankingSystem[]>;
 }
 
-export type AssertHasRankingSystem = <M extends Mode>(
+export type AssertHasRuleset = <M extends Mode> (ruleset: Ruleset, mode: M) => ruleset is Ruleset & AvailableRuleset<M>
+
+export type AssertHasRankingSystem = <M extends Mode, R extends Ruleset & AvailableRuleset<M>>(
   rankingSystem: Brand<string> | RankingSystem,
-  opt: { mode: M; ruleset: Ruleset & AvailableRuleset<M> }
+  opt: { mode: M; ruleset: R }
 ) => rankingSystem is RankingSystem
-export type AssertHasOverallRankingSystem = <M extends Mode>(
+
+export type AssertHasOverallRankingSystem = <M extends Mode, R extends Ruleset & AvailableRuleset<M>>(
   rankingSystem: Brand<string> | LeaderboardRankingSystem,
-  opt: { mode: M; ruleset: Ruleset & AvailableRuleset<M> }
+  opt: { mode: M; ruleset: R }
 ) => rankingSystem is LeaderboardRankingSystem
