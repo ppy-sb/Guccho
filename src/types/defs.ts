@@ -56,18 +56,6 @@ export const modeRulesetRankingSystemDef = {
   },
 } as const
 
-// export const mode = Object.keys(modeRulesetRankingSystemDef) as Mode[]
-// export const ruleset = [...Object.values(modeRulesetRankingSystemDef).reduce((acc, m) => {
-//   Object.keys(m).map(key => acc.add(key))
-//   return acc
-// }, new Set<string>())] as Ruleset[]
-
-// export const rankingSystem = [...Object.values(modeRulesetRankingSystemDef).reduce((acc, m) => {
-//   Object.values(m).map(rs => {
-
-//   })
-//   return acc
-// }, new Set<string>())]
 const _mode = new Set<Mode>()
 const _ruleset = new Set<Ruleset>()
 
@@ -92,15 +80,15 @@ for (const key in modeRulesetRankingSystemDef) {
   }
 }
 
-export const mode = [..._mode]
-export const ruleset = [..._ruleset]
+export const modes = [..._mode]
+export const rulesets = [..._ruleset]
 
-export const ppRankingSystem = [..._ppRankingSystem]
-export const scoreRankingSystem = [..._scoreRankingSystem]
-export const rankingSystem = [...ppRankingSystem, ...scoreRankingSystem]
+export const ppRankingSystems = [..._ppRankingSystem]
+export const scoreRankingSystems = [..._scoreRankingSystem]
+export const rankingSystems = [...ppRankingSystems, ...scoreRankingSystems]
 
-export const leaderboardPPRankingSystem = [..._leaderboardPPRankingSystem]
-export const leaderboardScoreRankingSystem = [..._leaderboardScoreRankingSystem]
-export const leaderboardRankingSystem = [...leaderboardPPRankingSystem, ...leaderboardScoreRankingSystem]
+export const leaderboardPPRankingSystems = [..._leaderboardPPRankingSystem]
+export const leaderboardScoreRankingSystems = [..._leaderboardScoreRankingSystem]
+export const leaderboardRankingSystems = [...leaderboardPPRankingSystems, ...leaderboardScoreRankingSystems]
 
 export const features = ['userpage', 'visibility-scope'] as const

@@ -4,7 +4,7 @@ import VLazyImage from 'v-lazy-image'
 import { faBan } from '@fortawesome/free-solid-svg-icons'
 import type { RankingSystemScore } from '~/types/score'
 import type { LeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
-import { leaderboardScoreRankingSystem, ppRankingSystem } from '~/types/common'
+import { leaderboardScoreRankingSystems, ppRankingSystems } from '~/types/common'
 import { createAddCommasFormatter } from '~/common/varkaUtils'
 import { useFAIconLib } from '#imports'
 import { assertBeatmapIsVisible } from '~/utils/map'
@@ -157,7 +157,7 @@ const meta = computed(
             class="flex items-center justify-end flex-grow text-lg md:text-xl lg:text-2xl"
           >
             <template
-              v-if="(ppRankingSystem as readonly string[]).includes(props.rankingSystem)"
+              v-if="(ppRankingSystems as readonly string[]).includes(props.rankingSystem)"
             >
               <div class="font-bold font-mono">
                 {{ score.pp.toFixed(2) }}
@@ -165,7 +165,7 @@ const meta = computed(
               <span class="font-light">pp</span>
             </template>
             <template
-              v-else-if="(leaderboardScoreRankingSystem as readonly string[]).includes(props.rankingSystem)"
+              v-else-if="(leaderboardScoreRankingSystems as readonly string[]).includes(props.rankingSystem)"
             >
               <div class="font-bold font-mono">
                 {{ numberFmt(score.score) }}

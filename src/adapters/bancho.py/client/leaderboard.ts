@@ -5,7 +5,7 @@ import { toBanchoPyMode, toMods } from '../enums'
 import type { Id } from '../exports'
 import { toRoles, toUserEssential } from '../transforms'
 import { prismaClient } from '.'
-import { mode as _modes } from '~/types/common'
+import { modes as _modes } from '~/types/common'
 import type { LeaderboardDataProvider } from '$def/client/leaderboard'
 import type {
   LeaderboardRankingSystem,

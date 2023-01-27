@@ -8,10 +8,10 @@ import type {
   ScoreRankingSystem,
 } from '~/types/common'
 import {
-  leaderboardRankingSystem,
-  leaderboardScoreRankingSystem,
-  mode,
-  ruleset,
+  leaderboardRankingSystems,
+  leaderboardScoreRankingSystems,
+  modes,
+  rulesets,
 } from '~/types/common'
 
 import type { UserEssential } from '~/types/user'
@@ -23,7 +23,7 @@ let prevSwitcherState = {
 }
 const stabilizeScoreRank = (rankingSystem: LeaderboardRankingSystem) => {
   if (
-    leaderboardScoreRankingSystem.includes(
+    leaderboardScoreRankingSystems.includes(
       rankingSystem as LeaderboardScoreRankingSystem,
     )
   ) {
@@ -103,9 +103,9 @@ onMounted(() => {
 
   // transition direction
   const arrayMap = {
-    mode,
-    ruleset,
-    rankingSystem: leaderboardRankingSystem,
+    mode: modes,
+    ruleset: rulesets,
+    rankingSystem: leaderboardRankingSystems,
   } as const
   const computeAnimateDirection = () => {
     const sw = switcher

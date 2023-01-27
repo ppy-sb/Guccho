@@ -3,7 +3,7 @@ import type { Ref } from 'vue'
 import {
   LeaderboardRankingSystem,
   PPRankingSystem,
-  ppRankingSystem,
+  ppRankingSystems,
 } from '~/types/common'
 import { PPRank, ScoreRank } from '~/types/statistics'
 import type { BaseRank, UserModeRulesetStatistics } from '~/types/statistics'
@@ -91,7 +91,7 @@ const ScoreToNextLevel = computed(
         <div v-if="sw" class="stat">
           <div class="stat-title">
             {{
-              ppRankingSystem.includes(sw as PPRankingSystem)
+              ppRankingSystems.includes(sw as PPRankingSystem)
                 ? "Performance"
                 : "Score"
             }}
@@ -101,7 +101,7 @@ const ScoreToNextLevel = computed(
             <roller
               :char-set="chars"
               class="font-mono"
-              :value="ppRankingSystem.includes(sw as PPRankingSystem) ? `${scoreFmt((currentRankingSystem as PPRank)?.performance)}` : scoreFmtCompact((deferredRender[sw as LeaderboardRankingSystem] as ScoreRank).score as bigint)"
+              :value="ppRankingSystems.includes(sw as PPRankingSystem) ? `${scoreFmt((currentRankingSystem as PPRank)?.performance)}` : scoreFmtCompact((deferredRender[sw as LeaderboardRankingSystem] as ScoreRank).score as bigint)"
               default-value="-"
               :title="deferredRender.totalScore.score"
             />
