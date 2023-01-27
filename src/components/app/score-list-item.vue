@@ -4,7 +4,10 @@ import VLazyImage from 'v-lazy-image'
 import { faBan } from '@fortawesome/free-solid-svg-icons'
 import type { RankingSystemScore } from '~/types/score'
 import type { LeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
-import { leaderboardScoreRankingSystems, ppRankingSystems } from '~/types/common'
+import {
+  leaderboardScoreRankingSystems,
+  ppRankingSystems,
+} from '~/types/common'
 import { createAddCommasFormatter } from '~/common/varkaUtils'
 import { useFAIconLib } from '#imports'
 import { assertBeatmapIsVisible } from '~/utils/map'

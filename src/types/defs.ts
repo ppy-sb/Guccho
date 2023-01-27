@@ -1,4 +1,11 @@
-import type { LeaderboardPPRankingSystem, LeaderboardScoreRankingSystem, Mode, PPRankingSystem, Ruleset, ScoreRankingSystem } from './common'
+import type {
+  LeaderboardPPRankingSystem,
+  LeaderboardScoreRankingSystem,
+  Mode,
+  PPRankingSystem,
+  Ruleset,
+  ScoreRankingSystem,
+} from './common'
 
 export const relationship = ['friend', 'block'] as const
 export const mutualRelationship = ['mutual-friend', 'mutual-block'] as const
@@ -19,14 +26,20 @@ const basePPRankingSystem = ['ppv2', 'ppv1'] as const
 const baseScoreRankingSystem = ['score'] as const
 
 const baseLeaderboardPPRankingSystem = basePPRankingSystem
-const baseLeaderboardScoreRankingSystem = ['rankedScore', 'totalScore'] as const
+const baseLeaderboardScoreRankingSystem = [
+  'rankedScore',
+  'totalScore',
+] as const
 
 const defaultConfigure = {
   leaderboardRankingSystem: {
     ppRankingSystem: baseLeaderboardPPRankingSystem,
     scoreRankingSystem: baseLeaderboardScoreRankingSystem,
   },
-  rankingSystem: { ppRankingSystem: basePPRankingSystem, scoreRankingSystem: baseScoreRankingSystem },
+  rankingSystem: {
+    ppRankingSystem: basePPRankingSystem,
+    scoreRankingSystem: baseScoreRankingSystem,
+  },
 }
 
 export const modeRulesetRankingSystemDef = {
@@ -64,11 +77,19 @@ for (const key in modeRulesetRankingSystemDef) {
     _ruleset.add(rule as Ruleset)
     const rankingSystemDefs = ruleset[rule as keyof typeof ruleset]
 
-    rankingSystemDefs.leaderboardRankingSystem.ppRankingSystem.map(rs => _leaderboardPPRankingSystem.add(rs))
-    rankingSystemDefs.leaderboardRankingSystem.scoreRankingSystem.map(rs => _leaderboardScoreRankingSystem.add(rs))
+    rankingSystemDefs.leaderboardRankingSystem.ppRankingSystem.map(rs =>
+      _leaderboardPPRankingSystem.add(rs),
+    )
+    rankingSystemDefs.leaderboardRankingSystem.scoreRankingSystem.map(rs =>
+      _leaderboardScoreRankingSystem.add(rs),
+    )
 
-    rankingSystemDefs.rankingSystem.ppRankingSystem.map(rs => _ppRankingSystem.add(rs))
-    rankingSystemDefs.rankingSystem.scoreRankingSystem.map(rs => _scoreRankingSystem.add(rs))
+    rankingSystemDefs.rankingSystem.ppRankingSystem.map(rs =>
+      _ppRankingSystem.add(rs),
+    )
+    rankingSystemDefs.rankingSystem.scoreRankingSystem.map(rs =>
+      _scoreRankingSystem.add(rs),
+    )
   }
 }
 
@@ -80,7 +101,12 @@ export const scoreRankingSystems = [..._scoreRankingSystem]
 export const rankingSystems = [...ppRankingSystems, ...scoreRankingSystems]
 
 export const leaderboardPPRankingSystems = [..._leaderboardPPRankingSystem]
-export const leaderboardScoreRankingSystems = [..._leaderboardScoreRankingSystem]
-export const leaderboardRankingSystems = [...leaderboardPPRankingSystems, ...leaderboardScoreRankingSystems]
+export const leaderboardScoreRankingSystems = [
+  ..._leaderboardScoreRankingSystem,
+]
+export const leaderboardRankingSystems = [
+  ...leaderboardPPRankingSystems,
+  ...leaderboardScoreRankingSystems,
+]
 
 export const features = ['userpage', 'visibility-scope'] as const
