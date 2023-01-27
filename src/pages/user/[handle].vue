@@ -9,6 +9,7 @@ import {
 import { faPiedPiperPp } from '@fortawesome/free-brands-svg-icons'
 import type { LeaderboardRankingSystem } from '~/types/common'
 import type { UserModeRulesetStatistics } from '~/types/statistics'
+import { assertHasRuleset } from '~~/src/adapters/bancho.py/checks'
 
 const { addToLibrary } = useFAIconLib()
 
@@ -33,11 +34,16 @@ const {
     }),
 )
 const currentStatistic = computed<
-  UserModeRulesetStatistics<LeaderboardRankingSystem>
->(
-  // @ts-expect-error switcher has its logic to not allow wrong combination
-  () => user.value?.statistics[switcher.mode][switcher.ruleset],
-)
+  UserModeRulesetStatistics<LeaderboardRankingSystem> | undefined
+>(() => {
+  if (assertHasRuleset(switcher.mode, switcher.ruleset)) {
+    const returnValue = user.value?.statistics?.[switcher.mode][switcher.ruleset]
+    return returnValue
+  }
+  else {
+    return user.value?.statistics?.osu.standard
+  }
+})
 const currentRankingSystem = computed(
   () => currentStatistic.value?.[switcher.rankingSystem],
 )
