@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
-import { LeaderboardRankingSystem, PPRankingSystem, ppRankingSystem } from '~/types/common'
+import {
+  LeaderboardRankingSystem,
+  PPRankingSystem,
+  ppRankingSystem,
+} from '~/types/common'
 import { PPRank, ScoreRank } from '~/types/statistics'
 import type { BaseRank, UserModeRulesetStatistics } from '~/types/statistics'
 import { createScoreFormatter, toDuration } from '~/common/varkaUtils'
@@ -11,12 +15,21 @@ const numbers = [...Array(10).keys()].map(String)
 const chars = [...numbers, ',', '.', 'K', 'M', 'B', 'T', '-']
 const percent = [...numbers, ',', '.', '%']
 
-const data = inject('user.statistics') as Ref<UserModeRulesetStatistics<LeaderboardRankingSystem>>
+const data = inject('user.statistics') as Ref<
+  UserModeRulesetStatistics<LeaderboardRankingSystem>
+>
 const currentRankingSystem = inject<BaseRank>('user.currentRankingSystem')
-const scoreFmtCompact = createScoreFormatter({ notation: 'compact', maximumFractionDigits: 2 })
+const scoreFmtCompact = createScoreFormatter({
+  notation: 'compact',
+  maximumFractionDigits: 2,
+})
 const scoreFmt = createScoreFormatter({ notation: undefined })
 const deferredRender = reactive({ ...data.value })
-const playTime = computed(() => deferredRender ? toDuration(new Date(deferredRender.playTime * 1000), new Date(0)) : { hours: 0, minutes: 0, seconds: 0 })
+const playTime = computed(() =>
+  deferredRender
+    ? toDuration(new Date(deferredRender.playTime * 1000), new Date(0))
+    : { hours: 0, minutes: 0, seconds: 0 },
+)
 const switcher = inject<OverallSwitcherComposableType>('switcher')
 
 const sw = computed(() => switcher?.[0].rankingSystem)
@@ -32,8 +45,17 @@ watch(data, () => {
 })
 
 const userLevelInt = computed(() => Math.floor(deferredRender.level) || 0)
-const userLevelPercent = computed(() => ((deferredRender.level % 1) / 100).toLocaleString('en-US', { style: 'percent', maximumFractionDigits: 2 }))
-const ScoreToNextLevel = computed(() => getRequiredScoreForLevel(userLevelInt.value + 1) - getRequiredScoreForLevel(userLevelInt.value))
+const userLevelPercent = computed(() =>
+  ((deferredRender.level % 1) / 100).toLocaleString('en-US', {
+    style: 'percent',
+    maximumFractionDigits: 2,
+  }),
+)
+const ScoreToNextLevel = computed(
+  () =>
+    getRequiredScoreForLevel(userLevelInt.value + 1)
+    - getRequiredScoreForLevel(userLevelInt.value),
+)
 </script>
 
 <template>
@@ -45,24 +67,34 @@ const ScoreToNextLevel = computed(() => getRequiredScoreForLevel(userLevelInt.va
             Rank
           </div>
           <div class="stat-value flex gap-1 items-center font-mono">
-            # <Roller
+            #
+            <Roller
               :char-set="chars"
-              :value="`${Intl.NumberFormat().format(currentRankingSystem.rank || 0)}`"
+              :value="`${Intl.NumberFormat().format(
+                currentRankingSystem.rank || 0,
+              )}`"
             />
           </div>
           <div class="stat-desc flex gap-2 items-center">
-            country rank: <div class="font-mono flex items-center gap-[0.1em]">
+            country rank:
+            <div class="font-mono flex items-center gap-[0.1em]">
               #
               <Roller
                 :char-set="chars"
-                :value="`${Intl.NumberFormat().format(currentRankingSystem.countryRank || 0)}`"
+                :value="`${Intl.NumberFormat().format(
+                  currentRankingSystem.countryRank || 0,
+                )}`"
               />
             </div>
           </div>
         </div>
         <div v-if="sw" class="stat">
           <div class="stat-title">
-            {{ ppRankingSystem.includes(sw as PPRankingSystem) ? 'Performance' : "Score" }}
+            {{
+              ppRankingSystem.includes(sw as PPRankingSystem)
+                ? "Performance"
+                : "Score"
+            }}
           </div>
           <!-- TODO add popover -->
           <div class="stat-value">
@@ -80,7 +112,8 @@ const ScoreToNextLevel = computed(() => getRequiredScoreForLevel(userLevelInt.va
               class="font-mono"
               :value="scoreFmt(deferredRender.totalHits)"
               default-value="-"
-            /> total hits
+            />
+            total hits
           </div>
         </div>
         <div class="stat relative gap-0">
@@ -104,7 +137,8 @@ const ScoreToNextLevel = computed(() => getRequiredScoreForLevel(userLevelInt.va
               class="font-mono"
               :char-set="chars"
               :value="scoreFmt(ScoreToNextLevel)"
-            /> to Lv.{{ userLevelInt + 1 }}
+            />
+            to Lv.{{ userLevelInt + 1 }}
           </div>
         </div>
         <div class="stat">
@@ -119,7 +153,8 @@ const ScoreToNextLevel = computed(() => getRequiredScoreForLevel(userLevelInt.va
             />
           </div>
           <div class="stat-desc flex gap-2">
-            {{ playTime.hours }} H, {{ playTime.minutes }} M, {{ playTime.seconds }} S
+            {{ playTime.hours }} H, {{ playTime.minutes }} M,
+            {{ playTime.seconds }} S
           </div>
         </div>
         <div class="stat">
@@ -131,7 +166,8 @@ const ScoreToNextLevel = computed(() => getRequiredScoreForLevel(userLevelInt.va
               class="font-mono"
               :char-set="chars"
               :value="scoreFmt(deferredRender.maxCombo)"
-            /> <span class="font-light">x</span>
+            />
+            <span class="font-light">x</span>
           </div>
           <div class="stat-desc invisible">
             1
@@ -151,7 +187,7 @@ const ScoreToNextLevel = computed(() => getRequiredScoreForLevel(userLevelInt.va
 <style scoped lang="postcss">
 .stats {
   /* @apply grid-flow-row sm:grid sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 */
-  @apply flex flex-wrap justify-around
+  @apply flex flex-wrap justify-around;
 }
 .stats > .stat {
   @apply sm:w-1/2 md:w-min;

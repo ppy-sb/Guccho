@@ -18,7 +18,9 @@ export enum RankingStatusEnum {
 }
 
 export type RankingStatus = keyof typeof RankingStatusEnum
-export type AbnormalStatus = keyof typeof RankingStatusEnum & 'deleted' | 'notFound'
+export type AbnormalStatus =
+  | (keyof typeof RankingStatusEnum & 'deleted')
+  | 'notFound'
 
 export interface Beatmapset<Source extends BeatmapSource, LocalId, ForeignId> {
   meta: {
@@ -69,16 +71,21 @@ export type BeatmapWithMeta<
   Status extends RankingStatus,
   LocalId,
   ForeignId,
-> = {
-  status: Status & AbnormalStatus
-} | NormalBeatmapWithMeta<Source, Status, LocalId, ForeignId>
+> =
+  | {
+    status: Status & AbnormalStatus
+  }
+  | NormalBeatmapWithMeta<Source, Status, LocalId, ForeignId>
 
 export type NormalBeatmapWithMeta<
   Source extends BeatmapSource,
   Status extends RankingStatus,
   LocalId,
   ForeignId,
-> = BeatmapEssential<LocalId, Source extends UnknownSource ? never : ForeignId> & {
+> = BeatmapEssential<
+  LocalId,
+  Source extends UnknownSource ? never : ForeignId
+> & {
   status: Exclude<Status, AbnormalStatus>
   source?: Source
   beatmapset: Beatmapset<Source, LocalId, ForeignId>

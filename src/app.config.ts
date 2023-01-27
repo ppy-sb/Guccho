@@ -1,6 +1,11 @@
 import { defineAppConfig } from 'nuxt/app'
 
-import type { LeaderboardRankingSystem, Mode, RankingSystem, Ruleset } from '~/types/common'
+import type {
+  LeaderboardRankingSystem,
+  Mode,
+  RankingSystem,
+  Ruleset,
+} from '~/types/common'
 
 interface AppConfigItemBase {
   name: string
@@ -14,18 +19,9 @@ const config: {
     front: string
   }
   title: string
-  mode: Record<
-    Mode,
-    AppConfigItemBase
-  >
-  ruleset: Record<
-    Ruleset,
-    AppConfigItemBase
-  >
-  rankingSystem: Record<
-    RankingSystem,
-    { name: string }
-  >
+  mode: Record<Mode, AppConfigItemBase>
+  ruleset: Record<Ruleset, AppConfigItemBase>
+  rankingSystem: Record<RankingSystem, { name: string }>
   overallRankingSystem: Record<
     LeaderboardRankingSystem,
     AppConfigItemBase & {

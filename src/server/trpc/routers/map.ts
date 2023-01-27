@@ -5,16 +5,21 @@ import { MapDataProvider } from '$active/client'
 
 const map = new MapDataProvider()
 export const router = _router({
-  beatmapset: p.input(z.object({
-    id: string(),
-  })).query(async ({ input }) => {
-    const bs = await map.getBeatmapset({ id: stringToId(input.id) })
-    if (!bs)
-      return
-    return {
-      ...bs,
-      id: idToString(bs.id),
-      beatmaps: bs.beatmaps.map(bm => ({ ...bm, id: idToString(bm.id) })),
-    }
-  }),
+  beatmapset: p
+    .input(
+      z.object({
+        id: string(),
+      }),
+    )
+    .query(async ({ input }) => {
+      const bs = await map.getBeatmapset({ id: stringToId(input.id) })
+      if (!bs) {
+        return
+      }
+      return {
+        ...bs,
+        id: idToString(bs.id),
+        beatmaps: bs.beatmaps.map(bm => ({ ...bm, id: idToString(bm.id) })),
+      }
+    }),
 })

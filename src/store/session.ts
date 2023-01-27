@@ -21,8 +21,9 @@ export const useSession = defineStore('session', {
   }),
   actions: {
     async gotSession() {
-      if (!this.user)
+      if (!this.user) {
         return
+      }
       const privilege = checkUserPrivilege(this.user)
       this.privilege = privilege
     },
@@ -34,9 +35,13 @@ export const useSession = defineStore('session', {
     },
     async loginHashed(handle: string, md5HashedPassword: string) {
       const { $client } = useNuxtApp()
-      const result = await $client.session.login.query({ handle, md5HashedPassword })
-      if (!result)
+      const result = await $client.session.login.query({
+        handle,
+        md5HashedPassword,
+      })
+      if (!result) {
         return false
+      }
 
       this.$patch({
         loggedIn: true,
@@ -54,10 +59,12 @@ export const useSession = defineStore('session', {
       try {
         const { $client } = useNuxtApp()
         const result = await $client.session.retrieve.query()
-        if (!result)
+        if (!result) {
           return
-        if (!result.user)
+        }
+        if (!result.user) {
           return
+        }
         this.$patch({
           loggedIn: true,
           userId: result.user.id,
@@ -67,8 +74,9 @@ export const useSession = defineStore('session', {
         return true
       }
       catch (err) {
-        if ((err as TRPCError)?.code === 'NOT_FOUND')
+        if ((err as TRPCError)?.code === 'NOT_FOUND') {
           this.$reset()
+        }
 
         return false
       }

@@ -1,4 +1,11 @@
-import type { Map as DBMap, Score as DBScore, User as DatabaseUser, RelationshipType, Source, Stat } from '@prisma/client' // bancho.py
+import type {
+  Map as DBMap,
+  Score as DBScore,
+  User as DatabaseUser,
+  RelationshipType,
+  Source,
+  Stat,
+} from '@prisma/client' // bancho.py
 import type { Id } from '../exports'
 import type { BanchoPyRankedStatus } from '../enums'
 import { BanchoPyPrivilege, toBanchoRankingStatus } from '../enums'
@@ -70,10 +77,8 @@ export function createRulesetData<
   }
   return {
     ppv2: {
-      rank:
-          livePPRank?.rank || Number(ranks?.ppv2Rank) || undefined,
-      countryRank:
-          livePPRank?.countryRank || undefined,
+      rank: livePPRank?.rank || Number(ranks?.ppv2Rank) || undefined,
+      countryRank: livePPRank?.countryRank || undefined,
       performance: dbResult.pp,
     },
     rankedScore: {
@@ -106,41 +111,53 @@ export function createRulesetData<
 
 export function toRoles(priv: number): UserPrivilegeString[] {
   const roles: UserPrivilegeString[] = []
-  if (priv & BanchoPyPrivilege.Normal)
+  if (priv & BanchoPyPrivilege.Normal) {
     roles.push('registered')
+  }
 
-  if (priv & BanchoPyPrivilege.Verified)
+  if (priv & BanchoPyPrivilege.Verified) {
     roles.push('normal')
+  }
 
-  if (priv & BanchoPyPrivilege.Whitelisted)
+  if (priv & BanchoPyPrivilege.Whitelisted) {
     roles.push('bypassAntiCheat')
+  }
 
-  if (priv & BanchoPyPrivilege.Donator)
+  if (priv & BanchoPyPrivilege.Donator) {
     roles.push('supporter')
+  }
 
-  if (priv & BanchoPyPrivilege.Alumni)
+  if (priv & BanchoPyPrivilege.Alumni) {
     roles.push('alumni')
+  }
 
-  if (priv & BanchoPyPrivilege.Tournament)
+  if (priv & BanchoPyPrivilege.Tournament) {
     roles.push('tournamentStuff')
+  }
 
-  if (priv & BanchoPyPrivilege.Nominator)
+  if (priv & BanchoPyPrivilege.Nominator) {
     roles.push('beatmapNominator')
+  }
 
-  if (priv & BanchoPyPrivilege.Mod)
+  if (priv & BanchoPyPrivilege.Mod) {
     roles.push('moderator')
+  }
 
-  if (priv & BanchoPyPrivilege.Staff)
+  if (priv & BanchoPyPrivilege.Staff) {
     roles.push('staff')
+  }
 
-  if (priv & BanchoPyPrivilege.Admin)
+  if (priv & BanchoPyPrivilege.Admin) {
     roles.push('admin')
+  }
 
-  if (priv & BanchoPyPrivilege.Dangerous)
+  if (priv & BanchoPyPrivilege.Dangerous) {
     roles.push('owner')
+  }
 
-  if (priv & BanchoPyPrivilege.Bot)
+  if (priv & BanchoPyPrivilege.Bot) {
     roles.push('bot')
+  }
 
   return roles
 }
@@ -157,7 +174,10 @@ export function toUserEssential<
     name: user.name,
     safeName: user.safeName,
     flag: user.country,
-    avatarSrc: (process.env.BANCHO_PY_AVATAR_DOMAIN && `https://${process.env.BANCHO_PY_AVATAR_DOMAIN}/${user.id}`) || '',
+    avatarSrc:
+      (process.env.BANCHO_PY_AVATAR_DOMAIN
+        && `https://${process.env.BANCHO_PY_AVATAR_DOMAIN}/${user.id}`)
+      || '',
     roles: toRoles(user.priv),
   }
 
@@ -168,8 +188,9 @@ export function toUserEssential<
     }
   }
 
-  if (includes?.email)
+  if (includes?.email) {
     returnValue.email = user.email
+  }
 
   return returnValue as Includes['secrets'] extends true
     ? UserEssential<Id> & { secrets: UserSecrets }
@@ -201,21 +222,28 @@ export function dedupeUserRelationship(
   return [...reduceUserRelationships.values()]
 }
 
-export function toFullUser(user: DatabaseUser): UserEssential<Id> & Pick<UserExtra<Id>, 'settings'> & Pick<UserOptional, 'oldNames'> {
+export function toFullUser(
+  user: DatabaseUser,
+): UserEssential<Id> &
+  Pick<UserExtra<Id>, 'settings'> &
+  Pick<UserOptional, 'oldNames'> {
   return {
     id: user.id,
     ingameId: user.id,
     name: user.name,
     safeName: user.safeName,
     flag: user.country,
-    avatarSrc: (process.env.BANCHO_PY_AVATAR_DOMAIN && `https://${process.env.BANCHO_PY_AVATAR_DOMAIN}/${user.id}`) || '',
+    avatarSrc:
+      (process.env.BANCHO_PY_AVATAR_DOMAIN
+        && `https://${process.env.BANCHO_PY_AVATAR_DOMAIN}/${user.id}`)
+      || '',
     roles: toRoles(user.priv),
     settings: {
       visibility: {
         reachable: { public: true },
         status: { public: true },
         privateMessage: { public: true },
-        email: { },
+        email: {},
         oldNames: { public: true },
       } as const,
     },
@@ -228,11 +256,15 @@ export function capitalizeFirstLetter<T extends string>(string: T) {
 }
 
 export function toRankingStatus(status: BanchoPyRankedStatus) {
-  return RankingStatusEnum[toBanchoRankingStatus(status)] as RankingStatus | undefined
+  return RankingStatusEnum[toBanchoRankingStatus(status)] as
+    | RankingStatus
+    | undefined
 }
 
-export type AbleToTransformToScores = (DBScore & {
-  beatmap: DBMap & {
+export type AbleToTransformToScores = DBScore & {
+  beatmap:
+  | (DBMap & {
     source: Source
-  } | null
-})
+  })
+  | null
+}

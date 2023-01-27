@@ -39,8 +39,10 @@ const posting = ref(false)
 const updateUserSettings = async () => {
   errorMessage.value = []
   const updateData = {
-    name: user.value.name !== unchanged.value.name ? user.value.name : undefined,
-    email: user.value.email !== unchanged.value.email ? user.value.email : undefined,
+    name:
+      user.value.name !== unchanged.value.name ? user.value.name : undefined,
+    email:
+      user.value.email !== unchanged.value.email ? user.value.email : undefined,
   }
   posting.value = true
 
@@ -48,18 +50,23 @@ const updateUserSettings = async () => {
     $client.me.changeSettings.mutate(updateData).catch((error) => {
       errorMessage.value.push(error.message)
     }),
-    profile.value && $client.me.changeUserpage.mutate({ profile: profile.value }).catch((error) => {
-      errorMessage.value.push(error.message)
-    }),
+    profile.value
+      && $client.me.changeUserpage
+        .mutate({ profile: profile.value })
+        .catch((error) => {
+          errorMessage.value.push(error.message)
+        }),
   ])
   updateResult.value = true
   posting.value = false
-  setTimeout(() => updateResult.value = false, 3000)
-  if (!result)
+  setTimeout(() => (updateResult.value = false), 3000)
+  if (!result) {
     return
+  }
   unchanged.value = { ...unchanged.value, ...result }
-  if (!profileResult)
+  if (!profileResult) {
     return
+  }
   profile.value = profileResult.raw
 }
 
@@ -76,8 +83,9 @@ const changePasswordForm = reactive<{
 const changePasswordError = ref('')
 
 const updatePassword = async (closeModal: () => void) => {
-  if (!changePasswordForm.newPassword)
-    return // checked by browser
+  if (!changePasswordForm.newPassword) {
+    return
+  } // checked by browser
   if (changePasswordForm.newPassword !== changePasswordForm.repeatNewPassword) {
     changePasswordError.value = 'new password mismatch'
     return
@@ -105,30 +113,24 @@ const updatePassword = async (closeModal: () => void) => {
   }
 }
 onBeforeMount(() => {
-  if (!user.value.profile)
+  if (!user.value.profile) {
     return
+  }
   profile.value = user.value.profile.raw
 })
 </script>
 
 <template>
-  <section
-    v-if="user"
-    class="container mx-auto custom-container"
-  >
+  <section v-if="user" class="container mx-auto custom-container">
     <t-modal-root>
-      <t-modal-wrapper
-        ref="changeAvatar"
-        v-slot="{ closeModal }"
-      >
+      <t-modal-wrapper ref="changeAvatar" v-slot="{ closeModal }">
         <t-modal class="max-w-3xl">
           <div class="flex flex-col gap-2">
             <div class="flex items-center justify-center w-full">
-              <label
-                for="dropzone-file"
-                class="dropzone"
-              >
-                <div class="flex flex-col items-center justify-center px-3 pt-5 pb-6">
+              <label for="dropzone-file" class="dropzone">
+                <div
+                  class="flex flex-col items-center justify-center px-3 pt-5 pb-6"
+                >
                   <svg
                     aria-hidden="true"
                     class="w-10 h-10 mb-3 text-kimberly-600 dark:text-kimberly-400"
@@ -144,15 +146,17 @@ onBeforeMount(() => {
                       d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
                     />
                   </svg>
-                  <p class="mb-2 text-sm text-kimberly-500 dark:text-kimberly-300"><span class="font-semibold">Click to
-                    upload</span> or drag and drop</p>
-                  <p class="text-xs text-kimberly-500 dark:text-kimberly-300">SVG, PNG, JPG or GIF (MAX. 800x400px)</p>
+                  <p
+                    class="mb-2 text-sm text-kimberly-500 dark:text-kimberly-300"
+                  >
+                    <span class="font-semibold">Click to upload</span> or drag
+                    and drop
+                  </p>
+                  <p class="text-xs text-kimberly-500 dark:text-kimberly-300">
+                    SVG, PNG, JPG or GIF (MAX. 800x400px)
+                  </p>
                 </div>
-                <input
-                  id="dropzone-file"
-                  type="file"
-                  class="hidden"
-                >
+                <input id="dropzone-file" type="file" class="hidden">
               </label>
             </div>
             <t-button
@@ -161,36 +165,37 @@ onBeforeMount(() => {
               :variant="uploadingAvatar === 2 ? 'success' : 'neutral'"
               @click="saveAvatar"
             >
-              {{ uploadingAvatar === 0 ? 'Save' : uploadingAvatar === 1 ? 'Uploading' : uploadingAvatar === 2 ? 'done' : '' }}
+              {{
+                uploadingAvatar === 0
+                  ? "Save"
+                  : uploadingAvatar === 1
+                    ? "Uploading"
+                    : uploadingAvatar === 2
+                      ? "done"
+                      : ""
+              }}
             </t-button>
             <t-button
               class="grow"
-              @click="() => {
-                closeModal()
-                uploadingAvatar = 0
-              }"
+              @click="
+                () => {
+                  closeModal();
+                  uploadingAvatar = 0;
+                }
+              "
             >
               close
             </t-button>
           </div>
         </t-modal>
       </t-modal-wrapper>
-      <t-modal-wrapper
-        ref="changePassword"
-        v-slot="{ closeModal }"
-      >
+      <t-modal-wrapper ref="changePassword" v-slot="{ closeModal }">
         <t-modal>
           <template #body>
-            <form
-              action="#"
-              @submit.prevent="updatePassword(closeModal)"
-            >
+            <form action="#" @submit.prevent="updatePassword(closeModal)">
               <div class="card-body w-96">
                 <div class="form-control">
-                  <label
-                    class="label"
-                    for="old-password"
-                  >
+                  <label class="label" for="old-password">
                     <span class="pl-2 label-text">Old Password</span>
                   </label>
                   <input
@@ -201,41 +206,31 @@ onBeforeMount(() => {
                   >
                 </div>
                 <div class="form-control">
-                  <label
-                    class="label"
-                    for="old-password"
-                  >
+                  <label class="label" for="old-password">
                     <span class="pl-2 label-text">New Password</span>
                   </label>
                   <input
                     v-model="changePasswordForm.newPassword"
                     type="password"
-                    class="input input-sm  input-ghost"
+                    class="input input-sm input-ghost"
                     required
                   >
                 </div>
                 <div class="form-control">
-                  <label
-                    class="label"
-                    for="old-password"
-                  >
+                  <label class="label" for="old-password">
                     <span class="pl-2 label-text">Repeat Password</span>
                   </label>
                   <input
                     v-model="changePasswordForm.repeatNewPassword"
                     type="password"
-                    class="input input-sm  input-ghost"
+                    class="input input-sm input-ghost"
                     required
                   >
                 </div>
                 <span class="text-error px-2">{{ changePasswordError }}</span>
               </div>
               <div class="flex p-4 gap-2">
-                <t-button
-                  size="sm"
-                  variant="accent"
-                  class="grow"
-                >
+                <t-button size="sm" variant="accent" class="grow">
                   confirm
                 </t-button>
                 <t-button
@@ -243,10 +238,11 @@ onBeforeMount(() => {
                   variant="secondary"
                   class="grow"
                   type="button"
-                  @click="closeModal(() => {
-                    changePasswordForm = {},
-                    changePasswordError = ''
-                  })"
+                  @click="
+                    closeModal(() => {
+                      (changePasswordForm = {}), (changePasswordError = '');
+                    })
+                  "
                 >
                   cancel
                 </t-button>
@@ -257,17 +253,17 @@ onBeforeMount(() => {
       </t-modal-wrapper>
     </t-modal-root>
     <header-default class="!pb-2 !pt-4">
-      <header-simple-title-with-sub
-        title="preferences"
-        class="text-left"
-      />
+      <header-simple-title-with-sub title="preferences" class="text-left" />
       <button
         class="self-end btn btn-sm"
-        :class="[updateResult ? 'btn-success' : 'btn-accent', posting ? 'loading' : '']"
+        :class="[
+          updateResult ? 'btn-success' : 'btn-accent',
+          posting ? 'loading' : '',
+        ]"
         type="button"
         @click="updateUserSettings"
       >
-        {{ updateResult ? "done!" : 'update' }}
+        {{ updateResult ? "done!" : "update" }}
       </button>
     </header-default>
 
@@ -287,14 +283,16 @@ onBeforeMount(() => {
             <img
               :src="user.avatarSrc"
               class="pointer-events-none"
-              style="min-width:150px; width:150px;"
+              style="min-width: 150px; width: 150px"
             >
           </div>
           <div>
             <h1 class="text-5xl text-left">
               {{ user.name }}
             </h1>
-            <h2 class="text-3xl text-left underline decoration-sky-500 text-kimberly-600 dark:text-kimberly-300">
+            <h2
+              class="text-3xl text-left underline decoration-sky-500 text-kimberly-600 dark:text-kimberly-300"
+            >
               @{{ user.safeName }}
             </h2>
             <div class="pb-4" />
@@ -303,13 +301,17 @@ onBeforeMount(() => {
       </div>
       <div class="grow lg:[max-width:50%] mt-4 lg:mt-0 lg:ml-4">
         <div class="text-red-500">
-          {{ errorMessage.join(',') }}
+          {{ errorMessage.join(",") }}
         </div>
         <div class="form-control">
           <label class="label">
             <span class="pl-3 label-text">Username</span>
           </label>
-          <div :class="unchanged.name !== user.name && 'input-group input-group-sm'">
+          <div
+            :class="
+              unchanged.name !== user.name && 'input-group input-group-sm'
+            "
+          >
             <input
               v-model="user.name"
               type="text"
@@ -325,10 +327,12 @@ onBeforeMount(() => {
               class="btn btn-sm"
               type="button"
               :disabled="unchanged.name === user.name"
-              @click="() => {
-                if (!user || !unchanged) return
-                user.name = unchanged.name
-              }"
+              @click="
+                () => {
+                  if (!user || !unchanged) return;
+                  user.name = unchanged.name;
+                }
+              "
             >
               revert
             </button>
@@ -345,15 +349,13 @@ onBeforeMount(() => {
               class="input input-sm grow"
               disabled
               :class="{
-                'input-bordered input-primary': unchanged.safeName !== user.safeName,
-                '!input-ghost border-none': unchanged.safeName === user.safeName,
+                'input-bordered input-primary':
+                  unchanged.safeName !== user.safeName,
+                '!input-ghost border-none':
+                  unchanged.safeName === user.safeName,
               }"
             >
-            <button
-              class="btn btn-sm btn-secondary"
-              type="button"
-              disabled
-            >
+            <button class="btn btn-sm btn-secondary" type="button" disabled>
               request change
             </button>
           </div>
@@ -362,7 +364,11 @@ onBeforeMount(() => {
           <label class="label">
             <span class="pl-3 label-text">Email</span>
           </label>
-          <div :class="unchanged.email !== user.email && 'input-group input-group-sm'">
+          <div
+            :class="
+              unchanged.email !== user.email && 'input-group input-group-sm'
+            "
+          >
             <input
               v-model="user.email"
               type="email"
@@ -378,10 +384,12 @@ onBeforeMount(() => {
               class="btn btn-sm"
               type="button"
               :disabled="unchanged.email === user.email"
-              @click="() => {
-                if (!user || !unchanged) return
-                user.email = unchanged.email
-              }"
+              @click="
+                () => {
+                  if (!user || !unchanged) return;
+                  user.email = unchanged.email;
+                }
+              "
             >
               revert
             </button>
@@ -399,8 +407,10 @@ onBeforeMount(() => {
               class="input input-sm grow"
               disabled
               :class="{
-                'input-bordered input-primary': unchanged.secrets.apiKey !== user.secrets.apiKey,
-                '!input-ghost border-none': unchanged.secrets.apiKey === user.secrets.apiKey,
+                'input-bordered input-primary':
+                  unchanged.secrets.apiKey !== user.secrets.apiKey,
+                '!input-ghost border-none':
+                  unchanged.secrets.apiKey === user.secrets.apiKey,
               }"
             >
             <button
@@ -424,8 +434,10 @@ onBeforeMount(() => {
               class="input input-sm grow blur-sm hover:blur-none"
               disabled
               :class="{
-                'input-bordered input-primary': unchanged.secrets.apiKey !== user.secrets.apiKey,
-                '!input-ghost border-none': unchanged.secrets.apiKey === user.secrets.apiKey,
+                'input-bordered input-primary':
+                  unchanged.secrets.apiKey !== user.secrets.apiKey,
+                '!input-ghost border-none':
+                  unchanged.secrets.apiKey === user.secrets.apiKey,
               }"
             >
             <button
@@ -495,7 +507,7 @@ onBeforeMount(() => {
   @apply max-h-80;
 
   .editor__content {
-    @apply overflow-y-auto
+    @apply overflow-y-auto;
   }
 }
 </style>

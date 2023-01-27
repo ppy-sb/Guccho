@@ -1,4 +1,5 @@
-$variants: primary, secondary, accent, neutral, base-100, info, success, warning, error;
+$variants: primary, secondary, accent, neutral, base-100, info, success, warning,
+  error;
 html {
   @apply bg-transparent #{!important};
 }

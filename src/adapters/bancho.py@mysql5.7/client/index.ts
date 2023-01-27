@@ -1,6 +1,4 @@
-import {
-  PrismaClient,
-} from '@prisma/client'
+import { PrismaClient } from '@prisma/client'
 
 import * as Parent from '~/adapters/bancho.py/client'
 

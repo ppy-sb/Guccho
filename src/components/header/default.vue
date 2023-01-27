@@ -6,12 +6,11 @@ const props = defineProps<{
 </script>
 
 <template>
-  <div class="container items-center justify-between py-3 mx-auto text-center app-header-container custom-container sm:flex sm:w-full text-kimberly-900 dark:text-kimberly-100">
+  <div
+    class="container items-center justify-between py-3 mx-auto text-center app-header-container custom-container sm:flex sm:w-full text-kimberly-900 dark:text-kimberly-100"
+  >
     <slot>
-      <header-simple-title-with-sub
-        v-bind="props"
-        class="text-left"
-      />
+      <header-simple-title-with-sub v-bind="props" class="text-left" />
     </slot>
   </div>
 </template>

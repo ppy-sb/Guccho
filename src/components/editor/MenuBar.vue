@@ -64,7 +64,8 @@ export default {
         ...[1, 2, 3, 4, 5, 6].map(h => ({
           icon: `h-${h}`,
           title: `Heading ${h}`,
-          action: () => this.editor.chain().focus().toggleHeading({ level: h }).run(),
+          action: () =>
+            this.editor.chain().focus().toggleHeading({ level: h }).run(),
           isActive: () => this.editor.isActive('heading', { level: h }),
         })),
         {
@@ -122,11 +123,8 @@ export default {
         {
           icon: 'format-clear',
           title: 'Clear Format',
-          action: () => this.editor.chain()
-            .focus()
-            .clearNodes()
-            .unsetAllMarks()
-            .run(),
+          action: () =>
+            this.editor.chain().focus().clearNodes().unsetAllMarks().run(),
         },
         {
           type: 'divider',
@@ -158,18 +156,10 @@ export default {
         :key="`divider${index}`"
         class="divider"
       />
-      <MenuItem
-        v-else
-        :key="index"
-        v-bind="item"
-        class="menu-item icon"
-      />
+      <MenuItem v-else :key="index" v-bind="item" class="menu-item icon" />
     </template>
     <template v-if="editor.isActive('codeBlock')">
-      <label
-        for="indent"
-        class="label"
-      >Indent:</label>
+      <label for="indent" class="label">Indent:</label>
       <button
         class="flex items-center menu-item"
         :class="{
@@ -177,10 +167,7 @@ export default {
         }"
         @click="$emit('update:indent', '  ')"
       >
-        <svg
-          class="remix"
-          style="width: 1.5rem; height: 1.5rem;"
-        >
+        <svg class="remix" style="width: 1.5rem; height: 1.5rem">
           <use :xlink:href="`${remixiconUrl}#ri-space`" />
         </svg>
         2
@@ -192,10 +179,7 @@ export default {
         }"
         @click="$emit('update:indent', '    ')"
       >
-        <svg
-          class="remix"
-          style="width: 1.5rem; height: 1.5rem;"
-        >
+        <svg class="remix" style="width: 1.5rem; height: 1.5rem">
           <use :xlink:href="`${remixiconUrl}#ri-space`" />
         </svg>
         4
@@ -216,38 +200,38 @@ export default {
 <style lang="scss">
 .menubar {
   .divider {
-  width: 2px;
-  height: 1.25rem;
-  background-color: rgba(#000, 0.1);
-  margin-left: 0.5rem;
-  margin-right: 0.75rem;
-}
-.menu-item {
-  border: none;
-  background-color: transparent;
-  border-radius: 0.4rem;
-  margin-right: 0.25rem;
-  padding: 0.25rem;
-
-  svg {
-    width: 100%;
-    height: 100%;
-    fill: currentColor;
+    width: 2px;
+    height: 1.25rem;
+    background-color: rgba(#000, 0.1);
+    margin-left: 0.5rem;
+    margin-right: 0.75rem;
   }
-  &.icon {
+  .menu-item {
+    border: none;
+    background-color: transparent;
+    border-radius: 0.4rem;
+    margin-right: 0.25rem;
     padding: 0.25rem;
-  }
 
-  &.is-active,
-  &:hover {
-    @apply text-kimberly-100 bg-kimberly-800 dark:text-kimberly-900 dark:bg-kimberly-100;
-    // color: #FFF;
-    // background-color: #0D0D0D;
+    svg {
+      width: 100%;
+      height: 100%;
+      fill: currentColor;
+    }
+    &.icon {
+      padding: 0.25rem;
+    }
+
+    &.is-active,
+    &:hover {
+      @apply text-kimberly-100 bg-kimberly-800 dark:text-kimberly-900 dark:bg-kimberly-100;
+      // color: #FFF;
+      // background-color: #0D0D0D;
+    }
   }
-}
-.icon {
-  width: 1.75rem !important;
-  height: 1.75rem !important;
-}
+  .icon {
+    width: 1.75rem !important;
+    height: 1.75rem !important;
+  }
 }
 </style>

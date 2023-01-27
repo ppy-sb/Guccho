@@ -5,7 +5,11 @@ import { fromBanchoPyMode, toBanchoPyMode } from '../enums'
 import type { AbleToTransformToScores } from '../transforms'
 import { toUserEssential } from '../transforms'
 import { prismaClient } from '.'
-import type { ScoreProvider, SearchId, SearchQueryMany } from '$def/client/score'
+import type {
+  ScoreProvider,
+  SearchId,
+  SearchQueryMany,
+} from '$def/client/score'
 
 import { TSFilter } from '~/utils'
 
@@ -16,17 +20,21 @@ export default class BanchoPyScore implements ScoreProvider<bigint, Id> {
     this.db = prismaClient
   }
 
-  #transformScore(dbScore: AbleToTransformToScores & { user: User } | null) {
-    if (!dbScore)
+  #transformScore(dbScore: (AbleToTransformToScores & { user: User }) | null) {
+    if (!dbScore) {
       return null
+    }
 
     const [mode, ruleset] = fromBanchoPyMode(dbScore.mode)
 
-    return Object.assign(toScore({
-      score: dbScore,
-      mode,
-      ruleset,
-    }), { user: toUserEssential({ user: dbScore.user }) })
+    return Object.assign(
+      toScore({
+        score: dbScore,
+        mode,
+        ruleset,
+      }),
+      { user: toUserEssential({ user: dbScore.user }) },
+    )
   }
 
   async id(id: bigint) {

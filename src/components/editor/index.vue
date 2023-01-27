@@ -7,15 +7,18 @@ import '@/assets/styles/typography.scss'
 import MenuBar from './MenuBar.vue'
 import useEditor from '~/composables/useEditor'
 import useEditorLazyLoadHighlight from '~/composables/useEditorLazyLoadHighlight'
-const props = withDefaults(defineProps<{
-  modelValue?: JSONContent
-  editable?: boolean
-  indent?: string
-}>(), {
-  modelValue: undefined,
-  editable: true,
-  indent: '  ',
-})
+const props = withDefaults(
+  defineProps<{
+    modelValue?: JSONContent
+    editable?: boolean
+    indent?: string
+  }>(),
+  {
+    modelValue: undefined,
+    editable: true,
+    indent: '  ',
+  },
+)
 const emit = defineEmits(['update:modelValue'])
 
 const editorConf = reactive({
@@ -30,24 +33,20 @@ onBeforeMount(async () => {
     await Promise.all(lazy(props.modelValue))
     editor.value?.commands.setContent(props.modelValue)
   }
-  subscribe((content: Record<string, unknown>) => emit('update:modelValue', content))
+  subscribe((content: Record<string, unknown>) =>
+    emit('update:modelValue', content),
+  )
 })
 </script>
 
 <template>
-  <div
-    v-if="editor"
-    class="editor"
-  >
+  <div v-if="editor" class="editor">
     <MenuBar
       v-model:indent="editorConf.indent"
       class="editor__header"
       :editor="editor"
     />
-    <EditorContent
-      class="editor__content custom-typography"
-      :editor="editor"
-    />
+    <EditorContent class="editor__content custom-typography" :editor="editor" />
   </div>
 </template>
 
@@ -76,7 +75,7 @@ onBeforeMount(async () => {
 
     .ProseMirror {
       min-height: 10vh;
-      @apply outline-offset-4 overflow-visible
+      @apply outline-offset-4 overflow-visible;
     }
   }
   &__footer {

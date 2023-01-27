@@ -19,27 +19,34 @@ export const createSession = async (data?: { id: Id }) => {
 
 export const getSession = async (sessionId: string) => {
   const _session = session.get(sessionId)
-  if (_session == null)
+  if (_session == null) {
     return undefined
-  if ((Date.now() - _session.lastActivity) > config.expire)
+  }
+  if (Date.now() - _session.lastActivity > config.expire) {
     session.delete(sessionId)
+  }
 
   return _session
 }
 
 export const refresh = async (sessionId: string) => {
   const _session = session.get(sessionId)
-  if (_session == null)
+  if (_session == null) {
     return
+  }
   _session.lastActivity = Date.now()
   return sessionId
 }
 
-export const houseKeeping: Record<string, (store: typeof session, _config: typeof config) => Awaitable<void>> = {
+export const houseKeeping: Record<
+  string,
+  (store: typeof session, _config: typeof config) => Awaitable<void>
+> = {
   minutely(sessionStore, config) {
     sessionStore.forEach(({ lastActivity }, sessionId) => {
-      if (lastActivity + config.expire > Date.now())
+      if (lastActivity + config.expire > Date.now()) {
         return
+      }
 
       sessionStore.delete(sessionId)
     })

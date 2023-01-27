@@ -89,9 +89,9 @@ export interface UserSettings {
   >
 }
 export type AvailableRuleset<R extends Mode> =
-| (R extends StandardAvailable ? 'standard' : never)
-| (R extends RelaxAvailable ? 'relax' : never)
-| (R extends AutopilotAvailable ? 'autopilot' : never)
+  | (R extends StandardAvailable ? 'standard' : never)
+  | (R extends RelaxAvailable ? 'relax' : never)
+  | (R extends AutopilotAvailable ? 'autopilot' : never)
 
 export type UserStatistic<
   Id,
@@ -126,5 +126,6 @@ export type UserFull<
   IncludeMode extends Mode = Mode,
   IncludeRuleset extends Ruleset = Ruleset,
   Ranking extends LeaderboardRankingSystem = LeaderboardRankingSystem,
-> = UserEssential<Id> & Partial<UserOptional<Id>>
-& Partial<UserExtra<Id, IncludeMode, IncludeRuleset, Ranking>>
+> = UserEssential<Id> &
+Partial<UserOptional<Id>> &
+Partial<UserExtra<Id, IncludeMode, IncludeRuleset, Ranking>>

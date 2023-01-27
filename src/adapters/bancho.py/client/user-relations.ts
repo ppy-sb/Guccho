@@ -8,7 +8,8 @@ import type { UserEssential } from '~/types/user'
 import type { Relationship } from '~/types/common'
 import { calculateMutualRelationships } from '~/server/transforms'
 
-export default class BanchoPyUserRelationship implements UserRelationshipDataProvider<Id> {
+export default class BanchoPyUserRelationship
+implements UserRelationshipDataProvider<Id> {
   db: PrismaClient
   constructor() {
     this.db = prismaClient
@@ -48,7 +49,10 @@ export default class BanchoPyUserRelationship implements UserRelationshipDataPro
       },
     })
 
-    const [relationships, gotRelationships] = await Promise.all([pRelationResult, pGotRelationResult])
+    const [relationships, gotRelationships] = await Promise.all([
+      pRelationResult,
+      pGotRelationResult,
+    ])
 
     const asUserEssentialShape = relationships.map(r => ({
       ...r,
@@ -57,23 +61,37 @@ export default class BanchoPyUserRelationship implements UserRelationshipDataPro
     const deduped = dedupeUserRelationship(asUserEssentialShape)
 
     for (const _user of deduped) {
-      const reverse = gotRelationships.filter(reverse => reverse.fromUserId === user.id).map(reverse => reverse.type)
+      const reverse = gotRelationships
+        .filter(reverse => reverse.fromUserId === user.id)
+        .map(reverse => reverse.type)
       _user.relationshipFromTarget = reverse || []
-      _user.mutualRelationship = calculateMutualRelationships(_user.relationship, _user.relationshipFromTarget)
+      _user.mutualRelationship = calculateMutualRelationships(
+        _user.relationship,
+        _user.relationshipFromTarget,
+      )
     }
 
     return deduped
   }
 
-  async removeOne({ fromUser, targetUser, type }: { fromUser: UserEssential<Id>; targetUser: UserEssential<Id>; type: Relationship }) {
-  // bancho.py only allows one relationshipType per direction per one user pair
-  // so cannot delete with where condition due to prisma not allowing it.
-  // So to make sure that we are removing right relationship, we have to compare
-  // relation type against input before remove it.
+  async removeOne({
+    fromUser,
+    targetUser,
+    type,
+  }: {
+    fromUser: UserEssential<Id>
+    targetUser: UserEssential<Id>
+    type: Relationship
+  }) {
+    // bancho.py only allows one relationshipType per direction per one user pair
+    // so cannot delete with where condition due to prisma not allowing it.
+    // So to make sure that we are removing right relationship, we have to compare
+    // relation type against input before remove it.
     const relationship = await this.getOne(fromUser, targetUser)
 
-    if (relationship !== type)
+    if (relationship !== type) {
       throw new Error('not-found')
+    }
 
     await prismaClient.relationship.delete({
       where: {
@@ -85,15 +103,24 @@ export default class BanchoPyUserRelationship implements UserRelationshipDataPro
     })
   }
 
-  async createOneRelationship({ fromUser, targetUser, type }: { fromUser: UserEssential<Id>; targetUser: UserEssential<Id>; type: Relationship }) {
-  // bancho.py only allows one relationshipType per direction per one user pair
-  // so cannot delete with where condition due to prisma not allowing it.
-  // So to make sure that we are removing right relationship, we have to compare
-  // relation type against input before remove it.
+  async createOneRelationship({
+    fromUser,
+    targetUser,
+    type,
+  }: {
+    fromUser: UserEssential<Id>
+    targetUser: UserEssential<Id>
+    type: Relationship
+  }) {
+    // bancho.py only allows one relationshipType per direction per one user pair
+    // so cannot delete with where condition due to prisma not allowing it.
+    // So to make sure that we are removing right relationship, we have to compare
+    // relation type against input before remove it.
     const relationship = await this.getOne(fromUser, targetUser)
 
-    if (relationship)
+    if (relationship) {
       throw new Error('has-relationship')
+    }
 
     await prismaClient.relationship.create({
       data: {

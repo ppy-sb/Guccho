@@ -1,6 +1,4 @@
-import type {
-  Id,
-} from '../exports'
+import type { Id } from '../exports'
 
 import { prismaClient } from '.'
 
@@ -11,10 +9,17 @@ import { toRoles } from '~/adapters/bancho.py/transforms'
 import type { LeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
 
 export class LeaderboardDataProvider extends BanchoPyLeaderboardDataProvider {
-  async getPPv2LiveLeaderboard(banchoPyMode: number, start: number, end: number, country?: string) {
+  async getPPv2LiveLeaderboard(
+    banchoPyMode: number,
+    start: number,
+    end: number,
+    country?: string,
+  ) {
     if (this.redisClient?.isReady) {
       return await this.redisClient.zRange(
-        country ? `bancho:leaderboard:${banchoPyMode}:${country}` : `bancho:leaderboard:${banchoPyMode}`,
+        country
+          ? `bancho:leaderboard:${banchoPyMode}:${country}`
+          : `bancho:leaderboard:${banchoPyMode}`,
         '+inf',
         1,
         {
@@ -55,11 +60,23 @@ export class LeaderboardDataProvider extends BanchoPyLeaderboardDataProvider {
         ppv2: number
         playCount: number
       }>
-    >(/* sql */`
+    >(/* sql */ `
   SELECT 
-  ${rankingSystem === 'ppv2' ? '(SELECT COUNT(*) + 1 FROM stats s WHERE s.mode = stat.mode AND s.pp > stat.pp) as _rank,' : ''}
-  ${rankingSystem === 'totalScore' ? '(SELECT COUNT(*) + 1 FROM stats s WHERE s.mode = stat.mode AND s.tscore > stat.tscore) as _rank,' : ''}
-  ${rankingSystem === 'rankedScore' ? '(SELECT COUNT(*) + 1 FROM stats s WHERE s.mode = stat.mode AND s.rscore > stat.rscore) as _rank,' : ''}
+  ${
+    rankingSystem === 'ppv2'
+      ? '(SELECT COUNT(*) + 1 FROM stats s WHERE s.mode = stat.mode AND s.pp > stat.pp) as _rank,'
+      : ''
+  }
+  ${
+    rankingSystem === 'totalScore'
+      ? '(SELECT COUNT(*) + 1 FROM stats s WHERE s.mode = stat.mode AND s.tscore > stat.tscore) as _rank,'
+      : ''
+  }
+  ${
+    rankingSystem === 'rankedScore'
+      ? '(SELECT COUNT(*) + 1 FROM stats s WHERE s.mode = stat.mode AND s.rscore > stat.rscore) as _rank,'
+      : ''
+  }
   user.id,
   user.name,
   user.safe_name AS safeName,
@@ -87,29 +104,31 @@ LIMIT ${start}, ${pageSize}`)
     page: number
     pageSize: number
   }) {
-    const {
-      mode,
-      ruleset,
-      rankingSystem,
-      page,
-      pageSize,
-    } = opt
-    let result: Awaited<ReturnType<LeaderboardDataProvider['leaderboardFromDatabase']>> = []
+    const { mode, ruleset, rankingSystem, page, pageSize } = opt
+    let result: Awaited<
+      ReturnType<LeaderboardDataProvider['leaderboardFromDatabase']>
+    > = []
     const start = page * pageSize
     if (!this.redisClient?.isReady) {
       result = await this.leaderboardFromDatabase(opt)
     }
     else {
-      if (rankingSystem === 'ppv1')
+      if (rankingSystem === 'ppv1') {
         return []
+      }
 
       if (rankingSystem === 'ppv2') {
         try {
           const bPyMode = toBanchoPyMode(mode, ruleset)
-          if (bPyMode === undefined)
+          if (bPyMode === undefined) {
             throw new Error('no mode')
+          }
           // TODO: banned players are included
-          const rank = await this.getPPv2LiveLeaderboard(bPyMode, 0, start + pageSize * 2).then(res => res.map(Number))
+          const rank = await this.getPPv2LiveLeaderboard(
+            bPyMode,
+            0,
+            start + pageSize * 2,
+          ).then(res => res.map(Number))
 
           const [users, stats] = await Promise.all([
             this.db.user.findMany({
@@ -129,14 +148,16 @@ LIMIT ${start}, ${pageSize}`)
             }),
           ])
           for (const index in rank) {
-            if (result.length >= start + pageSize)
+            if (result.length >= start + pageSize) {
               break
+            }
             const id = rank[index]
             const user = users.find(u => u.id === id)
             const stat = stats.find(s => s.id === id)
 
-            if (!user || !stat || user.priv <= 2)
+            if (!user || !stat || user.priv <= 2) {
               continue
+            }
 
             result.push({
               id: user.id,
@@ -170,7 +191,10 @@ LIMIT ${start}, ${pageSize}`)
         name: item.name,
         safeName: item.safeName,
         flag: item.flag,
-        avatarSrc: (process.env.BANCHO_PY_AVATAR_DOMAIN && `https://${process.env.BANCHO_PY_AVATAR_DOMAIN}/${item.id}`) || '',
+        avatarSrc:
+          (process.env.BANCHO_PY_AVATAR_DOMAIN
+            && `https://${process.env.BANCHO_PY_AVATAR_DOMAIN}/${item.id}`)
+          || '',
         roles: toRoles(item.priv),
       },
       inThisLeaderboard: {

@@ -17,10 +17,7 @@ export default {
 <template>
   <div class="app-header">
     <div class="text-center">
-      <h1
-        v-if="title"
-        class="text-3xl font-bold text-center sm:text-left"
-      >
+      <h1 v-if="title" class="text-3xl font-bold text-center sm:text-left">
         {{ title }}
       </h1>
       <h2

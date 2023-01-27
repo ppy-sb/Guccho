@@ -21,7 +21,10 @@ export class UserDataProvider extends BanchoPyUser implements Base<Id> {
     this.sbDb = prismaClient
   }
 
-  async changeUserpage(user: UserEssential<number>, input: { profile: JSONContent }) {
+  async changeUserpage(
+    user: UserEssential<number>,
+    input: { profile: JSONContent },
+  ) {
     const renderExtensions = useEditorExtensions()
     try {
       const html = generateHTML(input.profile, renderExtensions)
@@ -43,8 +46,12 @@ export class UserDataProvider extends BanchoPyUser implements Base<Id> {
             rawType: 'tiptap',
           },
         })
-        if (!inserted.id)
-          throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'unable to save' })
+        if (!inserted.id) {
+          throw new TRPCError({
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'unable to save',
+          })
+        }
 
         return {
           html: inserted.html as string,
@@ -68,17 +75,26 @@ export class UserDataProvider extends BanchoPyUser implements Base<Id> {
       }
     }
     catch (err) {
-      throw new TRPCError({ code: 'PARSE_ERROR', message: 'unable to parse json content' })
+      throw new TRPCError({
+        code: 'PARSE_ERROR',
+        message: 'unable to parse json content',
+      })
     }
   }
 
-  async getFull<Excludes extends Partial<Record<keyof Base.ComposableProperties<Id>, boolean>>>({ handle, excludes }: { handle: string; excludes?: Excludes }) {
-    if (!excludes)
+  async getFull<
+    Excludes extends Partial<
+      Record<keyof Base.ComposableProperties<Id>, boolean>
+    >,
+  >({ handle, excludes }: { handle: string; excludes?: Excludes }) {
+    if (!excludes) {
       excludes = <Excludes>{ secrets: true }
+    }
     const user = await this.sbDb.user.findFirst(createUserQuery(handle))
 
-    if (user == null)
+    if (user == null) {
       return null
+    }
 
     const fullUser = await toFullUser(user)
     const profile = await this.db.userpage.findFirst({
@@ -92,27 +108,29 @@ export class UserDataProvider extends BanchoPyUser implements Base<Id> {
       reachable: false,
       status: 'offline' as const,
       statistics:
-        (excludes.statistics === true
-          ? undefined as never
-          : await this.getStatistics(user)),
+        excludes.statistics === true
+          ? (undefined as never)
+          : await this.getStatistics(user),
       relationships:
-        (excludes.relationships === true
-          ? undefined as never
-          : await this.relationships.get({ user })),
-      email: (excludes.email === true ? undefined as never : user.email),
-      profile: (excludes.profile === true
-        ? undefined as never
-        : {
-            html: profile?.html || '',
-            // TODO: alter database to read/save raw
-            raw: JSON.parse(profile?.raw || '{}'),
-          }),
-      secrets: (excludes.secrets === false
-        ? {
-            password: user.pwBcrypt,
-            apiKey: user.apiKey ?? undefined,
-          }
-        : undefined as never),
+        excludes.relationships === true
+          ? (undefined as never)
+          : await this.relationships.get({ user }),
+      email: excludes.email === true ? (undefined as never) : user.email,
+      profile:
+        excludes.profile === true
+          ? (undefined as never)
+          : {
+              html: profile?.html || '',
+              // TODO: alter database to read/save raw
+              raw: JSON.parse(profile?.raw || '{}'),
+            },
+      secrets:
+        excludes.secrets === false
+          ? {
+              password: user.pwBcrypt,
+              apiKey: user.apiKey ?? undefined,
+            }
+          : (undefined as never),
     }
   }
 }

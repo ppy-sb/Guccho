@@ -21,5 +21,6 @@ module.exports = {
     'vue/multi-word-component-names': ['off'],
     'vue/no-v-model-argument': ['off'],
     '@typescript-eslint/type-annotation-spacing': 'warn',
+    'curly': ['error', 'multi-line', 'consistent'],
   },
 }

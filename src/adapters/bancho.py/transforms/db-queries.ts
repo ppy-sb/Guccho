@@ -1,9 +1,17 @@
 import type { Id } from '../exports'
 
-export const createUserQuery = (handle: string, selectAgainst: Array<'id' | 'name' | 'safeName' | 'email'> = ['id', 'name', 'safeName']) => {
+export const createUserQuery = (
+  handle: string,
+  selectAgainst: Array<'id' | 'name' | 'safeName' | 'email'> = [
+    'id',
+    'name',
+    'safeName',
+  ],
+) => {
   let handleNum = parseInt(handle)
-  if (isNaN(handleNum))
+  if (isNaN(handleNum)) {
     handleNum = -1
+  }
 
   return {
     where: {
@@ -30,7 +38,12 @@ export const createUserQuery = (handle: string, selectAgainst: Array<'id' | 'nam
                   email: handle,
                 }
               : undefined,
-          ].filter(Boolean) as Array<{ id: Id } | { name: string } | { safeName: string } | { email: string }>,
+          ].filter(Boolean) as Array<
+            | { id: Id }
+            | { name: string }
+            | { safeName: string }
+            | { email: string }
+          >,
         },
         {
           priv: {
