@@ -23,7 +23,9 @@ const emit = defineEmits<{
 const config = useAppConfig()
 const { assertHasOverallRankingSystem } = await useAdapterConfig()
 
-const [switcher, setSwitcher] = useOverallSwitcher(toRaw(props.modelValue) || {})
+const [switcher, setSwitcher] = useOverallSwitcher(
+  toRaw(props.modelValue) || {},
+)
 const emitData = () => {
   emit('input', toRaw(switcher))
   emit('update:modelValue', toRaw(switcher))
@@ -40,7 +42,8 @@ watch(switcher, () => emitData())
         class="h-mode"
         :class="{
           '!opacity-80 pointer-events-none': switcher.mode === mode,
-          '!opacity-10 pointer-events-none': switcher.ruleset && forbiddenMode(switcher.ruleset, mode),
+          '!opacity-10 pointer-events-none':
+            switcher.ruleset && forbiddenMode(switcher.ruleset, mode),
         }"
         @click="setSwitcher({ mode })"
       >
@@ -57,7 +60,8 @@ watch(switcher, () => emitData())
         class="h-mode"
         :class="{
           '!opacity-80 pointer-events-none': switcher.ruleset === ruleset,
-          '!opacity-20 pointer-events-none': switcher.mode && forbiddenMods(switcher.mode, ruleset),
+          '!opacity-20 pointer-events-none':
+            switcher.mode && forbiddenMods(switcher.mode, ruleset),
         }"
         @click="setSwitcher({ ruleset })"
       >
@@ -73,9 +77,17 @@ watch(switcher, () => emitData())
         :key="rankingSystem"
       >
         <a
-          v-if="assertHasOverallRankingSystem(rankingSystem, { mode: switcher.mode, ruleset: switcher.ruleset })"
+          v-if="
+            assertHasOverallRankingSystem(rankingSystem, {
+              mode: switcher.mode,
+              ruleset: switcher.ruleset,
+            })
+          "
           class="text-sm h-mode"
-          :class="{ '!opacity-80 pointer-events-none': switcher.rankingSystem === rankingSystem }"
+          :class="{
+            '!opacity-80 pointer-events-none':
+              switcher.rankingSystem === rankingSystem,
+          }"
           @click="setSwitcher({ rankingSystem })"
         >
           {{ s.name }}
@@ -97,7 +109,7 @@ watch(switcher, () => emitData())
 }
 
 .color-theme-light-invert {
-  filter:invert(100%);
-  @apply dark:[filter:invert(0)]
+  filter: invert(100%);
+  @apply dark:[filter:invert(0)];
 }
 </style>

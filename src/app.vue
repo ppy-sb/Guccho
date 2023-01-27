@@ -28,16 +28,18 @@ onMounted(() => {
 </script>
 
 <template>
-  <div
-    :class="[
-      safari ? 'safari' : 'not-safari',
-    ]"
-  >
-    <t-modal-container ref="modalContainer" :teleport-id="config.appModalTeleportTargetId">
+  <div :class="[safari ? 'safari' : 'not-safari']">
+    <t-modal-container
+      ref="modalContainer"
+      :teleport-id="config.appModalTeleportTargetId"
+    >
       <teleport to="body">
         <app-navbar :disabled="modalContainer?.stat === 'show'" />
       </teleport>
-      <div v-if="appConfig.needConfirmWebsite && !confirmedWebsite" class="flex h-screen items-center">
+      <div
+        v-if="appConfig.needConfirmWebsite && !confirmedWebsite"
+        class="flex h-screen items-center"
+      >
         <div class="card bg-base-200 shadow-xl px-16 mx-auto gap-8">
           <div class="card-body">
             <svg class="remix text-white invert">
@@ -45,16 +47,26 @@ onMounted(() => {
             </svg>
             <div class="form-control">
               <label class="cursor-pointer label">
-                <input v-model="checked" type="checkbox" class="checkbox checkbox-error mx-2">
-                <span class="label-text text-4xl">I understand this is not the <a class="link" href="https://osu.ppy.sh">Official Osu Website</a></span>
+                <input
+                  v-model="checked"
+                  type="checkbox"
+                  class="checkbox checkbox-error mx-2"
+                >
+                <span class="label-text text-4xl">I understand this is not the
+                  <a class="link" href="https://osu.ppy.sh">Official Osu Website</a></span>
               </label>
             </div>
-            <div class="text-center lg:text-left lg:grid lg:grid-cols-2 items-baseline">
+            <div
+              class="text-center lg:text-left lg:grid lg:grid-cols-2 items-baseline"
+            >
               <div>
                 <t-button
-                  :class=" {
+                  :class="{
                     invisible: !checked,
-                  }" variant="primary" class="w-80" @click="confirmed = 'ok'"
+                  }"
+                  variant="primary"
+                  class="w-80"
+                  @click="confirmed = 'ok'"
                 >
                   Confirm
                 </t-button>
@@ -76,7 +88,7 @@ onMounted(() => {
 <style lang="postcss">
 .not-safari {
   & .custom-container {
-    @apply drop-shadow-xl
+    @apply drop-shadow-xl;
   }
 }
 </style>

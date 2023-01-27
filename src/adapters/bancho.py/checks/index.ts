@@ -1,5 +1,10 @@
 import type { LeaderboardRankingSystem, RankingSystem } from '~/types/common'
-import type { AssertHasOverallRankingSystem, AssertHasRankingSystem, ServerOverallRankingSystemDef, ServerRankingSystemDef } from '~/types/server'
+import type {
+  AssertHasOverallRankingSystem,
+  AssertHasRankingSystem,
+  ServerOverallRankingSystemDef,
+  ServerRankingSystemDef,
+} from '~/types/server'
 
 const rankingSystem = ['ppv2', 'score'] as const
 const leaderboardRankingSystem = ['ppv2', 'rankedScore', 'totalScore'] as const
@@ -41,5 +46,15 @@ const havingLeaderboardRankingSystem: ServerOverallRankingSystemDef = {
   },
 }
 
-export const assertHasRankingSystem: AssertHasRankingSystem = (rankingSystem, { mode, ruleset }): rankingSystem is RankingSystem => havingRankingSystem[mode][ruleset].includes(rankingSystem as RankingSystem)
-export const assertHasOverallRankingSystem: AssertHasOverallRankingSystem = (rankingSystem, { mode, ruleset }): rankingSystem is LeaderboardRankingSystem => havingLeaderboardRankingSystem[mode][ruleset].includes(rankingSystem as LeaderboardRankingSystem)
+export const assertHasRankingSystem: AssertHasRankingSystem = (
+  rankingSystem,
+  { mode, ruleset },
+): rankingSystem is RankingSystem =>
+  havingRankingSystem[mode][ruleset].includes(rankingSystem as RankingSystem)
+export const assertHasOverallRankingSystem: AssertHasOverallRankingSystem = (
+  rankingSystem,
+  { mode, ruleset },
+): rankingSystem is LeaderboardRankingSystem =>
+  havingLeaderboardRankingSystem[mode][ruleset].includes(
+    rankingSystem as LeaderboardRankingSystem,
+  )

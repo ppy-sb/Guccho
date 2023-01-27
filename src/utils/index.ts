@@ -8,7 +8,9 @@ export function assertIsString(input: unknown): input is string {
   return typeof input === 'string'
 }
 
-export function assertIsBanchoBeatmapset(test: Beatmapset<BeatmapSource, any, unknown>): test is Beatmapset<'bancho', any, string | number> {
+export function assertIsBanchoBeatmapset(
+  test: Beatmapset<BeatmapSource, any, unknown>,
+): test is Beatmapset<'bancho', any, string | number> {
   return test.source === 'bancho'
 }
 
@@ -25,10 +27,11 @@ export function loadImage(src: string) {
   })
 }
 
-export function noop() { }
+export function noop() {}
 
 export function placeholder(e: Event & { target: HTMLImageElement }) {
   e.target.src = '/images/image-placeholder.svg'
 }
 
-export const TSFilter = <T>(item: T): item is Exclude<T, undefined | null> => item !== undefined && item !== null
+export const TSFilter = <T>(item: T): item is Exclude<T, undefined | null> =>
+  item !== undefined && item !== null

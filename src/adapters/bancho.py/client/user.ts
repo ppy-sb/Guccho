@@ -16,11 +16,7 @@ import type { UserDataProvider } from '$def/client/user'
 import type { LeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
 import useEditorExtensions from '~/composables/useEditorExtensions'
 
-import type {
-  UserEssential,
-  UserOptional,
-  UserStatistic,
-} from '~/types/user'
+import type { UserEssential, UserOptional, UserStatistic } from '~/types/user'
 
 import { TSFilter } from '~/utils'
 
@@ -40,42 +36,53 @@ export default class BanchoPyUser implements UserDataProvider<Id> {
     if (this.redisClient?.isReady) {
       return {
         rank: await this.redisClient.zRevRank(
-        `bancho:leaderboard:${mode}`,
-        idToString(id),
+          `bancho:leaderboard:${mode}`,
+          idToString(id),
         ),
         countryRank: await this.redisClient.zRevRank(
-        `bancho:leaderboard:${mode}:${country}`,
-        idToString(id),
+          `bancho:leaderboard:${mode}:${country}`,
+          idToString(id),
         ),
       }
     }
   }
 
-  async exists({ handle, keys }: UserDataProvider.OptType<number, Record<never, never>>) {
-    return (await this.db.user.count(createUserQuery(handle, keys || ['id', 'name', 'safeName', 'email']))) > 0
+  async exists({
+    handle,
+    keys,
+  }: UserDataProvider.OptType<number, Record<never, never>>) {
+    return (
+      (await this.db.user.count(
+        createUserQuery(handle, keys || ['id', 'name', 'safeName', 'email']),
+      )) > 0
+    )
   }
 
-  async getEssentialById<Includes extends Partial<Record<keyof UserOptional<unknown>, boolean>>>({ id, includes }: { id: Id; includes?: Includes }) {
-    const user = await this.db.user.findFirst(
-      {
-        where: {
-          id,
-        },
+  async getEssentialById<
+    Includes extends Partial<Record<keyof UserOptional<unknown>, boolean>>,
+  >({ id, includes }: { id: Id; includes?: Includes }) {
+    const user = await this.db.user.findFirst({
+      where: {
+        id,
       },
-    )
-    if (user == null)
+    })
+    if (user == null) {
       return null
+    }
 
     return toUserEssential({ user, includes })
   }
 
-  async getEssential<Includes extends Partial<Record<keyof UserOptional<unknown>, boolean>>>(opt: UserDataProvider.OptType<Id, Includes>) {
+  async getEssential<
+    Includes extends Partial<Record<keyof UserOptional<unknown>, boolean>>,
+  >(opt: UserDataProvider.OptType<Id, Includes>) {
     const { handle, includes, keys } = opt
     const user = await this.db.user.findFirst(
       createUserQuery(handle, keys || ['id', 'name', 'safeName', 'email']),
     )
-    if (user == null)
+    if (user == null) {
       return null
+    }
 
     return toUserEssential({ user, includes })
   }
@@ -98,16 +105,23 @@ export default class BanchoPyUser implements UserDataProvider<Id> {
   }) {
     const start = page * perPage
     const _mode = toBanchoPyMode(mode, ruleset)
-    if (_mode === undefined)
-      throw new TRPCError({ code: 'PRECONDITION_FAILED', message: 'unsupported mode' })
+    if (_mode === undefined) {
+      throw new TRPCError({
+        code: 'PRECONDITION_FAILED',
+        message: 'unsupported mode',
+      })
+    }
 
     const orderBy: Prisma.ScoreFindManyArgs['orderBy'] = {}
-    if (rankingSystem === 'ppv2')
+    if (rankingSystem === 'ppv2') {
       orderBy.pp = 'desc'
-    else if (rankingSystem === 'rankedScore')
+    }
+    else if (rankingSystem === 'rankedScore') {
       orderBy.score = 'desc'
-    else if (rankingSystem === 'totalScore')
+    }
+    else if (rankingSystem === 'totalScore') {
       orderBy.score = 'desc'
+    }
     const scores = await this.db.score.findMany({
       where: {
         userId: id,
@@ -127,9 +141,11 @@ export default class BanchoPyUser implements UserDataProvider<Id> {
       skip: start,
       take: perPage,
     })
-    return toRankingSystemScores({ scores, rankingSystem, mode }).map(score => Object.assign(score, {
-      id: score.id.toString(),
-    }))
+    return toRankingSystemScores({ scores, rankingSystem, mode }).map(score =>
+      Object.assign(score, {
+        id: score.id.toString(),
+      }),
+    )
   }
 
   // https://github.com/prisma/prisma/issues/6570 need two separate query to get count for now
@@ -141,14 +157,7 @@ export default class BanchoPyUser implements UserDataProvider<Id> {
     page: number
     perPage: number
   }) {
-    const {
-      id,
-      mode,
-      ruleset,
-      rankingSystem,
-      page,
-      perPage,
-    } = opt
+    const { id, mode, ruleset, rankingSystem, page, perPage } = opt
 
     const start = page * perPage
 
@@ -161,7 +170,10 @@ INNER JOIN (
   SELECT s.map_md5 AS md5, MAX(s.score) AS maxScore
   FROM users u
   INNER JOIN scores s ON s.userid = u.id
-  WHERE u.priv > 2 AND s.mode = ${toBanchoPyMode(mode, ruleset)} AND s.score > 0 AND s.status >= 2
+  WHERE u.priv > 2 AND s.mode = ${toBanchoPyMode(
+    mode,
+    ruleset,
+  )} AND s.score > 0 AND s.status >= 2
   GROUP BY s.map_md5
 ) tmp ON tmp.maxScore = s2.score AND tmp.md5 = s2.map_md5
 WHERE s2.userid = ${id}
@@ -175,7 +187,10 @@ INNER JOIN (
     SELECT s.map_md5 AS md5, MAX(s.pp) AS maxPP
     FROM users AS u
     INNER JOIN scores AS s ON s.userid = u.id
-    WHERE u.priv > 2 AND s.mode = ${toBanchoPyMode(mode, ruleset)} AND s.pp > 0 AND s.status >= 2
+    WHERE u.priv > 2 AND s.mode = ${toBanchoPyMode(
+      mode,
+      ruleset,
+    )} AND s.pp > 0 AND s.status >= 2
     GROUP BY s.map_md5
 ) AS tmp ON tmp.maxPP = s2.pp AND tmp.md5 = s2.map_md5
 WHERE s2.userid = ${id}
@@ -208,19 +223,16 @@ WHERE s2.userid = ${id}
     })
     return {
       count: scoreIds.length,
-      scores: toRankingSystemScores({ scores, rankingSystem, mode }).map(score => Object.assign(score, {
-        id: score.id.toString(),
-      })),
+      scores: toRankingSystemScores({ scores, rankingSystem, mode }).map(
+        score =>
+          Object.assign(score, {
+            id: score.id.toString(),
+          }),
+      ),
     }
   }
 
-  async getStatistics({
-    id,
-    country,
-  }: {
-    id: Id
-    country: string
-  }) {
+  async getStatistics({ id, country }: { id: Id; country: string }) {
     const [results, ranks, livePPRank] = await Promise.all([
       this.db.stat.findMany({
         where: {
@@ -262,26 +274,51 @@ WHERE s2.userid = ${id}
       this.redisClient
         ? {
             osu: {
-              standard: await this.getLiveRank(id, BanchoPyMode.osuStandard, country),
+              standard: await this.getLiveRank(
+                id,
+                BanchoPyMode.osuStandard,
+                country,
+              ),
               relax: await this.getLiveRank(id, BanchoPyMode.osuRelax, country),
-              autopilot: await this.getLiveRank(id, BanchoPyMode.osuAutopilot, country),
+              autopilot: await this.getLiveRank(
+                id,
+                BanchoPyMode.osuAutopilot,
+                country,
+              ),
             },
             taiko: {
-              standard: await this.getLiveRank(id, BanchoPyMode.osuStandard, country),
+              standard: await this.getLiveRank(
+                id,
+                BanchoPyMode.osuStandard,
+                country,
+              ),
               relax: await this.getLiveRank(id, BanchoPyMode.osuRelax, country),
             },
             fruits: {
-              standard: await this.getLiveRank(id, BanchoPyMode.osuStandard, country),
+              standard: await this.getLiveRank(
+                id,
+                BanchoPyMode.osuStandard,
+                country,
+              ),
               relax: await this.getLiveRank(id, BanchoPyMode.osuRelax, country),
             },
             mania: {
-              standard: await this.getLiveRank(id, BanchoPyMode.osuStandard, country),
+              standard: await this.getLiveRank(
+                id,
+                BanchoPyMode.osuStandard,
+                country,
+              ),
             },
           }
         : undefined,
     ])
 
-    const statistics: UserStatistic<Id, Mode, Ruleset, LeaderboardRankingSystem> = {
+    const statistics: UserStatistic<
+      Id,
+      Mode,
+      Ruleset,
+      LeaderboardRankingSystem
+    > = {
       osu: {
         standard: createRulesetData({
           databaseResult: results.find(
@@ -312,7 +349,9 @@ WHERE s2.userid = ${id}
           livePPRank: livePPRank?.taiko.standard,
         }),
         relax: createRulesetData({
-          databaseResult: results.find(i => i.mode === BanchoPyMode.taikoRelax),
+          databaseResult: results.find(
+            i => i.mode === BanchoPyMode.taikoRelax,
+          ),
           ranks: ranks.find(i => i.mode === BanchoPyMode.taikoRelax),
           livePPRank: livePPRank?.taiko.relax,
         }),
@@ -346,33 +385,46 @@ WHERE s2.userid = ${id}
     return statistics
   }
 
-  async getFull<Excludes extends Partial<Record<keyof UserDataProvider.ComposableProperties<Id>, boolean>>>({ handle, excludes }: { handle: string; excludes?: Excludes }) {
-    if (!excludes)
+  async getFull<
+    Excludes extends Partial<
+      Record<keyof UserDataProvider.ComposableProperties<Id>, boolean>
+    >,
+  >({ handle, excludes }: { handle: string; excludes?: Excludes }) {
+    if (!excludes) {
       excludes = <Excludes>{ secrets: true }
+    }
     const user = await this.db.user.findFirst(createUserQuery(handle))
 
-    if (user == null)
+    if (user == null) {
       return null
+    }
 
     // type check will not find any missing params here.
-    const returnValue = <Exclude<Awaited<ReturnType<UserDataProvider<Id>['getFull']>>, null>>(await toFullUser(user))
+    const returnValue = <
+      Exclude<Awaited<ReturnType<UserDataProvider<Id>['getFull']>>, null>
+    > await toFullUser(user)
     const parallels: Promise<any>[] = []
 
     returnValue.reachable = false
     returnValue.status = 'offline'
 
     if (excludes.statistics !== true) {
-      parallels.push(this.getStatistics(user).then((res) => {
-        returnValue.statistics = res
-      }))
+      parallels.push(
+        this.getStatistics(user).then((res) => {
+          returnValue.statistics = res
+        }),
+      )
     }
     if (excludes.relationships !== true) {
-      parallels.push(this.relationships.get({ user }).then((res) => {
-        returnValue.relationships = res
-      }))
+      parallels.push(
+        this.relationships.get({ user }).then((res) => {
+          returnValue.relationships = res
+        }),
+      )
     }
-    if (excludes.email !== true)
+    if (excludes.email !== true) {
       returnValue.email = user.email
+    }
 
     if (excludes.profile !== true) {
       returnValue.profile = {
@@ -434,14 +486,14 @@ WHERE s2.userid = ${id}
       }
     }
     catch (err) {
-      throw new TRPCError({ code: 'PARSE_ERROR', message: 'unable to parse json content' })
+      throw new TRPCError({
+        code: 'PARSE_ERROR',
+        message: 'unable to parse json content',
+      })
     }
   }
 
-  async changePassword(
-    user: UserEssential<Id>,
-    newPasswordMD5: string,
-  ) {
+  async changePassword(user: UserEssential<Id>, newPasswordMD5: string) {
     const salt = await bcrypt.genSalt(11)
     const pwBcrypt = await bcrypt.hash(newPasswordMD5, salt)
     const result = await this.db.user.update({

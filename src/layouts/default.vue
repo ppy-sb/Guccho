@@ -17,9 +17,12 @@ onMounted(() => {
       </div>
       <footer class="py-4 text-center bottom-1">
         <h3 v-if="safari">
-          dev note: some visual effects are disabled for safari to improve performance.
+          dev note: some visual effects are disabled for safari to improve
+          performance.
         </h3>
-        <h1 class="text-sm font-semibold text-kimberly-900 dark:text-kimberly-100">
+        <h1
+          class="text-sm font-semibold text-kimberly-900 dark:text-kimberly-100"
+        >
           © {{ new Date().getFullYear() }} ppy.sb | Varkaria
         </h1>
         <!-- <h2 class="text-sm font-semibold font-bold text-kimberly-900 dark:text-kimberly-100">

@@ -2,16 +2,20 @@ import type { PrismaClient } from '@prisma/client' // bancho.py
 import { client as redisClient } from '../redis-client'
 import type { BanchoPyMode } from '../enums'
 import { toBanchoPyMode, toMods } from '../enums'
-import type {
-  Id,
-} from '../exports'
+import type { Id } from '../exports'
 import { toRoles, toUserEssential } from '../transforms'
 import { prismaClient } from '.'
 import { mode as _modes } from '~/types/common'
 import type { LeaderboardDataProvider } from '$def/client/leaderboard'
-import type { LeaderboardRankingSystem, Mode, RankingSystem, Ruleset } from '~/types/common'
+import type {
+  LeaderboardRankingSystem,
+  Mode,
+  RankingSystem,
+  Ruleset,
+} from '~/types/common'
 
-export default class BanchoPyLeaderboard implements LeaderboardDataProvider<Id> {
+export default class BanchoPyLeaderboard
+implements LeaderboardDataProvider<Id> {
   db: PrismaClient
   redisClient?: ReturnType<typeof redisClient>
   constructor() {
@@ -33,8 +37,9 @@ export default class BanchoPyLeaderboard implements LeaderboardDataProvider<Id> 
     page: number
     pageSize: number
   }) {
-    if (rankingSystem === 'ppv1')
+    if (rankingSystem === 'ppv1') {
       return []
+    }
     const start = page * pageSize
 
     const result = await prismaClient.$queryRawUnsafe<
@@ -53,31 +58,34 @@ export default class BanchoPyLeaderboard implements LeaderboardDataProvider<Id> 
         ppv2: number
         playCount: number
       }>
-    >(/* sql */`
+    >(/* sql */ `
   WITH ranks AS (
     SELECT
-    ${rankingSystem === 'ppv2'
+    ${
+      rankingSystem === 'ppv2'
         ? /* sql */ `
       RANK () OVER (
         PARTITION BY stat.mode
         ORDER BY stat.pp desc
       ) as _rank,`
         : ''
-      }${rankingSystem === 'totalScore'
+    }${
+      rankingSystem === 'totalScore'
         ? /* sql */ `
       RANK () OVER (
         PARTITION BY stat.mode
         ORDER BY stat.tscore desc
       ) as _rank,`
         : ''
-      }${rankingSystem === 'rankedScore'
+    }${
+      rankingSystem === 'rankedScore'
         ? /* sql */ `
       RANK () OVER (
         PARTITION BY stat.mode
         ORDER BY stat.rscore desc
       ) as _rank,`
         : ''
-      }
+    }
       user.id,
       user.name,
       user.safe_name as safeName,
@@ -120,7 +128,10 @@ export default class BanchoPyLeaderboard implements LeaderboardDataProvider<Id> 
         name: item.name,
         safeName: item.safeName,
         flag: item.flag,
-        avatarSrc: (process.env.BANCHO_PY_AVATAR_DOMAIN && `https://${process.env.BANCHO_PY_AVATAR_DOMAIN}/${item.id}`) || '',
+        avatarSrc:
+          (process.env.BANCHO_PY_AVATAR_DOMAIN
+            && `https://${process.env.BANCHO_PY_AVATAR_DOMAIN}/${item.id}`)
+          || '',
         roles: toRoles(item.priv),
       },
       inThisLeaderboard: {
@@ -134,15 +145,22 @@ export default class BanchoPyLeaderboard implements LeaderboardDataProvider<Id> 
     }))
   }
 
-  async getBeatmapLeaderboard(query: LeaderboardDataProvider.BaseQuery & { rankingSystem: RankingSystem; id: Id }) {
+  async getBeatmapLeaderboard(
+    query: LeaderboardDataProvider.BaseQuery & {
+      rankingSystem: RankingSystem
+      id: Id
+    },
+  ) {
     const { ruleset, rankingSystem, id } = query
     let { mode } = query
     if (!mode) {
       const beatmap = await this.db.map.findFirst({ where: { id } })
-      if (!beatmap)
+      if (!beatmap) {
         mode = 'osu'
-      else
+      }
+      else {
         mode = _modes[beatmap.mode]
+      }
     }
     let sort = {}
     if (rankingSystem === 'score') {
@@ -155,7 +173,9 @@ export default class BanchoPyLeaderboard implements LeaderboardDataProvider<Id> 
         pp: 'desc',
       }
     }
-    else { return [] }
+    else {
+      return []
+    }
 
     const scores = await this.db.score.findMany({
       include: {

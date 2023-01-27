@@ -3,14 +3,24 @@ import type { ComputedRef } from 'vue'
 import type { UserModeRulesetStatistics } from '~/types/statistics'
 import type { LeaderboardRankingSystem } from '~/types/common'
 
-const currentRankingSystem = inject('user.statistics') as ComputedRef<UserModeRulesetStatistics<LeaderboardRankingSystem>>
+const currentRankingSystem = inject('user.statistics') as ComputedRef<
+  UserModeRulesetStatistics<LeaderboardRankingSystem>
+>
 
 const totalCount = computed(() => {
-  return Object.values(currentRankingSystem.value.scoreRankComposition).reduce((acc, cur) => acc + cur, 0)
+  return Object.values(currentRankingSystem.value.scoreRankComposition).reduce(
+    (acc, cur) => acc + cur,
+    0,
+  )
 })
-const fmt = new Intl.NumberFormat(undefined, { style: 'percent', minimumFractionDigits: 9 })
+const fmt = new Intl.NumberFormat(undefined, {
+  style: 'percent',
+  minimumFractionDigits: 9,
+})
 const percent = (num: number) => fmt.format(num)
-const composition = computed(() => currentRankingSystem.value.scoreRankComposition)
+const composition = computed(
+  () => currentRankingSystem.value.scoreRankComposition,
+)
 
 const createStyleObject = (count: number) => ({
   width: percent(count / totalCount.value),
@@ -89,7 +99,7 @@ const createStyleObject = (count: number) => ({
 .multi-progress-bar-container {
   @apply overflow-hidden h-4 mb-4 text-xs flex rounded-xl;
   .multi-progress-bar {
-    @apply shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center
+    @apply shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center;
   }
 }
 </style>

@@ -1,5 +1,10 @@
 <script setup lang="ts">
-import { faEnvelope, faHeart, faHeartCrack, faUserGroup } from '@fortawesome/free-solid-svg-icons'
+import {
+  faEnvelope,
+  faHeart,
+  faHeartCrack,
+  faUserGroup,
+} from '@fortawesome/free-solid-svg-icons'
 import type { Ref } from 'vue'
 import { inject, ref } from 'vue'
 import { useElementHover } from '@vueuse/core'
@@ -16,19 +21,20 @@ addToLibrary(faUserGroup, faHeartCrack, faHeart, faEnvelope)
 const { $client } = useNuxtApp()
 const session = useSession()
 const changeFriendStateButton = ref(null)
-const [switcher, setSwitcher] = inject('switcher') as OverallSwitcherComposableType
+const [switcher, setSwitcher] = inject(
+  'switcher',
+) as OverallSwitcherComposableType
 const user = inject<Ref<User<string>>>('user')
-const {
-  data,
-  refresh,
-} = await useAsyncData(async () => {
+const { data, refresh } = await useAsyncData(async () => {
   if (!user?.value) {
-    return {
-    }
+    return {}
   }
-  const relationWithMe = (session.loggedIn && $client.me.relation.query({
-    target: user.value.id,
-  })) || undefined
+  const relationWithMe
+    = (session.loggedIn
+      && $client.me.relation.query({
+        target: user.value.id,
+      }))
+    || undefined
   const friendCount = $client.user.countRelations.query({
     handle: user.value.id,
     type: 'friend',
@@ -38,20 +44,30 @@ const {
     friendCount: await friendCount,
   }
 })
-const isMutualFriend = computed(() => data.value?.relationWithMe?.mutual?.includes('mutual-friend') || false)
-const isFriend = computed(() => data.value?.relationWithMe?.self.includes('friend'))
+const isMutualFriend = computed(
+  () => data.value?.relationWithMe?.mutual?.includes('mutual-friend') || false,
+)
+const isFriend = computed(() =>
+  data.value?.relationWithMe?.self.includes('friend'),
+)
 const isFriendButtonHovered = useElementHover(changeFriendStateButton)
-const friendButtonContent = computed(() => data.value?.friendCount || 'Add as friend')
+const friendButtonContent = computed(
+  () => data.value?.friendCount || 'Add as friend',
+)
 const toggleFriend = async () => {
-  if (!session.loggedIn)
+  if (!session.loggedIn) {
     return
-  if (!user?.value)
+  }
+  if (!user?.value) {
     return
+  }
   const input = { type: 'friend', target: user.value.id } as const
-  if (isFriend.value)
+  if (isFriend.value) {
     await $client.me.removeOneRelation.mutate(input)
-  else
+  }
+  else {
     await $client.me.addOneRelation.mutate(input)
+  }
 
   refresh()
 }
@@ -70,7 +86,9 @@ const toggleFriend = async () => {
       >
     </div>
     <!-- info -->
-    <div class="flex flex-col w-full pt-2 md:p-0 bg-kimberly-200 dark:bg-kimberly-700 md:bg-transparent md:grow">
+    <div
+      class="flex flex-col w-full pt-2 md:p-0 bg-kimberly-200 dark:bg-kimberly-700 md:bg-transparent md:grow"
+    >
       <div
         v-if="session.$state.userId !== user.id"
         class="container flex justify-around order-3 gap-3 pb-2 mx-auto md:order-1 md:justify-end md:pb-0"
@@ -83,7 +101,11 @@ const toggleFriend = async () => {
           @click="toggleFriend"
         >
           <font-awesome-icon
-            :icon="isFriendButtonHovered && isMutualFriend ? 'fas fa-heart-crack' : 'fas fa-heart'"
+            :icon="
+              isFriendButtonHovered && isMutualFriend
+                ? 'fas fa-heart-crack'
+                : 'fas fa-heart'
+            "
             :class="{
               'fa-bounce': isFriendButtonHovered,
             }"
@@ -120,10 +142,15 @@ const toggleFriend = async () => {
           Edit
         </t-nuxt-link-button>
       </div>
-      <div class="container mx-auto sm:order-2 sm:flex sm:gap-1 sm:items-end sm:justify-around md:justify-between md:pb-2">
+      <div
+        class="container mx-auto sm:order-2 sm:flex sm:gap-1 sm:items-end sm:justify-around md:justify-between md:pb-2"
+      >
         <div>
           <div>
-            <h1 class="text-5xl xl:text-6xl items-center md:items-left flex flex-col md:flex-row gap-1 pb-1" :class="useUserRoleColor(user)">
+            <h1
+              class="text-5xl xl:text-6xl items-center md:items-left flex flex-col md:flex-row gap-1 pb-1"
+              :class="useUserRoleColor(user)"
+            >
               {{ user.name }}
               <!-- <div class="flex flex-row gap-1 md:self-end">
                 <div
@@ -145,7 +172,11 @@ const toggleFriend = async () => {
           </div>
         </div>
         <div class="div">
-          <app-mode-switcher :model-value="switcher" class="self-end" @update:model-value="setSwitcher" />
+          <app-mode-switcher
+            :model-value="switcher"
+            class="self-end"
+            @update:model-value="setSwitcher"
+          />
         </div>
       </div>
       <div class="order-3 user-status">

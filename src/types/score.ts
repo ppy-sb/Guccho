@@ -1,8 +1,18 @@
 import type { BeatmapSource, BeatmapWithMeta, RankingStatus } from './beatmap'
-import type { Grade, LeaderboardRankingSystem, Mode, PPRankingSystem, Ruleset } from './common'
+import type {
+  Grade,
+  LeaderboardRankingSystem,
+  Mode,
+  PPRankingSystem,
+  Ruleset,
+} from './common'
 
 export type HitCount<_Mode extends Mode> = Record<
-  300 | 100 | 50 | 'miss' | (_Mode extends 'mania' ? 'max' | 200 : 'geki' | 'katu'),
+  | 300
+  | 100
+  | 50
+  | 'miss'
+  | (_Mode extends 'mania' ? 'max' | 200 : 'geki' | 'katu'),
   number
 >
 
@@ -52,10 +62,7 @@ export type StableMod = keyof typeof stableMod
 // future(lazer) proof
 export type Mod = StableMod
 
-export interface ScoreEssential<
-  ScoreId,
-  _Mode extends Mode,
-> {
+export interface ScoreEssential<ScoreId, _Mode extends Mode> {
   id: ScoreId
   playedAt: Date
   mods: Mod[]
@@ -79,10 +86,13 @@ export type RulesetScore<
   ruleset: _Ruleset
   beatmap: BeatmapWithMeta<BMSrc, Status, BeatmapId, unknown>
   scoreRank?: number
-} & Record<PPRankingSystem & PPRank, {
-  rank?: number
-  pp: number
-}>
+} & Record<
+    PPRankingSystem & PPRank,
+    {
+      rank?: number
+      pp: number
+    }
+  >
 
 export interface RankingSystemScore<
   ScoreId,

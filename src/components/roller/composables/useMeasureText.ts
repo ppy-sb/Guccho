@@ -4,7 +4,9 @@ import { onMounted, ref, watch } from 'vue'
 /**
 
  */
-export default function useMeasureText(itemElement: Ref<HTMLDivElement | null>) {
+export default function useMeasureText(
+  itemElement: Ref<HTMLDivElement | null>,
+) {
   const width = ref(0)
 
   function updateWidth() {

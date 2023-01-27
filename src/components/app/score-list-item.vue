@@ -11,7 +11,12 @@ import { assertBeatmapIsVisible } from '~/utils/map'
 import { placeholder } from '~/utils'
 const props = withDefaults(
   defineProps<{
-    score?: RankingSystemScore<unknown, unknown, Mode, LeaderboardRankingSystem>
+    score?: RankingSystemScore<
+      unknown,
+      unknown,
+      Mode,
+      LeaderboardRankingSystem
+    >
     mode: Mode
     ruleset: Ruleset
     rankingSystem: LeaderboardRankingSystem
@@ -25,32 +30,41 @@ const { addToLibrary } = useFAIconLib()
 addToLibrary(faBan)
 const numberFmt = createAddCommasFormatter()
 const beatmap = computed(() => {
-  if (!props.score)
+  if (!props.score) {
     return
-  if (!assertBeatmapIsVisible(props.score.beatmap))
+  }
+  if (!assertBeatmapIsVisible(props.score.beatmap)) {
     return
+  }
   return props.score.beatmap
 })
-const meta = computed((): {
-  artist: string
-  title: string
-} | void => {
-  if (!beatmap.value)
-    return
-  if (!assertBeatmapIsVisible(beatmap.value))
-    return
-
-  if (props.useIntl) {
-    return beatmap.value.beatmapset.meta.intl
-  }
-
-  else {
-    return {
-      artist: beatmap.value.beatmapset.meta.artist || beatmap.value.beatmapset.meta.intl.artist,
-      title: beatmap.value.beatmapset.meta.title || beatmap.value.beatmapset.meta.intl.title,
+const meta = computed(
+  (): {
+    artist: string
+    title: string
+  } | void => {
+    if (!beatmap.value) {
+      return
     }
-  }
-})
+    if (!assertBeatmapIsVisible(beatmap.value)) {
+      return
+    }
+
+    if (props.useIntl) {
+      return beatmap.value.beatmapset.meta.intl
+    }
+    else {
+      return {
+        artist:
+          beatmap.value.beatmapset.meta.artist
+          || beatmap.value.beatmapset.meta.intl.artist,
+        title:
+          beatmap.value.beatmapset.meta.title
+          || beatmap.value.beatmapset.meta.intl.title,
+      }
+    }
+  },
+)
 </script>
 
 <template>
@@ -59,9 +73,24 @@ const meta = computed((): {
     <div class="flex justify-between">
       <div class="flex min-w-0 gap-4">
         <div class="hidden md:block">
-          <VLazyImage v-if="beatmap && assertBeatmapIsVisible(beatmap) && beatmap.beatmapset.source === 'bancho'" class="object-cover w-20 h-16 rounded-xl" src-placeholder="/images/image-placeholder.svg" :src="`https://assets.ppy.sh/beatmaps/${beatmap.beatmapset.foreignId}/covers/list.jpg`" alt="list" :onerror="placeholder" />
+          <VLazyImage
+            v-if="
+              beatmap
+                && assertBeatmapIsVisible(beatmap)
+                && beatmap.beatmapset.source === 'bancho'
+            "
+            class="object-cover w-20 h-16 rounded-xl"
+            src-placeholder="/images/image-placeholder.svg"
+            :src="`https://assets.ppy.sh/beatmaps/${beatmap.beatmapset.foreignId}/covers/list.jpg`"
+            alt="list"
+            :onerror="placeholder"
+          />
           <div v-else class="w-20 h-16">
-            <font-awesome-icon icon="fa-solid fa-ban" size="4x" class="w-full" />
+            <font-awesome-icon
+              icon="fa-solid fa-ban"
+              size="4x"
+              class="w-full"
+            />
           </div>
         </div>
         <div class="flex flex-col min-w-0">
@@ -76,7 +105,11 @@ const meta = computed((): {
                   beatmap: beatmap.id,
                   mode: props.mode,
                   ruleset: props.ruleset,
-                  rank: ['totalScore', 'rankedScore'].includes(props.rankingSystem) ? 'score' : props.rankingSystem,
+                  rank: ['totalScore', 'rankedScore'].includes(
+                    props.rankingSystem,
+                  )
+                    ? 'score'
+                    : props.rankingSystem,
                 },
               }"
               class="truncate"
@@ -95,7 +128,7 @@ const meta = computed((): {
                 {{ beatmap.version }}
               </span>
               <span class="font-light">
-                {{ score.mods.join(', ') || 'NoMod' }}
+                {{ score.mods.join(", ") || "NoMod" }}
               </span>
             </div>
             <div class="flex">
@@ -111,28 +144,37 @@ const meta = computed((): {
             </div>
           </div>
           <div class="mt-auto map-date">
-            <time class="text-xs italic lg:text-sm font-extralight"> {{ score.playedAt.toLocaleDateString() }} {{
-              score.playedAt.toLocaleTimeString('en-us')
-            }} </time>
+            <time class="text-xs italic lg:text-sm font-extralight">
+              {{ score.playedAt.toLocaleDateString() }}
+              {{ score.playedAt.toLocaleTimeString("en-us") }}
+            </time>
           </div>
         </div>
       </div>
       <div class="flex gap-4">
         <div class="flex flex-col">
-          <div class="flex items-center justify-end flex-grow text-lg md:text-xl lg:text-2xl">
-            <template v-if="(ppRankingSystem as readonly string[]).includes(props.rankingSystem)">
+          <div
+            class="flex items-center justify-end flex-grow text-lg md:text-xl lg:text-2xl"
+          >
+            <template
+              v-if="(ppRankingSystem as readonly string[]).includes(props.rankingSystem)"
+            >
               <div class="font-bold font-mono">
                 {{ score.pp.toFixed(2) }}
               </div>
               <span class="font-light">pp</span>
             </template>
-            <template v-else-if="(leaderboardScoreRankingSystem as readonly string[]).includes(props.rankingSystem)">
+            <template
+              v-else-if="(leaderboardScoreRankingSystem as readonly string[]).includes(props.rankingSystem)"
+            >
               <div class="font-bold font-mono">
                 {{ numberFmt(score.score) }}
               </div>
             </template>
           </div>
-          <div class="flex mt-auto text-xs md:text-md lg:text-md whitespace-nowrap justify-end">
+          <div
+            class="flex mt-auto text-xs md:text-md lg:text-md whitespace-nowrap justify-end"
+          >
             <b class="font-mono">{{ score.accuracy.toFixed(2) }}</b>
             <div class="text-light">
               % Acc
@@ -151,9 +193,9 @@ const meta = computed((): {
 
 <style lang="scss">
 .score {
-  @apply py-2
+  @apply py-2;
 }
 .score + .score {
-  @apply border-t-2 border-kimberly-300/50
+  @apply border-t-2 border-kimberly-300/50;
 }
 </style>

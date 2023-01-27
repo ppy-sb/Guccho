@@ -1,7 +1,11 @@
 import type { HitCount } from '~/types/score'
 import type { LeaderboardRankingSystem, Mode } from '~/types/common'
 import type { UserFull } from '~/types/user'
-import type { PPRank, ScoreRank, UserModeRulesetStatistics } from '~/types/statistics'
+import type {
+  PPRank,
+  ScoreRank,
+  UserModeRulesetStatistics,
+} from '~/types/statistics'
 
 export const createISODate = (date: Date = new Date()) => date.toUTCString()
 
@@ -19,62 +23,64 @@ export const createScoreRank = (
       [createISODate(new Date('2022-01-01'))]: BigInt(1_000_000_000),
     },
   },
-): ScoreRank => JSON.parse(
-  JSON.stringify(initial),
-)
-export const createBeatmapSet = (initial = {
-  id: 1234,
-  source: 'bancho',
-  foreignId: '1122',
-  meta: {
-    artist: '名無しアーティスト',
-    title: '曲のタイトル',
-    intl: {
-      artist: 'unknown artist',
-      title: 'song title',
+): ScoreRank => JSON.parse(JSON.stringify(initial))
+export const createBeatmapSet = (
+  initial = {
+    id: 1234,
+    source: 'bancho',
+    foreignId: '1122',
+    meta: {
+      artist: '名無しアーティスト',
+      title: '曲のタイトル',
+      intl: {
+        artist: 'unknown artist',
+        title: 'song title',
+      },
     },
   },
-}) => JSON.parse(JSON.stringify(initial))
+) => JSON.parse(JSON.stringify(initial))
 
-export const createBeatmap = (initial = {
-  id: 12345,
-  foreignId: '11223',
+export const createBeatmap = (
+  initial = {
+    id: 12345,
+    foreignId: '11223',
 
-  status: 'ranked',
-  properties: {
-    bpm: 120,
-    circleSize: 9,
-    approachRate: 9,
-    accuracy: 8,
-    hpDrain: 6,
-    count: {
-      circles: 200,
-      sliders: 95,
-      spinners: 2,
+    status: 'ranked',
+    properties: {
+      bpm: 120,
+      circleSize: 9,
+      approachRate: 9,
+      accuracy: 8,
+      hpDrain: 6,
+      count: {
+        circles: 200,
+        sliders: 95,
+        spinners: 2,
+      },
     },
+    md5: 'ed390d5c6d138c4f910035d054ccffc5',
+    beatmapset: createBeatmapSet(),
   },
-  md5: 'ed390d5c6d138c4f910035d054ccffc5',
-  beatmapset: createBeatmapSet(),
-}) => JSON.parse(JSON.stringify(initial))
+) => JSON.parse(JSON.stringify(initial))
 
 export const createHitObject = <_Mode extends Mode>(mode: _Mode) =>
   mode === 'mania'
-    ? {
-      max: 0,
-      300: 0,
-      200: 0,
-      100: 0,
-      50: 0,
-      miss: 0,
-    } satisfies HitCount<'mania'>
-    : {
-      300: 0,
-      geki: 0,
-      100: 0,
-      katu: 0,
-      50: 0,
-      miss: 0,
-    } satisfies HitCount<Exclude<Mode, 'mania'>>
+    ? ({
+        max: 0,
+        300: 0,
+        200: 0,
+        100: 0,
+        50: 0,
+        miss: 0,
+      } satisfies HitCount<'mania'>)
+    : ({
+        300: 0,
+        geki: 0,
+        100: 0,
+        katu: 0,
+        50: 0,
+        miss: 0,
+      } satisfies HitCount<Exclude<Mode, 'mania'>>)
 
 export const createPPRank = (
   initial: PPRank = {
@@ -84,7 +90,10 @@ export const createPPRank = (
     // countryRankHistory: {[createISODate(new Date('2023-01-01'))]:1},
     accuracy: 0.98,
     performance: 100,
-    performanceHistory: { [createISODate(new Date('2022-01-01'))]: 0, [createISODate(new Date('2023-01-01'))]: 100 },
+    performanceHistory: {
+      [createISODate(new Date('2022-01-01'))]: 0,
+      [createISODate(new Date('2023-01-01'))]: 100,
+    },
   },
 ): PPRank => {
   const copy = JSON.parse(JSON.stringify(initial))

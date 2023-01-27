@@ -21,6 +21,4 @@ const props = defineProps<{
   </nuxt-link>
 </template>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

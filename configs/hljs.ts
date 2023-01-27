@@ -11,8 +11,9 @@ files.forEach((file) => {
   const { aliases } = module(highlight)
   const language = `#${file.slice(0, -3)}`
   hljs[language] = language
-  if (!aliases)
+  if (!aliases) {
     return
+  }
   aliases.forEach((alias: string) => {
     hljs[`#${alias}`] = language
   })

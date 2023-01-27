@@ -8,8 +8,9 @@ const session = useSession()
 const route = useRoute()
 const router = useRouter()
 
-if (session.loggedIn)
+if (session.loggedIn) {
   router.back()
+}
 
 const error = ref('')
 
@@ -31,13 +32,15 @@ const userLogin = async () => {
   try {
     const result = await session.login(login.user, login.password)
     if (result) {
-      if (route.query.redirect)
+      if (route.query.redirect) {
         await navigateTo(route.query.redirect.toString())
-
-      else if (route.query.back === '1')
+      }
+      else if (route.query.back === '1') {
         router.back()
-
-      else await navigateTo('/')
+      }
+      else {
+        await navigateTo('/')
+      }
     }
   }
   catch (_error) {
@@ -50,11 +53,17 @@ const userLogin = async () => {
 </script>
 
 <template>
-  <div class="flex items-center justify-center px-4 py-12 my-auto sm:px-6 lg:px-8">
-    <div class="relative w-full max-w-md p-6 overflow-hidden shadow-2xl space-y-8 bg-kimberly-100/80 dark:bg-kimberly-800 rounded-3xl">
+  <div
+    class="flex items-center justify-center px-4 py-12 my-auto sm:px-6 lg:px-8"
+  >
+    <div
+      class="relative w-full max-w-md p-6 overflow-hidden shadow-2xl space-y-8 bg-kimberly-100/80 dark:bg-kimberly-800 rounded-3xl"
+    >
       <fetch-overlay :fetching="fetching" />
       <div>
-        <h2 class="text-3xl text-center text-kimberly-800 dark:text-kimberly-50">
+        <h2
+          class="text-3xl text-center text-kimberly-800 dark:text-kimberly-50"
+        >
           Login
         </h2>
       </div>
@@ -65,10 +74,7 @@ const userLogin = async () => {
       >
         <div class="shadow-sm flex flex-col gap-2">
           <div>
-            <label
-              for="user"
-              class="sr-only"
-            >User / Email</label>
+            <label for="user" class="sr-only">User / Email</label>
             <input
               id="user"
               v-model="login.user"
@@ -82,10 +88,7 @@ const userLogin = async () => {
             >
           </div>
           <div>
-            <label
-              for="password"
-              class="sr-only"
-            >Password</label>
+            <label for="password" class="sr-only">Password</label>
             <input
               id="password"
               v-model="login.password"
@@ -98,10 +101,7 @@ const userLogin = async () => {
               placeholder="Password"
             >
           </div>
-          <h1
-            v-if="error"
-            class="auth-error-text"
-          >
+          <h1 v-if="error" class="auth-error-text">
             {{ error }}
           </h1>
         </div>
@@ -115,10 +115,7 @@ const userLogin = async () => {
           >
             {{ registerButton }}
           </t-nuxt-link-button>
-          <button
-            type="submit"
-            class="btn btn-primary"
-          >
+          <button type="submit" class="btn btn-primary">
             Sign in
           </button>
         </div>
@@ -129,6 +126,6 @@ const userLogin = async () => {
 
 <style lang="postcss" scoped>
 .auth-error-text {
-  @apply text-red-500 text-sm font-medium
+  @apply text-red-500 text-sm font-medium;
 }
 </style>

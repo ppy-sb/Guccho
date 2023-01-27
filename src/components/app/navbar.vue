@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { useSession } from '~/store/session'
 
-const props
-  = defineProps<{
-    disabled?: boolean
-  }>()
+const props = defineProps<{
+  disabled?: boolean
+}>()
 const session = useSession()
 
 const searchModalWrapper = ref<{
@@ -38,8 +37,9 @@ const shownMenu = reactive({
   user: false,
 })
 const handleScroll = () => {
-  if (root.value == null)
+  if (root.value == null) {
     return
+  }
 
   detached.value = window.pageYOffset > 0
 }
@@ -79,10 +79,7 @@ onUnmounted(() => {
           :distance="8"
           strategy="fixed"
         >
-          <label
-            tabindex="0"
-            class="btn btn-ghost btn-circle"
-          >
+          <label tabindex="0" class="btn btn-ghost btn-circle">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               class="w-5 h-5"
@@ -137,7 +134,10 @@ onUnmounted(() => {
         </nuxt-link>
       </div>
       <div class="navbar-end">
-        <button class="btn btn-ghost btn-circle" @click="() => searchModalWrapper?.searchModal?.openModal()">
+        <button
+          class="btn btn-ghost btn-circle"
+          @click="() => searchModalWrapper?.searchModal?.openModal()"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class="w-5 h-5"
@@ -222,10 +222,7 @@ onUnmounted(() => {
                   </nuxt-link>
                 </li>
                 <li>
-                  <a
-                    href="#"
-                    @click="logout"
-                  >log out</a>
+                  <a href="#" @click="logout">log out</a>
                 </li>
               </ul>
             </div>
@@ -239,8 +236,8 @@ onUnmounted(() => {
 <style lang="postcss">
 .navbar-tint,
 .detached > .navbar {
-    @apply bg-kimberly-150/70 dark:bg-kimberly-700/80;
-    @apply backdrop-blur-md shadow-xl;
+  @apply bg-kimberly-150/70 dark:bg-kimberly-700/80;
+  @apply backdrop-blur-md shadow-xl;
 }
 .navbar {
   @apply border-[1px] border-kimberly-50/0 dark:border-kimberly-500/0;
@@ -272,7 +269,7 @@ onUnmounted(() => {
 .detached {
   @apply px-2 pt-2;
   & .navbar {
-    @apply  border-kimberly-50/30 dark:border-kimberly-500/30;
+    @apply border-kimberly-50/30 dark:border-kimberly-500/30;
     @apply rounded-2xl;
     @apply min-h-0;
 
@@ -307,7 +304,7 @@ onUnmounted(() => {
 <style lang="postcss" scoped>
 .menus {
   .menu:last-of-type {
-    @apply rounded-b-box
+    @apply rounded-b-box;
   }
 }
 </style>

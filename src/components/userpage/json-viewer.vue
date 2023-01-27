@@ -5,10 +5,7 @@ const user = inject('user')
 </script>
 
 <template>
-  <section
-
-    class="mt-4 custom-container "
-  >
+  <section class="mt-4 custom-container">
     <JsonViewer
       :value="user"
       :expand-depth="3"

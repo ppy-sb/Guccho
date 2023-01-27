@@ -1,5 +1,9 @@
 import type { PrismaClient } from '@prisma/client' // bancho.py
-import { toBeatmapEssential, toBeatmapWithBeatmapset, toBeatmapset } from '../transforms/to-beatmapset'
+import {
+  toBeatmapEssential,
+  toBeatmapWithBeatmapset,
+  toBeatmapset,
+} from '../transforms/to-beatmapset'
 import { toRankingStatus } from '../transforms'
 import { stringToId } from '../transforms/id-conversion'
 import type { Id } from '../exports'
@@ -17,8 +21,9 @@ export default class BanchoPyMap implements MapDataProvider<Id> {
 
   async getBeatmap(query: { id: Id }) {
     const { id } = query
-    if (!id)
+    if (!id) {
       return null
+    }
     const beatmap = await this.db.map.findFirst({
       where: {
         id,
@@ -27,22 +32,25 @@ export default class BanchoPyMap implements MapDataProvider<Id> {
         source: true,
       },
     })
-    if (!beatmap)
+    if (!beatmap) {
       return null
+    }
     return toBeatmapWithBeatmapset(beatmap) || null
   }
 
   async getBeatmapset(query: { id: Id }) {
     const { id } = query
-    if (!id)
+    if (!id) {
       return null
+    }
     const source = await this.db.source.findFirst({
       where: {
         id,
       },
     })
-    if (!source)
+    if (!source) {
       return null
+    }
     const beatmaps = await this.db.map.findMany({
       where: {
         source: {
@@ -53,11 +61,13 @@ export default class BanchoPyMap implements MapDataProvider<Id> {
         diff: 'asc',
       },
     })
-    if (!beatmaps.length)
+    if (!beatmaps.length) {
       return null
+    }
     const beatmapset = toBeatmapset(source, beatmaps[0])
-    if (!beatmapset)
+    if (!beatmapset) {
       return null
+    }
 
     return Object.assign(beatmapset, {
       beatmaps: beatmaps.map(bm => ({
@@ -97,7 +107,13 @@ export default class BanchoPyMap implements MapDataProvider<Id> {
     return result.map(toBeatmapWithBeatmapset).filter(TSFilter)
   }
 
-  async searchBeatmapset({ keyword, limit }: { keyword: string; limit: number }): Promise<Beatmapset<BeatmapSource, number, unknown>[]> {
+  async searchBeatmapset({
+    keyword,
+    limit,
+  }: {
+    keyword: string
+    limit: number
+  }): Promise<Beatmapset<BeatmapSource, number, unknown>[]> {
     const idKw = stringToId(keyword)
     const beatmaps = await this.db.map.findMany({
       where: {

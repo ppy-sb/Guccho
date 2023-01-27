@@ -1,7 +1,18 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
-import type { LeaderboardRankingSystem, LeaderboardScoreRankingSystem, NumberRange, PPRankingSystem, ScoreRankingSystem } from '~/types/common'
-import { leaderboardRankingSystem, leaderboardScoreRankingSystem, mode, ruleset } from '~/types/common'
+import type {
+  LeaderboardRankingSystem,
+  LeaderboardScoreRankingSystem,
+  NumberRange,
+  PPRankingSystem,
+  ScoreRankingSystem,
+} from '~/types/common'
+import {
+  leaderboardRankingSystem,
+  leaderboardScoreRankingSystem,
+  mode,
+  ruleset,
+} from '~/types/common'
 
 import type { UserEssential } from '~/types/user'
 import type { OverallSwitcherComposableType } from '~/composables/useSwitcher'
@@ -11,11 +22,19 @@ let prevSwitcherState = {
   ...switcher,
 }
 const stabilizeScoreRank = (rankingSystem: LeaderboardRankingSystem) => {
-  if (leaderboardScoreRankingSystem.includes(rankingSystem as LeaderboardScoreRankingSystem))
+  if (
+    leaderboardScoreRankingSystem.includes(
+      rankingSystem as LeaderboardScoreRankingSystem,
+    )
+  ) {
     return 'score' as ScoreRankingSystem
+  }
   return rankingSystem as PPRankingSystem
 }
-const switchBetweenScoreRanks = () => prevSwitcherState.rankingSystem !== switcher.rankingSystem && stabilizeScoreRank(prevSwitcherState.rankingSystem) === stabilizeScoreRank(switcher.rankingSystem)
+const switchBetweenScoreRanks = () =>
+  prevSwitcherState.rankingSystem !== switcher.rankingSystem
+  && stabilizeScoreRank(prevSwitcherState.rankingSystem)
+    === stabilizeScoreRank(switcher.rankingSystem)
 const bpPage = ref<NumberRange<0, 10>>(0)
 const topPage = ref<NumberRange<0, 10>>(0)
 
@@ -26,7 +45,12 @@ const {
   refresh: refreshBP,
   pending: pendingBP,
 } = await useAsyncData(async () => {
-  if (!user.value || !switcher.mode || !switcher.ruleset || !switcher.rankingSystem) {
+  if (
+    !user.value
+    || !switcher.mode
+    || !switcher.ruleset
+    || !switcher.rankingSystem
+  ) {
     return {
       scores: [],
       handle: user.value.id,
@@ -52,21 +76,29 @@ const {
   }
 })
 watch([user, bpPage], async () => {
-  if (!user.value)
+  if (!user.value) {
     return
+  }
   await refreshBP()
 })
 
 const transition = ref<'left' | 'right'>('left')
 onMounted(() => {
-  const animationDirection = <T extends readonly any[]>(val: T[number], prevVal: T[number], array: T) => {
+  const animationDirection = <T extends readonly any[]>(
+    val: T[number],
+    prevVal: T[number],
+    array: T,
+  ) => {
     const [idx, prevIdx] = [array.indexOf(val), array.indexOf(prevVal)]
-    if (idx === prevIdx)
+    if (idx === prevIdx) {
       return
-    if (idx > prevIdx)
+    }
+    if (idx > prevIdx) {
       return 'right'
-    else
+    }
+    else {
       return 'left'
+    }
   }
 
   // transition direction
@@ -79,10 +111,18 @@ onMounted(() => {
     const sw = switcher
 
     for (const [key, switcherState] of Object.entries(sw)) {
-      const [value, previousValue] = [switcherState, prevSwitcherState[key as keyof typeof prevSwitcherState]]
-      const direction = animationDirection(value, previousValue, arrayMap[key as keyof typeof prevSwitcherState])
-      if (!direction)
+      const [value, previousValue] = [
+        switcherState,
+        prevSwitcherState[key as keyof typeof prevSwitcherState],
+      ]
+      const direction = animationDirection(
+        value,
+        previousValue,
+        arrayMap[key as keyof typeof prevSwitcherState],
+      )
+      if (!direction) {
         continue
+      }
       transition.value = direction
       break
     }
@@ -103,13 +143,15 @@ onMounted(() => {
 })
 const prevPage = (val: Ref<any>) => () => {
   transition.value = 'left'
-  if (val.value > 0)
+  if (val.value > 0) {
     val.value -= 1
+  }
 }
 const nextPage = (val: Ref<any>) => () => {
   transition.value = 'right'
-  if (val.value < 9)
+  if (val.value < 9) {
     val.value += 1
+  }
 }
 
 const prevBp = prevPage(bpPage)
@@ -124,7 +166,9 @@ const nextBp = nextPage(bpPage)
     <div class="flex flex-col gap-6">
       <section v-if="bp?.scores?.length" class="custom-container">
         <div class="card" :class="[pendingBP && 'pointer-events-none']">
-          <div class="justify-center p-1 card-title rounded-2xl bg-kimberly-300/30">
+          <div
+            class="justify-center p-1 card-title rounded-2xl bg-kimberly-300/30"
+          >
             Best Scores
           </div>
           <div
@@ -135,22 +179,50 @@ const nextBp = nextPage(bpPage)
           >
             <div class="relative">
               <transition :name="transition">
-                <ul :key="bp.lastSwitcherStatus.mode + bp.lastSwitcherStatus.ruleset + stabilizeScoreRank(bp.lastSwitcherStatus.rankingSystem) + user.id + bp.page">
-                  <li v-for="i in bp.scores" :key="`bests-${i.id}`" class="score">
-                    <app-score-list-item :score="i" :mode="bp.lastSwitcherStatus.mode" :ruleset="bp.lastSwitcherStatus.ruleset" :ranking-system="bp.lastSwitcherStatus.rankingSystem" />
+                <ul
+                  :key="
+                    bp.lastSwitcherStatus.mode
+                      + bp.lastSwitcherStatus.ruleset
+                      + stabilizeScoreRank(bp.lastSwitcherStatus.rankingSystem)
+                      + user.id
+                      + bp.page
+                  "
+                >
+                  <li
+                    v-for="i in bp.scores"
+                    :key="`bests-${i.id}`"
+                    class="score"
+                  >
+                    <app-score-list-item
+                      :score="i"
+                      :mode="bp.lastSwitcherStatus.mode"
+                      :ruleset="bp.lastSwitcherStatus.ruleset"
+                      :ranking-system="bp.lastSwitcherStatus.rankingSystem"
+                    />
                   </li>
                 </ul>
               </transition>
             </div>
           </div>
-          <div class="btn-group d-flex w-full bg-kimberly-300/30 rounded-2xl shadow-xl" style="--rounded-btn: 1rem">
-            <button class="btn btn-ghost" :disabled="bpPage === 0" @click="prevBp">
+          <div
+            class="btn-group d-flex w-full bg-kimberly-300/30 rounded-2xl shadow-xl"
+            style="--rounded-btn: 1rem"
+          >
+            <button
+              class="btn btn-ghost"
+              :disabled="bpPage === 0"
+              @click="prevBp"
+            >
               «
             </button>
             <button class="btn btn-ghost grow" @click="() => refreshBP()">
               Page {{ bpPage + 1 }}
             </button>
-            <button class="btn btn-ghost" :disabled="bp.scores.length < 10" @click="nextBp">
+            <button
+              class="btn btn-ghost"
+              :disabled="bp.scores.length < 10"
+              @click="nextBp"
+            >
               »
             </button>
           </div>
@@ -183,13 +255,13 @@ const nextBp = nextPage(bpPage)
 .left-enter-from {
   transform: translateX(-2%) translateY(1%);
 }
-.left-leave-to{
+.left-leave-to {
   transform: translateX(2%) translateY(1%);
 }
 .right-enter-from {
   transform: translateX(2%) translateY(1%);
 }
-.right-leave-to{
+.right-leave-to {
   transform: translateX(-2%) translateY(1%);
 }
 

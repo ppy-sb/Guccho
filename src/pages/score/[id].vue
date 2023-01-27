@@ -21,6 +21,4 @@ const data = await $client.score.id.query({ id })
   </div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
