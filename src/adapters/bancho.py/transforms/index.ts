@@ -5,7 +5,7 @@ import type {
   RelationshipType,
   Source,
   Stat,
-} from '@prisma/client' // bancho.py
+} from '.prisma/bancho.py'
 import type { Id } from '../exports'
 import type { BanchoPyRankedStatus } from '../enums'
 import { BanchoPyPrivilege, toBanchoRankingStatus } from '../enums'

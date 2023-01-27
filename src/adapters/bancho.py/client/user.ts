@@ -2,7 +2,7 @@ import type { JSONContent } from '@tiptap/core'
 import bcrypt from 'bcryptjs'
 import { TRPCError } from '@trpc/server'
 import { generateHTML } from '@tiptap/html'
-import type { Prisma, PrismaClient } from '@prisma/client' // bancho.py
+import type { Prisma, PrismaClient } from '.prisma/bancho.py'
 import type { Id } from '../exports'
 import { BanchoPyMode, toBanchoPyMode } from '../enums'
 import { createRulesetData, toFullUser, toUserEssential } from '../transforms'

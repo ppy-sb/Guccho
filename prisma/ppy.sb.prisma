@@ -1,7 +1,7 @@
 generator client {
   provider      = "prisma-client-js"
   binaryTargets = ["native"]
-  // output        = "../.prisma/ppy.sb"
+  output        = "../node_modules/.prisma/ppy.sb"
 }
 
 datasource db {

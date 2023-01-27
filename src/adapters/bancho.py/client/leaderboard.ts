@@ -1,4 +1,4 @@
-import type { PrismaClient } from '@prisma/client' // bancho.py
+import type { PrismaClient } from '.prisma/bancho.py'
 import { client as redisClient } from '../redis-client'
 import type { BanchoPyMode } from '../enums'
 import { toBanchoPyMode, toMods } from '../enums'

@@ -1,4 +1,4 @@
-import type { PrismaClient } from '@prisma/client' // bancho.py
+import type { PrismaClient } from '.prisma/bancho.py'
 import {
   toBeatmapEssential,
   toBeatmapWithBeatmapset,

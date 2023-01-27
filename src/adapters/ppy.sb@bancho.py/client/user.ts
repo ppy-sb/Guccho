@@ -1,7 +1,7 @@
 import type { JSONContent } from '@tiptap/core'
 import { generateHTML } from '@tiptap/html'
 import { TRPCError } from '@trpc/server'
-import type { PrismaClient } from '@prisma/client' // ppy.sb
+// import type { PrismaClient } from '.prisma/ppy.sb'
 import type { Id } from '../exports'
 import { prismaClient } from './'
 
@@ -14,11 +14,10 @@ import useEditorExtensions from '~/composables/useEditorExtensions'
 import type { UserDataProvider as Base } from '$def/client/user'
 
 export class UserDataProvider extends BanchoPyUser implements Base<Id> {
-  sbDb: PrismaClient
+  sbDb = prismaClient
 
   constructor() {
     super()
-    this.sbDb = prismaClient
   }
 
   async changeUserpage(
@@ -97,7 +96,7 @@ export class UserDataProvider extends BanchoPyUser implements Base<Id> {
     }
 
     const fullUser = await toFullUser(user)
-    const profile = await this.db.userpage.findFirst({
+    const profile = await this.sbDb.userpage.findFirst({
       where: {
         userId: user.id,
       },
