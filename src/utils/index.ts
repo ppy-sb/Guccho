@@ -1,3 +1,5 @@
+// import type { AvailableRuleset, Mode } from '~/types/common'
+// import { modeRulesetRankingSystemDef } from '~/types/defs'
 import type { BeatmapSource, Beatmapset } from '~/types/beatmap'
 
 export function assertNotReachable(..._any: never[]): never {
@@ -33,5 +35,4 @@ export function placeholder(e: Event & { target: HTMLImageElement }) {
   e.target.src = '/images/image-placeholder.svg'
 }
 
-export const TSFilter = <T>(item: T): item is Exclude<T, undefined | null> =>
-  item !== undefined && item !== null
+export const TSFilter = <T>(item: T): item is Exclude<T, undefined | null> => item !== undefined && item !== null

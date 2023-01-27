@@ -108,6 +108,7 @@ onMounted(() => {
     ruleset: rulesets,
     rankingSystem: leaderboardRankingSystems,
   } as const
+
   const computeAnimateDirection = () => {
     const sw = switcher
 

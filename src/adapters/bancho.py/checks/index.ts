@@ -1,7 +1,8 @@
-import type { LeaderboardRankingSystem, RankingSystem } from '~/types/common'
+import type { AvailableRuleset, LeaderboardRankingSystem, RankingSystem, Ruleset } from '~/types/common'
 import type {
   AssertHasOverallRankingSystem,
   AssertHasRankingSystem,
+  AssertHasRuleset,
   ServerOverallRankingSystemDef,
   ServerRankingSystemDef,
 } from '~/types/server'
@@ -46,11 +47,17 @@ const havingLeaderboardRankingSystem: ServerOverallRankingSystemDef = {
   },
 }
 
+export const assertHasRuleset: AssertHasRuleset = (ruleset, mode): ruleset is Ruleset & AvailableRuleset<typeof mode> => {
+  const mDef = havingRankingSystem[mode]
+  return ruleset in mDef
+}
+
 export const assertHasRankingSystem: AssertHasRankingSystem = (
   rankingSystem,
   { mode, ruleset },
 ): rankingSystem is RankingSystem =>
   havingRankingSystem[mode][ruleset].includes(rankingSystem as RankingSystem)
+
 export const assertHasOverallRankingSystem: AssertHasOverallRankingSystem = (
   rankingSystem,
   { mode, ruleset },

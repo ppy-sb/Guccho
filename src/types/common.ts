@@ -17,28 +17,33 @@ type ModeRulesetRankingSystemDef = typeof modeRulesetRankingSystemDef
 export type Mode = keyof ModeRulesetRankingSystemDef
 export type Ruleset = keyof U2I<ModeRulesetRankingSystemDef[Mode]>
 
-export type RulesetAvailableInMode = {
-  [R in Ruleset]: {
-    [M in keyof ModeRulesetRankingSystemDef]: ModeRulesetRankingSystemDef[M][R &
-    keyof ModeRulesetRankingSystemDef[M]] extends never
-      ? never
-      : M;
-  }[keyof ModeRulesetRankingSystemDef];
-}
-export type StandardAvailable = RulesetAvailableInMode['standard']
-export type RelaxAvailable = RulesetAvailableInMode['relax']
-export type AutopilotAvailable = RulesetAvailableInMode['autopilot']
+export type AvailableRuleset<M extends Mode> = keyof ModeRulesetRankingSystemDef[M]
+export type AvailableRankingSystem<M extends Mode, R extends Ruleset & AvailableRuleset<M>> = ModeRulesetRankingSystemDef[M][R]
+
+// export type RulesetAvailableInMode = {
+//   [R in Ruleset]: {
+//     [M in keyof ModeRulesetRankingSystemDef]: ModeRulesetRankingSystemDef[M][R &
+//     keyof ModeRulesetRankingSystemDef[M]] extends never
+//       ? never
+//       : M;
+//   }[keyof ModeRulesetRankingSystemDef];
+// }
+// export type StandardAvailable = RulesetAvailableInMode['standard']
+// export type RelaxAvailable = RulesetAvailableInMode['relax']
+// export type AutopilotAvailable = RulesetAvailableInMode['autopilot']
+export type AllRankingSystemDefs = ModeRulesetRankingSystemDef[Mode][keyof ModeRulesetRankingSystemDef[Mode]]
 
 export type PPRankingSystem =
-  ModeRulesetRankingSystemDef[Mode][keyof ModeRulesetRankingSystemDef[Mode]]['rankingSystem']['ppRankingSystem'][number]
+  AllRankingSystemDefs['rankingSystem']['ppRankingSystem'][number]
 export type ScoreRankingSystem =
-  ModeRulesetRankingSystemDef[Mode][keyof ModeRulesetRankingSystemDef[Mode]]['rankingSystem']['scoreRankingSystem'][number]
+  AllRankingSystemDefs['rankingSystem']['scoreRankingSystem'][number]
 export type RankingSystem = PPRankingSystem | ScoreRankingSystem
 
 export type LeaderboardPPRankingSystem =
-  ModeRulesetRankingSystemDef[Mode][keyof ModeRulesetRankingSystemDef[Mode]]['leaderboardRankingSystem']['ppRankingSystem'][number]
+  AllRankingSystemDefs['leaderboardRankingSystem']['ppRankingSystem'][number]
 export type LeaderboardScoreRankingSystem =
-  ModeRulesetRankingSystemDef[Mode][keyof ModeRulesetRankingSystemDef[Mode]]['leaderboardRankingSystem']['scoreRankingSystem'][number]
+  AllRankingSystemDefs['leaderboardRankingSystem']['scoreRankingSystem'][number]
+
 export type LeaderboardRankingSystem =
   | LeaderboardPPRankingSystem
   | LeaderboardScoreRankingSystem
@@ -64,8 +69,3 @@ export type ServerConfig<
     name: string
   }
 >
-// export type AutoAvailable<_Ruleset extends Ruleset> = {
-//   'standard': StandardAvailable
-//   'relax': RelaxAvailable
-//   'autopilot': AutopilotAvailable
-// }[_Ruleset]

@@ -14,6 +14,7 @@ import type { NumberRange } from '~/types/common'
 import { followUserSettings } from '~/server/transforms'
 import { UserDataProvider, UserRelationshipDataProvider } from '$active/client'
 import { idToString } from '$active/exports'
+import { assertHasRuleset } from '~~/src/adapters/bancho.py/checks'
 
 const [userProvider, userRelationshipProvider] = [
   new UserDataProvider(),
@@ -80,7 +81,7 @@ export const router = _router({
       }
 
       const { mode, ruleset, rankingSystem } = input
-      if (!assertHasOverallRankingSystem(rankingSystem, { mode, ruleset })) {
+      if (!assertHasRuleset(ruleset, mode) || !assertHasOverallRankingSystem(rankingSystem, { mode, ruleset })) {
         throw new TRPCError({
           code: 'PRECONDITION_FAILED',
           message: 'ranking system not supported',
@@ -117,7 +118,7 @@ export const router = _router({
       }
 
       const { mode, ruleset, rankingSystem } = input
-      if (!assertHasOverallRankingSystem(rankingSystem, { mode, ruleset })) {
+      if (!assertHasRuleset(ruleset, mode) || !assertHasOverallRankingSystem(rankingSystem, { mode, ruleset })) {
         throw new TRPCError({
           code: 'PRECONDITION_FAILED',
           message: 'ranking system not supported',
