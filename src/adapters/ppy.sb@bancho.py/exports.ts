@@ -1,7 +1,4 @@
-export type {
-  Id,
-  ScoreId,
-} from '../bancho.py/exports'
+export type { Id, ScoreId } from '../bancho.py/exports'
 export {
   modes,
   rulesets,

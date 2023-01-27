@@ -8,7 +8,12 @@ import useReloadAnimation from './useReloadAnimation'
  * @param charSet A set of target values, rolled according to the order of the list
  * @param duration animation duration
  */
-export default function useAnimationManager(char: Ref<string>, defaultChar: Ref<string>, charSet: Ref<string[]>, duration: Ref<number>) {
+export default function useAnimationManager(
+  char: Ref<string>,
+  defaultChar: Ref<string>,
+  charSet: Ref<string[]>,
+  duration: Ref<number>,
+) {
   const targetIdx = computed(() => charSet.value.indexOf(char.value)) // Target index in charSet
   const prevTargetIdx = ref(charSet.value.indexOf(defaultChar.value)) // Target index in charSet just before
 

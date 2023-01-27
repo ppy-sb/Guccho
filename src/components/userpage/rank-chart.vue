@@ -10,11 +10,21 @@ import type { BaseRank } from '~/types/statistics'
 
 // import 'chart.js/auto/auto.js'
 
-const hsl = ([h, s, l]: [any, any, any], a: any) => `hsl(${h} ${s}% ${l}% / ${a}%)`
+const hsl = ([h, s, l]: [any, any, any], a: any) =>
+  `hsl(${h} ${s}% ${l}% / ${a}%)`
 const gRankFill = hsl(hsvRaw.wewak[500], 20)
 const cRankFill = hsl(hsvRaw.kimberly[500], 30)
 
-const chars = [' ', ...[...Array(10).keys()].map(String), ',', '#', 'N', '/', 'A', 'a']
+const chars = [
+  ' ',
+  ...[...Array(10).keys()].map(String),
+  ',',
+  '#',
+  'N',
+  '/',
+  'A',
+  'a',
+]
 
 const update = ref(0)
 
@@ -54,15 +64,9 @@ const countryRank = {
 
 <template>
   <ClientOnly v-if="currentRankingSystem">
-    <section
-      class="container mx-auto custom-container"
-      v-bind="$attrs"
-    >
+    <section class="container mx-auto custom-container" v-bind="$attrs">
       <div class="atropos-wrap">
-        <Atropos
-          class="my-atropos"
-          :shadow-offset="-3"
-        >
+        <Atropos class="my-atropos" :shadow-offset="-3">
           <div
             data-atropos-offset="0"
             class="relative w-full h-full atropos-bg"
@@ -71,7 +75,13 @@ const countryRank = {
             v-if="currentRankingSystem.rankHistory"
             data-atropos-offset="-3"
             :chart-data="countryRank"
-            style="max-width: 106% !important; height: 320px; top: 10px; left: -3%; right: -3%"
+            style="
+              max-width: 106% !important;
+              height: 320px;
+              top: 10px;
+              left: -3%;
+              right: -3%;
+            "
             class="!absolute -z-10"
             :options="userpageLineChartOptions"
           />
@@ -88,7 +98,13 @@ const countryRank = {
             v-if="currentRankingSystem.countryRankHistory"
             data-atropos-offset="3"
             :chart-data="globalRank"
-            style="height: 340px; max-width: 112% !important; top: 20px; left: -6%; right: -6%"
+            style="
+              height: 340px;
+              max-width: 112% !important;
+              top: 20px;
+              left: -6%;
+              right: -6%;
+            "
             class="!absolute z-10"
             :options="userpageLineChartOptions"
           />
@@ -101,10 +117,7 @@ const countryRank = {
               country rank history is not available
             </div>
           </div>
-          <div
-            data-atropos-offset="5"
-            class="absolute top-0 w-full h-full"
-          >
+          <div data-atropos-offset="5" class="absolute top-0 w-full h-full">
             <dl class="z-20 flex w-full h-full">
               <div class="w-1/4" />
               <div class="flex flex-col">
@@ -115,7 +128,13 @@ const countryRank = {
                 <dd class="self-end text-5xl">
                   <Roller
                     :char-set="chars"
-                    :value="update ? `#${Intl.NumberFormat().format(currentRankingSystem.rank || 0)}` : ' '"
+                    :value="
+                      update
+                        ? `#${Intl.NumberFormat().format(
+                          currentRankingSystem.rank || 0,
+                        )}`
+                        : ' '
+                    "
                   />
                 </dd>
               </div>
@@ -136,7 +155,13 @@ const countryRank = {
                 <dd class="ml-20 text-3xl">
                   <Roller
                     :char-set="chars"
-                    :value="update ? `#${Intl.NumberFormat().format(currentRankingSystem.countryRank)}` : ' '"
+                    :value="
+                      update
+                        ? `#${Intl.NumberFormat().format(
+                          currentRankingSystem.countryRank,
+                        )}`
+                        : ' '
+                    "
                   />
                 </dd>
               </div>
@@ -164,11 +189,11 @@ const countryRank = {
   @apply sm:overflow-visible sm:mx-auto;
 
   .atropos-bg {
-    @apply rounded-2xl
+    @apply rounded-2xl;
   }
 
   .atropos-inner {
-    @apply sm:rounded-2xl sm:overflow-hidden !important
+    @apply sm:rounded-2xl sm:overflow-hidden !important;
   }
 
   .atropos-shadow {
@@ -177,7 +202,7 @@ const countryRank = {
     /* height: 102%; */
     /* left: -1%; */
     /* top: -1%; */
-    filter: blur(40px) saturate(0.7) opacity(0.2) !important
+    filter: blur(40px) saturate(0.7) opacity(0.2) !important;
   }
 }
 </style>

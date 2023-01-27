@@ -1,6 +1,11 @@
 import { forbiddenMode, forbiddenMods } from '../common/varkaUtils'
 import useAdapterConfig from './useAdapterConfig'
-import type { LeaderboardRankingSystem, Mode, RankingSystem, Ruleset } from '~/types/common'
+import type {
+  LeaderboardRankingSystem,
+  Mode,
+  RankingSystem,
+  Ruleset,
+} from '~/types/common'
 
 export interface SwitcherPropType<TRS> {
   mode?: Mode
@@ -8,9 +13,12 @@ export interface SwitcherPropType<TRS> {
   rankingSystem?: TRS
 }
 
-export function useOverallSwitcher(initial?: SwitcherPropType<LeaderboardRankingSystem>) {
+export function useOverallSwitcher(
+  initial?: SwitcherPropType<LeaderboardRankingSystem>,
+) {
   const { mode, ruleset, rankingSystem } = initial || {}
-  const { supportedModes, supportedRulesets, assertHasOverallRankingSystem } = useAdapterConfig()
+  const { supportedModes, supportedRulesets, assertHasOverallRankingSystem }
+    = useAdapterConfig()
   const data = reactive({
     mode: mode || supportedModes[0],
     ruleset: ruleset || supportedRulesets[0],
@@ -18,21 +26,45 @@ export function useOverallSwitcher(initial?: SwitcherPropType<LeaderboardRanking
   })
   return [
     data,
-    function setSwitcher({ mode, ruleset, rankingSystem }: SwitcherPropType<LeaderboardRankingSystem>) {
-      if (mode && supportedModes.includes(mode) && !forbiddenMode(ruleset || data.ruleset, mode))
+    function setSwitcher({
+      mode,
+      ruleset,
+      rankingSystem,
+    }: SwitcherPropType<LeaderboardRankingSystem>) {
+      if (
+        mode
+        && supportedModes.includes(mode)
+        && !forbiddenMode(ruleset || data.ruleset, mode)
+      ) {
         data.mode = mode
-      if (ruleset && supportedRulesets.includes(ruleset) && !forbiddenMods(mode || data.mode, ruleset))
+      }
+      if (
+        ruleset
+        && supportedRulesets.includes(ruleset)
+        && !forbiddenMods(mode || data.mode, ruleset)
+      ) {
         data.ruleset = ruleset
-      if (rankingSystem && assertHasOverallRankingSystem(rankingSystem, { mode: data.mode, ruleset: data.ruleset }))
+      }
+      if (
+        rankingSystem
+        && assertHasOverallRankingSystem(rankingSystem, {
+          mode: data.mode,
+          ruleset: data.ruleset,
+        })
+      ) {
         data.rankingSystem = rankingSystem
+      }
     },
   ] as const
 }
-export type OverallSwitcherComposableType = ReturnType<typeof useOverallSwitcher>
+export type OverallSwitcherComposableType = ReturnType<
+  typeof useOverallSwitcher
+>
 
 export function useSwitcher(initial?: SwitcherPropType<RankingSystem>) {
   const { mode, ruleset, rankingSystem } = initial || {}
-  const { supportedModes, supportedRulesets, assertHasRankingSystem } = useAdapterConfig()
+  const { supportedModes, supportedRulesets, assertHasRankingSystem }
+    = useAdapterConfig()
   const data = reactive({
     mode: mode || supportedModes[0],
     ruleset: ruleset || supportedRulesets[0],
@@ -40,13 +72,34 @@ export function useSwitcher(initial?: SwitcherPropType<RankingSystem>) {
   })
   return [
     data,
-    function setSwitcher({ mode, ruleset, rankingSystem }: SwitcherPropType<RankingSystem>) {
-      if (mode && supportedModes.includes(mode) && !forbiddenMode(ruleset || data.ruleset, mode))
+    function setSwitcher({
+      mode,
+      ruleset,
+      rankingSystem,
+    }: SwitcherPropType<RankingSystem>) {
+      if (
+        mode
+        && supportedModes.includes(mode)
+        && !forbiddenMode(ruleset || data.ruleset, mode)
+      ) {
         data.mode = mode
-      if (ruleset && supportedRulesets.includes(ruleset) && !forbiddenMods(mode || data.mode, ruleset))
+      }
+      if (
+        ruleset
+        && supportedRulesets.includes(ruleset)
+        && !forbiddenMods(mode || data.mode, ruleset)
+      ) {
         data.ruleset = ruleset
-      if (rankingSystem && assertHasRankingSystem(rankingSystem, { mode: data.mode, ruleset: data.ruleset }))
+      }
+      if (
+        rankingSystem
+        && assertHasRankingSystem(rankingSystem, {
+          mode: data.mode,
+          ruleset: data.ruleset,
+        })
+      ) {
         data.rankingSystem = rankingSystem
+      }
     },
   ] as const
 }

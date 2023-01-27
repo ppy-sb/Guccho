@@ -7,9 +7,7 @@ import { createRulesetData } from '~/adapters/bancho.py/transforms'
 import type { UserDataProvider as Base } from '$def/client/user'
 import type { LeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
 
-import type {
-  UserStatistic,
-} from '~/types/user'
+import type { UserStatistic } from '~/types/user'
 
 import { UserDataProvider as BanchoPyUser } from '~/adapters/bancho.py/client'
 
@@ -21,13 +19,7 @@ export class UserDataProvider extends BanchoPyUser implements Base<Id> {
     this.sbDb = prismaClient
   }
 
-  async getStatistics({
-    id,
-    country,
-  }: {
-    id: Id
-    country: string
-  }) {
+  async getStatistics({ id, country }: { id: Id; country: string }) {
     const [results, ranks, livePPRank] = await Promise.all([
       this.db.stat.findMany({
         where: {
@@ -81,26 +73,51 @@ WHERE id = ${id}
       this.redisClient
         ? {
             osu: {
-              standard: await this.getLiveRank(id, BanchoPyMode.osuStandard, country),
+              standard: await this.getLiveRank(
+                id,
+                BanchoPyMode.osuStandard,
+                country,
+              ),
               relax: await this.getLiveRank(id, BanchoPyMode.osuRelax, country),
-              autopilot: await this.getLiveRank(id, BanchoPyMode.osuAutopilot, country),
+              autopilot: await this.getLiveRank(
+                id,
+                BanchoPyMode.osuAutopilot,
+                country,
+              ),
             },
             taiko: {
-              standard: await this.getLiveRank(id, BanchoPyMode.osuStandard, country),
+              standard: await this.getLiveRank(
+                id,
+                BanchoPyMode.osuStandard,
+                country,
+              ),
               relax: await this.getLiveRank(id, BanchoPyMode.osuRelax, country),
             },
             fruits: {
-              standard: await this.getLiveRank(id, BanchoPyMode.osuStandard, country),
+              standard: await this.getLiveRank(
+                id,
+                BanchoPyMode.osuStandard,
+                country,
+              ),
               relax: await this.getLiveRank(id, BanchoPyMode.osuRelax, country),
             },
             mania: {
-              standard: await this.getLiveRank(id, BanchoPyMode.osuStandard, country),
+              standard: await this.getLiveRank(
+                id,
+                BanchoPyMode.osuStandard,
+                country,
+              ),
             },
           }
         : undefined,
     ])
 
-    const statistics: UserStatistic<Id, Mode, Ruleset, LeaderboardRankingSystem> = {
+    const statistics: UserStatistic<
+      Id,
+      Mode,
+      Ruleset,
+      LeaderboardRankingSystem
+    > = {
       osu: {
         standard: createRulesetData({
           databaseResult: results.find(
@@ -131,7 +148,9 @@ WHERE id = ${id}
           livePPRank: livePPRank?.taiko.standard,
         }),
         relax: createRulesetData({
-          databaseResult: results.find(i => i.mode === BanchoPyMode.taikoRelax),
+          databaseResult: results.find(
+            i => i.mode === BanchoPyMode.taikoRelax,
+          ),
           ranks: ranks.find(i => i.mode === BanchoPyMode.taikoRelax),
           livePPRank: livePPRank?.taiko.relax,
         }),

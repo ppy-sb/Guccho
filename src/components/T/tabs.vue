@@ -18,10 +18,7 @@ provide('disabled', disabled)
 </script>
 
 <template>
-  <div
-    class="tabs"
-    :class="[props.variant === 'boxed' && 'tabs-boxed']"
-  >
+  <div class="tabs" :class="[props.variant === 'boxed' && 'tabs-boxed']">
     <slot v-bind="{ disabled, select }" />
   </div>
 </template>

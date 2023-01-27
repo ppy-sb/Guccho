@@ -3,19 +3,22 @@ import type { JSONContent } from '@tiptap/vue-3'
 import { EditorContent } from '@tiptap/vue-3'
 import '@/assets/styles/typography.scss'
 import type { Ref } from 'vue'
-const user = inject<Ref<{
-  id: unknown
-  profile: {
-    html: string
-    raw: JSONContent
-  }
-}>>('user')
+const user = inject<
+  Ref<{
+    id: unknown
+    profile: {
+      html: string
+      raw: JSONContent
+    }
+  }>
+>('user')
 const clientTakeover = ref(false)
 const { editor } = useEditor()
 const { parseAndImportHighlightLibFromHtml } = useEditorLazyLoadHighlight()
 onMounted(async () => {
-  if (!user)
+  if (!user) {
     return
+  }
   if (user.value.profile) {
     await parseAndImportHighlightLibFromHtml(user.value.profile.html)
     editor.value?.setEditable(false)
@@ -26,12 +29,12 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div v-if="user?.profile.html" class="container mx-auto mt-4 custom-container">
-    <client-only v-if="(clientTakeover && user?.profile)">
-      <EditorContent
-        class="custom-typography"
-        :editor="editor"
-      />
+  <div
+    v-if="user?.profile.html"
+    class="container mx-auto mt-4 custom-container"
+  >
+    <client-only v-if="clientTakeover && user?.profile">
+      <EditorContent class="custom-typography" :editor="editor" />
     </client-only>
     <!-- eslint-disable-next-line vue/no-v-html -->
     <div
@@ -42,6 +45,4 @@ onMounted(async () => {
   </div>
 </template>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

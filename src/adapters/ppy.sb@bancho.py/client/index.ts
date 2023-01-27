@@ -1,6 +1,4 @@
-import {
-  PrismaClient,
-} from '@prisma/client' // ppy.sb
+import { PrismaClient } from '@prisma/client' // ppy.sb
 import * as Parent from '~/adapters/bancho.py@mysql5.7/client'
 
 export const prismaClient = new PrismaClient()

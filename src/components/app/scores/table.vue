@@ -1,13 +1,19 @@
 <script setup lang="ts">
 import type { RankingSystem } from '~/types/common'
-import { createAddCommasFormatter, createPPFormatter } from '~/common/varkaUtils'
+import {
+  createAddCommasFormatter,
+  createPPFormatter,
+} from '~/common/varkaUtils'
 import type { BeatmapLeaderboard } from '~/types/leaderboard'
-const props = withDefaults(defineProps<{
-  scores: BeatmapLeaderboard<string>[]
-  rankingSystem: RankingSystem
-}>(), {
-  rankingSystem: 'ppv2',
-})
+const props = withDefaults(
+  defineProps<{
+    scores: BeatmapLeaderboard<string>[]
+    rankingSystem: RankingSystem
+  }>(),
+  {
+    rankingSystem: 'ppv2',
+  },
+)
 const comma = createAddCommasFormatter()
 const pp = createPPFormatter()
 </script>
@@ -16,9 +22,7 @@ const pp = createPPFormatter()
   <table class="table table-compact table-zebra">
     <thead>
       <tr>
-        <th>
-          Player
-        </th>
+        <th>Player</th>
         <th class="text-right">
           Rank
         </th>
@@ -53,7 +57,13 @@ const pp = createPPFormatter()
                   width="30"
                 >
               </div>
-              <nuxt-link :to="{ name: 'user-handle', params: { handle: item.user.safeName } }" :class="useUserRoleColor(item.user)">
+              <nuxt-link
+                :to="{
+                  name: 'user-handle',
+                  params: { handle: item.user.safeName },
+                }"
+                :class="useUserRoleColor(item.user)"
+              >
                 {{ item.user.name }}
               </nuxt-link>
             </div>
@@ -62,7 +72,7 @@ const pp = createPPFormatter()
             #{{ index + 1 }}
           </td>
           <td class="text-right font-mono">
-            {{ item.score.mods.join(' ') }}
+            {{ item.score.mods.join(" ") }}
           </td>
           <td class="text-right font-mono">
             {{ comma(item.score.score) }}
@@ -102,6 +112,4 @@ const pp = createPPFormatter()
   </table>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

@@ -26,15 +26,17 @@ let modalClosedCallback = () => {}
 
 const outerL2 = inject<typeof l2 | undefined>('openL2', undefined)
 const openModal = (cb?: () => void) => {
-  if (outerL2)
+  if (outerL2) {
     outerL2('show')
+  }
 
   stat.value = 'show'
   modalShownCallback = cb ?? modalShownCallback
 }
 const closeModal = (cb?: () => void) => {
-  if (outerL2)
+  if (outerL2) {
     outerL2('closed')
+  }
 
   stat.value = 'closed'
   modalClosedCallback = cb ?? modalClosedCallback
@@ -49,15 +51,18 @@ provide('openL2', l2)
 onMounted(() => {
   content.value.addEventListener('animationend', (e: AnimationEvent) => {
     if (e.animationName === 'zoomInContent') {
-      if (e.srcElement !== content.value)
+      if (e.srcElement !== content.value) {
         return
+      }
 
       nextTick(() => {
-        if (stat.value !== 'hidden')
+        if (stat.value !== 'hidden') {
           stat.value = 'hidden'
+        }
         if (outerL2 == null) {
-          if (l2Status.value !== 'hidden')
+          if (l2Status.value !== 'hidden') {
             l2Status.value = 'hidden'
+          }
         }
 
         modalClosedCallback()
@@ -84,28 +89,19 @@ defineExpose({
     :data-l2-status="l2Status"
   >
     <div class="zoom-modal-background">
-      <slot
-        name="modal"
-        v-bind="{ openModal, closeModal }"
-      >
-        <div
-          v-if="props.teleportId"
-          :id="props.teleportId.toString()"
-        />
+      <slot name="modal" v-bind="{ openModal, closeModal }">
+        <div v-if="props.teleportId" :id="props.teleportId.toString()" />
       </slot>
     </div>
 
-    <div
-      ref="content"
-      class="content notify-safari-something-will-change"
-    >
+    <div ref="content" class="content notify-safari-something-will-change">
       <slot v-bind="{ openModal, closeModal }" />
     </div>
   </div>
 </template>
 
 <style lang="scss">
-@import './shared.scss';
+@import "./shared.scss";
 $content-stage1: blur(0.3em) opacity(0.4) saturate(0.7);
 $content-stage2: blur(1em) opacity(0.2) saturate(0.3);
 
@@ -168,7 +164,6 @@ $scale2: scale(0.95);
       animation: zoomInContent $duration $animate-function forwards;
     }
   }
-
 }
 
 @keyframes zoomOutContent {

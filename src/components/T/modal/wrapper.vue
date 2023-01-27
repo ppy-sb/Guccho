@@ -26,11 +26,7 @@ defineExpose({
 </script>
 
 <template>
-  <div
-    ref="wrapper"
-    class="zoom-modal-wrapper"
-    :data-wrapper-status="stat"
-  >
+  <div ref="wrapper" class="zoom-modal-wrapper" :data-wrapper-status="stat">
     <div class="zoom-modal">
       <slot v-bind="{ openModal, closeModal }" />
     </div>
@@ -60,7 +56,7 @@ defineExpose({
 </style>
 
 <style lang="scss">
-@import './shared.scss';
+@import "./shared.scss";
 
 $in: blur(16px) opacity(0) saturate(0.5);
 $scale: scale(1.1);
@@ -75,18 +71,17 @@ $scale: scale(1.1);
     visibility: hidden;
     z-index: 0;
     pointer-events: none;
-
   }
   &[data-wrapper-status="show"] {
     z-index: 50;
 
-    >.zoom-modal {
+    > .zoom-modal {
       animation: zoomIn $duration $animate-function forwards;
     }
   }
 
-  &[data-wrapper-status="closed"]{
-    >.zoom-modal {
+  &[data-wrapper-status="closed"] {
+    > .zoom-modal {
       animation: zoomOut $duration $animate-function forwards;
     }
   }

@@ -4,7 +4,10 @@ import { nextTick, onMounted, ref, watch } from 'vue'
 /**
 
  */
-export default function useSelectElement(itemElements: Ref<HTMLDivElement[]>, targetIdx: Ref<number>) {
+export default function useSelectElement(
+  itemElements: Ref<HTMLDivElement[]>,
+  targetIdx: Ref<number>,
+) {
   const itemElement: Ref<HTMLDivElement | null> = ref(null)
 
   function updateItemElement() {

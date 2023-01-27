@@ -7,24 +7,13 @@ const showJSON = ref(false)
 
 <template>
   <div class="container mx-auto">
-    <lazy-editor
-      v-model.lazy="html"
-      class="safari-performance-boost"
-    />
+    <lazy-editor v-model.lazy="html" class="safari-performance-boost" />
 
     <div class="py-4">
-      <t-button
-        v-if="!showJSON"
-        variant="primary"
-        @click="showJSON = true"
-      >
+      <t-button v-if="!showJSON" variant="primary" @click="showJSON = true">
         show json
       </t-button>
-      <t-button
-        v-if="showJSON"
-        variant="primary"
-        @click="showJSON = false"
-      >
+      <t-button v-if="showJSON" variant="primary" @click="showJSON = false">
         hide json
       </t-button>
     </div>
@@ -43,7 +32,7 @@ const showJSON = ref(false)
 .safari .safari-performance-boost {
   @apply max-h-80;
   .editor__content {
-    @apply overflow-y-auto
+    @apply overflow-y-auto;
   }
 }
 </style>

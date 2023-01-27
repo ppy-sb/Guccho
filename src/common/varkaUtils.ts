@@ -10,14 +10,24 @@ export function getFlagURL(flag: string) {
   return url
 }
 
-export function createScoreFormatter(opt: Intl.NumberFormatOptions = { notation: 'compact', maximumFractionDigits: 2 }) {
+export function createScoreFormatter(
+  opt: Intl.NumberFormatOptions = {
+    notation: 'compact',
+    maximumFractionDigits: 2,
+  },
+) {
   const fmt = Intl.NumberFormat('en-US', opt)
   return function scoreFormat(score: bigint | number) {
     return fmt.format(score)
   }
 }
 
-export function createPPFormatter(opt: Intl.NumberFormatOptions = { maximumFractionDigits: 2, minimumFractionDigits: 2 }) {
+export function createPPFormatter(
+  opt: Intl.NumberFormatOptions = {
+    maximumFractionDigits: 2,
+    minimumFractionDigits: 2,
+  },
+) {
   const fmt = Intl.NumberFormat('en-US', opt)
   return function scoreFormat(score: bigint | number) {
     return fmt.format(score)
@@ -32,26 +42,34 @@ export function createAddCommasFormatter() {
 }
 
 export function forbiddenMode(ruleset: Ruleset, mode: Mode) {
-  if (ruleset === 'relax' && mode === 'mania')
+  if (ruleset === 'relax' && mode === 'mania') {
     return true
-  else if (ruleset === 'autopilot' && mode !== 'osu')
+  }
+  else if (ruleset === 'autopilot' && mode !== 'osu') {
     return true
-  else return false
+  }
+  else {
+    return false
+  }
 }
 
 export function forbiddenMods(mode: Mode, ruleset: Ruleset) {
-  if (mode === 'mania' && ruleset === 'relax')
+  if (mode === 'mania' && ruleset === 'relax') {
     return true
-  else if (mode !== 'osu' && ruleset === 'autopilot')
+  }
+  else if (mode !== 'osu' && ruleset === 'autopilot') {
     return true
-  else return false
+  }
+  else {
+    return false
+  }
 }
 
 export function toDuration(duration: Date, startsFrom: Date = new Date(0)) {
   const sec_num = (duration.getTime() - startsFrom.getTime()) / 1000
   const hours = Math.floor(sec_num / 3600)
-  const minutes = Math.floor((sec_num - (hours * 3600)) / 60)
-  const seconds = sec_num - (hours * 3600) - (minutes * 60)
+  const minutes = Math.floor((sec_num - hours * 3600) / 60)
+  const seconds = sec_num - hours * 3600 - minutes * 60
 
   return {
     hours,

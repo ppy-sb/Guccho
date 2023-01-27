@@ -17,8 +17,15 @@ const current = inject<Ref<unknown>>('current')
 const clickTab = inject<(value: unknown) => void>('select')
 const disabledSymbol = inject('disabled')
 
-const disabled = computed(() => (props.value === disabledSymbol) || props.disabled === '' || props.disabled === true)
-const active = computed(() => !disabled.value && current?.value === props.value)
+const disabled = computed(
+  () =>
+    props.value === disabledSymbol
+    || props.disabled === ''
+    || props.disabled === true,
+)
+const active = computed(
+  () => !disabled.value && current?.value === props.value,
+)
 </script>
 
 <template>

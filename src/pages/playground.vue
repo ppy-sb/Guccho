@@ -27,7 +27,7 @@ definePageMeta({
           class="tab-lg"
           @click="navigateTo(route)"
         >
-          {{ route.name.split('-').slice(1).join('-') }}
+          {{ route.name.split("-").slice(1).join("-") }}
         </t-tab>
       </t-tabs>
     </section>
@@ -35,5 +35,4 @@ definePageMeta({
   </div>
 </template>
 
-<style lang="postcss" scoped>
-</style>
+<style lang="postcss" scoped></style>

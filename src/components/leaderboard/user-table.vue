@@ -1,5 +1,9 @@
 <script lang="ts" setup>
-import { createAddCommasFormatter, createScoreFormatter, getFlagURL } from '~/common/varkaUtils'
+import {
+  createAddCommasFormatter,
+  createScoreFormatter,
+  getFlagURL,
+} from '~/common/varkaUtils'
 import type { LeaderboardRankingSystem } from '~/types/common'
 import type { ComponentLeaderboard, Leaderboard } from '~/types/leaderboard'
 const props = defineProps<{
@@ -27,10 +31,7 @@ const formatter = new Intl.NumberFormat(undefined, option)
     <th>
       <div class="flex items-center">
         <div class="flex-shrink-0">
-          <img
-            class="w-auto h-6"
-            :src="getFlagURL(props.user.flag)"
-          >
+          <img class="w-auto h-6" :src="getFlagURL(props.user.flag)">
         </div>
       </div>
     </th>
@@ -44,7 +45,10 @@ const formatter = new Intl.NumberFormat(undefined, option)
             width="30"
           >
         </div>
-        <nuxt-link :to="{ name: 'user-handle', params: { handle: `@${user.safeName}` } }" :class="useUserRoleColor(user)">
+        <nuxt-link
+          :to="{ name: 'user-handle', params: { handle: `@${user.safeName}` } }"
+          :class="useUserRoleColor(user)"
+        >
           {{ user.name }}
         </nuxt-link>
       </div>

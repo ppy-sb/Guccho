@@ -14,8 +14,9 @@ if (!session.$state.loggedIn) {
 }
 const relations = await $client.me.relations.query()
 
-if (!relations)
+if (!relations) {
   throw new Error('user not exists')
+}
 
 const errorMessage = ref('')
 
@@ -28,21 +29,11 @@ const layout = ref('list')
 
 <template>
   <div class="container pt-24 mx-auto custom-container">
-    <t-tabs
-      v-model="layout"
-      size="lg"
-      variant="bordered"
-    >
-      <t-tab
-        value="list"
-        :active="layout === 'list'"
-      >
+    <t-tabs v-model="layout" size="lg" variant="bordered">
+      <t-tab value="list" :active="layout === 'list'">
         list
       </t-tab>
-      <t-tab
-        value="condensed"
-        :active="layout === 'condensed'"
-      >
+      <t-tab value="condensed" :active="layout === 'condensed'">
         condensed
       </t-tab>
     </t-tabs>
@@ -52,16 +43,15 @@ const layout = ref('list')
           {{ errorMessage || "Loading..." }}
         </div>
       </template>
-      <div
-        v-if="layout === 'list'"
-        class="mx-auto user-list"
-      >
+      <div v-if="layout === 'list'" class="mx-auto user-list">
         <div
           v-for="user in relations"
           :key="`relation-@${user.safeName}`"
           class="w-full p-2 user-list-item"
         >
-          <div class="flex items-center justify-center gap-2 md:justify-start face">
+          <div
+            class="flex items-center justify-center gap-2 md:justify-start face"
+          >
             <div class="relative z-10 mask mask-squircle hoverable">
               <img
                 :src="user.avatarSrc"
@@ -85,18 +75,10 @@ const layout = ref('list')
                   @{{ user.safeName }}
                 </nuxt-link>
                 <div class="flex gap-2 actions">
-                  <t-button
-                    variant="info"
-                    size="xs"
-                    class="md:btn-sm"
-                  >
+                  <t-button variant="info" size="xs" class="md:btn-sm">
                     chat
                   </t-button>
-                  <t-button
-                    variant="warning"
-                    size="xs"
-                    class="md:btn-sm"
-                  >
+                  <t-button variant="warning" size="xs" class="md:btn-sm">
                     remove friend
                   </t-button>
                 </div>

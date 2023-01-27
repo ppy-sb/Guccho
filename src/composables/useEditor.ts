@@ -3,11 +3,13 @@ import type { Editor as EditorCore, JSONContent } from '@tiptap/core'
 
 import useEditorExtensions from './useEditorExtensions'
 import useEditorLazyLoadHighlight from './useEditorLazyLoadHighlight'
-export default (reactiveConfig: {
-  indent: string
-} = {
-  indent: '  ',
-}) => {
+export default (
+  reactiveConfig: {
+    indent: string
+  } = {
+    indent: '  ',
+  },
+) => {
   const extensions = useEditorExtensions(reactiveConfig)
   const { load: lazy } = useEditorLazyLoadHighlight()
   const editor = ref<EditorVue>()
@@ -25,7 +27,9 @@ export default (reactiveConfig: {
     editor.value.on('beforeCreate', lazyLoadCodeBlock)
     editor.value.on('update', lazyLoadCodeBlock)
     created = true
-    subscribedBeforeMounted.forEach(subscriber => editor.value?.on('update', ({ editor }) => subscriber(editor.getJSON())))
+    subscribedBeforeMounted.forEach(subscriber =>
+      editor.value?.on('update', ({ editor }) => subscriber(editor.getJSON())),
+    )
   })
   onUnmounted(() => {
     editor.value?.commands.clearContent()

@@ -30,7 +30,6 @@ export enum BanchoPyPrivilege {
 
   Donator = Supporter | Premium,
   Staff = Mod | Admin | Dangerous,
-
 }
 
 export enum BanchoPyMode {
@@ -50,8 +49,13 @@ export enum BanchoPyMode {
   // maniaAutopilot = 11,
 }
 
-export function toBanchoPyMode(mode: Mode, ruleset: Ruleset): BanchoPyMode | undefined {
-  const joined: `${Mode}${Capitalize<Ruleset>}` = `${mode}${capitalizeFirstLetter(ruleset)}`
+export function toBanchoPyMode(
+  mode: Mode,
+  ruleset: Ruleset,
+): BanchoPyMode | undefined {
+  const joined: `${Mode}${Capitalize<Ruleset>}` = `${mode}${capitalizeFirstLetter(
+    ruleset,
+  )}`
   switch (joined) {
     case 'maniaRelax':
     case 'taikoAutopilot':
@@ -96,7 +100,9 @@ export enum BanchoPyRankedStatus {
   Loved = 5,
 }
 
-export function toBanchoRankingStatus(input: BanchoPyRankedStatus): RankingStatusEnum {
+export function toBanchoRankingStatus(
+  input: BanchoPyRankedStatus,
+): RankingStatusEnum {
   switch (input) {
     case BanchoPyRankedStatus.NotSubmitted:
       return RankingStatusEnum.deleted
@@ -117,12 +123,14 @@ export function toBanchoRankingStatus(input: BanchoPyRankedStatus): RankingStatu
 
 export function toMods(e: number): Array<StableMod> {
   const returnValue: Array<StableMod> = []
-  if (e === 0)
+  if (e === 0) {
     return returnValue
+  }
 
   for (const [mod, bit] of Object.entries(stableMod)) {
-    if (bit & e)
+    if (bit & e) {
       returnValue.push(mod as StableMod)
+    }
   }
   return returnValue
 }

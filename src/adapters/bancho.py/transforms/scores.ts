@@ -3,11 +3,21 @@ import { toMods } from '../enums'
 import { createHitCount } from './create-hit-count'
 import { toBeatmapWithBeatmapset } from './to-beatmapset'
 import type { AbleToTransformToScores } from './index'
-import type { Grade, LeaderboardRankingSystem, Mode, PPRankingSystem, Ruleset } from '~/types/common'
+import type {
+  Grade,
+  LeaderboardRankingSystem,
+  Mode,
+  PPRankingSystem,
+  Ruleset,
+} from '~/types/common'
 import type { RankingStatus } from '~/types/beatmap'
 import type { RankingSystemScore, RulesetScore } from '~/types/score'
 
-export function toScore<_RankingSystem extends PPRankingSystem>({ score, mode, ruleset }: {
+export function toScore<_RankingSystem extends PPRankingSystem>({
+  score,
+  mode,
+  ruleset,
+}: {
   score: AbleToTransformToScores
   mode: Mode
   ruleset: Ruleset
@@ -21,7 +31,8 @@ export function toScore<_RankingSystem extends PPRankingSystem>({ score, mode, r
     grade: 'ssh',
     accuracy: 98,
     hit: createHitCount(mode, score),
-    beatmap: (score.beatmap !== null && toBeatmapWithBeatmapset(score.beatmap)) || {
+    beatmap: (score.beatmap !== null
+      && toBeatmapWithBeatmapset(score.beatmap)) || {
       status: 'notFound',
     },
     mods: toMods(score.mods),
@@ -37,23 +48,30 @@ export function toScore<_RankingSystem extends PPRankingSystem>({ score, mode, r
     Mode,
     Ruleset,
     _RankingSystem,
-    typeof score['beatmap'] extends null
+    (typeof score)['beatmap'] extends null
       ? 'unknown'
-      : Exclude<typeof score['beatmap'], null>['server'],
-    typeof score['beatmap'] extends null
-      ? 'notFound'
-      : RankingStatus
+      : Exclude<(typeof score)['beatmap'], null>['server'],
+    (typeof score)['beatmap'] extends null ? 'notFound' : RankingStatus
   >
   return rtn1
 }
 
-export function toRankingSystemScore<_RankingSystem extends LeaderboardRankingSystem>({ score, rankingSystem, mode, rank }: {
+export function toRankingSystemScore<
+  _RankingSystem extends LeaderboardRankingSystem,
+>({
+  score,
+  rankingSystem,
+  mode,
+  rank,
+}: {
   score: AbleToTransformToScores
   rankingSystem: _RankingSystem
   mode: Mode
   rank: number
 }) {
-  type HasBeatmap = typeof score['beatmap'] extends null ? false : Exclude<typeof score['beatmap'], null>
+  type HasBeatmap = (typeof score)['beatmap'] extends null
+    ? false
+    : Exclude<(typeof score)['beatmap'], null>
 
   const result = {
     id: score.id,
@@ -62,14 +80,17 @@ export function toRankingSystemScore<_RankingSystem extends LeaderboardRankingSy
     accuracy: score.acc,
     grade: score.grade as Grade,
     hit: createHitCount(mode, score),
-    beatmap: (score.beatmap !== null && toBeatmapWithBeatmapset(score.beatmap)) || {
+    beatmap: (score.beatmap !== null
+      && toBeatmapWithBeatmapset(score.beatmap)) || {
       status: 'notFound',
     },
     mods: toMods(score.mods),
     playedAt: score.playTime,
     maxCombo: score.maxCombo,
     rank,
-    pp: (rankingSystem === 'ppv1' || rankingSystem === 'ppv2' ? score.pp : undefined) as _RankingSystem extends PPRankingSystem ? number : never,
+    pp: (rankingSystem === 'ppv1' || rankingSystem === 'ppv2'
+      ? score.pp
+      : undefined) as _RankingSystem extends PPRankingSystem ? number : never,
   } satisfies RankingSystemScore<
     bigint,
     Id,
@@ -81,7 +102,11 @@ export function toRankingSystemScore<_RankingSystem extends LeaderboardRankingSy
   return result
 }
 
-export function toScores({ scores, mode, ruleset }: {
+export function toScores({
+  scores,
+  mode,
+  ruleset,
+}: {
   scores: AbleToTransformToScores[]
   mode: Mode
   ruleset: Ruleset
@@ -89,11 +114,17 @@ export function toScores({ scores, mode, ruleset }: {
   return scores.map(score => toScore({ score, mode, ruleset }))
 }
 
-export function toRankingSystemScores<RS extends LeaderboardRankingSystem>({ scores, mode, rankingSystem }: {
+export function toRankingSystemScores<RS extends LeaderboardRankingSystem>({
+  scores,
+  mode,
+  rankingSystem,
+}: {
   scores: AbleToTransformToScores[]
   rankingSystem: RS
   mode: Mode
 }) {
-  return scores.map((score, index) => toRankingSystemScore({ score, rankingSystem, mode, rank: index + 1 }))
+  return scores.map((score, index) =>
+    toRankingSystemScore({ score, rankingSystem, mode, rank: index + 1 }),
+  )
 }
 // : Flavor extends 'ranking-system' ? :

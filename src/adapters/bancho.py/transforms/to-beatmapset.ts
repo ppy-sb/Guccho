@@ -4,7 +4,16 @@ import { toRankingStatus } from './index'
 import type { BeatmapEssential, Beatmapset } from '~/types/beatmap'
 
 // this do not deserves exporting
-export function toBeatmapset(beatmapset: Source, beatmap: DBMap): undefined | Beatmapset<typeof beatmapset['server'], typeof beatmapset['id'], typeof beatmapset['id']> {
+export function toBeatmapset(
+  beatmapset: Source,
+  beatmap: DBMap,
+):
+  | undefined
+  | Beatmapset<
+      (typeof beatmapset)['server'],
+      (typeof beatmapset)['id'],
+      (typeof beatmapset)['id']
+    > {
   return {
     id: beatmap.setId,
     foreignId: beatmapset.id || beatmap.setId,
@@ -44,13 +53,16 @@ export function toBeatmapEssential(beatmap: DBMap): BeatmapEssential<Id, Id> {
   }
 }
 
-export function toBeatmapWithBeatmapset(beatmap: DBMap & {
-  source: Source
-}) {
+export function toBeatmapWithBeatmapset(
+  beatmap: DBMap & {
+    source: Source
+  },
+) {
   const status = toRankingStatus(beatmap.status) || 'WIP'
   const beatmapset = toBeatmapset(beatmap.source, beatmap)
-  if (!beatmapset)
+  if (!beatmapset) {
     return
+  }
   return Object.assign(toBeatmapEssential(beatmap), {
     status,
     beatmapset,

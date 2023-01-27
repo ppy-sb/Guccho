@@ -37,8 +37,9 @@ reloadAnimation()
 const charArray = computed(() => [...props.value])
 const defaultCharArray = computed(() => [...props.defaultValue])
 const computedCharSet = computed(() => {
-  if (Array.isArray(props.charSet))
+  if (Array.isArray(props.charSet)) {
     return props.charSet as string[]
+  }
   return RollerCharSet[props.charSet as RollerItemCharSet]
 })
 const client = ref(false)
@@ -49,8 +50,21 @@ onBeforeMount(() => {
 
 <template>
   <client-only>
-    <TransitionGroup tag="div" name="roller-list" class="roller" v-bind="$attrs">
-      <RollerItem v-for="(char, idx) of charArray" :key="idx" :char="char" :duration="duration" :char-set="computedCharSet" :default-char="defaultCharArray[idx]" :mode="mode" />
+    <TransitionGroup
+      tag="div"
+      name="roller-list"
+      class="roller"
+      v-bind="$attrs"
+    >
+      <RollerItem
+        v-for="(char, idx) of charArray"
+        :key="idx"
+        :char="char"
+        :duration="duration"
+        :char-set="computedCharSet"
+        :default-char="defaultCharArray[idx]"
+        :mode="mode"
+      />
     </TransitionGroup>
   </client-only>
   <div v-if="!client" v-bind="$attrs" class="invisible">
@@ -60,24 +74,24 @@ onBeforeMount(() => {
 
 <style lang="postcss" scoped>
 .roller {
-    display: flex;
-    /* flex-wrap: wrap; */
+  display: flex;
+  /* flex-wrap: wrap; */
 }
 .roller-list-enter-active,
 .roller-list-leave-active {
-    transition: 0.5s ease-out;
+  transition: 0.5s ease-out;
 }
 .roller-list-enter-from {
-    opacity: 0;
+  opacity: 0;
 }
 .roller-list-enter-to {
-    opacity: 1;
+  opacity: 1;
 }
 .roller-list-leave-from {
-    opacity: 1;
+  opacity: 1;
 }
 .roller-list-leave-to {
-    opacity: 0;
-    width: 0px !important;
+  opacity: 0;
+  width: 0px !important;
 }
 </style>

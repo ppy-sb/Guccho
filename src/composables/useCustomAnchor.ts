@@ -1,8 +1,9 @@
 export default function ({ separator } = { separator: ',' }) {
   function parse(hashContent: string) {
     let content: string = hashContent
-    if (hashContent.startsWith('#'))
+    if (hashContent.startsWith('#')) {
       content = hashContent.slice(1)
+    }
 
     const returnValue: Record<string, string> = {}
 
@@ -11,8 +12,9 @@ export default function ({ separator } = { separator: ',' }) {
     for (let item of splitted) {
       item = decodeURIComponent(item)
       const result = item.match(/(?<key>\w+)\((?<value>\w+)\)/)
-      if (!result?.groups?.key)
+      if (!result?.groups?.key) {
         continue
+      }
       returnValue[result.groups.key] = result.groups.value
     }
 
@@ -23,8 +25,9 @@ export default function ({ separator } = { separator: ',' }) {
     let returnValue = ''
 
     for (const [key, value] of Object.entries(data)) {
-      if (!value || !key)
+      if (!value || !key) {
         continue
+      }
       const str = `${encodeURIComponent(key)}(${encodeURIComponent(value)})`
       returnValue += str + separator
     }

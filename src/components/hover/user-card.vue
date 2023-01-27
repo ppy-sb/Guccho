@@ -13,10 +13,7 @@ const config = useAppConfig()
 </script>
 
 <template>
-  <VTooltip
-    delay="{ show: 500, hide: 100 }"
-    placement="right"
-  >
+  <VTooltip delay="{ show: 500, hide: 100 }" placement="right">
     <nuxt-link :to="to">
       {{ props.user.name }}
     </nuxt-link>
@@ -37,10 +34,7 @@ const config = useAppConfig()
                 {{ props.user.name }}
               </h1>
               <h1>
-                <img
-                  class="w-auto h-6"
-                  :src="getFlagURL(props.user.flag)"
-                >
+                <img class="w-auto h-6" :src="getFlagURL(props.user.flag)">
               </h1>
             </div>
           </div>

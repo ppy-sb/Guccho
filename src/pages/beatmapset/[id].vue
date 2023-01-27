@@ -13,19 +13,21 @@ import type { RankingSystem } from '~/types/common'
 
 const { $client } = useNuxtApp()
 const route = useRoute()
-const {
-  supportedModes,
-  supportedRulesets,
-  assertHasRankingSystem,
-} = useAdapterConfig()
+const { supportedModes, supportedRulesets, assertHasRankingSystem }
+  = useAdapterConfig()
 const [switcher, setSwitcher] = useSwitcher()
 const lazyBgCover = ref('')
 
 const { data: beatmapset, error } = await useAsyncData(
-  async () => await $client.map.beatmapset.query({ id: route.params.id.toString() }),
+  async () =>
+    await $client.map.beatmapset.query({ id: route.params.id.toString() }),
 )
-const hashed = beatmapset.value?.beatmaps.find(bm => bm.id === route.query.beatmap?.toString())
-const selectedMapId = ref<string>(hashed?.id || beatmapset.value?.beatmaps[0].id || '')
+const hashed = beatmapset.value?.beatmaps.find(
+  bm => bm.id === route.query.beatmap?.toString(),
+)
+const selectedMapId = ref<string>(
+  hashed?.id || beatmapset.value?.beatmaps[0].id || '',
+)
 const selectedMap = computed(() =>
   beatmapset.value?.beatmaps.find(bm => bm.id === selectedMapId.value),
 )
@@ -43,9 +45,7 @@ const queryMode = route.query.mode?.toString()
 const queryRuleset = route.query.ruleset?.toString()
 
 setSwitcher({
-  mode: assertIncludes(queryMode, supportedModes)
-    ? queryMode
-    : undefined,
+  mode: assertIncludes(queryMode, supportedModes) ? queryMode : undefined,
   ruleset: assertIncludes(queryRuleset, supportedRulesets)
     ? queryRuleset
     : undefined,
@@ -53,15 +53,19 @@ setSwitcher({
 
 if (queryRankingSystem) {
   setSwitcher({
-    rankingSystem: assertHasRankingSystem(queryRankingSystem, { mode: switcher.mode, ruleset: switcher.ruleset })
+    rankingSystem: assertHasRankingSystem(queryRankingSystem, {
+      mode: switcher.mode,
+      ruleset: switcher.ruleset,
+    })
       ? queryRankingSystem
       : undefined,
   })
 }
 
 const { data: leaderboard, refresh } = await useAsyncData(async () => {
-  if (!selectedMap.value)
+  if (!selectedMap.value) {
     return null
+  }
 
   return await $client.leaderboard.beatmap.query({
     ...switcher,
@@ -73,8 +77,9 @@ const { data: leaderboard, refresh } = await useAsyncData(async () => {
 
 function rewriteAnchor() {
   const url = new URL(window.location.toString())
-  if (selectedMap.value)
+  if (selectedMap.value) {
     url.searchParams.set('beatmap', selectedMap.value.id)
+  }
 
   url.searchParams.set('rank', switcher.rankingSystem)
   url.searchParams.set('mode', switcher.mode)
@@ -115,7 +120,9 @@ onBeforeMount(() => {
     <div class="container custom-container mx-auto">
       <div class="header-with-maps flex-wrap">
         <div class="text-center">
-          <h1 class="text-3xl font-bold text-center sm:text-left lg:whitespace-nowrap">
+          <h1
+            class="text-3xl font-bold text-center sm:text-left lg:whitespace-nowrap"
+          >
             {{ beatmapset.meta.intl.title }}
           </h1>
           <h2
@@ -158,7 +165,11 @@ onBeforeMount(() => {
             />
             <div class="pt-4">
               <div class="w-min">
-                <v-dropdown theme="guweb-dropdown" placement="auto" :distance="6">
+                <v-dropdown
+                  theme="guweb-dropdown"
+                  placement="auto"
+                  :distance="6"
+                >
                   <button class="btn btn-sm btn-accent">
                     download
                   </button>
@@ -171,7 +182,9 @@ onBeforeMount(() => {
                           <span>External Sources</span>
                         </li>
                         <li>
-                          <a :href="`https://osu.ppy.sh/s/${beatmapset.foreignId}`">Bancho</a>
+                          <a
+                            :href="`https://osu.ppy.sh/s/${beatmapset.foreignId}`"
+                          >Bancho</a>
                         </li>
                         <li>
                           <a
@@ -179,7 +192,9 @@ onBeforeMount(() => {
                           >Chimu.moe</a>
                         </li>
                         <li>
-                          <a :href="`https://kitsu.moe/api/d/${beatmapset.foreignId}`">Kitsu.moe</a>
+                          <a
+                            :href="`https://kitsu.moe/api/d/${beatmapset.foreignId}`"
+                          >Kitsu.moe</a>
                         </li>
                       </template>
                     </ul>
@@ -191,7 +206,11 @@ onBeforeMount(() => {
         </div>
         <div class="w-full md:w-2/3">
           <div class="p-2 flex justify-between">
-            <t-tabs v-model="switcher.mode" variant="" @update:model-value="update">
+            <t-tabs
+              v-model="switcher.mode"
+              variant=""
+              @update:model-value="update"
+            >
               <t-tab
                 v-for="m in supportedModes"
                 :key="`sw-${m}`"
@@ -201,7 +220,11 @@ onBeforeMount(() => {
                 {{ m }}
               </t-tab>
             </t-tabs>
-            <t-tabs v-model="switcher.ruleset" variant="" @update:model-value="update">
+            <t-tabs
+              v-model="switcher.ruleset"
+              variant=""
+              @update:model-value="update"
+            >
               <t-tab
                 v-for="r in supportedRulesets"
                 :key="`sw-${r}`"
@@ -323,7 +346,8 @@ onBeforeMount(() => {
           :ranking-system="switcher.rankingSystem"
           class="w-full"
           :class="{
-            'clear-rounded-tl': beatmapRankingSystems[0] === switcher.rankingSystem,
+            'clear-rounded-tl':
+              beatmapRankingSystems[0] === switcher.rankingSystem,
           }"
         />
       </div>
