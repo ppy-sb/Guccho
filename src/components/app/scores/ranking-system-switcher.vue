@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Mode, RankingSystem, Ruleset } from '~/types/common'
-import { rankingSystem } from '~/types/common'
+import { rankingSystems } from '~/types/common'
 const props = defineProps<{
   modelValue: RankingSystem
   mode: Mode
@@ -15,7 +15,7 @@ const app = useAppConfig()
 const { assertHasRankingSystem } = useAdapterConfig()
 
 const show = computed(() => {
-  return rankingSystem.filter(rs =>
+  return rankingSystems.filter(rs =>
     assertHasRankingSystem(rs, { mode: props.mode, ruleset: props.ruleset }),
   )
 })
