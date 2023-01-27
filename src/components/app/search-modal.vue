@@ -16,25 +16,36 @@ const {
   data: users,
   pending: pendingUsers,
   refresh: searchUsers,
-} = await useAsyncData(() =>
-  $client.search.searchUser.query({ keyword: kw.value, limit: 10 }),
-)
+} = await useAsyncData(async () => {
+  if (!kw.value) {
+    return []
+  }
+  return await $client.search.searchUser.query({ keyword: kw.value, limit: 10 })
+})
+
 const {
   data: beatmaps,
   pending: pendingBeatmaps,
   refresh: searchBeatmaps,
-} = await useAsyncData(() =>
-  $client.search.searchBeatmap.query({ keyword: kw.value, limit: 10 }),
-)
+} = await useAsyncData(async () => {
+  if (!kw.value) {
+    return []
+  }
+  return await $client.search.searchBeatmap.query({ keyword: kw.value, limit: 10 })
+})
+
 const {
   data: beatmapsets,
   pending: pendingBeatmapsets,
   refresh: searchBeatmapsets,
-} = await useAsyncData(() =>
-  $client.search.searchBeatmapset.query({ keyword: kw.value, limit: 10 }),
-)
+} = await useAsyncData(async () => {
+  if (!kw.value) {
+    return
+  }
+  return await $client.search.searchBeatmapset.query({ keyword: kw.value, limit: 10 })
+})
 
-const debouncedSearch = useDebounceFn(async () => {
+const search = useDebounceFn(() => {
   if (!kw.value) {
     return
   }
@@ -43,14 +54,6 @@ const debouncedSearch = useDebounceFn(async () => {
   searchBeatmaps()
   searchBeatmapsets()
 }, 300)
-const search = () => {
-  if (!kw.value) {
-    return
-  }
-
-  debouncedSearch()
-}
-
 const hasResult = computed(() => {
   return (
     (Array.isArray(beatmapsets.value) && beatmapsets.value.length)
