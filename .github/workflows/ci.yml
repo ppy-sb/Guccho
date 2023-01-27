@@ -3,12 +3,12 @@ name: ci
 on:
   push:
     branches:
-      - main
-      - master
+      - "main"
+      - "prod"
   pull_request:
     branches:
-      - main
-      - master
+      - "main"
+      - "prod"
 
 jobs:
   ci:
@@ -31,8 +31,11 @@ jobs:
           check-latest: true
           cache: yarn
 
-      - name: install dependencies
+      - name: install dependencies 🎁
         run: yarn --frozen-lockfile
 
+      - name: type check ⚙️
+        run: yarn lint:type-check
+
       - name: Run linter 👀
-        run: yarn lint:fix
+        run: yarn lint
