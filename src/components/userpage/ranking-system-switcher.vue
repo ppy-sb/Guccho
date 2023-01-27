@@ -7,7 +7,8 @@ import { useAdapterConfig } from '#imports'
 import type { OverallSwitcherComposableType } from '~/composables/useSwitcher'
 import { LeaderboardRankingSystem } from '~/types/common'
 
-const { assertHasRuleset, assertHasOverallRankingSystem } = await useAdapterConfig()
+const { assertHasRuleset, assertHasOverallRankingSystem }
+  = await useAdapterConfig()
 
 const config = useAppConfig()
 const rankingSystem = config.overallRankingSystem
@@ -36,10 +37,8 @@ const filter = (showType: 'tab' | 'dropdown') =>
       return acc
     }
     if (
-      !assertHasRuleset(switcher.ruleset, switcher.mode) || !assertHasOverallRankingSystem(key, {
-        mode: switcher.mode,
-        ruleset: switcher.ruleset,
-      })
+      !assertHasRuleset(switcher.mode, switcher.ruleset)
+      || !assertHasOverallRankingSystem(switcher.mode, switcher.ruleset, key)
     ) {
       return acc
     }

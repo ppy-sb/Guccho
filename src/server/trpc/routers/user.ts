@@ -81,7 +81,10 @@ export const router = _router({
       }
 
       const { mode, ruleset, rankingSystem } = input
-      if (!assertHasRuleset(ruleset, mode) || !assertHasOverallRankingSystem(rankingSystem, { mode, ruleset })) {
+      if (
+        !assertHasRuleset(mode, ruleset)
+        || !assertHasOverallRankingSystem(mode, ruleset, rankingSystem)
+      ) {
         throw new TRPCError({
           code: 'PRECONDITION_FAILED',
           message: 'ranking system not supported',
@@ -118,7 +121,10 @@ export const router = _router({
       }
 
       const { mode, ruleset, rankingSystem } = input
-      if (!assertHasRuleset(ruleset, mode) || !assertHasOverallRankingSystem(rankingSystem, { mode, ruleset })) {
+      if (
+        !assertHasRuleset(mode, ruleset)
+        || !assertHasOverallRankingSystem(mode, ruleset, rankingSystem)
+      ) {
         throw new TRPCError({
           code: 'PRECONDITION_FAILED',
           message: 'ranking system not supported',

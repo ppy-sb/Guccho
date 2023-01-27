@@ -78,11 +78,8 @@ watch(switcher, () => emitData())
       >
         <a
           v-if="
-            assertHasRuleset(switcher.ruleset, switcher.mode)
-              && assertHasOverallRankingSystem(rankingSystem, {
-                mode: switcher.mode,
-                ruleset: switcher.ruleset,
-              })
+            assertHasRuleset(switcher.mode, switcher.ruleset)
+              && assertHasOverallRankingSystem(switcher.mode, switcher.ruleset, rankingSystem)
           "
           class="text-sm h-mode"
           :class="{
