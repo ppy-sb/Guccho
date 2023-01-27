@@ -51,11 +51,8 @@ export function useOverallSwitcher(
       }
       if (
         rankingSystem
-        && assertHasRuleset(data.ruleset, data.mode)
-        && assertHasOverallRankingSystem(rankingSystem, {
-          mode: data.mode,
-          ruleset: data.ruleset,
-        })
+        && assertHasRuleset(data.mode, data.ruleset)
+        && assertHasOverallRankingSystem(data.mode, data.ruleset, rankingSystem)
       ) {
         data.rankingSystem = rankingSystem
       }
@@ -102,11 +99,8 @@ export function useSwitcher(initial?: SwitcherPropType<RankingSystem>) {
       }
       if (
         rankingSystem
-        && assertHasRuleset(data.ruleset, data.mode)
-        && assertHasRankingSystem(rankingSystem, {
-          mode: data.mode,
-          ruleset: data.ruleset,
-        })
+        && assertHasRuleset(data.mode, data.ruleset)
+        && assertHasRankingSystem(data.mode, data.ruleset, rankingSystem)
       ) {
         data.rankingSystem = rankingSystem
       }

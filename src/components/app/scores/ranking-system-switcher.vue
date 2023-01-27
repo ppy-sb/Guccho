@@ -15,8 +15,10 @@ const app = useAppConfig()
 const { assertHasRankingSystem, assertHasRuleset } = useAdapterConfig()
 
 const show = computed(() => {
-  return rankingSystems.filter(rs =>
-    assertHasRuleset(props.ruleset, props.mode) && assertHasRankingSystem(rs, { mode: props.mode, ruleset: props.ruleset }),
+  return rankingSystems.filter(
+    rs =>
+      assertHasRuleset(props.mode, props.ruleset)
+      && assertHasRankingSystem(props.mode, props.ruleset, rs),
   )
 })
 watch(props, () => emit('update:rankingSystemList', show.value))

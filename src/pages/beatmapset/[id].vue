@@ -13,8 +13,12 @@ import type { RankingSystem } from '~/types/common'
 
 const { $client } = useNuxtApp()
 const route = useRoute()
-const { supportedModes, supportedRulesets, assertHasRankingSystem, assertHasRuleset }
-  = useAdapterConfig()
+const {
+  supportedModes,
+  supportedRulesets,
+  assertHasRankingSystem,
+  assertHasRuleset,
+} = useAdapterConfig()
 const [switcher, setSwitcher] = useSwitcher()
 const lazyBgCover = ref('')
 
@@ -53,12 +57,15 @@ setSwitcher({
 
 if (queryRankingSystem) {
   setSwitcher({
-    rankingSystem: assertHasRuleset(switcher.ruleset, switcher.mode) && assertHasRankingSystem(queryRankingSystem, {
-      mode: switcher.mode,
-      ruleset: switcher.ruleset,
-    })
-      ? queryRankingSystem
-      : undefined,
+    rankingSystem:
+      assertHasRuleset(switcher.mode, switcher.ruleset)
+      && assertHasRankingSystem(
+        switcher.mode,
+        switcher.ruleset,
+        queryRankingSystem,
+      )
+        ? queryRankingSystem
+        : undefined,
   })
 }
 
