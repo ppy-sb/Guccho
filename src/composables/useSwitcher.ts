@@ -1,4 +1,3 @@
-import { forbiddenMode, forbiddenMods } from '../common/varkaUtils'
 import useAdapterConfig from './useAdapterConfig'
 import type {
   LeaderboardRankingSystem,
@@ -38,14 +37,14 @@ export function useOverallSwitcher(
       if (
         mode
         && supportedModes.includes(mode)
-        && !forbiddenMode(ruleset || data.ruleset, mode)
+        && assertHasRuleset(mode, ruleset || data.ruleset)
       ) {
         data.mode = mode
       }
       if (
         ruleset
         && supportedRulesets.includes(ruleset)
-        && !forbiddenMods(mode || data.mode, ruleset)
+        && assertHasRuleset(mode || data.mode, ruleset)
       ) {
         data.ruleset = ruleset
       }
@@ -86,14 +85,14 @@ export function useSwitcher(initial?: SwitcherPropType<RankingSystem>) {
       if (
         mode
         && supportedModes.includes(mode)
-        && !forbiddenMode(ruleset || data.ruleset, mode)
+        && assertHasRuleset(mode, ruleset || data.ruleset)
       ) {
         data.mode = mode
       }
       if (
         ruleset
         && supportedRulesets.includes(ruleset)
-        && !forbiddenMods(mode || data.mode, ruleset)
+        && assertHasRuleset(mode || data.mode, ruleset)
       ) {
         data.ruleset = ruleset
       }

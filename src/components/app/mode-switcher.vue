@@ -2,7 +2,6 @@
 <script setup lang="ts">
 import { toRaw, watch } from 'vue'
 import { useAppConfig } from '#app'
-import { forbiddenMode, forbiddenMods } from '~/common/varkaUtils'
 import type { LeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
 import { useAdapterConfig } from '#imports'
 
@@ -44,7 +43,7 @@ watch(switcher, () => emitData())
         :class="{
           '!opacity-80 pointer-events-none': switcher.mode === mode,
           '!opacity-10 pointer-events-none':
-            switcher.ruleset && forbiddenMode(switcher.ruleset, mode),
+            switcher.ruleset && !assertHasRuleset(mode, switcher.ruleset),
         }"
         @click="setSwitcher({ mode })"
       >
@@ -62,7 +61,7 @@ watch(switcher, () => emitData())
         :class="{
           '!opacity-80 pointer-events-none': switcher.ruleset === ruleset,
           '!opacity-20 pointer-events-none':
-            switcher.mode && forbiddenMods(switcher.mode, ruleset),
+            switcher.mode && !assertHasRuleset(switcher.mode, ruleset),
         }"
         @click="setSwitcher({ ruleset })"
       >

@@ -1,5 +1,3 @@
-import type { Mode, Ruleset } from '~/types/common'
-
 export function getFlagURL(flag: string) {
   let url = 'https://osu.ppy.sh/assets/images/flags/'
   flag = flag.toUpperCase()
@@ -38,30 +36,6 @@ export function createAddCommasFormatter() {
   const fmt = Intl.NumberFormat()
   return function addCommas(nStr: number | bigint) {
     return fmt.format(nStr)
-  }
-}
-
-export function forbiddenMode(ruleset: Ruleset, mode: Mode) {
-  if (ruleset === 'relax' && mode === 'mania') {
-    return true
-  }
-  else if (ruleset === 'autopilot' && mode !== 'osu') {
-    return true
-  }
-  else {
-    return false
-  }
-}
-
-export function forbiddenMods(mode: Mode, ruleset: Ruleset) {
-  if (mode === 'mania' && ruleset === 'relax') {
-    return true
-  }
-  else if (mode !== 'osu' && ruleset === 'autopilot') {
-    return true
-  }
-  else {
-    return false
   }
 }
 

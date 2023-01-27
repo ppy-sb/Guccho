@@ -8,7 +8,6 @@ import {
   noop,
   placeholder,
 } from '~/utils'
-import { forbiddenMode, forbiddenMods } from '~/common/varkaUtils'
 import type { RankingSystem } from '~/types/common'
 
 const { $client } = useNuxtApp()
@@ -222,7 +221,7 @@ onBeforeMount(() => {
                 v-for="m in supportedModes"
                 :key="`sw-${m}`"
                 :value="m"
-                :disabled="forbiddenMode(switcher.ruleset, m) === true"
+                :disabled="assertHasRuleset(m, switcher.ruleset) === false"
               >
                 {{ m }}
               </t-tab>
@@ -236,7 +235,7 @@ onBeforeMount(() => {
                 v-for="r in supportedRulesets"
                 :key="`sw-${r}`"
                 :value="r"
-                :disabled="forbiddenMods(switcher.mode, r) === true"
+                :disabled="assertHasRuleset(switcher.mode, r) === false"
               >
                 {{ r }}
               </t-tab>
