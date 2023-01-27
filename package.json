@@ -9,6 +9,7 @@
     "preview:dev": "dotenv -e .env.development nuxt preview",
     "preview:prod": "nuxt preview",
     "start:prod": "dotenv -e .env node .output/server/index.mjs",
+    "start:dev:inspect": "dotenv -e .env.development node -- --inspect .output/server/index.mjs",
     "analyze": "nuxt analyze",
     "postinstall": "nuxt prepare",
     "lint:ts": "eslint --ext '.js,.vue,.ts,.jsx,.tsx' --ignore-path .gitignore .",
