@@ -70,6 +70,11 @@ const {
   }),
 )
 
+useHead({
+  titleTemplate: `%s - Leaderboard - ${config.title}`,
+  title: computed(() => ` ${selected.value.mode} | ${selected.value.ruleset} | ${selected.value.rankingSystem}`),
+})
+
 function rewriteHistory() {
   const l = window.location
   const r = router.resolve({

@@ -13,7 +13,11 @@ if (!session.$state.loggedIn) {
   })
 }
 const relations = await $client.me.relations.query()
+const config = useAppConfig()
 
+useHead({
+  titleTemplate: `Friends - ${config.title}`,
+})
 if (!relations) {
   throw new Error('user not exists')
 }

@@ -18,7 +18,7 @@ addToLibrary(faRankingStar, faPiedPiperPp, faBarsStaggered, faHouseUser)
 definePageMeta({
   layout: 'without-footer',
 })
-
+const appConf = useAppConfig()
 const route = useRoute()
 const { $client } = useNuxtApp()
 const _switcherContext = useOverallSwitcher()
@@ -47,6 +47,12 @@ const currentStatistic = computed<
 const currentRankingSystem = computed(
   () => currentStatistic.value?.[switcher.rankingSystem],
 )
+
+useHead({
+  titleTemplate: `%s - ${appConf.title}`,
+  title: computed(() => `${user.value?.name} | ${switcher.mode} | ${switcher.ruleset} | ${switcher.rankingSystem}`),
+})
+
 provide('user', user)
 provide('switcher', _switcherContext)
 

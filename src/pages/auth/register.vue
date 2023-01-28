@@ -7,6 +7,11 @@ const credential = ref({
 })
 const error = ref('')
 const fetching = ref(false)
+const config = useAppConfig()
+
+useHead({
+  titleTemplate: `Login - ${config.title}`,
+})
 
 const userRegisterAction = () => {
   fetching.value = true

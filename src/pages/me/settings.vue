@@ -13,7 +13,11 @@ const changeAvatar = ref<{
 const changePassword = ref<{
   openModal: (arg0?: CallableFunction) => void
 }>()
+const config = useAppConfig()
 
+useHead({
+  titleTemplate: `Settings - ${config.title}`,
+})
 const { $client } = useNuxtApp()
 definePageMeta({
   middleware: ['auth'],

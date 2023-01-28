@@ -7,10 +7,15 @@ import { useSession } from '~/store/session'
 const session = useSession()
 const route = useRoute()
 const router = useRouter()
+const config = useAppConfig()
 
 if (session.loggedIn) {
   router.back()
 }
+
+useHead({
+  titleTemplate: `Login - ${config.title}`,
+})
 
 const error = ref('')
 

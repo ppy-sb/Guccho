@@ -12,6 +12,7 @@ import type { RankingSystem } from '~/types/common'
 
 const { $client } = useNuxtApp()
 const route = useRoute()
+const config = useAppConfig()
 const {
   supportedModes,
   supportedRulesets,
@@ -79,6 +80,11 @@ const { data: leaderboard, refresh } = await useAsyncData(async () => {
     pageSize: 20,
     beatmapId: selectedMap.value.id.toString(),
   })
+})
+
+useHead({
+  titleTemplate: `%s - ${config.title}`,
+  title: computed(() => `${beatmapset.value?.meta.intl.artist} - ${beatmapset.value?.meta.intl.artist} > ${selectedMap.value?.version}`),
 })
 
 function rewriteAnchor() {

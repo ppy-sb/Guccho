@@ -4,6 +4,9 @@ import { useAppConfig } from '#app'
 import { useSession } from '~/store/session'
 const session = useSession()
 const config = useAppConfig()
+useHead({
+  titleTemplate: `${config.title}`,
+})
 </script>
 
 <template>
