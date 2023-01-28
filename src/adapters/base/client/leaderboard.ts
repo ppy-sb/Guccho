@@ -1,4 +1,5 @@
 import type {
+  AvailableRuleset,
   Awaitable,
   LeaderboardRankingSystem,
   Mode,
@@ -11,9 +12,9 @@ import type {
 } from '~/types/leaderboard'
 
 export namespace LeaderboardDataProvider {
-  export interface BaseQuery {
-    mode?: Mode
-    ruleset: Ruleset
+  export interface BaseQuery<M extends Mode = Mode> {
+    mode?: M
+    ruleset: Ruleset & AvailableRuleset<M>
     page: number
     pageSize: number
   }

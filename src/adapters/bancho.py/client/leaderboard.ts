@@ -5,14 +5,15 @@ import { toBanchoPyMode, toMods } from '../enums'
 import type { Id } from '../exports'
 import { toRoles, toUserEssential } from '../transforms'
 import { prismaClient } from '.'
-import { modes as _modes } from '~/types/common'
-import type { LeaderboardDataProvider } from '$def/client/leaderboard'
 import type {
+  AvailableRuleset,
   LeaderboardRankingSystem,
   Mode,
   RankingSystem,
   Ruleset,
 } from '~/types/common'
+import { modes as _modes } from '~/types/common'
+import type { LeaderboardDataProvider } from '$def/client/leaderboard'
 
 export default class BanchoPyLeaderboard
 implements LeaderboardDataProvider<Id> {
@@ -24,15 +25,15 @@ implements LeaderboardDataProvider<Id> {
     this.redisClient = redisClient()
   }
 
-  async getLeaderboard({
+  async getLeaderboard<M extends Mode>({
     mode,
     ruleset,
     rankingSystem,
     page,
     pageSize,
   }: {
-    mode: Mode
-    ruleset: Ruleset
+    mode: M
+    ruleset: Ruleset & AvailableRuleset<M>
     rankingSystem: LeaderboardRankingSystem
     page: number
     pageSize: number

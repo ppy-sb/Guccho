@@ -6,7 +6,7 @@ import { toBanchoPyMode } from '~/adapters/bancho.py/enums'
 import { LeaderboardDataProvider as BanchoPyLeaderboardDataProvider } from '~/adapters/bancho.py/client'
 import { toRoles } from '~/adapters/bancho.py/transforms'
 
-import type { LeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
+import type { AvailableRuleset, LeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
 
 export class LeaderboardDataProvider extends BanchoPyLeaderboardDataProvider {
   async getPPv2LiveLeaderboard(
@@ -35,10 +35,9 @@ export class LeaderboardDataProvider extends BanchoPyLeaderboardDataProvider {
     throw new Error('redis is not ready')
   }
 
-  // TODO: now broken
-  async leaderboardFromDatabase(opt: {
-    mode: Mode
-    ruleset: Ruleset
+  async leaderboardFromDatabase<M extends Mode>(opt: {
+    mode: M
+    ruleset: Ruleset & AvailableRuleset<M>
     rankingSystem: LeaderboardRankingSystem
     page: number
     pageSize: number
@@ -97,9 +96,9 @@ ORDER BY _rank ASC
 LIMIT ${start}, ${pageSize}`)
   }
 
-  async getLeaderboard(opt: {
-    mode: Mode
-    ruleset: Ruleset
+  async getLeaderboard<M extends Mode>(opt: {
+    mode: M
+    ruleset: Ruleset & AvailableRuleset<M>
     rankingSystem: LeaderboardRankingSystem
     page: number
     pageSize: number

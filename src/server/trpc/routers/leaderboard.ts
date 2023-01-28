@@ -7,7 +7,7 @@ import {
   zodRankingSystem,
   zodRuleset,
 } from './../shapes/index'
-import { idToString, stringToId } from '$active/exports'
+import { assertHasRuleset, idToString, stringToId } from '$active/exports'
 import { LeaderboardDataProvider } from '$active/client'
 
 const provider = new LeaderboardDataProvider()
@@ -24,6 +24,9 @@ export const router = _router({
     )
     .query(
       async ({ input: { mode, ruleset, rankingSystem, page, pageSize } }) => {
+        if (!assertHasRuleset(mode, ruleset)) {
+          return []
+        }
         const result = await provider.getLeaderboard({
           mode,
           ruleset,
@@ -52,6 +55,14 @@ export const router = _router({
       async ({
         input: { mode, ruleset, rankingSystem, page, pageSize, beatmapId },
       }) => {
+        if (!mode) {
+          // TODO return default modes
+          mode = 'osu'
+          // return []
+        }
+        if (!assertHasRuleset(mode, ruleset)) {
+          return []
+        }
         const result = await provider.getBeatmapLeaderboard({
           mode,
           ruleset,

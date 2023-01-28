@@ -61,14 +61,13 @@ const {
   pending,
   refresh,
 } = await useAsyncData(
-  async () =>
-    await $client.leaderboard.overall.query({
-      mode: selected.value.mode,
-      ruleset: selected.value.ruleset,
-      rankingSystem: selected.value.rankingSystem,
-      page: page.value - 1,
-      pageSize: perPage,
-    }),
+  () => $client.leaderboard.overall.query({
+    mode: selected.value.mode,
+    ruleset: selected.value.ruleset,
+    rankingSystem: selected.value.rankingSystem,
+    page: page.value - 1,
+    pageSize: perPage,
+  }),
 )
 
 function rewriteHistory() {
@@ -118,7 +117,7 @@ function reloadPage(i?: number) {
       <app-mode-switcher
         v-model="selected"
         :show-sort="true"
-        @input="reloadPage()"
+        @update:model-value="reloadPage()"
       />
     </header-simple-title-with-sub>
     <div
