@@ -54,13 +54,14 @@ useHead({
           </template>
         </div>
       </div>
-    </div>
-    <div class="hidden mascot lg:block">
-      <img
-        src="/mascot/riru.png"
-        style="max-height: 70vmin"
-        alt="riru Mascot"
-      >
+
+      <div class="hidden mascot lg:block">
+        <img
+          src="/mascot/riru.png"
+          style="max-height: 70vmin"
+          alt="riru Mascot"
+        >
+      </div>
     </div>
   </div>
 </template>
