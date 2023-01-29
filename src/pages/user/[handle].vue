@@ -101,7 +101,7 @@ onMounted(() => {
 
 <template>
   <div class="absolute w-full">
-    <section v-if="error" class="min-h-screen grid">
+    <section v-if="error" class="min-h-screen">
       <div class="mx-auto my-auto flex flex-col justify-between gap-3">
         <h1 class="self-center text-3xl">
           Oops...
@@ -125,7 +125,7 @@ onMounted(() => {
     <div v-else-if="user" class="flex flex-col pt-20 justify-stretch md:pt-0">
       <userpage-heading id="heading" ref="heading" />
       <userpage-profile />
-      <userpage-ranking-system-switcher class="z-10 !drop-shadow-xl" />
+      <userpage-ranking-system-switcher class="z-10" />
       <div class="container custom-container mx-auto">
         <userpage-statistics id="statistics" ref="statistics" />
         <userpage-score-rank-composition />
@@ -145,31 +145,32 @@ onMounted(() => {
         <userpage-top-scores v-if="currentRankingSystem" />
       </div>
       <div class="pt-4" />
-
       <!-- placeholder for bottom nav -->
       <div class="py-8 -z-50" />
-    </div>
-    <div class="btm-nav sticky">
-      <template v-for="(isVisible, el) of visible" :key="el">
-        <a
-          v-if="icons[el]"
-          :class="{
-            active: isVisible,
-          }"
-          :href="`#${el}`"
-        >
-          <font-awesome-icon :icon="icons[el]" class="fa-xl" />
-        </a>
-        <a
-          v-else
-          :class="{
-            active: isVisible,
-          }"
-          :href="`#${el}`"
-        >
-          {{ el }}
-        </a>
-      </template>
+      <teleport to="#footer">
+        <div class="btm-nav">
+          <template v-for="(isVisible, el) of visible" :key="el">
+            <a
+              v-if="icons[el]"
+              :class="{
+                active: isVisible,
+              }"
+              :href="`#${el}`"
+            >
+              <font-awesome-icon :icon="icons[el]" class="fa-xl" />
+            </a>
+            <a
+              v-else
+              :class="{
+                active: isVisible,
+              }"
+              :href="`#${el}`"
+            >
+              {{ el }}
+            </a>
+          </template>
+        </div>
+      </teleport>
     </div>
   </div>
 </template>

@@ -37,9 +37,9 @@ const shownMenu = reactive({
   user: false,
 })
 const handleScroll = () => {
-  if (root.value == null) {
-    return
-  }
+  // if (root.value == null) {
+  //   return
+  // }
 
   detached.value = window.pageYOffset > 0
 }

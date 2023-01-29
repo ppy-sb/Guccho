@@ -82,6 +82,11 @@ onMounted(() => {
         </NuxtLayout>
       </template>
     </t-modal-container>
+    <div
+      id="footer" class="relative" :class="{
+        disabled: modalContainer?.stat === 'show',
+      }"
+    />
   </div>
 </template>
 
@@ -90,5 +95,8 @@ onMounted(() => {
   & .custom-container {
     @apply drop-shadow-xl;
   }
+}
+#footer.disabled {
+  @apply blur-sm
 }
 </style>
