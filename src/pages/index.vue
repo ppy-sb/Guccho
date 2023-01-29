@@ -25,41 +25,42 @@ useHead({
             - we're fully open source!
           </h2>
         </div>
-
-        <div v-if="session.$state.loggedIn" class="flex gap-2 px-2 sm:px-0">
-          <t-nuxt-link-button
-            :to="{
-              name: 'user-handle',
-              params: { handle: session.$state.userId },
-            }"
-            variant="primary"
-          >
-            to my profile
-          </t-nuxt-link-button>
-          <t-nuxt-link-button :to="{ name: 'me-settings' }" variant="secondary">
-            settings
-          </t-nuxt-link-button>
-        </div>
-        <div v-else class="grid grid-cols-2 gap-2 justify-center">
-          <t-nuxt-link-button :to="{ name: 'auth-login' }" variant="primary">
-            Login
-          </t-nuxt-link-button>
-          <t-nuxt-link-button
-            :to="{ name: 'auth-register' }"
-            variant="secondary"
-            class="btn-disabled"
-          >
-            Register
-          </t-nuxt-link-button>
+        <div class="grid grid-cols-2 gap-2 justify-center">
+          <template v-if="session.$state.loggedIn">
+            <t-nuxt-link-button
+              :to="{
+                name: 'user-handle',
+                params: { handle: session.$state.userId },
+              }"
+              variant="primary"
+            >
+              to my profile
+            </t-nuxt-link-button>
+            <t-nuxt-link-button :to="{ name: 'me-settings' }" variant="secondary">
+              settings
+            </t-nuxt-link-button>
+          </template>
+          <template v-else>
+            <t-nuxt-link-button :to="{ name: 'auth-login' }" variant="primary">
+              Login
+            </t-nuxt-link-button>
+            <t-nuxt-link-button
+              :to="{ name: 'auth-register' }"
+              variant="secondary"
+              class="btn-disabled"
+            >
+              Register
+            </t-nuxt-link-button>
+          </template>
         </div>
       </div>
-      <div class="hidden mascot lg:block">
-        <img
-          src="/mascot/riru.png"
-          style="max-height: 70vmin"
-          alt="riru Mascot"
-        >
-      </div>
+    </div>
+    <div class="hidden mascot lg:block">
+      <img
+        src="/mascot/riru.png"
+        style="max-height: 70vmin"
+        alt="riru Mascot"
+      >
     </div>
   </div>
 </template>
