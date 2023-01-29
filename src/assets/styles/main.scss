@@ -136,5 +136,5 @@ body:before {
   left: 0;
   right: 0;
   bottom: 0;
-  @apply bg-gradient-to-b from-kimberly-50/50 to-kimberly-50/90 dark:from-kimberly-800 dark:to-kimberly-900;
+  @apply bg-gradient-to-b from-kimberly-50/50 to-kimberly-50/90 dark:from-kimberly-800 dark:to-kimberly-900 -z-50;
 }

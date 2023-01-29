@@ -69,7 +69,7 @@ useHead({
   max-width: 32rem;
 }
 .heading {
-  @apply flex items-center justify-between px-4 lg:px-0 mx-auto my-auto text-left w-max text-kimberly-900 dark:text-kimberly-100;
+  @apply relative flex items-center justify-between px-4 lg:px-0 mx-auto my-auto text-left w-max text-kimberly-900 dark:text-kimberly-100;
   &::before {
     content: "";
     @apply -z-10;
