@@ -21,7 +21,9 @@ const show = computed(() => {
       && assertHasRankingSystem(props.mode, props.ruleset, rs),
   )
 })
-watch(props, () => emit('update:rankingSystemList', show.value))
+watch([() => props.mode, () => props.ruleset], () => {
+  emit('update:rankingSystemList', show.value)
+})
 </script>
 
 <template>
