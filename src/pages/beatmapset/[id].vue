@@ -84,7 +84,7 @@ const { data: leaderboard, refresh } = await useAsyncData(async () => {
 
 useHead({
   titleTemplate: `%s - ${config.title}`,
-  title: computed(() => `${beatmapset.value?.meta.intl.artist} - ${beatmapset.value?.meta.intl.artist} > ${selectedMap.value?.version}`),
+  title: computed(() => `${beatmapset.value?.meta.intl.artist} - ${beatmapset.value?.meta.intl.title} > ${selectedMap.value?.version}`),
 })
 
 function rewriteAnchor() {
