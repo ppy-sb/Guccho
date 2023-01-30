@@ -113,7 +113,6 @@ WHERE id = ${id}
     ])
 
     const statistics: UserStatistic<
-      Id,
       Mode,
       Ruleset,
       LeaderboardRankingSystem

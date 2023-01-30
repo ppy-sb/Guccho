@@ -101,33 +101,33 @@ export const createPPRank = (
   return copy
 }
 
-export const createRulesetData = <M extends Mode>(
-  mode: M,
+export const createRulesetData = (
+  mode: Mode,
   ppRankData: PPRank | undefined = undefined,
   scoreRankData: ScoreRank | undefined = undefined,
 ): UserModeRulesetStatistics<LeaderboardRankingSystem> => ({
-    ppv2: createPPRank(ppRankData),
-    ppv1: createPPRank(ppRankData),
-    rankedScore: createScoreRank(scoreRankData),
-    totalScore: createScoreRank(scoreRankData),
-    playCount: 1,
-    playTime: 10000,
-    totalHits: 1,
-    level: 0.0,
-    maxCombo: 999,
-    replayWatchedByOthers: 9,
-    scoreRankComposition: {
-      ssh: 0,
-      ss: 0,
-      sh: 0,
-      s: 0,
-      a: 0,
-      b: 0,
-      c: 0,
-      d: 0,
-      f: 0,
-    },
-  })
+  ppv2: createPPRank(ppRankData),
+  ppv1: createPPRank(ppRankData),
+  rankedScore: createScoreRank(scoreRankData),
+  totalScore: createScoreRank(scoreRankData),
+  playCount: 1,
+  playTime: 10000,
+  totalHits: 1,
+  level: 0.0,
+  maxCombo: 999,
+  replayWatchedByOthers: 9,
+  scoreRankComposition: {
+    ssh: 0,
+    ss: 0,
+    sh: 0,
+    s: 0,
+    a: 0,
+    b: 0,
+    c: 0,
+    d: 0,
+    f: 0,
+  },
+})
 export const sampleUserWithSecrets: Required<UserFull<unknown>> = {
   id: '',
   ingameId: 9999,

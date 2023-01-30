@@ -4,7 +4,6 @@ import type {
   LeaderboardRankingSystem,
   Mode,
   RankingSystem,
-  Ruleset,
 } from '~/types/common'
 import type {
   BeatmapLeaderboard,
@@ -14,7 +13,7 @@ import type {
 export namespace LeaderboardDataProvider {
   export interface BaseQuery<M extends Mode = Mode> {
     mode?: M
-    ruleset: Ruleset & AvailableRuleset<M>
+    ruleset: AvailableRuleset<M>
     page: number
     pageSize: number
   }

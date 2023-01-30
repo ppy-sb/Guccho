@@ -88,15 +88,14 @@ export interface UserSettings {
 }
 
 export type UserStatistic<
-  Id,
   IncludeMode extends Mode = Mode,
   IncludeRuleset extends Ruleset = Ruleset,
   Ranking extends LeaderboardRankingSystem = LeaderboardRankingSystem,
 > = {
   [M in IncludeMode]: Record<
-    IncludeRuleset & AvailableRuleset<M>,
+    AvailableRuleset<M, IncludeRuleset>,
     UserModeRulesetStatistics<Ranking>
-  >;
+  >
 }
 
 export interface UserExtra<
@@ -105,7 +104,7 @@ export interface UserExtra<
   IncludeRuleset extends Ruleset = Ruleset,
   Ranking extends LeaderboardRankingSystem = LeaderboardRankingSystem,
 > {
-  statistics: UserStatistic<Id, IncludeMode, IncludeRuleset, Ranking>
+  statistics: UserStatistic<IncludeMode, IncludeRuleset, Ranking>
 
   profile?: {
     html: string

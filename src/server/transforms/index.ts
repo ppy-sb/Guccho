@@ -1,11 +1,12 @@
 import type {
+  AvailableRuleset,
   LeaderboardRankingSystem,
   Mode,
   MutualRelationship,
   Relationship,
   Ruleset,
   Scope,
-} from '~/types/common'
+} from './../../types/common'
 import type {
   UserEssential,
   UserExtra,
@@ -41,7 +42,7 @@ export function followUserSettings<
 }: {
   user: UserEssential<Id> &
   Partial<
-      UserExtra<Id, _Mode, _Ruleset, _RankingSystem> & Partial<UserOptional<Id>>
+      UserExtra<Id, _Mode, AvailableRuleset<_Mode, _Ruleset>, _RankingSystem> & Partial<UserOptional<Id>>
     > & {
     settings: UserSettings
   }

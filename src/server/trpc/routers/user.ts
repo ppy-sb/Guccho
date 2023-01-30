@@ -2,8 +2,8 @@ import { z } from 'zod'
 import { TRPCError } from '@trpc/server'
 import {
   zodHandle,
+  zodLeaderboardRankingSystem,
   zodMode,
-  zodOverallRankingSystem,
   zodRelationType,
   zodRuleset,
 } from '../shapes'
@@ -68,7 +68,7 @@ export const router = _router({
         handle: zodHandle,
         mode: zodMode,
         ruleset: zodRuleset,
-        rankingSystem: zodOverallRankingSystem,
+        rankingSystem: zodLeaderboardRankingSystem,
         page: z.number().gte(0).lt(10),
       }),
     )
@@ -108,7 +108,7 @@ export const router = _router({
         handle: zodHandle,
         mode: zodMode,
         ruleset: zodRuleset,
-        rankingSystem: zodOverallRankingSystem,
+        rankingSystem: zodLeaderboardRankingSystem,
         page: z.number().gte(0).lt(10),
       }),
     )

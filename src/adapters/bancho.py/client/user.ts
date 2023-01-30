@@ -10,10 +10,10 @@ import { toRankingSystemScores } from '../transforms/scores'
 import { createUserQuery } from '../transforms/db-queries'
 import { idToString, stringToId } from '../transforms/id-conversion'
 import { client as redisClient } from '../redis-client'
+import type { LeaderboardRankingSystem, Mode, Ruleset } from './../../../types/common'
 import BanchoPyUserRelationship from './user-relations'
 import { prismaClient } from '.'
 import type { UserDataProvider } from '$def/client/user'
-import type { LeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
 import useEditorExtensions from '~/composables/useEditorExtensions'
 
 import type { UserEssential, UserOptional, UserStatistic } from '~/types/user'
@@ -314,7 +314,6 @@ WHERE s2.userid = ${id}
     ])
 
     const statistics: UserStatistic<
-      Id,
       Mode,
       Ruleset,
       LeaderboardRankingSystem

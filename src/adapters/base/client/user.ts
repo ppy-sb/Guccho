@@ -75,7 +75,7 @@ export interface UserDataProvider<Id> {
   getStatistics(query: {
     id: Id
     country: string
-  }): Awaitable<UserStatistic<Id>>
+  }): Awaitable<UserStatistic>
 
   getFull<
     Excludes extends Partial<

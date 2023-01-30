@@ -6,7 +6,7 @@ import { toBanchoPyMode } from '~/adapters/bancho.py/enums'
 import { LeaderboardDataProvider as BanchoPyLeaderboardDataProvider } from '~/adapters/bancho.py/client'
 import { toRoles } from '~/adapters/bancho.py/transforms'
 
-import type { AvailableRuleset, LeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
+import type { AvailableRuleset, LeaderboardRankingSystem, Mode } from '~/types/common'
 
 export class LeaderboardDataProvider extends BanchoPyLeaderboardDataProvider {
   async getPPv2LiveLeaderboard(
@@ -37,7 +37,7 @@ export class LeaderboardDataProvider extends BanchoPyLeaderboardDataProvider {
 
   async leaderboardFromDatabase<M extends Mode>(opt: {
     mode: M
-    ruleset: Ruleset & AvailableRuleset<M>
+    ruleset: AvailableRuleset<M>
     rankingSystem: LeaderboardRankingSystem
     page: number
     pageSize: number
@@ -98,7 +98,7 @@ LIMIT ${start}, ${pageSize}`)
 
   async getLeaderboard<M extends Mode>(opt: {
     mode: M
-    ruleset: Ruleset & AvailableRuleset<M>
+    ruleset: AvailableRuleset<M>
     rankingSystem: LeaderboardRankingSystem
     page: number
     pageSize: number

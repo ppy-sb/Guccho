@@ -17,12 +17,12 @@ type ModeRulesetRankingSystemDef = typeof modeRulesetRankingSystemDef
 export type Mode = keyof ModeRulesetRankingSystemDef
 export type Ruleset = keyof U2I<ModeRulesetRankingSystemDef[Mode]>
 
-export type AvailableRuleset<M extends Mode> =
-  keyof ModeRulesetRankingSystemDef[M]
+export type AvailableRuleset<M extends Mode, Available = Ruleset> =
+  keyof ModeRulesetRankingSystemDef[M] & Available
 
 export type AvailableRankingSystem<
   M extends Mode,
-  R extends Ruleset & AvailableRuleset<M>,
+  R extends AvailableRuleset<M>,
 > = ModeRulesetRankingSystemDef[M][R]
 
 // export type RulesetAvailableInMode = {

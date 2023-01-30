@@ -2,11 +2,11 @@ import z from 'zod'
 // import { createRouter } from '../context'
 import { router as _router, publicProcedure } from '../trpc'
 import {
+  zodLeaderboardRankingSystem,
   zodMode,
-  zodOverallRankingSystem,
   zodRankingSystem,
   zodRuleset,
-} from './../shapes/index'
+} from '../shapes/index'
 import { assertHasRuleset, idToString, stringToId } from '$active/exports'
 import { LeaderboardDataProvider } from '$active/client'
 
@@ -17,13 +17,14 @@ export const router = _router({
       z.object({
         mode: zodMode,
         ruleset: zodRuleset,
-        rankingSystem: zodOverallRankingSystem,
+        rankingSystem: zodLeaderboardRankingSystem,
         page: z.number().gte(0).lt(10),
         pageSize: z.number().gte(20).lt(51),
       }),
     )
     .query(
-      async ({ input: { mode, ruleset, rankingSystem, page, pageSize } }) => {
+      async ({ input }) => {
+        const { mode, ruleset, rankingSystem, page, pageSize } = input
         if (!assertHasRuleset(mode, ruleset)) {
           return []
         }

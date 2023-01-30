@@ -10,7 +10,6 @@ import type {
   LeaderboardRankingSystem,
   Mode,
   RankingSystem,
-  Ruleset,
 } from '~/types/common'
 import { modes as _modes } from '~/types/common'
 import type { LeaderboardDataProvider } from '$def/client/leaderboard'
@@ -33,7 +32,7 @@ implements LeaderboardDataProvider<Id> {
     pageSize,
   }: {
     mode: M
-    ruleset: Ruleset & AvailableRuleset<M>
+    ruleset: AvailableRuleset<M>
     rankingSystem: LeaderboardRankingSystem
     page: number
     pageSize: number
