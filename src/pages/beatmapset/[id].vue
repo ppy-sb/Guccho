@@ -131,16 +131,16 @@ onBeforeMount(() => {
   >
     <div class="container custom-container mx-auto">
       <div class="header-with-maps flex-wrap">
-        <div class="text-center">
+        <div class="text-center flex gap-2 items-baseline pb-2 pl-4">
           <h1
             class="text-3xl font-bold text-center sm:text-left lg:whitespace-nowrap"
           >
             {{ beatmapset.meta.intl.title }}
           </h1>
           <h2
-            class="text-lg font-semibold text-center whitespace-pre opacity-40 sm:text-left pb-2"
+            class="text-lg font-semibold text-center whitespace-pre opacity-40 sm:text-left"
           >
-            Song by {{ beatmapset.meta.intl.artist }}
+            by {{ beatmapset.meta.intl.artist }}
           </h2>
         </div>
         <t-tabs
