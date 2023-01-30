@@ -7,7 +7,7 @@ import type {
   Mode,
   RankingSystem,
   Ruleset,
-} from './../../../types/common'
+} from '~/types/common'
 
 export const zodHandle = z.string()
 export const zodRelationType = z.union([

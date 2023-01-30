@@ -6,7 +6,7 @@ import type {
   Relationship,
   Ruleset,
   Scope,
-} from './../../types/common'
+} from '~/types/common'
 import type {
   UserEssential,
   UserExtra,
