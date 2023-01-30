@@ -11,11 +11,18 @@ const data = await $client.score.id.query({ id })
 </script>
 
 <template>
-  <div class="container custom-container mx-auto mt-20">
+  <div v-if="data" class="container custom-container mx-auto mt-20">
+    <!-- <t-modal-root>
+      <t-modal-wrapper ref="changeAvatar" v-slot="{ closeModal }">
+        <t-modal v-if="data">
+        </t-modal>
+      </t-modal-wrapper>
+    </t-modal-root> -->
     <template v-if="data">
-      <div>
+      <app-score-heading :score="data" ranking-system="ppv2" />
+      <!-- <div>
         {{ data.score }}
-      </div>
+      </div> -->
       <JsonViewer :value="data" class="rounded-lg" />
     </template>
   </div>
