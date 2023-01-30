@@ -4,10 +4,10 @@ import { useAppConfig } from '#app'
 import { computed, inject } from 'vue'
 
 import { useAdapterConfig } from '#imports'
-import type { OverallSwitcherComposableType } from '~/composables/useSwitcher'
+import type { LeaderboardSwitcherComposableType } from '~/composables/useSwitcher'
 import { LeaderboardRankingSystem } from '~/types/common'
 
-const { assertHasRuleset, assertHasOverallRankingSystem }
+const { assertHasRuleset, assertHasLeaderboardRankingSystem }
   = await useAdapterConfig()
 
 const config = useAppConfig()
@@ -15,7 +15,7 @@ const rankingSystem = config.overallRankingSystem
 
 const [switcher, setSwitcher] = inject(
   'switcher',
-) as OverallSwitcherComposableType
+) as LeaderboardSwitcherComposableType
 
 interface RankConf {
   userpage: {
@@ -38,7 +38,7 @@ const filter = (showType: 'tab' | 'dropdown') =>
     }
     if (
       !assertHasRuleset(switcher.mode, switcher.ruleset)
-      || !assertHasOverallRankingSystem(switcher.mode, switcher.ruleset, key)
+      || !assertHasLeaderboardRankingSystem(switcher.mode, switcher.ruleset, key)
     ) {
       return acc
     }

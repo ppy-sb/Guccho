@@ -96,15 +96,15 @@ WHERE id = ${id}
             fruits: {
               standard: await this.getLiveRank(
                 id,
-                BanchoPyMode.osuStandard,
+                BanchoPyMode.fruitsStandard,
                 country,
               ),
-              relax: await this.getLiveRank(id, BanchoPyMode.osuRelax, country),
+              relax: await this.getLiveRank(id, BanchoPyMode.fruitsRelax, country),
             },
             mania: {
               standard: await this.getLiveRank(
                 id,
-                BanchoPyMode.osuStandard,
+                BanchoPyMode.maniaStandard,
                 country,
               ),
             },

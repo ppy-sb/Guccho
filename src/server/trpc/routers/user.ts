@@ -9,17 +9,15 @@ import {
 } from '../shapes'
 import { router as _router, publicProcedure as p } from '../trpc'
 import { userNotFound } from '../messages'
-import { assertHasOverallRankingSystem } from '../config'
+import { assertHasLeaderboardRankingSystem } from '../config'
 import type { NumberRange } from '~/types/common'
 import { followUserSettings } from '~/server/transforms'
 import { UserDataProvider, UserRelationshipDataProvider } from '$active/client'
 import { idToString } from '$active/exports'
-import { assertHasRuleset } from '~~/src/adapters/bancho.py/checks'
+import { assertHasRuleset } from '~/adapters/bancho.py/checks'
 
-const [userProvider, userRelationshipProvider] = [
-  new UserDataProvider(),
-  new UserRelationshipDataProvider(),
-]
+const userProvider = new UserDataProvider()
+const userRelationshipProvider = new UserRelationshipDataProvider()
 
 export const router = _router({
   userpage: p
@@ -83,7 +81,7 @@ export const router = _router({
       const { mode, ruleset, rankingSystem } = input
       if (
         !assertHasRuleset(mode, ruleset)
-        || !assertHasOverallRankingSystem(mode, ruleset, rankingSystem)
+        || !assertHasLeaderboardRankingSystem(mode, ruleset, rankingSystem)
       ) {
         throw new TRPCError({
           code: 'PRECONDITION_FAILED',
@@ -123,7 +121,7 @@ export const router = _router({
       const { mode, ruleset, rankingSystem } = input
       if (
         !assertHasRuleset(mode, ruleset)
-        || !assertHasOverallRankingSystem(mode, ruleset, rankingSystem)
+        || !assertHasLeaderboardRankingSystem(mode, ruleset, rankingSystem)
       ) {
         throw new TRPCError({
           code: 'PRECONDITION_FAILED',

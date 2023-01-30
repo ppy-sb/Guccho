@@ -1,54 +1,41 @@
 import type {
   AvailableRuleset,
   LeaderboardRankingSystem,
+  PPRankingSystem,
   RankingSystem,
   Ruleset,
 } from '~/types/common'
 import type {
-  AssertHasOverallRankingSystem,
+  AssertHasLeaderboardRankingSystem,
   AssertHasRankingSystem,
   AssertHasRuleset,
-  ServerOverallRankingSystemDef,
   ServerRankingSystemDef,
 } from '~/types/server'
 
-const rankingSystem = ['ppv2', 'score'] as const
-const leaderboardRankingSystem = ['ppv2', 'rankedScore', 'totalScore'] as const
+const ppRankingSystems = ['ppv2', 'score'] as const
+const leaderboardRankingSystems = ['ppv2', 'rankedScore', 'totalScore'] as const
+
+const defaultConf = {
+  leaderboardRankingSystem: leaderboardRankingSystems,
+  rankingSystem: ppRankingSystems,
+}
 
 const havingRankingSystem: ServerRankingSystemDef = {
   osu: {
-    standard: rankingSystem,
-    relax: rankingSystem,
-    autopilot: rankingSystem,
+    standard: defaultConf,
+    relax: defaultConf,
+    autopilot: defaultConf,
   },
   taiko: {
-    standard: rankingSystem,
-    relax: rankingSystem,
+    standard: defaultConf,
+    relax: defaultConf,
   },
   fruits: {
-    standard: rankingSystem,
-    relax: rankingSystem,
+    standard: defaultConf,
+    relax: defaultConf,
   },
   mania: {
-    standard: rankingSystem,
-  },
-}
-const havingLeaderboardRankingSystem: ServerOverallRankingSystemDef = {
-  osu: {
-    standard: leaderboardRankingSystem,
-    relax: leaderboardRankingSystem,
-    autopilot: leaderboardRankingSystem,
-  },
-  taiko: {
-    standard: leaderboardRankingSystem,
-    relax: leaderboardRankingSystem,
-  },
-  fruits: {
-    standard: leaderboardRankingSystem,
-    relax: leaderboardRankingSystem,
-  },
-  mania: {
-    standard: leaderboardRankingSystem,
+    standard: defaultConf,
   },
 }
 
@@ -65,13 +52,11 @@ export const assertHasRankingSystem: AssertHasRankingSystem = (
   ruleset,
   rankingSystem,
 ): rankingSystem is RankingSystem =>
-  havingRankingSystem[mode][ruleset].includes(rankingSystem as RankingSystem)
+  havingRankingSystem[mode][ruleset].rankingSystem.includes(rankingSystem as PPRankingSystem)
 
-export const assertHasOverallRankingSystem: AssertHasOverallRankingSystem = (
+export const assertHasLeaderboardRankingSystem: AssertHasLeaderboardRankingSystem = (
   mode,
   ruleset,
   rankingSystem,
 ): rankingSystem is LeaderboardRankingSystem =>
-  havingLeaderboardRankingSystem[mode][ruleset].includes(
-    rankingSystem as LeaderboardRankingSystem,
-  )
+  havingRankingSystem[mode][ruleset].leaderboardRankingSystem.includes(rankingSystem as LeaderboardRankingSystem)

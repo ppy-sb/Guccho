@@ -1,5 +1,5 @@
 import {
-  assertHasOverallRankingSystem,
+  assertHasLeaderboardRankingSystem,
   assertHasRankingSystem,
   assertHasRuleset,
   modes as supportedModes,
@@ -11,7 +11,7 @@ export default () => {
     supportedModes,
     supportedRulesets,
     assertHasRuleset,
-    assertHasOverallRankingSystem,
+    assertHasLeaderboardRankingSystem,
     assertHasRankingSystem,
   }
 }

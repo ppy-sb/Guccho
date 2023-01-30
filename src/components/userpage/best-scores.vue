@@ -15,9 +15,9 @@ import {
 } from '~/types/common'
 
 import type { UserEssential } from '~/types/user'
-import type { OverallSwitcherComposableType } from '~/composables/useSwitcher'
+import type { LeaderboardSwitcherComposableType } from '~/composables/useSwitcher'
 const { $client } = useNuxtApp()
-const [switcher] = inject('switcher') as OverallSwitcherComposableType
+const [switcher] = inject('switcher') as LeaderboardSwitcherComposableType
 let prevSwitcherState = {
   ...switcher,
 }

@@ -1,5 +1,5 @@
 import type {
-  AssertHasOverallRankingSystem,
+  AssertHasLeaderboardRankingSystem,
   AssertHasRankingSystem,
 } from '~/types/server'
 import type { LeaderboardRankingSystem, RankingSystem } from '~/types/common'
@@ -12,7 +12,7 @@ export const assertHasRankingSystem: AssertHasRankingSystem = (
   _2,
   rankingSystem,
 ): rankingSystem is RankingSystem => false
-export const assertHasOverallRankingSystem: AssertHasOverallRankingSystem = (
+export const assertHasLeaderboardRankingSystem: AssertHasLeaderboardRankingSystem = (
   _1,
   _2,
   rankingSystem,

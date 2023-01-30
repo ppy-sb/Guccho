@@ -8,7 +8,7 @@ import {
 import { PPRank, ScoreRank } from '~/types/statistics'
 import type { BaseRank, UserModeRulesetStatistics } from '~/types/statistics'
 import { createScoreFormatter, toDuration } from '~/common/varkaUtils'
-import type { OverallSwitcherComposableType } from '~/composables/useSwitcher'
+import type { LeaderboardSwitcherComposableType } from '~/composables/useSwitcher'
 import { getRequiredScoreForLevel } from '~/utils/level-calc'
 
 const numbers = [...Array(10).keys()].map(String)
@@ -30,17 +30,14 @@ const playTime = computed(() =>
     ? toDuration(new Date(deferredRender.playTime * 1000), new Date(0))
     : { hours: 0, minutes: 0, seconds: 0 },
 )
-const switcher = inject<OverallSwitcherComposableType>('switcher')
+const switcher = inject<LeaderboardSwitcherComposableType>('switcher')
 
 const sw = computed(() => switcher?.[0].rankingSystem)
 
 watch(data, () => {
-  let count = 0
   for (const key in deferredRender) {
-    setTimeout(() => {
-      // @ts-expect-error it's fine
-      deferredRender[key] = data.value[key]
-    }, (count += 1) * 100)
+    // @ts-expect-error it's fine
+    deferredRender[key] = data.value[key]
   }
 })
 

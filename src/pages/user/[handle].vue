@@ -9,7 +9,7 @@ import {
 import { faPiedPiperPp } from '@fortawesome/free-brands-svg-icons'
 import type { LeaderboardRankingSystem } from '~/types/common'
 import type { UserModeRulesetStatistics } from '~/types/statistics'
-import { assertHasRuleset } from '~~/src/adapters/bancho.py/checks'
+import { assertHasRuleset } from '~/adapters/bancho.py/checks'
 
 const { addToLibrary } = useFAIconLib()
 
@@ -21,7 +21,7 @@ definePageMeta({
 const appConf = useAppConfig()
 const route = useRoute()
 const { $client } = useNuxtApp()
-const _switcherContext = useOverallSwitcher()
+const _switcherContext = useLeaderboardSwitcher()
 const [switcher] = _switcherContext
 const {
   data: user,

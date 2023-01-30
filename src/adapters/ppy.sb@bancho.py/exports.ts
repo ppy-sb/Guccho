@@ -7,7 +7,7 @@ export {
   stringToScoreId,
   idToString,
   assertHasRuleset,
-  assertHasOverallRankingSystem,
+  assertHasLeaderboardRankingSystem,
   assertHasRankingSystem,
   features,
 } from '../bancho.py/exports'

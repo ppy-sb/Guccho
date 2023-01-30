@@ -13,7 +13,7 @@ import { useFAIconLib } from '#imports'
 import type { UserFull as User } from '~/types/user'
 import { useSession } from '~/store/session'
 
-import type { OverallSwitcherComposableType } from '~/composables/useSwitcher'
+import type { LeaderboardSwitcherComposableType } from '~/composables/useSwitcher'
 
 const { addToLibrary } = useFAIconLib()
 addToLibrary(faUserGroup, faHeartCrack, faHeart, faEnvelope)
@@ -23,7 +23,7 @@ const session = useSession()
 const changeFriendStateButton = ref(null)
 const [switcher, setSwitcher] = inject(
   'switcher',
-) as OverallSwitcherComposableType
+) as LeaderboardSwitcherComposableType
 const user = inject<Ref<User<string>>>('user')
 const { data, refresh } = await useAsyncData(async () => {
   if (!user?.value) {

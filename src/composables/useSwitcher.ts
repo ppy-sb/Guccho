@@ -12,14 +12,14 @@ export interface SwitcherPropType<TRS> {
   rankingSystem?: TRS
 }
 
-export function useOverallSwitcher(
+export function useLeaderboardSwitcher(
   initial?: SwitcherPropType<LeaderboardRankingSystem>,
 ) {
   const { mode, ruleset, rankingSystem } = initial || {}
   const {
     supportedModes,
     supportedRulesets,
-    assertHasOverallRankingSystem,
+    assertHasLeaderboardRankingSystem,
     assertHasRuleset,
   } = useAdapterConfig()
   const data = reactive({
@@ -41,6 +41,7 @@ export function useOverallSwitcher(
       ) {
         data.mode = mode
       }
+
       if (
         ruleset
         && supportedRulesets.includes(ruleset)
@@ -48,18 +49,22 @@ export function useOverallSwitcher(
       ) {
         data.ruleset = ruleset
       }
+
       if (
         rankingSystem
         && assertHasRuleset(data.mode, data.ruleset)
-        && assertHasOverallRankingSystem(data.mode, data.ruleset, rankingSystem)
+        && assertHasLeaderboardRankingSystem(data.mode, data.ruleset, rankingSystem)
       ) {
         data.rankingSystem = rankingSystem
+      }
+      else {
+        data.rankingSystem = 'ppv2'
       }
     },
   ] as const
 }
-export type OverallSwitcherComposableType = ReturnType<
-  typeof useOverallSwitcher
+export type LeaderboardSwitcherComposableType = ReturnType<
+  typeof useLeaderboardSwitcher
 >
 
 export function useSwitcher(initial?: SwitcherPropType<RankingSystem>) {

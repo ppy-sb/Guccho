@@ -1,12 +1,12 @@
-import { useOverallSwitcher } from './useSwitcher'
+import { useLeaderboardSwitcher } from './useSwitcher'
 
-let switcherContext: ReturnType<typeof useOverallSwitcher>
+let switcherContext: ReturnType<typeof useLeaderboardSwitcher>
 const created = false
 export default function useGlobalSwitcher(
-  initial: Parameters<typeof useOverallSwitcher>[0],
+  initial: Parameters<typeof useLeaderboardSwitcher>[0],
 ) {
   if (!created) {
-    switcherContext = useOverallSwitcher(initial)
+    switcherContext = useLeaderboardSwitcher(initial)
   }
   return switcherContext
 }
