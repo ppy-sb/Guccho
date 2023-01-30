@@ -88,10 +88,10 @@ WHERE id = ${id}
             taiko: {
               standard: await this.getLiveRank(
                 id,
-                BanchoPyMode.osuStandard,
+                BanchoPyMode.taikoStandard,
                 country,
               ),
-              relax: await this.getLiveRank(id, BanchoPyMode.osuRelax, country),
+              relax: await this.getLiveRank(id, BanchoPyMode.taikoRelax, country),
             },
             fruits: {
               standard: await this.getLiveRank(
