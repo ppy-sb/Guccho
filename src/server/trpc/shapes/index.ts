@@ -1,5 +1,5 @@
 import type { JSONContent } from '@tiptap/core'
-import z from 'zod'
+import z, { literal, string, union } from 'zod'
 import { assertHasLeaderboardRankingSystem, assertHasRankingSystem, assertHasRuleset } from '../config'
 import type {
   AvailableRuleset,
@@ -9,38 +9,38 @@ import type {
   Ruleset,
 } from '~/types/common'
 
-export const zodHandle = z.string()
-export const zodRelationType = z.union([
-  z.literal('friend'),
-  z.literal('block'),
+export const zodHandle = string()
+export const zodRelationType = union([
+  literal('friend'),
+  literal('block'),
 ])
 
-export const zodMode = z.union([
-  z.literal('osu'),
-  z.literal('taiko'),
-  z.literal('fruits'),
-  z.literal('mania'),
+export const zodMode = union([
+  literal('osu'),
+  literal('taiko'),
+  literal('fruits'),
+  literal('mania'),
 ])
-export const zodRuleset = z.union([
-  z.literal('standard'),
-  z.literal('relax'),
-  z.literal('autopilot'),
+export const zodRuleset = union([
+  literal('standard'),
+  literal('relax'),
+  literal('autopilot'),
 ])
-export const zodPPRankingSystem = z.union([
-  z.literal('ppv2'),
-  z.literal('ppv1'),
+export const zodPPRankingSystem = union([
+  literal('ppv2'),
+  literal('ppv1'),
 ])
-export const zodScoreRankingSystem = z.union([
-  z.literal('rankedScore'),
-  z.literal('totalScore'),
+export const zodScoreRankingSystem = union([
+  literal('rankedScore'),
+  literal('totalScore'),
 ])
-export const zodLeaderboardRankingSystem = z.union([
+export const zodLeaderboardRankingSystem = union([
   zodPPRankingSystem,
   zodScoreRankingSystem,
 ])
-export const zodRankingSystem = z.union([
+export const zodRankingSystem = union([
   zodPPRankingSystem,
-  z.literal('score'),
+  literal('score'),
 ])
 
 export const zodSafeModeRulesetBase = z.object({
@@ -70,7 +70,7 @@ export const validateModeRulesetLeaderboardRankingSystem = <M extends Mode, R ex
     && assertHasLeaderboardRankingSystem(mode, ruleset, rankingSystem)
   )
 }
-
+// TODO transform
 export const validateModeRulesetRankingSystem = ({
   mode,
   ruleset,
@@ -93,7 +93,7 @@ export const validateModeRulesetRankingSystem = ({
 //   .refine(validateModeRulesetLeaderboardRankingSystem)
 
 export const zodTipTapJSONContent = z
-  .record(z.string(), z.any())
+  .record(string(), z.any())
   .transform((input, ctx) => {
     if (!('content' in input) || !Array.isArray(input.content)) {
       ctx.addIssue({
@@ -104,3 +104,15 @@ export const zodTipTapJSONContent = z
     }
     return input as JSONContent
   })
+
+export const zodRankingStatus = union([
+  literal('graveyard'),
+  literal('WIP'),
+  literal('pending'),
+  literal('ranked'),
+  literal('approved'),
+  literal('qualified'),
+  literal('loved'),
+  // literal('deleted'),
+  // literal('notFound'),
+])

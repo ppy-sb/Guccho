@@ -5,7 +5,7 @@ import { generateHTML } from '@tiptap/html'
 import type { Prisma, PrismaClient } from '.prisma/bancho.py'
 import type { Id } from '../exports'
 import { BanchoPyMode, toBanchoPyMode } from '../enums'
-import { createRulesetData, toFullUser, toUserEssential } from '../transforms'
+import { createRulesetData, fromRankingStatus, toFullUser, toUserEssential } from '../transforms'
 import { toRankingSystemScores } from '../transforms/scores'
 import { createUserQuery } from '../transforms/db-queries'
 import { idToString, stringToId } from '../transforms/id-conversion'
@@ -19,6 +19,7 @@ import useEditorExtensions from '~/composables/useEditorExtensions'
 import type { UserEssential, UserOptional, UserStatistic } from '~/types/user'
 
 import { TSFilter } from '~/utils'
+import { RankingStatusEnum } from '~/types/beatmap'
 
 export default class BanchoPyUser implements UserDataProvider<Id> {
   db: PrismaClient
@@ -95,14 +96,8 @@ export default class BanchoPyUser implements UserDataProvider<Id> {
     rankingSystem,
     page,
     perPage,
-  }: {
-    id: Id
-    mode: Mode
-    ruleset: Ruleset
-    rankingSystem: _RS
-    page: number
-    perPage: number
-  }) {
+    rankingStatus,
+  }: UserDataProvider.BaseQuery<Id, Mode, Ruleset, _RS>) {
     const start = page * perPage
     const _mode = toBanchoPyMode(mode, ruleset)
     if (_mode === undefined) {
@@ -111,6 +106,7 @@ export default class BanchoPyUser implements UserDataProvider<Id> {
         message: 'unsupported mode',
       })
     }
+    const banchoPyRankingStatus = rankingStatus.map(i => fromRankingStatus(RankingStatusEnum[i]))
 
     const orderBy: Prisma.ScoreFindManyArgs['orderBy'] = {}
     if (rankingSystem === 'ppv2') {
@@ -122,13 +118,16 @@ export default class BanchoPyUser implements UserDataProvider<Id> {
     else if (rankingSystem === 'totalScore') {
       orderBy.score = 'desc'
     }
+    else {
+      throw new Error('unknown ranking system')
+    }
     const scores = await this.db.score.findMany({
       where: {
         userId: id,
         mode: _mode,
         status: {
           // TODO remove unranked map from user bests
-          in: [2, 3],
+          in: banchoPyRankingStatus,
         },
       },
       include: {
@@ -150,17 +149,12 @@ export default class BanchoPyUser implements UserDataProvider<Id> {
   }
 
   // https://github.com/prisma/prisma/issues/6570 need two separate query to get count for now
-  async getTops<_RS extends LeaderboardRankingSystem>(opt: {
-    id: Id
-    mode: Mode
-    ruleset: Ruleset
-    rankingSystem: _RS
-    page: number
-    perPage: number
-  }) {
-    const { id, mode, ruleset, rankingSystem, page, perPage } = opt
+  async getTops<_RS extends LeaderboardRankingSystem>(opt: UserDataProvider.BaseQuery<Id, Mode, Ruleset, _RS>) {
+    const { id, mode, ruleset, rankingSystem, page, perPage, rankingStatus } = opt
 
     const start = page * perPage
+
+    const banchoPyRankingStatus = rankingStatus.map(i => fromRankingStatus(RankingStatusEnum[i]))
 
     let scoreIds: number[]
     if (rankingSystem === 'rankedScore' || rankingSystem === 'totalScore') {
@@ -174,7 +168,7 @@ INNER JOIN (
   WHERE u.priv > 2 AND s.mode = ${toBanchoPyMode(
     mode,
     ruleset,
-  )} AND s.score > 0 AND s.status >= 2
+  )} AND s.score > 0 AND s.status in ${banchoPyRankingStatus}
   GROUP BY s.map_md5
 ) tmp ON tmp.maxScore = s2.score AND tmp.md5 = s2.map_md5
 WHERE s2.userid = ${id}
@@ -191,7 +185,7 @@ INNER JOIN (
     WHERE u.priv > 2 AND s.mode = ${toBanchoPyMode(
       mode,
       ruleset,
-    )} AND s.pp > 0 AND s.status >= 2
+    )} AND s.pp > 0 AND s.status in ${banchoPyRankingStatus}
     GROUP BY s.map_md5
 ) AS tmp ON tmp.maxPP = s2.pp AND tmp.md5 = s2.map_md5
 WHERE s2.userid = ${id}

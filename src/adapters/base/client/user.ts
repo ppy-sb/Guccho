@@ -12,6 +12,7 @@ import type {
   Ruleset,
 } from '~/types/common'
 import type { RankingSystemScore } from '~/types/score'
+import type { RankingStatus } from '~/types/beatmap'
 
 export namespace UserDataProvider {
   export type ComposableProperties<Id> = UserExtra<Id> & UserOptional<Id>
@@ -25,6 +26,16 @@ export namespace UserDataProvider {
     handle: string
     includes?: Includes
     keys?: Array<['id', 'name', 'safeName', 'email'][number]>
+  }
+
+  export interface BaseQuery<Id, _Mode extends Mode, _Ruleset extends Ruleset, TRankingSystem extends LeaderboardRankingSystem> {
+    id: Id
+    mode: _Mode
+    ruleset: _Ruleset
+    rankingSystem: TRankingSystem
+    page: number
+    perPage: number
+    rankingStatus: RankingStatus[]
   }
 }
 export interface UserDataProvider<Id> {
@@ -47,27 +58,13 @@ export interface UserDataProvider<Id> {
     _Mode extends Mode,
     _Ruleset extends Ruleset,
     _RankingSystem extends LeaderboardRankingSystem,
-  >(query: {
-    id: Id
-    mode: _Mode
-    ruleset: _Ruleset
-    rankingSystem: _RankingSystem
-    page: number
-    perPage: number
-  }): Awaitable<RankingSystemScore<string, Id, _Mode, _RankingSystem>[]>
+  >(query: UserDataProvider.BaseQuery<Id, _Mode, _Ruleset, _RankingSystem>): Awaitable<RankingSystemScore<string, Id, _Mode, _RankingSystem>[]>
 
   getTops<
     _Mode extends Mode,
     _Ruleset extends Ruleset,
     _RankingSystem extends LeaderboardRankingSystem,
-  >(query: {
-    id: Id
-    mode: _Mode
-    ruleset: _Ruleset
-    rankingSystem: _RankingSystem
-    page: number
-    perPage: number
-  }): Awaitable<{
+  >(query: UserDataProvider.BaseQuery<Id, _Mode, _Ruleset, _RankingSystem>): Awaitable<{
     count: number
     scores: RankingSystemScore<string, Id, _Mode, _RankingSystem>[]
   }>

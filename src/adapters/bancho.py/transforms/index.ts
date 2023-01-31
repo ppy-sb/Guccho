@@ -7,8 +7,7 @@ import type {
   Stat,
 } from '.prisma/bancho.py'
 import type { Id } from '../exports'
-import type { BanchoPyRankedStatus } from '../enums'
-import { BanchoPyPrivilege, toBanchoRankingStatus } from '../enums'
+import { BanchoPyPrivilege, BanchoPyRankedStatus, toBanchoRankingStatus } from '../enums'
 import { getLevelWithProgress } from '~/utils/level-calc'
 import type {
   UserEssential,
@@ -259,6 +258,29 @@ export function toRankingStatus(status: BanchoPyRankedStatus) {
   return RankingStatusEnum[toBanchoRankingStatus(status)] as
     | RankingStatus
     | undefined
+}
+export function fromRankingStatus(status: RankingStatusEnum) {
+  switch (status) {
+    case RankingStatusEnum.deleted:
+    case RankingStatusEnum.notFound:
+      return BanchoPyRankedStatus.NotSubmitted
+    case RankingStatusEnum.pending:
+      return BanchoPyRankedStatus.Pending
+    case RankingStatusEnum.ranked:
+      return BanchoPyRankedStatus.Ranked
+    case RankingStatusEnum.approved:
+      return BanchoPyRankedStatus.Approved
+    case RankingStatusEnum.qualified:
+      return BanchoPyRankedStatus.Qualified
+    case RankingStatusEnum.loved:
+      return BanchoPyRankedStatus.Loved
+    case RankingStatusEnum.WIP:
+      return BanchoPyRankedStatus.Pending
+    case RankingStatusEnum.graveyard:
+      return BanchoPyRankedStatus.Pending
+    default:
+      throw new Error(`unknown ranking status: ${status}`)
+  }
 }
 
 export type AbleToTransformToScores = DBScore & {

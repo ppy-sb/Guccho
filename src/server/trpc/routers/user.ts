@@ -4,6 +4,7 @@ import {
   zodHandle,
   zodLeaderboardRankingSystem,
   zodMode,
+  zodRankingStatus,
   zodRelationType,
   zodRuleset,
 } from '../shapes'
@@ -70,6 +71,7 @@ export const router = _router({
         ruleset: zodRuleset,
         rankingSystem: zodLeaderboardRankingSystem,
         page: z.number().gte(0).lt(10),
+        includes: z.array(zodRankingStatus).default(['ranked', 'loved', 'approved']),
       }),
     )
     .query(async ({ input }) => {
@@ -91,11 +93,12 @@ export const router = _router({
 
       const returnValue = await userProvider.getBests({
         id: user.id,
-        mode: input.mode,
-        ruleset: input.ruleset,
-        rankingSystem: input.rankingSystem,
+        mode,
+        ruleset,
+        rankingSystem,
         page: input.page as NumberRange<0, 10>,
         perPage: 10,
+        rankingStatus: input.includes,
       })
       if (!returnValue) {
         throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' })
@@ -110,6 +113,7 @@ export const router = _router({
         ruleset: zodRuleset,
         rankingSystem: zodLeaderboardRankingSystem,
         page: z.number().gte(0).lt(10),
+        includes: z.array(zodRankingStatus).default(['ranked', 'loved', 'approved']),
       }),
     )
     .query(async ({ input }) => {
@@ -136,6 +140,7 @@ export const router = _router({
         rankingSystem: input.rankingSystem,
         page: input.page as NumberRange<0, 10>,
         perPage: 10,
+        rankingStatus: input.includes,
       })
       if (!returnValue) {
         throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' })
