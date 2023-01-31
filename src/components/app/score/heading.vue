@@ -6,8 +6,9 @@ import { assertBeatmapIsVisible } from '~/utils/map'
 import {
   createScoreFormatter,
 } from '~/common/varkaUtils'
+import type { UserEssential } from '~~/src/types/user'
 defineProps<{
-  score: RulesetScore<string, string, Mode, Ruleset, PPRankingSystem>
+  score: RulesetScore<string, string, Mode, Ruleset, PPRankingSystem> & { user: UserEssential<unknown> }
   rankingSystem: RankingSystem
 }>()
 
@@ -25,7 +26,7 @@ const scoreFmt = createScoreFormatter({ notation: undefined })
     <template v-if="assertBeatmapIsVisible(score.beatmap)">
       <div class="flex">
         <div class="flex flex-col gap-2">
-          <div class="flex gap-2 items-baseline">
+          <div class="flex gap-2 items-baseline flex-wrap">
             <div class="text-3xl font-bold">
               {{ score.beatmap.beatmapset.meta.intl.title }}
             </div>
@@ -35,12 +36,28 @@ const scoreFmt = createScoreFormatter({ notation: undefined })
                 {{ score.beatmap.beatmapset.meta.intl.artist }}
               </span>
             </div>
-          </div>
-
-          <div class="flex gap-1 items-baseline">
+            <div class="divider divider-horizontal" />
             <span class="text-2xl font-bold">{{ score.beatmap.version }}</span>
             <span class="font-light">mapped by</span>
             <span class="text-xl font-semibold">{{ score.beatmap.creator }}</span>
+          </div>
+
+          <div class="flex gap-1 items-baseline">
+            <div class="flex items-center gap-1">
+              <img class="mask mask-squircle" width="30" :src="score.user.avatarSrc" alt="">
+              <nuxt-link
+                :to="{
+                  name: 'user-handle',
+                  params: {
+                    handle: `@${score.user.safeName}`,
+                  },
+                }" class="text-4xl font-bold underline decoration-sky-500"
+              >
+                {{ score.user.name }}
+              </nuxt-link>
+            </div>
+            <span class="font-light">played at</span>
+            <span class="text-xl font-semibold">{{ score.playedAt.toLocaleString() }}</span>
           </div>
         </div>
         <div class="ml-auto">
@@ -49,7 +66,7 @@ const scoreFmt = createScoreFormatter({ notation: undefined })
           </t-button>
         </div>
       </div>
-      <div class="grid gap-2 grid-cols-1 grid-rows-auto">
+      <div class="flex flex-col md:flex-row w-full justify-between">
         <div class="p-8 flex gap-2 items-baseline">
           <template v-if="rankingSystem === 'score'">
             <span class="text-5xl">{{ scoreFmt(score.score) }}</span>
@@ -58,6 +75,9 @@ const scoreFmt = createScoreFormatter({ notation: undefined })
             <span class="text-5xl">{{ scoreFmt(score.ppv2.pp) }}</span>
             <span class="text-3xl">pp</span>
           </template>
+        </div>
+        <div class="p-8 text-8xl">
+          {{ score.grade }}
         </div>
       </div>
     </template>

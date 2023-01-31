@@ -28,8 +28,8 @@ export function toScore<_RankingSystem extends PPRankingSystem>({
     maxCombo: score.maxCombo,
     // mods: score.mods,
     score: BigInt(score.score),
-    grade: 'ssh',
-    accuracy: 98,
+    grade: score.grade,
+    accuracy: score.acc,
     hit: createHitCount(mode, score),
     beatmap: (score.beatmap !== null
       && toBeatmapWithBeatmapset(score.beatmap)) || {
