@@ -57,7 +57,9 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <app-search-modal ref="searchModalWrapper" />
+  <client-only>
+    <app-search-modal ref="searchModalWrapper" />
+  </client-only>
   <div
     ref="root"
     class="w-full transition-[padding] fixed navbar-container"
