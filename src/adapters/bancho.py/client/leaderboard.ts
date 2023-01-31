@@ -11,7 +11,7 @@ import type {
   Mode,
   RankingSystem,
 } from '~/types/common'
-import { modes as _modes } from '~/types/common'
+import { modes as _modes } from '~/types/defs'
 import type { LeaderboardDataProvider } from '$def/client/leaderboard'
 
 export default class BanchoPyLeaderboard

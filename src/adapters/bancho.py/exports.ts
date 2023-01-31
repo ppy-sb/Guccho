@@ -1,5 +1,5 @@
 import type { Feature } from '~/types/common'
-export { modes, rulesets } from '~/types/common'
+export { modes, rulesets } from '~/types/defs'
 
 export type Id = number
 export type ScoreId = bigint

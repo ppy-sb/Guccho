@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Mode, RankingSystem, Ruleset } from '~/types/common'
-import { rankingSystems } from '~/types/common'
+import { rankingSystems } from '~/types/defs'
 const props = defineProps<{
   modelValue: RankingSystem
   mode: Mode

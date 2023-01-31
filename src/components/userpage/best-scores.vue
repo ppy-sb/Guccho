@@ -12,7 +12,7 @@ import {
   leaderboardScoreRankingSystems,
   modes,
   rulesets,
-} from '~/types/common'
+} from '~/types/defs'
 
 import type { UserEssential } from '~/types/user'
 import type { LeaderboardSwitcherComposableType } from '~/composables/useSwitcher'

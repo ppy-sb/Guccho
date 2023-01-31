@@ -7,7 +7,6 @@ import type {
   scopes,
 } from './defs'
 import type { Enumerate, U2I } from './internal-utils'
-export * from './defs'
 
 export type Relationship = (typeof relationship)[number]
 export type MutualRelationship = (typeof mutualRelationship)[number]

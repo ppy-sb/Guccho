@@ -7,7 +7,7 @@ import type { LeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
 import {
   leaderboardScoreRankingSystems,
   ppRankingSystems,
-} from '~/types/common'
+} from '~/types/defs'
 import { createAddCommasFormatter } from '~/common/varkaUtils'
 import { useFAIconLib } from '#imports'
 import { assertBeatmapIsVisible } from '~/utils/map'

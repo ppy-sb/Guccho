@@ -3,8 +3,8 @@ import type { Ref } from 'vue'
 import {
   LeaderboardRankingSystem,
   PPRankingSystem,
-  ppRankingSystems,
 } from '~/types/common'
+import { ppRankingSystems } from '~/types/defs'
 import { PPRank, ScoreRank } from '~/types/statistics'
 import type { BaseRank, UserModeRulesetStatistics } from '~/types/statistics'
 import { createScoreFormatter, toDuration } from '~/common/varkaUtils'
