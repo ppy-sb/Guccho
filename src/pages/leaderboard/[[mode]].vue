@@ -118,7 +118,6 @@ function reloadPage(i?: number) {
           || ''
       "
     >
-      <!-- TODO replaceHistoryState? like what we did in beatmapset/[id] -->
       <app-mode-switcher
         v-model="selected"
         :show-sort="true"

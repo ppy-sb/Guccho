@@ -127,6 +127,7 @@ export default class BanchoPyUser implements UserDataProvider<Id> {
         userId: id,
         mode: _mode,
         status: {
+          // TODO remove unranked map from user bests
           in: [2, 3],
         },
       },

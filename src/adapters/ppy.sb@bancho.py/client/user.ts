@@ -120,7 +120,6 @@ export class UserDataProvider extends BanchoPyUser implements Base<Id> {
           ? (undefined as never)
           : {
               html: profile?.html || '',
-              // TODO: alter database to read/save raw
               raw: JSON.parse(profile?.raw || '{}'),
             },
       secrets:
