@@ -78,14 +78,16 @@ export class StatusProvider {
   async memory() {
     const m = await mem()
 
-    return pick(m, [
-      'total',
-      'available',
-      'free',
-      'used',
-      'active',
-      'buffcache',
-    ])
+    return {
+      system: pick(m, [
+        'total',
+        'available',
+        'free',
+        'used',
+        'active',
+        'buffcache',
+      ]),
+    }
   }
 
   async ready() {

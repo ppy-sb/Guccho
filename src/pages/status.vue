@@ -8,6 +8,12 @@ const fmtPercent = new Intl.NumberFormat(undefined, {
   minimumFractionDigits: 2,
 })
 
+const fmtCompact = new Intl.NumberFormat('en-US', {
+  style: 'unit',
+  unit: 'megabyte',
+  unitDisplay: 'narrow',
+})
+
 const { $client } = useNuxtApp()
 let browser = false
 let interval: ReturnType<typeof setInterval>
@@ -82,6 +88,35 @@ const createStyleObject = (count: number) => ({
           class="multi-progress-bar bg-base-300/10"
         >
           Other
+        </div>
+      </div>
+
+      <div class="flex gap-2 mb-2 drop-shadow-lg items-baseline">
+        <h1 class="text-3xl">
+          Memory
+        </h1>
+        <h2 class="text-xl">
+          Total: {{ fmtCompact.format(data.memory.system.total / 1_000_000) }}
+        </h2>
+      </div>
+      <div ref="appLoad" class="multi-progress-bar-container bg-kimberly-500/10 shadow-lg">
+        <div
+          :style="createStyleObject(data.memory.system.active / data.memory.system.total * 100)"
+          class="multi-progress-bar bg-blue-500 text-white"
+        >
+          active
+        </div>
+        <div
+          :style="createStyleObject(data.memory.system.buffcache / data.memory.system.total * 100)"
+          class="multi-progress-bar bg-teal-500 text-white"
+        >
+          cache
+        </div>
+        <div
+          :style="createStyleObject((data.memory.system.free) / data.memory.system.total * 100)"
+          class="multi-progress-bar bg-base-300/10"
+        >
+          free
         </div>
       </div>
     </div>
