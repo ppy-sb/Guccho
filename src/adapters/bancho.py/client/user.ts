@@ -2,7 +2,8 @@ import type { JSONContent } from '@tiptap/core'
 import bcrypt from 'bcryptjs'
 import { TRPCError } from '@trpc/server'
 import { generateHTML } from '@tiptap/html'
-import type { Prisma, PrismaClient } from '.prisma/bancho.py'
+import { Prisma } from '.prisma/bancho.py'
+import type { PrismaClient } from '.prisma/bancho.py'
 import type { Id } from '../exports'
 import { BanchoPyMode, toBanchoPyMode } from '../enums'
 import { createRulesetData, fromRankingStatus, toFullUser, toUserEssential } from '../transforms'
@@ -168,7 +169,7 @@ INNER JOIN (
   WHERE u.priv > 2 AND s.mode = ${toBanchoPyMode(
     mode,
     ruleset,
-  )} AND s.score > 0 AND s.status in (${banchoPyRankingStatus.join(',')})
+  )} AND s.score > 0 AND s.status in (${Prisma.join(banchoPyRankingStatus)})
   GROUP BY s.map_md5
 ) tmp ON tmp.maxScore = s2.score AND tmp.md5 = s2.map_md5
 WHERE s2.userid = ${id}
@@ -185,7 +186,7 @@ INNER JOIN (
     WHERE u.priv > 2 AND s.mode = ${toBanchoPyMode(
       mode,
       ruleset,
-    )} AND s.pp > 0 AND s.status in (${banchoPyRankingStatus.join(',')})
+    )} AND s.pp > 0 AND s.status in (${Prisma.join(banchoPyRankingStatus)})
     GROUP BY s.map_md5
 ) AS tmp ON tmp.maxPP = s2.pp AND tmp.md5 = s2.map_md5
 WHERE s2.userid = ${id}

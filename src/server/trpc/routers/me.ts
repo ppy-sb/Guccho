@@ -18,6 +18,9 @@ import { idToString } from '$active/exports'
 
 const userProvider = new UserDataProvider()
 const relationProvider = new UserRelationshipDataProvider()
+
+// const verifiedEmail = new Map<string, Set<string>>()
+
 export const router = _router({
   settings: pUser.query(async ({ ctx }) => {
     return await userProvider.getFull({
