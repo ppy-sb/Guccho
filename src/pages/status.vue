@@ -2,6 +2,11 @@
 import { JsonViewer } from 'vue3-json-viewer'
 import 'vue3-json-viewer/dist/index.css'
 
+const fmtPercent = new Intl.NumberFormat(undefined, {
+  style: 'percent',
+  minimumFractionDigits: 2,
+})
+
 const { $client } = useNuxtApp()
 let browser = false
 let interval: ReturnType<typeof setInterval>
@@ -11,7 +16,6 @@ const { data, refresh } = await useAsyncData(
 
 const systemLoad = ref<HTMLDivElement | null>(null)
 const appLoad = ref<HTMLDivElement | null>(null)
-const canvas = ref<HTMLCanvasElement | null>(null)
 const box = ref<HTMLDivElement | null>(null)
 // const systemLoadEdge = ref<HTMLDivElement | null>(null)
 
@@ -35,7 +39,8 @@ const createStyleObject = (count: number) => ({
         <h1 class="text-3xl">
           System Load
         </h1>
-        <span class="text-xl">avg: {{ data.load.system.avg }}</span>
+        <span class="text-xl">avg: {{ fmtPercent.format(data.load.system.avg) }}</span>
+        <span class="text-xl">current: {{ fmtPercent.format(data.load.system.current / 100) }}</span>
       </div>
       <div ref="systemLoad" class="multi-progress-bar-container bg-kimberly-500/10 shadow-lg">
         <div
