@@ -11,5 +11,6 @@ export const LeaderboardDataProvider = Parent.LeaderboardDataProvider
 export const UserRelationshipDataProvider = Parent.UserRelationshipDataProvider
 export const ScoreDataProvider = Parent.ScoreDataProvider
 export const MapDataProvider = Parent.MapDataProvider
+export const StatusProvider = Parent.StatusProvider
 
 export { UserDataProvider } from './user'

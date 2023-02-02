@@ -37,3 +37,10 @@ export function placeholder(e: Event & { target: HTMLImageElement }) {
 
 export const TSFilter = <T>(item: T): item is Exclude<T, undefined | null> =>
   item !== undefined && item !== null
+
+export function pick<T extends Record<any, any>, K extends keyof T>(record: T, keys: K[]) {
+  return keys.reduce<Partial<T>>((acc, cur) => {
+    acc[cur] = record[cur]
+    return acc
+  }, {}) as { [P in K]: T[P]; }
+}

@@ -6,7 +6,7 @@ import { assertBeatmapIsVisible } from '~/utils/map'
 import {
   createScoreFormatter,
 } from '~/common/varkaUtils'
-import type { UserEssential } from '~~/src/types/user'
+import type { UserEssential } from '~/types/user'
 defineProps<{
   score: RulesetScore<string, string, Mode, Ruleset, PPRankingSystem> & { user: UserEssential<unknown> }
   rankingSystem: RankingSystem

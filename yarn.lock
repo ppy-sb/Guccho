@@ -7369,6 +7369,11 @@ synckit@^0.8.4:
     "@pkgr/utils" "^2.3.1"
     tslib "^2.4.0"
 
+systeminformation@^5.17.8:
+  version "5.17.8"
+  resolved "https://registry.yarnpkg.com/systeminformation/-/systeminformation-5.17.8.tgz#b27836e05e18ee2e122027e42b064e995934a08b"
+  integrity sha512-kMQsCOFQXqEjoDWKpYkC+ezJImrOnyTL3FZnYDZdWLTZcMW7Gomdp8zH9ztGlSo2L1iCAQXZ8HlV1bI8/Ts64g==
+
 tailwind-config-viewer@^1.7.2:
   version "1.7.2"
   resolved "https://registry.yarnpkg.com/tailwind-config-viewer/-/tailwind-config-viewer-1.7.2.tgz#3d8242e6ef69d08f388c5dadb40eee62d4ae6386"

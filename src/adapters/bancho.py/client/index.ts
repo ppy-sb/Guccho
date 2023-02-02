@@ -9,3 +9,4 @@ export { default as UserRelationshipDataProvider } from './user-relations'
 export { default as LeaderboardDataProvider } from './leaderboard'
 export { default as MapDataProvider } from './map' // bancho.py
 export { default as ScoreDataProvider } from './score'
+export { StatusProvider } from './status'

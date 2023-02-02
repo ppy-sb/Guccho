@@ -168,7 +168,7 @@ INNER JOIN (
   WHERE u.priv > 2 AND s.mode = ${toBanchoPyMode(
     mode,
     ruleset,
-  )} AND s.score > 0 AND s.status in ${banchoPyRankingStatus}
+  )} AND s.score > 0 AND s.status in (${banchoPyRankingStatus.join(',')})
   GROUP BY s.map_md5
 ) tmp ON tmp.maxScore = s2.score AND tmp.md5 = s2.map_md5
 WHERE s2.userid = ${id}
@@ -185,7 +185,7 @@ INNER JOIN (
     WHERE u.priv > 2 AND s.mode = ${toBanchoPyMode(
       mode,
       ruleset,
-    )} AND s.pp > 0 AND s.status in ${banchoPyRankingStatus}
+    )} AND s.pp > 0 AND s.status in (${banchoPyRankingStatus.join(',')})
     GROUP BY s.map_md5
 ) AS tmp ON tmp.maxPP = s2.pp AND tmp.md5 = s2.map_md5
 WHERE s2.userid = ${id}

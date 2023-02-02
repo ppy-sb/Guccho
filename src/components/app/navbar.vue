@@ -238,7 +238,7 @@ onUnmounted(() => {
 <style lang="postcss">
 .navbar-tint,
 .detached > .navbar {
-  @apply bg-kimberly-150/70 dark:bg-kimberly-700/80;
+  @apply bg-kimberly-100/80 dark:bg-kimberly-700/80;
   @apply backdrop-blur-md shadow-xl;
 }
 .navbar {
@@ -269,7 +269,7 @@ onUnmounted(() => {
   }
 }
 .detached {
-  @apply px-2 pt-2;
+  @apply px-2 pt-1;
   & .navbar {
     @apply border-kimberly-50/30 dark:border-kimberly-500/30;
     @apply rounded-2xl;
@@ -287,12 +287,12 @@ onUnmounted(() => {
       }
     }
     & .btn {
-      height: 2.5rem;
-      min-height: 2.5rem;
+      height: 2rem;
+      min-height: 2rem;
 
       &.btn-circle {
-        width: 2.5rem;
-        min-width: 2.5rem;
+        width: 2rem;
+        min-width: 2rem;
       }
 
       &.attach:text-lg {
