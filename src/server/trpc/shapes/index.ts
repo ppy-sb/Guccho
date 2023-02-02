@@ -1,19 +1,10 @@
 import type { JSONContent } from '@tiptap/core'
 import z, { literal, string, union } from 'zod'
-import { assertHasLeaderboardRankingSystem, assertHasRankingSystem, assertHasRuleset } from '../config'
-import type {
-  AvailableRuleset,
-  LeaderboardRankingSystem,
-  Mode,
-  RankingSystem,
-  Ruleset,
-} from '~/types/common'
+import { assertHasRuleset } from '../config'
+import type { Mode, Ruleset } from '~/types/common'
 
 export const zodHandle = string()
-export const zodRelationType = union([
-  literal('friend'),
-  literal('block'),
-])
+export const zodRelationType = union([literal('friend'), literal('block')])
 
 export const zodMode = union([
   literal('osu'),
@@ -26,10 +17,7 @@ export const zodRuleset = union([
   literal('relax'),
   literal('autopilot'),
 ])
-export const zodPPRankingSystem = union([
-  literal('ppv2'),
-  literal('ppv1'),
-])
+export const zodPPRankingSystem = union([literal('ppv2'), literal('ppv1')])
 export const zodScoreRankingSystem = union([
   literal('rankedScore'),
   literal('totalScore'),
@@ -38,10 +26,7 @@ export const zodLeaderboardRankingSystem = union([
   zodPPRankingSystem,
   zodScoreRankingSystem,
 ])
-export const zodRankingSystem = union([
-  zodPPRankingSystem,
-  literal('score'),
-])
+export const zodRankingSystem = union([zodPPRankingSystem, literal('score')])
 
 export const zodSafeModeRulesetBase = z.object({
   mode: zodMode,
@@ -57,40 +42,6 @@ export const validateModeRuleset = ({
 }) => {
   return assertHasRuleset(mode, ruleset)
 }
-// export const zodSafeModeRuleset
-//   = zodSafeModeRulesetBase.refine(validateModeRuleset)
-
-export const validateModeRulesetLeaderboardRankingSystem = <M extends Mode, R extends AvailableRuleset<M>>(
-  mode: M,
-  ruleset: R,
-  rankingSystem: LeaderboardRankingSystem,
-) => {
-  return (
-    assertHasRuleset(mode, ruleset)
-    && assertHasLeaderboardRankingSystem(mode, ruleset, rankingSystem)
-  )
-}
-// TODO transform
-export const validateModeRulesetRankingSystem = ({
-  mode,
-  ruleset,
-  rankingSystem,
-}: { mode: Mode; ruleset: Ruleset; rankingSystem: RankingSystem } & Record<
-  string,
-  any
->) => {
-  return (
-    assertHasRuleset(mode, ruleset)
-    && assertHasRankingSystem(mode, ruleset, rankingSystem)
-  )
-}
-// export const zodSafeModeRulesetLeaderboardRankingSystem = zodSafeModeRulesetBase
-//   .merge(
-//     z.object({
-//       rankingSystem: zodLeaderboardRankingSystem,
-//     }),
-//   )
-//   .refine(validateModeRulesetLeaderboardRankingSystem)
 
 export const zodTipTapJSONContent = z
   .record(string(), z.any())
