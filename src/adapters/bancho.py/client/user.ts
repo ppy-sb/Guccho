@@ -1,5 +1,5 @@
+import _Prisma from '@prisma/client'
 import type { PrismaClient } from '.prisma/bancho.py'
-import { Prisma } from '.prisma/bancho.py'
 import type { JSONContent } from '@tiptap/core'
 import { generateHTML } from '@tiptap/html'
 import { TRPCError } from '@trpc/server'
@@ -21,6 +21,7 @@ import type { UserEssential, UserOptional, UserStatistic } from '~/types/user'
 
 import { RankingStatusEnum } from '~/types/beatmap'
 import { TSFilter } from '~/utils'
+const { Prisma } = _Prisma
 
 export default class BanchoPyUser implements UserDataProvider<Id> {
   db: PrismaClient
