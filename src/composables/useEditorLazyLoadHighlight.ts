@@ -1,6 +1,6 @@
+import { useRuntimeConfig } from '#app'
 import type { JSONContent } from '@tiptap/core'
 import { lowlight } from 'lowlight/lib/core.js'
-import { useRuntimeConfig } from '#app'
 export default () => {
   const {
     public: { hljs },

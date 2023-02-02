@@ -1,14 +1,13 @@
 import type {
-  Map as DBMap,
-  Score as DBScore,
-  User as DatabaseUser,
-  RelationshipType,
-  Source,
-  Stat,
+  Map as DBMap, Score as DBScore, User as DatabaseUser, RelationshipType,
+  Source, Stat,
 } from '.prisma/bancho.py'
-import type { Id } from '../exports'
 import { BanchoPyPrivilege, BanchoPyRankedStatus, toBanchoRankingStatus } from '../enums'
-import { getLevelWithProgress } from '~/utils/level-calc'
+import type { Id } from '../exports'
+import type { RankingStatus } from '~/types/beatmap'
+import { RankingStatusEnum } from '~/types/beatmap'
+import type { LeaderboardRankingSystem } from '~/types/common'
+import type { UserModeRulesetStatistics } from '~/types/statistics'
 import type {
   UserEssential,
   UserExtra,
@@ -16,11 +15,8 @@ import type {
   UserPrivilegeString,
   UserSecrets,
 } from '~/types/user'
-import type { RankingStatus } from '~/types/beatmap'
-import { RankingStatusEnum } from '~/types/beatmap'
-import type { LeaderboardRankingSystem } from '~/types/common'
 import type { UserRelationship } from '~/types/user-relationship'
-import type { UserModeRulesetStatistics } from '~/types/statistics'
+import { getLevelWithProgress } from '~/utils/level-calc'
 
 export function createRulesetData<
   _RankingSystem extends LeaderboardRankingSystem,

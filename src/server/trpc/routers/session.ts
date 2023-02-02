@@ -1,10 +1,7 @@
+import { TRPCError } from '@trpc/server'
 import bcrypt from 'bcryptjs'
 import { z } from 'zod'
-import { TRPCError } from '@trpc/server'
 
-import { zodHandle } from '../shapes'
-import { sessionProcedure as pSession } from '../middleware/session'
-import { router as _router } from '../trpc'
 import {
   passwordMismatch,
   sessionNotFound,
@@ -12,9 +9,12 @@ import {
   unknownError,
   userNotFound,
 } from '../messages'
+import { sessionProcedure as pSession } from '../middleware/session'
+import { zodHandle } from '../shapes'
+import { router as _router } from '../trpc'
 import { getSession } from '~/server/session'
-import { UserDataProvider } from '$active/client'
 import { idToString } from '$active/exports'
+import { UserDataProvider } from '$active/client'
 
 const { compare } = bcrypt
 const userProvider = new UserDataProvider()

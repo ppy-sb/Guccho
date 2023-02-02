@@ -1,9 +1,9 @@
 import type { PrismaClient, User } from '.prisma/bancho.py'
-import type { Id } from '../exports'
-import { toScore } from '../transforms/scores'
 import { fromBanchoPyMode, toBanchoPyMode } from '../enums'
+import type { Id } from '../exports'
 import type { AbleToTransformToScores } from '../transforms'
 import { toUserEssential } from '../transforms'
+import { toScore } from '../transforms/scores'
 import { prismaClient } from '.'
 import type {
   ScoreProvider,

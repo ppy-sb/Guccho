@@ -1,11 +1,11 @@
-import type { HitCount } from '~/types/score'
 import type { LeaderboardRankingSystem, Mode } from '~/types/common'
-import type { UserFull } from '~/types/user'
+import type { HitCount } from '~/types/score'
 import type {
   PPRank,
   ScoreRank,
   UserModeRulesetStatistics,
 } from '~/types/statistics'
+import type { UserFull } from '~/types/user'
 
 export const createISODate = (date: Date = new Date()) => date.toUTCString()
 

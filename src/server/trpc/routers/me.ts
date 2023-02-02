@@ -1,9 +1,7 @@
-import bcrypt from 'bcryptjs'
 import { TRPCError } from '@trpc/server'
+import bcrypt from 'bcryptjs'
 import z from 'zod'
 
-import { router as _router } from '../trpc'
-import { zodHandle, zodRelationType, zodTipTapJSONContent } from '../shapes'
 import {
   atLeastOneUserNotExists,
   oldPasswordMismatch,
@@ -11,10 +9,12 @@ import {
   userExists,
   userNotFound,
 } from '../messages'
-import { userProcedure as pUser } from '~/server/trpc/middleware/user'
+import { zodHandle, zodRelationType, zodTipTapJSONContent } from '../shapes'
+import { router as _router } from '../trpc'
 import { UserDataProvider, UserRelationshipDataProvider } from '$active/client'
-import { calculateMutualRelationships } from '~/server/transforms'
 import { idToString } from '$active/exports'
+import { calculateMutualRelationships } from '~/server/transforms'
+import { userProcedure as pUser } from '~/server/trpc/middleware/user'
 
 const userProvider = new UserDataProvider()
 const relationProvider = new UserRelationshipDataProvider()

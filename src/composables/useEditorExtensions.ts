@@ -1,10 +1,10 @@
+import { CodeBlockLowlight } from '@tiptap/extension-code-block-lowlight'
 import { Highlight } from '@tiptap/extension-highlight'
-import { Typography } from '@tiptap/extension-typography'
-import { StarterKit } from '@tiptap/starter-kit'
 import { TaskItem } from '@tiptap/extension-task-item'
 import { TaskList } from '@tiptap/extension-task-list'
 import { TextAlign } from '@tiptap/extension-text-align'
-import { CodeBlockLowlight } from '@tiptap/extension-code-block-lowlight'
+import { Typography } from '@tiptap/extension-typography'
+import { StarterKit } from '@tiptap/starter-kit'
 
 import { lowlight } from 'lowlight/lib/core.js'
 

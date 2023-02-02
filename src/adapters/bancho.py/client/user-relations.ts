@@ -4,9 +4,9 @@ import { dedupeUserRelationship, toUserEssential } from '../transforms'
 
 import { prismaClient } from '.'
 import type { UserRelationshipDataProvider } from '$def/client/user-relations'
-import type { UserEssential } from '~/types/user'
-import type { Relationship } from '~/types/common'
 import { calculateMutualRelationships } from '~/server/transforms'
+import type { Relationship } from '~/types/common'
+import type { UserEssential } from '~/types/user'
 
 export default class BanchoPyUserRelationship
 implements UserRelationshipDataProvider<Id> {

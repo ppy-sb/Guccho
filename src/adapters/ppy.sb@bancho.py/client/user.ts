@@ -7,11 +7,11 @@ import { prismaClient } from './'
 
 import type { UserEssential } from '~/types/user'
 
+import type { UserDataProvider as Base } from '$def/client/user'
 import { toFullUser } from '~/adapters/bancho.py/transforms'
 import { createUserQuery } from '~/adapters/bancho.py/transforms/db-queries'
 import { UserDataProvider as BanchoPyUser } from '~/adapters/bancho.py@mysql5.7/client'
 import useEditorExtensions from '~/composables/useEditorExtensions'
-import type { UserDataProvider as Base } from '$def/client/user'
 
 export class UserDataProvider extends BanchoPyUser implements Base<Id> {
   sbDb = prismaClient

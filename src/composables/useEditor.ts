@@ -1,5 +1,5 @@
-import { Editor as EditorVue } from '@tiptap/vue-3'
 import type { Editor as EditorCore, JSONContent } from '@tiptap/core'
+import { Editor as EditorVue } from '@tiptap/vue-3'
 
 import useEditorExtensions from './useEditorExtensions'
 import useEditorLazyLoadHighlight from './useEditorLazyLoadHighlight'

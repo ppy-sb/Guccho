@@ -1,5 +1,5 @@
-import type { RulesetScore } from '~/types/score'
 import type { Awaitable, Mode, PPRankingSystem, Ruleset } from '~/types/common'
+import type { RulesetScore } from '~/types/score'
 import type { UserEssential } from '~/types/user'
 
 export interface SearchQueryMany<TId> {

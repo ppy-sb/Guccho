@@ -1,5 +1,7 @@
-import { z } from 'zod'
 import { TRPCError } from '@trpc/server'
+import { z } from 'zod'
+import { assertHasLeaderboardRankingSystem } from '../config'
+import { userNotFound } from '../messages'
 import {
   zodHandle,
   zodLeaderboardRankingSystem,
@@ -9,13 +11,11 @@ import {
   zodRuleset,
 } from '../shapes'
 import { router as _router, publicProcedure as p } from '../trpc'
-import { userNotFound } from '../messages'
-import { assertHasLeaderboardRankingSystem } from '../config'
 import type { NumberRange } from '~/types/common'
 import { followUserSettings } from '~/server/transforms'
-import { UserDataProvider, UserRelationshipDataProvider } from '$active/client'
-import { idToString } from '$active/exports'
 import { assertHasRuleset } from '~/adapters/bancho.py/checks'
+import { idToString } from '$active/exports'
+import { UserDataProvider, UserRelationshipDataProvider } from '$active/client'
 
 const userProvider = new UserDataProvider()
 const userRelationshipProvider = new UserRelationshipDataProvider()
