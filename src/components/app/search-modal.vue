@@ -78,7 +78,7 @@ const hasResult = computed(() => {
       <t-modal>
         <template #root>
           <div
-            class="card w-11/12 lg:w-1/2 max-h-[calc(100vh-2em)] bg-gradient-to-b from-kimberly-100 to-kimberly-200 dark:from-base-300 dark:to-base-200 shadow-md"
+            class="card w-11/12 lg:w-2/3 max-h-[calc(100vh-2em)] bg-gradient-to-b from-kimberly-100 to-kimberly-200 dark:from-base-300 dark:to-base-200 shadow-lg"
           >
             <div class="card-actions justify-end pt-2 px-1">
               <button class="btn btn-ghost btn-sm" @click="() => closeModal()">
@@ -102,7 +102,7 @@ const hasResult = computed(() => {
               v-model="kw"
               type="text"
               placeholder="Search User and Beatmaps..."
-              class="input input-bordered input-ghost shadow-xl m-4"
+              class="input input-bordered input-ghost shadow-md m-4"
               @input="search"
             >
             <div class="pt-0 overflow-auto menus">

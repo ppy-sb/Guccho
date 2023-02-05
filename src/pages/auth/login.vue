@@ -62,7 +62,7 @@ const userLogin = async () => {
     class="flex items-center justify-center px-4 py-12 my-auto sm:px-6 lg:px-8"
   >
     <div
-      class="relative w-full max-w-md p-6 overflow-hidden shadow-2xl space-y-8 bg-kimberly-100/80 dark:bg-kimberly-800 rounded-3xl"
+      class="half-box"
     >
       <fetch-overlay :fetching="fetching" />
       <div>
@@ -77,7 +77,7 @@ const userLogin = async () => {
         autocomplete="off"
         @submit.prevent="userLogin"
       >
-        <div class="shadow-sm flex flex-col gap-2">
+        <div class="flex flex-col gap-2">
           <div>
             <label for="user" class="sr-only">User / Email</label>
             <input
@@ -87,7 +87,7 @@ const userLogin = async () => {
               type="user"
               autocomplete="off"
               required
-              class="w-full input input-ghost"
+              class="w-full input input-ghost shadow-sm"
               :class="{ 'input-error': error }"
               placeholder="User / ID / Email"
             >
@@ -101,7 +101,7 @@ const userLogin = async () => {
               type="password"
               autocomplete="off"
               required
-              class="w-full input input-ghost"
+              class="w-full input input-ghost shadow-sm"
               :class="{ 'input-error': error }"
               placeholder="Password"
             >
@@ -132,5 +132,15 @@ const userLogin = async () => {
 <style lang="postcss" scoped>
 .auth-error-text {
   @apply text-red-500 text-sm font-medium;
+}
+
+.half-box {
+  @apply relative w-full max-w-md p-6 overflow-hidden space-y-8 rounded-3xl;
+  &::before {
+    content: "";
+    @apply absolute left-0 top-0 right-0 bottom-0;
+    @apply bg-gradient-to-t from-kimberly-500/5 to-transparent rounded-3xl;
+    @apply blur-sm -z-10;
+  }
 }
 </style>

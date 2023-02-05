@@ -72,12 +72,16 @@ useHead({
 }
 .heading {
   @apply relative flex items-center justify-between px-4 lg:px-0 mx-auto my-auto text-left w-max text-kimberly-900 dark:text-kimberly-100;
-  &::before {
+  &::before,
+  &::after {
     content: "";
-    @apply -z-10;
+    @apply -z-10 opacity-50;
     @apply lg:absolute lg:top-[30%] lg:bottom-[30%] lg:left-0 lg:right-0;
-    @apply lg:bg-gradient-to-r lg:from-kimberly-500/30 lg:to-transparent;
-    @apply lg:rounded-3xl lg:drop-shadow-lg;
+    @apply lg:bg-gradient-to-r lg:from-kimberly-500/5 lg:to-transparent;
+    @apply lg:rounded-3xl;
+  }
+  &::before {
+    @apply lg:blur
   }
 }
 </style>
