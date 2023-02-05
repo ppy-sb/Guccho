@@ -205,7 +205,7 @@ const nextBp = nextPage(bpPage)
             </div>
           </div>
           <div
-            class="btn-group d-flex w-full bg-kimberly-300/30 rounded-2xl shadow-xl"
+            class="btn-group d-flex w-full bg-kimberly-300/30 rounded-2xl shadow"
             style="--rounded-btn: 1rem"
           >
             <button
