@@ -205,8 +205,8 @@ onBeforeMount(() => {
                     {{ avatarError }}
                   </p>
                 </div>
-                <output v-else class="drop-shadow">
-                  <img :src="newAvatarURL" class="mask mask-squircle overflow-hidden" alt="">
+                <output v-else class="drop-shadow p-2">
+                  <img :src="newAvatarURL" class="mask mask-squircle overflow-hidden _avatar">
                 </output>
                 <input id="dropzone-file" accept="image/*" type="file" class="hidden" @change="selectAvatarFile">
               </label>
@@ -233,6 +233,7 @@ onBeforeMount(() => {
                 () => {
                   closeModal(() => {
                     newAvatar = undefined
+                    newAvatarURL = undefined
                     uploadingAvatarStat = 'idle';
                   });
                 }
@@ -327,7 +328,7 @@ onBeforeMount(() => {
         <div
           class="flex items-end justify-center p-3 overflow-hidden shadow-md gap-4 md:justify-start bg-kimberly-200/30 dark:bg-kimberly-700/40 sm:rounded-3xl lg:mr-4"
         >
-          <div class="relative z-10 mask mask-squircle hoverable w-100">
+          <div class="relative z-10 mask mask-squircle hoverable w-100 self-center">
             <button
               class="absolute top-0 z-20 w-full h-full btn btn-primary hover:bg-wewak-500/30 hover:active:border-wewak-500/30 no-animation"
               type="button"
@@ -337,8 +338,7 @@ onBeforeMount(() => {
             </button>
             <img
               :src="newAvatarURL || user.avatarSrc"
-              class="pointer-events-none"
-              style="min-width: 150px; width: 150px"
+              class="pointer-events-none _avatar"
             >
           </div>
           <div>
@@ -554,6 +554,10 @@ onBeforeMount(() => {
   @apply dark:hover:bg-kimberly-200 dark:bg-kimberly-800 dark:bg-kimberly-300 dark:bg-kimberly-700 hover:bg-kimberly-50 dark:border-kimberly-600 dark:hover:border-kimberly-500 dark:hover:bg-kimberly-600;
   @apply hover:shadow-lg;
   @apply transition-shadow transition-colors;
+}
+._avatar {
+  min-width: 150px;
+  max-width: 200px
 }
 </style>
 
