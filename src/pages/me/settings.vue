@@ -31,6 +31,7 @@ const profile = ref<JSONContent>()
 const profileEdited = ref(false)
 const uploadingAvatar = ref(0)
 const saveAvatar = () => {
+  // TODO update avatar
   uploadingAvatar.value = 1
   setTimeout(() => {
     uploadingAvatar.value = 2
