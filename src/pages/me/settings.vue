@@ -205,8 +205,8 @@ onBeforeMount(() => {
                     {{ avatarError }}
                   </p>
                 </div>
-                <output v-else class="drop-shadow p-2">
-                  <img :src="newAvatarURL" class="mask mask-squircle overflow-hidden _avatar">
+                <output v-else class="drop-shadow m-2 w-full mask mask-squircle overflow-hidden _avatar">
+                  <img :src="newAvatarURL">
                 </output>
                 <input id="dropzone-file" accept="image/*" type="file" class="hidden" @change="selectAvatarFile">
               </label>
