@@ -563,7 +563,7 @@ WHERE s2.userid = ${id}
 
     const loc = join(this.config.avatar.location, `${user.id}.${mime.ext}`)
     await writeFile(loc, avatar)
-    return `${this.config.avatar.domain}/${user.id}?${Date.now()}`
+    return `//${this.config.avatar.domain}/${user.id}?${Date.now()}`
   }
 
   async search({ keyword, limit }: { keyword: string; limit: number }) {

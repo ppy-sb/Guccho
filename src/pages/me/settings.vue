@@ -9,6 +9,7 @@ definePageMeta({
 
 const { $client } = useNuxtApp()
 const config = useAppConfig()
+const route = useRoute()
 
 useHead({
   titleTemplate: `Settings - ${config.title}`,
@@ -17,10 +18,20 @@ definePageMeta({
   middleware: ['auth'],
 })
 
-const _user = await $client.me.settings.query()
+// const _user = await $client.me.settings.query()
 
-const user = ref({ ..._user } as Exclude<typeof _user, null>)
-const unchanged = ref({ ...user.value })
+const { data: user, refresh } = await useAsyncData(() => $client.me.settings.query())
+
+if (!user.value) {
+  await navigateTo({
+    name: 'auth-login',
+    query: {
+      redirect: route.fullPath,
+    },
+  })
+}
+
+const unchanged = ref({ ...user.value as Exclude<typeof user['value'], null> })
 
 const profile = ref<JSONContent>()
 const profileEdited = ref(false)
@@ -50,15 +61,19 @@ const saveAvatar = async () => {
   uploadingAvatarStat.value = 'uploading'
 
   const ab = await newAvatar.value.arrayBuffer()
-  await $client.me.changeAvatar.mutate({ avatar: new Uint8Array(ab) })
+  const url = await $client.me.changeAvatar.mutate({ avatar: new Uint8Array(ab) })
 
   uploadingAvatarStat.value = 'succeed'
+  newAvatarURL.value = url
 }
 // update settings
 const errorMessage = ref<string[]>([])
 const updateResult = ref(false)
 const posting = ref(false)
 const updateUserSettings = async () => {
+  if (!user.value) {
+    return
+  }
   errorMessage.value = []
   const updateData = {
     name:
@@ -135,7 +150,7 @@ const updatePassword = async (closeModal: () => void) => {
   }
 }
 onBeforeMount(() => {
-  if (!user.value.profile) {
+  if (!user.value?.profile) {
     return
   }
   profile.value = user.value.profile.raw
@@ -310,7 +325,7 @@ onBeforeMount(() => {
               change
             </button>
             <img
-              :src="user.avatarSrc"
+              :src="newAvatarURL || user.avatarSrc"
               class="pointer-events-none"
               style="min-width: 150px; width: 150px"
             >
