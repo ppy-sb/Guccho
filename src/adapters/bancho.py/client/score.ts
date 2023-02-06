@@ -16,6 +16,12 @@ import { TSFilter } from '~/utils'
 export default class BanchoPyScore implements ScoreProvider<bigint, Id> {
   db: PrismaClient
 
+  config = {
+    avatar: {
+      domain: process.env.BANCHO_PY_AVATAR_DOMAIN,
+    },
+  }
+
   constructor() {
     this.db = prismaClient
   }
@@ -33,7 +39,7 @@ export default class BanchoPyScore implements ScoreProvider<bigint, Id> {
         mode,
         ruleset,
       }),
-      { user: toUserEssential({ user: dbScore.user }) },
+      { user: toUserEssential({ user: dbScore.user, config: this.config }) },
     )
   }
 

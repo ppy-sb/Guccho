@@ -95,7 +95,7 @@ export class UserDataProvider extends BanchoPyUser implements Base<Id> {
       return null
     }
 
-    const fullUser = await toFullUser(user)
+    const fullUser = await toFullUser(user, this.config)
     const profile = await this.sbDb.userpage.findFirst({
       where: {
         userId: user.id,

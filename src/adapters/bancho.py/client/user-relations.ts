@@ -11,6 +11,13 @@ import type { UserEssential } from '~/types/user'
 export default class BanchoPyUserRelationship
 implements UserRelationshipDataProvider<Id> {
   db: PrismaClient
+
+  config = {
+    avatar: {
+      domain: process.env.BANCHO_PY_AVATAR_DOMAIN,
+    },
+  }
+
   constructor() {
     this.db = prismaClient
   }
@@ -56,7 +63,7 @@ implements UserRelationshipDataProvider<Id> {
 
     const asUserEssentialShape = relationships.map(r => ({
       ...r,
-      toUser: toUserEssential({ user: r.toUser }),
+      toUser: toUserEssential({ user: r.toUser, config: this.config }),
     }))
     const deduped = dedupeUserRelationship(asUserEssentialShape)
 

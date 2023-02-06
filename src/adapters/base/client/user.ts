@@ -127,6 +127,8 @@ export interface UserDataProvider<Id> {
     newPasswordMD5: string
   ): Awaitable<UserEssential<Id>>
 
+  changeAvatar(user: { id: Id }, avatar: Buffer | Uint8Array): Awaitable<string>
+
   search(opt: {
     keyword: string
     limit: number

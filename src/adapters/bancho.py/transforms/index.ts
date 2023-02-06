@@ -162,7 +162,15 @@ export function toUserEssential<
     never,
     never
   >,
->({ user, includes }: { user: DatabaseUser; includes?: Includes }) {
+>({ user, includes, config }: {
+  user: DatabaseUser
+  includes?: Includes
+  config: {
+    avatar: {
+      domain?: string
+    }
+  }
+}) {
   const returnValue: UserEssential<Id> & Partial<UserOptional<Id>> = {
     id: user.id,
     ingameId: user.id,
@@ -170,9 +178,9 @@ export function toUserEssential<
     safeName: user.safeName,
     flag: user.country,
     avatarSrc:
-      (process.env.BANCHO_PY_AVATAR_DOMAIN
-        && `https://${process.env.BANCHO_PY_AVATAR_DOMAIN}/${user.id}`)
-      || '',
+      (config.avatar.domain
+        && `https://${config.avatar.domain}/${user.id}`)
+      || undefined,
     roles: toRoles(user.priv),
   }
 
@@ -219,6 +227,11 @@ export function dedupeUserRelationship(
 
 export function toFullUser(
   user: DatabaseUser,
+  config: {
+    avatar: {
+      domain?: string
+    }
+  },
 ): UserEssential<Id> &
   Pick<UserExtra<Id>, 'settings'> &
   Pick<UserOptional, 'oldNames'> {
@@ -229,9 +242,9 @@ export function toFullUser(
     safeName: user.safeName,
     flag: user.country,
     avatarSrc:
-      (process.env.BANCHO_PY_AVATAR_DOMAIN
-        && `https://${process.env.BANCHO_PY_AVATAR_DOMAIN}/${user.id}`)
-      || '',
+      (config.avatar.domain
+        && `https://${config.avatar.domain}/${user.id}`)
+      || undefined,
     roles: toRoles(user.priv),
     settings: {
       visibility: {

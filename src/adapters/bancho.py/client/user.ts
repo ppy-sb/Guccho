@@ -1,8 +1,12 @@
+import { isAbsolute, join, resolve, sep } from 'path'
+import { mkdirSync } from 'fs'
+import { writeFile } from 'fs/promises'
 import type { Prisma, PrismaClient } from '.prisma/bancho.py'
 import type { JSONContent } from '@tiptap/core'
 import { generateHTML } from '@tiptap/html'
 import { TRPCError } from '@trpc/server'
 import bcrypt from 'bcryptjs'
+import imageType from 'image-type'
 import { BanchoPyMode, toBanchoPyMode } from '../enums'
 import type { Id } from '../exports'
 import { client as redisClient } from '../redis-client'
@@ -21,16 +25,56 @@ import type { UserEssential, UserOptional, UserStatistic } from '~/types/user'
 import { RankingStatusEnum } from '~/types/beatmap'
 import { TSFilter } from '~/utils'
 
+function mkDirByPathSync(targetDir: string, { isRelativeToScript = false } = {}) {
+  const initDir = isAbsolute(targetDir) ? sep : ''
+  const baseDir = isRelativeToScript ? __dirname : '.'
+
+  return targetDir.split(sep).reduce((parentDir: string, childDir: string) => {
+    const curDir = resolve(baseDir, parentDir, childDir)
+    try {
+      mkdirSync(curDir)
+    }
+    catch (err: any) {
+      if (err.code === 'EEXIST') { // curDir already exists!
+        return curDir
+      }
+
+      // To avoid `EISDIR` error on Mac and `EACCES`-->`ENOENT` and `EPERM` on Windows.
+      if (err.code === 'ENOENT') { // Throw the original parentDir error on curDir `ENOENT` failure.
+        throw new Error(`EACCES: permission denied, mkdir '${parentDir}'`)
+      }
+
+      const caughtErr = ['EACCES', 'EPERM', 'EISDIR'].includes(err.code)
+      if (!caughtErr || (caughtErr && curDir === resolve(targetDir))) {
+        throw err // Throw if it's just the last created dir.
+      }
+    }
+
+    return curDir
+  }, initDir)
+}
+
 export default class BanchoPyUser implements UserDataProvider<Id> {
   db: PrismaClient
 
   relationships: BanchoPyUserRelationship
   redisClient?: ReturnType<typeof redisClient>
 
+  config = {
+    avatar: {
+      domain: process.env.BANCHO_PY_AVATAR_DOMAIN,
+      location: process.env.BANCHO_PY_AVATAR_LOCATION,
+    },
+  }
+
   constructor() {
     this.db = prismaClient
     this.relationships = new BanchoPyUserRelationship()
     this.redisClient = redisClient()
+
+    if (this.config.avatar.location) {
+      mkDirByPathSync(this.config.avatar.location)
+    }
   }
 
   async getLiveRank(id: number, mode: number, country: string) {
@@ -71,7 +115,7 @@ export default class BanchoPyUser implements UserDataProvider<Id> {
       return null
     }
 
-    return toUserEssential({ user, includes })
+    return toUserEssential({ user, includes, config: this.config })
   }
 
   async getEssential<
@@ -85,7 +129,7 @@ export default class BanchoPyUser implements UserDataProvider<Id> {
       return null
     }
 
-    return toUserEssential({ user, includes })
+    return toUserEssential({ user, includes, config: this.config })
   }
 
   // https://github.com/prisma/prisma/issues/6570 need two separate query to get count for now
@@ -396,7 +440,7 @@ WHERE s2.userid = ${id}
     // type check will not find any missing params here.
     const returnValue = <
       Exclude<Awaited<ReturnType<UserDataProvider<Id>['getFull']>>, null>
-    > await toFullUser(user)
+    > await toFullUser(user, this.config)
     const parallels: Promise<any>[] = []
 
     returnValue.reachable = false
@@ -454,7 +498,7 @@ WHERE s2.userid = ${id}
         name: input.name,
       },
     })
-    return toUserEssential({ user: result })
+    return toUserEssential({ user: result, config: this.config })
   }
 
   async changeUserpage(
@@ -498,7 +542,28 @@ WHERE s2.userid = ${id}
         pwBcrypt,
       },
     })
-    return toUserEssential({ user: result })
+    return toUserEssential({ user: result, config: this.config })
+  }
+
+  async changeAvatar(user: { id: Id }, avatar: Uint8Array) {
+    if (!this.config.avatar.location) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'server is not configured correctly, missing avatar location',
+      })
+    }
+    const mime = await imageType(avatar)
+
+    if (!mime?.mime.includes('image')) {
+      throw new TRPCError({
+        code: 'PRECONDITION_FAILED',
+        message: 'Not an image',
+      })
+    }
+
+    const loc = join(this.config.avatar.location, `${user.id}.${mime.ext}`)
+    await writeFile(loc, avatar)
+    return `${this.config.avatar.domain}/${user.id}?${Date.now()}`
   }
 
   async search({ keyword, limit }: { keyword: string; limit: number }) {
@@ -539,6 +604,6 @@ WHERE s2.userid = ${id}
       take: limit,
     })
 
-    return result.map(user => toUserEssential({ user }))
+    return result.map(user => toUserEssential({ user, config: this.config }))
   }
 }

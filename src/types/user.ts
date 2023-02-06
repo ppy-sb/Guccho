@@ -67,7 +67,7 @@ export interface UserEssential<Id> {
   name: string
   safeName: string
   flag: string
-  avatarSrc: string
+  avatarSrc?: string
 
   roles: UserPrivilegeString[]
 }

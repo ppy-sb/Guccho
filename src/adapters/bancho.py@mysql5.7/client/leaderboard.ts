@@ -191,8 +191,8 @@ LIMIT ${start}, ${pageSize}`)
         safeName: item.safeName,
         flag: item.flag,
         avatarSrc:
-          (process.env.BANCHO_PY_AVATAR_DOMAIN
-            && `https://${process.env.BANCHO_PY_AVATAR_DOMAIN}/${item.id}`)
+          (this.config.avatar.domain
+            && `https://${this.config.avatar.domain}/${item.id}`)
           || '',
         roles: toRoles(item.priv),
       },

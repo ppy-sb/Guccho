@@ -7,18 +7,12 @@ definePageMeta({
   middleware: ['auth'],
 })
 
-const changeAvatar = ref<{
-  openModal: (arg0?: CallableFunction) => void
-}>()
-const changePassword = ref<{
-  openModal: (arg0?: CallableFunction) => void
-}>()
+const { $client } = useNuxtApp()
 const config = useAppConfig()
 
 useHead({
   titleTemplate: `Settings - ${config.title}`,
 })
-const { $client } = useNuxtApp()
 definePageMeta({
   middleware: ['auth'],
 })
@@ -27,17 +21,43 @@ const _user = await $client.me.settings.query()
 
 const user = ref({ ..._user } as Exclude<typeof _user, null>)
 const unchanged = ref({ ...user.value })
+
 const profile = ref<JSONContent>()
 const profileEdited = ref(false)
-const uploadingAvatar = ref(0)
-const saveAvatar = () => {
-  // TODO update avatar
-  uploadingAvatar.value = 1
+
+const newAvatar = ref<File>()
+const newAvatarURL = ref<string>()
+const selectAvatarFile = (e: Event) => {
+  const file = (e?.target as HTMLInputElement)?.files?.[0]
+  if (!file) {
+    return
+  }
+  newAvatar.value = file
+  newAvatarURL.value = URL.createObjectURL(file)
+}
+const uploadingAvatarStat = ref<'idle' | 'uploading' | 'succeed' | 'errored'>('idle')
+const changeAvatar = ref<{
+  openModal: (arg0?: CallableFunction) => void
+}>()
+const changePassword = ref<{
+  openModal: (arg0?: CallableFunction) => void
+}>()
+const saveAvatar = async () => {
+  if (!newAvatar.value) {
+    return
+  }
+
+  uploadingAvatarStat.value = 'uploading'
+
+  const ab = await newAvatar.value.arrayBuffer()
+
+  $client.me.changeAvatar.mutate({ avatar: new Uint8Array(ab) })
+
   setTimeout(() => {
-    uploadingAvatar.value = 2
+    uploadingAvatarStat.value = 'succeed'
   }, 1000)
 }
-
+// update settings
 const errorMessage = ref<string[]>([])
 const updateResult = ref(false)
 const posting = ref(false)
@@ -134,6 +154,7 @@ onBeforeMount(() => {
             <div class="flex items-center justify-center w-full">
               <label for="dropzone-file" class="dropzone">
                 <div
+                  v-if="!newAvatar"
                   class="flex flex-col items-center justify-center px-3 pt-5 pb-6"
                 >
                   <svg
@@ -161,21 +182,24 @@ onBeforeMount(() => {
                     SVG, PNG, JPG or GIF (MAX. 800x400px)
                   </p>
                 </div>
-                <input id="dropzone-file" type="file" class="hidden">
+                <div v-else class="mask mask-squircle overflow-hidden">
+                  <img :src="newAvatarURL" alt="">
+                </div>
+                <input id="dropzone-file" accept="image/*" type="file" class="hidden" @change="selectAvatarFile">
               </label>
             </div>
             <t-button
               class="grow"
-              :loading="uploadingAvatar === 1"
-              :variant="uploadingAvatar === 2 ? 'success' : 'neutral'"
+              :loading="uploadingAvatarStat === 'uploading'"
+              :variant="uploadingAvatarStat === 'succeed' ? 'success' : 'neutral'"
               @click="saveAvatar"
             >
               {{
-                uploadingAvatar === 0
+                uploadingAvatarStat === 'idle'
                   ? "Save"
-                  : uploadingAvatar === 1
+                  : uploadingAvatarStat === 'uploading'
                     ? "Uploading"
-                    : uploadingAvatar === 2
+                    : uploadingAvatarStat === 'succeed'
                       ? "done"
                       : ""
               }}
@@ -185,7 +209,7 @@ onBeforeMount(() => {
               @click="
                 () => {
                   closeModal();
-                  uploadingAvatar = 0;
+                  uploadingAvatarStat = 'idle';
                 }
               "
             >
@@ -194,6 +218,7 @@ onBeforeMount(() => {
           </div>
         </t-modal>
       </t-modal-wrapper>
+
       <t-modal-wrapper ref="changePassword" v-slot="{ closeModal }">
         <t-modal>
           <template #body>

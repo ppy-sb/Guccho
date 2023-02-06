@@ -28,6 +28,7 @@ export const router = _router({
       excludes: { statistics: true, relationships: true, secrets: false },
     })
   }),
+
   changeUserpage: pUser
     .input(
       z.object({
@@ -40,6 +41,7 @@ export const router = _router({
       })
       return result
     }),
+
   changeSettings: pUser
     .input(
       z.object({
@@ -75,6 +77,14 @@ export const router = _router({
       ctx.user = result
       return ctx.user
     }),
+
+  changeAvatar: pUser
+    .input(z.object({
+      avatar: z.instanceof(Uint8Array),
+    })).mutation(async ({ ctx, input }) => {
+      return await userProvider.changeAvatar(ctx.user, input.avatar)
+    }),
+
   updatePassword: pUser
     .input(
       z.object({
@@ -107,6 +117,7 @@ export const router = _router({
         input.newPassword,
       )
     }),
+
   relation: pUser
     .input(
       z.object({
@@ -138,9 +149,11 @@ export const router = _router({
           ),
       }
     }),
+
   relations: pUser.query(async ({ ctx }) => {
     return await relationProvider.get({ user: ctx.user })
   }),
+
   removeOneRelation: pUser
     .input(
       z.object({
@@ -177,6 +190,7 @@ export const router = _router({
         throw err
       }
     }),
+
   addOneRelation: pUser
     .input(
       z.object({

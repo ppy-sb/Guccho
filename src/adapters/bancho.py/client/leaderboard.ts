@@ -18,6 +18,13 @@ export default class BanchoPyLeaderboard
 implements LeaderboardDataProvider<Id> {
   db: PrismaClient
   redisClient?: ReturnType<typeof redisClient>
+
+  config = {
+    avatar: {
+      domain: process.env.BANCHO_PY_AVATAR_DOMAIN,
+    },
+  }
+
   constructor() {
     this.db = prismaClient
 
@@ -129,9 +136,9 @@ implements LeaderboardDataProvider<Id> {
         safeName: item.safeName,
         flag: item.flag,
         avatarSrc:
-          (process.env.BANCHO_PY_AVATAR_DOMAIN
-            && `https://${process.env.BANCHO_PY_AVATAR_DOMAIN}/${item.id}`)
-          || '',
+          (this.config.avatar.domain
+            && `https://${this.config.avatar.domain}/${item.id}`)
+          || undefined,
         roles: toRoles(item.priv),
       },
       inThisLeaderboard: {
@@ -193,7 +200,7 @@ implements LeaderboardDataProvider<Id> {
       orderBy: sort,
     })
     return scores.map((item, index) => ({
-      user: toUserEssential({ user: item.user }),
+      user: toUserEssential({ user: item.user, config: this.config }),
       score: {
         id: item.id.toString(),
         ppv2: item.pp,

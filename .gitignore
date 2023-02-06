@@ -249,3 +249,5 @@ fix-permission.sh
 
 .mock
 dump.rdb
+
+.dump
