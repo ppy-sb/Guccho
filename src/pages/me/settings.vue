@@ -50,12 +50,9 @@ const saveAvatar = async () => {
   uploadingAvatarStat.value = 'uploading'
 
   const ab = await newAvatar.value.arrayBuffer()
+  await $client.me.changeAvatar.mutate({ avatar: new Uint8Array(ab) })
 
-  $client.me.changeAvatar.mutate({ avatar: new Uint8Array(ab) })
-
-  setTimeout(() => {
-    uploadingAvatarStat.value = 'succeed'
-  }, 1000)
+  uploadingAvatarStat.value = 'succeed'
 }
 // update settings
 const errorMessage = ref<string[]>([])
@@ -182,9 +179,9 @@ onBeforeMount(() => {
                     SVG, PNG, JPG or GIF (MAX. 800x400px)
                   </p>
                 </div>
-                <div v-else class="mask mask-squircle overflow-hidden">
-                  <img :src="newAvatarURL" alt="">
-                </div>
+                <output v-else class="drop-shadow">
+                  <img :src="newAvatarURL" class="mask mask-squircle overflow-hidden" alt="">
+                </output>
                 <input id="dropzone-file" accept="image/*" type="file" class="hidden" @change="selectAvatarFile">
               </label>
             </div>
@@ -208,8 +205,10 @@ onBeforeMount(() => {
               class="grow"
               @click="
                 () => {
-                  closeModal();
-                  uploadingAvatarStat = 'idle';
+                  closeModal(() => {
+                    newAvatar = undefined
+                    uploadingAvatarStat = 'idle';
+                  });
                 }
               "
             >

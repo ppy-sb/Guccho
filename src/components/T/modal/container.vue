@@ -21,8 +21,8 @@ const l2 = (value: Status) => {
   l2Status.value = value
 }
 
-let modalShownCallback = () => {}
-let modalClosedCallback = () => {}
+const modalShownCallback: (() => void)[] = []
+const modalClosedCallback: (() => void)[] = []
 
 const outerL2 = inject<typeof l2 | undefined>('openL2', undefined)
 const openModal = (cb?: () => void) => {
@@ -31,7 +31,9 @@ const openModal = (cb?: () => void) => {
   }
 
   stat.value = 'show'
-  modalShownCallback = cb ?? modalShownCallback
+  if (cb) {
+    modalShownCallback.push(cb)
+  }
 }
 const closeModal = (cb?: () => void) => {
   if (outerL2) {
@@ -39,7 +41,9 @@ const closeModal = (cb?: () => void) => {
   }
 
   stat.value = 'closed'
-  modalClosedCallback = cb ?? modalClosedCallback
+  if (cb) {
+    modalClosedCallback.push(cb)
+  }
 }
 provide('openModal', openModal)
 provide('closeModal', closeModal)
@@ -65,12 +69,16 @@ onMounted(() => {
           }
         }
 
-        modalClosedCallback()
+        for (const cb of modalClosedCallback) {
+          cb()
+        }
         emit('closed')
       })
     }
     else if (e.animationName === 'zoomOutContent') {
-      modalShownCallback()
+      for (const cb of modalShownCallback) {
+        cb()
+      }
       emit('shown')
     }
   })
