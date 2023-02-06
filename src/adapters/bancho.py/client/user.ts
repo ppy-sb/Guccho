@@ -1,6 +1,8 @@
 import { isAbsolute, join, resolve, sep } from 'path'
 import { mkdirSync } from 'fs'
-import { writeFile } from 'fs/promises'
+import { unlink, writeFile } from 'fs/promises'
+
+import glob from 'glob-promise'
 import type { Prisma, PrismaClient } from '.prisma/bancho.py'
 import type { JSONContent } from '@tiptap/core'
 import { generateHTML } from '@tiptap/html'
@@ -561,7 +563,28 @@ WHERE s2.userid = ${id}
       })
     }
 
+    const oldFilesPath = `${user.id}.*`
+
+    if (oldFilesPath.startsWith('.')) {
+      throw new TRPCError({
+        message: 'SOMEONE IS TRYING TO DELETE ALL AVATARS',
+        code: 'BAD_REQUEST',
+      })
+    }
+    const existFilesPath = join(this.config.avatar.location, oldFilesPath)
     const loc = join(this.config.avatar.location, `${user.id}.${mime.ext}`)
+
+    const oldFiles = await glob(existFilesPath)
+
+    if (oldFiles.length > 2) {
+      throw new TRPCError({
+        message: 'trying to delete more than 2 files, please contact support to clean your old avatars',
+        code: 'INTERNAL_SERVER_ERROR',
+      })
+    }
+
+    await Promise.all(oldFiles.map(file => unlink(file)))
+
     await writeFile(loc, avatar)
     return `//${this.config.avatar.domain}/${user.id}?${Date.now()}`
   }
