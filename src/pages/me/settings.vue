@@ -38,11 +38,19 @@ const profileEdited = ref(false)
 
 const newAvatar = ref<File>()
 const newAvatarURL = ref<string>()
-const selectAvatarFile = (e: Event) => {
+const avatarError = ref<string>()
+const selectAvatarFile = async (e: Event) => {
+  avatarError.value = undefined
   const file = (e?.target as HTMLInputElement)?.files?.[0]
   if (!file) {
     return
   }
+
+  if (!checkAvatar(await file.arrayBuffer())) {
+    avatarError.value = 'size too big'
+    return
+  }
+
   newAvatar.value = file
   newAvatarURL.value = URL.createObjectURL(file)
 }
@@ -190,8 +198,11 @@ onBeforeMount(() => {
                     <span class="font-semibold">Click to upload</span> or drag
                     and drop
                   </p>
-                  <p class="text-xs text-kimberly-500 dark:text-kimberly-300">
+                  <!-- <p class="text-xs text-kimberly-500 dark:text-kimberly-300">
                     SVG, PNG, JPG or GIF (MAX. 800x400px)
+                  </p> -->
+                  <p class="text-sm text-red-500">
+                    {{ avatarError }}
                   </p>
                 </div>
                 <output v-else class="drop-shadow">

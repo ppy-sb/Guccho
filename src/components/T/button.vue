@@ -2,6 +2,7 @@
 const props = defineProps<{
   variant?: string
   size?: string
+  loading?: boolean
 }>()
 const emit = defineEmits<(e: 'click') => void>()
 </script>
@@ -12,6 +13,7 @@ const emit = defineEmits<(e: 'click') => void>()
     :class="[
       props.variant && `btn-${props.variant}`,
       props.size && `btn-${props.size}`,
+      props.loading && 'loading',
     ]"
     @click="emit('click')"
   >
