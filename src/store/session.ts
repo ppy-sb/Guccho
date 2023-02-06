@@ -48,6 +48,7 @@ export const useSession = defineStore('session', {
         userId: result.user.id,
         user: result.user,
       })
+      this.setAvatarTimestamp()
       return true
     },
     async destroy() {
@@ -70,6 +71,7 @@ export const useSession = defineStore('session', {
           userId: result.user.id,
           user: result.user,
         })
+        this.setAvatarTimestamp()
         await this.gotSession()
         return true
       }
@@ -82,7 +84,7 @@ export const useSession = defineStore('session', {
       }
     },
 
-    async reloadAvatar() {
+    setAvatarTimestamp() {
       if (!this.user) {
         return
       }

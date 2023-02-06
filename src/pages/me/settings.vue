@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import md5 from 'md5'
 import type { JSONContent } from '@tiptap/core'
+import { useSession } from '~/store/session'
 
 definePageMeta({
   middleware: ['auth'],
@@ -10,6 +11,8 @@ definePageMeta({
 const { $client } = useNuxtApp()
 const config = useAppConfig()
 const route = useRoute()
+
+const session = useSession()
 
 useHead({
   titleTemplate: `Settings - ${config.title}`,
@@ -73,6 +76,7 @@ const saveAvatar = async () => {
 
   uploadingAvatarStat.value = 'succeed'
   newAvatarURL.value = url
+  session.setAvatarTimestamp()
 }
 // update settings
 const errorMessage = ref<string[]>([])
@@ -214,6 +218,7 @@ onBeforeMount(() => {
             <t-button
               class="grow"
               :loading="uploadingAvatarStat === 'uploading'"
+              :disabled="uploadingAvatarStat === 'succeed'"
               :variant="uploadingAvatarStat === 'succeed' ? 'success' : 'neutral'"
               @click="saveAvatar"
             >
@@ -557,7 +562,8 @@ onBeforeMount(() => {
 }
 ._avatar {
   min-width: 150px;
-  max-width: 200px
+  max-width: 200px;
+  @apply object-cover aspect-square;
 }
 </style>
 

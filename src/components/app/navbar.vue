@@ -263,6 +263,7 @@ onUnmounted(() => {
 
   .avatar {
     & img.avatar-img {
+      @apply object-cover aspect-square;
       @apply transition-all;
       @apply w-7 !important;
     }
