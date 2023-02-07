@@ -93,7 +93,7 @@ onMounted(() => {
 <style lang="postcss">
 .not-safari {
   & .custom-container {
-    @apply drop-shadow-xl;
+    /* @apply drop-shadow-xl; */
   }
 }
 #footer.disabled {

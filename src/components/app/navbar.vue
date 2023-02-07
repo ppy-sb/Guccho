@@ -37,10 +37,6 @@ const shownMenu = reactive({
   user: false,
 })
 const handleScroll = () => {
-  // if (root.value == null) {
-  //   return
-  // }
-
   detached.value = window.pageYOffset > 0
 }
 
@@ -62,8 +58,8 @@ onUnmounted(() => {
   </client-only>
   <div
     ref="root"
-    class="w-full transition-[padding] fixed navbar-container"
-    :class="[detached && 'detached', !disabled && 'z-50']"
+    class="w-full transition-[padding] fixed navbar-container z-40"
+    :class="[detached && 'detached']"
   >
     <div
       class="navbar transition-[border-radius]"
@@ -98,7 +94,7 @@ onUnmounted(() => {
             </svg>
           </label>
           <template #popper>
-            <div class="menu bg-kimberly-150/70 dark:bg-kimberly-700/80">
+            <div class="menu bg-kimberly-100/80 dark:bg-kimberly-700/80">
               <li
                 v-for="menuItem in menu"
                 :key="`menu-${menuItem.name}`"

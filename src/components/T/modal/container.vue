@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { inject, nextTick, onMounted, provide, ref } from 'vue'
 import type { Status } from './shared'
 
 const props = defineProps({
@@ -12,7 +11,7 @@ const emit = defineEmits<{
   (event: 'closed'): void
   (event: 'shown'): void
 }>()
-const content = ref()
+const content = ref<HTMLElement>()
 
 const stat = ref<Status>('hidden')
 const l2Status = ref<Status>('hidden')
@@ -48,12 +47,12 @@ const closeModal = (cb?: () => void) => {
 provide('openModal', openModal)
 provide('closeModal', closeModal)
 provide('stat', stat)
-// provide('l2Stat', l2Status)
+
 provide('openL2', l2)
 
 // events
 onMounted(() => {
-  content.value.addEventListener('animationend', (e: AnimationEvent) => {
+  const listener = (e: AnimationEvent) => {
     if (e.animationName === 'zoomInContent') {
       if (e.srcElement !== content.value) {
         return
@@ -81,6 +80,10 @@ onMounted(() => {
       }
       emit('shown')
     }
+  }
+  content.value?.addEventListener('animationend', listener)
+  onBeforeUnmount(() => {
+    content.value?.removeEventListener('animationend', listener)
   })
 })
 defineExpose({
@@ -110,7 +113,7 @@ defineExpose({
 
 <style lang="scss">
 @import "./shared.scss";
-$content-stage1: blur(0.3em) opacity(0.4) saturate(0.7);
+$content-stage1: blur(0.4em) opacity(0.4) saturate(0.7);
 $content-stage2: blur(1em) opacity(0.2) saturate(0.3);
 
 $scale: scale(0.97);
@@ -127,6 +130,7 @@ $scale2: scale(0.95);
     .zoom-modal {
       filter: opacity(0);
     }
+    pointer-events: none;
   }
 
   .zoom-modal-background {
@@ -139,7 +143,6 @@ $scale2: scale(0.95);
   }
 
   &[data-l1-status="show"] {
-    z-index: 0;
 
     > .zoom-modal-background {
       // background: rgba(0, 0, 0, .1);
@@ -158,9 +161,6 @@ $scale2: scale(0.95);
       animation: zoomInContentL2 $duration $animate-function forwards;
     }
 
-    > .content {
-      z-index: 1;
-    }
   }
 
   &[data-l1-status="closed"] {
@@ -234,7 +234,7 @@ $scale2: scale(0.95);
   }
 }
 
-[data-l2-status="show"] > .zoom-modal-background {
+.zoom-modal-container[data-l2-status="show"] > .zoom-modal-background {
   z-index: 1000 !important;
 }
 </style>
