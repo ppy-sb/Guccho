@@ -58,7 +58,7 @@ onUnmounted(() => {
   </client-only>
   <div
     ref="root"
-    class="w-full transition-[padding] fixed navbar-container z-40"
+    class="w-full transition-[padding] fixed navbar-container z-10"
     :class="[detached && 'detached']"
   >
     <div
