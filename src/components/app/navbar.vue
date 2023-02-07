@@ -250,7 +250,7 @@ onUnmounted(() => {
 
   &.disabled {
     transition: all 0.5s cubic-bezier(0.05, 1, 0.4, 0.95);
-    filter: saturate(0.8) opacity(0.8) blur(0.2rem);
+    filter: saturate(0.8) opacity(0.8);
 
     * {
       @apply pointer-events-none;

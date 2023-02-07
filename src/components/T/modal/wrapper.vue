@@ -58,8 +58,8 @@ defineExpose({
 <style lang="scss">
 @import "./shared.scss";
 
-$in: blur(16px) opacity(0) saturate(0.5);
-$scale: scale(1.1);
+$in: blur(0.5em) opacity(0) saturate(0.5);
+$scale: scale(1.07);
 .zoom-modal-wrapper {
   position: fixed;
   left: 0;

@@ -113,8 +113,8 @@ defineExpose({
 
 <style lang="scss">
 @import "./shared.scss";
-$content-stage1: blur(0.4em) opacity(0.4) saturate(0.7);
-$content-stage2: blur(1em) opacity(0.2) saturate(0.3);
+$content-stage1:  opacity(0.4) saturate(0.7);
+$content-stage2:  opacity(0.2) saturate(0.3);
 
 $scale: scale(0.97);
 $scale2: scale(0.95);
@@ -140,13 +140,16 @@ $scale2: scale(0.95);
     bottom: 0;
     right: 0;
     z-index: -50;
+
+    @apply transition-[filter];
   }
 
   &[data-l1-status="show"] {
 
     > .zoom-modal-background {
       // background: rgba(0, 0, 0, .1);
-      z-index: 1;
+      z-index: 40;
+      @apply backdrop-blur-sm
     }
 
     &[data-l2-status="hidden"] > .content {
