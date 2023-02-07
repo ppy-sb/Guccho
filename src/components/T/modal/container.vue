@@ -94,11 +94,7 @@ defineExpose({
 </script>
 
 <template>
-  <div
-    class="zoom-modal-container"
-    :data-l1-status="stat"
-    :data-l2-status="l2Status"
-  >
+  <div class="zoom-modal-container" :data-l1-status="stat" :data-l2-status="l2Status">
     <div class="zoom-modal-background">
       <slot name="modal" v-bind="{ openModal, closeModal }">
         <div v-if="props.teleportId" :id="props.teleportId.toString()" />
@@ -113,8 +109,9 @@ defineExpose({
 
 <style lang="scss">
 @import "./shared.scss";
-$content-stage1:  opacity(0.4) saturate(0.7);
-$content-stage2:  opacity(0.2) saturate(0.3);
+// TODO move filters to zoom-modal-background
+$content-stage1: opacity(0.4) saturate(0.7);
+$content-stage2: opacity(0.2) saturate(0.3);
 
 $scale: scale(0.97);
 $scale2: scale(0.95);
@@ -130,7 +127,8 @@ $scale2: scale(0.95);
     .zoom-modal {
       filter: opacity(0);
     }
-    pointer-events: none;
+
+    // pointer-events: none;
   }
 
   .zoom-modal-background {
@@ -148,16 +146,23 @@ $scale2: scale(0.95);
 
     > .zoom-modal-background {
       // background: rgba(0, 0, 0, .1);
-      z-index: 40;
-      @apply backdrop-blur-sm
+      z-index: 10;
+      @apply backdrop-blur-sm;
     }
 
     &[data-l2-status="hidden"] > .content {
       animation: zoomOutContent $duration $animate-function forwards;
     }
 
-    &[data-l2-status="show"] > .content {
-      animation: zoomOutContentL2 $duration $animate-function forwards !important;
+    &[data-l2-status="show"] {
+
+      > .zoom-modal-background {
+        @apply backdrop-blur;
+      }
+
+      > .content {
+        animation: zoomOutContentL2 $duration $animate-function forwards !important;
+      }
     }
 
     &[data-l2-status="closed"] > .content {
