@@ -11,15 +11,9 @@ guweb is the front-facing appearance of the osu! server protocol, [gulag](https:
 
 ## Setup
 
-Make sure to install the dependencies:
-
-```bash
-# yarn
-yarn install
-
-# npm
-npm install
-```
+- Config .env
+- Config `activeAdapter` in nuxt.config.ts
+- Run `yarn`
 
 ## supporting platforms
 
@@ -27,24 +21,13 @@ guweb-next has multi-platform support in mind. It's modular but not hot-swapable
 
 - ### guweb
 
-#### pre requests
-
-```bash
-# make sure you did run `yarn install`
-yarn prisma:gen:dev --schema=prisma/bancho.py.prisma
-```
+- Run `yarn build:schemas`
 
 ## Development Server
 
 Start the development server on <http://localhost:3000>
 
 ```bash
-# important: follow platform specific procedures first
-
-# npm
-npm run dev
-
-# yarn
 yarn dev
 ```
 
@@ -53,11 +36,6 @@ yarn dev
 Build the application for production:
 
 ```bash
-# important: follow platform specific procedures first
-
-# npm
-npm run build
-
 # yarn
 yarn build
 ```
@@ -65,11 +43,6 @@ yarn build
 Locally preview production build:
 
 ```bash
-# important: follow platform specific procedures first
-
-# npm
-npm run preview
-
 # yarn
 yarn preview
 ```
@@ -83,13 +56,7 @@ Checkout the [deployment documentation](https://v3.nuxtjs.org/guide/deploy/prese
 
 ### dev notes
 
-Plan: deprecate Python api server and use Nuxt 3 only.
-
-migration done
-
 todo: search 'TODO' in repo.
-
-markdown for userpage
 
 ### todo(s)
 
@@ -101,9 +68,4 @@ TODO standardize error string
 
 ## AppConfig and ServerConfig
 
-An adapter should export configs that has the same structure as AppConfig.
-For now an adapter will export 3 objects while AppConfig is providing one object contains the 3 objects mentioned.
-
-see `src/app.config.ts` and `src/adapters/bancho.py/exports.ts`
-
-it's still in draft and everything might change in the future.
+see `src/app.config.ts` and `src/adapters/bancho.py/exports.ts`, more detailed readme will be provided later
