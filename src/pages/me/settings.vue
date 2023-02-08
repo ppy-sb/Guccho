@@ -21,8 +21,6 @@ definePageMeta({
   middleware: ['auth'],
 })
 
-// const _user = await $client.me.settings.query()
-
 const { data: user, refresh } = await useAsyncData(() => $client.me.settings.query())
 
 if (!user.value) {
@@ -77,6 +75,7 @@ const saveAvatar = async () => {
   uploadingAvatarStat.value = 'succeed'
   newAvatarURL.value = url
   session.setAvatarTimestamp()
+  refresh()
 }
 // update settings
 const errorMessage = ref<string[]>([])

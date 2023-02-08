@@ -22,6 +22,7 @@ const scoreFmt = createScoreFormatter({ notation: undefined })
 </script>
 
 <template>
+  <!-- TODO score design -->
   <div>
     <template v-if="assertBeatmapIsVisible(score.beatmap)">
       <div class="flex">
