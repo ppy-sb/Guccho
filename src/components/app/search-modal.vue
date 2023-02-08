@@ -169,7 +169,7 @@ const hasResult = computed(() => {
                         }"
                         @click="() => closeModal()"
                       >
-                        <div class="drop-shadow-lg flex gap-2 items-center">
+                        <div class="flex gap-2 items-center">
                           <img
                             v-if="assertIsBanchoBeatmapset(bm.beatmapset)"
                             class="h-[30px] mask mask-squircle"
@@ -203,7 +203,7 @@ const hasResult = computed(() => {
                         }"
                         @click="() => closeModal()"
                       >
-                        <div class="drop-shadow-lg flex gap-2 items-center">
+                        <div class="flex gap-2 items-center">
                           <img
                             :src="user.avatarSrc"
                             class="w-[30px] mask mask-squircle"
