@@ -137,7 +137,7 @@ const hasResult = computed(() => {
                         }"
                         @click="() => closeModal()"
                       >
-                        <div class="drop-shadow-lg flex gap-2 items-center">
+                        <div class="flex gap-2 items-center">
                           <img
                             v-if="assertIsBanchoBeatmapset(bs)"
                             class="h-[30px] mask mask-squircle"
