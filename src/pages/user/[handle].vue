@@ -16,13 +16,16 @@ const { addToLibrary } = useFAIconLib()
 addToLibrary(faRankingStar, faPiedPiperPp, faBarsStaggered, faHouseUser)
 
 definePageMeta({
-  layout: 'without-footer',
+  layout: 'screen',
 })
 const appConf = useAppConfig()
 const route = useRoute()
 const { $client } = useNuxtApp()
-const _switcherContext = useLeaderboardSwitcher()
-const [switcher] = _switcherContext
+
+const switcherCtx = useLeaderboardSwitcher()
+const [switcher] = switcherCtx
+
+const [_, setScroll] = useScrollYObserver()
 const {
   data: user,
   error,
@@ -54,7 +57,7 @@ useHead({
 })
 
 provide('user', user)
-provide('switcher', _switcherContext)
+provide('switcher', switcherCtx)
 
 provide('user.statistics', currentStatistic)
 provide('user.currentRankingSystem', currentRankingSystem)
@@ -72,13 +75,17 @@ const icons: Partial<Record<keyof typeof visible, string>> = {
   statistics: 'fa-solid fa-bars-staggered',
   heading: 'fa-solid fa-house-user',
 }
-const [heading, statistics, bestScores, topScores] = [
-  ref(null),
-  ref(null),
-  ref(null),
-  ref(null),
+const [handle, heading, statistics, bestScores, topScores] = [
+  ref<HTMLElement | null>(null),
+  ref<HTMLElement | null>(null),
+  ref<HTMLElement | null>(null),
+  ref<HTMLElement | null>(null),
+  ref<HTMLElement | null>(null),
 ]
 onMounted(() => {
+  if (handle.value) {
+    setScroll(handle.value)
+  }
   const stop = Object.entries({
     heading,
     statistics,
@@ -100,7 +107,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="absolute w-full">
+  <div ref="handle" class="handle">
     <section v-if="error" class="min-h-screen">
       <div class="mx-auto my-auto flex flex-col justify-between gap-3">
         <h1 class="self-center text-3xl">
@@ -176,8 +183,8 @@ onMounted(() => {
 </template>
 
 <style lang="postcss" scoped>
-.bg {
-  @apply bg-gradient-to-b from-kimberly-50/50 to-kimberly-50/90 dark:from-kimberly-800 dark:to-kimberly-900;
-  @apply min-h-screen;
+.handle {
+  /* @apply bg-gradient-to-b from-kimberly-50/50 to-kimberly-50/90 dark:from-kimberly-800 dark:to-kimberly-900; */
+  @apply h-screen overflow-scroll;
 }
 </style>

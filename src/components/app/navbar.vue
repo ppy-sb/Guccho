@@ -4,6 +4,9 @@ import { useSession } from '~/store/session'
 const props = defineProps<{
   disabled?: boolean
 }>()
+
+const [scrollY] = useScrollYObserver()
+
 const session = useSession()
 
 const searchModalWrapper = ref<{
@@ -28,7 +31,7 @@ const menu = computed(() => [
 ])
 const config = useAppConfig()
 const detached = ref(false)
-
+watch(scrollY, () => detached.value = scrollY.value > 0)
 const root = ref<HTMLElement>()
 
 const shownMenu = reactive({
@@ -36,20 +39,11 @@ const shownMenu = reactive({
   right: false,
   user: false,
 })
-const handleScroll = () => {
-  detached.value = window.pageYOffset > 0
-}
 
 const logout = async () => {
   await session.destroy()
-  navigateTo('/')
+  await navigateTo('/')
 }
-onBeforeMount(() => {
-  document.addEventListener('scroll', handleScroll)
-})
-onUnmounted(() => {
-  document.removeEventListener('scroll', handleScroll)
-})
 </script>
 
 <template>
@@ -58,7 +52,7 @@ onUnmounted(() => {
   </client-only>
   <div
     ref="root"
-    class="w-full transition-[padding] fixed navbar-container z-10"
+    class="w-full transition-[padding] fixed navbar-container z-40"
     :class="[detached && 'detached']"
   >
     <div
@@ -174,7 +168,7 @@ onUnmounted(() => {
             </div>
           </button>
           <template #popper>
-            <div class="menu bg-kimberly-150/70 dark:bg-kimberly-700/80">
+            <div class="menu bg-kimberly-100/80 dark:bg-kimberly-700/80">
               <ul
                 tabindex="0"
                 class="right-0 p-2 mt-2 shadow-xl menu menu-compact dropdown-content rounded-br-2xl rounded-bl-2xl w-52"
@@ -264,6 +258,11 @@ onUnmounted(() => {
       @apply w-7 !important;
     }
   }
+
+  .navbar-end {
+    @apply transition-[gap];
+    @apply gap-0
+  }
 }
 .detached {
   @apply px-2 pt-1;
@@ -295,6 +294,11 @@ onUnmounted(() => {
       &.attach:text-lg {
         @apply text-base !important;
       }
+    }
+
+    & .navbar-end {
+      @apply transition-[gap];
+      @apply gap-2
     }
   }
 }

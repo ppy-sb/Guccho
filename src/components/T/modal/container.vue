@@ -11,7 +11,7 @@ const emit = defineEmits<{
   (event: 'closed'): void
   (event: 'shown'): void
 }>()
-const content = ref<HTMLElement>()
+const modal = ref<HTMLElement>()
 
 const stat = ref<Status>('hidden')
 const l2Status = ref<Status>('hidden')
@@ -53,8 +53,8 @@ provide('openL2', l2)
 // events
 onMounted(() => {
   const listener = (e: AnimationEvent) => {
-    if (e.animationName === 'zoomInContent') {
-      if (e.srcElement !== content.value) {
+    if (e.animationName === 'zoomInModalContent') {
+      if (e.srcElement !== modal.value) {
         return
       }
 
@@ -74,16 +74,16 @@ onMounted(() => {
         emit('closed')
       })
     }
-    else if (e.animationName === 'zoomOutContent') {
+    else if (e.animationName === 'zoomOutModalContent') {
       for (const cb of modalShownCallback) {
         cb()
       }
       emit('shown')
     }
   }
-  content.value?.addEventListener('animationend', listener)
+  modal.value?.addEventListener('animationend', listener)
   onBeforeUnmount(() => {
-    content.value?.removeEventListener('animationend', listener)
+    modal.value?.removeEventListener('animationend', listener)
   })
 })
 defineExpose({
@@ -101,7 +101,7 @@ defineExpose({
       </slot>
     </div>
 
-    <div ref="content" class="content notify-safari-something-will-change">
+    <div ref="modal" class="zoom-modal-content notify-safari-something-will-change">
       <slot v-bind="{ openModal, closeModal }" />
     </div>
   </div>
@@ -110,8 +110,8 @@ defineExpose({
 <style lang="scss">
 @import "./shared.scss";
 // TODO move filters to zoom-modal-background
-$content-stage1: opacity(0.4) saturate(0.7);
-$content-stage2: opacity(0.2) saturate(0.3);
+$zoom-content-stage1: opacity(0.4) saturate(0.7);
+$zoom-content-stage2: opacity(0.2) saturate(0.3);
 
 $scale: scale(0.97);
 $scale2: scale(0.95);
@@ -146,12 +146,12 @@ $scale2: scale(0.95);
 
     > .zoom-modal-background {
       // background: rgba(0, 0, 0, .1);
-      z-index: 10;
+      z-index: 40;
       @apply backdrop-blur-sm;
     }
 
-    &[data-l2-status="hidden"] > .content {
-      animation: zoomOutContent $duration $animate-function forwards;
+    &[data-l2-status="hidden"] > .zoom-modal-content {
+      animation: zoomOutModalContent $duration $animate-function forwards;
     }
 
     &[data-l2-status="show"] {
@@ -160,13 +160,13 @@ $scale2: scale(0.95);
         @apply backdrop-blur;
       }
 
-      > .content {
-        animation: zoomOutContentL2 $duration $animate-function forwards !important;
+      > .zoom-modal-content {
+        animation: zoomOutModalContentL2 $duration $animate-function forwards !important;
       }
     }
 
-    &[data-l2-status="closed"] > .content {
-      animation: zoomInContentL2 $duration $animate-function forwards;
+    &[data-l2-status="closed"] > .zoom-modal-content {
+      animation: zoomInModalContentL2 $duration $animate-function forwards;
     }
 
   }
@@ -176,13 +176,13 @@ $scale2: scale(0.95);
       z-index: 0;
     }
 
-    > .content {
-      animation: zoomInContent $duration $animate-function forwards;
+    > .zoom-modal-content {
+      animation: zoomInModalContent $duration $animate-function forwards;
     }
   }
 }
 
-@keyframes zoomOutContent {
+@keyframes zoomOutModalContent {
   0% {
     transform: scale(1);
     // -webkit-transform: scale(1);
@@ -190,18 +190,18 @@ $scale2: scale(0.95);
 
   100% {
     transform: $scale;
-    filter: $content-stage1;
+    filter: $zoom-content-stage1;
     // -webkit-transform: $scale;
-    // -webkit-filter: $content-stage1;
+    // -webkit-filter: $zoom-modal-content-stage1;
   }
 }
 
-@keyframes zoomInContent {
+@keyframes zoomInModalContent {
   0% {
     transform: $scale;
-    filter: $content-stage1;
+    filter: $zoom-content-stage1;
     // -webkit-transform: $scale;
-    // -webkit-filter: $content-stage1;
+    // -webkit-filter: $zoom-modal-content-stage1;
   }
 
   100% {
@@ -210,35 +210,35 @@ $scale2: scale(0.95);
   }
 }
 
-@keyframes zoomOutContentL2 {
+@keyframes zoomOutModalContentL2 {
   0% {
     transform: $scale;
-    filter: $content-stage1;
+    filter: $zoom-content-stage1;
     // -webkit-transform: $scale;
-    // -webkit-filter: $content-stage1;
+    // -webkit-filter: $zoom-modal-content-stage1;
   }
 
   100% {
     transform: $scale2;
-    filter: $content-stage2;
+    filter: $zoom-content-stage2;
     // -webkit-transform: $scale2;
-    // -webkit-filter: $content-stage2;
+    // -webkit-filter: $zoom-modal-content-stage2;
   }
 }
 
-@keyframes zoomInContentL2 {
+@keyframes zoomInModalContentL2 {
   0% {
     transform: $scale2;
-    filter: $content-stage2;
+    filter: $zoom-content-stage2;
     // -webkit-transform: $scale2;
-    // -webkit-filter: $content-stage2;
+    // -webkit-filter: $zoom-modal-content-stage2;
   }
 
   100% {
     transform: $scale;
-    filter: $content-stage1;
+    filter: $zoom-content-stage1;
     // -webkit-transform: $scale;
-    // -webkit-filter: $content-stage1;
+    // -webkit-filter: $zoom-modal-content-stage1;
   }
 }
 

@@ -1,7 +1,7 @@
 <script setup></script>
 
 <template>
-  <div class="zoom-modal-content">
+  <div class="zoom-modal-inner">
     <slot name="root">
       <div
         class="shadow-xl card bg-kimberly-50 dark:bg-kimberly-800 shadow-kimberly-800/20"
@@ -17,7 +17,7 @@
 </template>
 
 <style lang="postcss" scoped>
-.zoom-modal-content {
-  @apply h-screen m-auto flex items-center justify-center;
+.zoom-modal-inner {
+  @apply min-h-screen m-auto flex items-center justify-center;
 }
 </style>
