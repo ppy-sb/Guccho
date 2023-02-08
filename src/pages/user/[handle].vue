@@ -129,7 +129,7 @@ onMounted(() => {
         </div>
       </div>
     </section>
-    <div v-else-if="user" class="flex flex-col pt-20 justify-stretch md:pt-0">
+    <div v-else-if="user" class="flex flex-col mt-20 justify-stretch md:mt-0">
       <userpage-heading id="heading" ref="heading" />
       <userpage-profile />
       <userpage-ranking-system-switcher class="z-10" />
@@ -151,9 +151,8 @@ onMounted(() => {
       >
         <userpage-top-scores v-if="currentRankingSystem" />
       </div>
-      <div class="pt-4" />
       <!-- placeholder for bottom nav -->
-      <div class="py-8 -z-50" />
+      <div class="my-8 -z-50" />
       <teleport to="#footer">
         <div class="btm-nav">
           <template v-for="(isVisible, el) of visible" :key="el">
@@ -185,6 +184,6 @@ onMounted(() => {
 <style lang="postcss" scoped>
 .handle {
   /* @apply bg-gradient-to-b from-kimberly-50/50 to-kimberly-50/90 dark:from-kimberly-800 dark:to-kimberly-900; */
-  @apply h-screen overflow-scroll;
+  @apply h-full overflow-scroll;
 }
 </style>
