@@ -37,7 +37,7 @@ const formatter = new Intl.NumberFormat(undefined, option)
     </th>
     <th>
       <div class="flex gap-2 items-center">
-        <div class="aspect-square mask mask-squircle flex">
+        <div class="aspect-square mask mask-squircle overflow-hidden object-cover flex">
           <img
             class="m-auto"
             :src="user.avatarSrc"
