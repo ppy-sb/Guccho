@@ -140,7 +140,7 @@ const hasResult = computed(() => {
                         <div class="flex gap-2 items-center">
                           <img
                             v-if="assertIsBanchoBeatmapset(bs)"
-                            class="h-[30px] mask mask-squircle"
+                            class="h-[30px] mask mask-squircle overflow-hidden object-cover aspect-square"
                             :src="`https://b.ppy.sh/thumb/${bs.foreignId}.jpg`"
                             :onerror="placeholder"
                           >
@@ -172,7 +172,7 @@ const hasResult = computed(() => {
                         <div class="flex gap-2 items-center">
                           <img
                             v-if="assertIsBanchoBeatmapset(bm.beatmapset)"
-                            class="h-[30px] mask mask-squircle"
+                            class="h-[30px] mask mask-squircle overflow-hidden object-cover aspect-square"
                             :src="`https://b.ppy.sh/thumb/${bm.beatmapset.foreignId}.jpg`"
                             :onerror="placeholder"
                           >
@@ -206,7 +206,7 @@ const hasResult = computed(() => {
                         <div class="flex gap-2 items-center">
                           <img
                             :src="user.avatarSrc"
-                            class="w-[30px] mask mask-squircle"
+                            class="w-[30px] mask mask-squircle overflow"
                             :onerror="placeholder"
                           >
                           <span>{{ user.name }}</span>
