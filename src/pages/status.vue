@@ -1,8 +1,4 @@
 <script setup lang="ts">
-// @ts-expect-error we don't have to know
-import { JsonViewer } from 'vue3-json-viewer'
-import 'vue3-json-viewer/dist/index.css'
-
 const fmtPercent = new Intl.NumberFormat(undefined, {
   style: 'percent',
   minimumFractionDigits: 2,
@@ -120,14 +116,14 @@ const createStyleObject = (count: number) => ({
         </div>
       </div>
     </div>
-
+    <!--
     <JsonViewer
       :value="data"
       :expand-depth="3"
       theme="light"
       copyable
       class="rounded-3xl"
-    />
+    /> -->
   </div>
 </template>
 
