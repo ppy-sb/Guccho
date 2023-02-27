@@ -1,7 +1,12 @@
 <script setup lang="ts">
 // @ts-expect-error There's no such declaration file for me to include, nor do I felt to declare it myself. It's a Vue SFC How do you expecting me to declare it myself... by hand? Are you really respecting my time?
 import VLazyImage from 'v-lazy-image'
-import { faBan } from '@fortawesome/free-solid-svg-icons'
+import {
+  faBan,
+  faCheckDouble,
+  faHeart,
+  faPause,
+} from '@fortawesome/free-solid-svg-icons'
 import type { RankingSystemScore } from '~/types/score'
 import type { LeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
 import {
@@ -12,6 +17,7 @@ import { createAddCommasFormatter } from '~/common/varkaUtils'
 import { useFAIconLib } from '#imports'
 import { assertBeatmapIsVisible } from '~/utils/map'
 import { placeholder } from '~/utils'
+import type { RankingStatus } from '~/types/beatmap'
 const props = withDefaults(
   defineProps<{
     score?: RankingSystemScore<
@@ -30,7 +36,16 @@ const props = withDefaults(
   },
 )
 const { addToLibrary } = useFAIconLib()
-addToLibrary(faBan)
+addToLibrary(faBan, faCheckDouble, faHeart, faPause)
+
+const rankingStatusIconMapping: Partial<Record<RankingStatus, string>> = {
+  approved: 'fa-solid fa-check-double',
+  ranked: 'fa-solid fa-ranking-star',
+  pending: 'fa-solid fa-pause',
+  loved: 'fa-solid fa-heart',
+  qualified: 'fa-solid fa-fa-check-double',
+}
+
 const numberFmt = createAddCommasFormatter()
 const beatmap = computed(() => {
   if (!props.score) {
@@ -81,19 +96,12 @@ const meta = computed(
               beatmap
                 && assertBeatmapIsVisible(beatmap)
                 && beatmap.beatmapset.source === 'bancho'
-            "
-            class="object-cover w-20 h-16 rounded-xl"
-            src-placeholder="/images/image-placeholder.svg"
-            :src="`https://assets.ppy.sh/beatmaps/${beatmap.beatmapset.foreignId}/covers/list.jpg`"
-            alt="list"
+            " class="object-cover w-20 h-16 rounded-xl" src-placeholder="/images/image-placeholder.svg"
+            :src="`https://assets.ppy.sh/beatmaps/${beatmap.beatmapset.foreignId}/covers/list.jpg`" alt="list"
             :onerror="placeholder"
           />
           <div v-else class="w-20 h-16">
-            <font-awesome-icon
-              icon="fa-solid fa-ban"
-              size="4x"
-              class="w-full"
-            />
+            <font-awesome-icon icon="fa-solid fa-ban" size="4x" class="w-full" />
           </div>
         </div>
         <div class="flex flex-col min-w-0">
@@ -114,11 +122,12 @@ const meta = computed(
                     ? 'score'
                     : props.rankingSystem,
                 },
-              }"
-              class="truncate"
+              }" class="truncate"
             >
               <template v-if="meta">
-                <span class="text-sm truncate md:text-md lg:text-lg font-bold">{{ meta.artist }} - {{ meta.title }}</span>
+                <span class="text-sm truncate md:text-md lg:text-lg font-bold flex gap-2 items-center">
+                  <font-awesome-icon v-if="rankingStatusIconMapping[beatmap.status]" :icon="rankingStatusIconMapping[beatmap?.status]" class="opacity-50" :aria-label="beatmap.status" />
+                  {{ meta.artist }} - {{ meta.title }}</span>
               </template>
             </router-link>
           </template>
@@ -148,36 +157,27 @@ const meta = computed(
           </div>
           <div class="mt-auto map-date">
             <time class="text-xs italic lg:text-sm font-extralight">
-              {{ score.playedAt.toLocaleDateString() }}
-              {{ score.playedAt.toLocaleTimeString("en-us") }}
+              {{ score.playedAt.toLocaleString() }}
             </time>
           </div>
         </div>
       </div>
       <div class="flex gap-4">
         <div class="flex flex-col">
-          <div
-            class="flex items-center justify-end flex-grow text-lg md:text-xl lg:text-2xl"
-          >
-            <template
-              v-if="(ppRankingSystems as readonly string[]).includes(props.rankingSystem)"
-            >
+          <div class="flex items-center justify-end flex-grow text-lg md:text-xl lg:text-2xl">
+            <template v-if="(ppRankingSystems as readonly string[]).includes(props.rankingSystem)">
               <div class="font-bold font-mono">
                 {{ score.pp.toFixed(2) }}
               </div>
               <span class="font-light">pp</span>
             </template>
-            <template
-              v-else-if="(leaderboardScoreRankingSystems as readonly string[]).includes(props.rankingSystem)"
-            >
+            <template v-else-if="(leaderboardScoreRankingSystems as readonly string[]).includes(props.rankingSystem)">
               <div class="font-bold font-mono">
                 {{ numberFmt(score.score) }}
               </div>
             </template>
           </div>
-          <div
-            class="flex mt-auto text-xs md:text-md lg:text-md whitespace-nowrap justify-end"
-          >
+          <div class="flex mt-auto text-xs md:text-md lg:text-md whitespace-nowrap justify-end">
             <b class="font-mono">{{ score.accuracy.toFixed(2) }}</b>
             <div class="text-light">
               % Acc
@@ -198,6 +198,7 @@ const meta = computed(
 .score {
   @apply py-2;
 }
+
 .score + .score {
   @apply border-t-2 border-kimberly-300/50;
 }

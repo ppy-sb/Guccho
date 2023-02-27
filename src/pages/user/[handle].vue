@@ -147,7 +147,7 @@ onMounted(() => {
       <div
         id="topScores"
         ref="topScores"
-        class="container custom-container mx-auto py-2"
+        class="container custom-container mx-auto py-4"
       >
         <userpage-top-scores v-if="currentRankingSystem" />
       </div>

@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
+
+import { faPiedPiperPp } from '@fortawesome/free-brands-svg-icons'
 import type {
   LeaderboardRankingSystem,
   LeaderboardScoreRankingSystem,
@@ -16,6 +18,9 @@ import {
 
 import type { UserEssential } from '~/types/user'
 import type { LeaderboardSwitcherComposableType } from '~/composables/useSwitcher'
+const { addToLibrary } = useFAIconLib()
+
+addToLibrary(faPiedPiperPp)
 const { $client } = useNuxtApp()
 const [switcher] = inject('switcher') as LeaderboardSwitcherComposableType
 let prevSwitcherState = {
@@ -167,9 +172,14 @@ const nextBp = nextPage(bpPage)
       <section v-if="bp?.scores?.length" class="custom-container">
         <div class="card" :class="[pendingBP && 'pointer-events-none']">
           <div
-            class="justify-center p-1 card-title rounded-2xl bg-kimberly-300/30"
+            class="p-1 two-tone flex items-center w-100"
           >
-            Best Scores
+            <font-awesome-icon icon="fa-brands fa-pied-piper-pp" class="text-4xl w-1/6 opacity-70" />
+            <div class="w-2/3 flex">
+              <div class="text-3xl font-semibold mx-auto">
+                Best Scores
+              </div>
+            </div>
           </div>
           <div
             class="px-1 py-2 card-body transition-[filter] transition-opacity duration-200"
@@ -205,7 +215,7 @@ const nextBp = nextPage(bpPage)
             </div>
           </div>
           <div
-            class="btn-group d-flex w-full bg-kimberly-300/30 rounded-2xl shadow"
+            class="btn-group d-flex w-full bg-kimberly-300/30 dark:bg-kimberly-700/50 rounded-2xl shadow"
             style="--rounded-btn: 1rem"
           >
             <button

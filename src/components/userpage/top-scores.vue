@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
+import {
+  faRankingStar,
+} from '@fortawesome/free-solid-svg-icons'
 import type {
   LeaderboardRankingSystem,
   LeaderboardScoreRankingSystem,
@@ -16,6 +19,10 @@ import {
 
 import type { UserEssential } from '~/types/user'
 import type { LeaderboardSwitcherComposableType } from '~/composables/useSwitcher'
+
+const { addToLibrary } = useFAIconLib()
+
+addToLibrary(faRankingStar)
 const { $client } = useNuxtApp()
 const [switcher] = inject('switcher') as LeaderboardSwitcherComposableType
 let prevSwitcherState = {
@@ -168,10 +175,25 @@ const nextTop = nextPage(topPage)
     <div class="flex flex-col gap-6">
       <section v-if="top?.count" class="custom-container">
         <div class="card" :class="[pendingTop && 'pointer-events-none']">
-          <div
+          <!-- <div
             class="justify-center p-1 card-title rounded-2xl bg-kimberly-300/30"
           >
             First Ranks ({{ top.count }})
+          </div> -->
+          <div
+            class="p-1 two-tone flex items-center w-100"
+          >
+            <font-awesome-icon icon="fa-solid fa-ranking-star" class="text-3xl w-1/6 opacity-70" />
+            <div class="w-2/3 flex">
+              <div class="text-3xl font-semibold mx-auto">
+                Top Ranks
+              </div>
+            </div>
+            <div class="w-1/6 flex">
+              <div class="text-2xl mx-auto font-light italic opacity-90">
+                {{ top.count }}
+              </div>
+            </div>
           </div>
           <div
             class="px-1 py-2 card-body transition-[filter] transition-opacity duration-200"
@@ -207,7 +229,7 @@ const nextTop = nextPage(topPage)
             </div>
           </div>
           <div
-            class="btn-group d-flex w-full bg-kimberly-300/30 rounded-2xl shadow"
+            class="btn-group d-flex w-full bg-kimberly-300/30 dark:bg-kimberly-700/50 rounded-2xl shadow"
             style="--rounded-btn: 1rem"
           >
             <button
