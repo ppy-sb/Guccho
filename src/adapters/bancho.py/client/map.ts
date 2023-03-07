@@ -78,6 +78,7 @@ export default class BanchoPyMap implements MapDataProvider<Id> {
   async searchBeatmap({ keyword, limit }: { keyword: string; limit: number }) {
     const idKw = stringToId(keyword)
     const result = await this.db.map.findMany({
+      take: limit,
       where: {
         OR: [
           isNaN(idKw)
@@ -100,7 +101,6 @@ export default class BanchoPyMap implements MapDataProvider<Id> {
           setId: 'desc',
         },
       ],
-      take: limit,
     })
     return result.map(toBeatmapWithBeatmapset).filter(TSFilter)
   }
@@ -114,6 +114,7 @@ export default class BanchoPyMap implements MapDataProvider<Id> {
   }): Promise<Beatmapset<BeatmapSource, number, unknown>[]> {
     const idKw = stringToId(keyword)
     const beatmaps = await this.db.map.findMany({
+      take: limit,
       where: {
         OR: [
           isNaN(idKw)
@@ -147,7 +148,6 @@ export default class BanchoPyMap implements MapDataProvider<Id> {
       include: {
         source: true,
       },
-      take: limit,
     })
     return beatmaps.map(bs => toBeatmapset(bs.source, bs)).filter(TSFilter)
   }
