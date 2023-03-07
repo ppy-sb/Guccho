@@ -80,10 +80,10 @@ const toggleFriend = async () => {
   >
     <!-- Logo -->
     <div>
-      <img
-        :src="`${user.avatarSrc}?${Date.now()}`"
-        class="mask mask-squircle w-[150px] md:w-[300px] object-cover aspect-square"
-      >
+      <div
+        :style="`background-image: url(${user.avatarSrc}?${Date.now()}); background-position: center`"
+        class="mask mask-squircle w-[150px] md:w-[300px] bg-cover aspect-square"
+      />
     </div>
     <!-- info -->
     <div
