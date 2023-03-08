@@ -146,6 +146,9 @@ body:before {
       @apply absolute top-0 left-0 right-0 bottom-0 -z-10;
       @apply rounded-2xl;
       content: '';
-      background: linear-gradient(110deg, transparent, theme('colors.kimberly.700 / 30%') 16.6% ,theme('colors.kimberly.700 / 50%') 16.7%,  theme('colors.kimberly.700 / 60%') 83.3%, theme('colors.kimberly.700 / 30%') 83.4%, transparent 100%);
+      background: linear-gradient(110deg, transparent, theme('colors.kimberly.200 / 30%') 16.6% ,theme('colors.kimberly.300 / 50%') 16.7%,  theme('colors.kimberly.300 / 60%') 83.3%, theme('colors.kimberly.200 / 30%') 83.4%, transparent 100%);
+      @media (prefers-color-scheme: dark) {
+        background: linear-gradient(110deg, transparent, theme('colors.kimberly.700 / 30%') 16.6% ,theme('colors.kimberly.700 / 50%') 16.7%,  theme('colors.kimberly.700 / 60%') 83.3%, theme('colors.kimberly.700 / 30%') 83.4%, transparent 100%);
+      }
   }
 }
