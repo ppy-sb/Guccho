@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { router as _router, publicProcedure as p } from '../trpc'
 import { idToString } from '$active'
-import { MapProvider, UserProvider } from '~/adapters/ppy.sb@bancho.py/server'
+import { MapProvider, UserProvider } from '$active/server'
 
 const map = new MapProvider()
 const user = new UserProvider()

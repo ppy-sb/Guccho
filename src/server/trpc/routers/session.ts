@@ -13,7 +13,7 @@ import { sessionProcedure as pSession } from '../middleware/session'
 import { zodHandle } from '../shapes'
 import { router as _router } from '../trpc'
 import { getSession } from '~/server/session'
-import { UserProvider } from '~/adapters/ppy.sb@bancho.py/server'
+import { UserProvider } from '$active/server'
 import { idToString } from '$active'
 
 const { compare } = bcrypt

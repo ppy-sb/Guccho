@@ -1,3 +1,4 @@
+import memoize from 'memoizee'
 import z from 'zod'
 
 import {
@@ -7,17 +8,15 @@ import {
   zodRuleset,
 } from '../shapes'
 import { router as _router, publicProcedure } from '../trpc'
-import { LeaderboardProvider } from '~/adapters/ppy.sb@bancho.py/server'
+import { LeaderboardProvider } from '$active/server'
 import { hasRuleset, idToString, stringToId } from '$active'
 
-// import memoize from 'memoizee'
-// import { createRouter } from '../context'
 const provider = new LeaderboardProvider()
 
-const getLeaderboard = provider.getLeaderboard.bind(provider)
-const getBeatmapLeaderboard = provider.getBeatmapLeaderboard.bind(provider)
-// const getLeaderboard = memoize(provider.getLeaderboard.bind(provider), { promise: true, maxAge: 10 * 60 * 1000 })
-// const getBeatmapLeaderboard = memoize(provider.getBeatmapLeaderboard.bind(provider), { promise: true, maxAge: 10 * 60 * 1000 })
+// const getLeaderboard = provider.getLeaderboard.bind(provider)
+// const getBeatmapLeaderboard = provider.getBeatmapLeaderboard.bind(provider)
+const getLeaderboard = memoize(provider.getLeaderboard.bind(provider), { promise: true, maxAge: 10 * 60 * 1000 })
+const getBeatmapLeaderboard = memoize(provider.getBeatmapLeaderboard.bind(provider), { promise: true, maxAge: 10 * 60 * 1000 })
 export const router = _router({
   overall: publicProcedure
     .input(

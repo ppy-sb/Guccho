@@ -1,6 +1,7 @@
 import { TRPCError } from '@trpc/server'
 import bcrypt from 'bcryptjs'
 import z from 'zod'
+
 import {
   atLeastOneUserNotExists,
   oldPasswordMismatch,
@@ -10,13 +11,9 @@ import {
 } from '../messages'
 import { zodHandle, zodRelationType, zodTipTapJSONContent } from '../shapes'
 import { router as _router } from '../trpc'
-import {
-  UserProvider,
-  UserRelationProvider,
-} from '~/adapters/ppy.sb@bancho.py/server'
-import { calculateMutualRelationships } from '~/server/transforms'
 import { userProcedure as pUser } from '~/server/trpc/middleware/user'
-
+import { calculateMutualRelationships } from '~/server/transforms'
+import { UserProvider, UserRelationProvider } from '$active/server'
 import { idToString } from '$active'
 
 const userProvider = new UserProvider()

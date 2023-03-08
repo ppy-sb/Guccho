@@ -13,10 +13,7 @@ import {
 } from '../shapes'
 import { router as _router, publicProcedure as p } from '../trpc'
 import { followUserSettings } from '~/server/transforms'
-import {
-  UserProvider,
-  UserRelationProvider,
-} from '~/adapters/ppy.sb@bancho.py/server'
+import { UserProvider, UserRelationProvider } from '$active/server'
 import { idToString } from '$active'
 
 import type { NumberRange } from '~/types/common'
