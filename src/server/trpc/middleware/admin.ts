@@ -1,9 +1,9 @@
 import { TRPCError } from '@trpc/server'
 import { userProcedure } from './user'
-import { checkUserPrivilege } from '~/utils/checkUserPrivilege'
+import { calcUserPrivilege } from '~/utils/checkUserPrivilege'
 
 export const privilegeProcedure = userProcedure.use(async ({ ctx, next }) => {
-  const privilege = checkUserPrivilege(ctx.user)
+  const privilege = calcUserPrivilege(ctx.user)
 
   return next({
     ctx: {

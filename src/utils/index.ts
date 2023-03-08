@@ -1,4 +1,5 @@
 export * from './asserts'
+export * from './guards'
 
 export function loadImage(src: string) {
   return new Promise((resolve, reject) => {
@@ -23,4 +24,8 @@ export function pick<T extends Record<any, any>, K extends keyof T>(record: T, k
     acc[cur] = record[cur]
     return acc
   }, {}) as { [P in K]: T[P]; }
+}
+
+export function capitalizeFirstLetter<T extends string>(string: T) {
+  return (string.charAt(0).toUpperCase() + string.slice(1)) as Capitalize<T>
 }

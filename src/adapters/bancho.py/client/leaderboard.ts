@@ -1,9 +1,8 @@
 import type { PrismaClient } from '.prisma/bancho.py'
 import type { BanchoPyMode } from '../enums'
-import { toBanchoPyMode, toMods } from '../enums'
 import type { Id } from '../exports'
 import { client as redisClient } from '../redis-client'
-import { toRoles, toUserEssential } from '../transforms'
+import { toBanchoPyMode, toMods, toRoles, toUserEssential } from '../transforms'
 import { prismaClient } from '.'
 import { modes as _modes } from '~/types/defs'
 import type {
@@ -68,31 +67,28 @@ implements LeaderboardDataProvider<Id> {
     >(/* sql */ `
   WITH ranks AS (
     SELECT
-    ${
-      rankingSystem === 'ppv2'
+    ${rankingSystem === 'ppv2'
         ? /* sql */ `
       RANK () OVER (
         PARTITION BY stat.mode
         ORDER BY stat.pp desc
       ) as _rank,`
         : ''
-    }${
-      rankingSystem === 'totalScore'
+      }${rankingSystem === 'totalScore'
         ? /* sql */ `
       RANK () OVER (
         PARTITION BY stat.mode
         ORDER BY stat.tscore desc
       ) as _rank,`
         : ''
-    }${
-      rankingSystem === 'rankedScore'
+      }${rankingSystem === 'rankedScore'
         ? /* sql */ `
       RANK () OVER (
         PARTITION BY stat.mode
         ORDER BY stat.rscore desc
       ) as _rank,`
         : ''
-    }
+      }
       user.id,
       user.name,
       user.safe_name as safeName,

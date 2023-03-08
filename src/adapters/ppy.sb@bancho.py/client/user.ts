@@ -1,18 +1,15 @@
 import type { JSONContent } from '@tiptap/core'
 import { generateHTML } from '@tiptap/html'
 import { TRPCError } from '@trpc/server'
-// import type { PrismaClient } from '.prisma/ppy.sb'
 import type { Id } from '../exports'
 import { prismaClient } from './'
+import { createUserQuery, toFullUser } from '~/adapters/bancho.py/transforms'
+import { UserDataProvider as BanchoPyUser } from '~/adapters/bancho.py@mysql5.7/client'
+import useEditorExtensions from '~/composables/useEditorExtensions'
 
 import type { UserEssential } from '~/types/user'
 
 import type { UserDataProvider as Base } from '$def/client/user'
-import { toFullUser } from '~/adapters/bancho.py/transforms'
-import { createUserQuery } from '~/adapters/bancho.py/transforms/db-queries'
-import { UserDataProvider as BanchoPyUser } from '~/adapters/bancho.py@mysql5.7/client'
-import useEditorExtensions from '~/composables/useEditorExtensions'
-
 export class UserDataProvider extends BanchoPyUser implements Base<Id> {
   sbDb = prismaClient
 

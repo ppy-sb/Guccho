@@ -1,31 +1,37 @@
-import { isAbsolute, join, resolve, sep } from 'path'
-import { mkdirSync } from 'fs'
-import { unlink, writeFile } from 'fs/promises'
-
-import glob from 'glob-promise'
 import type { Prisma, PrismaClient } from '.prisma/bancho.py'
 import type { JSONContent } from '@tiptap/core'
 import { generateHTML } from '@tiptap/html'
 import { TRPCError } from '@trpc/server'
 import bcrypt from 'bcryptjs'
+import { mkdirSync } from 'fs'
+import { unlink, writeFile } from 'fs/promises'
+import glob from 'glob-promise'
 import imageType from 'image-type'
-import { BanchoPyMode, toBanchoPyMode } from '../enums'
-import type { Id } from '../exports'
-import { client as redisClient } from '../redis-client'
-import { createRulesetData, fromRankingStatus, toFullUser, toUserEssential } from '../transforms'
-import { createUserQuery } from '../transforms/db-queries'
-import { idToString, stringToId } from '../transforms/id-conversion'
-import { toRankingSystemScores } from '../transforms/scores'
-import BanchoPyUserRelationship from './user-relations'
-import { prismaClient } from '.'
-import type { LeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
+import { isAbsolute, join, resolve, sep } from 'path'
 import useEditorExtensions from '~/composables/useEditorExtensions'
-import type { UserDataProvider } from '$def/client/user'
-
-import type { UserEssential, UserOptional, UserStatistic } from '~/types/user'
-
 import { RankingStatusEnum } from '~/types/beatmap'
 import { TSFilter } from '~/utils'
+import { prismaClient } from '.'
+import { BanchoPyMode } from '../enums'
+import type { Id } from '../exports'
+import { client as redisClient } from '../redis-client'
+import {
+  createRulesetData,
+  createUserQuery,
+  fromRankingStatus,
+  idToString,
+  stringToId,
+  toBanchoPyMode,
+  toFullUser,
+  toRankingSystemScores,
+  toUserEssential
+} from '../transforms'
+import BanchoPyUserRelationship from './user-relations'
+
+import type { UserDataProvider } from '$def/client/user'
+import type { LeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
+
+import type { UserEssential, UserOptional, UserStatistic } from '~/types/user'
 
 function mkDirByPathSync(targetDir: string, { isRelativeToScript = false } = {}) {
   const initDir = isAbsolute(targetDir) ? sep : ''
@@ -212,9 +218,9 @@ INNER JOIN (
   FROM users u
   INNER JOIN scores s ON s.userid = u.id
   WHERE u.priv > 2 AND s.mode = ${toBanchoPyMode(
-    mode,
-    ruleset,
-  )} AND s.score > 0 AND s.status in (${banchoPyRankingStatus.join(',')})
+        mode,
+        ruleset,
+      )} AND s.score > 0 AND s.status in (${banchoPyRankingStatus.join(',')})
   GROUP BY s.map_md5
 ) tmp ON tmp.maxScore = s2.score AND tmp.md5 = s2.map_md5
 WHERE s2.userid = ${id}
@@ -229,9 +235,9 @@ INNER JOIN (
     FROM users AS u
     INNER JOIN scores AS s ON s.userid = u.id
     WHERE u.priv > 2 AND s.mode = ${toBanchoPyMode(
-      mode,
-      ruleset,
-    )} AND s.pp > 0 AND s.status in (${banchoPyRankingStatus.join(',')})
+        mode,
+        ruleset,
+      )} AND s.pp > 0 AND s.status in (${banchoPyRankingStatus.join(',')})
     GROUP BY s.map_md5
 ) AS tmp ON tmp.maxPP = s2.pp AND tmp.md5 = s2.map_md5
 WHERE s2.userid = ${id}
@@ -442,7 +448,7 @@ WHERE s2.userid = ${id}
     // type check will not find any missing params here.
     const returnValue = <
       Exclude<Awaited<ReturnType<UserDataProvider<Id>['getFull']>>, null>
-    > await toFullUser(user, this.config)
+      > await toFullUser(user, this.config)
     const parallels: Promise<any>[] = []
 
     returnValue.reachable = false

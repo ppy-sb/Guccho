@@ -1,10 +1,5 @@
 import type { JSONContent } from '@tiptap/core'
-import type {
-  UserEssential,
-  UserExtra,
-  UserOptional,
-  UserStatistic,
-} from '~/types/user'
+import type { RankingStatus } from '~/types/beatmap'
 import type {
   Awaitable,
   LeaderboardRankingSystem,
@@ -12,7 +7,12 @@ import type {
   Ruleset,
 } from '~/types/common'
 import type { RankingSystemScore } from '~/types/score'
-import type { RankingStatus } from '~/types/beatmap'
+import type {
+  UserEssential,
+  UserExtra,
+  UserOptional,
+  UserStatistic,
+} from '~/types/user'
 
 export namespace UserDataProvider {
   export type ComposableProperties<Id> = UserExtra<Id> & UserOptional<Id>

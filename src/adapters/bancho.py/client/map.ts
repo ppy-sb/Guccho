@@ -1,14 +1,11 @@
 import type { PrismaClient } from '.prisma/bancho.py'
+import { stringToId, toBeatmapEssential, toBeatmapWithBeatmapset, toBeatmapset, toRankingStatus } from '../transforms'
+
 import type { Id } from '../exports'
-import { toRankingStatus } from '../transforms'
-import { stringToId } from '../transforms/id-conversion'
-import {
-  toBeatmapEssential, toBeatmapWithBeatmapset, toBeatmapset,
-} from '../transforms/to-beatmapset'
 import { prismaClient } from '.'
-import { TSFilter } from '~/utils'
-import type { BeatmapSource, Beatmapset } from '~/types/beatmap'
 import type { MapDataProvider } from '$def/client/map'
+import type { BeatmapSource, Beatmapset } from '~/types/beatmap'
+import { TSFilter } from '~/utils'
 
 export default class BanchoPyMap implements MapDataProvider<Id> {
   db: PrismaClient

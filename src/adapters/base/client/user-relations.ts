@@ -1,6 +1,6 @@
+import type { Awaitable, Relationship } from '~/types/common'
 import type { UserEssential } from '~/types/user'
 import type { UserRelationship } from '~/types/user-relationship'
-import type { Awaitable, Relationship } from '~/types/common'
 
 export interface UserRelationshipDataProvider<Id> {
   get(query: { user: { id: Id } }): Awaitable<UserRelationship<Id>[]>

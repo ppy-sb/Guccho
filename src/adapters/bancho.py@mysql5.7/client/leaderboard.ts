@@ -1,10 +1,7 @@
 import type { Id } from '../exports'
-
 import { prismaClient } from '.'
-
 import { LeaderboardDataProvider as BanchoPyLeaderboardDataProvider } from '~/adapters/bancho.py/client'
-import { toBanchoPyMode } from '~/adapters/bancho.py/enums'
-import { toRoles } from '~/adapters/bancho.py/transforms'
+import { toBanchoPyMode, toRoles } from '~/adapters/bancho.py/transforms'
 
 import type { AvailableRuleset, LeaderboardRankingSystem, Mode } from '~/types/common'
 
@@ -60,22 +57,16 @@ export class LeaderboardDataProvider extends BanchoPyLeaderboardDataProvider {
         playCount: number
       }>
     >(/* sql */ `
-  SELECT 
-  ${
-    rankingSystem === 'ppv2'
-      ? '(SELECT COUNT(*) + 1 FROM stats s WHERE s.mode = stat.mode AND s.pp > stat.pp) as _rank,'
-      : ''
-  }
-  ${
-    rankingSystem === 'totalScore'
-      ? '(SELECT COUNT(*) + 1 FROM stats s WHERE s.mode = stat.mode AND s.tscore > stat.tscore) as _rank,'
-      : ''
-  }
-  ${
-    rankingSystem === 'rankedScore'
-      ? '(SELECT COUNT(*) + 1 FROM stats s WHERE s.mode = stat.mode AND s.rscore > stat.rscore) as _rank,'
-      : ''
-  }
+  SELECT ${rankingSystem === 'ppv2'
+        ? '(SELECT COUNT(*) + 1 FROM stats s WHERE s.mode = stat.mode AND s.pp > stat.pp) as _rank,'
+        : ''
+      } ${rankingSystem === 'totalScore'
+        ? '(SELECT COUNT(*) + 1 FROM stats s WHERE s.mode = stat.mode AND s.tscore > stat.tscore) as _rank,'
+        : ''
+      } ${rankingSystem === 'rankedScore'
+        ? '(SELECT COUNT(*) + 1 FROM stats s WHERE s.mode = stat.mode AND s.rscore > stat.rscore) as _rank,'
+        : ''
+      }
   user.id,
   user.name,
   user.safe_name AS safeName,

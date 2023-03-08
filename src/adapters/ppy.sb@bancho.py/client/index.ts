@@ -1,7 +1,7 @@
 import type { PrismaClient as ImportedPrismaClient } from '.prisma/ppy.sb'
 import * as Parent from '~/adapters/bancho.py@mysql5.7/client'
+import { createCursedRequire } from '~/utils/server'
 
-import { createCursedRequire } from '~/utils/cursed'
 const require = createCursedRequire(import.meta.url ?? __filename)
 const { PrismaClient } = require<{ PrismaClient: typeof ImportedPrismaClient }>('.prisma/ppy.sb')
 

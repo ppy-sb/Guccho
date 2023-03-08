@@ -1,9 +1,6 @@
 import type {
-  BeatmapEssential,
-  BeatmapSource,
-  BeatmapWithMeta,
-  Beatmapset,
-  RankingStatus,
+  BeatmapEssential, BeatmapSource, BeatmapWithMeta,
+  Beatmapset, RankingStatus,
 } from '~/types/beatmap'
 
 import type { Awaitable } from '~/types/common'

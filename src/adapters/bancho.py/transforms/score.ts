@@ -1,9 +1,10 @@
-import { toMods } from '../enums'
 import type { Id } from '../exports'
+import { toBeatmapWithBeatmapset } from './beatmap'
 import { createHitCount } from './create-hit-count'
-import { toBeatmapWithBeatmapset } from './to-beatmapset'
+import { toMods } from '.'
+
 import type { AbleToTransformToScores } from './index'
-import type { RankingSystemScore, RulesetScore } from '~/types/score'
+import type { RankingStatus } from '~/types/beatmap'
 import type {
   Grade,
   LeaderboardRankingSystem,
@@ -11,7 +12,7 @@ import type {
   PPRankingSystem,
   Ruleset,
 } from '~/types/common'
-import type { RankingStatus } from '~/types/beatmap'
+import type { RankingSystemScore, RulesetScore } from '~/types/score'
 
 export function toScore<_RankingSystem extends PPRankingSystem>({
   score,

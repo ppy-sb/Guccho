@@ -1,5 +1,5 @@
 import type { PrismaClient as ImportedPrismaClient } from '.prisma/bancho.py'
-import { createCursedRequire } from '~/utils/cursed'
+import { createCursedRequire } from '~/utils/server'
 const require = createCursedRequire(import.meta.url ?? __filename)
 const { PrismaClient } = require<{ PrismaClient: typeof ImportedPrismaClient }>('.prisma/bancho.py')
 

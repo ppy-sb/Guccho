@@ -1,7 +1,7 @@
 import type { TRPCError } from '@trpc/server'
 import md5 from 'md5'
 import { defineStore } from 'pinia'
-import { checkUserPrivilege } from '../utils/checkUserPrivilege'
+import { calcUserPrivilege } from '../utils/checkUserPrivilege'
 import type { UserFull } from '~/types/user'
 
 export const useSession = defineStore('session', {
@@ -24,7 +24,7 @@ export const useSession = defineStore('session', {
       if (!this.user) {
         return
       }
-      const privilege = checkUserPrivilege(this.user)
+      const privilege = calcUserPrivilege(this.user)
       this.privilege = privilege
     },
     async login(handle: string, passwordText: string) {

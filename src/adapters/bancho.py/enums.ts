@@ -1,8 +1,3 @@
-import { capitalizeFirstLetter } from './transforms'
-import { type StableMod, stableMod } from '~/types/score'
-
-import { RankingStatusEnum } from '~/types/beatmap'
-import type { Mode, Ruleset } from '~/types/common'
 //  privileges intended for all normal players.
 export enum BanchoPyPrivilege {
   Normal = 1 << 0, //  is an unbanned player.
@@ -49,43 +44,6 @@ export enum BanchoPyMode {
   // maniaAutopilot = 11,
 }
 
-export function toBanchoPyMode(
-  mode: Mode,
-  ruleset: Ruleset,
-): BanchoPyMode | undefined {
-  const joined: `${Mode}${Capitalize<Ruleset>}` = `${mode}${capitalizeFirstLetter(
-    ruleset,
-  )}`
-  switch (joined) {
-    case 'maniaRelax':
-    case 'taikoAutopilot':
-    case 'fruitsAutopilot':
-    case 'maniaAutopilot':
-      return
-    default:
-      return BanchoPyMode[joined]
-  }
-}
-
-const reverseRuleset: Record<number, Ruleset> = {
-  0: 'standard',
-  1: 'relax',
-  2: 'autopilot',
-}
-const reverseMode: Record<number, Mode> = {
-  0: 'osu',
-  1: 'taiko',
-  2: 'fruits',
-  3: 'mania',
-}
-
-export function fromBanchoPyMode(input: BanchoPyMode): [Mode, Ruleset] {
-  const modeKey = input % 4
-  const rulesetKet = Math.floor(input / 4)
-
-  return [reverseMode[modeKey], reverseRuleset[rulesetKet]]
-}
-
 export enum BanchoPyScoreStatus {
   Best = 2,
 }
@@ -98,39 +56,4 @@ export enum BanchoPyRankedStatus {
   Approved = 3,
   Qualified = 4,
   Loved = 5,
-}
-
-export function toBanchoRankingStatus(
-  input: BanchoPyRankedStatus,
-): RankingStatusEnum {
-  switch (input) {
-    case BanchoPyRankedStatus.NotSubmitted:
-      return RankingStatusEnum.deleted
-    case BanchoPyRankedStatus.Pending:
-      return RankingStatusEnum.pending
-    case BanchoPyRankedStatus.UpdateAvailable:
-      return RankingStatusEnum.notFound
-    case BanchoPyRankedStatus.Ranked:
-      return RankingStatusEnum.ranked
-    case BanchoPyRankedStatus.Approved:
-      return RankingStatusEnum.approved
-    case BanchoPyRankedStatus.Qualified:
-      return RankingStatusEnum.qualified
-    case BanchoPyRankedStatus.Loved:
-      return RankingStatusEnum.loved
-  }
-}
-
-export function toMods(e: number): Array<StableMod> {
-  const returnValue: Array<StableMod> = []
-  if (e === 0) {
-    return returnValue
-  }
-
-  for (const [mod, bit] of Object.entries(stableMod)) {
-    if (bit & e) {
-      returnValue.push(mod as StableMod)
-    }
-  }
-  return returnValue
 }
