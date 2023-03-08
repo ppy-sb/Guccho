@@ -1,14 +1,13 @@
 import { generateHTML } from '@tiptap/html'
 import { TRPCError } from '@trpc/server'
-import type { JSONContent } from '@tiptap/core'
-import type { Id } from '..'
-import { prismaClient } from './prisma'
+import { UserProvider as BanchoPyUser } from '~/adapters/bancho.py/server'
 import { createUserQuery, toFullUser } from '~/adapters/bancho.py/transforms'
-import {
-  UserProvider as BanchoPyUser,
-} from '~/adapters/bancho.py@mysql5.7/server'
 import useEditorExtensions from '~/composables/useEditorExtensions'
 
+import { prismaClient } from './prisma'
+
+import type { JSONContent } from '@tiptap/core'
+import type { Id } from '..'
 import type { UserEssential } from '~/types/user'
 
 import type { UserProvider as Base } from '~/adapters/base/server'

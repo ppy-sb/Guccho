@@ -279,86 +279,60 @@ WHERE s2.userid = ${id}
     }
   }
 
-  async getStatistics({ id, country }: { id: Id; country: string }) {
-    const [results, ranks, livePPRank] = await Promise.all([
-      this.db.stat.findMany({
-        where: {
-          id,
+  async getStatistics(opt: { id: Id; country: string }) {
+    const { id } = opt
+    const results = await this.db.stat.findMany({
+      where: {
+        id,
+      },
+    })
+
+    const baseQuery = {
+      user: {
+        priv: {
+          gt: 2,
         },
-      }),
+      },
+    }
+    const ranks = await Promise.all(results.map(async (stat) => {
+      const [ppv2, rankedScore, totalScore] = await Promise.all([
+        this.db.stat.count({
+          where: {
+            ...baseQuery,
+            mode: stat.mode,
+            pp: {
+              gt: stat.pp,
+            },
+          },
+        }),
+        this.db.stat.count({
+          where: {
+            ...baseQuery,
+            mode: stat.mode,
+            rankedScore: {
+              gt: stat.rankedScore,
+            },
+          },
+        }),
+        this.db.stat.count({
+          where: {
+            ...baseQuery,
+            mode: stat.mode,
+            totalScore: {
+              gt: stat.totalScore,
+            },
+          },
+        }),
+      ])
 
-      this.db.$queryRaw<
-        Array<{
-          id: Id
-          mode: number
-          ppv2Rank: bigint
-          totalScoreRank: bigint
-          rankedScoreRank: bigint
-        }>
-      >/* sql */`
-  WITH ranks AS (
-    SELECT
-      id,
-      mode,
-      RANK () OVER (
-        PARTITION BY mode
-        ORDER BY pp desc
-      ) ppv2Rank,
-      RANK () OVER (
-        PARTITION BY mode
-        ORDER BY tscore desc
-      ) totalScoreRank,
-      RANK () OVER (
-        PARTITION BY mode
-        ORDER BY rscore desc
-      ) rankedScoreRank
-    FROM stats
-  )
-  SELECT * FROM ranks
-  WHERE id = ${id}
-  `.catch(_ => []),
-
-      this.redisClient
-        ? {
-            osu: {
-              standard: await this.getLiveRank(
-                id,
-                BanchoPyMode.osuStandard,
-                country,
-              ),
-              relax: await this.getLiveRank(id, BanchoPyMode.osuRelax, country),
-              autopilot: await this.getLiveRank(
-                id,
-                BanchoPyMode.osuAutopilot,
-                country,
-              ),
-            },
-            taiko: {
-              standard: await this.getLiveRank(
-                id,
-                BanchoPyMode.osuStandard,
-                country,
-              ),
-              relax: await this.getLiveRank(id, BanchoPyMode.osuRelax, country),
-            },
-            fruits: {
-              standard: await this.getLiveRank(
-                id,
-                BanchoPyMode.osuStandard,
-                country,
-              ),
-              relax: await this.getLiveRank(id, BanchoPyMode.osuRelax, country),
-            },
-            mania: {
-              standard: await this.getLiveRank(
-                id,
-                BanchoPyMode.osuStandard,
-                country,
-              ),
-            },
-          }
-        : undefined,
-    ])
+      return {
+        mode: stat.mode,
+        ppv2Rank: ppv2 + 1,
+        rankedScoreRank: rankedScore + 1,
+        totalScoreRank: totalScore + 1,
+      }
+    }))
+    const livePPRank = await this.getRedisRanks(opt)
 
     const statistics: UserStatistic<
       Mode,
@@ -430,6 +404,163 @@ WHERE s2.userid = ${id}
     }
     return statistics
   }
+
+  async getRedisRanks({ id, country }: { id: Id; country: string }) {
+    if (!this.redisClient) {
+      return undefined
+    }
+    return {
+      osu: {
+        standard: await this.getLiveRank(
+          id,
+          BanchoPyMode.osuStandard,
+          country,
+        ),
+        relax: await this.getLiveRank(id, BanchoPyMode.osuRelax, country),
+        autopilot: await this.getLiveRank(
+          id,
+          BanchoPyMode.osuAutopilot,
+          country,
+        ),
+      },
+      taiko: {
+        standard: await this.getLiveRank(
+          id,
+          BanchoPyMode.osuStandard,
+          country,
+        ),
+        relax: await this.getLiveRank(id, BanchoPyMode.osuRelax, country),
+      },
+      fruits: {
+        standard: await this.getLiveRank(
+          id,
+          BanchoPyMode.osuStandard,
+          country,
+        ),
+        relax: await this.getLiveRank(id, BanchoPyMode.osuRelax, country),
+      },
+      mania: {
+        standard: await this.getLiveRank(
+          id,
+          BanchoPyMode.osuStandard,
+          country,
+        ),
+      },
+    }
+  }
+
+  // async getStatistics2(opt: { id: Id; country: string }) {
+  //   const { id, country } = opt
+  //   const [results, ranks, livePPRank] = await Promise.all([
+  //     this.db.stat.findMany({
+  //       where: {
+  //         id,
+  //       },
+  //     }),
+
+  //     this.db.$queryRaw<
+  //       Array<{
+  //         id: Id
+  //         mode: number
+  //         ppv2Rank: bigint
+  //         totalScoreRank: bigint
+  //         rankedScoreRank: bigint
+  //       }>
+  //     >/* sql */`
+  // WITH ranks AS (
+  //   SELECT
+  //     id,
+  //     mode,
+  //     RANK () OVER (
+  //       PARTITION BY mode
+  //       ORDER BY pp desc
+  //     ) ppv2Rank,
+  //     RANK () OVER (
+  //       PARTITION BY mode
+  //       ORDER BY tscore desc
+  //     ) totalScoreRank,
+  //     RANK () OVER (
+  //       PARTITION BY mode
+  //       ORDER BY rscore desc
+  //     ) rankedScoreRank
+  //   FROM stats
+  // )
+  // SELECT * FROM ranks
+  // WHERE id = ${id}
+  // `.catch(_ => []),
+  //     this.getRedisRanks({ id, country }),
+  //   ])
+
+  //   const statistics: UserStatistic<
+  //     Mode,
+  //     Ruleset,
+  //     LeaderboardRankingSystem
+  //   > = {
+  //     osu: {
+  //       standard: createRulesetData({
+  //         databaseResult: results.find(
+  //           i => i.mode === BanchoPyMode.osuStandard,
+  //         ),
+  //         ranks: ranks.find(i => i.mode === BanchoPyMode.osuStandard),
+  //         livePPRank: livePPRank?.osu.standard,
+  //       }),
+  //       relax: createRulesetData({
+  //         databaseResult: results.find(i => i.mode === BanchoPyMode.osuRelax),
+  //         ranks: ranks.find(i => i.mode === BanchoPyMode.osuRelax),
+  //         livePPRank: livePPRank?.osu.relax,
+  //       }),
+  //       autopilot: createRulesetData({
+  //         databaseResult: results.find(
+  //           i => i.mode === BanchoPyMode.osuAutopilot,
+  //         ),
+  //         ranks: ranks.find(i => i.mode === BanchoPyMode.osuAutopilot),
+  //         livePPRank: livePPRank?.osu.autopilot,
+  //       }),
+  //     },
+  //     taiko: {
+  //       standard: createRulesetData({
+  //         databaseResult: results.find(
+  //           i => i.mode === BanchoPyMode.taikoStandard,
+  //         ),
+  //         ranks: ranks.find(i => i.mode === BanchoPyMode.taikoStandard),
+  //         livePPRank: livePPRank?.taiko.standard,
+  //       }),
+  //       relax: createRulesetData({
+  //         databaseResult: results.find(
+  //           i => i.mode === BanchoPyMode.taikoRelax,
+  //         ),
+  //         ranks: ranks.find(i => i.mode === BanchoPyMode.taikoRelax),
+  //         livePPRank: livePPRank?.taiko.relax,
+  //       }),
+  //     },
+  //     fruits: {
+  //       standard: createRulesetData({
+  //         databaseResult: results.find(
+  //           i => i.mode === BanchoPyMode.fruitsStandard,
+  //         ),
+  //         ranks: ranks.find(i => i.mode === BanchoPyMode.fruitsStandard),
+  //         livePPRank: livePPRank?.fruits.standard,
+  //       }),
+  //       relax: createRulesetData({
+  //         databaseResult: results.find(
+  //           i => i.mode === BanchoPyMode.fruitsRelax,
+  //         ),
+  //         ranks: ranks.find(i => i.mode === BanchoPyMode.fruitsRelax),
+  //         livePPRank: livePPRank?.fruits.relax,
+  //       }),
+  //     },
+  //     mania: {
+  //       standard: createRulesetData({
+  //         databaseResult: results.find(
+  //           i => i.mode === BanchoPyMode.maniaStandard,
+  //         ),
+  //         ranks: ranks.find(i => i.mode === BanchoPyMode.maniaStandard),
+  //         livePPRank: livePPRank?.mania.standard,
+  //       }),
+  //     },
+  //   }
+  //   return statistics
+  // }
 
   async getFull<
     Excludes extends Partial<
