@@ -6,10 +6,9 @@ import {
   faUserGroup,
 } from '@fortawesome/free-solid-svg-icons'
 import type { Ref } from 'vue'
-import { inject, ref } from 'vue'
+
 import { useElementHover } from '@vueuse/core'
-import { useNuxtApp } from '#app'
-import { useFAIconLib } from '#imports'
+
 import type { UserFull as User } from '~/types/user'
 import { useSession } from '~/store/session'
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useAppConfig } from '#app'
+
 
 import { useSession } from '~/store/session'
 const session = useSession()

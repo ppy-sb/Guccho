@@ -8,7 +8,7 @@ import {
   faBatteryThreeQuarters,
   faChargingStation,
 } from '@fortawesome/free-solid-svg-icons'
-import { useFAIconLib } from '#imports'
+
 const { addToLibrary } = useFAIconLib()
 addToLibrary(
   faChargingStation,

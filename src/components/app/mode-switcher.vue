@@ -1,9 +1,5 @@
-<!-- eslint-disable vue/no-v-for-template-key -->
 <script setup lang="ts">
-import { toRaw, watch } from 'vue'
-import { useAppConfig } from '#app'
 import type { LeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
-import { useAdapterConfig } from '#imports'
 
 interface modelValue {
   mode?: Mode
@@ -20,8 +16,7 @@ const emit = defineEmits<{
   (event: 'update:modelValue', res: modelValue): void
 }>()
 const config = useAppConfig()
-const { hasLeaderboardRankingSystem, hasRuleset }
-  = await useAdapterConfig()
+const { hasLeaderboardRankingSystem, hasRuleset } = useAdapterConfig()
 
 const [switcher, setSwitcher] = useLeaderboardSwitcher(
   toRaw(props.modelValue) || {},

@@ -1,4 +1,5 @@
 import { TRPCError } from '@trpc/server'
+import { UserProvider } from '~/adapters/ppy.sb@bancho.py/server'
 
 import {
   unableToRetrieveSession,
@@ -6,7 +7,6 @@ import {
   youNeedToLogin,
 } from '../messages'
 import { sessionProcedure } from './session'
-import { UserProvider } from '$active'
 
 const userProvider = new UserProvider()
 export const userProcedure = sessionProcedure.use(async ({ ctx, next }) => {

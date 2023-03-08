@@ -9,6 +9,8 @@ import type {
   StatusProvider,
   UserProvider,
   UserRelationProvider,
+} from '../server'
+import type {
 
   // transforms
   idToString,
@@ -29,18 +31,21 @@ import type {
 } from '..'
 
 import type {
-  idToString as BaseIdToString,
   LeaderboardProvider as BaseLeaderboardProvider,
   MapProvider as BaseMapProvider,
+  ScoreProvider as BaseScoreProvider,
+  StatusProvider as BaseStatusProvider,
+  UserProvider as BaseUserProvider,
+  UserRelationProvider as BaseUserRelationProvider,
+
+} from '~/adapters/base/server'
+import type {
+  idToString as BaseIdToString,
   modes as BaseModes,
   rulesets as BaseRulesets,
   scoreIdToString as BaseScoreIdToString,
-  ScoreProvider as BaseScoreProvider,
-  StatusProvider as BaseStatusProvider,
   stringToId as BaseStringToId,
   stringToScoreId as BaseStringToScoreId,
-  UserProvider as BaseUserProvider,
-  UserRelationProvider as BaseUserRelationProvider,
   hasLeaderboardRankingSystem as BaseHasLeaderboardRankingSystem,
   hasRankingSystem as BaseHasRankingSystem,
   hasRuleset as BaseHasRuleset,

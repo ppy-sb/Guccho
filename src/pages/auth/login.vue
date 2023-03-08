@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { TRPCError } from '@trpc/server'
-import { reactive, ref } from 'vue'
-import { navigateTo, useRoute, useRouter } from '#app'
+
+
 import { useSession } from '~/store/session'
 
 const session = useSession()

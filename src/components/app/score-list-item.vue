@@ -14,9 +14,8 @@ import {
   ppRankingSystems,
 } from '~/types/defs'
 import { createAddCommasFormatter } from '~/common/varkaUtils'
-import { useFAIconLib } from '#imports'
-import { beatmapIsVisible } from '~/utils/map'
-import { placeholder } from '~/utils'
+
+import { beatmapIsVisible, placeholder } from '~/utils'
 import type { RankingStatus } from '~/types/beatmap'
 const props = withDefaults(
   defineProps<{

@@ -1,5 +1,6 @@
 export * from './asserts'
 export * from './guards'
+export * from './map'
 
 export function loadImage(src: string) {
   return new Promise((resolve, reject) => {

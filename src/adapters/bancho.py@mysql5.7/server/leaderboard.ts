@@ -1,8 +1,8 @@
+import { prismaClient } from '../prisma'
 import type { Id } from '..'
-import { prismaClient } from '.'
 import {
   LeaderboardProvider as BanchoPyLeaderboardProvider,
-} from '~/adapters/bancho.py/client'
+} from '~/adapters/bancho.py/server'
 import { toBanchoPyMode, toRoles } from '~/adapters/bancho.py/transforms'
 
 import type { AvailableRuleset, LeaderboardRankingSystem, Mode } from '~/types/common'

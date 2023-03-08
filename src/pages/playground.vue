@@ -1,5 +1,5 @@
 <script setup>
-import { navigateTo, useRoute } from '#app'
+
 const currentRoute = useRoute()
 const root = currentRoute.matched[0]
 

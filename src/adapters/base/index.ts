@@ -5,8 +5,6 @@ import type {
   HasRuleset,
 } from '~/types/server'
 
-export * from './client'
-
 export type Id = string
 export type ScoreId = string
 

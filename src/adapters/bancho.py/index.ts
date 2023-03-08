@@ -6,14 +6,7 @@ export {
   stringToScoreId,
 } from './transforms'
 export { modes, rulesets } from '~/types/defs'
-export {
-  LeaderboardProvider,
-  MapProvider,
-  ScoreProvider,
-  StatusProvider,
-  UserProvider,
-  UserRelationProvider,
-} from './client'
+
 export {
   hasLeaderboardRankingSystem,
   hasRankingSystem,

@@ -1,17 +1,19 @@
-import type { PrismaClient, User } from '.prisma/bancho.py'
+import { TSFilter } from '~/utils'
+
+import { prismaClient } from '../prisma'
 import {
   fromBanchoPyMode,
   toBanchoPyMode,
   toScore,
   toUserEssential,
 } from '../transforms'
+
+import type { PrismaClient, User } from '.prisma/bancho.py'
 import type { Id } from '..'
 import type { AbleToTransformToScores } from '../transforms'
-import { prismaClient } from '.'
-import { TSFilter } from '~/utils'
 import type {
   ScoreProvider as Base,
-} from '$def'
+} from '~/adapters/base/server'
 export class ScoreProvider implements Base<bigint, Id> {
   db: PrismaClient
 

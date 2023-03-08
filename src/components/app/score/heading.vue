@@ -2,7 +2,7 @@
 import { faEllipsisH } from '@fortawesome/free-solid-svg-icons'
 import type { RulesetScore } from '~/types/score'
 import type { Mode, PPRankingSystem, RankingSystem, Ruleset } from '~/types/common'
-import { beatmapIsVisible } from '~/utils/map'
+import { beatmapIsVisible } from '~/utils'
 import {
   createScoreFormatter,
 } from '~/common/varkaUtils'

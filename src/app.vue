@@ -1,9 +1,6 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-import { useAppConfig } from '#app'
 // @ts-expect-error string, no declaration file exists
 import remixiconUrl from 'remixicon/fonts/remixicon.symbol.svg'
-import { useSafariDetector } from '#imports'
 
 const appConfig = useAppConfig()
 const safari = ref(true)

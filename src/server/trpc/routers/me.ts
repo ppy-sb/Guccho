@@ -1,6 +1,13 @@
+import { idToString } from '$active'
 import { TRPCError } from '@trpc/server'
 import bcrypt from 'bcryptjs'
 import z from 'zod'
+import {
+  UserProvider,
+  UserRelationProvider,
+} from '~/adapters/ppy.sb@bancho.py/server'
+import { calculateMutualRelationships } from '~/server/transforms'
+import { userProcedure as pUser } from '~/server/trpc/middleware/user'
 
 import {
   atLeastOneUserNotExists,
@@ -11,9 +18,6 @@ import {
 } from '../messages'
 import { zodHandle, zodRelationType, zodTipTapJSONContent } from '../shapes'
 import { router as _router } from '../trpc'
-import { userProcedure as pUser } from '~/server/trpc/middleware/user'
-import { calculateMutualRelationships } from '~/server/transforms'
-import { UserProvider, UserRelationProvider, idToString } from '$active'
 
 const userProvider = new UserProvider()
 const relationProvider = new UserRelationProvider()

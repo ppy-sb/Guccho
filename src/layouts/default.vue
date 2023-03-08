@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useSafariDetector } from '#imports'
+
 const safari = ref(true)
 
 onBeforeMount(() => {

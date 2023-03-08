@@ -1,9 +1,6 @@
 <script setup lang="ts">
 // follow server
-import { useAppConfig } from '#app'
-import { computed, inject } from 'vue'
 
-import { useAdapterConfig } from '#imports'
 import type { LeaderboardSwitcherComposableType } from '~/composables/useSwitcher'
 import { LeaderboardRankingSystem } from '~/types/common'
 

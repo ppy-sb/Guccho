@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { inject, ref } from 'vue'
+
 import type { Status } from './shared'
 const props = defineProps<{
   initStatus?: Status

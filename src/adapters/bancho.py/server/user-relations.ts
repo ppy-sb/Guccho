@@ -1,9 +1,11 @@
-import type { PrismaClient } from '.prisma/bancho.py'
-import { dedupeUserRelationship, toUserEssential } from '../transforms'
-import type { Id } from '..'
-import { prismaClient } from '.'
 import { calculateMutualRelationships } from '~/server/transforms'
-import type { UserRelationProvider as Base } from '~/adapters/base'
+
+import { prismaClient } from '../prisma'
+import { dedupeUserRelationship, toUserEssential } from '../transforms'
+
+import type { PrismaClient } from '.prisma/bancho.py'
+import type { Id } from '..'
+import type { UserRelationProvider as Base } from '~/adapters/base/server'
 import type { Relationship } from '~/types/common'
 import type { UserEssential } from '~/types/user'
 

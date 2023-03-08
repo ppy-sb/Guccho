@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-
 const nested1 = ref()
 const openInner1 = ref()
 const nested2 = ref()

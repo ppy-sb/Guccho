@@ -13,8 +13,6 @@ export {
   rulesets,
 
   // types
-  Id,
-  ScoreId,
+  type Id,
+  type ScoreId,
 } from '../bancho.py'
-
-export * from './client'

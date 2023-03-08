@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { RouterLinkProps } from 'vue-router'
-import { useAppConfig } from '#app'
+
 import type { UserEssential } from '~/types/user'
 import { getFlagURL } from '~/common/varkaUtils'
 

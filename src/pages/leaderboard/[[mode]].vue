@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { navigateTo, useAppConfig, useRoute } from '#app'
-
 import type { LeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
 import type { SwitcherPropType } from '~/composables/useSwitcher'
 import { isString } from '~/utils'

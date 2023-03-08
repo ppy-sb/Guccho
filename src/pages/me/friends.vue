@@ -1,5 +1,5 @@
 <script setup>
-import { navigateTo, onErrorCaptured } from '#imports'
+
 import { useSession } from '~/store/session'
 const { $client } = useNuxtApp()
 const session = useSession()

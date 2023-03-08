@@ -1,5 +1,5 @@
-import { prismaClient } from '.'
-import { StatusProvider as Base } from '~/adapters/base'
+import { prismaClient } from '../prisma'
+import { StatusProvider as Base } from '~/adapters/base/server'
 
 export class StatusProvider extends Base implements Base {
   prismaState = false

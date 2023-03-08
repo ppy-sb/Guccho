@@ -1,15 +1,17 @@
-import type { PrismaClient } from '.prisma/bancho.py'
+import { TSFilter } from '~/utils'
+
+import { prismaClient } from '../prisma'
 import {
   stringToId,
   toBeatmapEssential,
-  toBeatmapWithBeatmapset,
   toBeatmapset,
+  toBeatmapWithBeatmapset,
   toRankingStatus,
 } from '../transforms'
+
+import type { PrismaClient } from '.prisma/bancho.py'
 import type { Id } from '..'
-import { prismaClient } from '.'
-import { TSFilter } from '~/utils'
-import type { MapProvider as Base } from '$def'
+import type { MapProvider as Base } from '~/adapters/base/server'
 import type { BeatmapSource, Beatmapset } from '~/types/beatmap'
 export class MapProvider implements Base<Id> {
   db: PrismaClient

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
-import { computed, ref, toRefs } from 'vue'
+
 import useAnimationManager from './composables/animation/useAnimationManager'
 import useMeasureText from './composables/useMeasureText'
 import useSelectElement from './composables/useSelectElement'

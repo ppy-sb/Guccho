@@ -1,18 +1,19 @@
-import type { PrismaClient } from '.prisma/bancho.py'
+import { modes as _modes } from '~/types/defs'
+
+import { prismaClient } from '../prisma'
+import { client as redisClient } from '../redis-client'
 import { toBanchoPyMode, toMods, toRoles, toUserEssential } from '../transforms'
 
-import { client as redisClient } from '../redis-client'
+import type { PrismaClient } from '.prisma/bancho.py'
 import type { BanchoPyMode } from '../enums'
 import type { Id } from '..'
-import { prismaClient } from '.'
-import { modes as _modes } from '~/types/defs'
 import type {
   AvailableRuleset,
   LeaderboardRankingSystem,
   Mode,
   RankingSystem,
 } from '~/types/common'
-import type { LeaderboardProvider as Base } from '$def'
+import type { LeaderboardProvider as Base } from '~/adapters/base/server'
 
 export class LeaderboardProvider
 implements Base<Id> {

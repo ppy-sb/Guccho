@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { computed, provide, reactive, ref } from 'vue'
 import { useIntersectionObserver } from '@vueuse/core'
 import {
   faBarsStaggered,
@@ -9,7 +8,8 @@ import {
 import { faPiedPiperPp } from '@fortawesome/free-brands-svg-icons'
 import type { LeaderboardRankingSystem } from '~/types/common'
 import type { UserModeRulesetStatistics } from '~/types/statistics'
-import { hasRuleset } from '~~/src/adapters/bancho.py/guards'
+// import { hasRuleset } from
+const { hasRuleset } = useAdapterConfig()
 
 const { addToLibrary } = useFAIconLib()
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeMount, reactive } from 'vue'
+
 import type { JSONContent } from '@tiptap/vue-3'
 import { EditorContent } from '@tiptap/vue-3'
 import '@/assets/styles/typography.scss'

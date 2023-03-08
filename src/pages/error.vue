@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { clearError } from '#app'
+
 
 const props = defineProps<{
   error: Error

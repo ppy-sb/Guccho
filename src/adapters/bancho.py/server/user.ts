@@ -1,14 +1,17 @@
-import { mkdirSync } from 'fs'
-import { unlink, writeFile } from 'fs/promises'
-import { isAbsolute, join, resolve, sep } from 'path'
 import { generateHTML } from '@tiptap/html'
 import { TRPCError } from '@trpc/server'
 import bcrypt from 'bcryptjs'
+import { mkdirSync } from 'fs'
+import { unlink, writeFile } from 'fs/promises'
 import glob from 'glob-promise'
 import imageType from 'image-type'
-import type { Prisma, PrismaClient } from '.prisma/bancho.py'
-import type { JSONContent } from '@tiptap/core'
+import { isAbsolute, join, resolve, sep } from 'path'
+import useEditorExtensions from '~/composables/useEditorExtensions'
+import { RankingStatusEnum } from '~/types/beatmap'
+import { TSFilter } from '~/utils'
+
 import { BanchoPyMode } from '../enums'
+import { prismaClient } from '../prisma'
 import { client as redisClient } from '../redis-client'
 import {
   createRulesetData,
@@ -21,14 +24,12 @@ import {
   toRankingSystemScores,
   toUserEssential,
 } from '../transforms'
-import type { Id } from '..'
 import { UserRelationProvider } from './user-relations'
-import { prismaClient } from '.'
-import useEditorExtensions from '~/composables/useEditorExtensions'
-import { RankingStatusEnum } from '~/types/beatmap'
-import { TSFilter } from '~/utils'
 
-import type { UserProvider as Base } from '$def'
+import type { Prisma, PrismaClient } from '.prisma/bancho.py'
+import type { JSONContent } from '@tiptap/core'
+import type { Id } from '..'
+import type { UserProvider as Base } from '~/adapters/base/server'
 import type { LeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
 
 import type { UserEssential, UserOptional, UserStatistic } from '~/types/user'

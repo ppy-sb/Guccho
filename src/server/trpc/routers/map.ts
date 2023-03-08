@@ -1,6 +1,8 @@
+import { idToString, stringToId } from '$active'
 import { string, z } from 'zod'
-import { router as _router, publicProcedure as p } from '../trpc'
-import { MapProvider, idToString, stringToId } from '$active'
+import { MapProvider } from '~/adapters/ppy.sb@bancho.py/server'
+
+import { publicProcedure as p, router as _router } from '../trpc'
 
 const map = new MapProvider()
 export const router = _router({

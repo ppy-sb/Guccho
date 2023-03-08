@@ -1,5 +1,6 @@
-import { router as _router, publicProcedure as p } from '../trpc'
-import { StatusProvider } from '$active'
+import { StatusProvider } from '~/adapters/ppy.sb@bancho.py/server'
+
+import { publicProcedure as p, router as _router } from '../trpc'
 
 const sp = new StatusProvider()
 export const router = _router({

@@ -1,4 +1,6 @@
+import { hasRuleset, idToString, stringToId } from '$active'
 import z from 'zod'
+import { LeaderboardProvider } from '~/adapters/ppy.sb@bancho.py/server'
 
 import {
   zodLeaderboardRankingSystem,
@@ -6,11 +8,16 @@ import {
   zodRankingSystem,
   zodRuleset,
 } from '../shapes'
-import { router as _router, publicProcedure } from '../trpc'
-import { LeaderboardProvider, hasRuleset, idToString, stringToId } from '$active'
+import { publicProcedure, router as _router } from '../trpc'
 
+// import memoize from 'memoizee'
 // import { createRouter } from '../context'
 const provider = new LeaderboardProvider()
+
+const getLeaderboard = provider.getLeaderboard.bind(provider)
+const getBeatmapLeaderboard = provider.getBeatmapLeaderboard.bind(provider)
+// const getLeaderboard = memoize(provider.getLeaderboard.bind(provider), { promise: true, maxAge: 10 * 60 * 1000 })
+// const getBeatmapLeaderboard = memoize(provider.getBeatmapLeaderboard.bind(provider), { promise: true, maxAge: 10 * 60 * 1000 })
 export const router = _router({
   overall: publicProcedure
     .input(
@@ -28,7 +35,7 @@ export const router = _router({
         if (!hasRuleset(mode, ruleset)) {
           return []
         }
-        const result = await provider.getLeaderboard({
+        const result = await getLeaderboard({
           mode,
           ruleset,
           rankingSystem,
@@ -64,7 +71,7 @@ export const router = _router({
         if (!hasRuleset(mode, ruleset)) {
           return []
         }
-        const result = await provider.getBeatmapLeaderboard({
+        const result = await getBeatmapLeaderboard({
           mode,
           ruleset,
           rankingSystem,
