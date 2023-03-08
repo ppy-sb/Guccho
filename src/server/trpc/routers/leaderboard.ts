@@ -1,4 +1,3 @@
-import memoize from 'memoizee'
 import z from 'zod'
 
 import {
@@ -13,10 +12,22 @@ import { hasRuleset, idToString, stringToId } from '$active'
 
 const provider = new LeaderboardProvider()
 
-// const getLeaderboard = provider.getLeaderboard.bind(provider)
-// const getBeatmapLeaderboard = provider.getBeatmapLeaderboard.bind(provider)
-const getLeaderboard = memoize(provider.getLeaderboard.bind(provider), { promise: true, maxAge: 10 * 60 * 1000 })
-const getBeatmapLeaderboard = memoize(provider.getBeatmapLeaderboard.bind(provider), { promise: true, maxAge: 10 * 60 * 1000 })
+const getLeaderboard = provider.getLeaderboard.bind(provider)
+const getBeatmapLeaderboard = provider.getBeatmapLeaderboard.bind(provider)
+// const getLeaderboard = memoize(arg => provider.getLeaderboard(arg), {
+//   promise: true,
+//   maxAge: 10 * 60 * 1000,
+//   normalizer(args) {
+//     return stringify(args[0])
+//   },
+// })
+// const getBeatmapLeaderboard = memoize((arg: Parameters<typeof provider.getBeatmapLeaderboard>[0]) => provider.getBeatmapLeaderboard(arg), {
+//   promise: true,
+//   maxAge: 10 * 60 * 1000,
+//   normalizer(args: Parameters<typeof provider.getBeatmapLeaderboard>) {
+//     return stringify(args[0])
+//   },
+// })
 export const router = _router({
   overall: publicProcedure
     .input(
