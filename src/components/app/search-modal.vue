@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useDebounceFn } from '@vueuse/core'
-import { assertIsBanchoBeatmapset, placeholder } from '~/utils'
+import { isBanchoBeatmapset, placeholder } from '~/utils'
 
 const { $client } = useNuxtApp()
 const searchModal = ref<{
@@ -139,7 +139,7 @@ const hasResult = computed(() => {
                       >
                         <div class="flex gap-2 items-center">
                           <img
-                            v-if="assertIsBanchoBeatmapset(bs)"
+                            v-if="isBanchoBeatmapset(bs)"
                             class="h-[30px] mask mask-squircle overflow-hidden object-cover aspect-square"
                             :src="`https://b.ppy.sh/thumb/${bs.foreignId}.jpg`"
                             :onerror="placeholder"
@@ -171,7 +171,7 @@ const hasResult = computed(() => {
                       >
                         <div class="flex gap-2 items-center">
                           <img
-                            v-if="assertIsBanchoBeatmapset(bm.beatmapset)"
+                            v-if="isBanchoBeatmapset(bm.beatmapset)"
                             class="h-[30px] mask mask-squircle overflow-hidden object-cover aspect-square"
                             :src="`https://b.ppy.sh/thumb/${bm.beatmapset.foreignId}.jpg`"
                             :onerror="placeholder"

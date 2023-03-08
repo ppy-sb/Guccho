@@ -14,7 +14,7 @@ import type {
   UserStatistic,
 } from '~/types/user'
 
-export namespace UserDataProvider {
+export namespace UserProvider {
   export type ComposableProperties<Id> = UserExtra<Id> & UserOptional<Id>
   export interface OptType<
     Id,
@@ -38,13 +38,13 @@ export namespace UserDataProvider {
     rankingStatus: RankingStatus[]
   }
 }
-export interface UserDataProvider<Id> {
-  exists({ handle, keys }: UserDataProvider.OptType<Id>): Awaitable<boolean>
+export interface UserProvider<Id> {
+  exists({ handle, keys }: UserProvider.OptType<Id>): Awaitable<boolean>
 
   getEssential<
     Includes extends Partial<Record<keyof UserOptional<Id>, boolean>>,
   >(
-    opt: UserDataProvider.OptType<Id, Includes>
+    opt: UserProvider.OptType<Id, Includes>
   ): Awaitable<UserEssential<Id> | null>
 
   getEssentialById<
@@ -58,13 +58,13 @@ export interface UserDataProvider<Id> {
     _Mode extends Mode,
     _Ruleset extends Ruleset,
     _RankingSystem extends LeaderboardRankingSystem,
-  >(query: UserDataProvider.BaseQuery<Id, _Mode, _Ruleset, _RankingSystem>): Awaitable<RankingSystemScore<string, Id, _Mode, _RankingSystem>[]>
+  >(query: UserProvider.BaseQuery<Id, _Mode, _Ruleset, _RankingSystem>): Awaitable<RankingSystemScore<string, Id, _Mode, _RankingSystem>[]>
 
   getTops<
     _Mode extends Mode,
     _Ruleset extends Ruleset,
     _RankingSystem extends LeaderboardRankingSystem,
-  >(query: UserDataProvider.BaseQuery<Id, _Mode, _Ruleset, _RankingSystem>): Awaitable<{
+  >(query: UserProvider.BaseQuery<Id, _Mode, _Ruleset, _RankingSystem>): Awaitable<{
     count: number
     scores: RankingSystemScore<string, Id, _Mode, _RankingSystem>[]
   }>
@@ -76,7 +76,7 @@ export interface UserDataProvider<Id> {
 
   getFull<
     Excludes extends Partial<
-      Record<keyof UserDataProvider.ComposableProperties<Id>, boolean>
+      Record<keyof UserProvider.ComposableProperties<Id>, boolean>
     >,
   >(query: {
     handle: string
@@ -84,14 +84,14 @@ export interface UserDataProvider<Id> {
   }): Awaitable<
     | null
     | (UserEssential<Id> & {
-      [K in keyof UserDataProvider.ComposableProperties<Id> as Exclude<
+      [K in keyof UserProvider.ComposableProperties<Id> as Exclude<
           Excludes,
           'secrets'
         >[K] extends true
         ? never
-        : K]: UserDataProvider.ComposableProperties<Id>[K];
+        : K]: UserProvider.ComposableProperties<Id>[K];
     } & (Excludes['secrets'] extends true
-      ? { secrets: UserDataProvider.ComposableProperties<Id>['secrets'] }
+      ? { secrets: UserProvider.ComposableProperties<Id>['secrets'] }
       : {}))
   >
 

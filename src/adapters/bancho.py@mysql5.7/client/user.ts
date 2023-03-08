@@ -1,17 +1,16 @@
 import type { PrismaClient } from '.prisma/bancho.py'
-import type { Id } from '../exports'
+import type { Id } from '..'
 import { prismaClient } from '.'
+import { UserProvider as BanchoPyUser } from '~/adapters/bancho.py/client'
 import { BanchoPyMode } from '~/adapters/bancho.py/enums'
 import { createRulesetData } from '~/adapters/bancho.py/transforms'
 
-import type { UserDataProvider as Base } from '$def/client/user'
+import type { UserProvider as Base } from '$def'
 import type { LeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
 
 import type { UserStatistic } from '~/types/user'
 
-import { UserDataProvider as BanchoPyUser } from '~/adapters/bancho.py/client'
-
-export class UserDataProvider extends BanchoPyUser implements Base<Id> {
+export class UserProvider extends BanchoPyUser implements Base<Id> {
   db: PrismaClient
 
   constructor() {

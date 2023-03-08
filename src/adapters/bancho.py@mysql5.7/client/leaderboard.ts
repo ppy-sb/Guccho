@@ -1,11 +1,13 @@
-import type { Id } from '../exports'
+import type { Id } from '..'
 import { prismaClient } from '.'
-import { LeaderboardDataProvider as BanchoPyLeaderboardDataProvider } from '~/adapters/bancho.py/client'
+import {
+  LeaderboardProvider as BanchoPyLeaderboardProvider,
+} from '~/adapters/bancho.py/client'
 import { toBanchoPyMode, toRoles } from '~/adapters/bancho.py/transforms'
 
 import type { AvailableRuleset, LeaderboardRankingSystem, Mode } from '~/types/common'
 
-export class LeaderboardDataProvider extends BanchoPyLeaderboardDataProvider {
+export class LeaderboardProvider extends BanchoPyLeaderboardProvider {
   async getPPv2LiveLeaderboard(
     banchoPyMode: number,
     start: number,
@@ -96,7 +98,7 @@ LIMIT ${start}, ${pageSize}`)
   }) {
     const { mode, ruleset, rankingSystem, page, pageSize } = opt
     let result: Awaited<
-      ReturnType<LeaderboardDataProvider['leaderboardFromDatabase']>
+      ReturnType<LeaderboardProvider['leaderboardFromDatabase']>
     > = []
     const start = page * pageSize
     if (!this.redisClient?.isReady) {

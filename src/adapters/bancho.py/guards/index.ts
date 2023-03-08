@@ -6,9 +6,9 @@ import type {
   Ruleset,
 } from '~/types/common'
 import type {
-  AssertHasLeaderboardRankingSystem,
-  AssertHasRankingSystem,
-  AssertHasRuleset,
+  HasLeaderboardRankingSystem,
+  HasRankingSystem,
+  HasRuleset,
   ServerRankingSystemDef,
 } from '~/types/server'
 
@@ -39,7 +39,7 @@ const havingRankingSystem: ServerRankingSystemDef = {
   },
 }
 
-export const assertHasRuleset: AssertHasRuleset = (
+export const hasRuleset: HasRuleset = (
   mode,
   ruleset,
 ): ruleset is Ruleset & AvailableRuleset<typeof mode> => {
@@ -47,14 +47,14 @@ export const assertHasRuleset: AssertHasRuleset = (
   return ruleset in mDef
 }
 
-export const assertHasRankingSystem: AssertHasRankingSystem = (
+export const hasRankingSystem: HasRankingSystem = (
   mode,
   ruleset,
   rankingSystem,
 ): rankingSystem is RankingSystem =>
   havingRankingSystem[mode][ruleset].rankingSystem.includes(rankingSystem as PPRankingSystem)
 
-export const assertHasLeaderboardRankingSystem: AssertHasLeaderboardRankingSystem = (
+export const hasLeaderboardRankingSystem: HasLeaderboardRankingSystem = (
   mode,
   ruleset,
   rankingSystem,

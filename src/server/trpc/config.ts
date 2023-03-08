@@ -1,1 +1,1 @@
-export * from '$active/exports'
+export * from '$active'

@@ -15,7 +15,7 @@ import {
 } from '~/types/defs'
 import { createAddCommasFormatter } from '~/common/varkaUtils'
 import { useFAIconLib } from '#imports'
-import { assertBeatmapIsVisible } from '~/utils/map'
+import { beatmapIsVisible } from '~/utils/map'
 import { placeholder } from '~/utils'
 import type { RankingStatus } from '~/types/beatmap'
 const props = withDefaults(
@@ -51,7 +51,7 @@ const beatmap = computed(() => {
   if (!props.score) {
     return
   }
-  if (!assertBeatmapIsVisible(props.score.beatmap)) {
+  if (!beatmapIsVisible(props.score.beatmap)) {
     return
   }
   return props.score.beatmap
@@ -64,7 +64,7 @@ const meta = computed(
     if (!beatmap.value) {
       return
     }
-    if (!assertBeatmapIsVisible(beatmap.value)) {
+    if (!beatmapIsVisible(beatmap.value)) {
       return
     }
 
@@ -94,7 +94,7 @@ const meta = computed(
           <VLazyImage
             v-if="
               beatmap
-                && assertBeatmapIsVisible(beatmap)
+                && beatmapIsVisible(beatmap)
                 && beatmap.beatmapset.source === 'bancho'
             " class="object-cover w-20 h-16 rounded-xl" src-placeholder="/images/image-placeholder.svg"
             :src="`https://assets.ppy.sh/beatmaps/${beatmap.beatmapset.foreignId}/covers/list.jpg`" alt="list"
@@ -105,7 +105,7 @@ const meta = computed(
           </div>
         </div>
         <div class="flex flex-col min-w-0">
-          <template v-if="beatmap && assertBeatmapIsVisible(beatmap)">
+          <template v-if="beatmap && beatmapIsVisible(beatmap)">
             <router-link
               :to="{
                 name: 'beatmapset-id',

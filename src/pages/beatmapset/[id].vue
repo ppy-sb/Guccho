@@ -2,8 +2,8 @@
 // @ts-expect-error no d.ts
 import VLazyImage from 'v-lazy-image'
 import {
-  assertIncludes,
-  assertIsBanchoBeatmapset,
+  includes,
+  isBanchoBeatmapset,
   loadImage,
   noop,
   placeholder,
@@ -16,8 +16,8 @@ const config = useAppConfig()
 const {
   supportedModes,
   supportedRulesets,
-  assertHasRankingSystem,
-  assertHasRuleset,
+  hasRankingSystem,
+  hasRuleset,
 } = useAdapterConfig()
 const [switcher, setSwitcher] = useSwitcher()
 const lazyBgCover = ref('')
@@ -36,7 +36,7 @@ const selectedMap = computed(() =>
   beatmapset.value?.beatmaps.find(bm => bm.id === selectedMapId.value),
 )
 const bgCover = beatmapset.value
-  && assertIsBanchoBeatmapset(beatmapset.value) && {
+  && isBanchoBeatmapset(beatmapset.value) && {
   cover: `https://assets.ppy.sh/beatmaps/${
       beatmapset.value.foreignId
     }/covers/cover.jpg?${Math.floor(new Date().getTime() / 1000)}`,
@@ -49,8 +49,8 @@ const queryMode = route.query.mode?.toString()
 const queryRuleset = route.query.ruleset?.toString()
 
 setSwitcher({
-  mode: assertIncludes(queryMode, supportedModes) ? queryMode : undefined,
-  ruleset: assertIncludes(queryRuleset, supportedRulesets)
+  mode: includes(queryMode, supportedModes) ? queryMode : undefined,
+  ruleset: includes(queryRuleset, supportedRulesets)
     ? queryRuleset
     : undefined,
 })
@@ -58,8 +58,8 @@ setSwitcher({
 if (queryRankingSystem) {
   setSwitcher({
     rankingSystem:
-      assertHasRuleset(switcher.mode, switcher.ruleset)
-      && assertHasRankingSystem(
+      hasRuleset(switcher.mode, switcher.ruleset)
+      && hasRankingSystem(
         switcher.mode,
         switcher.ruleset,
         queryRankingSystem,
@@ -125,7 +125,7 @@ onBeforeMount(() => {
   <div
     v-else-if="beatmapset"
     :class="[
-      assertIsBanchoBeatmapset(beatmapset) && `pre-bg-cover`,
+      isBanchoBeatmapset(beatmapset) && `pre-bg-cover`,
       lazyBgCover !== '' && 'ready',
     ]"
   >
@@ -189,7 +189,7 @@ onBeforeMount(() => {
                     <ul
                       class="menu p-2 menu-compact border-[1px] border-base-300/20 bg-base-200/80 w-56 rounded-box"
                     >
-                      <template v-if="assertIsBanchoBeatmapset(beatmapset)">
+                      <template v-if="isBanchoBeatmapset(beatmapset)">
                         <li class="menu-title">
                           <span>External Sources</span>
                         </li>
@@ -227,7 +227,7 @@ onBeforeMount(() => {
                 v-for="m in supportedModes"
                 :key="`sw-${m}`"
                 :value="m"
-                :disabled="assertHasRuleset(m, switcher.ruleset) === false"
+                :disabled="hasRuleset(m, switcher.ruleset) === false"
               >
                 {{ m }}
               </t-tab>
@@ -241,7 +241,7 @@ onBeforeMount(() => {
                 v-for="r in supportedRulesets"
                 :key="`sw-${r}`"
                 :value="r"
-                :disabled="assertHasRuleset(switcher.mode, r) === false"
+                :disabled="hasRuleset(switcher.mode, r) === false"
               >
                 {{ r }}
               </t-tab>

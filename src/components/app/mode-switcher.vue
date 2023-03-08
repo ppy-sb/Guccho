@@ -20,7 +20,7 @@ const emit = defineEmits<{
   (event: 'update:modelValue', res: modelValue): void
 }>()
 const config = useAppConfig()
-const { assertHasLeaderboardRankingSystem, assertHasRuleset }
+const { hasLeaderboardRankingSystem, hasRuleset }
   = await useAdapterConfig()
 
 const [switcher, setSwitcher] = useLeaderboardSwitcher(
@@ -43,7 +43,7 @@ watch(switcher, () => emitData())
         :class="{
           '!opacity-80 pointer-events-none': switcher.mode === mode,
           '!opacity-10 pointer-events-none':
-            switcher.ruleset && !assertHasRuleset(mode, switcher.ruleset),
+            switcher.ruleset && !hasRuleset(mode, switcher.ruleset),
         }"
         @click="setSwitcher({ mode })"
       >
@@ -61,7 +61,7 @@ watch(switcher, () => emitData())
         :class="{
           '!opacity-80 pointer-events-none': switcher.ruleset === ruleset,
           '!opacity-20 pointer-events-none':
-            switcher.mode && !assertHasRuleset(switcher.mode, ruleset),
+            switcher.mode && !hasRuleset(switcher.mode, ruleset),
         }"
         @click="setSwitcher({ ruleset })"
       >
@@ -78,8 +78,8 @@ watch(switcher, () => emitData())
       >
         <a
           v-if="
-            assertHasRuleset(switcher.mode, switcher.ruleset)
-              && assertHasLeaderboardRankingSystem(
+            hasRuleset(switcher.mode, switcher.ruleset)
+              && hasLeaderboardRankingSystem(
                 switcher.mode,
                 switcher.ruleset,
                 rankingSystem,

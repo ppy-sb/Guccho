@@ -9,7 +9,7 @@ import {
 import { faPiedPiperPp } from '@fortawesome/free-brands-svg-icons'
 import type { LeaderboardRankingSystem } from '~/types/common'
 import type { UserModeRulesetStatistics } from '~/types/statistics'
-import { assertHasRuleset } from '~/adapters/bancho.py/checks'
+import { hasRuleset } from '~~/src/adapters/bancho.py/guards'
 
 const { addToLibrary } = useFAIconLib()
 
@@ -39,7 +39,7 @@ const {
 const currentStatistic = computed<
   UserModeRulesetStatistics<LeaderboardRankingSystem> | undefined
 >(() => {
-  if (assertHasRuleset(switcher.mode, switcher.ruleset)) {
+  if (hasRuleset(switcher.mode, switcher.ruleset)) {
     const returnValue = user.value?.statistics?.[switcher.mode][switcher.ruleset]
     return returnValue
   }

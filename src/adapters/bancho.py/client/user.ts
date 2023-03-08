@@ -1,15 +1,14 @@
 import { mkdirSync } from 'fs'
 import { unlink, writeFile } from 'fs/promises'
 import { isAbsolute, join, resolve, sep } from 'path'
-import type { Prisma, PrismaClient } from '.prisma/bancho.py'
-import type { JSONContent } from '@tiptap/core'
 import { generateHTML } from '@tiptap/html'
 import { TRPCError } from '@trpc/server'
 import bcrypt from 'bcryptjs'
 import glob from 'glob-promise'
 import imageType from 'image-type'
+import type { Prisma, PrismaClient } from '.prisma/bancho.py'
+import type { JSONContent } from '@tiptap/core'
 import { BanchoPyMode } from '../enums'
-import type { Id } from '../exports'
 import { client as redisClient } from '../redis-client'
 import {
   createRulesetData,
@@ -22,13 +21,14 @@ import {
   toRankingSystemScores,
   toUserEssential,
 } from '../transforms'
-import BanchoPyUserRelationship from './user-relations'
+import type { Id } from '..'
+import { UserRelationProvider } from './user-relations'
 import { prismaClient } from '.'
 import useEditorExtensions from '~/composables/useEditorExtensions'
 import { RankingStatusEnum } from '~/types/beatmap'
 import { TSFilter } from '~/utils'
 
-import type { UserDataProvider } from '$def/client/user'
+import type { UserProvider as Base } from '$def'
 import type { LeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
 
 import type { UserEssential, UserOptional, UserStatistic } from '~/types/user'
@@ -62,10 +62,10 @@ function mkDirByPathSync(targetDir: string, { isRelativeToScript = false } = {})
   }, initDir)
 }
 
-export default class BanchoPyUser implements UserDataProvider<Id> {
+export class UserProvider implements Base<Id> {
   db: PrismaClient
 
-  relationships: BanchoPyUserRelationship
+  relationships: UserRelationProvider
   redisClient?: ReturnType<typeof redisClient>
 
   config = {
@@ -77,7 +77,7 @@ export default class BanchoPyUser implements UserDataProvider<Id> {
 
   constructor() {
     this.db = prismaClient
-    this.relationships = new BanchoPyUserRelationship()
+    this.relationships = new UserRelationProvider()
     this.redisClient = redisClient()
 
     if (this.config.avatar.location) {
@@ -103,7 +103,7 @@ export default class BanchoPyUser implements UserDataProvider<Id> {
   async exists({
     handle,
     keys,
-  }: UserDataProvider.OptType<number, Record<never, never>>) {
+  }: Base.OptType<number, Record<never, never>>) {
     return (
       (await this.db.user.count(
         createUserQuery(handle, keys || ['id', 'name', 'safeName', 'email']),
@@ -128,7 +128,7 @@ export default class BanchoPyUser implements UserDataProvider<Id> {
 
   async getEssential<
     Includes extends Partial<Record<keyof UserOptional<unknown>, boolean>>,
-  >(opt: UserDataProvider.OptType<Id, Includes>) {
+  >(opt: Base.OptType<Id, Includes>) {
     const { handle, includes, keys } = opt
     const user = await this.db.user.findFirst(
       createUserQuery(handle, keys || ['id', 'name', 'safeName', 'email']),
@@ -149,7 +149,7 @@ export default class BanchoPyUser implements UserDataProvider<Id> {
     page,
     perPage,
     rankingStatus,
-  }: UserDataProvider.BaseQuery<Id, Mode, Ruleset, _RS>) {
+  }: Base.BaseQuery<Id, Mode, Ruleset, _RS>) {
     const start = page * perPage
     const _mode = toBanchoPyMode(mode, ruleset)
     if (_mode === undefined) {
@@ -201,7 +201,7 @@ export default class BanchoPyUser implements UserDataProvider<Id> {
   }
 
   // https://github.com/prisma/prisma/issues/6570 need two separate query to get count for now
-  async getTops<_RS extends LeaderboardRankingSystem>(opt: UserDataProvider.BaseQuery<Id, Mode, Ruleset, _RS>) {
+  async getTops<_RS extends LeaderboardRankingSystem>(opt: Base.BaseQuery<Id, Mode, Ruleset, _RS>) {
     const { id, mode, ruleset, rankingSystem, page, perPage, rankingStatus } = opt
 
     const start = page * perPage
@@ -433,7 +433,7 @@ WHERE s2.userid = ${id}
 
   async getFull<
     Excludes extends Partial<
-      Record<keyof UserDataProvider.ComposableProperties<Id>, boolean>
+      Record<keyof Base.ComposableProperties<Id>, boolean>
     >,
   >({ handle, excludes }: { handle: string; excludes?: Excludes }) {
     if (!excludes) {
@@ -447,7 +447,7 @@ WHERE s2.userid = ${id}
 
     // type check will not find any missing params here.
     const returnValue = <
-      Exclude<Awaited<ReturnType<UserDataProvider<Id>['getFull']>>, null>
+      Exclude<Awaited<ReturnType<Base<Id>['getFull']>>, null>
       > await toFullUser(user, this.config)
     const parallels: Promise<any>[] = []
 

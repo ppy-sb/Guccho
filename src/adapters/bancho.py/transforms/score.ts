@@ -1,4 +1,4 @@
-import type { Id } from '../exports'
+import type { Id } from '..'
 import { toBeatmapWithBeatmapset } from './beatmap'
 import { createHitCount } from './create-hit-count'
 import { toMods } from '.'

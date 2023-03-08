@@ -1,10 +1,9 @@
 import { z } from 'zod'
 import { router as _router, publicProcedure as p } from '../trpc'
-import { MapDataProvider, UserDataProvider } from '$active/client'
-import { idToString } from '$active/exports'
+import { MapProvider, UserProvider, idToString } from '$active'
 
-const map = new MapDataProvider()
-const user = new UserDataProvider()
+const map = new MapProvider()
+const user = new UserProvider()
 
 const replaceId = <T extends { id: Parameters<typeof idToString>[number] }>(
   bs: T,

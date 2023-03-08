@@ -13,11 +13,10 @@ import { sessionProcedure as pSession } from '../middleware/session'
 import { zodHandle } from '../shapes'
 import { router as _router } from '../trpc'
 import { getSession } from '~/server/session'
-import { idToString } from '$active/exports'
-import { UserDataProvider } from '$active/client'
+import { UserProvider, idToString } from '$active'
 
 const { compare } = bcrypt
-const userProvider = new UserDataProvider()
+const userProvider = new UserProvider()
 export const router = _router({
   login: pSession
     .input(

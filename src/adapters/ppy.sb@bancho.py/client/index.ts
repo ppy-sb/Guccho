@@ -7,10 +7,10 @@ const { PrismaClient } = require<{ PrismaClient: typeof ImportedPrismaClient }>(
 
 export const prismaClient = new PrismaClient()
 
-export const LeaderboardDataProvider = Parent.LeaderboardDataProvider
-export const UserRelationshipDataProvider = Parent.UserRelationshipDataProvider
-export const ScoreDataProvider = Parent.ScoreDataProvider
-export const MapDataProvider = Parent.MapDataProvider
+export const LeaderboardProvider = Parent.LeaderboardProvider
+export const UserRelationProvider = Parent.UserRelationProvider
+export const ScoreProvider = Parent.ScoreProvider
+export const MapProvider = Parent.MapProvider
 export const StatusProvider = Parent.StatusProvider
 
-export { UserDataProvider } from './user'
+export { UserProvider } from './user'

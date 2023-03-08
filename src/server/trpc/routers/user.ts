@@ -1,6 +1,7 @@
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
-import { assertHasLeaderboardRankingSystem } from '../config'
+
+import { hasLeaderboardRankingSystem } from '../config'
 import { userNotFound } from '../messages'
 import {
   zodHandle,
@@ -11,14 +12,13 @@ import {
   zodRuleset,
 } from '../shapes'
 import { router as _router, publicProcedure as p } from '../trpc'
-import type { NumberRange } from '~/types/common'
+import { hasRuleset } from '~~/src/adapters/bancho.py/guards'
 import { followUserSettings } from '~/server/transforms'
-import { assertHasRuleset } from '~/adapters/bancho.py/checks'
-import { idToString } from '$active/exports'
-import { UserDataProvider, UserRelationshipDataProvider } from '$active/client'
+import { UserProvider, UserRelationProvider, idToString } from '$active'
 
-const userProvider = new UserDataProvider()
-const userRelationshipProvider = new UserRelationshipDataProvider()
+import type { NumberRange } from '~/types/common'
+const userProvider = new UserProvider()
+const userRelationshipProvider = new UserRelationProvider()
 
 export const router = _router({
   userpage: p
@@ -82,8 +82,8 @@ export const router = _router({
 
       const { mode, ruleset, rankingSystem } = input
       if (
-        !assertHasRuleset(mode, ruleset)
-        || !assertHasLeaderboardRankingSystem(mode, ruleset, rankingSystem)
+        !hasRuleset(mode, ruleset)
+        || !hasLeaderboardRankingSystem(mode, ruleset, rankingSystem)
       ) {
         throw new TRPCError({
           code: 'PRECONDITION_FAILED',
@@ -124,8 +124,8 @@ export const router = _router({
 
       const { mode, ruleset, rankingSystem } = input
       if (
-        !assertHasRuleset(mode, ruleset)
-        || !assertHasLeaderboardRankingSystem(mode, ruleset, rankingSystem)
+        !hasRuleset(mode, ruleset)
+        || !hasLeaderboardRankingSystem(mode, ruleset, rankingSystem)
       ) {
         throw new TRPCError({
           code: 'PRECONDITION_FAILED',

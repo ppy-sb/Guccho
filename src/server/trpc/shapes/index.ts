@@ -1,6 +1,8 @@
-import type { JSONContent } from '@tiptap/core'
 import z, { literal, string, union } from 'zod'
-import { assertHasRuleset } from '../config'
+
+import type { JSONContent } from '@tiptap/core'
+import { hasRuleset } from '../config'
+
 import type { Mode, Ruleset } from '~/types/common'
 
 export const zodHandle = string()
@@ -40,7 +42,7 @@ export const validateModeRuleset = ({
   mode: Mode
   ruleset: Ruleset
 }) => {
-  return assertHasRuleset(mode, ruleset)
+  return hasRuleset(mode, ruleset)
 }
 
 export const zodTipTapJSONContent = z

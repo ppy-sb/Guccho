@@ -1,16 +1,16 @@
 import type { BeatmapSource, Beatmapset } from '~/types/beatmap'
 
-export function assertIsString(input: unknown): input is string {
+export function isString(input: unknown): input is string {
   return typeof input === 'string'
 }
 
-export function assertIsBanchoBeatmapset(
+export function isBanchoBeatmapset(
   test: Beatmapset<BeatmapSource, any, unknown>,
 ): test is Beatmapset<'bancho', any, string | number> {
   return test.source === 'bancho'
 }
 
-export function assertIncludes<T>(input: any, array: readonly T[]): input is T {
+export function includes<T>(input: any, array: readonly T[]): input is T {
   return array.includes(input)
 }
 

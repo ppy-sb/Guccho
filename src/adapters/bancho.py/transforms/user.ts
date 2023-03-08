@@ -3,7 +3,7 @@ import type {
 } from '.prisma/bancho.py'
 import { BanchoPyPrivilege } from '../enums'
 
-import type { Id } from '../exports'
+import type { Id } from '..'
 import type {
   UserEssential,
   UserExtra,

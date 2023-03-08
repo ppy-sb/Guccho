@@ -2,7 +2,7 @@
 import { faEllipsisH } from '@fortawesome/free-solid-svg-icons'
 import type { RulesetScore } from '~/types/score'
 import type { Mode, PPRankingSystem, RankingSystem, Ruleset } from '~/types/common'
-import { assertBeatmapIsVisible } from '~/utils/map'
+import { beatmapIsVisible } from '~/utils/map'
 import {
   createScoreFormatter,
 } from '~/common/varkaUtils'
@@ -16,7 +16,7 @@ const { addToLibrary } = useFAIconLib()
 
 addToLibrary(faEllipsisH)
 
-const { assertHasRankingSystem, assertHasRuleset } = useAdapterConfig()
+const { hasRankingSystem, hasRuleset } = useAdapterConfig()
 
 const scoreFmt = createScoreFormatter({ notation: undefined })
 </script>
@@ -24,7 +24,7 @@ const scoreFmt = createScoreFormatter({ notation: undefined })
 <template>
   <!-- TODO score design -->
   <div>
-    <template v-if="assertBeatmapIsVisible(score.beatmap)">
+    <template v-if="beatmapIsVisible(score.beatmap)">
       <div class="flex">
         <div class="flex flex-col gap-2">
           <div class="flex gap-2 items-baseline flex-wrap">
@@ -72,7 +72,7 @@ const scoreFmt = createScoreFormatter({ notation: undefined })
           <template v-if="rankingSystem === 'score'">
             <span class="text-5xl">{{ scoreFmt(score.score) }}</span>
           </template>
-          <template v-else-if="rankingSystem === 'ppv2' && assertHasRuleset(score.mode, score.ruleset) && assertHasRankingSystem(score.mode, score.ruleset, 'ppv2')">
+          <template v-else-if="rankingSystem === 'ppv2' && hasRuleset(score.mode, score.ruleset) && hasRankingSystem(score.mode, score.ruleset, 'ppv2')">
             <span class="text-5xl">{{ scoreFmt(score.ppv2.pp) }}</span>
             <span class="text-3xl">pp</span>
           </template>

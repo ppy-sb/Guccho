@@ -1,8 +1,9 @@
 import type { PrismaClient } from '.prisma/bancho.py'
-import type { BanchoPyMode } from '../enums'
-import type { Id } from '../exports'
-import { client as redisClient } from '../redis-client'
 import { toBanchoPyMode, toMods, toRoles, toUserEssential } from '../transforms'
+
+import { client as redisClient } from '../redis-client'
+import type { BanchoPyMode } from '../enums'
+import type { Id } from '..'
 import { prismaClient } from '.'
 import { modes as _modes } from '~/types/defs'
 import type {
@@ -11,10 +12,10 @@ import type {
   Mode,
   RankingSystem,
 } from '~/types/common'
-import type { LeaderboardDataProvider } from '$def/client/leaderboard'
+import type { LeaderboardProvider as Base } from '$def'
 
-export default class BanchoPyLeaderboard
-implements LeaderboardDataProvider<Id> {
+export class LeaderboardProvider
+implements Base<Id> {
   db: PrismaClient
   redisClient?: ReturnType<typeof redisClient>
 
@@ -149,7 +150,7 @@ implements LeaderboardDataProvider<Id> {
   }
 
   async getBeatmapLeaderboard(
-    query: LeaderboardDataProvider.BaseQuery & {
+    query: Base.BaseQuery & {
       rankingSystem: RankingSystem
       id: Id
     },

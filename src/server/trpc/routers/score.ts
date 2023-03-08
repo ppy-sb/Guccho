@@ -1,10 +1,9 @@
 import { string, z } from 'zod'
 import { router as _router, publicProcedure as p } from '../trpc'
-import { ScoreDataProvider } from '$active/client'
-import { idToString, scoreIdToString, stringToScoreId } from '$active/exports'
-import { assertBeatmapIsVisible } from '~/utils/map'
+import { ScoreProvider, idToString, scoreIdToString, stringToScoreId } from '$active'
+import { beatmapIsVisible } from '~/utils/map'
 
-const sScore = new ScoreDataProvider()
+const sScore = new ScoreProvider()
 export const router = _router({
   id: p
     .input(
@@ -22,7 +21,7 @@ export const router = _router({
       const returnValue = {
         ...score,
         id: scoreIdToString(score.id),
-        beatmap: assertBeatmapIsVisible(score.beatmap)
+        beatmap: beatmapIsVisible(score.beatmap)
           ? {
               ...score.beatmap,
               id: idToString(score.beatmap.id),

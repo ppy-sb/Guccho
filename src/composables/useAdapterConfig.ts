@@ -1,7 +1,7 @@
 import {
-  assertHasLeaderboardRankingSystem,
-  assertHasRankingSystem,
-  assertHasRuleset,
+  hasLeaderboardRankingSystem,
+  hasRankingSystem,
+  hasRuleset,
   modes as supportedModes,
   rulesets as supportedRulesets,
 } from '~/server/trpc/config'
@@ -10,8 +10,8 @@ export default () => {
   return {
     supportedModes,
     supportedRulesets,
-    assertHasRuleset,
-    assertHasLeaderboardRankingSystem,
-    assertHasRankingSystem,
+    hasRuleset,
+    hasLeaderboardRankingSystem,
+    hasRankingSystem,
   }
 }

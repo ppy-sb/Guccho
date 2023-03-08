@@ -4,7 +4,7 @@ import type {
   Source,
 } from '.prisma/bancho.py'
 import { BanchoPyMode, BanchoPyRankedStatus } from '../enums'
-import type { Id } from '../exports'
+import type { Id } from '..'
 import { RankingStatusEnum } from '~/types/beatmap'
 import { stableMod } from '~/types/score'
 import { capitalizeFirstLetter } from '~/utils'

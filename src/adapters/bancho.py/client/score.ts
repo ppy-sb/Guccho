@@ -1,17 +1,18 @@
 import type { PrismaClient, User } from '.prisma/bancho.py'
-import { fromBanchoPyMode, toBanchoPyMode, toScore, toUserEssential } from '../transforms'
-
-import type { Id } from '../exports'
+import {
+  fromBanchoPyMode,
+  toBanchoPyMode,
+  toScore,
+  toUserEssential,
+} from '../transforms'
+import type { Id } from '..'
 import type { AbleToTransformToScores } from '../transforms'
 import { prismaClient } from '.'
-import type {
-  ScoreProvider,
-  SearchId,
-  SearchQueryMany,
-} from '$def/client/score'
 import { TSFilter } from '~/utils'
-
-export default class BanchoPyScore implements ScoreProvider<bigint, Id> {
+import type {
+  ScoreProvider as Base,
+} from '$def'
+export class ScoreProvider implements Base<bigint, Id> {
   db: PrismaClient
 
   config = {
@@ -56,7 +57,7 @@ export default class BanchoPyScore implements ScoreProvider<bigint, Id> {
     return this.#transformScore(dbScore)
   }
 
-  async findOne(opt: SearchQueryMany<Id> | SearchId<bigint>) {
+  async findOne(opt: Base.SearchQueryMany<Id> | Base.SearchId<bigint>) {
     if ('id' in opt) {
       return this.id(opt.id)
     }
@@ -81,7 +82,7 @@ export default class BanchoPyScore implements ScoreProvider<bigint, Id> {
     }
   }
 
-  async findMany(opt: SearchQueryMany<Id>) {
+  async findMany(opt: Base.SearchQueryMany<Id>) {
     const banchoPyMode = toBanchoPyMode(opt.mode, opt.ruleset)
     const scores = await this.db.score.findMany({
       where: {

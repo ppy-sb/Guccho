@@ -1,4 +1,5 @@
 import useAdapterConfig from './useAdapterConfig'
+
 import type {
   LeaderboardRankingSystem,
   Mode,
@@ -19,8 +20,8 @@ export function useLeaderboardSwitcher(
   const {
     supportedModes,
     supportedRulesets,
-    assertHasLeaderboardRankingSystem,
-    assertHasRuleset,
+    hasLeaderboardRankingSystem,
+    hasRuleset,
   } = useAdapterConfig()
   const data = reactive({
     mode: mode || supportedModes[0],
@@ -37,7 +38,7 @@ export function useLeaderboardSwitcher(
       if (
         mode
         && supportedModes.includes(mode)
-        && assertHasRuleset(mode, ruleset || data.ruleset)
+        && hasRuleset(mode, ruleset || data.ruleset)
       ) {
         data.mode = mode
       }
@@ -45,15 +46,15 @@ export function useLeaderboardSwitcher(
       if (
         ruleset
         && supportedRulesets.includes(ruleset)
-        && assertHasRuleset(mode || data.mode, ruleset)
+        && hasRuleset(mode || data.mode, ruleset)
       ) {
         data.ruleset = ruleset
       }
 
       if (
         rankingSystem
-        && assertHasRuleset(data.mode, data.ruleset)
-        && assertHasLeaderboardRankingSystem(data.mode, data.ruleset, rankingSystem)
+        && hasRuleset(data.mode, data.ruleset)
+        && hasLeaderboardRankingSystem(data.mode, data.ruleset, rankingSystem)
       ) {
         data.rankingSystem = rankingSystem
       }
@@ -72,8 +73,8 @@ export function useSwitcher(initial?: SwitcherPropType<RankingSystem>) {
   const {
     supportedModes,
     supportedRulesets,
-    assertHasRankingSystem,
-    assertHasRuleset,
+    hasRankingSystem,
+    hasRuleset,
   } = useAdapterConfig()
   const data = reactive({
     mode: mode || supportedModes[0],
@@ -90,21 +91,21 @@ export function useSwitcher(initial?: SwitcherPropType<RankingSystem>) {
       if (
         mode
         && supportedModes.includes(mode)
-        && assertHasRuleset(mode, ruleset || data.ruleset)
+        && hasRuleset(mode, ruleset || data.ruleset)
       ) {
         data.mode = mode
       }
       if (
         ruleset
         && supportedRulesets.includes(ruleset)
-        && assertHasRuleset(mode || data.mode, ruleset)
+        && hasRuleset(mode || data.mode, ruleset)
       ) {
         data.ruleset = ruleset
       }
       if (
         rankingSystem
-        && assertHasRuleset(data.mode, data.ruleset)
-        && assertHasRankingSystem(data.mode, data.ruleset, rankingSystem)
+        && hasRuleset(data.mode, data.ruleset)
+        && hasRankingSystem(data.mode, data.ruleset, rankingSystem)
       ) {
         data.rankingSystem = rankingSystem
       }

@@ -1,4 +1,4 @@
-import type { Id } from '../exports'
+import type { Id } from '..'
 
 export const createUserQuery = (
   handle: string,

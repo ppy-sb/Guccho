@@ -1,7 +1,7 @@
 import { prismaClient } from '.'
-import { StatusProvider as PSP } from '~/adapters/base/client/status'
+import { StatusProvider as Base } from '~/adapters/base'
 
-export class StatusProvider extends PSP implements PSP {
+export class StatusProvider extends Base implements Base {
   prismaState = false
   async ready() {
     try {

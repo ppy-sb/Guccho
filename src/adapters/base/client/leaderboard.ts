@@ -10,7 +10,7 @@ import type {
   ComponentLeaderboard,
 } from '~/types/leaderboard'
 
-export namespace LeaderboardDataProvider {
+export namespace LeaderboardProvider {
   export interface BaseQuery<M extends Mode = Mode> {
     mode?: M
     ruleset: AvailableRuleset<M>
@@ -18,15 +18,15 @@ export namespace LeaderboardDataProvider {
     pageSize: number
   }
 }
-export interface LeaderboardDataProvider<Id> {
+export interface LeaderboardProvider<Id> {
   getLeaderboard(
-    query: Required<LeaderboardDataProvider.BaseQuery> & {
+    query: Required<LeaderboardProvider.BaseQuery> & {
       rankingSystem: LeaderboardRankingSystem
     }
   ): Awaitable<ComponentLeaderboard<Id>[]>
 
   getBeatmapLeaderboard(
-    query: LeaderboardDataProvider.BaseQuery & {
+    query: LeaderboardProvider.BaseQuery & {
       rankingSystem: RankingSystem
       id: Id
     }

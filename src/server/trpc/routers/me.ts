@@ -11,13 +11,12 @@ import {
 } from '../messages'
 import { zodHandle, zodRelationType, zodTipTapJSONContent } from '../shapes'
 import { router as _router } from '../trpc'
-import { UserDataProvider, UserRelationshipDataProvider } from '$active/client'
-import { idToString } from '$active/exports'
-import { calculateMutualRelationships } from '~/server/transforms'
 import { userProcedure as pUser } from '~/server/trpc/middleware/user'
+import { calculateMutualRelationships } from '~/server/transforms'
+import { UserProvider, UserRelationProvider, idToString } from '$active'
 
-const userProvider = new UserDataProvider()
-const relationProvider = new UserRelationshipDataProvider()
+const userProvider = new UserProvider()
+const relationProvider = new UserRelationProvider()
 
 // const verifiedEmail = new Map<string, Set<string>>()
 

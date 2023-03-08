@@ -12,13 +12,13 @@ const emit = defineEmits<{
   (e: 'update:rankingSystemList', v: RankingSystem[]): void
 }>()
 const app = useAppConfig()
-const { assertHasRankingSystem, assertHasRuleset } = useAdapterConfig()
+const { hasRankingSystem, hasRuleset } = useAdapterConfig()
 
 const show = computed(() => {
   return rankingSystems.filter(
     rs =>
-      assertHasRuleset(props.mode, props.ruleset)
-      && assertHasRankingSystem(props.mode, props.ruleset, rs),
+      hasRuleset(props.mode, props.ruleset)
+      && hasRankingSystem(props.mode, props.ruleset, rs),
   )
 })
 watch([() => props.mode, () => props.ruleset], () => {

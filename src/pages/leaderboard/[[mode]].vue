@@ -3,7 +3,7 @@ import { navigateTo, useAppConfig, useRoute } from '#app'
 
 import type { LeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
 import type { SwitcherPropType } from '~/composables/useSwitcher'
-import { assertIsString } from '~/utils'
+import { isString } from '~/utils'
 
 const config = useAppConfig()
 
@@ -18,22 +18,22 @@ const availableModes = Object.keys(config.mode)
 const availableRulesets = Object.keys(config.ruleset)
 const availableRankingSystems = Object.keys(config.overallRankingSystem)
 const mode = (
-  assertIsString(pMode) && availableModes.includes(pMode)
+  isString(pMode) && availableModes.includes(pMode)
     ? pMode
     : availableModes[0]
 ) as Mode
 const ruleset = (
-  assertIsString(pRuleset) && availableRulesets.includes(pRuleset)
+  isString(pRuleset) && availableRulesets.includes(pRuleset)
     ? pRuleset
     : availableRulesets[0]
 ) as Ruleset
 const rankingSystem = (
-  assertIsString(pRankingSystem)
+  isString(pRankingSystem)
   && availableRankingSystems.includes(pRankingSystem)
     ? pRankingSystem
     : availableRankingSystems[0]
 ) as LeaderboardRankingSystem
-const page = ref((assertIsString(pPage) && parseInt(pPage)) || 1)
+const page = ref((isString(pPage) && parseInt(pPage)) || 1)
 
 const perPage = 20
 
@@ -60,8 +60,8 @@ const {
   data: table,
   pending,
   refresh,
-} = await useAsyncData(
-  () => $client.leaderboard.overall.query({
+} = await useAsyncData(() =>
+  $client.leaderboard.overall.query({
     mode: selected.value.mode,
     ruleset: selected.value.ruleset,
     rankingSystem: selected.value.rankingSystem,

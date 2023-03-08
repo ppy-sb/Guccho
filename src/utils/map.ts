@@ -4,7 +4,7 @@ import type {
   NormalBeatmapWithMeta,
   RankingStatus,
 } from '~/types/beatmap'
-export function assertBeatmapIsVisible<T extends RankingStatus>(
+export function beatmapIsVisible<T extends RankingStatus>(
   beatmap: BeatmapWithMeta<BeatmapSource, T, any, any>,
 ): beatmap is NormalBeatmapWithMeta<
   BeatmapSource,

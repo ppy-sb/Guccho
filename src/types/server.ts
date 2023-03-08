@@ -16,12 +16,12 @@ export type ServerRankingSystemDef = {
   }
 }
 
-export type AssertHasRuleset = <M extends Mode>(
+export type HasRuleset = <M extends Mode>(
   mode: M,
   ruleset: Ruleset
 ) => ruleset is AvailableRuleset<M>
 
-export type AssertHasRankingSystem = <
+export type HasRankingSystem = <
   M extends Mode,
   R extends AvailableRuleset<M>,
 >(
@@ -30,7 +30,7 @@ export type AssertHasRankingSystem = <
   rankingSystem: Brand<string> | RankingSystem
 ) => rankingSystem is RankingSystem
 
-export type AssertHasLeaderboardRankingSystem = <
+export type HasLeaderboardRankingSystem = <
   M extends Mode,
   R extends AvailableRuleset<M>,
 >(

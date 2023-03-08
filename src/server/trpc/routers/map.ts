@@ -1,9 +1,8 @@
 import { string, z } from 'zod'
 import { router as _router, publicProcedure as p } from '../trpc'
-import { MapDataProvider } from '$active/client'
-import { idToString, stringToId } from '$active/exports'
+import { MapProvider, idToString, stringToId } from '$active'
 
-const map = new MapDataProvider()
+const map = new MapProvider()
 export const router = _router({
   beatmapset: p
     .input(

@@ -1,16 +1,16 @@
 import z from 'zod'
-// import { createRouter } from '../context'
+
 import {
   zodLeaderboardRankingSystem,
   zodMode,
   zodRankingSystem,
   zodRuleset,
-} from '../shapes/index'
+} from '../shapes'
 import { router as _router, publicProcedure } from '../trpc'
-import { LeaderboardDataProvider } from '$active/client'
-import { assertHasRuleset, idToString, stringToId } from '$active/exports'
+import { LeaderboardProvider, hasRuleset, idToString, stringToId } from '$active'
 
-const provider = new LeaderboardDataProvider()
+// import { createRouter } from '../context'
+const provider = new LeaderboardProvider()
 export const router = _router({
   overall: publicProcedure
     .input(
@@ -25,7 +25,7 @@ export const router = _router({
     .query(
       async ({ input }) => {
         const { mode, ruleset, rankingSystem, page, pageSize } = input
-        if (!assertHasRuleset(mode, ruleset)) {
+        if (!hasRuleset(mode, ruleset)) {
           return []
         }
         const result = await provider.getLeaderboard({
@@ -61,7 +61,7 @@ export const router = _router({
           mode = 'osu'
           // return []
         }
-        if (!assertHasRuleset(mode, ruleset)) {
+        if (!hasRuleset(mode, ruleset)) {
           return []
         }
         const result = await provider.getBeatmapLeaderboard({
