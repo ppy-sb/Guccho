@@ -1,6 +1,4 @@
-import { hasRuleset, idToString, stringToId } from '$active'
 import z from 'zod'
-import { LeaderboardProvider } from '~/adapters/ppy.sb@bancho.py/server'
 
 import {
   zodLeaderboardRankingSystem,
@@ -8,7 +6,9 @@ import {
   zodRankingSystem,
   zodRuleset,
 } from '../shapes'
-import { publicProcedure, router as _router } from '../trpc'
+import { router as _router, publicProcedure } from '../trpc'
+import { LeaderboardProvider } from '~/adapters/ppy.sb@bancho.py/server'
+import { hasRuleset, idToString, stringToId } from '$active'
 
 // import memoize from 'memoizee'
 // import { createRouter } from '../context'

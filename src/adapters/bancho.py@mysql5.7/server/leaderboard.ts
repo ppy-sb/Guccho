@@ -1,5 +1,5 @@
-import { prismaClient } from '../prisma'
 import type { Id } from '..'
+import { prismaClient } from './prisma'
 import {
   LeaderboardProvider as BanchoPyLeaderboardProvider,
 } from '~/adapters/bancho.py/server'

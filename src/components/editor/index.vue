@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 import type { JSONContent } from '@tiptap/vue-3'
 import { EditorContent } from '@tiptap/vue-3'
 import '@/assets/styles/typography.scss'

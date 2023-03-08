@@ -1,8 +1,8 @@
 import { generateHTML } from '@tiptap/html'
 import { TRPCError } from '@trpc/server'
 import type { JSONContent } from '@tiptap/core'
-import { prismaClient } from '../prisma'
 import type { Id } from '..'
+import { prismaClient } from './prisma'
 import { createUserQuery, toFullUser } from '~/adapters/bancho.py/transforms'
 import {
   UserProvider as BanchoPyUser,

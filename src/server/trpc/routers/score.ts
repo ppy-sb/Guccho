@@ -1,9 +1,8 @@
-import { idToString, scoreIdToString, stringToScoreId } from '$active'
 import { string, z } from 'zod'
+import { router as _router, publicProcedure as p } from '../trpc'
+import { idToString, scoreIdToString, stringToScoreId } from '$active'
 import { ScoreProvider } from '~/adapters/ppy.sb@bancho.py/server'
 import { beatmapIsVisible } from '~/utils/map'
-
-import { publicProcedure as p, router as _router } from '../trpc'
 
 const sScore = new ScoreProvider()
 export const router = _router({

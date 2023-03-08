@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 import md5 from 'md5'
 import type { JSONContent } from '@tiptap/core'
 import { useSession } from '~/store/session'

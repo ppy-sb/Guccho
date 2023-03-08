@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 import useReloadAnimation from './composables/animation/useReloadAnimation'
 import RollerItem from './item.vue'
 import type { RollerItemCharSet, RollerItemMode } from './main'

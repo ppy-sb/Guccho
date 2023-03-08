@@ -1,5 +1,4 @@
 <script setup>
-
 // import { userRegister } from '@/mock/index'
 const credential = ref({
   user: '',

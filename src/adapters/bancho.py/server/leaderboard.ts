@@ -1,12 +1,11 @@
-import { modes as _modes } from '~/types/defs'
-
-import { prismaClient } from '../prisma'
+import type { PrismaClient } from '.prisma/bancho.py'
 import { client as redisClient } from '../redis-client'
 import { toBanchoPyMode, toMods, toRoles, toUserEssential } from '../transforms'
-
-import type { PrismaClient } from '.prisma/bancho.py'
 import type { BanchoPyMode } from '../enums'
 import type { Id } from '..'
+import { prismaClient } from './prisma'
+
+import { modes as _modes } from '~/types/defs'
 import type {
   AvailableRuleset,
   LeaderboardRankingSystem,

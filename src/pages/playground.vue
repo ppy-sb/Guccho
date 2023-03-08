@@ -1,5 +1,4 @@
 <script setup>
-
 const currentRoute = useRoute()
 const root = currentRoute.matched[0]
 

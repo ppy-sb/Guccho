@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 import type { Status } from './shared'
 const props = defineProps<{
   initStatus?: Status

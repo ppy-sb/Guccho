@@ -1,5 +1,4 @@
 <script setup>
-
 import { useSession } from '~/store/session'
 const { $client } = useNuxtApp()
 const session = useSession()

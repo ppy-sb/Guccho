@@ -1,11 +1,10 @@
+import type { PrismaClient } from '.prisma/bancho.py'
+import type { Id } from '..'
+import { prismaClient } from './prisma'
 import { BanchoPyMode } from '~/adapters/bancho.py/enums'
 import { UserProvider as BanchoPyUser } from '~/adapters/bancho.py/server'
 import { createRulesetData } from '~/adapters/bancho.py/transforms'
 
-import { prismaClient } from '../prisma'
-
-import type { PrismaClient } from '.prisma/bancho.py'
-import type { Id } from '..'
 import type { UserProvider as Base } from '~/adapters/base/server'
 import type { LeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
 

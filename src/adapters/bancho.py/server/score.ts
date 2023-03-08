@@ -1,6 +1,4 @@
-import { TSFilter } from '~/utils'
-
-import { prismaClient } from '../prisma'
+import type { PrismaClient, User } from '.prisma/bancho.py'
 import {
   fromBanchoPyMode,
   toBanchoPyMode,
@@ -8,9 +6,10 @@ import {
   toUserEssential,
 } from '../transforms'
 
-import type { PrismaClient, User } from '.prisma/bancho.py'
 import type { Id } from '..'
 import type { AbleToTransformToScores } from '../transforms'
+import { prismaClient } from './prisma'
+import { TSFilter } from '~/utils'
 import type {
   ScoreProvider as Base,
 } from '~/adapters/base/server'
