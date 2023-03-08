@@ -48,26 +48,27 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <div v-if="!client" v-bind="$attrs" class="invisible">
+  <!-- <div v-if="!client" v-bind="$attrs" class="invisible">
     {{ value }}
-  </div>
-  <TransitionGroup
-    v-if="client"
-    tag="div"
-    name="roller-list"
-    class="roller"
-    v-bind="$attrs"
-  >
-    <RollerItem
-      v-for="(char, idx) of charArray"
-      :key="idx"
-      :char="char"
-      :duration="duration"
-      :char-set="computedCharSet"
-      :default-char="defaultCharArray[idx]"
-      :mode="mode"
-    />
-  </TransitionGroup>
+  </div> -->
+  <client-only>
+    <TransitionGroup
+      tag="div"
+      name="roller-list"
+      class="roller"
+      v-bind="$attrs"
+    >
+      <RollerItem
+        v-for="(char, idx) of charArray"
+        :key="idx"
+        :char="char"
+        :duration="duration"
+        :char-set="computedCharSet"
+        :default-char="defaultCharArray[idx]"
+        :mode="mode"
+      />
+    </TransitionGroup>
+  </client-only>
 </template>
 
 <style lang="postcss" scoped>
