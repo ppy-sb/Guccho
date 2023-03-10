@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import md5 from 'md5'
 import type { JSONContent } from '@tiptap/core'
+import { Cropper } from 'vue-advanced-cropper'
 import { useSession } from '~/store/session'
 import { checkAvatar } from '~/utils'
+
+import 'vue-advanced-cropper/dist/style.css'
 
 definePageMeta({
   middleware: ['auth'],
@@ -31,7 +34,6 @@ if (!user.value) {
     },
   })
 }
-
 const unchanged = ref({ ...user.value as Exclude<typeof user['value'], null> })
 
 const profile = ref<JSONContent>()
@@ -39,6 +41,8 @@ const profileEdited = ref(false)
 
 const newAvatar = ref<File>()
 const newAvatarURL = ref<string>()
+const cropper = ref<InstanceType<typeof Cropper> | null>(null)
+const croppedAvatar = ref<ArrayBuffer>()
 const avatarError = ref<string>()
 const selectAvatarFile = async (e: Event) => {
   avatarError.value = undefined
@@ -55,6 +59,13 @@ const selectAvatarFile = async (e: Event) => {
   newAvatar.value = file
   newAvatarURL.value = URL.createObjectURL(file)
 }
+
+const crop = ({ canvas }: { canvas: HTMLCanvasElement }) => {
+  canvas.toBlob(async (blob) => {
+    croppedAvatar.value = await blob?.arrayBuffer()
+  }, 'image/png', 1)
+}
+
 const uploadingAvatarStat = ref<'idle' | 'uploading' | 'succeed' | 'errored'>('idle')
 const changeAvatar = ref<{
   openModal: (arg0?: CallableFunction) => void
@@ -63,14 +74,14 @@ const changePassword = ref<{
   openModal: (arg0?: CallableFunction) => void
 }>()
 const saveAvatar = async () => {
-  if (!newAvatar.value) {
+  if (!croppedAvatar.value) {
     return
   }
 
   uploadingAvatarStat.value = 'uploading'
 
-  const ab = await newAvatar.value.arrayBuffer()
-  const url = await $client.me.changeAvatar.mutate({ avatar: new Uint8Array(ab) })
+  // const ab = await newAvatar.value.arrayBuffer()
+  const url = await $client.me.changeAvatar.mutate({ avatar: new Uint8Array(croppedAvatar.value) })
 
   uploadingAvatarStat.value = 'succeed'
   newAvatarURL.value = url
@@ -175,9 +186,9 @@ onBeforeMount(() => {
         <t-modal class="max-w-3xl">
           <div class="flex flex-col gap-2">
             <div class="flex items-center justify-center w-full">
-              <label for="dropzone-file" class="dropzone">
+              <label v-if="!newAvatar" for="dropzone-file" class="dropzone">
                 <div
-                  v-if="!newAvatar"
+
                   class="flex flex-col items-center justify-center px-3 pt-5 pb-6"
                 >
                   <svg
@@ -208,11 +219,26 @@ onBeforeMount(() => {
                     {{ avatarError }}
                   </p>
                 </div>
-                <output v-else class="drop-shadow m-2 w-full mask mask-squircle overflow-hidden _avatar">
-                  <img :src="newAvatarURL">
-                </output>
                 <input id="dropzone-file" accept="image/*" type="file" class="hidden" @change="selectAvatarFile">
               </label>
+              <output v-else-if="uploadingAvatarStat !== 'succeed'" class="drop-shadow m-2 w-96">
+                <Cropper
+                  ref="cropper"
+                  class="cropper"
+                  :src="newAvatarURL"
+                  :stencil-props="{
+                    aspectRatio: 1,
+                  }"
+                  :canvas="{
+                    minHeight: 64,
+                    minWidth: 64,
+                    maxHeight: 640,
+                    maxWidth: 640,
+                  }"
+                  @change="crop"
+                />
+              </output>
+              <img v-else :src="newAvatarURL" class="mask mask-squircle overflow-hidden _avatar">
             </div>
             <t-button
               class="grow"
