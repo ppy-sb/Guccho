@@ -1,6 +1,6 @@
 import type { PrismaClient } from '.prisma/bancho.py'
 import { client as redisClient } from '../redis-client'
-import { toBanchoPyMode, toMods, toRoles, toUserEssential } from '../transforms'
+import { toBanchoPyMode, toMods, toRoles, toUserEssential, userEssentials } from '../transforms'
 import type { Id } from '..'
 import { prismaClient } from './prisma'
 
@@ -12,6 +12,15 @@ import type {
   RankingSystem,
 } from '~/types/common'
 import type { LeaderboardProvider as Base } from '~/adapters/base/server'
+
+const leaderboardFields = {
+  id: true,
+  pp: true,
+  accuracy: true,
+  totalScore: true,
+  rankedScore: true,
+  plays: true,
+} as const
 export class LeaderboardProvider
 implements Base<Id> {
   db: PrismaClient
@@ -92,13 +101,16 @@ implements Base<Id> {
         ).then(res => res.map(Number))
 
         const [users, stats] = await Promise.all([
+          /* optimized */
           this.db.user.findMany({
             where: {
               id: {
                 in: rank,
               },
+              ...userEssentials,
             },
           }),
+          /* optimized */
           this.db.stat.findMany({
             where: {
               id: {
@@ -106,6 +118,7 @@ implements Base<Id> {
               },
               mode: bPyMode,
             },
+            select: leaderboardFields,
           }),
         ])
         for (const index in rank) {
@@ -193,8 +206,12 @@ implements Base<Id> {
         },
         mode: toBanchoPyMode(mode, ruleset),
       },
-      include: {
+      // include: {
+      //   user: true,
+      // },
+      select: {
         user: true,
+        ...leaderboardFields,
       },
       orderBy: rankingSystem === 'ppv2'
         ? {

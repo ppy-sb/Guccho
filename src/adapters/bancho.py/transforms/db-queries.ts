@@ -1,13 +1,25 @@
 import type { Id } from '..'
-
-export const createUserQuery = (
-  handle: string,
+import type { DatabaseUserEssentialFields } from './user'
+export const userEssentials = {
+  select: {
+    id: true,
+    name: true,
+    safeName: true,
+    country: true,
+    priv: true,
+    pwBcrypt: true,
+    apiKey: true,
+    email: true,
+  },
+} as const satisfies {
+  select: Record<DatabaseUserEssentialFields, true>
+}
+export function createUserQuery(handle: string,
   selectAgainst: Array<'id' | 'name' | 'safeName' | 'email'> = [
     'id',
     'name',
     'safeName',
-  ],
-) => {
+  ]) {
   let handleNum = parseInt(handle)
   if (isNaN(handleNum)) {
     handleNum = -1
@@ -39,10 +51,10 @@ export const createUserQuery = (
                 }
               : undefined,
           ].filter(Boolean) as Array<
-            | { id: Id }
-            | { name: string }
-            | { safeName: string }
-            | { email: string }
+            { id: Id } |
+            { name: string } |
+            { safeName: string } |
+            { email: string }
           >,
         },
         {

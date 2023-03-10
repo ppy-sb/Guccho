@@ -93,20 +93,20 @@ for (const key in modeRulesetRankingSystemDef) {
   }
 }
 
-export const modes = [..._mode]
-export const rulesets = [..._ruleset]
+export const modes = [..._mode] as const
+export const rulesets = [..._ruleset] as const
 
-export const ppRankingSystems = [..._ppRankingSystem]
-export const scoreRankingSystems = [..._scoreRankingSystem]
-export const rankingSystems = [...ppRankingSystems, ...scoreRankingSystems]
+export const ppRankingSystems = [..._ppRankingSystem] as const
+export const scoreRankingSystems = [..._scoreRankingSystem] as const
+export const rankingSystems = [...ppRankingSystems, ...scoreRankingSystems] as const
 
-export const leaderboardPPRankingSystems = [..._leaderboardPPRankingSystem]
+export const leaderboardPPRankingSystems = [..._leaderboardPPRankingSystem] as const
 export const leaderboardScoreRankingSystems = [
   ..._leaderboardScoreRankingSystem,
-]
+] as const
 export const leaderboardRankingSystems = [
   ...leaderboardPPRankingSystems,
   ...leaderboardScoreRankingSystems,
-]
+] as const
 
 export const features = ['userpage', 'visibility-scope'] as const

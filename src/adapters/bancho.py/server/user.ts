@@ -20,6 +20,7 @@ import {
   toFullUser,
   toRankingSystemScores,
   toUserEssential,
+  userEssentials,
 } from '../transforms'
 import type { Id } from '..'
 import { prismaClient } from './prisma'
@@ -114,10 +115,12 @@ export class UserProvider implements Base<Id> {
   async getEssentialById<
     Includes extends Partial<Record<keyof UserOptional<unknown>, boolean>>,
   >({ id, includes }: { id: Id; includes?: Includes }) {
+    /* optimized */
     const user = await this.db.user.findFirst({
       where: {
         id,
       },
+      ...userEssentials,
     })
     if (user == null) {
       return null
@@ -130,9 +133,11 @@ export class UserProvider implements Base<Id> {
     Includes extends Partial<Record<keyof UserOptional<unknown>, boolean>>,
   >(opt: Base.OptType<Id, Includes>) {
     const { handle, includes, keys } = opt
-    const user = await this.db.user.findFirst(
-      createUserQuery(handle, keys || ['id', 'name', 'safeName', 'email']),
-    )
+    /* optimized */
+    const user = await this.db.user.findFirst({
+      ...createUserQuery(handle, keys || ['id', 'name', 'safeName', 'email']),
+      ...userEssentials,
+    })
     if (user == null) {
       return null
     }
@@ -449,119 +454,6 @@ WHERE s2.userid = ${id}
     }
   }
 
-  // async getStatistics2(opt: { id: Id; country: string }) {
-  //   const { id, country } = opt
-  //   const [results, ranks, livePPRank] = await Promise.all([
-  //     this.db.stat.findMany({
-  //       where: {
-  //         id,
-  //       },
-  //     }),
-
-  //     this.db.$queryRaw<
-  //       Array<{
-  //         id: Id
-  //         mode: number
-  //         ppv2Rank: bigint
-  //         totalScoreRank: bigint
-  //         rankedScoreRank: bigint
-  //       }>
-  //     >/* sql */`
-  // WITH ranks AS (
-  //   SELECT
-  //     id,
-  //     mode,
-  //     RANK () OVER (
-  //       PARTITION BY mode
-  //       ORDER BY pp desc
-  //     ) ppv2Rank,
-  //     RANK () OVER (
-  //       PARTITION BY mode
-  //       ORDER BY tscore desc
-  //     ) totalScoreRank,
-  //     RANK () OVER (
-  //       PARTITION BY mode
-  //       ORDER BY rscore desc
-  //     ) rankedScoreRank
-  //   FROM stats
-  // )
-  // SELECT * FROM ranks
-  // WHERE id = ${id}
-  // `.catch(_ => []),
-  //     this.getRedisRanks({ id, country }),
-  //   ])
-
-  //   const statistics: UserStatistic<
-  //     Mode,
-  //     Ruleset,
-  //     LeaderboardRankingSystem
-  //   > = {
-  //     osu: {
-  //       standard: createRulesetData({
-  //         databaseResult: results.find(
-  //           i => i.mode === BanchoPyMode.osuStandard,
-  //         ),
-  //         ranks: ranks.find(i => i.mode === BanchoPyMode.osuStandard),
-  //         livePPRank: livePPRank?.osu.standard,
-  //       }),
-  //       relax: createRulesetData({
-  //         databaseResult: results.find(i => i.mode === BanchoPyMode.osuRelax),
-  //         ranks: ranks.find(i => i.mode === BanchoPyMode.osuRelax),
-  //         livePPRank: livePPRank?.osu.relax,
-  //       }),
-  //       autopilot: createRulesetData({
-  //         databaseResult: results.find(
-  //           i => i.mode === BanchoPyMode.osuAutopilot,
-  //         ),
-  //         ranks: ranks.find(i => i.mode === BanchoPyMode.osuAutopilot),
-  //         livePPRank: livePPRank?.osu.autopilot,
-  //       }),
-  //     },
-  //     taiko: {
-  //       standard: createRulesetData({
-  //         databaseResult: results.find(
-  //           i => i.mode === BanchoPyMode.taikoStandard,
-  //         ),
-  //         ranks: ranks.find(i => i.mode === BanchoPyMode.taikoStandard),
-  //         livePPRank: livePPRank?.taiko.standard,
-  //       }),
-  //       relax: createRulesetData({
-  //         databaseResult: results.find(
-  //           i => i.mode === BanchoPyMode.taikoRelax,
-  //         ),
-  //         ranks: ranks.find(i => i.mode === BanchoPyMode.taikoRelax),
-  //         livePPRank: livePPRank?.taiko.relax,
-  //       }),
-  //     },
-  //     fruits: {
-  //       standard: createRulesetData({
-  //         databaseResult: results.find(
-  //           i => i.mode === BanchoPyMode.fruitsStandard,
-  //         ),
-  //         ranks: ranks.find(i => i.mode === BanchoPyMode.fruitsStandard),
-  //         livePPRank: livePPRank?.fruits.standard,
-  //       }),
-  //       relax: createRulesetData({
-  //         databaseResult: results.find(
-  //           i => i.mode === BanchoPyMode.fruitsRelax,
-  //         ),
-  //         ranks: ranks.find(i => i.mode === BanchoPyMode.fruitsRelax),
-  //         livePPRank: livePPRank?.fruits.relax,
-  //       }),
-  //     },
-  //     mania: {
-  //       standard: createRulesetData({
-  //         databaseResult: results.find(
-  //           i => i.mode === BanchoPyMode.maniaStandard,
-  //         ),
-  //         ranks: ranks.find(i => i.mode === BanchoPyMode.maniaStandard),
-  //         livePPRank: livePPRank?.mania.standard,
-  //       }),
-  //     },
-  //   }
-  //   return statistics
-  // }
-
   async getFull<
     Excludes extends Partial<
       Record<keyof Base.ComposableProperties<Id>, boolean>
@@ -728,7 +620,9 @@ WHERE s2.userid = ${id}
 
   async search({ keyword, limit }: { keyword: string; limit: number }) {
     const idKw = stringToId(keyword)
+    /* optimized */
     const result = await this.db.user.findMany({
+      ...userEssentials,
       where: {
         OR: [
           isNaN(idKw)
