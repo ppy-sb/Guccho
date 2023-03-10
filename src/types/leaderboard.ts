@@ -1,5 +1,4 @@
 import type { UserEssential } from './user'
-import type { Maybe } from './frontend-common'
 import type {
   LeaderboardRankingSystem,
   LeaderboardScoreRankingSystem,
@@ -16,8 +15,9 @@ export interface Leaderboard<
     accuracy: number
     playCount: number
     rank: number | bigint
-  } & Record<_RankingSystem & PPRankingSystem, number> &
-  Record<_RankingSystem & LeaderboardScoreRankingSystem, bigint>
+  }
+  & Record<_RankingSystem & PPRankingSystem, number>
+  & Record<_RankingSystem & LeaderboardScoreRankingSystem, bigint>
 }
 export interface BeatmapLeaderboard<Id> {
   user: UserEssential<Id>
@@ -31,7 +31,7 @@ export interface BeatmapLeaderboard<Id> {
   rank: number
 }
 
-export type ComponentLeaderboard<IdType> = Maybe<
-  Leaderboard<IdType>,
-  'inThisLeaderboard'
->
+export type ComponentLeaderboard<IdType> = Omit<Leaderboard<IdType>, 'inThisLeaderboard'> & {
+  inThisLeaderboard: Partial<Leaderboard<IdType>['inThisLeaderboard']>
+  & Pick<Leaderboard<IdType>['inThisLeaderboard'], 'accuracy' | 'playCount'>
+}

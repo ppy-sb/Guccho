@@ -12,7 +12,6 @@ import type {
   RankingSystem,
 } from '~/types/common'
 import type { LeaderboardProvider as Base } from '~/adapters/base/server'
-
 export class LeaderboardProvider
 implements Base<Id> {
   db: PrismaClient
@@ -56,10 +55,10 @@ implements Base<Id> {
     throw new Error('redis is not ready')
   }
 
-  async getLeaderboard<M extends Mode>(opt: {
+  async getLeaderboard<M extends Mode, RS extends LeaderboardRankingSystem>(opt: {
     mode: M
     ruleset: AvailableRuleset<M>
-    rankingSystem: LeaderboardRankingSystem
+    rankingSystem: RS
     page: number
     pageSize: number
   }) {
@@ -151,9 +150,9 @@ implements Base<Id> {
           inThisLeaderboard: {
             ppv2: item.ppv2,
             accuracy: item.accuracy,
+            playCount: item.playCount,
             totalScore: item.totalScore,
             rankedScore: item.rankedScore,
-            playCount: item.playCount,
             // rank: item._rank,
             // order is correct but rank contains banned user, since we didn't check user priv before when selecting count.
             // calculate rank based on page size * index of this page.
@@ -171,7 +170,7 @@ implements Base<Id> {
     }
   }
 
-  async getDatabaseLeaderboard<M extends Mode>({
+  async getDatabaseLeaderboard<M extends Mode, RS extends LeaderboardRankingSystem>({
     mode,
     ruleset,
     rankingSystem,
@@ -180,7 +179,7 @@ implements Base<Id> {
   }: {
     mode: M
     ruleset: AvailableRuleset<M>
-    rankingSystem: LeaderboardRankingSystem
+    rankingSystem: RS
     page: number
     pageSize: number
   }) {
@@ -220,128 +219,12 @@ implements Base<Id> {
         ppv2: stat.pp,
         rankedScore: stat.rankedScore,
         totalScore: stat.totalScore,
+        accuracy: stat.accuracy,
+        playCount: stat.plays,
         rank: BigInt(start + index + 1),
       },
     }))
   }
-
-  // async getLeaderboard2<M extends Mode>({
-  //   mode,
-  //   ruleset,
-  //   rankingSystem,
-  //   page,
-  //   pageSize,
-  // }: {
-  //   mode: M
-  //   ruleset: AvailableRuleset<M>
-  //   rankingSystem: LeaderboardRankingSystem
-  //   page: number
-  //   pageSize: number
-  // }) {
-  //   if (rankingSystem === 'ppv1') {
-  //     return []
-  //   }
-  //   const start = page * pageSize
-
-  //   const result = await prismaClient.$queryRawUnsafe<
-  //     Array<{
-  //       id: Id
-  //       name: string
-  //       safeName: string
-  //       flag: string
-  //       priv: number
-
-  //       mode: BanchoPyMode
-  //       _rank: bigint
-  //       accuracy: number
-  //       totalScore: bigint
-  //       rankedScore: bigint
-  //       ppv2: number
-  //       playCount: number
-  //     }>
-  //   >(/* sql */ `
-  // WITH ranks AS (
-  //   SELECT
-  //   ${rankingSystem === 'ppv2'
-  //       ? /* sql */ `
-  //     RANK () OVER (
-  //       PARTITION BY stat.mode
-  //       ORDER BY stat.pp desc
-  //     ) as _rank,`
-  //       : ''
-  //     }${rankingSystem === 'totalScore'
-  //       ? /* sql */ `
-  //     RANK () OVER (
-  //       PARTITION BY stat.mode
-  //       ORDER BY stat.tscore desc
-  //     ) as _rank,`
-  //       : ''
-  //     }${rankingSystem === 'rankedScore'
-  //       ? /* sql */ `
-  //     RANK () OVER (
-  //       PARTITION BY stat.mode
-  //       ORDER BY stat.rscore desc
-  //     ) as _rank,`
-  //       : ''
-  //     }
-  //     user.id,
-  //     user.name,
-  //     user.safe_name as safeName,
-  //     user.country as flag,
-  //     user.priv,
-  //     stat.pp as ppv2,
-  //     stat.acc as accuracy,
-  //     stat.rscore as rankedScore,
-  //     stat.tscore as totalScore,
-  //     stat.plays as playCount,
-  //     stat.mode
-  //   FROM stats stat
-  //   LEFT JOIN users user
-  //   ON stat.id = user.id
-  //   WHERE stat.mode = ${toBanchoPyMode(mode, ruleset)} AND user.priv > 2
-  // )
-  // SELECT
-  //   id,
-  //   name,
-  //   safeName,
-  //   flag,
-  //   _rank,
-  //   priv,
-
-  //   ppv2,
-  //   accuracy,
-  //   rankedScore,
-  //   totalScore,
-  //   playCount
-  // FROM ranks
-  // WHERE _rank > 0
-  // ORDER BY _rank ASC
-  // LIMIT ${start}, ${pageSize}
-  // `)
-
-  //   return result.map(item => ({
-  //     user: {
-  //       id: item.id,
-  //       ingameId: item.id,
-  //       name: item.name,
-  //       safeName: item.safeName,
-  //       flag: item.flag,
-  //       avatarSrc:
-  //         (this.config.avatar.domain
-  //           && `https://${this.config.avatar.domain}/${item.id}`)
-  //         || undefined,
-  //       roles: toRoles(item.priv),
-  //     },
-  //     inThisLeaderboard: {
-  //       ppv2: item.ppv2,
-  //       accuracy: item.accuracy,
-  //       totalScore: item.totalScore,
-  //       rankedScore: item.rankedScore,
-  //       playCount: item.playCount,
-  //       rank: item._rank,
-  //     },
-  //   }))
-  // }
 
   async getBeatmapLeaderboard(
     query: Base.BaseQuery & {
