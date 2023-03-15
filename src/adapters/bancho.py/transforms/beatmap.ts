@@ -37,7 +37,30 @@ export function toBeatmapset(
     },
   }
 }
-export function toBeatmapEssential(beatmap: DBMap): BeatmapEssential<Id, Id> {
+export function toBeatmapEssential(beatmap: {
+  id: number
+  // setId: number
+  // status: number
+  md5: string
+  // artist: string
+  // title: string
+  version: string
+  creator: string
+  // filename: string
+  lastUpdate: Date
+  totalLength: number
+  maxCombo: number
+  // frozen: boolean
+  plays: number
+  passes: number
+  mode: number
+  bpm: number
+  cs: number
+  ar: number
+  od: number
+  hp: number
+  diff: number
+}): BeatmapEssential<Id, Id> {
   return {
     id: beatmap.id,
     foreignId: beatmap.id,

@@ -8,7 +8,6 @@ import {
 import { faPiedPiperPp } from '@fortawesome/free-brands-svg-icons'
 import type { LeaderboardRankingSystem } from '~/types/common'
 import type { UserModeRulesetStatistics } from '~/types/statistics'
-// import { hasRuleset } from
 const { hasRuleset } = useAdapterConfig()
 
 const { addToLibrary } = useFAIconLib()
@@ -26,16 +25,13 @@ const switcherCtx = useLeaderboardSwitcher()
 const [switcher] = switcherCtx
 
 const [_, setScroll] = useScrollYObserver()
-const {
-  data: user,
-  error,
-  refresh,
-} = await useAsyncData(
+const { data: user, error, refresh } = await useAsyncData(
   async () =>
     await $client.user.userpage.query({
       handle: `${route.params.handle}`,
     }),
 )
+
 const currentStatistic = computed<
   UserModeRulesetStatistics<LeaderboardRankingSystem> | undefined
 >(() => {
@@ -53,7 +49,10 @@ const currentRankingSystem = computed(
 
 useHead({
   titleTemplate: `%s - ${appConf.title}`,
-  title: computed(() => `${user.value?.name} | ${switcher.mode} | ${switcher.ruleset} | ${switcher.rankingSystem}`),
+  title: computed(
+    () =>
+      `${user.value?.name} | ${switcher.mode} | ${switcher.ruleset} | ${switcher.rankingSystem}`,
+  ),
 })
 
 provide('user', user)
@@ -137,18 +136,10 @@ onMounted(() => {
         <userpage-statistics id="statistics" ref="statistics" />
         <userpage-score-rank-composition />
       </div>
-      <div
-        id="bestScores"
-        ref="bestScores"
-        class="container custom-container mx-auto py-2"
-      >
+      <div id="bestScores" ref="bestScores" class="container custom-container mx-auto py-2">
         <userpage-best-scores v-if="currentRankingSystem" />
       </div>
-      <div
-        id="topScores"
-        ref="topScores"
-        class="container custom-container mx-auto py-4"
-      >
+      <div id="topScores" ref="topScores" class="container custom-container mx-auto py-4">
         <userpage-top-scores v-if="currentRankingSystem" />
       </div>
       <!-- placeholder for bottom nav -->
@@ -161,17 +152,14 @@ onMounted(() => {
                 v-if="icons[el]"
                 :class="{
                   active: isVisible,
-                }"
-                :href="`#${el}`"
+                }" :href="`#${el}`"
               >
                 <font-awesome-icon :icon="icons[el]" class="fa-xl" />
               </a>
               <a
-                v-else
-                :class="{
+                v-else :class="{
                   active: isVisible,
-                }"
-                :href="`#${el}`"
+                }" :href="`#${el}`"
               >
                 {{ el }}
               </a>

@@ -23,6 +23,7 @@ import {
   userEssentials,
 } from '../transforms'
 import type { Id } from '..'
+import { getLiveUserStatus } from '../api-client'
 import { prismaClient } from './prisma'
 import { UserRelationProvider } from './user-relations'
 import useEditorExtensions from '~/composables/useEditorExtensions'
@@ -659,5 +660,9 @@ WHERE s2.userid = ${id}
     })
 
     return result.map(user => toUserEssential({ user, config: this.config }))
+  }
+
+  status(opt: { id: Id }) {
+    return getLiveUserStatus(opt)
   }
 }

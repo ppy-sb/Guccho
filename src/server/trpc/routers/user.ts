@@ -14,7 +14,7 @@ import {
 import { router as _router, publicProcedure as p } from '../trpc'
 import { followUserSettings } from '~/server/transforms'
 import { UserProvider, UserRelationProvider } from '$active/server'
-import { idToString } from '$active'
+import { idToString, stringToId } from '$active'
 
 import type { NumberRange } from '~/types/common'
 const userProvider = new UserProvider()
@@ -174,5 +174,11 @@ export const router = _router({
       }
       const count = await userRelationshipProvider.count({ user, type })
       return count
+    }),
+  status: p
+    .input(z.object({
+      id: z.string(),
+    })).query(async ({ input: { id } }) => {
+      return await userProvider.status({ id: stringToId(id) })
     }),
 })

@@ -16,7 +16,9 @@ import type { LeaderboardSwitcherComposableType } from '~/composables/useSwitche
 
 const { addToLibrary } = useFAIconLib()
 addToLibrary(faUserGroup, faHeartCrack, faHeart, faEnvelope)
+// "unknown" | "playing" | "idle" | "modding" | "multiplaying" | "afk" | "editing" | "multiplayer" | "watching" | "testing" | "submitting" | "paused" | "lobby" | "osuDirect"
 
+const hasBeatmap = ['playing', 'modding', 'multiplaying', 'editing', 'watching', 'testing', 'submitting']
 const { $client } = useNuxtApp()
 const session = useSession()
 const changeFriendStateButton = ref(null)
@@ -42,6 +44,12 @@ const { data, refresh } = await useAsyncData(async () => {
     relationWithMe: await relationWithMe,
     friendCount: await friendCount,
   }
+})
+const { data: live, refresh: reloadLiveData } = await useAsyncData(async () =>
+  user?.value?.id ? await $client.user.status.query({ id: user.value.id }) : null,
+)
+onMounted(() => {
+  onBeforeUnmount(() => clearInterval(setInterval(() => reloadLiveData(), 5000)))
 })
 const isMutualFriend = computed(
   () => data.value?.relationWithMe?.mutual?.includes('mutual-friend') || false,
@@ -145,13 +153,12 @@ const toggleFriend = async () => {
         class="container mx-auto sm:order-2 sm:flex sm:gap-1 sm:items-end sm:justify-around md:justify-between md:pb-2"
       >
         <div>
-          <div>
-            <h1
-              class="text-5xl xl:text-6xl items-center md:items-left flex flex-col md:flex-row gap-1 pb-1"
-              :class="useUserRoleColor(user)"
-            >
-              {{ user.name }}
-              <!-- <div class="flex flex-row gap-1 md:self-end">
+          <h1
+            class="text-5xl xl:text-6xl items-center md:items-left flex flex-col md:flex-row gap-1 pb-1"
+            :class="useUserRoleColor(user)"
+          >
+            {{ user.name }}
+            <!-- <div class="flex flex-row gap-1 md:self-end">
                 <div
                   v-for="role in user.roles.filter(role => !['normal', 'registered'].includes(role))"
                   :key="role"
@@ -160,15 +167,14 @@ const toggleFriend = async () => {
                   {{ role }}
                 </div>
               </div> -->
-            </h1>
-            <!-- underline -->
-            <h2
-              class="text-3xl text-center md:text-left decoration-sky-500 text-kimberly-600 dark:text-kimberly-300"
-            >
-              @{{ user.safeName }}
-            </h2>
-            <div class="lg:pb-2" />
-          </div>
+          </h1>
+          <!-- underline -->
+          <h2
+            class="text-3xl text-center md:text-left decoration-sky-500 text-kimberly-600 dark:text-kimberly-300"
+          >
+            @{{ user.safeName }}
+          </h2>
+          <div class="lg:pb-2" />
         </div>
         <div class="div">
           <app-mode-switcher
@@ -178,9 +184,20 @@ const toggleFriend = async () => {
           />
         </div>
       </div>
-      <div class="order-3 user-status">
-        <!-- currently offline. -->
-      </div>
+      <template v-if="live">
+        <div v-if="live.status === 'offline'" class="order-3 user-status">
+          currently offline, last seen at {{ live.lastSeen.toLocaleString() }}
+        </div>
+        <div v-else-if="live && hasBeatmap.includes(live.status)" class="order-3 user-status">
+          {{ live.status }} {{ live.beatmap?.beatmapset.meta.intl.artist }} - {{ live.beatmap?.beatmapset.meta.intl.title }} [{{ live.beatmap?.version }}]
+        </div>
+        <div v-else-if="live.status === 'idle'" class="order-3 user-status">
+          currently online.
+        </div>
+        <div v-else-if="live.status === 'afk'" class="order-3 user-status">
+          afk
+        </div>
+      </template>
     </div>
   </section>
 </template>

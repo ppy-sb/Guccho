@@ -1,5 +1,6 @@
 import type { JSONContent } from '@tiptap/core'
-import type { RankingStatus } from '~/types/beatmap'
+import { getLiveUserStatus } from '../../bancho.py/api-client'
+import type { BeatmapSource, RankingStatus } from '~/types/beatmap'
 import type {
   Awaitable,
   LeaderboardRankingSystem,
@@ -133,4 +134,32 @@ export interface UserProvider<Id> {
     keyword: string
     limit: number
   }): Awaitable<UserEssential<Id>[]>
+
+  status({ id }: { id: Id }): Promise<{
+    status: 'offline'
+    lastSeen: Date
+  } | {
+    status: 'idle' | 'afk' | 'playing' | 'editing' | 'modding' | 'multiplayer' | 'watching' | 'unknown' | 'testing' | 'submitting' | 'paused' | 'lobby' | 'multiplaying' | 'osuDirect'
+    description: string
+    mode: Mode
+    ruleset: Ruleset
+    beatmap?: {
+      id: number
+      foreignId: number
+      md5: string
+      version: string
+      creator: string
+      beatmapset: {
+        id: number
+        foreignId: number
+        meta: {
+          intl: {
+            artist: string
+            title: string
+          }
+        }
+        source: BeatmapSource
+      }
+    }
+  }>
 }
