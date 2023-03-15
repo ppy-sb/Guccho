@@ -3,7 +3,7 @@ export {
   UserRelationProvider,
   ScoreProvider,
   MapProvider,
-  StatusProvider,
+  ServiceStatusProvider,
 } from '~/adapters/bancho.py/server'
 
 export { UserProvider } from './user'

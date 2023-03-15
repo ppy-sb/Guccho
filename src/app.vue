@@ -3,7 +3,7 @@
 import remixiconUrl from 'remixicon/fonts/remixicon.symbol.svg'
 
 const appConfig = useAppConfig()
-const safari = ref(true)
+const safari = ref(false)
 const modalContainer = ref()
 
 const oneYearLater = new Date()
@@ -88,11 +88,6 @@ onMounted(() => {
 </template>
 
 <style lang="postcss">
-.not-safari {
-  & .custom-container {
-    /* @apply drop-shadow-xl; */
-  }
-}
 #footer.disabled {
   @apply blur-sm
 }

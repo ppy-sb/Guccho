@@ -6,7 +6,7 @@ import type {
   LeaderboardProvider,
   MapProvider,
   ScoreProvider,
-  StatusProvider,
+  ServiceStatusProvider,
   UserProvider,
   UserRelationProvider,
 } from '../server'
@@ -34,7 +34,7 @@ import type {
   LeaderboardProvider as BaseLeaderboardProvider,
   MapProvider as BaseMapProvider,
   ScoreProvider as BaseScoreProvider,
-  StatusProvider as BaseStatusProvider,
+  ServiceStatusProvider as BaseServerStatusProvider,
   UserProvider as BaseUserProvider,
   UserRelationProvider as BaseUserRelationProvider,
 
@@ -57,7 +57,7 @@ interface ShouldMatch {
   ScoreProvider: BaseScoreProvider<any, any>
   UserProvider: BaseUserProvider<any>
   UserRelationProvider: BaseUserRelationProvider<any>
-  StatusProvider: BaseStatusProvider
+  ServiceStatusProvider: BaseServerStatusProvider
 
   idToString: typeof BaseIdToString
   stringToId: typeof BaseStringToId
@@ -90,7 +90,7 @@ interface ActiveNameSpace extends ShouldMatch {
   ScoreProvider: InstanceType<typeof ScoreProvider>
   UserProvider: InstanceType<typeof UserProvider>
   UserRelationProvider: InstanceType<typeof UserRelationProvider>
-  StatusProvider: InstanceType<typeof StatusProvider>
+  ServiceStatusProvider: InstanceType<typeof ServiceStatusProvider>
   Id: Id
   ScoreId: ScoreId
 }

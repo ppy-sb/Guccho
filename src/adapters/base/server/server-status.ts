@@ -4,7 +4,7 @@ import { pick } from '~/utils'
 function calcPercentageLoad(usage: number, time: ReturnType<typeof process['hrtime']>) {
   return 100 * (usage / (time[0] * 1e9 + time[1]))
 }
-export class StatusProvider {
+export class ServiceStatusProvider {
   lastTime = process.hrtime()
   lastUsage = process.cpuUsage()
   interval = 2000

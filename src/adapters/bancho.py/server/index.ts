@@ -1,6 +1,6 @@
 export { LeaderboardProvider } from './leaderboard'
 export { MapProvider } from './map'
 export { ScoreProvider } from './score'
-export { StatusProvider } from './status'
+export { ServiceStatusProvider } from './server-status'
 export { UserProvider } from './user'
 export { UserRelationProvider } from './user-relations'
