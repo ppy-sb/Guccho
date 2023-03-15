@@ -174,12 +174,12 @@ const toggleFriend = async () => {
                 </div>
               </div> -->
           </h1>
-          <!-- underline -->
-          <h2
-            class="text-3xl text-center md:text-left decoration-sky-500 text-kimberly-600 dark:text-kimberly-300"
+          <nuxt-link
+            :to="{ name: 'user-handle', params: { handle: `@${user.safeName}` } }"
+            class="text-3xl text-center underline md:text-left decoration-sky-500 text-kimberly-600 dark:text-kimberly-300"
           >
             @{{ user.safeName }}
-          </h2>
+          </nuxt-link>
           <div class="lg:pb-2" />
         </div>
       </div>

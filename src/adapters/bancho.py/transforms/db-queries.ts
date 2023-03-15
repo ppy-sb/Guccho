@@ -30,9 +30,9 @@ export function createUserQuery(handle: string,
       AND: [
         {
           OR: [
-            selectAgainst.includes('id')
+            selectAgainst.includes('safeName')
               ? {
-                  id: handleNum,
+                  safeName: handle.startsWith('@') ? handle.slice(1) : handle,
                 }
               : undefined,
             selectAgainst.includes('name')
@@ -40,14 +40,14 @@ export function createUserQuery(handle: string,
                   name: handle,
                 }
               : undefined,
-            selectAgainst.includes('safeName')
-              ? {
-                  safeName: handle.startsWith('@') ? handle.slice(1) : handle,
-                }
-              : undefined,
             selectAgainst.includes('email')
               ? {
                   email: handle,
+                }
+              : undefined,
+            selectAgainst.includes('id')
+              ? {
+                  id: handleNum,
                 }
               : undefined,
           ].filter(Boolean) as Array<

@@ -626,21 +626,6 @@ WHERE s2.userid = ${id}
       ...userEssentials,
       where: {
         OR: [
-          isNaN(idKw)
-            ? undefined
-            : {
-                id: idKw,
-              },
-          {
-            name: {
-              contains: keyword,
-            },
-          },
-          {
-            safeName: {
-              contains: keyword,
-            },
-          },
           keyword.startsWith('@')
             ? {
                 safeName: {
@@ -648,6 +633,21 @@ WHERE s2.userid = ${id}
                 },
               }
             : undefined,
+          {
+            safeName: {
+              contains: keyword,
+            },
+          },
+          {
+            name: {
+              contains: keyword,
+            },
+          },
+          isNaN(idKw)
+            ? undefined
+            : {
+                id: idKw,
+              },
           // TODO: search by email after preferences implemented
           // {
           //   email: {
