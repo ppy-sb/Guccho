@@ -16,7 +16,6 @@ import type { LeaderboardSwitcherComposableType } from '~/composables/useSwitche
 
 const { addToLibrary } = useFAIconLib()
 addToLibrary(faUserGroup, faHeartCrack, faHeart, faEnvelope)
-// "unknown" | "playing" | "idle" | "modding" | "multiplaying" | "afk" | "editing" | "multiplayer" | "watching" | "testing" | "submitting" | "paused" | "lobby" | "osuDirect"
 
 const hasBeatmap = ['playing', 'modding', 'multiplaying', 'editing', 'watching', 'testing', 'submitting']
 const { $client } = useNuxtApp()
@@ -150,9 +149,16 @@ const toggleFriend = async () => {
         </t-nuxt-link-button>
       </div>
       <div
-        class="container mx-auto sm:order-2 sm:flex sm:gap-1 sm:items-end sm:justify-around md:justify-between md:pb-2"
+        class="container mx-auto flex-wrap flex flex-col md:flex-row gap-8 lg:gap-0 sm:order-2 md:items-end md:justify-between md:pb-2"
       >
-        <div>
+        <div class="mx-auto md:mx-0 order-2 md:order-1 lg:order-2">
+          <app-mode-switcher
+            :model-value="switcher"
+            class="self-start"
+            @update:model-value="setSwitcher"
+          />
+        </div>
+        <div class="order-1 md:order-2 lg:order-1">
           <h1
             class="text-5xl xl:text-6xl items-center md:items-left flex flex-col md:flex-row gap-1 pb-1"
             :class="useUserRoleColor(user)"
@@ -175,13 +181,6 @@ const toggleFriend = async () => {
             @{{ user.safeName }}
           </h2>
           <div class="lg:pb-2" />
-        </div>
-        <div class="div">
-          <app-mode-switcher
-            :model-value="switcher"
-            class="self-end"
-            @update:model-value="setSwitcher"
-          />
         </div>
       </div>
       <template v-if="live">
