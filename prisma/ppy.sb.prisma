@@ -30,19 +30,20 @@ model User {
   clanPriv        Int     @default(0) @map("clan_priv") @db.TinyInt
   apiKey          String? @unique(map: "users_api_key_uindex") @map("api_key") @db.Char(36)
 
-  clan             Clan           @relation(name: "clan", fields: [clanId], references: [id])
+  clan             Clan              @relation(name: "clan", fields: [clanId], references: [id])
   favourites       Favourite[]
   ingameLogins     IngameLogin[]
-  receivedMessages Mail[]         @relation("receivedMessages")
-  sentMessages     Mail[]         @relation("sentMessages")
+  receivedMessages Mail[]            @relation("receivedMessages")
+  sentMessages     Mail[]            @relation("sentMessages")
   clientHashes     ClientHash[]
   comments         Comment[]
-  ownedClans       Clan[]         @relation("owner")
-  relations        Relationship[] @relation("from")
-  gotRelations     Relationship[] @relation("to")
+  ownedClans       Clan[]            @relation("owner")
+  relations        Relationship[]    @relation("from")
+  gotRelations     Relationship[]    @relation("to")
   stat             Stat[]
   userpages        Userpage[]
-  Score            Score[]
+  scores            Score[]
+  userAchievement  UserAchievement[]
 
   @@map("users")
 }
@@ -318,16 +319,20 @@ model UserAchievement {
   userId        Int @map("userid")
   achievementId Int @map("achid")
 
+  user        User        @relation(fields: [userId], references: [id])
+  achievement Achievement @relation(fields: [achievementId], references: [id])
+
   @@id([userId, achievementId])
   @@map("user_achievements")
 }
 
 model Achievement {
-  id   Int    @id @default(autoincrement())
-  file String @unique(map: "achievements_file_uindex") @db.VarChar(128)
-  name String @unique(map: "achievements_name_uindex") @db.VarChar(128)
-  desc String @unique(map: "achievements_desc_uindex") @db.VarChar(256)
-  cond String @db.VarChar(64)
+  id              Int               @id @default(autoincrement())
+  file            String            @unique(map: "achievements_file_uindex") @db.VarChar(128)
+  name            String            @unique(map: "achievements_name_uindex") @db.VarChar(128)
+  desc            String            @unique(map: "achievements_desc_uindex") @db.VarChar(256)
+  cond            String            @db.VarChar(64)
+  UserAchievement UserAchievement[]
 
   @@map("achievements")
 }
