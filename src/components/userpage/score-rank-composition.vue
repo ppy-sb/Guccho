@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import type { ComputedRef } from 'vue'
-import type { UserModeRulesetStatistics } from '~/types/statistics'
-import type { LeaderboardRankingSystem } from '~/types/common'
+import type { inferRouterOutputs } from '@trpc/server'
+import type { AvailableRuleset, Mode } from '~/types/common'
+import type { AppRouter } from '~/server/trpc/routers'
+type RouterOutput = inferRouterOutputs<AppRouter>
 
+type Statistics = NonNullable<RouterOutput['user']['userpage']['statistics']>[Mode][AvailableRuleset<Mode>]
 const currentRankingSystem = inject('user.statistics') as ComputedRef<
-  UserModeRulesetStatistics<LeaderboardRankingSystem>
+  Statistics
 >
 
 const totalCount = computed(() => {

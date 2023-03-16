@@ -6,8 +6,6 @@ import {
   faRankingStar,
 } from '@fortawesome/free-solid-svg-icons'
 import { faPiedPiperPp } from '@fortawesome/free-brands-svg-icons'
-import type { LeaderboardRankingSystem } from '~/types/common'
-import type { UserModeRulesetStatistics } from '~/types/statistics'
 const { hasRuleset } = useAdapterConfig()
 
 const { addToLibrary } = useFAIconLib()
@@ -25,23 +23,18 @@ const switcherCtx = useLeaderboardSwitcher()
 const [switcher] = switcherCtx
 
 const [_, setScroll] = useScrollYObserver()
-const { data: user, error, refresh } = await useAsyncData(
-  async () =>
-    await $client.user.userpage.query({
-      handle: `${route.params.handle}`,
-    }),
-)
+const { data: user, error, refresh } = await useAsyncData(() => $client.user.userpage.query({
+  handle: `${route.params.handle}`,
+}))
 
-const currentStatistic = computed<
-  UserModeRulesetStatistics<LeaderboardRankingSystem> | undefined
->(() => {
-  if (hasRuleset(switcher.mode, switcher.ruleset)) {
-    const returnValue = user.value?.statistics?.[switcher.mode][switcher.ruleset]
-    return returnValue
+const currentStatistic = computed(() => {
+  const returnValue = hasRuleset(switcher.mode, switcher.ruleset)
+    ? user.value?.statistics?.[switcher.mode][switcher.ruleset]
+    : user.value?.statistics?.osu.standard
+  if (!returnValue) {
+    throw new Error('unknown mode & ruleset')
   }
-  else {
-    return user.value?.statistics?.osu.standard
-  }
+  return returnValue
 })
 const currentRankingSystem = computed(
   () => currentStatistic.value?.[switcher.rankingSystem],
@@ -54,7 +47,6 @@ useHead({
       `${user.value?.name} | ${switcher.mode} | ${switcher.ruleset} | ${switcher.rankingSystem}`,
   ),
 })
-
 provide('user', user)
 provide('switcher', switcherCtx)
 

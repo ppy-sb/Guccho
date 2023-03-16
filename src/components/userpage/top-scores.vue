@@ -3,6 +3,8 @@ import type { Ref } from 'vue'
 import {
   faRankingStar,
 } from '@fortawesome/free-solid-svg-icons'
+import type { inferRouterOutputs } from '@trpc/server'
+import type { AppRouter } from '~/server/trpc/routers'
 import type {
   LeaderboardRankingSystem,
   LeaderboardScoreRankingSystem,
@@ -17,8 +19,10 @@ import {
   rulesets,
 } from '~/types/defs'
 
-import type { UserEssential } from '~/types/user'
 import type { LeaderboardSwitcherComposableType } from '~/composables/useSwitcher'
+type RouterOutput = inferRouterOutputs<AppRouter>
+
+type User = RouterOutput['user']['userpage']
 
 const { addToLibrary } = useFAIconLib()
 
@@ -45,7 +49,7 @@ const switchBetweenScoreRanks = () =>
 const bpPage = ref<NumberRange<0, 10>>(0)
 const topPage = ref<NumberRange<0, 10>>(0)
 
-const user = inject('user') as Ref<UserEssential<string>>
+const user = inject('user') as Ref<User>
 const {
   data: top,
   error: errorTop,

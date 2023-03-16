@@ -1,6 +1,7 @@
 import type {
   AvailableRuleset,
   LeaderboardRankingSystem,
+  Mode,
   PPRankingSystem,
   RankingSystem,
   Ruleset,
@@ -39,10 +40,10 @@ const havingRankingSystem: ServerRankingSystemDef = {
   },
 }
 
-export const hasRuleset: HasRuleset = (
-  mode,
-  ruleset,
-): ruleset is Ruleset & AvailableRuleset<typeof mode> => {
+export const hasRuleset: HasRuleset = <M extends Mode>(
+  mode: M,
+  ruleset: Ruleset,
+): ruleset is Ruleset & AvailableRuleset<M> => {
   const mDef = havingRankingSystem[mode]
   return ruleset in mDef
 }

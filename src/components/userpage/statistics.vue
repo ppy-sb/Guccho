@@ -1,24 +1,33 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
+import type { inferRouterOutputs } from '@trpc/server'
 import {
   LeaderboardRankingSystem,
   PPRankingSystem,
 } from '~/types/common'
 import { ppRankingSystems } from '~/types/defs'
 import { PPRank, ScoreRank } from '~/types/statistics'
-import type { BaseRank, UserModeRulesetStatistics } from '~/types/statistics'
 import { createScoreFormatter, toDuration } from '~/common/varkaUtils'
 import type { LeaderboardSwitcherComposableType } from '~/composables/useSwitcher'
+
+import type {
+  AvailableRuleset, Mode,
+} from '~/types/common'
+import type { AppRouter } from '~/server/trpc/routers'
 import { getRequiredScoreForLevel } from '~/utils/level-calc'
+type RouterOutput = inferRouterOutputs<AppRouter>
+
+type Statistics = NonNullable<RouterOutput['user']['userpage']['statistics']>[Mode][AvailableRuleset<Mode>]
+type BR = Statistics[LeaderboardRankingSystem]
 
 const numbers = [...Array(10).keys()].map(String)
 const chars = [...numbers, ',', '.', 'K', 'M', 'B', 'T', '-']
 const percent = [...numbers, ',', '.', '%']
 
 const data = inject('user.statistics') as Ref<
-  UserModeRulesetStatistics<LeaderboardRankingSystem>
+  Statistics
 >
-const currentRankingSystem = inject<BaseRank>('user.currentRankingSystem')
+const currentRankingSystem = inject<BR>('user.currentRankingSystem')
 const scoreFmtCompact = createScoreFormatter({
   notation: 'compact',
   maximumFractionDigits: 2,

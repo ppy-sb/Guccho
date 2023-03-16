@@ -15,11 +15,7 @@ export const router = _router({
     .query(async ({ input }) => {
       const score = await sScore.id(stringToScoreId(input.id))
 
-      if (!score) {
-        return null
-      }
-
-      const returnValue = {
+      return {
         ...score,
         id: scoreIdToString(score.id),
         beatmap: beatmapIsVisible(score.beatmap)
@@ -33,6 +29,5 @@ export const router = _router({
             }
           : score.beatmap,
       }
-      return returnValue
     }),
 })

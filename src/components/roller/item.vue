@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { Ref } from 'vue'
-
 import useAnimationManager from './composables/animation/useAnimationManager'
 import useMeasureText from './composables/useMeasureText'
 import useSelectElement from './composables/useSelectElement'
@@ -30,7 +28,7 @@ const { isReady, isEnd, targetIdx, prevTargetIdx } = useAnimationManager(
   duration,
 )
 
-const itemElements: Ref<HTMLDivElement[]> = ref([])
+const itemElements = ref<HTMLDivElement[]>([])
 const { itemElement } = useSelectElement(itemElements, targetIdx)
 const { width } = useMeasureText(itemElement)
 

@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import type { RouterLinkProps } from 'vue-router'
 
-import type { UserEssential } from '~/types/user'
+import type { inferRouterOutputs } from '@trpc/server'
+import type { AppRouter } from '~/server/trpc/routers'
 import { getFlagURL } from '~/common/varkaUtils'
+type RouterOutput = inferRouterOutputs<AppRouter>
+
+type User = RouterOutput['user']['userpage']
 
 const props = defineProps<{
-  user: UserEssential<string>
+  user: User
   to: RouterLinkProps['to']
 }>()
 // const runtimeConfig = useAppConfig()

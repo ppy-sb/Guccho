@@ -1,14 +1,17 @@
 <script setup lang="ts">
 import { faEllipsisH } from '@fortawesome/free-solid-svg-icons'
-import type { RulesetScore } from '~/types/score'
-import type { Mode, PPRankingSystem, RankingSystem, Ruleset } from '~/types/common'
+import type { inferRouterOutputs } from '@trpc/server'
 import { beatmapIsVisible } from '~/utils'
 import {
   createScoreFormatter,
 } from '~/common/varkaUtils'
-import type { UserEssential } from '~/types/user'
+import type { AppRouter } from '~/server/trpc/routers'
+import type { RankingSystem } from '~/types/common'
+type RouterOutput = inferRouterOutputs<AppRouter>
+
+type Score = NonNullable<RouterOutput['score']['id']>
 defineProps<{
-  score: RulesetScore<string, string, Mode, Ruleset, PPRankingSystem> & { user: UserEssential<unknown> }
+  score: Score
   rankingSystem: RankingSystem
 }>()
 
