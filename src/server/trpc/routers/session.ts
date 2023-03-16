@@ -7,7 +7,6 @@ import {
   sessionNotFound,
   unableToRetrieveSession,
   unknownError,
-  userNotFound,
 } from '../messages'
 import { sessionProcedure as pSession } from '../middleware/session'
 import { zodHandle } from '../shapes'
@@ -32,12 +31,6 @@ export const router = _router({
           handle,
           includes: { secrets: true },
         })
-        if (user == null) {
-          throw new TRPCError({
-            code: 'NOT_FOUND',
-            message: userNotFound,
-          })
-        }
         const result = await compare(md5HashedPassword, user.secrets.password)
         if (!result) {
           throw new TRPCError({
@@ -92,16 +85,18 @@ export const router = _router({
         })
       }
       if (session.userId) {
-        const user = await userProvider.getEssentialById({
-          id: session.userId,
-        })
-        if (!user) {
+        try {
+          const user = await userProvider.getEssentialById({
+            id: session.userId,
+          })
+          return {
+            user: Object.assign(user, { id: idToString(user.id) }),
+          }
+        }
+        catch (_) {
           return {
             user: null,
           }
-        }
-        return {
-          user: Object.assign(user, { id: idToString(user.id) }),
         }
       }
       return {

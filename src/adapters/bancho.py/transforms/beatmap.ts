@@ -14,13 +14,11 @@ import type { BeatmapEssential, Beatmapset, RankingStatus } from '~/types/beatma
 import type { Mode, Ruleset } from '~/types/common'
 import type { StableMod } from '~/types/score'
 
-// this do not deserves exporting
+// this does not deserves exporting
 export function toBeatmapset(
   beatmapset: Source,
   beatmap: DBMap,
-):
-  | undefined
-  | Beatmapset<
+): Beatmapset<
       (typeof beatmapset)['server'],
       (typeof beatmapset)['id'],
       (typeof beatmapset)['id']
@@ -37,6 +35,7 @@ export function toBeatmapset(
     },
   }
 }
+
 export function toBeatmapEssential(beatmap: {
   id: number
   // setId: number
@@ -94,9 +93,6 @@ export function toBeatmapWithBeatmapset(
 ) {
   const status = toRankingStatus(beatmap.status) || 'WIP'
   const beatmapset = toBeatmapset(beatmap.source, beatmap)
-  if (!beatmapset) {
-    return
-  }
   return Object.assign(toBeatmapEssential(beatmap), {
     status,
     beatmapset,

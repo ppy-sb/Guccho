@@ -2,7 +2,7 @@ import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 
 import { hasLeaderboardRankingSystem, hasRuleset } from '../config'
-import { userNotFound } from '../messages'
+
 import {
   zodHandle,
   zodLeaderboardRankingSystem,
@@ -32,12 +32,6 @@ export const router = _router({
         handle,
         excludes: { relationships: true, secrets: true },
       })
-      if (user == null) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: userNotFound,
-        })
-      }
       return Object.assign(followUserSettings({ user, scope: 'public' }), {
         id: idToString(user.id),
       })
@@ -53,12 +47,6 @@ export const router = _router({
         handle,
         excludes: { email: true },
       })
-      if (user == null) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: userNotFound,
-        })
-      }
       return Object.assign(followUserSettings({ user, scope: 'public' }), {
         id: idToString(user.id),
       })
@@ -76,9 +64,6 @@ export const router = _router({
     )
     .query(async ({ input }) => {
       const user = await userProvider.getEssential({ handle: input.handle })
-      if (!user) {
-        throw new TRPCError({ code: 'NOT_FOUND', message: userNotFound })
-      }
 
       const { mode, ruleset, rankingSystem } = input
       if (
@@ -118,9 +103,6 @@ export const router = _router({
     )
     .query(async ({ input }) => {
       const user = await userProvider.getEssential({ handle: input.handle })
-      if (!user) {
-        throw new TRPCError({ code: 'NOT_FOUND', message: userNotFound })
-      }
 
       const { mode, ruleset, rankingSystem } = input
       if (
@@ -155,9 +137,7 @@ export const router = _router({
     )
     .query(async ({ input }) => {
       const user = await userProvider.getEssential({ handle: input.handle })
-      if (!user) {
-        return null
-      }
+
       return Object.assign(user, { id: idToString(user.id) })
     }),
   countRelations: p
@@ -169,9 +149,7 @@ export const router = _router({
     )
     .query(async ({ input: { handle, type } }) => {
       const user = await userProvider.getEssential({ handle })
-      if (user == null) {
-        return
-      }
+
       const count = await userRelationshipProvider.count({ user, type })
       return count
     }),

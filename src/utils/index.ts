@@ -17,7 +17,7 @@ export function placeholder(e: Event & { target: HTMLImageElement }) {
   e.target.src = '/images/image-placeholder.svg'
 }
 
-export const TSFilter = <T>(item: T): item is Exclude<T, undefined | null> =>
+export const TSFilter = <T>(item: T): item is NonNullable<T> =>
   item !== undefined && item !== null
 
 export function pick<T extends Record<any, any>, K extends keyof T>(record: T, keys: K[]) {

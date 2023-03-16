@@ -164,15 +164,6 @@ const toggleFriend = async () => {
             :class="useUserRoleColor(user)"
           >
             {{ user.name }}
-            <!-- <div class="flex flex-row gap-1 md:self-end">
-                <div
-                  v-for="role in user.roles.filter(role => !['normal', 'registered'].includes(role))"
-                  :key="role"
-                  class="badge"
-                >
-                  {{ role }}
-                </div>
-              </div> -->
           </h1>
           <nuxt-link
             :to="{ name: 'user-handle', params: { handle: `@${user.safeName}` } }"

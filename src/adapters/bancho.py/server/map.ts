@@ -21,10 +21,7 @@ export class MapProvider implements Base<Id> {
 
   async getBeatmap(query: { id: Id }) {
     const { id } = query
-    if (!id) {
-      return null
-    }
-    const beatmap = await this.db.map.findFirst({
+    const beatmap = await this.db.map.findFirstOrThrow({
       where: {
         id,
       },
@@ -32,25 +29,22 @@ export class MapProvider implements Base<Id> {
         source: true,
       },
     })
-    if (!beatmap) {
-      return null
-    }
-    return toBeatmapWithBeatmapset(beatmap) || null
+    return toBeatmapWithBeatmapset(beatmap)
   }
 
   async getBeatmapset(query: { id: Id }) {
     const { id } = query
-    if (!id) {
-      return null
-    }
-    const source = await this.db.source.findFirst({
+    const source = await this.db.source.findFirstOrThrow({
       where: {
         id,
       },
     })
-    if (!source) {
-      return null
-    }
+    // if (!source) {
+    //   throw new TRPCError({
+    //     message: `unable to find beatmap source: ${id}`,
+    //     code: 'NOT_FOUND',
+    //   })
+    // }
     const beatmaps = await this.db.map.findMany({
       where: {
         source: {
@@ -61,13 +55,7 @@ export class MapProvider implements Base<Id> {
         diff: 'asc',
       },
     })
-    if (!beatmaps.length) {
-      return null
-    }
     const beatmapset = toBeatmapset(source, beatmaps[0])
-    if (!beatmapset) {
-      return null
-    }
 
     return Object.assign(beatmapset, {
       beatmaps: beatmaps.map(bm => ({

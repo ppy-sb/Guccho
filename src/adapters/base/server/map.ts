@@ -14,7 +14,6 @@ export interface MapProvider<Id> {
     | (Beatmapset<BeatmapSource, Id, unknown> & {
       beatmaps: BeatmapEssential<Id, unknown>[]
     })
-    | null
   >
   getBeatmap(
     query: MapProvider.IdQuery<Id>
@@ -23,7 +22,7 @@ export interface MapProvider<Id> {
     RankingStatus,
     Id,
     unknown
-  > | null>
+  >>
   searchBeatmap(opt: { keyword: string }): Awaitable<
     (BeatmapEssential<Id, unknown> & {
       beatmapset: Beatmapset<BeatmapSource, Id, unknown>

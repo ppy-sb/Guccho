@@ -1,5 +1,4 @@
 import type { JSONContent } from '@tiptap/core'
-import { getLiveUserStatus } from '../../bancho.py/api-client'
 import type { BeatmapSource, RankingStatus } from '~/types/beatmap'
 import type {
   Awaitable,
@@ -46,14 +45,14 @@ export interface UserProvider<Id> {
     Includes extends Partial<Record<keyof UserOptional<Id>, boolean>>,
   >(
     opt: UserProvider.OptType<Id, Includes>
-  ): Awaitable<UserEssential<Id> | null>
+  ): Awaitable<UserEssential<Id>>
 
   getEssentialById<
     Includes extends Partial<Record<keyof UserOptional<Id>, boolean>>,
   >(opt: {
     id: Id
     includes: Includes
-  }): Awaitable<UserEssential<Id> | null>
+  }): Awaitable<UserEssential<Id>>
 
   getBests<
     _Mode extends Mode,
@@ -83,7 +82,6 @@ export interface UserProvider<Id> {
     handle: string
     excludes?: Excludes
   }): Awaitable<
-    | null
     | (UserEssential<Id> & {
       [K in keyof UserProvider.ComposableProperties<Id> as Exclude<
           Excludes,

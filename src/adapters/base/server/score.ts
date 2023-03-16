@@ -30,13 +30,11 @@ export interface ScoreProvider<TScoreId, TId> {
     | (RulesetScore<TScoreId, TId, Mode, Ruleset, PPRankingSystem> & {
       user: UserEssential<TId>
     })
-    | null
   >
   findOne(opt: ScoreProvider.SearchQueryMany<TId> | ScoreProvider.SearchId<TScoreId>): Awaitable<
     | (RulesetScore<TScoreId, TId, Mode, Ruleset, PPRankingSystem> & {
       user: UserEssential<TId>
     })
-    | null
   >
   findMany(opt: ScoreProvider.SearchQueryMany<TId>): Awaitable<
     (RulesetScore<TScoreId, TId, Mode, Ruleset, PPRankingSystem> & {

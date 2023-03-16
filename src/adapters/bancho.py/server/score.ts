@@ -26,11 +26,7 @@ export class ScoreProvider implements Base<bigint, Id> {
     this.db = prismaClient
   }
 
-  #transformScore(dbScore: (AbleToTransformToScores & { user: User }) | null) {
-    if (!dbScore) {
-      return null
-    }
-
+  #transformScore(dbScore: (AbleToTransformToScores & { user: User })) {
     const [mode, ruleset] = fromBanchoPyMode(dbScore.mode)
 
     return Object.assign(
@@ -44,7 +40,7 @@ export class ScoreProvider implements Base<bigint, Id> {
   }
 
   async id(id: bigint) {
-    const dbScore = await this.db.score.findFirst({
+    const dbScore = await this.db.score.findFirstOrThrow({
       where: { id },
       include: {
         beatmap: {
@@ -58,13 +54,22 @@ export class ScoreProvider implements Base<bigint, Id> {
     return this.#transformScore(dbScore)
   }
 
+  // #throw() {
+  //   if (!dbScore) {
+  //     throw new TRPCError({
+  //       code: 'NOT_FOUND',
+  //       message: `unable to find score ${id} in database`,
+  //     })
+  //   }
+  // }
+
   async findOne(opt: Base.SearchQueryMany<Id> | Base.SearchId<bigint>) {
     if ('id' in opt) {
       return this.id(opt.id)
     }
     else {
       const banchoPyMode = toBanchoPyMode(opt.mode, opt.ruleset)
-      const score = await this.db.score.findFirst({
+      const score = await this.db.score.findFirstOrThrow({
         where: {
           user: opt.user,
           beatmap: opt.beatmap,

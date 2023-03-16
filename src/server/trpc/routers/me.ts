@@ -7,7 +7,6 @@ import {
   oldPasswordMismatch,
   relationTypeNotFound,
   userExists,
-  userNotFound,
 } from '../messages'
 import { zodHandle, zodRelationType, zodTipTapJSONContent } from '../shapes'
 import { router as _router } from '../trpc'
@@ -97,9 +96,6 @@ export const router = _router({
         id: ctx.user.id,
         includes: { secrets: true },
       })
-      if (userWithPassword == null) {
-        throw new TRPCError({ code: 'NOT_FOUND', message: userNotFound })
-      }
       if (
         !(await bcrypt.compare(
           input.oldPassword,

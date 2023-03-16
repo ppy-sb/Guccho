@@ -86,11 +86,7 @@ export class UserProvider extends BanchoPyUser implements Base<Id> {
     if (!excludes) {
       excludes = <Excludes>{ secrets: true }
     }
-    const user = await this.sbDb.user.findFirst(createUserQuery(handle))
-
-    if (user == null) {
-      return null
-    }
+    const user = await this.sbDb.user.findFirstOrThrow(createUserQuery(handle))
 
     const fullUser = await toFullUser(user, this.config)
     const profile = await this.sbDb.userpage.findFirst({

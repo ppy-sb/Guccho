@@ -26,6 +26,7 @@ import type { Id } from '..'
 import { getLiveUserStatus } from '../api-client'
 import { prismaClient } from './prisma'
 import { UserRelationProvider } from './user-relations'
+import { userNotFound } from '~/server/trpc/messages'
 import useEditorExtensions from '~/composables/useEditorExtensions'
 import { RankingStatusEnum } from '~/types/beatmap'
 import { TSFilter } from '~/utils'
@@ -117,15 +118,12 @@ export class UserProvider implements Base<Id> {
     Includes extends Partial<Record<keyof UserOptional<unknown>, boolean>>,
   >({ id, includes }: { id: Id; includes?: Includes }) {
     /* optimized */
-    const user = await this.db.user.findFirst({
+    const user = await this.db.user.findFirstOrThrow({
       where: {
         id,
       },
       ...userEssentials,
     })
-    if (user == null) {
-      return null
-    }
 
     return toUserEssential({ user, includes, config: this.config })
   }
@@ -135,14 +133,13 @@ export class UserProvider implements Base<Id> {
   >(opt: Base.OptType<Id, Includes>) {
     const { handle, includes, keys } = opt
     /* optimized */
-    const user = await this.db.user.findFirst({
+    const user = await this.db.user.findFirstOrThrow({
       ...createUserQuery(handle, keys || ['id', 'name', 'safeName', 'email']),
       ...userEssentials,
     })
-    if (user == null) {
-      return null
-    }
-
+      .catch(() => {
+        throw new TRPCError({ code: 'NOT_FOUND', message: userNotFound })
+      })
     return toUserEssential({ user, includes, config: this.config })
   }
 
@@ -463,11 +460,7 @@ WHERE s2.userid = ${id}
     if (!excludes) {
       excludes = <Excludes>{ secrets: true }
     }
-    const user = await this.db.user.findFirst(createUserQuery(handle))
-
-    if (user == null) {
-      return null
-    }
+    const user = await this.db.user.findFirstOrThrow(createUserQuery(handle))
 
     // type check will not find any missing params here.
     const returnValue = <
@@ -511,6 +504,9 @@ WHERE s2.userid = ${id}
     }
 
     await Promise.all(parallels)
+      .catch((e) => {
+        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: e.message })
+      })
     return returnValue
   }
 

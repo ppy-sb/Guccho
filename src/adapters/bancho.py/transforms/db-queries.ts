@@ -1,5 +1,5 @@
-import type { Id } from '..'
 import type { DatabaseUserEssentialFields } from './user'
+import { TSFilter, includes } from '~/utils'
 export const userEssentials = {
   select: {
     id: true,
@@ -30,32 +30,27 @@ export function createUserQuery(handle: string,
       AND: [
         {
           OR: [
-            selectAgainst.includes('safeName')
+            includes('safeName', selectAgainst)
               ? {
                   safeName: handle.startsWith('@') ? handle.slice(1) : handle,
                 }
               : undefined,
-            selectAgainst.includes('name')
+            includes('name', selectAgainst)
               ? {
                   name: handle,
                 }
               : undefined,
-            selectAgainst.includes('email')
+            includes('email', selectAgainst)
               ? {
                   email: handle,
                 }
               : undefined,
-            selectAgainst.includes('id')
+            includes('id', selectAgainst)
               ? {
                   id: handleNum,
                 }
               : undefined,
-          ].filter(Boolean) as Array<
-            { id: Id } |
-            { name: string } |
-            { safeName: string } |
-            { email: string }
-          >,
+          ].filter(TSFilter),
         },
         {
           priv: {
