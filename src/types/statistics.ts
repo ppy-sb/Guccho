@@ -26,8 +26,6 @@ export type ScoreRank = BaseRank & {
 }
 
 export type UserModeRulesetStatistics<RS extends LeaderboardRankingSystem> = {
-  // TODO: Achievement
-  // achievements: Achievement[]
   playCount: number
   playTime: number
   totalHits: number

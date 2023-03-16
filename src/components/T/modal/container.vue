@@ -109,7 +109,6 @@ defineExpose({
 
 <style lang="scss">
 @import "./shared.scss";
-// TODO move filters to zoom-modal-background
 $zoom-content-stage1: opacity(0.4) saturate(0.7);
 $zoom-content-stage2: opacity(0.2) saturate(0.3);
 

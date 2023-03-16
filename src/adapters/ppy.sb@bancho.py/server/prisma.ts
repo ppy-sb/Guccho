@@ -1,5 +1,4 @@
 import type { PrismaClient as ImportedPrismaClient } from '.prisma/ppy.sb'
-// import { prismaErrorHandler } from '~/adapters/bancho.py/server/prisma'
 import { createCursedRequire } from '~/server'
 
 const require = createCursedRequire(import.meta.url ?? __filename)
