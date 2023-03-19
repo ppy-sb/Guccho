@@ -176,13 +176,13 @@ const toggleFriend = async () => {
       </div>
       <template v-if="live">
         <div v-if="live.status === 'offline'" class="order-3 user-status">
-          currently offline, last seen at {{ live.lastSeen.toLocaleString() }}
+          Offline, last seen at {{ live.lastSeen.toLocaleString() }}
         </div>
         <div v-else-if="live && hasBeatmap.includes(live.status)" class="order-3 user-status">
-          {{ live.status }} {{ live.beatmap?.beatmapset.meta.intl.artist }} - {{ live.beatmap?.beatmapset.meta.intl.title }} [{{ live.beatmap?.version }}]
+          {{ capitalizeFirstLetter(live.status) }} {{ live.beatmap?.beatmapset.meta.intl.artist }} - {{ live.beatmap?.beatmapset.meta.intl.title }} [{{ live.beatmap?.version }}]
         </div>
         <div v-else-if="live.status === 'idle'" class="order-3 user-status">
-          currently online.
+          Online.
         </div>
         <div v-else-if="live.status === 'afk'" class="order-3 user-status">
           afk
