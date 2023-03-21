@@ -36,7 +36,7 @@ const config: {
     api: '1.0.3',
     front: '1.0.3',
   },
-  title: 'guweb@next',
+  title: 'Guccho',
   mode: {
     osu: {
       name: 'Osu',

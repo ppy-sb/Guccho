@@ -1,8 +1,8 @@
-# guweb@next
+# Guccho
 
 ## What is Guccho?
 
-guweb is the front-facing appearance of the osu! server protocol, [gulag](https://github.com/cmyui/gulag)!
+Guccho is a web interface to interact with osu private servers with compatibility in mind.
 
 ## Requirements
 
@@ -15,13 +15,13 @@ guweb is the front-facing appearance of the osu! server protocol, [gulag](https:
 - Config `activeAdapter` in nuxt.config.ts
 - Run `yarn`
 
-## supporting platforms
+## platforms
 
-Guccho has multi-platform support in mind. It's modular but not hot-swapable. Some procedures need to be done before it's ready for dev/prod.
+- ### bancho.py (aka gulag)
 
-- ### guweb
+- ### ppy.sb
 
-- Run `yarn build:schemas`
+  Run `yarn build:schemas`
 
 ## Development Server
 
@@ -54,18 +54,11 @@ Checkout the [deployment documentation](https://v3.nuxtjs.org/guide/deploy/prese
 - [ppy.sb](https://github.com/ppy-sb)
 - [Varkaria](https://github.com/Varkaria)
 
-### dev notes
-
-todo: search 'TODO' in repo.
-
 ### todo(s)
 
 TODO Register
 TODO Give first registered user owner privilege
 
-TODO Session [x] half baked, currently lives in memory
-TODO standardize error string
-
 ## AppConfig and ServerConfig
 
-see `src/app.config.ts` and `src/adapters/bancho.py/exports.ts`, more detailed readme will be provided later
+see `src/app.config.ts` and `src/adapters/bancho.py/exports.ts`, more detailed readme will be provided later.
