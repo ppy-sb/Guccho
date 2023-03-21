@@ -20,7 +20,7 @@ export enum BanchoPyPrivilege {
   Admin = 1 << 13, //  able to manage users (level 2).
   Dangerous = 1 << 14, //  able to manage full server state.
 
-  // guweb-next custom
+  // Guccho custom
   Bot = 1 << 15,
 
   Donator = Supporter | Premium,

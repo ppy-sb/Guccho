@@ -18,7 +18,7 @@ useHead({
           <h2 class="font-semibold px-2 sm:px-0 h-sub text-md sm:text-left">
             We are an osu! private server built from the ground up with many
             unique features not seen elsewhere!<br>
-            - for more information, check out gulag and guweb-next on GitHub
+            - for more information, check out gulag and Guccho on GitHub
             <br>
             - we're fully open source!
           </h2>

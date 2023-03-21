@@ -1,6 +1,6 @@
 # guweb@next
 
-## What is guweb-nuxt?
+## What is Guccho?
 
 guweb is the front-facing appearance of the osu! server protocol, [gulag](https://github.com/cmyui/gulag)!
 
@@ -17,7 +17,7 @@ guweb is the front-facing appearance of the osu! server protocol, [gulag](https:
 
 ## supporting platforms
 
-guweb-next has multi-platform support in mind. It's modular but not hot-swapable. Some procedures need to be done before it's ready for dev/prod.
+Guccho has multi-platform support in mind. It's modular but not hot-swapable. Some procedures need to be done before it's ready for dev/prod.
 
 - ### guweb
 
@@ -49,7 +49,7 @@ yarn preview
 
 Checkout the [deployment documentation](https://v3.nuxtjs.org/guide/deploy/presets) for more information.
 
-## The team (guweb-nuxt)
+## The team (Guccho)
 
 - [ppy.sb](https://github.com/ppy-sb)
 - [Varkaria](https://github.com/Varkaria)
