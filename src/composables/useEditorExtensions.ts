@@ -9,7 +9,7 @@ import { StarterKit } from '@tiptap/starter-kit'
 
 import { lowlight } from 'lowlight/lib/core.js'
 
-export default (config?: { indent?: string; link?: { openOnClick: boolean } }) => [
+export default <TEdit extends boolean>(config?: { indent?: string; edit?: TEdit }) => [
   StarterKit.configure({
     codeBlock: false,
   }),
