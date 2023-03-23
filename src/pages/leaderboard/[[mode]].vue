@@ -95,7 +95,6 @@ function reloadPage(i?: number) {
   if (i) {
     page.value = i
   }
-  // console.log(selected)
   rewriteHistory()
   refresh()
 }

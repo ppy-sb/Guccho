@@ -9,5 +9,5 @@ export const router = _router({
   save: p.input(object({
     slug: string(),
     content: any(),
-  })).mutation(({ input }) => sp.saveLocal(input.slug, input.content)),
+  })).mutation(({ input }) => sp.save(input.slug, input.content)),
 })

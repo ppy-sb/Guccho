@@ -36,7 +36,6 @@ export abstract class ArticleProvider {
   async saveLocal(slug: string, jsonContent: JSONContent): Promise<void> {
     const loc = resolve(join('articles', slug))
     await fs.writeFile(loc, JSON.stringify(jsonContent), 'utf-8')
-    console.log('written to', loc)
   }
 
   render(jsonContent: JSONContent) {

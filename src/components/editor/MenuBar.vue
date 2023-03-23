@@ -155,7 +155,6 @@ export default {
   methods: {
     setLink() {
       const url = this.link
-      console.log(url)
       // empty
       if (!url) {
         this.editor
