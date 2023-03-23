@@ -17,13 +17,12 @@ definePageMeta({
 })
 const appConf = useAppConfig()
 const route = useRoute()
-const { $client } = useNuxtApp()
 
 const switcherCtx = useLeaderboardSwitcher()
 const [switcher] = switcherCtx
 
 const [_, setScroll] = useScrollYObserver()
-const { data: user, error, refresh } = await useAsyncData(() => $client.user.userpage.query({
+const { data: user, error, refresh } = await useAsyncData(() => useNuxtApp().$client.user.userpage.query({
   handle: `${route.params.handle}`,
 }))
 

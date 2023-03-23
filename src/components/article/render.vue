@@ -15,7 +15,7 @@ onMounted(async () => {
   }
   await parseAndImportHighlightLibFromHtml(props.html)
   editor.value?.setEditable(false)
-  editor.value?.commands.setContent(props.html)
+  editor.value?.commands.setContent(props.json)
   clientTakeover.value = true
 })
 </script>
