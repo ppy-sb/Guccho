@@ -1,5 +1,5 @@
 import { TRPCError } from '@trpc/server'
-import { z } from 'zod'
+import { array, number, object, string } from 'zod'
 
 import { hasLeaderboardRankingSystem, hasRuleset } from '../config'
 
@@ -12,6 +12,8 @@ import {
   zodRuleset,
 } from '../shapes'
 import { router as _router, publicProcedure as p } from '../trpc'
+import { sessionProcedure } from '../middleware/session'
+import { updateSession } from '../../session'
 import { followUserSettings } from '~/server/transforms'
 import { UserProvider, UserRelationProvider } from '$active/server'
 import { idToString, stringToId } from '$active'
@@ -21,9 +23,18 @@ const userProvider = new UserProvider()
 const userRelationshipProvider = new UserRelationProvider()
 
 export const router = _router({
+  exists: p
+    .input(
+      object({
+        handle: zodHandle,
+      }),
+    )
+    .query(async ({ input: { handle } }) => {
+      return userProvider.exists({ handle })
+    }),
   userpage: p
     .input(
-      z.object({
+      object({
         handle: zodHandle,
       }),
     )
@@ -38,7 +49,7 @@ export const router = _router({
     }),
   full: p
     .input(
-      z.object({
+      object({
         handle: zodHandle,
       }),
     )
@@ -53,13 +64,13 @@ export const router = _router({
     }),
   best: p
     .input(
-      z.object({
+      object({
         handle: zodHandle,
         mode: zodMode,
         ruleset: zodRuleset,
         rankingSystem: zodLeaderboardRankingSystem,
-        page: z.number().gte(0).lt(10),
-        includes: z.array(zodRankingStatus).default(['ranked', 'loved', 'approved']),
+        page: number().gte(0).lt(10),
+        includes: array(zodRankingStatus).default(['ranked', 'loved', 'approved']),
       }),
     )
     .query(async ({ input }) => {
@@ -92,13 +103,13 @@ export const router = _router({
     }),
   tops: p
     .input(
-      z.object({
+      object({
         handle: zodHandle,
         mode: zodMode,
         ruleset: zodRuleset,
         rankingSystem: zodLeaderboardRankingSystem,
-        page: z.number().gte(0).lt(10),
-        includes: z.array(zodRankingStatus).default(['ranked', 'loved', 'approved']),
+        page: number().gte(0).lt(10),
+        includes: array(zodRankingStatus).default(['ranked', 'loved', 'approved']),
       }),
     )
     .query(async ({ input }) => {
@@ -131,7 +142,7 @@ export const router = _router({
     }),
   essential: p
     .input(
-      z.object({
+      object({
         handle: zodHandle,
       }),
     )
@@ -142,7 +153,7 @@ export const router = _router({
     }),
   countRelations: p
     .input(
-      z.object({
+      object({
         handle: zodHandle,
         type: zodRelationType,
       }),
@@ -154,9 +165,21 @@ export const router = _router({
       return count
     }),
   status: p
-    .input(z.object({
-      id: z.string(),
+    .input(object({
+      id: string(),
     })).query(async ({ input: { id } }) => {
       return await userProvider.status({ id: stringToId(id) })
+    }),
+  register: sessionProcedure
+    .input(object({
+      name: string(),
+      safeName: string(),
+      email: string().email(),
+      passwordMd5: string(),
+    })).mutation(async ({ input, ctx }) => {
+      const user = await userProvider.register(input)
+      const sessionId = ctx.session.id
+      updateSession(sessionId, { userId: user.id })
+      return user
     }),
 })

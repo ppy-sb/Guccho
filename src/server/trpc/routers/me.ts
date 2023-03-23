@@ -1,7 +1,7 @@
 import { TRPCError } from '@trpc/server'
-import bcrypt from 'bcryptjs'
 import z from 'zod'
 
+import bcrypt from 'bcryptjs'
 import {
   atLeastOneUserNotExists,
   oldPasswordMismatch,
@@ -14,6 +14,7 @@ import { userProcedure as pUser } from '~/server/trpc/middleware/user'
 import { calculateMutualRelationships } from '~/server/transforms'
 import { UserProvider, UserRelationProvider } from '$active/server'
 import { idToString } from '$active'
+const { compare } = bcrypt
 
 const userProvider = new UserProvider()
 const relationProvider = new UserRelationProvider()
@@ -97,7 +98,7 @@ export const router = _router({
         includes: { secrets: true },
       })
       if (
-        !(await bcrypt.compare(
+        !(await compare(
           input.oldPassword,
           userWithPassword.secrets.password,
         ))

@@ -16,13 +16,13 @@ export default {
 
 <template>
   <div class="app-header">
-    <div class="text-center">
-      <h1 v-if="title" class="text-3xl font-bold text-center sm:text-left">
+    <div>
+      <h1 v-if="title" class="text-3xl font-bold">
         {{ title }}
       </h1>
       <h2
         v-if="subtitle"
-        class="text-lg font-semibold text-center whitespace-pre opacity-40 sm:text-left"
+        class="text-lg font-semibold whitespace-pre opacity-40"
       >
         {{ subtitle }}
       </h2>
@@ -38,8 +38,8 @@ export default {
 
 <style lang="postcss" scoped>
 .app-header {
-  @apply sm:flex mt-2 items-center justify-between text-center text-kimberly-900 dark:text-kimberly-100;
-  /* @apply sm:flex sm:w-full mt-2 items-center justify-between text-center text-kimberly-900 dark:text-kimberly-100 ; */
+  @apply sm:flex mt-2 items-center justify-between text-kimberly-900 dark:text-kimberly-100 pl-2;
+  /* @apply sm:flex sm:w-full mt-2 items-center justify-between  text-kimberly-900 dark:text-kimberly-100 ; */
   transition: 0.3s ease;
   @apply pb-2;
 

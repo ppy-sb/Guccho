@@ -1,3 +1,4 @@
+export { ArticleProvider } from './article'
 export { LeaderboardProvider } from './leaderboard'
 export { MapProvider } from './map'
 export { ScoreProvider } from './score'

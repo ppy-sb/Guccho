@@ -251,3 +251,6 @@ fix-permission.sh
 dump.rdb
 
 .dump
+
+articles/*
+!articles/registered

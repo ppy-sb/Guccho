@@ -45,7 +45,6 @@ useHead({
             <t-nuxt-link-button
               :to="{ name: 'auth-register' }"
               variant="secondary"
-              class="btn-disabled"
             >
               Register
             </t-nuxt-link-button>

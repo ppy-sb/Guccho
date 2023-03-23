@@ -9,6 +9,7 @@ import { router as search } from './search'
 import { router as session } from './session'
 import { router as status } from './status'
 import { router as user } from './user'
+import { router as article } from './article'
 
 export const appRouter = router({
   session,
@@ -20,6 +21,7 @@ export const appRouter = router({
   search,
   score,
   status,
+  article,
 })
 
 // export type definition of API

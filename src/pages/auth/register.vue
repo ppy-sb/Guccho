@@ -1,20 +1,86 @@
-<script setup>
-// import { userRegister } from '@/mock/index'
-const credential = ref({
-  user: '',
+<script setup lang="ts">
+import type { TRPCClientError } from '@trpc/client'
+import md5 from 'md5'
+import type { AppRouter } from '~/server/trpc/routers'
+import type { Awaitable } from '~/types/common'
+const loginButton = ref('Have account?')
+
+const shape = {
+  name: '',
+  safeName: '',
+  email: '',
   password: '',
-})
-const error = ref('')
+}
+const reg = reactive({ ...shape })
+const error = reactive({ ...shape })
+const serverError = ref('')
 const fetching = ref(false)
 const config = useAppConfig()
+const { $client } = useNuxtApp()
+
+const unique = (key: keyof typeof shape) => async () => {
+  if (!reg[key]) {
+    error[key] = `${key} must not be empty`
+    return false
+  }
+  const exists = await $client.user.exists.query({ handle: reg[key] })
+  if (!exists) {
+    return true
+  }
+  error[key] = `a user with same ${key} exists.`
+  return false
+}
+const pwPatternStr = '(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}'
+const pwPattern = new RegExp(pwPatternStr)
+const validate: {
+  [Key in keyof typeof shape]: () => Awaitable<boolean>
+} = {
+  name: unique('name'),
+  safeName: unique('safeName'),
+  email: unique('email'),
+  password() {
+    return Boolean(reg.password.match(pwPattern))
+  },
+}
 
 useHead({
-  titleTemplate: `Login - ${config.title}`,
+  titleTemplate: `Register - ${config.title}`,
 })
-
-const userRegisterAction = () => {
+function isValidationError(
+  cause: any,
+): cause is TRPCClientError<AppRouter> {
+  return cause.name === 'TRPCClientError'
+}
+const userRegisterAction = async () => {
   fetching.value = true
-  // const data = await userRegister()
+  const result = (await Promise.all(Object.values(validate).map(test => test()))).every(Boolean)
+  if (!result) {
+    fetching.value = false
+    return
+  }
+
+  const result$ = await $client.user.register.mutate({
+    name: reg.name,
+    safeName: reg.safeName,
+    email: reg.email,
+    passwordMd5: md5(reg.password),
+  })
+    .catch((ex: unknown) => {
+      console.log(ex.cause.data)
+      // for (const key in ex) {
+      //   console.log(ex[key])
+      // }
+      // if (isValidationError(ex)) {
+      //   if (ex?.data?.zodError) {
+      //     const e = ex.data.zodError
+      //     for (const f in e.fieldErrors) {
+      //       error[f] = e.fieldErrors[f]
+      //     }
+      //   }
+      // }
+      serverError.value = (ex as Error).message
+    })
+  fetching.value = false
 }
 </script>
 
@@ -39,46 +105,94 @@ const userRegisterAction = () => {
         autocomplete="off"
         @submit.prevent="userRegisterAction"
       >
-        <div class="shadow-sm space-y-2">
+        <div class="text-error text-sm pl-4">
+          {{ serverError }}
+        </div>
+        <div class="space-y-2">
           <div>
-            <label for="user" class="sr-only">User / Email</label>
-            <h1 v-if="error" class="auth-error-text">
-              {{ error }}
-            </h1>
+            <label for="name" class="sr-only">name</label>
             <input
-              id="user"
-              v-model="credential.user"
-              name="user"
-              type="user"
+              id="nickname"
+              v-model="reg.name"
+              name="nickname"
+              type="name"
               autocomplete="off"
               required
-              class="w-full input input-ghost"
-              :class="{ 'input-error': error }"
-              placeholder="User"
+              class="w-full input input-ghost shadow-sm"
+              :class="{ 'input-error': error.name }"
+              placeholder="Nickname (you can change it later)"
+              @input="error.name = ''"
             >
+            <div class="text-error text-sm pl-4">
+              {{ error.name }}
+            </div>
+          </div>
+          <div>
+            <label for="name" class="sr-only">username</label>
+            <input
+              id="name"
+              v-model="reg.safeName"
+              name="name"
+              type="name"
+              autocomplete="off"
+              required
+              class="w-full input input-ghost shadow-sm"
+              :class="{ 'input-error': error.safeName }"
+              placeholder="Username (semi-permanent)"
+              @input="error.safeName = ''"
+            >
+            <div class="text-error text-sm pl-4">
+              {{ error.safeName }}
+            </div>
+          </div>
+          <div>
+            <label for="name" class="sr-only">email</label>
+            <input
+              id="email"
+              v-model="reg.email"
+              name="email"
+              type="email"
+              autocomplete="off"
+              required
+              class="w-full input input-ghost shadow-sm"
+              :class="{ 'input-error': error.email }"
+              placeholder="Email"
+              @input="error.email = ''"
+            >
+            <div class="text-error text-sm pl-4">
+              {{ error.email }}
+            </div>
           </div>
           <div>
             <label for="password" class="sr-only">Password</label>
-            <h1 v-if="error" class="auth-error-text">
-              {{ error }}
-            </h1>
             <input
               id="password"
-              v-model="credential.password"
+              v-model="reg.password"
               name="password"
               type="password"
               autocomplete="off"
               required
-              class="w-full input input-ghost"
-              :class="{ 'input-error': error }"
+              :pattern="pwPatternStr"
+              title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters"
+              class="w-full input input-ghost shadow-sm"
+              :class="{ 'input-error': error.password }"
               placeholder="Password"
+              @input="error.password = ''"
             >
+            <div class="text-error text-sm pl-4">
+              {{ error.password }}
+            </div>
           </div>
         </div>
 
         <div class="grid grid-cols-2 gap-2">
-          <t-nuxt-link-button :to="{ name: 'auth-login' }" variant="secondary">
-            Log in
+          <t-nuxt-link-button
+            :to="{ name: 'auth-login' }"
+            variant="secondary"
+            @mouseenter="loginButton = 'Login'"
+            @mouseleave="loginButton = 'Have account?'"
+          >
+            {{ loginButton }}
           </t-nuxt-link-button>
           <button type="submit" class="btn btn-primary">
             Sign Up

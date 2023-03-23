@@ -1,12 +1,14 @@
 import superjson from 'superjson'
-import { createTRPCNuxtClient, httpBatchLink } from 'trpc-nuxt/client'
+import { createTRPCNuxtClient, httpBatchLink, httpLink } from 'trpc-nuxt/client'
 import type { AppRouter } from '@/server/trpc/routers'
 
 export default defineNuxtPlugin(() => {
-  // const session = useCookie('session')
   const client = createTRPCNuxtClient<AppRouter>({
     transformer: superjson,
     links: [
+      httpLink({
+        url: '/api/trpc',
+      }),
       httpBatchLink({
         /**
          * If you want to use SSR, you need to use the server's full URL

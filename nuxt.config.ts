@@ -66,6 +66,7 @@ export default defineNuxtConfig({
   alias: {
     $active: fileURLToPath(new URL(`./src/adapters/${activeAdapter}`, import.meta.url)),
     $def: fileURLToPath(new URL('./src/adapters/base', import.meta.url)),
+    $articles: fileURLToPath(new URL('./articles', import.meta.url)),
   },
 
   // auth: {

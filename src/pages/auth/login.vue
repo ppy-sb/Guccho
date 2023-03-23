@@ -113,8 +113,7 @@ const userLogin = async () => {
           <t-nuxt-link-button
             to="/auth/register"
             variant="accent"
-            class="btn-disabled"
-            @mouseenter="registerButton = 'sign up'"
+            @mouseenter="registerButton = 'Sign up'"
             @mouseleave="registerButton = 'Do not have an account?'"
           >
             {{ registerButton }}

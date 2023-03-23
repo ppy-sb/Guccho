@@ -3,6 +3,7 @@
 /* eslint-disable sort-imports */
 import type {
   // data providers
+  ArticleProvider,
   LeaderboardProvider,
   MapProvider,
   ScoreProvider,
@@ -31,6 +32,7 @@ import type {
 } from '..'
 
 import type {
+  ArticleProvider as BaseArticleProvider,
   LeaderboardProvider as BaseLeaderboardProvider,
   MapProvider as BaseMapProvider,
   ScoreProvider as BaseScoreProvider,
@@ -52,6 +54,7 @@ import type {
 } from '$def'
 
 interface ShouldMatch {
+  ArticleProvider: BaseArticleProvider
   LeaderboardProvider: BaseLeaderboardProvider<any>
   MapProvider: BaseMapProvider<any>
   ScoreProvider: BaseScoreProvider<any, any>
@@ -85,6 +88,7 @@ interface ActiveNameSpace extends ShouldMatch {
   modes: typeof modes
   rulesets: typeof rulesets
 
+  ArticleProvider: InstanceType<typeof ArticleProvider>
   LeaderboardProvider: InstanceType<typeof LeaderboardProvider>
   MapProvider: InstanceType<typeof MapProvider>
   ScoreProvider: InstanceType<typeof ScoreProvider>

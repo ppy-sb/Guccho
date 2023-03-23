@@ -13,7 +13,7 @@ export const sessionProcedure = publicProcedure
       return await next({
         ctx: Object.assign(ctx, {
           session: {
-            id: ctx.session.id,
+            id: sessionId,
           },
         }),
       })

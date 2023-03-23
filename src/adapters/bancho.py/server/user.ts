@@ -1,9 +1,8 @@
 import { mkdirSync } from 'fs'
 import { unlink, writeFile } from 'fs/promises'
 import { isAbsolute, join, resolve, sep } from 'path'
-import { generateHTML } from '@tiptap/html'
 import { TRPCError } from '@trpc/server'
-import bcrypt from 'bcryptjs'
+
 import glob from 'glob-promise'
 import imageType from 'image-type'
 import type { Prisma, PrismaClient } from '.prisma/bancho.py'
@@ -24,10 +23,11 @@ import {
 } from '../transforms'
 import type { Id } from '..'
 import { getLiveUserStatus } from '../api-client'
+import { encrypt } from '../crypto'
 import { prismaClient } from './prisma'
 import { UserRelationProvider } from './user-relations'
 import { userNotFound } from '~/server/trpc/messages'
-import useEditorExtensions from '~/composables/useEditorExtensions'
+
 import { RankingStatusEnum } from '~/types/beatmap'
 import { TSFilter } from '~/utils'
 
@@ -64,6 +64,8 @@ function mkDirByPathSync(targetDir: string, { isRelativeToScript = false } = {})
     return curDir
   }, initDir)
 }
+
+const bpyNumModes = Object.values(BanchoPyMode).filter(v => !isNaN(Number(v))) as BanchoPyMode[]
 
 export class UserProvider implements Base<Id> {
   db: PrismaClient
@@ -535,9 +537,8 @@ WHERE s2.userid = ${id}
       profile: JSONContent
     },
   ) {
-    const renderExtensions = useEditorExtensions()
+    // article render
     try {
-      const html = generateHTML(input.profile, renderExtensions)
       const result = await this.db.user.update({
         where: {
           id: user.id,
@@ -560,8 +561,7 @@ WHERE s2.userid = ${id}
   }
 
   async changePassword(user: UserEssential<Id>, newPasswordMD5: string) {
-    const salt = await bcrypt.genSalt(11)
-    const pwBcrypt = await bcrypt.hash(newPasswordMD5, salt)
+    const pwBcrypt = await encrypt(newPasswordMD5)
     const result = await this.db.user.update({
       where: {
         id: user.id,
@@ -660,5 +660,30 @@ WHERE s2.userid = ${id}
 
   status(opt: { id: Id }) {
     return getLiveUserStatus(opt)
+  }
+
+  async register(opt: { name: string; safeName: string; email: string; passwordMd5: string }) {
+    const { name, safeName, email, passwordMd5 } = opt
+
+    const user = await this.db.$transaction(async (tx) => {
+      const user = await tx.user.create({
+        data: {
+          name,
+          safeName,
+          email,
+          pwBcrypt: await encrypt(passwordMd5),
+        },
+      })
+
+      await this.db.stat.createMany({
+        data: bpyNumModes.map(mode => ({
+          id: user.id,
+          mode,
+        })),
+      })
+      return user
+    })
+
+    return toUserEssential({ user, config: this.config })
   }
 }

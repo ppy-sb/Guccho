@@ -23,7 +23,8 @@ const emit = defineEmits(['update:modelValue'])
 const editorConf = reactive({
   indent: props.indent,
 })
-const { editor, subscribe } = useEditor(editorConf)
+const context = useEditor(editorConf)
+const { editor, subscribe } = context
 
 onBeforeMount(async () => {
   const { load: lazy } = useEditorLazyLoadHighlight()
@@ -35,6 +36,9 @@ onBeforeMount(async () => {
   subscribe((content: Record<string, unknown>) =>
     emit('update:modelValue', content),
   )
+})
+defineExpose({
+  context,
 })
 </script>
 

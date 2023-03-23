@@ -14,8 +14,8 @@ import { router as _router } from '../trpc'
 import { getSession } from '~/server/session'
 import { UserProvider } from '$active/server'
 import { idToString } from '$active'
-
 const { compare } = bcrypt
+
 const userProvider = new UserProvider()
 export const router = _router({
   login: pSession

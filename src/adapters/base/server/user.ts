@@ -160,4 +160,6 @@ export interface UserProvider<Id> {
       }
     }
   }>
+
+  register(opt: { name: string; safeName: string; email: string; passwordMd5: string }): Awaitable<UserEssential<Id>>
 }

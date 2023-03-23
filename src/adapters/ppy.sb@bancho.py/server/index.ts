@@ -1,4 +1,5 @@
 export {
+  ArticleProvider,
   LeaderboardProvider,
   UserRelationProvider,
   ScoreProvider,

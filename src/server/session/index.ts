@@ -2,6 +2,7 @@ import { v4 } from 'uuid'
 
 import type { Id } from '$active'
 import type { Awaitable } from '~/types/common'
+type inferMapType<T> = T extends Map<infer K, infer U> ? [K, U] : never
 
 export const session = new Map<string, { userId?: Id; lastActivity: number }>()
 export const config = {
@@ -36,6 +37,20 @@ export const refresh = async (sessionId: string) => {
     return
   }
   _session.lastActivity = Date.now()
+  return sessionId
+}
+
+export const updateSession = async (sessionId: string, data: Partial<inferMapType<typeof session>[1]>) => {
+  const _session = session.get(sessionId)
+  if (_session == null) {
+    return undefined
+  }
+  const newSession = {
+    ..._session,
+    ...data,
+  }
+  newSession.lastActivity = Date.now()
+  session.set(sessionId, newSession)
   return sessionId
 }
 

@@ -338,22 +338,28 @@ onBeforeMount(() => {
         </t-modal>
       </t-modal-wrapper>
     </t-modal-root>
-    <header-default class="!pb-2 !pt-4">
-      <header-simple-title-with-sub title="preferences" class="text-left" />
-      <button
-        class="self-end btn btn-sm"
-        :class="[
-          updateResult ? 'btn-success' : 'btn-accent',
-          posting ? 'loading' : '',
-        ]"
-        type="button"
-        @click="updateUserSettings"
-      >
-        {{ updateResult ? "done!" : "update" }}
-      </button>
-    </header-default>
+    <!-- used as padding placeholders -->
+    <header-simple-title-with-sub />
+    <div class="container mx-auto">
+      <div class="flex justify-between p-2 items-baseline">
+        <div class="text-3xl font-bold">
+          preferences
+        </div>
+        <button
+          class="self-end btn btn-sm"
+          :class="[
+            updateResult ? 'btn-success' : 'btn-accent',
+            posting ? 'loading' : '',
+          ]"
+          type="button"
+          @click="updateUserSettings"
+        >
+          {{ updateResult ? "done!" : "update" }}
+        </button>
+      </div>
+    </div>
 
-    <div class="flex flex-col flex-wrap justify-between md:flex-row md:px-4">
+    <div class="flex flex-col flex-wrap justify-between md:flex-row">
       <div class="grow xl:max-w-2xl w-full lg:[max-width:50%]">
         <div
           class="flex items-end justify-center p-3 overflow-hidden shadow-md gap-4 md:justify-start bg-kimberly-200/30 dark:bg-kimberly-700/40 sm:rounded-3xl lg:mr-4"
@@ -402,6 +408,7 @@ onBeforeMount(() => {
               type="text"
               placeholder="Username"
               class="w-full input input-sm"
+              :disabled="user.roles.includes('supporter')"
               :class="{
                 'input-bordered input-primary': unchanged.name !== user.name,
                 'input-ghost': unchanged.name === user.name,
@@ -440,9 +447,9 @@ onBeforeMount(() => {
                   unchanged.safeName === user.safeName,
               }"
             >
-            <button class="btn btn-sm btn-secondary" type="button" disabled>
+            <!-- <button class="btn btn-sm btn-secondary" type="button" disabled>
               request change
-            </button>
+            </button> -->
           </div>
         </div>
         <div class="form-control">
