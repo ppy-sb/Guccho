@@ -1,5 +1,5 @@
 import fs from 'fs/promises'
-import { join, resolve } from 'path'
+import { isAbsolute, join, relative, resolve } from 'path'
 import type { JSONContent } from '@tiptap/core'
 import { generateHTML } from '@tiptap/html'
 import useEditorExtensions from '~/composables/useEditorExtensions'
@@ -10,16 +10,24 @@ interface Content {
 export abstract class ArticleProvider {
   articles = resolve('articles')
   404: Content
+  403: Content
   constructor() {
     this.initFallbacks()
   }
 
-  async initFallbacks() {
-    const fb = await this.getLocal('fallbacks/404')
-    if (!fb) {
-      return
-    }
-    this[404] = fb
+  initFallbacks() {
+    ([404, 403] as const).forEach(async (code) => {
+      const fb = await this.getLocal(`fallbacks/${code}`)
+      if (!fb) {
+        return
+      }
+      this[code] = fb
+    })
+  }
+
+  includes(path: string) {
+    const _r = relative(this.articles, path)
+    return _r && !_r.startsWith('..') && !isAbsolute(_r)
   }
 
   abstract get(slug: string, fallback: boolean): Promise<Content | undefined>
@@ -27,6 +35,9 @@ export abstract class ArticleProvider {
 
   async getLocal(slug: string, fallback = false): Promise<Content | undefined> {
     let file = join(this.articles, slug)
+    if (!this.includes(file)) {
+      return this[403]
+    }
     try {
       const check = fs.access(file, fs.constants.R_OK)
       if (fallback) {
