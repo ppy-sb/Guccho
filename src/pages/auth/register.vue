@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import type { TRPCClientError } from '@trpc/client'
 import md5 from 'md5'
-import type { AppRouter } from '~/server/trpc/routers'
 import type { Awaitable } from '~/types/common'
+import { useSession } from '~/store/session'
 const loginButton = ref('Have account?')
-
 const shape = {
   name: '',
   safeName: '',
@@ -13,7 +11,7 @@ const shape = {
 }
 const reg = reactive({ ...shape })
 const error = reactive({ ...shape })
-const serverError = ref('')
+// const serverError = ref('')
 const fetching = ref(false)
 const config = useAppConfig()
 const { $client } = useNuxtApp()
@@ -32,11 +30,13 @@ const unique = (key: keyof typeof shape) => async () => {
 }
 const pwPatternStr = '(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}'
 const pwPattern = new RegExp(pwPatternStr)
+const safeNamePatternStr = '[a-z0-9][a-z0-9_]+[a-z0-9]'
+const safeNamePattern = new RegExp(safeNamePatternStr)
 const validate: {
   [Key in keyof typeof shape]: () => Awaitable<boolean>
 } = {
   name: unique('name'),
-  safeName: unique('safeName'),
+  safeName: async () => Boolean(reg.safeName.match(safeNamePattern)) && await unique('safeName')(),
   email: unique('email'),
   password() {
     return Boolean(reg.password.match(pwPattern))
@@ -46,11 +46,11 @@ const validate: {
 useHead({
   titleTemplate: `Register - ${config.title}`,
 })
-function isValidationError(
-  cause: any,
-): cause is TRPCClientError<AppRouter> {
-  return cause.name === 'TRPCClientError'
-}
+// function isValidationError(
+//   cause: any,
+// ): cause is TRPCClientError<AppRouter> {
+//   return cause.name === 'TRPCClientError'
+// }
 const userRegisterAction = async () => {
   fetching.value = true
   const result = (await Promise.all(Object.values(validate).map(test => test()))).every(Boolean)
@@ -66,21 +66,30 @@ const userRegisterAction = async () => {
     passwordMd5: md5(reg.password),
   })
     .catch((ex: unknown) => {
-      console.log(ex.cause.data)
-      // for (const key in ex) {
-      //   console.log(ex[key])
-      // }
-      // if (isValidationError(ex)) {
-      //   if (ex?.data?.zodError) {
-      //     const e = ex.data.zodError
-      //     for (const f in e.fieldErrors) {
-      //       error[f] = e.fieldErrors[f]
-      //     }
-      //   }
-      // }
-      serverError.value = (ex as Error).message
+      if ((ex as any).cause.data.error.json.name === 'ZodError') {
+        const e = (ex as any).cause.data.error.json.issues as { validation: 'email' | 'passwordMd5'; message: string }[]
+        for (const f of e) {
+          switch (f.validation) {
+            case 'email': {
+              error.email = f.message
+              break
+            }
+            case 'passwordMd5': {
+              error.password = f.message
+              break
+            }
+          }
+        }
+      }
+
+      // serverError.value = (ex as Error).message
     })
   fetching.value = false
+  if (result$) {
+    const session = useSession()
+    await session.retrieve()
+    navigateTo('/article/registered')
+  }
 }
 </script>
 
@@ -105,9 +114,9 @@ const userRegisterAction = async () => {
         autocomplete="off"
         @submit.prevent="userRegisterAction"
       >
-        <div class="text-error text-sm pl-4">
+        <!-- <div class="text-error text-sm pl-4">
           {{ serverError }}
-        </div>
+        </div> -->
         <div class="space-y-2">
           <div>
             <label for="name" class="sr-only">name</label>
@@ -136,6 +145,8 @@ const userRegisterAction = async () => {
               type="name"
               autocomplete="off"
               required
+              :pattern="safeNamePatternStr"
+              title="Must not includes uppercase letter, nor starts or ends with _, contains only number, a-z and _"
               class="w-full input input-ghost shadow-sm"
               :class="{ 'input-error': error.safeName }"
               placeholder="Username (semi-permanent)"

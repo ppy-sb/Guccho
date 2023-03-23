@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import type Editor from '~/components/editor/index.vue'
-
+definePageMeta({
+  middleware: ['auth', 'admin'],
+})
 const slug = ref('')
 const { $client } = await useNuxtApp()
-const { data: content, refresh } = await useAsyncData(() => $client.article.get.query(slug.value))
+const { data: content, refresh } = await useAsyncData(async () => slug.value ? $client.article.get.query(slug.value) : undefined)
 const editor = ref<InstanceType<typeof Editor> | null>(null)
 const editing = ref({ ...content.value?.json })
 const save = async () => {

@@ -9,23 +9,22 @@ interface Content {
 }
 export abstract class ArticleProvider {
   articles = resolve('articles')
-  404: Content
-  403: Content
+  fallbacks = new Map<string, Content>()
   constructor() {
     this.initFallbacks()
   }
 
   initFallbacks() {
-    ([404, 403] as const).forEach(async (code) => {
+    (['404', '403'] as const).forEach(async (code) => {
       const fb = await this.getLocal(`fallbacks/${code}`)
       if (!fb) {
         return
       }
-      this[code] = fb
+      this.fallbacks.set(code, fb)
     })
   }
 
-  includes(path: string) {
+  inside(path: string) {
     const _r = relative(this.articles, path)
     return _r && !_r.startsWith('..') && !isAbsolute(_r)
   }
@@ -35,13 +34,15 @@ export abstract class ArticleProvider {
 
   async getLocal(slug: string, fallback = false): Promise<Content | undefined> {
     let file = join(this.articles, slug)
-    if (!this.includes(file)) {
-      return this[403]
+    if (!this.inside(file)) {
+      return this.fallbacks.get('403')
     }
     try {
-      const check = fs.access(file, fs.constants.R_OK)
+      let check = fs.access(file, fs.constants.R_OK)
       if (fallback) {
-        check.catch(_ => file = join(this.articles, 'fallbacks', slug))
+        check = check.catch((_) => {
+          file = join(this.articles, './fallbacks', slug)
+        }).then(() => fs.access(file, fs.constants.R_OK))
       }
       await check
       const content = JSON.parse(await fs.readFile(file, 'utf-8'))
