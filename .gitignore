@@ -253,4 +253,4 @@ dump.rdb
 .dump
 
 articles/*
-!articles/registered
+!articles/fallbacks

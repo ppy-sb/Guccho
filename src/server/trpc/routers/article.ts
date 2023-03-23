@@ -4,8 +4,8 @@ import { ArticleProvider } from '$active/server'
 
 const sp = new ArticleProvider()
 export const router = _router({
-  get: p.input(string()).query(({ input }) => sp.slug(input)),
-  getRendered: p.input(string()).query(({ input }) => sp.slug(input).then(res => res?.html)),
+  get: p.input(string()).query(({ input }) => sp.get(input)),
+  getRendered: p.input(string()).query(({ input }) => sp.get(input, true).then(res => res?.html || sp[404].html)),
   save: p.input(object({
     slug: string(),
     content: any(),

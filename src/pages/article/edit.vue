@@ -1,8 +1,10 @@
 <script setup lang="ts">
+import type Editor from '~/components/editor/index.vue'
+
 const slug = ref('')
 const { $client } = await useNuxtApp()
 const { data: content, refresh } = await useAsyncData(() => $client.article.get.query(slug.value))
-const editor = ref(null)
+const editor = ref<InstanceType<typeof Editor> | null>(null)
 const editing = ref({ ...content.value?.json })
 const save = async () => {
   await $client.article.save.mutate({
@@ -12,8 +14,8 @@ const save = async () => {
 }
 const update = async () => {
   await refresh()
-  editing.value = content.value?.json
-  editor.value.context.editor.value.commands.setContent(editing.value)
+  editing.value = content.value?.json || {}
+  editor.value?.context.editor.value?.commands.setContent(editing.value)
 }
 </script>
 

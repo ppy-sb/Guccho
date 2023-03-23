@@ -8,17 +8,31 @@ interface Content {
   html: string
 }
 export abstract class ArticleProvider {
-  async slug(slug: string): Promise<Content | undefined> {
-    return await this.getLocal(slug) || await this.get(slug)
+  articles = resolve('articles')
+  404: Content
+  constructor() {
+    this.initFallbacks()
   }
 
-  abstract get(slug: string): Promise<Content | undefined>
+  async initFallbacks() {
+    const fb = await this.getLocal('fallbacks/404')
+    if (!fb) {
+      return
+    }
+    this[404] = fb
+  }
+
+  abstract get(slug: string, fallback: boolean): Promise<Content | undefined>
   abstract save(slug: string, jsonContent: JSONContent): Promise<void>
 
-  async getLocal(slug: string): Promise<Content | undefined> {
-    const file = resolve(join('articles', slug))
+  async getLocal(slug: string, fallback = false): Promise<Content | undefined> {
+    let file = join(this.articles, slug)
     try {
-      await fs.access(file, fs.constants.R_OK)
+      const check = fs.access(file, fs.constants.R_OK)
+      if (fallback) {
+        check.catch(_ => file = join(this.articles, 'fallbacks', slug))
+      }
+      await check
       const content = JSON.parse(await fs.readFile(file, 'utf-8'))
       return {
         json: content,
@@ -26,15 +40,12 @@ export abstract class ArticleProvider {
       }
     }
     catch (e) {
-      return {
-        json: {},
-        html: '',
-      }
+      return undefined
     }
   }
 
   async saveLocal(slug: string, jsonContent: JSONContent): Promise<void> {
-    const loc = resolve(join('articles', slug))
+    const loc = join(this.articles, slug)
     await fs.writeFile(loc, JSON.stringify(jsonContent), 'utf-8')
   }
 
