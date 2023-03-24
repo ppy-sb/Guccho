@@ -7,7 +7,7 @@ const route = useRoute()
 const id = route.params.id.toString()
 
 const app$ = useNuxtApp()
-const data = await  app$.$client.score.id.query({ id })
+const data = await app$.$client.score.id.query({ id })
 </script>
 
 <template>
