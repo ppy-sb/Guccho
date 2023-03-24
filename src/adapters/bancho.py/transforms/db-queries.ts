@@ -20,7 +20,7 @@ export function createUserQuery(handle: string,
     'name',
     'safeName',
   ]) {
-  let handleNum = parseInt(handle)
+  let handleNum = +handle
   if (isNaN(handleNum)) {
     handleNum = -1
   }

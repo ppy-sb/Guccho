@@ -21,11 +21,11 @@ const unique = (key: keyof typeof shape) => async () => {
     error[key] = `${key} must not be empty`
     return false
   }
-  const exists = await  app$.$client.user.exists.query({ handle: reg[key] })
+  const exists = await app$.$client.user.exists.query({ handle: reg[key] })
   if (!exists) {
     return true
   }
-  error[key] = `a user with same ${key} exists.`
+  error[key] = `${key} is already taken.`
   return false
 }
 const pwPatternStr = '(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}'
@@ -59,7 +59,7 @@ const userRegisterAction = async () => {
     return
   }
 
-  const result$ = await  app$.$client.user.register.mutate({
+  const result$ = await app$.$client.user.register.mutate({
     name: reg.name,
     safeName: reg.safeName,
     email: reg.email,
