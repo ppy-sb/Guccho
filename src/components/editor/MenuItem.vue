@@ -1,7 +1,9 @@
-<script>
+<script lang="ts">
+// @ts-expect-error string
 import remixiconUrl from 'remixicon/fonts/remixicon.symbol.svg'
+import type { PropType } from 'vue'
 
-export default {
+export default defineComponent({
   props: {
     icon: {
       type: String,
@@ -14,12 +16,12 @@ export default {
     },
 
     action: {
-      type: Function,
+      type: Function as PropType<() => any>,
       required: true,
     },
 
     isActive: {
-      type: Function,
+      type: Function as PropType<() => boolean>,
       default: null,
     },
   },
@@ -29,7 +31,7 @@ export default {
       remixiconUrl,
     }
   },
-}
+})
 </script>
 
 <template>

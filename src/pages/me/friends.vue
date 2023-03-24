@@ -1,6 +1,6 @@
 <script setup>
 import { useSession } from '~/store/session'
-const { $client } = useNuxtApp()
+const app$ = useNuxtApp()
 const session = useSession()
 
 if (!session.$state.loggedIn) {
@@ -11,7 +11,7 @@ if (!session.$state.loggedIn) {
     },
   })
 }
-const relations = await $client.me.relations.query()
+const relations = await  app$.$client.me.relations.query()
 const config = useAppConfig()
 
 useHead({

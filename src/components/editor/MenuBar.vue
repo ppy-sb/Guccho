@@ -5,7 +5,7 @@ import { BubbleMenu } from '@tiptap/vue-3'
 import remixiconUrl from 'remixicon/fonts/remixicon.symbol.svg'
 import type { PropType } from 'vue'
 import MenuItem from './MenuItem.vue'
-export default {
+export default defineComponent({
   components: {
     MenuItem,
     BubbleMenu,
@@ -148,7 +148,7 @@ export default {
         {
           type: 'divider',
         },
-      ],
+      ] as const,
     }
   },
 
@@ -182,7 +182,7 @@ export default {
       this.link = link.href
     },
   },
-}
+})
 </script>
 
 <template>
@@ -222,7 +222,7 @@ export default {
     </BubbleMenu>
     <template v-for="(item, index) in items">
       <div
-        v-if="item.type === 'divider'"
+        v-if="'type' in item && item.type === 'divider'"
         :key="`divider${index}`"
         class="divider"
       />

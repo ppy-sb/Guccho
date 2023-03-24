@@ -26,6 +26,7 @@ import { getLiveUserStatus } from '../api-client'
 import { encrypt } from '../crypto'
 import { prismaClient } from './prisma'
 import { UserRelationProvider } from './user-relations'
+import { ArticleProvider } from './article'
 import { userNotFound } from '~/server/trpc/messages'
 
 import { RankingStatusEnum } from '~/types/beatmap'
@@ -36,6 +37,7 @@ import type { LeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
 
 import type { UserEssential, UserOptional, UserStatistic } from '~/types/user'
 
+const article = new ArticleProvider()
 function mkDirByPathSync(targetDir: string, { isRelativeToScript = false } = {}) {
   const initDir = isAbsolute(targetDir) ? sep : ''
   const baseDir = isRelativeToScript ? __dirname : '.'
@@ -537,7 +539,7 @@ WHERE s2.userid = ${id}
       profile: JSONContent
     },
   ) {
-    // article render
+    const html = article.render(input.profile)
     try {
       const result = await this.db.user.update({
         where: {

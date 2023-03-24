@@ -34,8 +34,8 @@ export const useSession = defineStore('session', {
       return result
     },
     async loginHashed(handle: string, md5HashedPassword: string) {
-      const { $client } = useNuxtApp()
-      const result = await $client.session.login.query({
+      const app$ = useNuxtApp()
+      const result = await  app$.$client.session.login.query({
         handle,
         md5HashedPassword,
       })
@@ -58,8 +58,8 @@ export const useSession = defineStore('session', {
     },
     async retrieve() {
       try {
-        const { $client } = useNuxtApp()
-        const result = await $client.session.retrieve.query()
+        const app$ = useNuxtApp()
+        const result = await  app$.$client.session.retrieve.query()
         if (!result) {
           return
         }

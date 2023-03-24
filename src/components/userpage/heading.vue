@@ -18,7 +18,7 @@ const { addToLibrary } = useFAIconLib()
 addToLibrary(faUserGroup, faHeartCrack, faHeart, faEnvelope)
 
 const hasBeatmap = ['playing', 'modding', 'multiplaying', 'editing', 'watching', 'testing', 'submitting']
-const { $client } = useNuxtApp()
+const app$ = useNuxtApp()
 const session = useSession()
 const changeFriendStateButton = ref(null)
 const [switcher, setSwitcher] = inject(
@@ -31,11 +31,11 @@ const { data, refresh } = await useAsyncData(async () => {
   }
   const relationWithMe
     = (session.loggedIn
-      && $client.me.relation.query({
+      &&  app$.$client.me.relation.query({
         target: user.value.id,
       }))
     || undefined
-  const friendCount = $client.user.countRelations.query({
+  const friendCount =  app$.$client.user.countRelations.query({
     handle: user.value.id,
     type: 'friend',
   })
@@ -45,7 +45,7 @@ const { data, refresh } = await useAsyncData(async () => {
   }
 })
 const { data: live, refresh: reloadLiveData } = await useAsyncData(async () =>
-  user?.value?.id ? await $client.user.status.query({ id: user.value.id }) : null,
+  user?.value?.id ? await  app$.$client.user.status.query({ id: user.value.id }) : null,
 )
 onMounted(() => {
   onBeforeUnmount(() => clearInterval(setInterval(() => reloadLiveData(), 5000)))
@@ -69,10 +69,10 @@ const toggleFriend = async () => {
   }
   const input = { type: 'friend', target: user.value.id } as const
   if (isFriend.value) {
-    await $client.me.removeOneRelation.mutate(input)
+    await  app$.$client.me.removeOneRelation.mutate(input)
   }
   else {
-    await $client.me.addOneRelation.mutate(input)
+    await  app$.$client.me.addOneRelation.mutate(input)
   }
 
   refresh()

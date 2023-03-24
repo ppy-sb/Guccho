@@ -14,14 +14,14 @@ const error = reactive({ ...shape })
 // const serverError = ref('')
 const fetching = ref(false)
 const config = useAppConfig()
-const { $client } = useNuxtApp()
+const app$ = useNuxtApp()
 
 const unique = (key: keyof typeof shape) => async () => {
   if (!reg[key]) {
     error[key] = `${key} must not be empty`
     return false
   }
-  const exists = await $client.user.exists.query({ handle: reg[key] })
+  const exists = await  app$.$client.user.exists.query({ handle: reg[key] })
   if (!exists) {
     return true
   }
@@ -59,7 +59,7 @@ const userRegisterAction = async () => {
     return
   }
 
-  const result$ = await $client.user.register.mutate({
+  const result$ = await  app$.$client.user.register.mutate({
     name: reg.name,
     safeName: reg.safeName,
     email: reg.email,

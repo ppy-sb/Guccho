@@ -11,7 +11,7 @@ definePageMeta({
   middleware: ['auth'],
 })
 
-const { $client } = useNuxtApp()
+const app$ = useNuxtApp()
 const config = useAppConfig()
 const route = useRoute()
 
@@ -24,7 +24,7 @@ definePageMeta({
   middleware: ['auth'],
 })
 
-const { data: user, refresh } = await useAsyncData(() => $client.me.settings.query())
+const { data: user, refresh } = await useAsyncData(() =>  app$.$client.me.settings.query())
 
 if (!user.value) {
   await navigateTo({
@@ -81,7 +81,7 @@ const saveAvatar = async () => {
   uploadingAvatarStat.value = 'uploading'
 
   // const ab = await newAvatar.value.arrayBuffer()
-  const url = await $client.me.changeAvatar.mutate({ avatar: new Uint8Array(croppedAvatar.value) })
+  const url = await  app$.$client.me.changeAvatar.mutate({ avatar: new Uint8Array(croppedAvatar.value) })
 
   uploadingAvatarStat.value = 'succeed'
   newAvatarURL.value = url
@@ -106,11 +106,11 @@ const updateUserSettings = async () => {
   posting.value = true
 
   const [result, profileResult] = await Promise.all([
-    $client.me.changeSettings.mutate(updateData).catch((error) => {
+     app$.$client.me.changeSettings.mutate(updateData).catch((error) => {
       errorMessage.value.push(error.message)
     }),
     profile.value
-      && $client.me.changeUserpage
+      &&  app$.$client.me.changeUserpage
         .mutate({ profile: profile.value })
         .catch((error) => {
           errorMessage.value.push(error.message)
@@ -160,7 +160,7 @@ const updatePassword = async (closeModal: () => void) => {
   }
 
   try {
-    const result = await $client.me.updatePassword.mutate(md5HashedPassword)
+    const result = await  app$.$client.me.updatePassword.mutate(md5HashedPassword)
     unchanged.value = {
       ...unchanged.value,
       ...result,

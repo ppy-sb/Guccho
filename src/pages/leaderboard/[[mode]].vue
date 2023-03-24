@@ -7,7 +7,7 @@ const config = useAppConfig()
 
 const route = useRoute()
 const router = useRouter()
-const { $client } = useNuxtApp()
+const app$ = useNuxtApp()
 
 const { mode: pMode } = route.params
 const { ruleset: pRuleset, ranking: pRankingSystem, page: pPage } = route.query
@@ -59,7 +59,7 @@ const {
   pending,
   refresh,
 } = await useAsyncData(() =>
-  $client.leaderboard.overall.query({
+   app$.$client.leaderboard.overall.query({
     mode: selected.value.mode,
     ruleset: selected.value.ruleset,
     rankingSystem: selected.value.rankingSystem,

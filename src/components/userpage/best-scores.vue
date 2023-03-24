@@ -21,7 +21,7 @@ import type { LeaderboardSwitcherComposableType } from '~/composables/useSwitche
 const { addToLibrary } = useFAIconLib()
 
 addToLibrary(faPiedPiperPp)
-const { $client } = useNuxtApp()
+const app$ = useNuxtApp()
 const [switcher] = inject('switcher') as LeaderboardSwitcherComposableType
 let prevSwitcherState = {
   ...switcher,
@@ -66,7 +66,7 @@ const {
     }
   }
   return {
-    scores: await $client.user.best.query({
+    scores: await  app$.$client.user.best.query({
       handle: user.value.id,
       mode: switcher.mode,
       ruleset: switcher.ruleset,

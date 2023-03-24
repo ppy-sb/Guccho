@@ -27,7 +27,7 @@ type User = RouterOutput['user']['userpage']
 const { addToLibrary } = useFAIconLib()
 
 addToLibrary(faRankingStar)
-const { $client } = useNuxtApp()
+const app$ = useNuxtApp()
 const [switcher] = inject('switcher') as LeaderboardSwitcherComposableType
 let prevSwitcherState = {
   ...switcher,
@@ -73,7 +73,7 @@ const {
     }
   }
   return {
-    ...(await $client.user.tops.query({
+    ...(await  app$.$client.user.tops.query({
       handle: user.value.id,
       mode: switcher.mode,
       ruleset: switcher.ruleset,

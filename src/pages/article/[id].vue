@@ -7,8 +7,8 @@ if (!id) {
 if (Array.isArray(id)) {
   throw new TypeError('bad id')
 }
-const { $client } = await useNuxtApp()
-const content = await $client.article.getRendered.query(id)
+const app$ = useNuxtApp()
+const content = await app$.$client.article.getRendered.query(id)
 </script>
 
 <template>

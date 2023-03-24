@@ -2,7 +2,7 @@
 import { useDebounceFn } from '@vueuse/core'
 import { isBanchoBeatmapset, placeholder } from '~/utils'
 
-const { $client } = useNuxtApp()
+const app$ = useNuxtApp()
 const searchModal = ref<{
   openModal: () => void
 }>()
@@ -20,7 +20,7 @@ const {
   if (!kw.value) {
     return []
   }
-  return await $client.search.searchUser.query({
+  return await app$.$client.search.searchUser.query({
     keyword: kw.value,
     limit: 10,
   })
@@ -34,7 +34,7 @@ const {
   if (!kw.value) {
     return []
   }
-  return await $client.search.searchBeatmap.query({
+  return await app$.$client.search.searchBeatmap.query({
     keyword: kw.value,
     limit: 10,
   })
@@ -48,7 +48,7 @@ const {
   if (!kw.value) {
     return
   }
-  return await $client.search.searchBeatmapset.query({
+  return await app$.$client.search.searchBeatmapset.query({
     keyword: kw.value,
     limit: 10,
   })
