@@ -43,6 +43,7 @@ const shownMenu = reactive({
 const logout = async () => {
   await session.destroy()
   await navigateTo('/')
+  shownMenu.user = false
 }
 </script>
 
