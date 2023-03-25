@@ -28,4 +28,10 @@ export const prismaErrorHandler = (cb: (e: unknown) => Error) => (e: unknown) =>
   return cb(e)
 }
 
-export const prismaClient = new PrismaClient()
+let prismaClientInstance: ImportedPrismaClient
+export const getPrismaClient = () => {
+  if (!prismaClientInstance) {
+    prismaClientInstance = new PrismaClient()
+  }
+  return prismaClientInstance
+}

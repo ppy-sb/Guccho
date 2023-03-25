@@ -5,7 +5,7 @@ import { TRPCError } from '@trpc/server'
 
 import glob from 'glob-promise'
 import imageType from 'image-type'
-import type { Prisma, PrismaClient } from '.prisma/bancho.py'
+import type { Prisma } from '.prisma/bancho.py'
 import type { JSONContent } from '@tiptap/core'
 import { BanchoPyMode } from '../enums'
 import { client as redisClient } from '../redis-client'
@@ -24,7 +24,7 @@ import {
 import type { Id } from '..'
 import { getLiveUserStatus } from '../api-client'
 import { encrypt } from '../crypto'
-import { prismaClient } from './prisma'
+import { getPrismaClient } from './prisma'
 import { UserRelationProvider } from './user-relations'
 import { ArticleProvider } from './article'
 import { userNotFound } from '~/server/trpc/messages'
@@ -70,7 +70,7 @@ function mkDirByPathSync(targetDir: string, { isRelativeToScript = false } = {})
 const bpyNumModes = Object.values(BanchoPyMode).filter(v => !isNaN(Number(v))) as BanchoPyMode[]
 
 export class UserProvider implements Base<Id> {
-  db: PrismaClient
+  db = getPrismaClient()
 
   relationships: UserRelationProvider
   redisClient?: ReturnType<typeof redisClient>
@@ -83,7 +83,7 @@ export class UserProvider implements Base<Id> {
   }
 
   constructor() {
-    this.db = prismaClient
+    this.db = getPrismaClient()
     this.relationships = new UserRelationProvider()
     this.redisClient = redisClient()
 

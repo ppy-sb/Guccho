@@ -6,4 +6,10 @@ const { PrismaClient } = require<{
   PrismaClient: typeof ImportedPrismaClient
 }>('.prisma/ppy.sb')
 
-export const prismaClient = new PrismaClient()
+let prismaClientInstance: ImportedPrismaClient
+export const getPrismaClient = () => {
+  if (!prismaClientInstance) {
+    prismaClientInstance = new PrismaClient()
+  }
+  return prismaClientInstance
+}

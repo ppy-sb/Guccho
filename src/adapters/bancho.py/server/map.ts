@@ -1,4 +1,3 @@
-import type { PrismaClient } from '.prisma/bancho.py'
 import {
   stringToId,
   toBeatmapEssential,
@@ -7,17 +6,13 @@ import {
   toRankingStatus,
 } from '../transforms'
 import type { Id } from '..'
-import { prismaClient } from './prisma'
+import { getPrismaClient } from './prisma'
 
 import { TSFilter } from '~/utils'
 import type { MapProvider as Base } from '~/adapters/base/server'
 import type { BeatmapSource, Beatmapset } from '~/types/beatmap'
 export class MapProvider implements Base<Id> {
-  db: PrismaClient
-
-  constructor() {
-    this.db = prismaClient
-  }
+  db = getPrismaClient()
 
   async getBeatmap(query: { id: Id }) {
     const { id } = query

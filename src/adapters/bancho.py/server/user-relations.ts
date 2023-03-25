@@ -1,7 +1,6 @@
-import type { PrismaClient } from '.prisma/bancho.py'
 import { dedupeUserRelationship, toUserEssential } from '../transforms'
 import type { Id } from '..'
-import { prismaClient } from './prisma'
+import { getPrismaClient } from './prisma'
 
 import { calculateMutualRelationships } from '~/server/transforms'
 import type { UserRelationProvider as Base } from '~/adapters/base/server'
@@ -10,7 +9,7 @@ import type { UserEssential } from '~/types/user'
 
 export class UserRelationProvider
 implements Base<Id> {
-  db: PrismaClient
+  db = getPrismaClient()
 
   config = {
     avatar: {
@@ -18,12 +17,8 @@ implements Base<Id> {
     },
   }
 
-  constructor() {
-    this.db = prismaClient
-  }
-
   async getOne(fromUser: { id: Id }, toUser: { id: Id }) {
-    const relationships = await prismaClient.relationship.findFirst({
+    const relationships = await this.db.relationship.findFirst({
       where: {
         fromUserId: fromUser.id,
         toUserId: toUser.id,
@@ -36,7 +31,7 @@ implements Base<Id> {
   }
 
   async get({ user }: { user: { id: Id } }) {
-    const pRelationResult = prismaClient.relationship.findMany({
+    const pRelationResult = this.db.relationship.findMany({
       where: {
         fromUserId: user.id,
       },
@@ -46,7 +41,7 @@ implements Base<Id> {
         toUserId: true,
       },
     })
-    const pGotRelationResult = prismaClient.relationship.findMany({
+    const pGotRelationResult = this.db.relationship.findMany({
       where: {
         toUserId: user.id,
       },
@@ -100,7 +95,7 @@ implements Base<Id> {
       throw new Error('not-found')
     }
 
-    await prismaClient.relationship.delete({
+    await this.db.relationship.delete({
       where: {
         fromUserId_toUserId: {
           fromUserId: fromUser.id,
@@ -129,7 +124,7 @@ implements Base<Id> {
       throw new Error('has-relationship')
     }
 
-    await prismaClient.relationship.create({
+    await this.db.relationship.create({
       data: {
         fromUserId: fromUser.id,
         toUserId: targetUser.id,
@@ -139,7 +134,7 @@ implements Base<Id> {
   }
 
   async count({ user, type }: { user: UserEssential<Id>; type: Relationship }) {
-    return await prismaClient.relationship.count({
+    return await this.db.relationship.count({
       where: {
         toUserId: user.id,
         type,

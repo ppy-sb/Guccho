@@ -1,8 +1,7 @@
-import type { PrismaClient } from '.prisma/bancho.py'
 import { client as redisClient } from '../redis-client'
 import { toBanchoPyMode, toMods, toRoles, toUserEssential, userEssentials } from '../transforms'
 import type { Id } from '..'
-import { prismaClient } from './prisma'
+import { getPrismaClient } from './prisma'
 
 import { modes as _modes } from '~/types/defs'
 import type {
@@ -23,19 +22,13 @@ const leaderboardFields = {
 } as const
 export class LeaderboardProvider
 implements Base<Id> {
-  db: PrismaClient
-  redisClient?: ReturnType<typeof redisClient>
+  db = getPrismaClient()
+  redisClient = redisClient()
 
   config = {
     avatar: {
       domain: process.env.BANCHO_PY_AVATAR_DOMAIN,
     },
-  }
-
-  constructor() {
-    this.db = prismaClient
-
-    this.redisClient = redisClient()
   }
 
   async getPPv2LiveLeaderboard(
@@ -197,7 +190,7 @@ implements Base<Id> {
     pageSize: number
   }) {
     const start = page * pageSize
-    const result = await prismaClient.stat.findMany({
+    const result = await this.db.stat.findMany({
       where: {
         user: {
           priv: {

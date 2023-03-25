@@ -1,4 +1,4 @@
-import { prismaClient } from './prisma'
+import { getPrismaClient } from './prisma'
 import { ServiceStatusProvider as Base } from '~/adapters/base/server'
 
 export class ServiceStatusProvider extends Base implements Base {
@@ -6,7 +6,7 @@ export class ServiceStatusProvider extends Base implements Base {
   async ready() {
     try {
       if (!this.prismaState) {
-        await prismaClient.$connect()
+        await getPrismaClient().$connect()
       }
       this.prismaState = true
     }
