@@ -14,10 +14,10 @@ import type {
 import type {
 
   // transforms
-  idToString,
-  stringToId,
-  scoreIdToString,
-  stringToScoreId,
+  // idToString,
+  // stringToId,
+  // scoreIdToString,
+  // stringToScoreId,
 
   // guards
   hasLeaderboardRankingSystem,
@@ -77,10 +77,10 @@ interface ShouldMatch {
 // @ts-expect-error namespace type check
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface ActiveNameSpace extends ShouldMatch {
-  idToString: typeof idToString
-  stringToId: typeof stringToId
-  scoreIdToString: typeof scoreIdToString
-  stringToScoreId: typeof stringToScoreId
+  // idToString: typeof idToString
+  // stringToId: typeof stringToId
+  // scoreIdToString: typeof scoreIdToString
+  // stringToScoreId: typeof stringToScoreId
   hasLeaderboardRankingSystem: typeof hasLeaderboardRankingSystem
   hasRankingSystem: typeof hasRankingSystem
   hasRuleset: typeof hasRuleset

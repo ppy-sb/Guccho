@@ -9,7 +9,7 @@ import {
 import { router as _router, publicProcedure } from '../trpc'
 import { mapId } from '../../mapInstance'
 import { LeaderboardProvider } from '$active/server'
-import { hasRuleset, idToString, stringToId } from '$active'
+import { hasRuleset } from '$active'
 
 const provider = new LeaderboardProvider()
 
@@ -55,7 +55,7 @@ export const router = _router({
         })
         return result.map(item => ({
           ...item,
-          user: mapId(item.user, idToString),
+          user: mapId(item.user, provider.idToString),
         }))
       },
     ),
@@ -89,10 +89,10 @@ export const router = _router({
           page,
           pageSize,
           id: beatmapId,
-        }, stringToId))
+        }, provider.stringToId))
         return result.map(item => ({
           ...item,
-          user: mapId(item.user, idToString),
+          user: mapId(item.user, provider.idToString),
         }))
       },
     ),

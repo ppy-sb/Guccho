@@ -1,4 +1,5 @@
 import type { JSONContent } from '@tiptap/core'
+import type { idTransformable } from './extends'
 import type { BeatmapSource, RankingStatus } from '~/types/beatmap'
 import type {
   Awaitable,
@@ -38,7 +39,7 @@ export namespace UserProvider {
     rankingStatus: RankingStatus[]
   }
 }
-export interface UserProvider<Id> {
+export interface UserProvider<Id> extends idTransformable {
   exists({ handle, keys }: UserProvider.OptType<Id>): Awaitable<boolean>
 
   getEssential<

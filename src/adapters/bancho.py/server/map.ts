@@ -1,9 +1,10 @@
 import {
+  idToString,
   stringToId,
+
   toBeatmapEssential,
   toBeatmapWithBeatmapset,
-  toBeatmapset,
-  toRankingStatus,
+  toBeatmapset, toRankingStatus,
 } from '../transforms'
 import type { Id } from '..'
 import { getPrismaClient } from './prisma'
@@ -12,6 +13,8 @@ import { TSFilter } from '~/utils'
 import type { MapProvider as Base } from '~/adapters/base/server'
 import type { BeatmapSource, Beatmapset } from '~/types/beatmap'
 export class MapProvider implements Base<Id> {
+  idToString = idToString
+  stringToId = stringToId
   db = getPrismaClient()
 
   async getBeatmap(query: { id: Id }) {

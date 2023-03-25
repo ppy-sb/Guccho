@@ -1,7 +1,7 @@
+import type { idTransformable, scoreIdTransformable } from './extends'
 import type { Awaitable, Mode, PPRankingSystem, Ruleset } from '~/types/common'
 import type { RulesetScore } from '~/types/score'
 import type { UserEssential } from '~/types/user'
-
 export namespace ScoreProvider {
 
   export interface SearchQueryMany<TId> {
@@ -25,7 +25,7 @@ export namespace ScoreProvider {
 
 }
 
-export interface ScoreProvider<TScoreId, TId> {
+export interface ScoreProvider<TScoreId, TId> extends idTransformable, scoreIdTransformable {
   id(id: TScoreId): Awaitable<
     | (RulesetScore<TScoreId, TId, Mode, Ruleset, PPRankingSystem> & {
       user: UserEssential<TId>
@@ -41,4 +41,5 @@ export interface ScoreProvider<TScoreId, TId> {
       user: UserEssential<TId>
     })[]
   >
+
 }

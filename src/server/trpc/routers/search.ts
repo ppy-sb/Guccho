@@ -1,15 +1,10 @@
 import { z } from 'zod'
 import { router as _router, publicProcedure as p } from '../trpc'
 import { mapId } from '../../mapInstance'
-import { idToString } from '$active'
 import { MapProvider, UserProvider } from '$active/server'
 
 const map = new MapProvider()
 const user = new UserProvider()
-
-const replaceId = <T extends { id: Parameters<typeof idToString>[number] }>(
-  bs: T,
-) => mapId(bs, idToString)
 
 export const router = _router({
   searchUser: p
@@ -25,7 +20,7 @@ export const router = _router({
         limit,
       })
 
-      return users.map(replaceId)
+      return users.map(u => mapId(u, user.idToString))
     }),
   searchBeatmap: p
     .input(
@@ -40,7 +35,7 @@ export const router = _router({
         limit,
       })
 
-      return beatmaps.map(replaceId)
+      return beatmaps.map(b => mapId(b, map.idToString))
     }),
   searchBeatmapset: p
     .input(
@@ -55,6 +50,6 @@ export const router = _router({
         limit,
       })
 
-      return beatmapsets.map(replaceId)
+      return beatmapsets.map(bs => mapId(bs, map.idToString))
     }),
 })

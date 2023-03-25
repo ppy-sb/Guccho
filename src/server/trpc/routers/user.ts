@@ -17,7 +17,6 @@ import { updateSession } from '../../session'
 import { mapId } from '../../mapInstance'
 import { followUserSettings } from '~/server/transforms'
 import { UserProvider, UserRelationProvider } from '$active/server'
-import { idToString, stringToId } from '$active'
 
 import type { NumberRange } from '~/types/common'
 const userProvider = new UserProvider()
@@ -44,7 +43,7 @@ export const router = _router({
         handle,
         excludes: { relationships: true, secrets: true },
       })
-      return mapId(followUserSettings({ user, scope: 'public' }), idToString)
+      return mapId(followUserSettings({ user, scope: 'public' }), userProvider.idToString)
     }),
   full: p
     .input(
@@ -57,7 +56,7 @@ export const router = _router({
         handle,
         excludes: { email: true },
       })
-      return mapId(followUserSettings({ user, scope: 'public' }), idToString)
+      return mapId(followUserSettings({ user, scope: 'public' }), userProvider.idToString)
     }),
   best: p
     .input(
@@ -146,7 +145,7 @@ export const router = _router({
     .query(async ({ input }) => {
       const user = await userProvider.getEssential({ handle: input.handle })
 
-      return mapId(user, idToString)
+      return mapId(user, userProvider.idToString)
     }),
   countRelations: p
     .input(
@@ -165,7 +164,7 @@ export const router = _router({
     .input(object({
       id: string(),
     })).query(async ({ input: { id } }) => {
-      return await userProvider.status({ id: stringToId(id) })
+      return await userProvider.status({ id: userProvider.stringToId(id) })
     }),
   register: sessionProcedure
     .input(object({

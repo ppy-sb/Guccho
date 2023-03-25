@@ -1,3 +1,4 @@
+import type { idTransformable } from './extends'
 import type {
   BeatmapEssential, BeatmapSource, BeatmapWithMeta, Beatmapset, RankingStatus,
 } from '~/types/beatmap'
@@ -9,7 +10,7 @@ export namespace MapProvider {
     id: Id
   }
 }
-export interface MapProvider<Id> {
+export interface MapProvider<Id> extends idTransformable {
   getBeatmapset(query: MapProvider.IdQuery<Id>): Awaitable<
     | (Beatmapset<BeatmapSource, Id, unknown> & {
       beatmaps: BeatmapEssential<Id, unknown>[]
@@ -31,4 +32,5 @@ export interface MapProvider<Id> {
   searchBeatmapset(opt: {
     keyword: string
   }): Awaitable<Beatmapset<BeatmapSource, Id, unknown>[]>
+
 }

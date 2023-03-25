@@ -1,5 +1,5 @@
+import { idToString, stringToId, toBanchoPyMode, toMods, toRoles, toUserEssential, userEssentials } from '../transforms'
 import { client as redisClient } from '../redis-client'
-import { toBanchoPyMode, toMods, toRoles, toUserEssential, userEssentials } from '../transforms'
 import type { Id } from '..'
 import { getPrismaClient } from './prisma'
 
@@ -20,8 +20,9 @@ const leaderboardFields = {
   rankedScore: true,
   plays: true,
 } as const
-export class LeaderboardProvider
-implements Base<Id> {
+export class LeaderboardProvider implements Base<Id> {
+  stringToId = stringToId
+  idToString = idToString
   db = getPrismaClient()
   redisClient = redisClient()
 

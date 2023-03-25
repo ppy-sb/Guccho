@@ -5,8 +5,8 @@ import type {
   HasRuleset,
 } from '~/types/server'
 
-export type Id = string
-export type ScoreId = string
+export type Id = any
+export type ScoreId = any
 
 export const idToString = (id: Id): string => id
 export const stringToId = (id: string): Id => id

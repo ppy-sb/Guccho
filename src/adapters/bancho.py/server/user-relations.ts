@@ -1,4 +1,5 @@
-import { dedupeUserRelationship, toUserEssential } from '../transforms'
+import { dedupeUserRelationship, idToString, stringToId, toUserEssential } from '../transforms'
+// import { idToString, stringToId } from '../transforms'
 import type { Id } from '..'
 import { getPrismaClient } from './prisma'
 
@@ -7,8 +8,9 @@ import type { UserRelationProvider as Base } from '~/adapters/base/server'
 import type { Relationship } from '~/types/common'
 import type { UserEssential } from '~/types/user'
 
-export class UserRelationProvider
-implements Base<Id> {
+export class UserRelationProvider implements Base<Id> {
+  stringToId = stringToId
+  idToString = idToString
   db = getPrismaClient()
 
   config = {

@@ -14,12 +14,13 @@ import {
   createUserQuery,
   fromRankingStatus,
   idToString,
+
   stringToId,
+
   toBanchoPyMode,
   toFullUser,
   toRankingSystemScores,
-  toUserEssential,
-  userEssentials,
+  toUserEssential, userEssentials,
 } from '../transforms'
 import type { Id } from '..'
 import { getLiveUserStatus } from '../api-client'
@@ -70,6 +71,8 @@ function mkDirByPathSync(targetDir: string, { isRelativeToScript = false } = {})
 const bpyNumModes = Object.values(BanchoPyMode).filter(v => !isNaN(Number(v))) as BanchoPyMode[]
 
 export class UserProvider implements Base<Id> {
+  stringToId = stringToId
+  idToString = idToString
   db = getPrismaClient()
 
   relationships: UserRelationProvider

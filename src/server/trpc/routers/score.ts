@@ -1,11 +1,10 @@
 import { string, z } from 'zod'
 import { router as _router, publicProcedure as p } from '../trpc'
 import { mapId } from '../../mapInstance'
-import { idToString, scoreIdToString, stringToScoreId } from '$active'
 import { ScoreProvider } from '$active/server'
 import { beatmapIsVisible } from '~/utils/map'
 
-const sScore = new ScoreProvider()
+const s = new ScoreProvider()
 export const router = _router({
   id: p
     .input(
@@ -14,15 +13,15 @@ export const router = _router({
       }),
     )
     .query(async ({ input }) => {
-      const score = await sScore.id(stringToScoreId(input.id))
+      const score = await s.id(s.stringToScoreId(input.id))
 
       return {
         ...score,
-        id: scoreIdToString(score.id),
+        id: s.scoreIdToString(score.id),
         beatmap: beatmapIsVisible(score.beatmap)
           ? {
-              ...mapId(score.beatmap, idToString),
-              beatmapset: mapId(score.beatmap.beatmapset, idToString),
+              ...mapId(score.beatmap, s.idToString),
+              beatmapset: mapId(score.beatmap.beatmapset, s.idToString),
             }
           : score.beatmap,
       }

@@ -14,7 +14,7 @@ import { router as _router } from '../trpc'
 import { mapId } from '../../mapInstance'
 import { getSession } from '~/server/session'
 import { UserProvider } from '$active/server'
-import { idToString } from '$active'
+
 const { compare } = bcrypt
 
 const userProvider = new UserProvider()
@@ -48,7 +48,7 @@ export const router = _router({
         }
         session.userId = user.id
         return {
-          user: mapId(user, idToString),
+          user: mapId(user, userProvider.idToString),
         }
       }
       catch (err) {
@@ -91,7 +91,7 @@ export const router = _router({
             id: session.userId,
           })
           return {
-            user: mapId(user, idToString),
+            user: mapId(user, userProvider.idToString),
           }
         }
         catch (_) {

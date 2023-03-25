@@ -1,8 +1,9 @@
+import type { idTransformable } from './extends'
 import type { Awaitable, Relationship } from '~/types/common'
 import type { UserEssential } from '~/types/user'
 import type { UserRelationship } from '~/types/user-relationship'
 
-export interface UserRelationProvider<Id> {
+export interface UserRelationProvider<Id> extends idTransformable {
   get(query: { user: { id: Id } }): Awaitable<UserRelationship<Id>[]>
   getOne(
     fromUser: { id: Id },

@@ -1,7 +1,7 @@
 // import { MapProvider } from '../adapters/bancho.py/server'
 
-// type Methods<T extends Record<string | number | symbol, any>> = {
-//   [Key in keyof T as T[Key] extends CallableFunction ? Key : never]: T[Key]
+// type Methods<T extends Record<any, any>> = {
+//   [Key in keyof T as T[Key] extends (...p: any[]) => any ? Key : never]: T[Key]
 // }
 
 type Merge<T1 extends Record<any, any>, T2 extends Record<any, any>> = {
@@ -22,3 +22,10 @@ export const wrapMapId = <T extends (...p: any[]) => any, K extends (id: ReturnT
       const r1 = f1(...p)
       return mapId(r1, f2) as Merge<ReturnType<T>, { id: ReturnType<K> }>
     }
+
+// export const mapInstance = <T extends Record<any, any>, K extends keyof Methods<T>>(instance: T, picks: K[]) => {
+//   return picks.reduce((acc, cur) => {
+//     acc[cur] = instance[cur].bind(instance)
+//     return acc
+//   }, {} as Pick<Methods<T>, K>)
+// }

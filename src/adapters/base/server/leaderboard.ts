@@ -1,3 +1,4 @@
+import type { idTransformable } from './extends'
 import type {
   AvailableRuleset,
   Awaitable,
@@ -18,7 +19,7 @@ export namespace LeaderboardProvider {
     pageSize: number
   }
 }
-export interface LeaderboardProvider<Id> {
+export interface LeaderboardProvider<Id> extends idTransformable {
   getLeaderboard(
     query: Required<LeaderboardProvider.BaseQuery> & {
       rankingSystem: LeaderboardRankingSystem

@@ -1,9 +1,10 @@
 import type { User } from '.prisma/bancho.py'
 import {
   fromBanchoPyMode,
-  toBanchoPyMode,
-  toScore,
-  toUserEssential,
+  idToString,
+  scoreIdToString,
+  stringToId,
+  stringToScoreId, toBanchoPyMode, toScore, toUserEssential,
 } from '../transforms'
 
 import type { Id } from '..'
@@ -14,6 +15,12 @@ import type {
   ScoreProvider as Base,
 } from '~/adapters/base/server'
 export class ScoreProvider implements Base<bigint, Id> {
+  idToString = idToString
+  stringToId = stringToId
+
+  stringToScoreId = stringToScoreId
+  scoreIdToString = scoreIdToString
+
   db = getPrismaClient()
 
   config = {
