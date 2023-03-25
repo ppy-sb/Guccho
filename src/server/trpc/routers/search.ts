@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { router as _router, publicProcedure as p } from '../trpc'
+import { mapId } from '../../mapInstance'
 import { idToString } from '$active'
 import { MapProvider, UserProvider } from '$active/server'
 
@@ -8,10 +9,7 @@ const user = new UserProvider()
 
 const replaceId = <T extends { id: Parameters<typeof idToString>[number] }>(
   bs: T,
-) => ({
-    ...bs,
-    id: idToString(bs.id),
-  })
+) => mapId(bs, idToString)
 
 export const router = _router({
   searchUser: p

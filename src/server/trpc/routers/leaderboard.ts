@@ -7,6 +7,7 @@ import {
   zodRuleset,
 } from '../shapes'
 import { router as _router, publicProcedure } from '../trpc'
+import { mapId } from '../../mapInstance'
 import { LeaderboardProvider } from '$active/server'
 import { hasRuleset, idToString, stringToId } from '$active'
 
@@ -54,7 +55,7 @@ export const router = _router({
         })
         return result.map(item => ({
           ...item,
-          user: Object.assign(item.user, { id: idToString(item.user.id) }),
+          user: mapId(item.user, idToString),
         }))
       },
     ),
@@ -81,17 +82,17 @@ export const router = _router({
         if (!hasRuleset(mode, ruleset)) {
           return []
         }
-        const result = await getBeatmapLeaderboard({
+        const result = await getBeatmapLeaderboard(mapId({
           mode,
           ruleset,
           rankingSystem,
           page,
           pageSize,
-          id: stringToId(beatmapId),
-        })
+          id: beatmapId,
+        }, stringToId))
         return result.map(item => ({
           ...item,
-          user: Object.assign(item.user, { id: idToString(item.user.id) }),
+          user: mapId(item.user, idToString),
         }))
       },
     ),

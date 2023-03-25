@@ -14,6 +14,7 @@ import {
 import { router as _router, publicProcedure as p } from '../trpc'
 import { sessionProcedure } from '../middleware/session'
 import { updateSession } from '../../session'
+import { mapId } from '../../mapInstance'
 import { followUserSettings } from '~/server/transforms'
 import { UserProvider, UserRelationProvider } from '$active/server'
 import { idToString, stringToId } from '$active'
@@ -43,9 +44,7 @@ export const router = _router({
         handle,
         excludes: { relationships: true, secrets: true },
       })
-      return Object.assign(followUserSettings({ user, scope: 'public' }), {
-        id: idToString(user.id),
-      })
+      return mapId(followUserSettings({ user, scope: 'public' }), idToString)
     }),
   full: p
     .input(
@@ -58,9 +57,7 @@ export const router = _router({
         handle,
         excludes: { email: true },
       })
-      return Object.assign(followUserSettings({ user, scope: 'public' }), {
-        id: idToString(user.id),
-      })
+      return mapId(followUserSettings({ user, scope: 'public' }), idToString)
     }),
   best: p
     .input(
@@ -149,7 +146,7 @@ export const router = _router({
     .query(async ({ input }) => {
       const user = await userProvider.getEssential({ handle: input.handle })
 
-      return Object.assign(user, { id: idToString(user.id) })
+      return mapId(user, idToString)
     }),
   countRelations: p
     .input(

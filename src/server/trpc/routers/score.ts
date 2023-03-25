@@ -1,5 +1,6 @@
 import { string, z } from 'zod'
 import { router as _router, publicProcedure as p } from '../trpc'
+import { mapId } from '../../mapInstance'
 import { idToString, scoreIdToString, stringToScoreId } from '$active'
 import { ScoreProvider } from '$active/server'
 import { beatmapIsVisible } from '~/utils/map'
@@ -20,12 +21,8 @@ export const router = _router({
         id: scoreIdToString(score.id),
         beatmap: beatmapIsVisible(score.beatmap)
           ? {
-              ...score.beatmap,
-              id: idToString(score.beatmap.id),
-              beatmapset: {
-                ...score.beatmap.beatmapset,
-                id: idToString(score.beatmap.beatmapset.id),
-              },
+              ...mapId(score.beatmap, idToString),
+              beatmapset: mapId(score.beatmap.beatmapset, idToString),
             }
           : score.beatmap,
       }

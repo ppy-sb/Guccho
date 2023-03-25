@@ -1,5 +1,6 @@
 import { string, z } from 'zod'
 import { router as _router, publicProcedure as p } from '../trpc'
+import { mapId } from '../../mapInstance'
 import { idToString, stringToId } from '$active'
 import { MapProvider } from '$active/server'
 
@@ -17,9 +18,8 @@ export const router = _router({
         return
       }
       return {
-        ...bs,
-        id: idToString(bs.id),
-        beatmaps: bs.beatmaps.map(bm => ({ ...bm, id: idToString(bm.id) })),
+        ...mapId(bs, idToString),
+        beatmaps: bs.beatmaps.map(bm => mapId(bm, idToString)),
       }
     }),
 })
