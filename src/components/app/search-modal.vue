@@ -1,15 +1,190 @@
 <script setup lang="ts">
 import { useDebounceFn } from '@vueuse/core'
+import { modes } from '../../types/defs'
+import type { Mode } from '~/types/common'
 import { isBanchoBeatmapset, placeholder } from '~/utils'
 
 const app$ = useNuxtApp()
 const searchModal = ref<{
   openModal: () => void
 }>()
-const kw = ref<string>('')
+const kw = ref('')
+const lastKw = ref('')
+type Query =
+| {
+  $gt: number
+}
+| {
+  $gte: number
+}
+| {
+  $lt: number
+}
+| {
+  $lte: number
+}
+| {
+  $eq: number
+}
+
+type TagQuery<T> = Record<'$eq' | '$ne', T>
+
+type Tag =
+| {
+  mode: TagQuery<Mode>
+}
+| {
+  bpm: Query
+}
+| {
+  starRating: Query
+}
+| {
+  accuracy: Query
+}
+| {
+  circleSize: Query
+}
+| {
+  approachRate: Query
+}
+| {
+  hpDrain: Query
+}
+| {
+  length: Query
+}
+
+const tags = ref<Tag[]>([])
+
+const taggable = {
+  mode: modes,
+}
+const tagOperators = {
+  $eq: '=',
+  $ne: '!=',
+}
+const queryable = {
+  bpm: ['bpm'],
+  starRating: ['star', 'sr', 'starRating'],
+  circleSize: ['cs', 'circleSize'],
+  approachRate: ['ar', 'approach', 'approachRate'],
+  accuracy: ['od', 'accuracy', 'overallDifficulty'],
+  hpDrain: ['hp', 'hpDrain'],
+  length: ['length', 'time', 'len'],
+}
+const compareOperators = {
+  $gte: '>=',
+  $gt: '>',
+  $eq: '=',
+  $le: '<=',
+  $lte: '<',
+}
+const tag = <T extends string, K extends string>(key: T, op: keyof typeof tagOperators, value: K) => {
+  return {
+    [key]: {
+      [op]: value,
+    },
+    toString: () => `<b>${key}</b> ${tagOperators[op]} <b>${value}</b>`,
+  } as Record<T, Record<typeof op, K>>
+}
+const query = <T extends keyof typeof queryable, K extends number>(key: T, op: keyof typeof compareOperators, value: K) => {
+  return {
+    [key]: {
+      [op]: value,
+    },
+    toString: () => `<b>${queryable[key][0]}</b> ${compareOperators[op]} <b>${value}</b>`,
+  } as Record<T, Record<typeof op, K>>
+}
+
+const extractTags = (force: boolean) => {
+  // user input space to confirm tag
+  if (!force && !kw.value.endsWith(' ')) {
+    return
+  }
+
+  const tokens = kw.value.split(' ')
+  // with side effects
+  kw.value = tokens.filter((token) => {
+    if (!token.includes('=')) {
+      return true
+    }
+
+    let op: keyof typeof tagOperators
+    for (op in tagOperators) {
+      const operator = tagOperators[op]
+      if (!token.includes(operator)) {
+        continue
+      }
+      if (!token.includes(operator)) {
+        continue
+      }
+
+      const [left, right] = token.split(operator)
+      if (!left || !right) {
+        continue
+      }
+      let field: keyof typeof taggable
+      for (field in taggable) {
+        if (left !== field) {
+          continue
+        }
+
+        const keywords = taggable[field]
+        if (!keywords.includes(right as Mode)) {
+          continue
+        }
+        tags.value.push(tag(field, op, right as Mode))
+        return false
+      }
+    }
+    return true
+  }).join(' ')
+}
+const extractQueries = (force: boolean) => {
+  // user input space to confirm tag
+  if (!force && !kw.value.endsWith(' ')) {
+    return
+  }
+  const tokens = kw.value.split(' ')
+  kw.value = tokens.filter((token) => {
+    let op: keyof typeof compareOperators
+    for (op in compareOperators) {
+      const operator = compareOperators[op]
+      if (!token.includes(operator)) {
+        continue
+      }
+
+      const [left, right] = token.split(operator)
+      if (!left || !right) {
+        continue
+      }
+      let field: keyof typeof queryable
+      for (field in queryable) {
+        const keywords = queryable[field]
+        if (!keywords.includes(left)) {
+          continue
+        }
+        const nRight = +right
+        if (isNaN(nRight)) {
+          continue
+        }
+        tags.value.push(query(field, op, nRight))
+        return false
+      }
+    }
+    return true
+  }).join(' ')
+}
 
 defineExpose({
   searchModal,
+})
+
+const includes = reactive({
+  beatmaps: true,
+  beatmapsets: true,
+  users: true,
 })
 
 const {
@@ -54,15 +229,30 @@ const {
   })
 })
 
-const search = useDebounceFn(() => {
+const searchRaw = (extract = false) => {
+  if (extract) {
+    extractTags(true)
+    extractQueries(true)
+  }
   if (!kw.value) {
     return
   }
+  if (kw.value === lastKw.value) {
+    return
+  }
 
-  searchUsers()
-  searchBeatmaps()
-  searchBeatmapsets()
-}, 300)
+  includes.users ? searchUsers() : users.value = []
+  includes.beatmaps ? searchBeatmaps() : beatmaps.value = []
+  includes.beatmapsets ? searchBeatmapsets() : beatmapsets.value = []
+}
+
+const search = useDebounceFn(searchRaw, 1000)
+
+const searchTrigger = () => {
+  extractTags(false)
+  extractQueries(false)
+  search(false)
+}
 const hasResult = computed(() => {
   return (
     (Array.isArray(beatmapsets.value) && beatmapsets.value.length)
@@ -80,7 +270,29 @@ const hasResult = computed(() => {
           <div
             class="card w-11/12 lg:w-2/3 max-h-[calc(100vh-2em)] bg-gradient-to-b from-kimberly-100 to-kimberly-200 dark:from-base-300 dark:to-base-200 shadow-lg"
           >
-            <div class="card-actions justify-end pt-2 px-1">
+            <div class="card-actions pt-2 px-1 flex">
+              <div class="pl-3" />
+              <div class="flex gap-4 items-baseline pt-1">
+                <div class="form-control">
+                  <label class="label cursor-pointer p-0 flex gap-2">
+                    <input v-model="includes.beatmapsets" type="checkbox" class="checkbox checkbox-sm" @change="searchRaw(true)">
+                    <span class="label-text">Includes Beatmapsets</span>
+                  </label>
+                </div>
+                <div class="form-control">
+                  <label class="label cursor-pointer p-0 flex gap-2">
+                    <input v-model="includes.beatmaps" type="checkbox" class="checkbox checkbox-sm" @change="searchRaw(true)">
+                    <span class="label-text">Includes Beatmaps</span>
+                  </label>
+                </div>
+                <div class="form-control">
+                  <label class="label cursor-pointer p-0 flex gap-2">
+                    <input v-model="includes.users" type="checkbox" class="checkbox checkbox-sm" @change="searchRaw(true)">
+                    <span class="label-text">Includes Users</span>
+                  </label>
+                </div>
+              </div>
+              <div class="ml-auto" />
               <button class="btn btn-ghost btn-sm" @click="() => closeModal()">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -98,13 +310,26 @@ const hasResult = computed(() => {
                 </svg>
               </button>
             </div>
-            <input
-              v-model="kw"
-              type="text"
-              placeholder="Search User and Beatmaps..."
-              class="input input-bordered input-ghost shadow-md m-4"
-              @input="search"
-            >
+            <div class="form-control m-4">
+              <label class="input-group">
+                <span class="shadow-md flex gap-2 overflow-x-scroll">
+                  <span v-if="!tags.length" class="opacity-50">Search</span>
+                  <span v-for="tag, index in tags" :key="index" class="badge badge-md badge-primary gap-1 cursor-pointer whitespace-nowrap" @click="tags.splice(index, 1)">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-4 h-4 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                    <div v-html="tag.toString()" />
+                  </span>
+                </span>
+                <input
+                  v-model="kw"
+                  type="text"
+                  placeholder="Search User and Beatmaps..."
+                  class="input grow input-bordered border-label-0 input-ghost shadow-md"
+                  @input="searchTrigger"
+                  @keyup.enter="searchRaw(true)"
+                >
+              </label>
+            </div>
+
             <div class="pt-0 overflow-auto menus">
               <template
                 v-if="
