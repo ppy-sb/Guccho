@@ -24,7 +24,7 @@ const lazyBgCover = ref('')
 
 const { data: beatmapset, error } = await useAsyncData(
   async () =>
-    await  app$.$client.map.beatmapset.query({ id: route.params.id.toString() }),
+    await app$.$client.map.beatmapset.query({ id: route.params.id.toString() }),
 )
 const hashed = beatmapset.value?.beatmaps.find(
   bm => bm.id === route.query.beatmap?.toString(),
@@ -74,7 +74,7 @@ const { data: leaderboard, refresh } = await useAsyncData(async () => {
     return null
   }
 
-  return await  app$.$client.leaderboard.beatmap.query({
+  return await app$.$client.leaderboard.beatmap.query({
     ...switcher,
     page: 0,
     pageSize: 20,

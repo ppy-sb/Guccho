@@ -30,12 +30,11 @@ const { data, refresh } = await useAsyncData(async () => {
     return {}
   }
   const relationWithMe
-    = (session.loggedIn
-      &&  app$.$client.me.relation.query({
-        target: user.value.id,
-      }))
+    = (session.loggedIn && app$.$client.me.relation.query({
+      target: user.value.id,
+    }))
     || undefined
-  const friendCount =  app$.$client.user.countRelations.query({
+  const friendCount = app$.$client.user.countRelations.query({
     handle: user.value.id,
     type: 'friend',
   })
@@ -45,7 +44,7 @@ const { data, refresh } = await useAsyncData(async () => {
   }
 })
 const { data: live, refresh: reloadLiveData } = await useAsyncData(async () =>
-  user?.value?.id ? await  app$.$client.user.status.query({ id: user.value.id }) : null,
+  user?.value?.id ? await app$.$client.user.status.query({ id: user.value.id }) : null,
 )
 onMounted(() => {
   onBeforeUnmount(() => clearInterval(setInterval(() => reloadLiveData(), 5000)))
@@ -69,10 +68,10 @@ const toggleFriend = async () => {
   }
   const input = { type: 'friend', target: user.value.id } as const
   if (isFriend.value) {
-    await  app$.$client.me.removeOneRelation.mutate(input)
+    await app$.$client.me.removeOneRelation.mutate(input)
   }
   else {
-    await  app$.$client.me.addOneRelation.mutate(input)
+    await app$.$client.me.addOneRelation.mutate(input)
   }
 
   refresh()
@@ -149,7 +148,7 @@ const toggleFriend = async () => {
         </t-nuxt-link-button>
       </div>
       <div
-        class="container flex flex-col flex-wrap gap-8 mx-auto md:flex-row md:gap-4 lg:gap-0 sm:order-2 md:items-end md:justify-between md:pb-2"
+        class="container flex flex-col flex-wrap gap-8 mx-auto lg:flex-row md:gap-4 lg:gap-0 sm:order-2 md:items-end md:justify-between md:pb-2"
       >
         <div class="order-2 mx-10 sm:mx-32 md:mx-0 md:order-1 lg:order-2 md:ml-auto md:pt-4 lg:py-2">
           <app-mode-switcher
@@ -158,9 +157,9 @@ const toggleFriend = async () => {
             @update:model-value="setSwitcher"
           />
         </div>
-        <div class="order-1 md:order-2 lg:order-1">
+        <div class="order-1 md:order-2 lg:order-1 self-center md:self-start">
           <h1
-            class="flex flex-col items-center gap-1 pb-1 text-5xl xl:text-6xl md:items-left md:flex-row"
+            class="text-center pb-1 text-5xl xl:text-6xl"
             :class="useUserRoleColor(user)"
           >
             {{ user.name }}

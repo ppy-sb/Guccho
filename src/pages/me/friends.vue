@@ -11,7 +11,7 @@ if (!session.$state.loggedIn) {
     },
   })
 }
-const relations = await  app$.$client.me.relations.query()
+const relations = await app$.$client.me.relations.query()
 const config = useAppConfig()
 
 useHead({

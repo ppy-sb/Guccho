@@ -66,7 +66,7 @@ const {
     }
   }
   return {
-    scores: await  app$.$client.user.best.query({
+    scores: await app$.$client.user.best.query({
       handle: user.value.id,
       mode: switcher.mode,
       ruleset: switcher.ruleset,

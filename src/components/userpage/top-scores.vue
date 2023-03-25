@@ -73,7 +73,7 @@ const {
     }
   }
   return {
-    ...(await  app$.$client.user.tops.query({
+    ...(await app$.$client.user.tops.query({
       handle: user.value.id,
       mode: switcher.mode,
       ruleset: switcher.ruleset,

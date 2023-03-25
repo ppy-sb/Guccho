@@ -59,7 +59,7 @@ const {
   pending,
   refresh,
 } = await useAsyncData(() =>
-   app$.$client.leaderboard.overall.query({
+  app$.$client.leaderboard.overall.query({
     mode: selected.value.mode,
     ruleset: selected.value.ruleset,
     rankingSystem: selected.value.rankingSystem,

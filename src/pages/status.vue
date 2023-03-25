@@ -14,7 +14,7 @@ const app$ = useNuxtApp()
 let browser = false
 let interval: ReturnType<typeof setInterval>
 const { data, refresh } = await useAsyncData(
-  async () => browser &&  app$.$client.status.public.query(),
+  async () => browser && app$.$client.status.public.query(),
 )
 
 const systemLoad = ref<HTMLDivElement | null>(null)
