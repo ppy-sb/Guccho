@@ -5,11 +5,9 @@ export function calcUserPrivilege(user: UserEssential<unknown>) {
   const owner = user.roles.includes('owner')
   const staff = user.roles.includes('staff')
 
-  const hasAdminAccess = admin || owner || staff
   return {
     admin,
     owner,
     staff,
-    hasAdminAccess,
   }
 }

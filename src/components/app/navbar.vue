@@ -206,7 +206,7 @@ const logout = async () => {
                 </li>
                 <li class="disabled">
                   <nuxt-link
-                    v-if="session.$state.privilege.hasAdminAccess"
+                    v-if="session.$state.privilege.staff"
                     :to="{
                       name: 'index',
                     }"

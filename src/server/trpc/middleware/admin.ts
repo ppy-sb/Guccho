@@ -17,7 +17,7 @@ export const privilegeProcedure = userProcedure.use(async ({ ctx, next }) => {
 })
 
 export const adminProcedure = privilegeProcedure.use(({ ctx, next }) => {
-  if (!ctx.user.privilege.hasAdminAccess) {
+  if (!ctx.user.privilege.staff) {
     throw new TRPCError({
       code: 'FORBIDDEN',
       message:

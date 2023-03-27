@@ -1,11 +1,13 @@
 import type { JSONContent } from '@tiptap/core'
+import type { UserEssential } from '../../../types/user'
+import type { Id } from '..'
 import { ArticleProvider as Base } from '$def/server/article'
 export class ArticleProvider extends Base {
-  async get(slug: string, fallback = false) {
-    return this.getLocal(slug, fallback)
+  async get(opt: { slug: string; fallback?: boolean }) {
+    return this.getLocal(opt)
   }
 
-  async save(slug: string, content: JSONContent) {
-    return this.saveLocal(slug, content)
+  async save(opt: { slug: string; content: JSONContent; user: UserEssential<Id> }) {
+    return this.saveLocal(opt)
   }
 }

@@ -10,13 +10,13 @@ export const useSession = defineStore('session', {
     userId?: string
     user?: Omit<UserFull<string>, 'statistics'>
     privilege: {
-      hasAdminAccess: boolean
+      staff: boolean
     }
   } => ({
     loggedIn: false,
     user: undefined,
     privilege: {
-      hasAdminAccess: false,
+      staff: false,
     },
   }),
   actions: {
