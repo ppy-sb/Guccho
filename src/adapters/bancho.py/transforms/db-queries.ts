@@ -80,12 +80,49 @@ export function createFilter(tags: Tag[]) {
   tags.forEach((tag) => {
     const [key, op, value] = tag
     const operator = prismaOperator[op]
-    if (key === 'mode') {
-      filter.push({ [key]: { [operator]: BanchoMode[value] } })
+
+    switch (key) {
+      case 'mode': {
+        filter.push({ mode: { [operator]: BanchoMode[value] } })
+        break
+      }
+      case 'starRating': {
+        filter.push({ diff: { [operator]: BanchoMode[value] } })
+        break
+      }
+      case 'accuracy': {
+        filter.push({ od: { [operator]: BanchoMode[value] } })
+        break
+      }
+      case 'approachRate': {
+        filter.push({ ar: { [operator]: BanchoMode[value] } })
+        break
+      }
+      case 'circleSize': {
+        filter.push({ cs: { [operator]: BanchoMode[value] } })
+        break
+      }
+      case 'hpDrain': {
+        filter.push({ hp: { [operator]: BanchoMode[value] } })
+        break
+      }
+      case 'length': {
+        filter.push({ totalLength: { [operator]: BanchoMode[value] } })
+        break
+      }
+      default: {
+        filter.push({ [key]: { [operator]: BanchoMode[value] } })
+      }
     }
-    else {
-      filter.push({ [key]: { [operator]: value } })
-    }
+    // if (key === 'mode') {
+    //
+    // }
+    // else if (key === 'starRating') {
+    //   filter.push({ diff: { [operator]: BanchoMode[value] } })
+    // }
+    // else {
+    //   filter.push({ [key]: { [operator]: value } })
+    // }
   })
   return filter
 }

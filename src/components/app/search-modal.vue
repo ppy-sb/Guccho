@@ -211,7 +211,7 @@ const searchRaw = (_extract = false) => {
   includes.beatmapsets ? searchBeatmapsets() : beatmapsets.value = []
 }
 
-const search = useDebounceFn(searchRaw, 1000)
+const search = useDebounceFn(searchRaw, 500)
 
 const searchTrigger = () => {
   extract()
@@ -323,12 +323,12 @@ watch(tags, () => searchRaw(), { deep: true })
             <div class="pt-0 overflow-auto menus">
               <template
                 v-if="
-                  pendingBeatmaps && pendingBeatmapsets && pendingUsers && kw
+                  pendingBeatmaps || pendingBeatmapsets || pendingUsers
                 "
               >
                 <div class="divider" />
                 <div class="p-5 pt-0">
-                  searching "{{ kw }}"...
+                  searching...
                 </div>
               </template>
               <template v-else-if="hasResult">
