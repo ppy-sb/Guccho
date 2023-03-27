@@ -26,12 +26,19 @@ const editorConf = reactive({
 const context = useEditor(editorConf)
 const { editor, subscribe } = context
 
-onBeforeMount(async () => {
+const onUpdated = async () => {
   const { load: lazy } = useEditorLazyLoadHighlight()
+  if (!props.modelValue) {
+    return
+  }
+  await Promise.all(lazy(props.modelValue))
+  editor.value?.commands.setContent(props.modelValue)
+}
+watch(() => props.modelValue, onUpdated)
+onBeforeMount(async () => {
   editor.value?.setEditable(props.editable)
-  if (props.editable && props.modelValue) {
-    await Promise.all(lazy(props.modelValue))
-    editor.value?.commands.setContent(props.modelValue)
+  if (props.editable) {
+    onUpdated()
   }
   subscribe((content: Record<string, unknown>) =>
     emit('update:modelValue', content),

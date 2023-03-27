@@ -351,7 +351,7 @@ const hasResult = computed(() => {
                           <img
                             v-if="isBanchoBeatmapset(bs)"
                             class="h-[30px] mask mask-squircle overflow-hidden object-cover aspect-square"
-                            src="https://b.ppy.sh/thumb/{bs.foreignId}.jpg"
+                            :src="`https://b.ppy.sh/thumb/${bs.foreignId}.jpg`"
                             :onerror="placeholder"
                           >
                           <span>{{ bs.meta.intl.artist }} -
@@ -383,7 +383,7 @@ const hasResult = computed(() => {
                           <img
                             v-if="isBanchoBeatmapset(bm.beatmapset)"
                             class="h-[30px] mask mask-squircle overflow-hidden object-cover aspect-square"
-                            src="https://b.ppy.sh/thumb/{bm.beatmapset.foreignId}.jpg"
+                            :src="`https://b.ppy.sh/thumb/${bm.beatmapset.foreignId}.jpg`"
                             :onerror="placeholder"
                           >
                           <span>{{ bm.beatmapset.meta.intl.artist }} -

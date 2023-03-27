@@ -21,6 +21,7 @@ const guweb = [
       'primary': palette.wewak[300],
       'secondary': cupcake.primary,
       'neutral': palette.kimberly[200],
+      'base-50': palette.kimberly[50],
       'base-100': palette.kimberly[100],
       'base-200': palette.kimberly[150],
       'base-300': palette.kimberly[200],
@@ -33,6 +34,7 @@ const guweb = [
       ...dracula,
       'primary': palette.wewak[500],
       'neutral': palette.kimberly[500],
+      'base-50': palette.kimberly[900],
       'base-100': palette.kimberly[900],
       'base-200': palette.kimberly[800],
       'base-300': palette.kimberly[700],
@@ -60,6 +62,9 @@ module.exports = {
     },
     {
       pattern: /hljs+/,
+    },
+    {
+      pattern: /select+/,
     },
   ],
   theme: {
