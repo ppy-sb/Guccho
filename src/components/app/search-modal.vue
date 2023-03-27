@@ -38,8 +38,17 @@ const compareOperators: Record<OP, string> = {
   lte: '<',
   ne: '!=',
 }
-const tag = <T extends keyof typeof taggable, K extends (typeof taggable)[T][number]>(key: T, op: keyof typeof tagOperators, value: K) => [key, op, value] as const
-const query = <T extends keyof typeof queryable, K>(key: T, op: keyof typeof compareOperators, value: K) => [key, op, value] as const
+const tag = <T extends keyof typeof taggable, K extends (typeof taggable)[T][number]>
+  (key: T, op: keyof typeof tagOperators, value: K) => {
+  const _v = [key, op, value] as const
+  _v.toString = () => `<b>${key}</b> ${tagOperators[op]} <b>${value}</b>`
+  return _v
+}
+const query = <T extends keyof typeof queryable, K>(key: T, op: keyof typeof compareOperators, value: K) => {
+  const _v = [key, op, value] as const
+  _v.toString = () => `<b>${key}</b> ${compareOperators[op]} <b>${value}</b>`
+  return _v
+}
 
 const extractTags = (force: boolean) => {
   // user input space to confirm tag
@@ -150,7 +159,7 @@ const {
   pending: pendingBeatmaps,
   refresh: searchBeatmaps,
 } = await useAsyncData(async () => {
-  if (!kw.value) {
+  if (!kw.value && !tags.value.length) {
     return []
   }
   return await app.$client.search.searchBeatmap.query({
@@ -164,8 +173,8 @@ const {
   pending: pendingBeatmapsets,
   refresh: searchBeatmapsets,
 } = await useAsyncData(async () => {
-  if (!kw.value) {
-    return
+  if (!kw.value && !tags.value.length) {
+    return []
   }
   return await app.$client.search.searchBeatmapset.query({
     keyword: kw.value,
@@ -173,8 +182,9 @@ const {
   })
 })
 
+const searchMode = computed(() => (includes.beatmaps || includes.beatmapsets) && !includes.users ? 'beatmap' : 'all')
 const extract = () => {
-  if (includes.beatmaps || includes.beatmapsets) {
+  if (searchMode.value === 'beatmap') {
     extractTags(false)
     extractQueries(false)
   }
@@ -182,11 +192,14 @@ const extract = () => {
 
 const searchRaw = (_extract = false) => {
   _extract && extract()
-  if (!kw.value) {
-    return
-  }
-  if (kw.value === lastKw.value) {
-    return
+
+  if (tags.value.length < 1) {
+    if (!kw.value) {
+      return
+    }
+    if (kw.value === lastKw.value) {
+      return
+    }
   }
 
   includes.users ? searchUsers() : users.value = []
@@ -219,12 +232,12 @@ const hasResult = computed(() => {
           >
             <div class="card-actions pt-2 px-1 flex">
               <div class="pl-3" />
-              <div class="flex gap-4 items-baseline pt-1">
+              <div class="flex flex-col gap-4 md:flex-row items-baseline pt-1">
                 <div class="form-control">
                   <label class="label cursor-pointer p-0 flex gap-2">
                     <input
                       v-model="includes.beatmapsets" type="checkbox" class="checkbox checkbox-sm" @change="() => {
-                        includes.users = false
+                        includes.users = !includes.beatmaps && !includes.beatmapsets
                         searchRaw(true)
                       }"
                     >
@@ -235,7 +248,7 @@ const hasResult = computed(() => {
                   <label class="label cursor-pointer p-0 flex gap-2">
                     <input
                       v-model="includes.beatmaps" type="checkbox" class="checkbox checkbox-sm" @change="() => {
-                        includes.users = false
+                        includes.users = !includes.beatmaps && !includes.beatmapsets
                         searchRaw(true)
                       }"
                     >
@@ -246,8 +259,8 @@ const hasResult = computed(() => {
                   <label class="label cursor-pointer p-0 flex gap-2">
                     <input
                       v-model="includes.users" type="checkbox" class="checkbox checkbox-sm" @change="() => {
-                        includes.beatmaps = false
-                        includes.beatmapsets = false
+                        includes.beatmaps = !includes.users
+                        includes.beatmapsets = !includes.users
                         searchRaw(false)
                       }"
                     >
@@ -274,8 +287,8 @@ const hasResult = computed(() => {
               </button>
             </div>
             <div class="form-control m-4">
-              <label class="input-group">
-                <span class="shadow-md flex gap-2 overflow-x-scroll">
+              <label v-if="searchMode === 'beatmap'" class="input-group">
+                <span class="shadow-md flex gap-2">
                   <span v-if="!tags.length" class="opacity-50">Search</span>
                   <span v-for="tag, index in tags" :key="index" class="badge badge-md badge-primary gap-1 cursor-pointer whitespace-nowrap" @click="tags.splice(index, 1)">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-4 h-4 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
@@ -291,6 +304,15 @@ const hasResult = computed(() => {
                   @keyup.enter="searchRaw(true)"
                 >
               </label>
+              <input
+                v-else
+                v-model="kw"
+                type="text"
+                placeholder="Search User and Beatmaps..."
+                class="input grow input-bordered border-label-0 input-ghost shadow-md"
+                @input="searchTrigger"
+                @keyup.enter="searchRaw(true)"
+              >
             </div>
 
             <div class="pt-0 overflow-auto menus">
