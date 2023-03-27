@@ -1,4 +1,4 @@
-import z, { literal, string, union } from 'zod'
+import z, { literal, number, string, tuple, union } from 'zod'
 
 import type { JSONContent } from '@tiptap/core'
 import { hasRuleset } from '../config'
@@ -68,4 +68,38 @@ export const zodRankingStatus = union([
   literal('loved'),
   // literal('deleted'),
   // literal('notFound'),
+])
+
+export const zodSearchBeatmap = union([
+  tuple([
+    union([
+      literal('bpm'),
+      literal('starRating'),
+      literal('accuracy'),
+      literal('circleSize'),
+      literal('approachRate'),
+      literal('hpDrain'),
+      literal('length'),
+    ]),
+    union([
+      literal('ne'),
+      literal('eq'),
+      literal('lte'),
+      literal('lt'),
+      literal('gte'),
+      literal('gt'),
+    ]),
+    number(),
+  ]),
+  tuple([
+    // union([
+    //   literal('mode'),
+    // ]),
+    literal('mode'),
+    union([
+      literal('ne'),
+      literal('eq'),
+    ]),
+    zodMode,
+  ]),
 ])

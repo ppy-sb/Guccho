@@ -57,3 +57,10 @@ export enum BanchoPyRankedStatus {
   Qualified = 4,
   Loved = 5,
 }
+
+export enum BanchoMode {
+  osu,
+  taiko,
+  fruits,
+  mania,
+}

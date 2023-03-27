@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { router as _router, publicProcedure as p } from '../trpc'
 import { mapId } from '../../mapInstance'
+import { zodSearchBeatmap } from '../shapes'
 import { MapProvider, UserProvider } from '$active/server'
 
 const map = new MapProvider()
@@ -27,12 +28,14 @@ export const router = _router({
       z.object({
         keyword: z.string(),
         limit: z.number().optional().default(5),
+        filters: z.array(zodSearchBeatmap).optional(),
       }),
     )
-    .query(async ({ input: { keyword, limit } }) => {
+    .query(async ({ input: { keyword, limit, filters } }) => {
       const beatmaps = await map.searchBeatmap({
         keyword,
         limit,
+        filters,
       })
 
       return beatmaps.map(b => mapId(b, map.idToString))
@@ -42,12 +45,14 @@ export const router = _router({
       z.object({
         keyword: z.string(),
         limit: z.number().optional().default(5),
+        filters: z.array(zodSearchBeatmap).optional(),
       }),
     )
-    .query(async ({ input: { keyword, limit } }) => {
+    .query(async ({ input: { keyword, limit, filters } }) => {
       const beatmapsets = await map.searchBeatmapset({
         keyword,
         limit,
+        filters,
       })
 
       return beatmapsets.map(bs => mapId(bs, map.idToString))

@@ -1,4 +1,6 @@
+import type { Prisma } from '.prisma/bancho.py'
 import type { DatabaseUserEssentialFields } from './user'
+import type { OP, Tag } from '~/types/search'
 import { TSFilter, includes } from '~/utils'
 export const userEssentials = {
   select: {
@@ -60,4 +62,24 @@ export function createUserQuery(handle: string,
       ],
     },
   }
+}
+
+const prismaOperator: Record<OP, keyof Prisma.IntFilter> = {
+  eq: 'equals',
+  ne: 'not',
+  lt: 'lt',
+  lte: 'lte',
+  gt: 'gt',
+  gte: 'gte',
+}
+export function createFilter(tags: Tag[]) {
+  type Filter = Prisma.Enumerable<Prisma.MapWhereInput>
+
+  const filter: Filter = []
+  tags.forEach((tag) => {
+    const [key, op, value] = tag
+    const operator = prismaOperator[op]
+    filter.push({ [key]: { [operator]: value } })
+  })
+  return filter
 }

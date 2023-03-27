@@ -1,13 +1,14 @@
 import {
+  createFilter,
   idToString,
-  stringToId,
 
+  stringToId,
   toBeatmapEssential,
-  toBeatmapWithBeatmapset,
-  toBeatmapset, toRankingStatus,
+  toBeatmapWithBeatmapset, toBeatmapset, toRankingStatus,
 } from '../transforms'
 import type { Id } from '..'
 import { getPrismaClient } from './prisma'
+import type { Tag } from '~/types/search'
 
 import { TSFilter } from '~/utils'
 import type { MapProvider as Base } from '~/adapters/base/server'
@@ -63,23 +64,29 @@ export class MapProvider implements Base<Id> {
     })
   }
 
-  async searchBeatmap({ keyword, limit }: { keyword: string; limit: number }) {
+  async searchBeatmap(opt: { keyword: string; limit: number; filters?: Tag[] }) {
+    const { keyword, limit, filters } = opt
     const idKw = stringToId(keyword)
     const result = await this.db.map.findMany({
       take: limit,
       where: {
-        OR: [
-          isNaN(idKw)
-            ? undefined
-            : {
-                setId: idKw,
-              },
+        AND: [
           {
-            version: {
-              contains: keyword,
-            },
+            OR: [
+              isNaN(idKw)
+                ? undefined
+                : {
+                    setId: idKw,
+                  },
+              {
+                version: {
+                  contains: keyword,
+                },
+              },
+            ].filter(TSFilter),
           },
-        ].filter(TSFilter),
+          ...(filters ? createFilter(filters) : []),
+        ],
       },
       include: {
         source: true,
@@ -96,36 +103,43 @@ export class MapProvider implements Base<Id> {
   async searchBeatmapset({
     keyword,
     limit,
+    filters,
   }: {
     keyword: string
     limit: number
+    filters?: Tag[]
   }): Promise<Beatmapset<BeatmapSource, number, unknown>[]> {
     const idKw = stringToId(keyword)
     const beatmaps = await this.db.map.findMany({
       take: limit,
       where: {
-        OR: [
-          isNaN(idKw)
-            ? undefined
-            : {
-                setId: idKw,
+        AND: [
+          {
+            OR: [
+              isNaN(idKw)
+                ? undefined
+                : {
+                    setId: idKw,
+                  },
+              {
+                title: {
+                  contains: keyword,
+                },
               },
-          {
-            title: {
-              contains: keyword,
-            },
+              {
+                artist: {
+                  contains: keyword,
+                },
+              },
+              {
+                creator: {
+                  contains: keyword,
+                },
+              },
+            ].filter(TSFilter),
           },
-          {
-            artist: {
-              contains: keyword,
-            },
-          },
-          {
-            creator: {
-              contains: keyword,
-            },
-          },
-        ].filter(TSFilter),
+          ...(filters ? createFilter(filters) : []),
+        ],
       },
       distinct: ['setId'],
       orderBy: [

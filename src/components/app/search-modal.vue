@@ -1,59 +1,16 @@
 <script setup lang="ts">
 import { useDebounceFn } from '@vueuse/core'
-import { modes } from '../../types/defs'
+import { modes } from '~/types/defs'
 import type { Mode } from '~/types/common'
 import { isBanchoBeatmapset, placeholder } from '~/utils'
+import type { OP, Tag } from '~/types/search'
 
-const app$ = useNuxtApp()
+const app = useNuxtApp()
 const searchModal = ref<{
   openModal: () => void
 }>()
 const kw = ref('')
 const lastKw = ref('')
-type Query =
-| {
-  $gt: number
-}
-| {
-  $gte: number
-}
-| {
-  $lt: number
-}
-| {
-  $lte: number
-}
-| {
-  $eq: number
-}
-
-type TagQuery<T> = Record<'$eq' | '$ne', T>
-
-type Tag =
-| {
-  mode: TagQuery<Mode>
-}
-| {
-  bpm: Query
-}
-| {
-  starRating: Query
-}
-| {
-  accuracy: Query
-}
-| {
-  circleSize: Query
-}
-| {
-  approachRate: Query
-}
-| {
-  hpDrain: Query
-}
-| {
-  length: Query
-}
 
 const tags = ref<Tag[]>([])
 
@@ -61,8 +18,8 @@ const taggable = {
   mode: modes,
 }
 const tagOperators = {
-  $eq: '=',
-  $ne: '!=',
+  eq: '=',
+  ne: '!=',
 }
 const queryable = {
   bpm: ['bpm'],
@@ -73,29 +30,16 @@ const queryable = {
   hpDrain: ['hp', 'hpDrain'],
   length: ['length', 'time', 'len'],
 }
-const compareOperators = {
-  $gte: '>=',
-  $gt: '>',
-  $eq: '=',
-  $le: '<=',
-  $lte: '<',
+const compareOperators: Record<OP, string> = {
+  gte: '>=',
+  gt: '>',
+  eq: '=',
+  lt: '<=',
+  lte: '<',
+  ne: '!=',
 }
-const tag = <T extends string, K extends string>(key: T, op: keyof typeof tagOperators, value: K) => {
-  return {
-    [key]: {
-      [op]: value,
-    },
-    toString: () => `<b>${key}</b> ${tagOperators[op]} <b>${value}</b>`,
-  } as Record<T, Record<typeof op, K>>
-}
-const query = <T extends keyof typeof queryable, K extends number>(key: T, op: keyof typeof compareOperators, value: K) => {
-  return {
-    [key]: {
-      [op]: value,
-    },
-    toString: () => `<b>${queryable[key][0]}</b> ${compareOperators[op]} <b>${value}</b>`,
-  } as Record<T, Record<typeof op, K>>
-}
+const tag = <T extends keyof typeof taggable, K extends (typeof taggable)[T][number]>(key: T, op: keyof typeof tagOperators, value: K) => [key, op, value] as const
+const query = <T extends keyof typeof queryable, K>(key: T, op: keyof typeof compareOperators, value: K) => [key, op, value] as const
 
 const extractTags = (force: boolean) => {
   // user input space to confirm tag
@@ -195,7 +139,7 @@ const {
   if (!kw.value) {
     return []
   }
-  return await app$.$client.search.searchUser.query({
+  return await app.$client.search.searchUser.query({
     keyword: kw.value,
     limit: 10,
   })
@@ -209,7 +153,7 @@ const {
   if (!kw.value) {
     return []
   }
-  return await app$.$client.search.searchBeatmap.query({
+  return await app.$client.search.searchBeatmap.query({
     keyword: kw.value,
     limit: 10,
   })
@@ -223,17 +167,21 @@ const {
   if (!kw.value) {
     return
   }
-  return await app$.$client.search.searchBeatmapset.query({
+  return await app.$client.search.searchBeatmapset.query({
     keyword: kw.value,
     limit: 10,
   })
 })
 
-const searchRaw = (extract = false) => {
-  if (extract) {
-    extractTags(true)
-    extractQueries(true)
+const extract = () => {
+  if (includes.beatmaps || includes.beatmapsets) {
+    extractTags(false)
+    extractQueries(false)
   }
+}
+
+const searchRaw = (_extract = false) => {
+  _extract && extract()
   if (!kw.value) {
     return
   }
@@ -249,8 +197,7 @@ const searchRaw = (extract = false) => {
 const search = useDebounceFn(searchRaw, 1000)
 
 const searchTrigger = () => {
-  extractTags(false)
-  extractQueries(false)
+  extract()
   search(false)
 }
 const hasResult = computed(() => {
@@ -275,19 +222,35 @@ const hasResult = computed(() => {
               <div class="flex gap-4 items-baseline pt-1">
                 <div class="form-control">
                   <label class="label cursor-pointer p-0 flex gap-2">
-                    <input v-model="includes.beatmapsets" type="checkbox" class="checkbox checkbox-sm" @change="searchRaw(true)">
+                    <input
+                      v-model="includes.beatmapsets" type="checkbox" class="checkbox checkbox-sm" @change="() => {
+                        includes.users = false
+                        searchRaw(true)
+                      }"
+                    >
                     <span class="label-text">Includes Beatmapsets</span>
                   </label>
                 </div>
                 <div class="form-control">
                   <label class="label cursor-pointer p-0 flex gap-2">
-                    <input v-model="includes.beatmaps" type="checkbox" class="checkbox checkbox-sm" @change="searchRaw(true)">
+                    <input
+                      v-model="includes.beatmaps" type="checkbox" class="checkbox checkbox-sm" @change="() => {
+                        includes.users = false
+                        searchRaw(true)
+                      }"
+                    >
                     <span class="label-text">Includes Beatmaps</span>
                   </label>
                 </div>
                 <div class="form-control">
                   <label class="label cursor-pointer p-0 flex gap-2">
-                    <input v-model="includes.users" type="checkbox" class="checkbox checkbox-sm" @change="searchRaw(true)">
+                    <input
+                      v-model="includes.users" type="checkbox" class="checkbox checkbox-sm" @change="() => {
+                        includes.beatmaps = false
+                        includes.beatmapsets = false
+                        searchRaw(false)
+                      }"
+                    >
                     <span class="label-text">Includes Users</span>
                   </label>
                 </div>
@@ -366,7 +329,7 @@ const hasResult = computed(() => {
                           <img
                             v-if="isBanchoBeatmapset(bs)"
                             class="h-[30px] mask mask-squircle overflow-hidden object-cover aspect-square"
-                            :src="`https://b.ppy.sh/thumb/${bs.foreignId}.jpg`"
+                            src="https://b.ppy.sh/thumb/{bs.foreignId}.jpg"
                             :onerror="placeholder"
                           >
                           <span>{{ bs.meta.intl.artist }} -
@@ -398,7 +361,7 @@ const hasResult = computed(() => {
                           <img
                             v-if="isBanchoBeatmapset(bm.beatmapset)"
                             class="h-[30px] mask mask-squircle overflow-hidden object-cover aspect-square"
-                            :src="`https://b.ppy.sh/thumb/${bm.beatmapset.foreignId}.jpg`"
+                            src="https://b.ppy.sh/thumb/{bm.beatmapset.foreignId}.jpg"
                             :onerror="placeholder"
                           >
                           <span>{{ bm.beatmapset.meta.intl.artist }} -
@@ -423,7 +386,7 @@ const hasResult = computed(() => {
                         :to="{
                           name: 'user-handle',
                           params: {
-                            handle: `@${user.safeName}`,
+                            handle: `@{user.safeName}`,
                           },
                         }"
                         @click="() => closeModal()"

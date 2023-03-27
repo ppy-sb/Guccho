@@ -1,3 +1,4 @@
+import type { Tag } from './../../../types/search'
 import type { idTransformable } from './extends'
 import type {
   BeatmapEssential, BeatmapSource, BeatmapWithMeta, Beatmapset, RankingStatus,
@@ -24,13 +25,15 @@ export interface MapProvider<Id> extends idTransformable {
     Id,
     unknown
   >>
-  searchBeatmap(opt: { keyword: string }): Awaitable<
+  searchBeatmap(opt: { keyword: string; limit: number; filters?: Tag[] }): Awaitable<
     (BeatmapEssential<Id, unknown> & {
       beatmapset: Beatmapset<BeatmapSource, Id, unknown>
     })[]
   >
   searchBeatmapset(opt: {
     keyword: string
+    limit: number
+    filters?: Tag[]
   }): Awaitable<Beatmapset<BeatmapSource, Id, unknown>[]>
 
 }

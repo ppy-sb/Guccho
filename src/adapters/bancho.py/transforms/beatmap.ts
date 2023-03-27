@@ -3,7 +3,7 @@ import type {
   Score as DBScore,
   Source,
 } from '.prisma/bancho.py'
-import { BanchoPyMode, BanchoPyRankedStatus } from '../enums'
+import { BanchoMode, BanchoPyMode, BanchoPyRankedStatus } from '../enums'
 import type { Id } from '..'
 import { RankingStatusEnum } from '~/types/beatmap'
 import { stableMod } from '~/types/score'
@@ -67,6 +67,7 @@ export function toBeatmapEssential(beatmap: {
     md5: beatmap.md5,
     creator: beatmap.creator,
     lastUpdate: beatmap.lastUpdate,
+    mode: BanchoMode[beatmap.mode] as Mode,
     properties: {
       bpm: beatmap.bpm,
       circleSize: beatmap.cs,

@@ -1,3 +1,5 @@
+import type { Mode } from './common'
+
 export type UnknownSource = 'unknown'
 export type LocalSource = 'local'
 export type ForeignSource = 'bancho' | 'privateServer'
@@ -61,6 +63,7 @@ export interface BeatmapEssential<Id, ForeignId = never> {
     maxCombo: number
     starRate: number
   }
+  mode: Mode
   md5: string
   version: string
   creator: string
