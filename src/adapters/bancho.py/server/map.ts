@@ -113,37 +113,41 @@ export class MapProvider implements Base<Id> {
     const bs = await this.db.source.findMany({
       take: limit,
       where: {
-        beatmaps: {
-          some: {
-            AND: [
-              {
-                OR: [
-                  isNaN(idKw)
-                    ? undefined
-                    : {
-                        setId: idKw,
-                      },
-                  {
-                    title: {
-                      contains: keyword,
-                    },
-                  },
-                  {
-                    artist: {
-                      contains: keyword,
-                    },
-                  },
-                  {
-                    creator: {
-                      contains: keyword,
-                    },
-                  },
-                ].filter(TSFilter),
+        AND: [
+          isNaN(idKw)
+            ? undefined
+            : {
+                id: idKw,
               },
-              ...(filters ? createFilter(filters) : []),
-            ],
+          {
+            beatmaps: {
+              some: {
+                AND: [
+                  {
+                    OR: [
+                      {
+                        title: {
+                          contains: keyword,
+                        },
+                      },
+                      {
+                        artist: {
+                          contains: keyword,
+                        },
+                      },
+                      {
+                        creator: {
+                          contains: keyword,
+                        },
+                      },
+                    ],
+                  },
+                  ...(filters ? createFilter(filters) : []),
+                ],
+              },
+            },
           },
-        },
+        ].filter(TSFilter),
       },
       include: {
         beatmaps: true,
