@@ -413,7 +413,7 @@ watch(tags, () => searchRaw(), { deep: true })
                         :to="{
                           name: 'user-handle',
                           params: {
-                            handle: `@{user.safeName}`,
+                            handle: `@${user.safeName}`,
                           },
                         }"
                         @click="() => closeModal()"
