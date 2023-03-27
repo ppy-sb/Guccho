@@ -28,7 +28,7 @@ const unique = (key: keyof typeof shape) => async () => {
   error[key] = `${key} is already taken.`
   return false
 }
-const pwPatternStr = '(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}'
+const pwPatternStr = '(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}'
 const pwPattern = new RegExp(pwPatternStr)
 const safeNamePatternStr = '[a-z0-9][a-z0-9_]+[a-z0-9]'
 const safeNamePattern = new RegExp(safeNamePatternStr)
