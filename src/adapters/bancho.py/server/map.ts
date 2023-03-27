@@ -123,27 +123,29 @@ export class MapProvider implements Base<Id> {
             beatmaps: {
               some: {
                 AND: [
-                  {
-                    OR: [
-                      {
-                        title: {
-                          contains: keyword,
-                        },
-                      },
-                      {
-                        artist: {
-                          contains: keyword,
-                        },
-                      },
-                      {
-                        creator: {
-                          contains: keyword,
-                        },
-                      },
-                    ],
-                  },
+                  isNaN(idKw)
+                    ? {
+                        OR: [
+                          {
+                            title: {
+                              contains: keyword,
+                            },
+                          },
+                          {
+                            artist: {
+                              contains: keyword,
+                            },
+                          },
+                          {
+                            creator: {
+                              contains: keyword,
+                            },
+                          },
+                        ],
+                      }
+                    : undefined,
                   ...(filters ? createFilter(filters) : []),
-                ],
+                ].filter(TSFilter),
               },
             },
           },
