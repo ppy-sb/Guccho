@@ -1,4 +1,5 @@
 import type { Prisma } from '.prisma/bancho.py'
+import { BanchoMode } from '../enums'
 import type { DatabaseUserEssentialFields } from './user'
 import type { OP, Tag } from '~/types/search'
 import { TSFilter, includes } from '~/utils'
@@ -79,7 +80,12 @@ export function createFilter(tags: Tag[]) {
   tags.forEach((tag) => {
     const [key, op, value] = tag
     const operator = prismaOperator[op]
-    filter.push({ [key]: { [operator]: value } })
+    if (key === 'mode') {
+      filter.push({ [key]: { [operator]: BanchoMode[value] } })
+    }
+    else {
+      filter.push({ [key]: { [operator]: value } })
+    }
   })
   return filter
 }

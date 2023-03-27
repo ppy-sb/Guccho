@@ -92,9 +92,6 @@ export const zodSearchBeatmap = union([
     number(),
   ]),
   tuple([
-    // union([
-    //   literal('mode'),
-    // ]),
     literal('mode'),
     union([
       literal('ne'),

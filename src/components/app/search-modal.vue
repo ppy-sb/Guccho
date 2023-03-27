@@ -31,21 +31,21 @@ const queryable = {
   length: ['length', 'time', 'len'],
 }
 const compareOperators: Record<OP, string> = {
+  eq: '=',
+  ne: '!=',
+  lte: '<',
+  lt: '<=',
   gte: '>=',
   gt: '>',
-  eq: '=',
-  lt: '<=',
-  lte: '<',
-  ne: '!=',
 }
 const tag = <T extends keyof typeof taggable, K extends (typeof taggable)[T][number]>
   (key: T, op: keyof typeof tagOperators, value: K) => {
-  const _v = [key, op, value] as const
+  const _v = [key, op, value] as [T, typeof op, K]
   _v.toString = () => `<b>${key}</b> ${tagOperators[op]} <b>${value}</b>`
   return _v
 }
 const query = <T extends keyof typeof queryable, K>(key: T, op: keyof typeof compareOperators, value: K) => {
-  const _v = [key, op, value] as const
+  const _v = [key, op, value] as [T, OP, K]
   _v.toString = () => `<b>${key}</b> ${compareOperators[op]} <b>${value}</b>`
   return _v
 }
@@ -158,12 +158,14 @@ const {
   data: beatmaps,
   pending: pendingBeatmaps,
   refresh: searchBeatmaps,
+  error: bmError,
 } = await useAsyncData(async () => {
   if (!kw.value && !tags.value.length) {
     return []
   }
   return await app.$client.search.searchBeatmap.query({
     keyword: kw.value,
+    filters: tags.value,
     limit: 10,
   })
 })
@@ -178,6 +180,7 @@ const {
   }
   return await app.$client.search.searchBeatmapset.query({
     keyword: kw.value,
+    filters: tags.value,
     limit: 10,
   })
 })
@@ -220,6 +223,7 @@ const hasResult = computed(() => {
     || (Array.isArray(users.value) && users.value.length)
   )
 })
+watch(tags, () => search())
 </script>
 
 <template>
@@ -231,6 +235,7 @@ const hasResult = computed(() => {
             class="card w-11/12 lg:w-2/3 max-h-[calc(100vh-2em)] bg-gradient-to-b from-kimberly-100 to-kimberly-200 dark:from-base-300 dark:to-base-200 shadow-lg"
           >
             <div class="card-actions pt-2 px-1 flex">
+              {{ bmError?.cause.data.error.json.message }}
               <div class="pl-3" />
               <div class="flex flex-col gap-4 md:flex-row items-baseline pt-1">
                 <div class="form-control">
