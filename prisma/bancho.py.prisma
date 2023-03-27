@@ -190,7 +190,7 @@ model Source {
   lastOsuApiCheck DateTime   @default(now()) @map("last_osuapi_check") @db.DateTime(0)
 
   favouredBy Favourite[]
-  Map        Map[]
+  beatmaps   Map[]
 
   @@id([server, id])
   @@map("mapsets")

@@ -110,55 +110,50 @@ export class MapProvider implements Base<Id> {
     filters?: Tag[]
   }): Promise<Beatmapset<BeatmapSource, number, unknown>[]> {
     const idKw = stringToId(keyword)
-    const beatmaps = await this.db.map.findMany({
+    const bs = await this.db.source.findMany({
       take: limit,
       where: {
-        AND: [
-          {
-            OR: [
-              isNaN(idKw)
-                ? undefined
-                : {
-                    setId: idKw,
+        beatmaps: {
+          some: {
+            AND: [
+              {
+                OR: [
+                  isNaN(idKw)
+                    ? undefined
+                    : {
+                        setId: idKw,
+                      },
+                  {
+                    title: {
+                      contains: keyword,
+                    },
                   },
-              {
-                title: {
-                  contains: keyword,
-                },
+                  {
+                    artist: {
+                      contains: keyword,
+                    },
+                  },
+                  {
+                    creator: {
+                      contains: keyword,
+                    },
+                  },
+                ].filter(TSFilter),
               },
-              {
-                artist: {
-                  contains: keyword,
-                },
-              },
-              {
-                creator: {
-                  contains: keyword,
-                },
-              },
-            ].filter(TSFilter),
+              ...(filters ? createFilter(filters) : []),
+            ],
           },
-          ...(filters ? createFilter(filters) : []),
-        ],
+        },
       },
-      distinct: ['setId'],
+      include: {
+        beatmaps: true,
+      },
       orderBy: [
         {
-          setId: 'desc',
+          id: 'desc',
         },
       ],
-      include: {
-        source: true,
-      },
     })
-    return beatmaps.map(bs => toBeatmapset(bs.source, bs)).filter(TSFilter)
+    return bs.map(bs => bs.beatmaps.length ? toBeatmapset(bs, bs.beatmaps[0]) : undefined).filter(TSFilter)
   }
-
-  // async search(opt: { keyword: string; limit: number }) {
-  //   const [beatmaps, beatmapsets] = await Promise.all([this.searchBeatmap(opt), this.searchBeatmapset(opt)])
-  //   return {
-  //     beatmaps,
-  //     beatmapsets,
-  //   }
-  // }
 }

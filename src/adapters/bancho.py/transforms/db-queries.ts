@@ -114,15 +114,6 @@ export function createFilter(tags: Tag[]) {
         filter.push({ [key]: { [operator]: BanchoMode[value] } })
       }
     }
-    // if (key === 'mode') {
-    //
-    // }
-    // else if (key === 'starRating') {
-    //   filter.push({ diff: { [operator]: BanchoMode[value] } })
-    // }
-    // else {
-    //   filter.push({ [key]: { [operator]: value } })
-    // }
   })
   return filter
 }
