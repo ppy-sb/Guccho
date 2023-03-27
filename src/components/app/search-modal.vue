@@ -158,7 +158,6 @@ const {
   data: beatmaps,
   pending: pendingBeatmaps,
   refresh: searchBeatmaps,
-  error: bmError,
 } = await useAsyncData(async () => {
   if (!kw.value && !tags.value.length) {
     return []
@@ -186,19 +185,21 @@ const {
 })
 
 const searchMode = computed(() => (includes.beatmaps || includes.beatmapsets) && !includes.users ? 'beatmap' : 'all')
-const extract = () => {
+const extract = (force = false) => {
   if (searchMode.value === 'beatmap') {
-    extractTags(false)
-    extractQueries(false)
+    extractTags(force)
+    extractQueries(force)
   }
 }
 
 const searchRaw = (_extract = false) => {
-  _extract && extract()
+  _extract && extract(true)
 
   if (tags.value.length < 1) {
     if (!kw.value) {
-      return
+      beatmaps.value = []
+      beatmapsets.value = []
+      users.value = []
     }
     if (kw.value === lastKw.value) {
       return
@@ -223,7 +224,7 @@ const hasResult = computed(() => {
     || (Array.isArray(users.value) && users.value.length)
   )
 })
-watch(tags, () => search())
+watch(tags, () => searchRaw(), { deep: true })
 </script>
 
 <template>
@@ -235,7 +236,6 @@ watch(tags, () => search())
             class="card w-11/12 lg:w-2/3 max-h-[calc(100vh-2em)] bg-gradient-to-b from-kimberly-100 to-kimberly-200 dark:from-base-300 dark:to-base-200 shadow-lg"
           >
             <div class="card-actions pt-2 px-1 flex">
-              {{ bmError?.cause.data.error.json.message }}
               <div class="pl-3" />
               <div class="flex flex-col gap-4 md:flex-row items-baseline pt-1">
                 <div class="form-control">
