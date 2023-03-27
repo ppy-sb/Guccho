@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs'
-export async function encrypt(md5HashedPassword: string) {
-  const salt = await bcrypt.genSalt(11)
+export async function encrypt(md5HashedPassword: string, rounds = 11) {
+  const salt = await bcrypt.genSalt(rounds)
   const pwBcrypt = await bcrypt.hash(md5HashedPassword, salt)
   return pwBcrypt
 }
