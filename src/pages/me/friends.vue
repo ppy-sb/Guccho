@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useSession } from '~/store/session'
 import type { UserRelationship } from '~/types/user-relationship'
+import type { Relationship } from '~/types/common'
 const app$ = useNuxtApp()
 const session = useSession()
 
@@ -12,13 +13,13 @@ if (!session.$state.loggedIn) {
     },
   })
 }
-const relations = await app$.$client.me.relations.query()
+const relations = ref(await app$.$client.me.relations.query())
 const config = useAppConfig()
 
 useHead({
   titleTemplate: `Friends - ${config.title}`,
 })
-if (!relations) {
+if (!relations.value) {
   throw new Error('user not exists')
 }
 
@@ -27,20 +28,30 @@ const errorMessage = ref('')
 onErrorCaptured((err) => {
   errorMessage.value = err.message || 'something went wrong.'
 })
-
-const toggleRelation = (type: 'friend' | 'block') => async (user: UserRelationship<string>) => {
-  const haveRelation = user.relationship.includes(type)
-  if (haveRelation) {
-    await app$.$client.me.removeOneRelation.mutate({ type, target: user.id })
-    user.relationship = user.relationship.filter(k => k !== type)
+const haveRelation = (relation: Relationship, user: UserRelationship<string>) => {
+  return user.relationship.includes(relation)
+}
+const pendingUser = reactive(new Set<string>())
+const toggleRelation = async (type: Relationship, user: UserRelationship<string>) => {
+  pendingUser.add(user.id)
+  try {
+    if (haveRelation(type, user)) {
+      await app$.$client.me.removeOneRelation.mutate({ type, target: user.id })
+      user.relationship = user.relationship.filter(k => k !== type)
+    }
+    else {
+      await app$.$client.me.addOneRelation.mutate({ type, target: user.id })
+      user.relationship.push(type)
+    }
+    pendingUser.delete(user.id)
   }
-  else {
-    await app$.$client.me.addOneRelation.mutate({ type, target: user.id })
-    user.relationship.push(type)
+  catch (e) {
+    pendingUser.delete(user.id)
   }
 }
 
-const toggleFriend = toggleRelation('friend')
+const toggleFriend = toggleRelation.bind(null, 'friend')
+const isFriend = haveRelation.bind(null, 'friend')
 </script>
 
 <template>
@@ -72,6 +83,7 @@ const toggleFriend = toggleRelation('friend')
               </h1>
               <div class="flex justify-between w-full items-top">
                 <nuxt-link
+                  :key="`${user.id}:${user.relationship.join('-')}`"
                   class="text-lg text-left underline md:text-2xl decoration-sky-500 text-kimberly-600 dark:text-kimberly-300 hover:text-kimberly-500"
                   :to="{
                     name: 'user-handle',
@@ -86,8 +98,8 @@ const toggleFriend = toggleRelation('friend')
                   <!-- <t-button variant="info" size="xs" class="md:btn-sm">
                     chat
                   </t-button> -->
-                  <t-button variant="warning" size="xs" class="md:btn-sm" @click="toggleFriend(user)">
-                    remove
+                  <t-button :loading="pendingUser.has(user.id)" variant="warning" size="xs" class="md:btn-sm" @click="toggleFriend(user)">
+                    {{ pendingUser.has(user.id) ? '' : isFriend(user) ? 'remove' : 'regret' }}
                   </t-button>
                 </div>
               </div>
