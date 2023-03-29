@@ -25,7 +25,7 @@ const privilege = ref<NonNullable<Content['privilege']>>({
 const update = async () => {
   await refresh()
   editing.value = content.value?.json || {}
-  editor.value?.context.editor.value?.commands.setContent(editing.value)
+  editor.value?.reload()
 }
 const exportArticle = () => {
   const file = new File([JSON.stringify({

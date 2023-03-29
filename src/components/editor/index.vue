@@ -34,7 +34,7 @@ const onUpdated = async () => {
   await Promise.all(lazy(props.modelValue))
   editor.value?.commands.setContent(props.modelValue)
 }
-watch(() => props.modelValue, onUpdated)
+
 onBeforeMount(async () => {
   editor.value?.setEditable(props.editable)
   if (props.editable) {
@@ -46,6 +46,9 @@ onBeforeMount(async () => {
 })
 defineExpose({
   context,
+  reload() {
+    onUpdated()
+  },
 })
 </script>
 

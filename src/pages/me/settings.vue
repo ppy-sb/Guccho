@@ -6,6 +6,7 @@ import { useSession } from '~/store/session'
 import { checkAvatar } from '~/utils'
 
 import 'vue-advanced-cropper/dist/style.css'
+import type Edit from '~/components/editor/index.vue'
 
 definePageMeta({
   middleware: ['auth'],
@@ -38,6 +39,7 @@ const unchanged = ref({ ...user.value as Exclude<typeof user['value'], null> })
 
 const profile = ref<JSONContent>()
 const profileEdited = ref(false)
+const editor = ref<InstanceType<typeof Edit>>()
 
 const newAvatar = ref<File>()
 const newAvatarURL = ref<string>()
@@ -86,7 +88,8 @@ const saveAvatar = async () => {
   uploadingAvatarStat.value = 'succeed'
   newAvatarURL.value = url
   session.setAvatarTimestamp()
-  refresh()
+  await refresh()
+  editor.value?.reload()
 }
 // update settings
 const errorMessage = ref<string[]>([])
@@ -559,6 +562,7 @@ onBeforeMount(() => {
       <span class="pl-3 label-text">profile</span>
     </label>
     <editor
+      ref="editor"
       v-model.lazy="profile"
       class="safari-performance-boost"
       @update:model-value="profileEdited = true"
