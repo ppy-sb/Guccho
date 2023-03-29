@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useSession } from '~/store/session'
+import type { UserRelationship } from '~/types/user-relationship'
 const app$ = useNuxtApp()
 const session = useSession()
 
@@ -27,10 +28,19 @@ onErrorCaptured((err) => {
   errorMessage.value = err.message || 'something went wrong.'
 })
 
-const toggleRelation = (type: 'friend' | 'block') => {
-  const b = 'not exists on server'
-  return b
+const toggleRelation = (type: 'friend' | 'block') => async (user: UserRelationship<string>) => {
+  const haveRelation = user.relationship.includes(type)
+  if (haveRelation) {
+    await app$.$client.me.removeOneRelation.mutate({ type, target: user.id })
+    user.relationship = user.relationship.filter(k => k !== type)
+  }
+  else {
+    await app$.$client.me.addOneRelation.mutate({ type, target: user.id })
+    user.relationship.push(type)
+  }
 }
+
+const toggleFriend = toggleRelation('friend')
 </script>
 
 <template>
@@ -76,7 +86,7 @@ const toggleRelation = (type: 'friend' | 'block') => {
                   <!-- <t-button variant="info" size="xs" class="md:btn-sm">
                     chat
                   </t-button> -->
-                  <t-button variant="warning" size="xs" class="md:btn-sm" @click="() => toggleRelation('friend')">
+                  <t-button variant="warning" size="xs" class="md:btn-sm" @click="toggleFriend(user)">
                     remove
                   </t-button>
                 </div>

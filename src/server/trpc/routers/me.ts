@@ -10,6 +10,7 @@ import {
 } from '../messages'
 import { zodHandle, zodRelationType, zodTipTapJSONContent } from '../shapes'
 import { router as _router } from '../trpc'
+import { mapId } from '../../mapInstance'
 import { userProcedure as pUser } from '~/server/trpc/middleware/user'
 import { calculateMutualRelationships } from '~/server/transforms'
 import { UserProvider, UserRelationProvider } from '$active/server'
@@ -147,7 +148,7 @@ export const router = _router({
     }),
 
   relations: pUser.query(async ({ ctx }) => {
-    return await relations.get({ user: ctx.user })
+    return await (await relations.get({ user: ctx.user })).map(f => mapId(f, relations.idToString))
   }),
 
   removeOneRelation: pUser

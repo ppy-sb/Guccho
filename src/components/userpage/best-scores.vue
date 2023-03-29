@@ -41,7 +41,6 @@ const switchBetweenScoreRanks = () =>
   && stabilizeScoreRank(prevSwitcherState.rankingSystem)
     === stabilizeScoreRank(switcher.rankingSystem)
 const bpPage = ref<NumberRange<0, 10>>(0)
-const topPage = ref<NumberRange<0, 10>>(0)
 
 const user = inject('user') as Ref<UserEssential<string>>
 const {
@@ -139,28 +138,27 @@ onMounted(() => {
     }
     // reset bp page
     bpPage.value = 0
-    topPage.value = 0
     // animate
     computeAnimateDirection()
     refreshBP()
     prevSwitcherState = { ...sw }
   })
 })
-const prevPage = (val: Ref<any>) => () => {
+const prevPage = (val: Ref<number>) => {
   transition.value = 'left'
   if (val.value > 0) {
     val.value -= 1
   }
 }
-const nextPage = (val: Ref<any>) => () => {
+const nextPage = (val: Ref<number>) => {
   transition.value = 'right'
   if (val.value < 9) {
     val.value += 1
   }
 }
 
-const prevBp = prevPage(bpPage)
-const nextBp = nextPage(bpPage)
+const prevBp = prevPage.bind(null, bpPage)
+const nextBp = nextPage.bind(null, bpPage)
 </script>
 
 <template>
