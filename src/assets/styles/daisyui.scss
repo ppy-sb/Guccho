@@ -5,12 +5,13 @@ html {
 }
 
 .btn {
+  @apply transition-shadow;
   @apply shadow-lg;
   @apply dark:shadow-md;
 
   @each $variant in $variants {
     &.btn-#{$variant} {
-      @apply shadow-#{$variant}/40 dark:shadow-#{$variant}/20;
+      @apply shadow-#{$variant}/40 hover:shadow-#{$variant}/50 dark:shadow-#{$variant}/20 hover:dark:shadow-#{$variant}/30;
     }
   }
 
@@ -20,15 +21,12 @@ html {
 }
 .input {
   @each $variant in $variants {
-    &.btn-#{$variant} {
-      @apply shadow-#{$variant}/40 dark:shadow-#{$variant}/20;
+    &.input-#{$variant} {
+      @apply shadow-#{$variant}/40 hover:shadow-#{$variant}/50 dark:shadow-#{$variant}/20 hover:dark:shadow-#{$variant}/30;
     }
   }
 }
 
 .dv-tab.tab-active {
-  // background-color: theme('bg-kimberly-500');
-  // @apply bg-kimberly-500
-
   @apply [--tab-bg:theme('colors.kimberly.700')];
 }
