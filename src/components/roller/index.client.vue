@@ -3,6 +3,7 @@ import useReloadAnimation from './composables/animation/useReloadAnimation'
 import RollerItem from './item.vue'
 import type { RollerItemCharSet, RollerItemMode } from './main'
 import { RollerCharSet } from './main'
+import './index.style.scss?style'
 
 export interface Props {
   value?: string
@@ -48,49 +49,20 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <!-- <div v-if="!client" v-bind="$attrs" class="invisible">
-    {{ value }}
-  </div> -->
-  <client-only>
-    <TransitionGroup
-      tag="div"
-      name="roller-list"
-      class="roller"
-      v-bind="$attrs"
-    >
-      <RollerItem
-        v-for="(char, idx) of charArray"
-        :key="idx"
-        :char="char"
-        :duration="duration"
-        :char-set="computedCharSet"
-        :default-char="defaultCharArray[idx]"
-        :mode="mode"
-      />
-    </TransitionGroup>
-  </client-only>
+  <TransitionGroup
+    tag="div"
+    name="roller-list"
+    class="roller"
+    v-bind="$attrs"
+  >
+    <RollerItem
+      v-for="(char, idx) of charArray"
+      :key="idx"
+      :char="char"
+      :duration="duration"
+      :char-set="computedCharSet"
+      :default-char="defaultCharArray[idx]"
+      :mode="mode"
+    />
+  </TransitionGroup>
 </template>
-
-<style lang="postcss" scoped>
-.roller {
-  display: flex;
-  /* flex-wrap: wrap; */
-}
-.roller-list-enter-active,
-.roller-list-leave-active {
-  transition: 0.5s ease-out;
-}
-.roller-list-enter-from {
-  opacity: 0;
-}
-.roller-list-enter-to {
-  opacity: 1;
-}
-.roller-list-leave-from {
-  opacity: 1;
-}
-.roller-list-leave-to {
-  opacity: 0;
-  width: 0px !important;
-}
-</style>

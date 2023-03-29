@@ -1,0 +1,22 @@
+
+.roller {
+  display: flex;
+  /* flex-wrap: wrap; */
+}
+.roller-list-enter-active,
+.roller-list-leave-active {
+  transition: 0.5s ease-out;
+}
+.roller-list-enter-from {
+  opacity: 0;
+}
+.roller-list-enter-to {
+  opacity: 1;
+}
+.roller-list-leave-from {
+  opacity: 1;
+}
+.roller-list-leave-to {
+  opacity: 0;
+  width: 0px !important;
+}
