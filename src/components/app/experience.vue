@@ -70,7 +70,7 @@ const { charging, level } = useBattery()
 <style scoped lang="postcss">
 .bottom-xp-bar {
   @apply fixed bottom-0 w-full px-2 border-t-2 font-mono flex items-end gap-1 opacity-20;
-  @apply bg-gradient-to-b from-kimberly-100 to-kimberly-150 dark:from-kimberly-800 dark:to-kimberly-900 border-kimberly-200;
+  @apply bg-gradient-to-b from-kimberly-100 to-kimberly-200 dark:from-kimberly-800 dark:to-kimberly-900 border-kimberly-200;
   @apply hover:opacity-100;
 }
 </style>
