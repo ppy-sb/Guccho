@@ -11,7 +11,7 @@ import {
 import { sessionProcedure as pSession } from '../middleware/session'
 import { zodHandle } from '../shapes'
 import { router as _router } from '../trpc'
-import { mapId } from '../../mapInstance'
+import { mapId } from '../../transforms/mapId'
 import { getSession } from '~/server/session'
 import { UserProvider } from '$active/server'
 

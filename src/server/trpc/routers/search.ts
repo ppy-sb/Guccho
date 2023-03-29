@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { router as _router, publicProcedure as p } from '../trpc'
-import { mapId } from '../../mapInstance'
+import { mapId } from '../../transforms/mapId'
 import { zodSearchBeatmap } from '../shapes'
 import { MapProvider, UserProvider } from '$active/server'
 

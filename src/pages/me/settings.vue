@@ -118,7 +118,9 @@ const updateUserSettings = async () => {
   ])
   updateResult.value = true
   posting.value = false
-  setTimeout(() => (updateResult.value = false), 3000)
+  setTimeout(() => {
+    updateResult.value = false
+  }, 3000)
   if (!result) {
     return
   }

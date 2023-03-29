@@ -14,7 +14,7 @@ import {
 import { router as _router, publicProcedure as p } from '../trpc'
 import { sessionProcedure } from '../middleware/session'
 import { updateSession } from '../../session'
-import { mapId } from '../../mapInstance'
+import { mapId } from '../../transforms/mapId'
 import { followUserSettings } from '~/server/transforms'
 import { UserProvider, UserRelationProvider } from '$active/server'
 

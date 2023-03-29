@@ -7,7 +7,7 @@ import {
   zodRuleset,
 } from '../shapes'
 import { router as _router, publicProcedure } from '../trpc'
-import { mapId } from '../../mapInstance'
+import { mapId } from '../../transforms/mapId'
 import { LeaderboardProvider } from '$active/server'
 import { hasRuleset } from '$active'
 
