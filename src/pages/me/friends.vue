@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { useSession } from '~/store/session'
 const app$ = useNuxtApp()
 const session = useSession()
@@ -27,26 +27,21 @@ onErrorCaptured((err) => {
   errorMessage.value = err.message || 'something went wrong.'
 })
 
-const layout = ref('list')
+const toggleRelation = (type: 'friend' | 'block') => {
+  const b = 'not exists on server'
+  return b
+}
 </script>
 
 <template>
   <div class="container pt-24 mx-auto custom-container">
-    <t-tabs v-model="layout" size="lg" variant="bordered">
-      <t-tab value="list" :active="layout === 'list'">
-        list
-      </t-tab>
-      <t-tab value="condensed" :active="layout === 'condensed'">
-        condensed
-      </t-tab>
-    </t-tabs>
     <suspense>
       <template #fallback>
         <div>
           {{ errorMessage || "Loading..." }}
         </div>
       </template>
-      <div v-if="layout === 'list'" class="mx-auto user-list">
+      <div class="mx-auto user-list">
         <div
           v-for="user in relations"
           :key="`relation-@${user.safeName}`"
@@ -78,11 +73,11 @@ const layout = ref('list')
                   @{{ user.safeName }}
                 </nuxt-link>
                 <div class="flex gap-2 actions">
-                  <t-button variant="info" size="xs" class="md:btn-sm">
+                  <!-- <t-button variant="info" size="xs" class="md:btn-sm">
                     chat
-                  </t-button>
-                  <t-button variant="warning" size="xs" class="md:btn-sm">
-                    remove friend
+                  </t-button> -->
+                  <t-button variant="warning" size="xs" class="md:btn-sm" @click="() => toggleRelation('friend')">
+                    remove
                   </t-button>
                 </div>
               </div>

@@ -58,17 +58,17 @@ export class UserRelationProvider implements Base<Id> {
       pGotRelationResult,
     ])
 
-    const asUserEssentialShape = relationships.map(r => ({
+    const transformed = relationships.map(r => ({
       ...r,
       toUser: toUserEssential({ user: r.toUser, config: this.config }),
     }))
-    const deduped = dedupeUserRelationship(asUserEssentialShape)
+    const deduped = dedupeUserRelationship(transformed)
 
     for (const _user of deduped) {
       const reverse = gotRelationships
-        .filter(reverse => reverse.fromUserId === user.id)
-        .map(reverse => reverse.type)
-      _user.relationshipFromTarget = reverse || []
+        .filter(reverse => reverse.fromUserId === _user.id)
+        .map(rev => rev.type)
+      _user.relationshipFromTarget = reverse
       _user.mutualRelationship = calculateMutualRelationships(
         _user.relationship,
         _user.relationshipFromTarget,
