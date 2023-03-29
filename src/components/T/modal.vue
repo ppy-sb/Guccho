@@ -1,5 +1,3 @@
-<script setup></script>
-
 <template>
   <div class="zoom-modal-inner">
     <slot name="root">
