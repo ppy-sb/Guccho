@@ -35,6 +35,13 @@ const selectedMapId = ref<string>(
 const selectedMap = computed(() =>
   beatmapset.value?.beatmaps.find(bm => bm.id === selectedMapId.value),
 )
+const allowedModes = computed(() => {
+  if (!selectedMap.value?.mode) {
+    return supportedModes
+  }
+  return (selectedMap.value.mode !== 'osu') ? [selectedMap.value.mode] : supportedModes
+})
+
 const bgCover = beatmapset.value
   && isBanchoBeatmapset(beatmapset.value) && {
   cover: `https://assets.ppy.sh/beatmaps/${
@@ -69,6 +76,29 @@ if (queryRankingSystem) {
   })
 }
 
+function rewriteAnchor() {
+  const url = new URL(window.location.toString())
+  if (selectedMap.value) {
+    url.searchParams.set('beatmap', selectedMap.value.id)
+  }
+
+  url.searchParams.set('rank', switcher.rankingSystem)
+  url.searchParams.set('mode', switcher.mode)
+  url.searchParams.set('ruleset', switcher.ruleset)
+  history.replaceState({}, '', url)
+}
+
+function updateSwitcher() {
+  if (!selectedMap.value) {
+    return
+  }
+  if (selectedMap.value.mode !== 'osu') {
+    switcher.mode = selectedMap.value.mode
+  }
+}
+
+watch(selectedMapId, updateSwitcher)
+
 const { data: leaderboard, refresh } = await useAsyncData(async () => {
   if (!selectedMap.value) {
     return null
@@ -82,25 +112,16 @@ const { data: leaderboard, refresh } = await useAsyncData(async () => {
   })
 })
 
+updateSwitcher()
+
 useHead({
   titleTemplate: `%s - ${config.title}`,
   title: computed(() => `${beatmapset.value?.meta.intl.artist} - ${beatmapset.value?.meta.intl.title} > ${selectedMap.value?.version}`),
 })
 
-function rewriteAnchor() {
-  const url = new URL(window.location.toString())
-  if (selectedMap.value) {
-    url.searchParams.set('beatmap', selectedMap.value.id)
-  }
-
-  url.searchParams.set('rank', switcher.rankingSystem)
-  url.searchParams.set('mode', switcher.mode)
-  url.searchParams.set('ruleset', switcher.ruleset)
-  history.replaceState({}, '', url)
-}
-
-const update = () => {
-  refresh()
+const update = async () => {
+  await refresh()
+  updateSwitcher()
   rewriteAnchor()
 }
 
@@ -220,31 +241,32 @@ onBeforeMount(() => {
           <div class="p-2 flex justify-between">
             <t-tabs
               v-model="switcher.mode"
-              variant=""
               @update:model-value="update"
             >
-              <t-tab
-                v-for="m in supportedModes"
-                :key="`sw-${m}`"
-                :value="m"
-                :disabled="hasRuleset(m, switcher.ruleset) === false"
-              >
-                {{ m }}
-              </t-tab>
+              <template v-for="m in allowedModes">
+                <t-tab
+                  v-if="hasRuleset(m, switcher.ruleset)"
+                  :key="`sw-${m}`"
+                  :value="m"
+                >
+                  {{ m }}
+                </t-tab>
+              </template>
             </t-tabs>
             <t-tabs
               v-model="switcher.ruleset"
               variant=""
               @update:model-value="update"
             >
-              <t-tab
-                v-for="r in supportedRulesets"
-                :key="`sw-${r}`"
-                :value="r"
-                :disabled="hasRuleset(switcher.mode, r) === false"
-              >
-                {{ r }}
-              </t-tab>
+              <template v-for="r in supportedRulesets">
+                <t-tab
+                  v-if="hasRuleset(switcher.mode, r)"
+                  :key="`sw-${r}`"
+                  :value="r"
+                >
+                  {{ r }}
+                </t-tab>
+              </template>
             </t-tabs>
           </div>
           <dl>
