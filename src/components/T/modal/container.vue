@@ -138,7 +138,7 @@ $scale2: scale(0.95);
     right: 0;
     z-index: -50;
 
-    @apply transition-[filter];
+    @apply transition-[filter] transition-[backdrop-filter];
   }
 
   &[data-l1-status="show"] {
@@ -146,7 +146,9 @@ $scale2: scale(0.95);
     > .zoom-modal-background {
       // background: rgba(0, 0, 0, .1);
       z-index: 40;
-      @apply backdrop-blur-sm;
+      @apply backdrop-blur-md;
+      @apply backdrop-contrast-[1.8] backdrop-brightness-[0.83];
+      @apply dark:backdrop-contrast-[1.2] dark:backdrop-brightness-[0.75];
     }
 
     &[data-l2-status="hidden"] > .zoom-modal-content {
@@ -184,14 +186,12 @@ $scale2: scale(0.95);
 @keyframes zoomOutModalContent {
   0% {
     transform: scale(1);
-    // -webkit-transform: scale(1);
+
   }
 
   100% {
     transform: $scale;
     filter: $zoom-content-stage1;
-    // -webkit-transform: $scale;
-    // -webkit-filter: $zoom-modal-content-stage1;
   }
 }
 
@@ -199,13 +199,10 @@ $scale2: scale(0.95);
   0% {
     transform: $scale;
     filter: $zoom-content-stage1;
-    // -webkit-transform: $scale;
-    // -webkit-filter: $zoom-modal-content-stage1;
   }
 
   100% {
     transform: scale(1);
-    // -webkit-transform: scale(1);
   }
 }
 
@@ -213,15 +210,11 @@ $scale2: scale(0.95);
   0% {
     transform: $scale;
     filter: $zoom-content-stage1;
-    // -webkit-transform: $scale;
-    // -webkit-filter: $zoom-modal-content-stage1;
   }
 
   100% {
     transform: $scale2;
     filter: $zoom-content-stage2;
-    // -webkit-transform: $scale2;
-    // -webkit-filter: $zoom-modal-content-stage2;
   }
 }
 
@@ -229,15 +222,11 @@ $scale2: scale(0.95);
   0% {
     transform: $scale2;
     filter: $zoom-content-stage2;
-    // -webkit-transform: $scale2;
-    // -webkit-filter: $zoom-modal-content-stage2;
   }
 
   100% {
     transform: $scale;
     filter: $zoom-content-stage1;
-    // -webkit-transform: $scale;
-    // -webkit-filter: $zoom-modal-content-stage1;
   }
 }
 

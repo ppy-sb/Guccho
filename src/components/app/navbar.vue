@@ -48,9 +48,7 @@ const logout = async () => {
 </script>
 
 <template>
-  <client-only>
-    <app-search-modal ref="searchModalWrapper" />
-  </client-only>
+  <app-search-modal ref="searchModalWrapper" />
   <div
     ref="root"
     class="w-full transition-[padding] fixed navbar-container z-40"
@@ -244,8 +242,6 @@ const logout = async () => {
   }
 
   &.disabled {
-    transition: all 0.5s cubic-bezier(0.05, 1, 0.4, 0.95);
-    filter: saturate(0.8) opacity(0.8);
 
     * {
       @apply pointer-events-none;
@@ -271,11 +267,6 @@ const logout = async () => {
     @apply border-kimberly-50/30 dark:border-kimberly-500/30;
     @apply rounded-2xl;
     @apply min-h-0;
-
-    &.disabled {
-      scale: (0.95);
-      filter: blur(0.3em);
-    }
 
     .avatar {
       & img.avatar-img {
