@@ -33,16 +33,15 @@ export default async function () {
     gte: '>=',
     gt: '>',
   }
-  const tag = <T extends keyof typeof taggable, K extends (typeof taggable)[T][number]>
-    (key: T, op: keyof typeof tagOperators, value: K) => {
-    const _v = [key, op, value] as [T, typeof op, K]
-    _v.toString = () => `<b>${key}</b> ${tagOperators[op]} <b>${value}</b>`
-    return _v
+  function tag<T extends keyof typeof taggable, K extends (typeof taggable)[T][number]>(key: T, op: keyof typeof tagOperators, value: K) {
+    const t = [key, op, value] as [T, typeof op, K]
+    t.toString = () => `<b>${key}</b> ${tagOperators[op]} <b>${value}</b>`
+    return t
   }
-  const query = <T extends keyof typeof queryable, K>(key: T, op: keyof typeof compareOperators, value: K) => {
-    const _v = [key, op, value] as [T, OP, K]
-    _v.toString = () => `<b>${key}</b> ${compareOperators[op]} <b>${value}</b>`
-    return _v
+  function query<T extends keyof typeof queryable, K>(key: T, op: keyof typeof compareOperators, value: K) {
+    const t = [key, op, value] as [T, OP, K]
+    t.toString = () => `<b>${key}</b> ${compareOperators[op]} <b>${value}</b>`
+    return t
   }
 
   const extractTags = (force: boolean) => {
@@ -219,7 +218,7 @@ export default async function () {
     },
     anyLoading: computed(() => pendingUsers.value || pendingBeatmaps.value || pendingBeatmapsets.value),
     anyResult: computed(() =>
-      (Array.isArray(beatmapsets.value) && beatmapsets.value.length)
+      ((Array.isArray(beatmapsets.value) && beatmapsets.value.length))
     || (Array.isArray(beatmaps.value) && beatmaps.value.length)
     || (Array.isArray(users.value) && users.value.length),
     ),
