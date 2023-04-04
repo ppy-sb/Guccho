@@ -147,8 +147,8 @@ $scale2: scale(0.95);
       // background: rgba(0, 0, 0, .1);
       z-index: 40;
       @apply backdrop-blur-md;
-      @apply backdrop-contrast-[1.8] backdrop-brightness-[0.83];
-      @apply dark:backdrop-contrast-[1.2] dark:backdrop-brightness-[0.75];
+      @apply backdrop-saturate-[0.8] backdrop-contrast-[1.02] backdrop-brightness-[1.02];
+      @apply dark:backdrop-contrast-[1.05] dark:backdrop-brightness-[0.9];
     }
 
     &[data-l2-status="hidden"] > .zoom-modal-content {
