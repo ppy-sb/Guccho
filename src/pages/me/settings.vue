@@ -561,7 +561,7 @@ onBeforeMount(() => {
     <label class="label">
       <span class="pl-3 label-text">profile</span>
     </label>
-    <editor
+    <lazy-editor
       ref="editor"
       v-model.lazy="profile"
       class="safari-performance-boost"
