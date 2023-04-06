@@ -84,6 +84,9 @@ onMounted(() => {
         disabled: modalContainer?.stat === 'show',
       }"
     />
+    <DevOnly>
+      <experience />
+    </DevOnly>
   </div>
 </template>
 

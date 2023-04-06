@@ -95,4 +95,7 @@ export default defineNuxtConfig({
   typescript: {
     strict: true,
   },
+  experimental: {
+    componentIslands: true,
+  },
 })

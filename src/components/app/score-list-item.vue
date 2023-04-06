@@ -17,6 +17,7 @@ import { createAddCommasFormatter } from '~/common/varkaUtils'
 
 import { beatmapIsVisible, placeholder } from '~/utils'
 import type { RankingStatus } from '~/types/beatmap'
+
 const props = withDefaults(
   defineProps<{
     score?: RankingSystemScore<
@@ -109,10 +110,10 @@ const meta = computed(
               :to="{
                 name: 'beatmapset-id',
                 params: {
-                  id: beatmap.beatmapset.id,
+                  id: beatmap.beatmapset.id as string,
                 },
                 query: {
-                  beatmap: beatmap.id,
+                  beatmap: beatmap.id as string,
                   mode: props.mode,
                   ruleset: props.ruleset,
                   rank: ['totalScore', 'rankedScore'].includes(

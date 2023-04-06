@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Mode, RankingSystem, Ruleset } from '~/types/common'
 import { rankingSystems } from '~/types/defs'
+
 const props = defineProps<{
   modelValue: RankingSystem
   mode: Mode
@@ -30,7 +31,7 @@ watch([() => props.mode, () => props.ruleset], () => {
   <t-tabs
     :model-value="props.modelValue"
     variant="lifted"
-    @update:model-value="(v) => emit('update:modelValue', v)"
+    @update:model-value="(v: typeof props['modelValue']) => emit('update:modelValue', v)"
   >
     <t-tab
       v-for="rs in show"

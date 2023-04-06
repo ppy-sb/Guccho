@@ -1,8 +1,6 @@
 <script setup lang="ts">
-// follow server
-
 import type { LeaderboardSwitcherComposableType } from '~/composables/useSwitcher'
-import { LeaderboardRankingSystem } from '~/types/common'
+import type { LeaderboardRankingSystem } from '~/types/common'
 
 const { hasRuleset, hasLeaderboardRankingSystem }
   = await useAdapterConfig()
@@ -26,10 +24,8 @@ const rankingSystemEntries = computed(
   () => Object.entries(rankingSystem) as Entry[],
 )
 
-const filter = (showType: 'tab' | 'dropdown') =>
-  rankingSystemEntries.value.reduce<
-    Partial<Record<keyof typeof rankingSystem, RankConf>>
-  >((acc, [key, value]) => {
+function filter(showType: 'tab' | 'dropdown') {
+  return rankingSystemEntries.value.reduce((acc, [key, value]) => {
     if (value.userpage.show !== showType) {
       return acc
     }
@@ -41,7 +37,8 @@ const filter = (showType: 'tab' | 'dropdown') =>
     }
     acc[key] = value
     return acc
-  }, {})
+  }, {} as Partial<Record<keyof typeof rankingSystem, RankConf>>)
+}
 const tabs = computed(() => filter('tab'))
 const dropdown = computed(() => filter('dropdown'))
 </script>

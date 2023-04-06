@@ -1,5 +1,3 @@
-import { defineAppConfig } from 'nuxt/app'
-
 import type {
   LeaderboardRankingSystem,
   Mode,

@@ -1,11 +1,12 @@
+import type { Brand } from './internal-utils'
 import type {
   AvailableRuleset,
   LeaderboardRankingSystem,
   Mode,
   RankingSystem,
   Ruleset,
+
 } from './common'
-import type { Brand } from './internal-utils'
 
 export type ServerRankingSystemDef = {
   [M in Mode]: {
@@ -27,6 +28,7 @@ export type HasRankingSystem = <
 >(
   mode: M,
   ruleset: R,
+  // rankingSystem: RankingSystem
   rankingSystem: Brand<string> | RankingSystem
 ) => rankingSystem is RankingSystem
 
@@ -36,5 +38,6 @@ export type HasLeaderboardRankingSystem = <
 >(
   mode: M,
   ruleset: R,
+  // rankingSystem: LeaderboardRankingSystem
   rankingSystem: Brand<string> | LeaderboardRankingSystem
 ) => rankingSystem is LeaderboardRankingSystem
