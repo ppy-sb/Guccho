@@ -8,6 +8,7 @@ const props = defineProps<{
 const [scrollY] = useScrollYObserver()
 
 const session = useSession()
+const $route = useRoute()
 
 const searchModalWrapper = ref<{
   searchModal: {
@@ -31,7 +32,7 @@ const menu = computed(() => [
 ])
 const config = useAppConfig()
 const detached = ref(false)
-watch(scrollY, () => detached.value = scrollY.value > 0)
+watch(scrollY, () => (detached.value = scrollY.value > 0))
 const root = ref<HTMLElement>()
 
 const shownMenu = reactive({
@@ -40,7 +41,7 @@ const shownMenu = reactive({
   user: false,
 })
 
-const logout = async () => {
+async function logout() {
   await session.destroy()
   await navigateTo('/')
   shownMenu.user = false
@@ -87,7 +88,7 @@ const logout = async () => {
             </svg>
           </label>
           <template #popper>
-            <div class="menu bg-kimberly-100/80 dark:bg-kimberly-700/80">
+            <div class="menu bg-base-100/80 dark:bg-base-300/80">
               <li
                 v-for="menuItem in menu"
                 :key="`menu-${menuItem.name}`"
@@ -167,7 +168,7 @@ const logout = async () => {
             </div>
           </button>
           <template #popper>
-            <div class="menu bg-kimberly-100/80 dark:bg-kimberly-700/80">
+            <div class="menu bg-base-100/80 dark:bg-base-300/80">
               <ul
                 tabindex="0"
                 class="right-0 p-2 mt-2 shadow-xl menu menu-compact dropdown-content rounded-br-2xl rounded-bl-2xl w-52"
@@ -227,7 +228,7 @@ const logout = async () => {
 <style lang="postcss">
 .navbar-tint,
 .detached > .navbar {
-  @apply bg-kimberly-100/80 dark:bg-kimberly-700/80;
+  @apply bg-base-100/80 dark:bg-base-300/80;
   @apply backdrop-blur-md shadow-xl;
 }
 .navbar {
@@ -242,7 +243,6 @@ const logout = async () => {
   }
 
   &.disabled {
-
     * {
       @apply pointer-events-none;
     }
@@ -258,7 +258,7 @@ const logout = async () => {
 
   .navbar-end {
     @apply transition-[gap];
-    @apply gap-0
+    @apply gap-0;
   }
 }
 .detached {
@@ -290,7 +290,7 @@ const logout = async () => {
 
     & .navbar-end {
       @apply transition-[gap];
-      @apply gap-2
+      @apply gap-2;
     }
   }
 }

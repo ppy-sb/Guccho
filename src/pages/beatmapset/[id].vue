@@ -184,7 +184,7 @@ onBeforeMount(() => {
       </div>
       <div
         v-if="selectedMap"
-        class="flex flex-col md:flex-row card bg-kimberly-100 dark:bg-kimberly-900"
+        class="flex flex-col md:flex-row card bg-base-100 "
       >
         <div class="w-full md:w-1/3 grow">
           <div class="p-8 h-full flex flex-col justify-around">

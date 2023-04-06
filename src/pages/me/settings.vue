@@ -367,7 +367,7 @@ onBeforeMount(() => {
     <div class="flex flex-col flex-wrap justify-between md:flex-row">
       <div class="grow xl:max-w-2xl w-full lg:[max-width:50%]">
         <div
-          class="flex items-end justify-center p-3 overflow-hidden shadow-md gap-4 md:justify-start bg-kimberly-200/30 dark:bg-kimberly-700/40 sm:rounded-3xl lg:mr-4"
+          class="flex items-end justify-center p-3 overflow-hidden shadow-md gap-4 md:justify-start bg-base-200/30 dark:bg-kimberly-700/40 sm:rounded-3xl lg:mr-4"
         >
           <div class="relative z-10 mask mask-squircle hoverable w-100 self-center">
             <button
@@ -594,7 +594,7 @@ onBeforeMount(() => {
 
 .dropzone {
   @apply flex flex-col justify-center items-center w-full h-64 bg-kimberly-50 rounded-lg border-2 border-kimberly-300 border-dashed cursor-pointer;
-  @apply dark:hover:bg-kimberly-200 dark:bg-kimberly-800 dark:bg-kimberly-300 dark:bg-kimberly-700 hover:bg-kimberly-50 dark:border-kimberly-600 dark:hover:border-kimberly-500 dark:hover:bg-kimberly-600;
+  @apply dark:hover:bg-base-200 dark:bg-kimberly-300 dark:bg-kimberly-700 hover:bg-kimberly-50 dark:border-kimberly-600 dark:hover:border-kimberly-500 dark:hover:bg-kimberly-600;
   @apply hover:shadow-lg;
   @apply transition-shadow transition-colors;
 }

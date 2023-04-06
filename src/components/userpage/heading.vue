@@ -92,7 +92,7 @@ const toggleFriend = async () => {
     </div>
     <!-- info -->
     <div
-      class="flex flex-col w-full pt-2 md:p-0 bg-kimberly-200 dark:bg-kimberly-700 md:bg-transparent md:grow"
+      class="flex flex-col w-full pt-2 md:p-0 bg-base-200 dark:bg-kimberly-700 md:bg-transparent md:grow"
     >
       <div
         v-if="session.$state.userId !== user.id"
@@ -193,7 +193,7 @@ const toggleFriend = async () => {
 
 <style scoped lang="scss">
 .user-status {
-  @apply text-center text-kimberly-600 dark:text-kimberly-400 bg-kimberly-200/50 dark:bg-kimberly-700/50 px-2;
+  @apply text-center text-kimberly-600 dark:text-kimberly-400 bg-base-200/50 dark:bg-kimberly-700/50 px-2;
   @apply md:text-left md:rounded;
   @apply md:[margin-left:-7em] md:[padding-left:7em];
 }

@@ -98,7 +98,7 @@ const userRegisterAction = async () => {
     class="flex items-center justify-center px-4 py-12 my-auto sm:px-6 lg:px-8"
   >
     <div
-      class="relative w-full max-w-md p-6 overflow-hidden shadow-2xl space-y-8 bg-kimberly-200/30 dark:bg-kimberly-800 rounded-3xl"
+      class="relative w-full max-w-md p-6 overflow-hidden shadow-2xl space-y-8 bg-base-200/30 dark:bg-kimberly-800 rounded-3xl"
     >
       <fetch-overlay :fetching="fetching" />
 
