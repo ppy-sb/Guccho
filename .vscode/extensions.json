@@ -1,5 +1,9 @@
 {
   "recommendations": [
-    "misterj.vue-volar-extention-pack"
+    "misterj.vue-volar-extention-pack",
+    "macieklad.tailwind-sass-syntax",
+    "bradlc.vscode-tailwindcss",
+    "sibiraj-s.vscode-scss-formatter",
+    "syler.sass-indented"
   ]
 }
