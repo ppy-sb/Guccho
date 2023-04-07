@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { isBanchoBeatmapset, placeholder } from '~/utils'
+
 const searchModal = ref<{
   openModal: () => void
 }>()
@@ -19,8 +20,8 @@ const {
     beatmapsets,
     users,
   },
-  anyLoading,
-  anyResult,
+  loading,
+  nothing,
 } = await useSearchModal()
 </script>
 
@@ -116,118 +117,129 @@ const {
             >
           </div>
           <div class="pt-0 overflow-auto menus">
-            <template
-              v-if="anyLoading"
-            >
+            <template v-if="loading.beatmapsets">
               <div class="divider" />
               <div class="p-5 pt-0">
-                searching...
+                Finding beatmapsets...
               </div>
             </template>
-            <template v-else-if="anyResult">
-              <template
-                v-if="Array.isArray(beatmapsets) && beatmapsets.length"
-              >
-                <div class="divider">
-                  beatmapsets
-                </div>
-                <ul class="menu">
-                  <li
-                    v-for="bs in beatmapsets"
-                    :key="`searchResult-bs-${bs.id}`"
+            <template
+              v-else-if="Array.isArray(beatmapsets) && beatmapsets.length"
+            >
+              <div class="divider">
+                beatmapsets
+              </div>
+              <ul class="menu">
+                <li
+                  v-for="bs in beatmapsets"
+                  :key="`searchResult-bs-${bs.id}`"
+                >
+                  <nuxt-link
+                    :to="{
+                      name: 'beatmapset-id',
+                      params: {
+                        id: bs.id,
+                      },
+                    }"
+                    @click="() => closeModal()"
                   >
-                    <nuxt-link
-                      :to="{
-                        name: 'beatmapset-id',
-                        params: {
-                          id: bs.id,
-                        },
-                      }"
-                      @click="() => closeModal()"
-                    >
-                      <div class="flex gap-2 items-center">
-                        <img
-                          v-if="isBanchoBeatmapset(bs)"
-                          class="h-[30px] mask mask-squircle overflow-hidden object-cover aspect-square"
-                          :src="`https://b.ppy.sh/thumb/${bs.foreignId}.jpg`"
-                          :onerror="placeholder"
-                        >
-                        <span>{{ bs.meta.intl.artist }} -
-                          {{ bs.meta.intl.title }}</span>
-                      </div>
-                    </nuxt-link>
-                  </li>
-                </ul>
-              </template>
-              <template v-if="Array.isArray(beatmaps) && beatmaps.length">
-                <div class="divider w-full">
-                  beatmaps
-                </div>
-                <ul class="menu">
-                  <li
-                    v-for="bm in beatmaps"
-                    :key="`searchResult-bm-${bm.id}`"
-                  >
-                    <nuxt-link
-                      :to="{
-                        name: 'beatmapset-id',
-                        params: {
-                          id: bm.beatmapset.id,
-                        },
-                      }"
-                      @click="() => closeModal()"
-                    >
-                      <div class="flex gap-2 items-center">
-                        <img
-                          v-if="isBanchoBeatmapset(bm.beatmapset)"
-                          class="h-[30px] mask mask-squircle overflow-hidden object-cover aspect-square"
-                          :src="`https://b.ppy.sh/thumb/${bm.beatmapset.foreignId}.jpg`"
-                          :onerror="placeholder"
-                        >
-                        <span>{{ bm.beatmapset.meta.intl.artist }} -
-                          {{ bm.beatmapset.meta.intl.title }} [{{
-                            bm.version
-                          }}]</span>
-                      </div>
-                    </nuxt-link>
-                  </li>
-                </ul>
-              </template>
-              <template v-if="Array.isArray(users) && users.length">
-                <div class="divider">
-                  users
-                </div>
-                <ul class="menu">
-                  <li
-                    v-for="user in users"
-                    :key="`searchResult-user-${user.safeName}`"
-                  >
-                    <nuxt-link
-                      :to="{
-                        name: 'user-handle',
-                        params: {
-                          handle: `@${user.safeName}`,
-                        },
-                      }"
-                      @click="() => closeModal()"
-                    >
-                      <div class="flex gap-2 items-center">
-                        <img
-                          :src="user.avatarSrc"
-                          class="w-[30px] mask mask-squircle overflow"
-                          :onerror="placeholder"
-                        >
-                        <span>{{ user.name }}</span>
-                      </div>
-                    </nuxt-link>
-                  </li>
-                </ul>
-              </template>
+                    <div class="flex gap-2 items-center">
+                      <img
+                        v-if="isBanchoBeatmapset(bs)"
+                        class="h-[30px] mask mask-squircle overflow-hidden object-cover aspect-square"
+                        :src="`https://b.ppy.sh/thumb/${bs.foreignId}.jpg`"
+                        :onerror="placeholder"
+                      >
+                      <span>{{ bs.meta.intl.artist }} -
+                        {{ bs.meta.intl.title }}</span>
+                    </div>
+                  </nuxt-link>
+                </li>
+              </ul>
             </template>
-            <template v-else-if="keyword">
+
+            <template v-if="loading.beatmaps">
               <div class="divider" />
               <div class="p-5 pt-0">
-                No Result
+                Finding beatmaps...
+              </div>
+            </template>
+            <template v-else-if="Array.isArray(beatmaps) && beatmaps.length">
+              <div class="divider w-full">
+                beatmaps
+              </div>
+              <ul class="menu">
+                <li
+                  v-for="bm in beatmaps"
+                  :key="`searchResult-bm-${bm.id}`"
+                >
+                  <nuxt-link
+                    :to="{
+                      name: 'beatmapset-id',
+                      params: {
+                        id: bm.beatmapset.id,
+                      },
+                    }"
+                    @click="() => closeModal()"
+                  >
+                    <div class="flex gap-2 items-center">
+                      <img
+                        v-if="isBanchoBeatmapset(bm.beatmapset)"
+                        class="h-[30px] mask mask-squircle overflow-hidden object-cover aspect-square"
+                        :src="`https://b.ppy.sh/thumb/${bm.beatmapset.foreignId}.jpg`"
+                        :onerror="placeholder"
+                      >
+                      <span>{{ bm.beatmapset.meta.intl.artist }} -
+                        {{ bm.beatmapset.meta.intl.title }} [{{
+                          bm.version
+                        }}]</span>
+                    </div>
+                  </nuxt-link>
+                </li>
+              </ul>
+            </template>
+
+            <template v-if="loading.users">
+              <div class="divider" />
+              <div class="p-5 pt-0">
+                Finding users...
+              </div>
+            </template>
+            <template v-else-if="Array.isArray(users) && users.length">
+              <div class="divider">
+                users
+              </div>
+              <ul class="menu">
+                <li
+                  v-for="user in users"
+                  :key="`searchResult-user-${user.safeName}`"
+                >
+                  <nuxt-link
+                    :to="{
+                      name: 'user-handle',
+                      params: {
+                        handle: `@${user.safeName}`,
+                      },
+                    }"
+                    @click="() => closeModal()"
+                  >
+                    <div class="flex gap-2 items-center">
+                      <img
+                        :src="user.avatarSrc"
+                        class="w-[30px] mask mask-squircle overflow"
+                        :onerror="placeholder"
+                      >
+                      <span>{{ user.name }}</span>
+                    </div>
+                  </nuxt-link>
+                </li>
+              </ul>
+            </template>
+
+            <template v-if="nothing">
+              <div class="divider" />
+              <div class="p-5 pt-0">
+                Found nothing.
               </div>
             </template>
           </div>
