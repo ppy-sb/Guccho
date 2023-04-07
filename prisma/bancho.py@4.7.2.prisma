@@ -80,7 +80,7 @@ model Clan {
   id        Int      @id @default(autoincrement())
   name      String   @unique(map: "clans_name_uindex") @db.VarChar(16)
   tag       String   @unique(map: "clans_tag_uindex") @db.VarChar(6)
-  ownerId   Int      @unique(map: "clans_owner_uindex")
+  ownerId   Int      @unique(map: "clans_owner_uindex") @map("owner")
   createdAt DateTime @map("created_at") @db.DateTime(0)
 
   joinedUsers User[] @relation("clan")
@@ -118,10 +118,8 @@ model Log {
   id   Int      @id @default(autoincrement())
   from Int
   to   Int
-  msg  String?  @db.VarChar(2048)
+  msg  String   @db.VarChar(2048)
   time DateTime @db.DateTime(0)
-
-  // action String @db.VarChar(32)
 
   @@map("logs")
 }
@@ -326,11 +324,12 @@ model UserAchievement {
 }
 
 model Achievement {
-  id              Int               @id @default(autoincrement())
-  file            String            @unique(map: "achievements_file_uindex") @db.VarChar(128)
-  name            String            @unique(map: "achievements_name_uindex") @db.VarChar(128)
-  desc            String            @unique(map: "achievements_desc_uindex") @db.VarChar(256)
-  cond            String            @db.VarChar(64)
+  id   Int    @id @default(autoincrement())
+  file String @unique(map: "achievements_file_uindex") @db.VarChar(128)
+  name String @unique(map: "achievements_name_uindex") @db.VarChar(128)
+  desc String @unique(map: "achievements_desc_uindex") @db.VarChar(256)
+  cond String @db.VarChar(64)
+
   UserAchievement UserAchievement[]
 
   @@map("achievements")
