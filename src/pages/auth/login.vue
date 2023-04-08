@@ -30,7 +30,7 @@ const login = reactive<{
 
 const fetching = ref(false)
 
-const userLogin = async () => {
+async function userLogin() {
   fetching.value = true
   error.value = ''
   try {

@@ -10,6 +10,7 @@ import useEditorExtensions from '~/composables/useEditorExtensions'
 import type { UserEssential } from '~/types/user'
 
 import type { UserProvider as Base } from '~/adapters/base/server'
+
 export class UserProvider extends BanchoPyUser implements Base<Id> {
   sbDb = getPrismaClient()
 

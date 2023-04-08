@@ -16,7 +16,7 @@ const modal = ref<HTMLElement>()
 const stat = ref<Status>('hidden')
 const l2Status = ref<Status>('hidden')
 
-const l2 = (value: Status) => {
+function l2(value: Status) {
   l2Status.value = value
 }
 
@@ -24,7 +24,7 @@ const modalShownCallback: (() => void)[] = []
 const modalClosedCallback: (() => void)[] = []
 
 const outerL2 = inject<typeof l2 | undefined>('openL2', undefined)
-const openModal = (cb?: () => void) => {
+function openModal(cb?: () => void) {
   if (outerL2) {
     outerL2('show')
   }
@@ -34,7 +34,7 @@ const openModal = (cb?: () => void) => {
     modalShownCallback.push(cb)
   }
 }
-const closeModal = (cb?: () => void) => {
+function closeModal(cb?: () => void) {
   if (outerL2) {
     outerL2('closed')
   }

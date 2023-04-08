@@ -6,7 +6,6 @@ import {
   faUserGroup,
 } from '@fortawesome/free-solid-svg-icons'
 import type { Ref } from 'vue'
-
 import { useElementHover } from '@vueuse/core'
 
 import type { UserFull as User } from '~/types/user'
@@ -55,11 +54,14 @@ const isMutualFriend = computed(
 const isFriend = computed(() =>
   data.value?.relationWithMe?.self.includes('friend'),
 )
-const isFriendButtonHovered = useElementHover(changeFriendStateButton)
+let isFriendButtonHovered = ref(false)
+onBeforeMount(() => {
+  isFriendButtonHovered = useElementHover(changeFriendStateButton)
+})
 const friendButtonContent = computed(
   () => data.value?.friendCount || 'Add as friend',
 )
-const toggleFriend = async () => {
+async function toggleFriend() {
   if (!session.loggedIn) {
     return
   }

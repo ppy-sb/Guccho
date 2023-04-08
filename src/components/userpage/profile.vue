@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { JSONContent } from '@tiptap/vue-3'
 import type { Ref } from 'vue'
+
 const user = inject<
   Ref<{
     id: unknown

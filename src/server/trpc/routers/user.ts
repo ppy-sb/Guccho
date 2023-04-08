@@ -19,6 +19,7 @@ import { followUserSettings } from '~/server/transforms'
 import { UserProvider, UserRelationProvider } from '$active/server'
 
 import type { NumberRange } from '~/types/common'
+
 const userProvider = new UserProvider()
 const userRelationshipProvider = new UserRelationProvider()
 

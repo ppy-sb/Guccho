@@ -2,6 +2,7 @@
 // @ts-expect-error we don't have to know
 import { JsonViewer } from 'vue3-json-viewer'
 import 'vue3-json-viewer/dist/index.css'
+
 const route = useRoute()
 
 const id = route.params.id.toString()

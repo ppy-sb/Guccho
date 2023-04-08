@@ -1,5 +1,5 @@
-import fs from 'fs/promises'
-import { isAbsolute, join, relative, resolve } from 'path'
+import fs from 'node:fs/promises'
+import { isAbsolute, join, relative, resolve } from 'node:path'
 import { BSON } from 'bson'
 import type { JSONContent } from '@tiptap/core'
 import { generateHTML } from '@tiptap/html'

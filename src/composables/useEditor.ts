@@ -3,6 +3,7 @@ import { Editor as EditorVue } from '@tiptap/vue-3'
 
 import useEditorExtensions from './useEditorExtensions'
 import useEditorLazyLoadHighlight from './useEditorLazyLoadHighlight'
+
 export default (
   reactiveConfig: {
     indent: string

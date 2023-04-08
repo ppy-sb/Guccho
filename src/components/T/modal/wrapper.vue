@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Status } from './shared'
+
 const props = defineProps<{
   initStatus?: Status
 }>()
@@ -9,11 +10,11 @@ const openModalContainer = inject<(cb?: () => void) => void>('openModal')
 const closeModalContainer = inject<(cb?: () => void) => void>('closeModal')
 const stat = ref(props.initStatus || 'hidden')
 
-const openModal = (cb?: () => void) => {
+function openModal(cb?: () => void) {
   stat.value = 'show'
   openModalContainer?.(cb)
 }
-const closeModal = (cb?: () => void) => {
+function closeModal(cb?: () => void) {
   stat.value = 'closed'
   closeModalContainer?.(cb)
 }

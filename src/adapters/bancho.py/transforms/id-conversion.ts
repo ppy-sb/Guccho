@@ -1,4 +1,5 @@
 import type { Id, ScoreId } from '..'
+
 export function stringToId(input: string): Id {
   return parseInt(input)
 }

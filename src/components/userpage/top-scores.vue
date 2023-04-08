@@ -20,6 +20,7 @@ import {
 } from '~/types/defs'
 
 import type { LeaderboardSwitcherComposableType } from '~/composables/useSwitcher'
+
 type RouterOutput = inferRouterOutputs<AppRouter>
 
 type User = RouterOutput['user']['userpage']
@@ -32,7 +33,7 @@ const [switcher] = inject('switcher') as LeaderboardSwitcherComposableType
 let prevSwitcherState = {
   ...switcher,
 }
-const stabilizeScoreRank = (rankingSystem: LeaderboardRankingSystem) => {
+function stabilizeScoreRank(rankingSystem: LeaderboardRankingSystem) {
   if (
     leaderboardScoreRankingSystems.includes(
       rankingSystem as LeaderboardScoreRankingSystem,
@@ -42,10 +43,11 @@ const stabilizeScoreRank = (rankingSystem: LeaderboardRankingSystem) => {
   }
   return rankingSystem as PPRankingSystem
 }
-const switchBetweenScoreRanks = () =>
-  prevSwitcherState.rankingSystem !== switcher.rankingSystem
+function switchBetweenScoreRanks() {
+  return prevSwitcherState.rankingSystem !== switcher.rankingSystem
   && stabilizeScoreRank(prevSwitcherState.rankingSystem)
     === stabilizeScoreRank(switcher.rankingSystem)
+}
 const topPage = ref<NumberRange<0, 10>>(0)
 
 const user = inject('user') as Ref<User>
@@ -152,13 +154,13 @@ onMounted(() => {
     prevSwitcherState = { ...sw }
   })
 })
-const prevPage = (val: Ref<number>) => {
+function prevPage(val: Ref<number>) {
   transition.value = 'left'
   if (val.value > 0) {
     val.value -= 1
   }
 }
-const nextPage = (val: Ref<number>) => {
+function nextPage(val: Ref<number>) {
   transition.value = 'right'
   if (val.value < 9) {
     val.value += 1

@@ -5,6 +5,7 @@ import {
   createPPFormatter,
 } from '~/common/varkaUtils'
 import type { BeatmapLeaderboard } from '~/types/leaderboard'
+
 const props = withDefaults(
   defineProps<{
     scores: BeatmapLeaderboard<string>[]

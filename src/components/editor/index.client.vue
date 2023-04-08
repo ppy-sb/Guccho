@@ -6,6 +6,7 @@ import '@/assets/styles/typography.scss'
 import MenuBar from './MenuBar.vue'
 import useEditor from '~/composables/useEditor'
 import useEditorLazyLoadHighlight from '~/composables/useEditorLazyLoadHighlight'
+
 const props = withDefaults(
   defineProps<{
     modelValue?: JSONContent
@@ -26,7 +27,7 @@ const editorConf = reactive({
 const context = useEditor(editorConf)
 const { editor, subscribe } = context
 
-const onUpdated = async () => {
+async function onUpdated() {
   const { load: lazy } = useEditorLazyLoadHighlight()
   if (!props.modelValue) {
     return

@@ -54,23 +54,20 @@ export const hex = {
     950: '#0A0B0F',
   },
 }
-export const convertSingle = (
-  colors: Record<string, any>,
+export function convertSingle(colors: Record<string, any>,
   converter: (...any: any) => any,
-  transform: (...any: any) => any,
-) =>
-  Object.entries(colors).reduce<Record<string, ReturnType<typeof transform>>>(
+  transform: (...any: any) => any) {
+  return Object.entries(colors).reduce<Record<string, ReturnType<typeof transform>>>(
     (acc, [key, value]) => {
       acc[key] = transform(converter(value))
       return acc
     },
     {},
   )
+}
 
-const to = <ConverterReturn extends Return, Return = ConverterReturn>(
-  converter: (...any: any) => ConverterReturn,
-  transform: (input: ConverterReturn) => Return = a => a,
-) => {
+function to<ConverterReturn extends Return, Return = ConverterReturn>(converter: (...any: any) => ConverterReturn,
+  transform: (input: ConverterReturn) => Return = a => a) {
   return Object.entries(hex).reduce<
     Record<keyof typeof hex, Record<string, ReturnType<typeof transform>>>
   >((acc, [key, colors]: [string, Record<string, any>]) => {

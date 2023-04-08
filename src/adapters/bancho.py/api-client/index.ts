@@ -97,7 +97,7 @@ type LiveUserStatus =
     json: () => Promise<{ status: 'Must provide either id OR name!' }>
   }
 
-const endpoint = (endpoint: string) => {
+function endpoint(endpoint: string) {
   if (endpoint.endsWith('/')) {
     endpoint = endpoint.slice(0, -1)
   }
@@ -120,7 +120,7 @@ function getEnvironmentVariable(name: string): string {
   return value
 }
 
-export const getLiveUserStatus = async ({ id }: { id: number }) => {
+export async function getLiveUserStatus({ id }: { id: number }) {
   const _endpoint = getEnvironmentVariable('BANCHO_PY_API_V1_ENDPOINT')
   const fetch = endpoint(_endpoint)
   const result = <LiveUserStatus> await fetch('/get_player_status', {

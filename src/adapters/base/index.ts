@@ -8,10 +8,18 @@ import type {
 export type Id = any
 export type ScoreId = any
 
-export const idToString = (id: Id): string => id
-export const stringToId = (id: string): Id => id
-export const scoreIdToString = (id: Id): string => id
-export const stringToScoreId = (id: string): ScoreId => id
+export function idToString(id: Id): string {
+  return id
+}
+export function stringToId(id: string): Id {
+  return id
+}
+export function scoreIdToString(id: Id): string {
+  return id
+}
+export function stringToScoreId(id: string): ScoreId {
+  return id
+}
 
 export const hasRankingSystem: HasRankingSystem = (
   _1,

@@ -14,6 +14,7 @@ import { TSFilter } from '~/utils'
 import type {
   ScoreProvider as Base,
 } from '~/adapters/base/server'
+
 export class ScoreProvider implements Base<bigint, Id> {
   idToString = idToString
   stringToId = stringToId

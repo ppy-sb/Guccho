@@ -2,6 +2,7 @@
 import type { JSONContent } from '@tiptap/vue-3'
 import { EditorContent } from '@tiptap/vue-3'
 import '@/assets/styles/typography.scss'
+
 const props = defineProps<{
   json: JSONContent
   html: string

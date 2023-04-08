@@ -1,6 +1,6 @@
-import { mkdirSync } from 'fs'
-import { unlink, writeFile } from 'fs/promises'
-import { isAbsolute, join, resolve, sep } from 'path'
+import { mkdirSync } from 'node:fs'
+import { unlink, writeFile } from 'node:fs/promises'
+import { isAbsolute, join, resolve, sep } from 'node:path'
 import { TRPCError } from '@trpc/server'
 
 import glob from 'glob-promise'

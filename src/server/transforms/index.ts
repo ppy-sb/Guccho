@@ -82,10 +82,8 @@ const rel: Record<
     mutual: 'mutual-block',
   },
 }
-export const calculateMutualRelationships = (
-  relationships: Relationship[],
-  passiveRelationships: Relationship[],
-) => {
+export function calculateMutualRelationships(relationships: Relationship[],
+  passiveRelationships: Relationship[]) {
   const mutualRelationships: MutualRelationship[] = []
 
   for (const [relation, { mutual }] of Object.entries(rel)) {

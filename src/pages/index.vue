@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useSession } from '~/store/session'
+
 const session = useSession()
 const config = useAppConfig()
 useHead({

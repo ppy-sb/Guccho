@@ -14,6 +14,7 @@ import { mapId } from '../../transforms/mapId'
 import { userProcedure as pUser } from '~/server/trpc/middleware/user'
 import { calculateMutualRelationships } from '~/server/transforms'
 import { UserProvider, UserRelationProvider } from '$active/server'
+
 const { compare } = bcrypt
 
 const users = new UserProvider()

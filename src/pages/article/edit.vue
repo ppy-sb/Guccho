@@ -2,6 +2,7 @@
 import { useSession } from '~/store/session'
 import type Editor from '~/components/editor/index.vue'
 import type { AccessPrivilege, Content } from '$def/server/article'
+
 definePageMeta({
   middleware: ['auth', 'admin'],
 })
@@ -12,7 +13,7 @@ const importArticleFile = ref<HTMLInputElement | null>(null)
 const { data: content, refresh } = await useAsyncData(async () => slug.value ? app$.$client.article.get.query(slug.value) : undefined)
 const editor = ref<InstanceType<typeof Editor> | null>(null)
 const editing = ref({ ...content.value?.json })
-const save = async () => {
+async function save() {
   await app$.$client.article.save.mutate({
     slug: slug.value,
     content: editing.value,
@@ -22,12 +23,12 @@ const privilege = ref<NonNullable<Content['privilege']>>({
   write: ['self', 'staff'],
   delete: ['self', 'staff'],
 })
-const update = async () => {
+async function update() {
   await refresh()
   editing.value = content.value?.json || {}
   editor.value?.reload()
 }
-const exportArticle = () => {
+function exportArticle() {
   const file = new File([JSON.stringify({
     privilege: privilege.value,
     json: editing.value,
@@ -39,7 +40,7 @@ const exportArticle = () => {
   a.download = `${slug.value || 'unnamed'}.article`
   a.click()
 }
-const importArticle = async () => {
+async function importArticle() {
   const file = importArticleFile.value?.files?.[0]
   if (!file) {
     return
@@ -62,7 +63,7 @@ const privileges: Partial<Record<AccessPrivilege, string>> = {
 }
 const options = Object.entries(privileges).map(([value, label]) => ({ label, value, disabled: value === 'self' }))
 
-const resetRead = (e: Event) => {
+function resetRead(e: Event) {
   // @ts-expect-error checkbox event
   if (!e.target?.checked) {
     privilege.value.read = undefined

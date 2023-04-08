@@ -8,6 +8,7 @@ import {
 import type { LeaderboardRankingSystem } from '~/types/common'
 import type { ComponentLeaderboard } from '~/types/leaderboard'
 import type { AppRouter } from '~/server/trpc/routers'
+
 type RouterOutput = inferRouterOutputs<AppRouter>
 
 type Leaderboard = NonNullable<RouterOutput['leaderboard']['overall']>[number]

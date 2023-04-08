@@ -119,7 +119,7 @@ useHead({
   title: computed(() => `${beatmapset.value?.meta.intl.artist} - ${beatmapset.value?.meta.intl.title} > ${selectedMap.value?.version}`),
 })
 
-const update = async () => {
+async function update() {
   await refresh()
   updateSwitcher()
   rewriteAnchor()

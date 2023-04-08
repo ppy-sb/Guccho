@@ -2,6 +2,7 @@
 import md5 from 'md5'
 import type { Awaitable } from '~/types/common'
 import { useSession } from '~/store/session'
+
 const loginButton = ref('Have account?')
 const shape = {
   name: '',
@@ -16,17 +17,19 @@ const fetching = ref(false)
 const config = useAppConfig()
 const app$ = useNuxtApp()
 
-const unique = (key: keyof typeof shape) => async () => {
-  if (!reg[key]) {
-    error[key] = `${key} must not be empty`
+function unique(key: keyof typeof shape) {
+  return async () => {
+    if (!reg[key]) {
+      error[key] = `${key} must not be empty`
+      return false
+    }
+    const exists = await app$.$client.user.exists.query({ handle: reg[key] })
+    if (!exists) {
+      return true
+    }
+    error[key] = `${key} is already taken.`
     return false
   }
-  const exists = await app$.$client.user.exists.query({ handle: reg[key] })
-  if (!exists) {
-    return true
-  }
-  error[key] = `${key} is already taken.`
-  return false
 }
 const pwPatternStr = '(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}'
 const pwPattern = new RegExp(pwPatternStr)
@@ -51,7 +54,7 @@ useHead({
 // ): cause is TRPCClientError<AppRouter> {
 //   return cause.name === 'TRPCClientError'
 // }
-const userRegisterAction = async () => {
+async function userRegisterAction() {
   fetching.value = true
   const result = (await Promise.all(Object.values(validate).map(test => test()))).every(Boolean)
   if (!result) {

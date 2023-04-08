@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { RollerItemCharSet, RollerItemMode } from './main'
+
 export interface Props {
   value?: string
   defaultValue?: string

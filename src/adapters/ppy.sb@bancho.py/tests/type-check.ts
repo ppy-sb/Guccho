@@ -75,7 +75,7 @@ interface ShouldMatch {
 }
 
 // @ts-expect-error namespace type check
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
 interface ActiveNameSpace extends ShouldMatch {
   // idToString: typeof idToString
   // stringToId: typeof stringToId

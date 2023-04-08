@@ -35,13 +35,13 @@ export const zodSafeModeRulesetBase = z.object({
   ruleset: zodRuleset,
 })
 
-export const validateModeRuleset = ({
+export function validateModeRuleset({
   mode,
   ruleset,
 }: {
   mode: Mode
   ruleset: Ruleset
-}) => {
+}) {
   return hasRuleset(mode, ruleset)
 }
 

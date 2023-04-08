@@ -9,7 +9,9 @@ const emit = defineEmits(['update:modelValue'])
 const size = computed(() => props.size)
 const current = computed(() => props.modelValue)
 const disabled = Symbol('disabled tab')
-const select = (value: unknown) => emit('update:modelValue', value)
+function select(value: unknown) {
+  return emit('update:modelValue', value)
+}
 provide('variant', props.variant)
 provide('size', size)
 provide('current', current)

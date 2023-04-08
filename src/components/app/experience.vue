@@ -19,7 +19,7 @@ addToLibrary(
   faBatteryEmpty,
 )
 const fps = useFps()
-const size = (v: number) => {
+function size(v: number) {
   const kb = v / 1024 / 1024
   return `${kb.toFixed(2)} MiB`
 }
@@ -27,7 +27,9 @@ const fmt = new Intl.NumberFormat(undefined, {
   style: 'percent',
   minimumFractionDigits: 2,
 })
-const percent = (num: number) => fmt.format(num)
+function percent(num: number) {
+  return fmt.format(num)
+}
 const { isSupported, memory } = useMemory()
 const { charging, level } = useBattery()
 </script>
@@ -69,7 +71,7 @@ const { charging, level } = useBattery()
 
 <style scoped lang="postcss">
 .bottom-xp-bar {
-  @apply fixed bottom-0 w-full px-2 border-t-2 font-mono flex items-end gap-1 opacity-20;
+  @apply fixed bottom-0 w-full px-2 border-t-[1px] font-mono flex items-end gap-1 opacity-20;
   @apply bg-gradient-to-b from-kimberly-100 to-kimberly-200 dark:from-kimberly-800 dark:to-kimberly-900 border-kimberly-200;
   @apply hover:opacity-100;
 }

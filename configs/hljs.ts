@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import { readdirSync } from 'fs'
+import { readdirSync } from 'node:fs'
 import highlight from 'highlight.js'
 
 const hljs: Record<string, string> = {}

@@ -3,6 +3,7 @@ import type { ComputedRef } from 'vue'
 import type { inferRouterOutputs } from '@trpc/server'
 import type { AvailableRuleset, Mode } from '~/types/common'
 import type { AppRouter } from '~/server/trpc/routers'
+
 type RouterOutput = inferRouterOutputs<AppRouter>
 
 type Statistics = NonNullable<RouterOutput['user']['userpage']['statistics']>[Mode][AvailableRuleset<Mode>]
@@ -20,14 +21,18 @@ const fmt = new Intl.NumberFormat(undefined, {
   style: 'percent',
   minimumFractionDigits: 9,
 })
-const percent = (num: number) => fmt.format(num)
+function percent(num: number) {
+  return fmt.format(num)
+}
 const composition = computed(
   () => currentRankingSystem.value.scoreRankComposition,
 )
 
-const createStyleObject = (count: number) => ({
-  width: percent(count / totalCount.value),
-})
+function createStyleObject(count: number) {
+  return {
+    width: percent(count / totalCount.value),
+  }
+}
 </script>
 
 <template>

@@ -1,5 +1,5 @@
 import type { JSONContent } from '@tiptap/core'
-/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import type {
   AvailableRuleset,
   LeaderboardRankingSystem,

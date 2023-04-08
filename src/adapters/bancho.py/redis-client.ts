@@ -1,4 +1,5 @@
 import { createClient } from 'redis'
+
 export function client() {
   const client
     = process.env.BANCHO_PY_REDIS_URI

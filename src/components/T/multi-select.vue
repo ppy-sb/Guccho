@@ -6,6 +6,7 @@ import {
   ListboxOption,
   ListboxOptions,
 } from '@headlessui/vue'
+
 interface Option {
   label: string | number
   value: any
@@ -19,7 +20,9 @@ const props = defineProps<{
 const e = defineEmits<{
   (e: 'update:modelValue', value: Option): void
 }>()
-const reset = () => props.modelValue?.map((v: any) => props.options.find(opt => opt.value === v))
+function reset() {
+  return props.modelValue?.map((v: any) => props.options.find(opt => opt.value === v))
+}
 const selected = ref(reset() || [])
 watch(() => props.modelValue, () => {
   selected.value = props.modelValue?.map((v: any) => props.options.find(opt => opt.value === v)) || []

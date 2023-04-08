@@ -7,6 +7,7 @@ import {
 } from '~/common/varkaUtils'
 import type { AppRouter } from '~/server/trpc/routers'
 import type { RankingSystem } from '~/types/common'
+
 type RouterOutput = inferRouterOutputs<AppRouter>
 
 type Score = NonNullable<RouterOutput['score']['id']>

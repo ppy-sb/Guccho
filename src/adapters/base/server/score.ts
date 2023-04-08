@@ -2,6 +2,7 @@ import type { idTransformable, scoreIdTransformable } from './extends'
 import type { Awaitable, Mode, PPRankingSystem, Ruleset } from '~/types/common'
 import type { RulesetScore } from '~/types/score'
 import type { UserEssential } from '~/types/user'
+
 export namespace ScoreProvider {
 
   export interface SearchQueryMany<TId> {

@@ -2,7 +2,9 @@
 const props = defineProps<{
   error: Error
 }>()
-const handleError = async () => await clearError({ redirect: '/' })
+async function handleError() {
+  return await clearError({ redirect: '/' })
+}
 </script>
 
 <template>

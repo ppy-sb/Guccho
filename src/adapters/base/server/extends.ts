@@ -1,4 +1,5 @@
 import type { idToString, scoreIdToString, stringToId, stringToScoreId } from '$def'
+
 export interface idTransformable {
   idToString: typeof idToString
   stringToId: typeof stringToId

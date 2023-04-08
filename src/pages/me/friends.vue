@@ -2,6 +2,7 @@
 import { useSession } from '~/store/session'
 import type { UserRelationship } from '~/types/user-relationship'
 import type { Relationship } from '~/types/common'
+
 const app$ = useNuxtApp()
 const session = useSession()
 
@@ -28,11 +29,11 @@ const errorMessage = ref('')
 onErrorCaptured((err) => {
   errorMessage.value = err.message || 'something went wrong.'
 })
-const haveRelation = (relation: Relationship, user: UserRelationship<string>) => {
+function haveRelation(relation: Relationship, user: UserRelationship<string>) {
   return user.relationship.includes(relation)
 }
 const pendingUser = reactive(new Set<string>())
-const toggleRelation = async (type: Relationship, user: UserRelationship<string>) => {
+async function toggleRelation(type: Relationship, user: UserRelationship<string>) {
   pendingUser.add(user.id)
   try {
     if (haveRelation(type, user)) {

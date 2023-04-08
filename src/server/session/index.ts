@@ -2,6 +2,7 @@ import { v4 } from 'uuid'
 
 import type { Id } from '$active'
 import type { Awaitable } from '~/types/common'
+
 type inferMapType<T> = T extends Map<infer K, infer U> ? [K, U] : never
 
 export const session = new Map<string, { userId?: Id; lastActivity: number }>()
@@ -9,7 +10,7 @@ export const config = {
   expire: 1000 * 60 * 60,
 }
 
-export const createSession = async (data?: { id: Id }) => {
+export async function createSession(data?: { id: Id }) {
   const sessionId = v4()
   const _session = {
     userId: data?.id,
@@ -19,7 +20,7 @@ export const createSession = async (data?: { id: Id }) => {
   return sessionId
 }
 
-export const getSession = async (sessionId: string) => {
+export async function getSession(sessionId: string) {
   const _session = session.get(sessionId)
   if (_session == null) {
     return undefined
@@ -31,7 +32,7 @@ export const getSession = async (sessionId: string) => {
   return _session
 }
 
-export const refresh = async (sessionId: string) => {
+export async function refresh(sessionId: string) {
   const _session = session.get(sessionId)
   if (_session == null) {
     return
@@ -40,7 +41,7 @@ export const refresh = async (sessionId: string) => {
   return sessionId
 }
 
-export const updateSession = async (sessionId: string, data: Partial<inferMapType<typeof session>[1]>) => {
+export async function updateSession(sessionId: string, data: Partial<inferMapType<typeof session>[1]>) {
   const _session = session.get(sessionId)
   if (_session == null) {
     return undefined

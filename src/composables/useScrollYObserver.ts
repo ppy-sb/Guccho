@@ -1,12 +1,12 @@
 const el = ref<HTMLElement>()
 const scrollY = ref(0)
-const observer = (e: Event) => {
+function observer(e: Event) {
   if (!(e.target instanceof HTMLElement)) {
     return
   }
   scrollY.value = e.target?.scrollTop
 }
-const handleScroll = () => {
+function handleScroll() {
   scrollY.value = window.pageYOffset
 }
 

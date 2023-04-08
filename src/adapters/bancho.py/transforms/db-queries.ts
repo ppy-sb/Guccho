@@ -3,6 +3,7 @@ import { BanchoMode } from '../enums'
 import type { DatabaseUserEssentialFields } from './user'
 import type { OP, Tag } from '~/types/search'
 import { TSFilter, includes } from '~/utils'
+
 export const userEssentials = {
   select: {
     id: true,

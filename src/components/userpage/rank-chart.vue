@@ -10,8 +10,9 @@ import type { BaseRank } from '~/types/statistics'
 
 // import 'chart.js/auto/auto.js'
 
-const hsl = ([h, s, l]: [any, any, any], a: any) =>
-  `hsl(${h} ${s}% ${l}% / ${a}%)`
+function hsl([h, s, l]: [any, any, any], a: any) {
+  return `hsl(${h} ${s}% ${l}% / ${a}%)`
+}
 const gRankFill = hsl(hsvRaw.wewak[500], 20)
 const cRankFill = hsl(hsvRaw.kimberly[500], 30)
 

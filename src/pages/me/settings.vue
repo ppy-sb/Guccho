@@ -46,7 +46,7 @@ const newAvatarURL = ref<string>()
 const cropper = ref<InstanceType<typeof Cropper> | null>(null)
 const croppedAvatar = ref<ArrayBuffer>()
 const avatarError = ref<string>()
-const selectAvatarFile = async (e: Event) => {
+async function selectAvatarFile(e: Event) {
   avatarError.value = undefined
   const file = (e?.target as HTMLInputElement)?.files?.[0]
   if (!file) {
@@ -62,7 +62,7 @@ const selectAvatarFile = async (e: Event) => {
   newAvatarURL.value = URL.createObjectURL(file)
 }
 
-const crop = ({ canvas }: { canvas: HTMLCanvasElement }) => {
+function crop({ canvas }: { canvas: HTMLCanvasElement }) {
   canvas.toBlob(async (blob) => {
     croppedAvatar.value = await blob?.arrayBuffer()
   }, 'image/png', 1)
@@ -75,7 +75,7 @@ const changeAvatar = ref<{
 const changePassword = ref<{
   openModal: (arg0?: CallableFunction) => void
 }>()
-const saveAvatar = async () => {
+async function saveAvatar() {
   if (!croppedAvatar.value) {
     return
   }
@@ -95,7 +95,7 @@ const saveAvatar = async () => {
 const errorMessage = ref<string[]>([])
 const updateResult = ref(false)
 const posting = ref(false)
-const updateUserSettings = async () => {
+async function updateUserSettings() {
   if (!user.value) {
     return
   }
@@ -146,7 +146,7 @@ const changePasswordForm = reactive<{
 
 const changePasswordError = ref('')
 
-const updatePassword = async (closeModal: () => void) => {
+async function updatePassword(closeModal: () => void) {
   if (!changePasswordForm.newPassword) {
     return
   } // checked by browser

@@ -6,6 +6,7 @@ import {
   faRankingStar,
 } from '@fortawesome/free-solid-svg-icons'
 import { faPiedPiperPp } from '@fortawesome/free-brands-svg-icons'
+
 const { hasRuleset } = useAdapterConfig()
 
 const { addToLibrary } = useFAIconLib()

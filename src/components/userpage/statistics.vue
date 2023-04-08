@@ -1,20 +1,20 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
 import type { inferRouterOutputs } from '@trpc/server'
-import {
+import type {
+  AvailableRuleset,
   LeaderboardRankingSystem,
-  PPRankingSystem,
+
+  Mode, PPRankingSystem,
 } from '~/types/common'
 import { ppRankingSystems } from '~/types/defs'
-import { PPRank, ScoreRank } from '~/types/statistics'
+import type { PPRank, ScoreRank } from '~/types/statistics'
 import { createScoreFormatter, toDuration } from '~/common/varkaUtils'
 import type { LeaderboardSwitcherComposableType } from '~/composables/useSwitcher'
 
-import type {
-  AvailableRuleset, Mode,
-} from '~/types/common'
 import type { AppRouter } from '~/server/trpc/routers'
 import { getRequiredScoreForLevel } from '~/utils/level-calc'
+
 type RouterOutput = inferRouterOutputs<AppRouter>
 
 type Statistics = NonNullable<RouterOutput['user']['userpage']['statistics']>[Mode][AvailableRuleset<Mode>]
