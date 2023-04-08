@@ -127,7 +127,7 @@ export interface UserProvider<Id> extends idTransformable {
     newPasswordMD5: string
   ): Awaitable<UserEssential<Id>>
 
-  changeAvatar(user: { id: Id }, avatar: Buffer | Uint8Array): Awaitable<string>
+  changeAvatar(user: { id: Id }, avatar: Uint8Array): Awaitable<string>
 
   search(opt: {
     keyword: string

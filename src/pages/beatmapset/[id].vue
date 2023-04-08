@@ -64,15 +64,10 @@ setSwitcher({
 
 if (queryRankingSystem) {
   setSwitcher({
-    rankingSystem:
-      hasRuleset(switcher.mode, switcher.ruleset)
-      && hasRankingSystem(
-        switcher.mode,
-        switcher.ruleset,
-        queryRankingSystem,
-      )
-        ? queryRankingSystem
-        : undefined,
+    rankingSystem: (hasRuleset(switcher.mode, switcher.ruleset)
+      && hasRankingSystem(switcher.mode, switcher.ruleset, queryRankingSystem))
+      ? queryRankingSystem
+      : undefined,
   })
 }
 
@@ -173,7 +168,6 @@ onBeforeMount(() => {
         >
           <t-tab
             v-for="bm in beatmapset.beatmaps"
-            ref="tabs"
             :key="bm.id"
             :value="bm.id"
             class="whitespace-nowrap grow"

@@ -89,9 +89,11 @@ export function toRankingSystemScore<
     playedAt: score.playTime,
     maxCombo: score.maxCombo,
     rank,
-    pp: (rankingSystem === 'ppv1' || rankingSystem === 'ppv2'
-      ? score.pp
-      : undefined) as _RankingSystem extends PPRankingSystem ? number : never,
+    pp: (
+      (rankingSystem === 'ppv1' || rankingSystem === 'ppv2')
+        ? score.pp
+        : undefined
+    ) as _RankingSystem extends PPRankingSystem ? number : never,
   } satisfies RankingSystemScore<
     bigint,
     Id,

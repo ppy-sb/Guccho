@@ -16,18 +16,17 @@ const availableModes = Object.keys(config.mode)
 const availableRulesets = Object.keys(config.ruleset)
 const availableRankingSystems = Object.keys(config.overallRankingSystem)
 const mode = (
-  isString(pMode) && availableModes.includes(pMode)
+  (isString(pMode) && availableModes.includes(pMode))
     ? pMode
     : availableModes[0]
 ) as Mode
 const ruleset = (
-  isString(pRuleset) && availableRulesets.includes(pRuleset)
+  (isString(pRuleset) && availableRulesets.includes(pRuleset))
     ? pRuleset
     : availableRulesets[0]
 ) as Ruleset
 const rankingSystem = (
-  isString(pRankingSystem)
-  && availableRankingSystems.includes(pRankingSystem)
+  (isString(pRankingSystem) && availableRankingSystems.includes(pRankingSystem))
     ? pRankingSystem
     : availableRankingSystems[0]
 ) as LeaderboardRankingSystem
