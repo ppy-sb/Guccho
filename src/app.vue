@@ -85,7 +85,7 @@ onMounted(() => {
       }"
     />
     <DevOnly>
-      <experience />
+      <app-experience />
     </DevOnly>
   </div>
 </template>

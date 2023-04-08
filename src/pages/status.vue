@@ -1,4 +1,9 @@
 <script setup lang="ts">
+// @ts-expect-error we don't have to know
+import { JsonViewer } from 'vue3-json-viewer'
+import 'vue3-json-viewer/dist/index.css'
+import { useSession } from '~/store/session'
+
 const fmtPercent = new Intl.NumberFormat(undefined, {
   style: 'percent',
   minimumFractionDigits: 2,
@@ -9,6 +14,9 @@ const fmtCompact = new Intl.NumberFormat('en-US', {
   unit: 'megabyte',
   unitDisplay: 'narrow',
 })
+const config = useAppConfig()
+
+const session = useSession()
 
 const app$ = useNuxtApp()
 let browser = false
@@ -17,10 +25,11 @@ const { data, refresh } = await useAsyncData(
   async () => browser && app$.$client.status.public.query(),
 )
 
+const serverConfig = session.user?.roles.includes('staff') ? await app$.$client.status.config.query() : undefined
+
 const systemLoad = ref<HTMLDivElement | null>(null)
 const appLoad = ref<HTMLDivElement | null>(null)
 const box = ref<HTMLDivElement | null>(null)
-// const systemLoadEdge = ref<HTMLDivElement | null>(null)
 
 onMounted(() => {
   clearInterval(interval)
@@ -30,15 +39,17 @@ onMounted(() => {
   }, 2000)
 })
 onUnmounted(() => clearInterval(interval))
-const createStyleObject = (count: number) => ({
-  width: `${count}%`,
-})
+function createStyleObject(count: number) {
+  return {
+    width: `${count}%`,
+  }
+}
 </script>
 
 <template>
   <div v-if="data" class="container mx-auto custom-container mt-20">
     <div ref="box" class="py-8">
-      <div class="flex gap-2 mb-2 items-baseline drop-shadow-lg">
+      <div class="flex gap-2 my-1 items-baseline drop-shadow-lg">
         <h1 class="text-3xl">
           System Load
         </h1>
@@ -58,16 +69,9 @@ const createStyleObject = (count: number) => ({
         >
           system
         </div>
-        <div
-          ref="systemLoadEdge"
-          :style="createStyleObject(data.load.system.idle)"
-          class="multi-progress-bar bg-base-300/10"
-        >
-          idle
-        </div>
       </div>
 
-      <h1 class="text-3xl drop-shadow-lg mb-2">
+      <h1 class="text-3xl drop-shadow-lg my-1">
         App Load
       </h1>
       <div ref="appLoad" class="multi-progress-bar-container bg-kimberly-500/10 shadow-lg">
@@ -87,7 +91,7 @@ const createStyleObject = (count: number) => ({
         </div>
       </div>
 
-      <div class="flex gap-2 mb-2 drop-shadow-lg items-baseline">
+      <div class="flex gap-2 my-1 drop-shadow-lg items-baseline">
         <h1 class="text-3xl">
           Memory
         </h1>
@@ -116,14 +120,28 @@ const createStyleObject = (count: number) => ({
         </div>
       </div>
     </div>
-    <!--
-    <JsonViewer
-      :value="data"
-      :expand-depth="3"
-      theme="light"
-      copyable
-      class="rounded-3xl"
-    /> -->
+    <template v-if="session.user?.roles.includes('staff')">
+      <h1 class="text-3xl drop-shadow-lg my-1">
+        Web App Config
+      </h1>
+      <JsonViewer
+        :value="config"
+        :expand-depth="999"
+        theme="light"
+        copyable
+        class="rounded-3xl"
+      />
+      <h1 class="text-3xl drop-shadow-lg my-1">
+        Server Config
+      </h1>
+      <JsonViewer
+        :value="serverConfig"
+        :expand-depth="999"
+        theme="light"
+        copyable
+        class="rounded-3xl"
+      />
+    </template>
   </div>
 </template>
 

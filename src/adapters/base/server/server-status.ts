@@ -1,6 +1,7 @@
 import { cpus } from 'node:os'
 import { currentLoad, mem } from 'systeminformation'
 import { pick } from '~/utils'
+
 function calcPercentageLoad(usage: number, time: ReturnType<typeof process['hrtime']>) {
   return 100 * (usage / (time[0] * 1e9 + time[1]))
 }
@@ -92,5 +93,52 @@ export class ServiceStatusProvider {
 
   async ready() {
     return false
+  }
+
+  async config() {
+    // const npmPackage = {
+    //   dependencies: {
+    //   } as Record<string, any>,
+    //   devDependencies: {
+
+    //   } as Record<string, any>,
+    // }
+    const npm: Record<string, unknown> = {}
+    const npmConfig: Record<string, unknown> = {}
+    const returnValue: Record<string, unknown> = {}
+    let key: keyof typeof process['env']
+    for (key in process.env) {
+      if (key.startsWith('npm_package_scripts')) {
+        continue
+      }
+      const dependencies = 'npm_package_dependencies_'
+      if (key.startsWith(dependencies)) {
+        // npmPackage.dependencies[key.slice(dependencies.length)] = process.env[key]
+        continue
+      }
+      const devDependencies = 'npm_package_devDependencies_'
+      if (key.startsWith(devDependencies)) {
+        // npmPackage.dependencies[key.slice(devDependencies.length)] = process.env[key]
+        continue
+      }
+      const _npmConfig = 'npm_config_'
+      if (key.startsWith(_npmConfig)) {
+        npmConfig[key.slice(_npmConfig.length)] = process.env[key]
+        continue
+      }
+      const _npm = 'npm_'
+      if (key.startsWith(_npm)) {
+        npm[key.slice(_npm.length)] = process.env[key]
+        continue
+      }
+      returnValue[key] = process.env[key]
+    }
+    return {
+      npm: {
+        ...npm,
+        config: npmConfig,
+      },
+      ...returnValue,
+    }
   }
 }
