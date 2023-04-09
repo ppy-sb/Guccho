@@ -101,8 +101,8 @@ export class LeaderboardProvider implements Base<Id> {
               id: {
                 in: rank,
               },
-              ...userEssentials,
             },
+            ...userEssentials,
           }),
           /* optimized */
           this.db.stat.findMany({

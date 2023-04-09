@@ -4,7 +4,7 @@ import type { DatabaseUserEssentialFields } from './user'
 import type { OP, Tag } from '~/types/search'
 import { TSFilter, includes } from '~/utils'
 
-export const userEssentials = {
+export const userEssentials: Prisma.UserFindManyArgs = {
   select: {
     id: true,
     name: true,
