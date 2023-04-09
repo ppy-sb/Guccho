@@ -8,7 +8,7 @@ import {
   faPause,
 } from '@fortawesome/free-solid-svg-icons'
 import type { RankingSystemScore } from '~/types/score'
-import type { LeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
+import type { LeaderboardPPRankingSystem, LeaderboardRankingSystem, LeaderboardScoreRankingSystem, Mode, Ruleset } from '~/types/common'
 import {
   leaderboardScoreRankingSystems,
   ppRankingSystems,
@@ -165,13 +165,13 @@ const meta = computed(
       <div class="flex gap-4">
         <div class="flex flex-col">
           <div class="flex items-center justify-end flex-grow text-lg md:text-xl lg:text-2xl">
-            <template v-if="(ppRankingSystems as readonly string[]).includes(props.rankingSystem)">
+            <template v-if="(ppRankingSystems).includes(props.rankingSystem as LeaderboardPPRankingSystem)">
               <div class="font-bold font-mono">
                 {{ score.pp.toFixed(2) }}
               </div>
               <span class="font-light">pp</span>
             </template>
-            <template v-else-if="(leaderboardScoreRankingSystems as readonly string[]).includes(props.rankingSystem)">
+            <template v-else-if="(leaderboardScoreRankingSystems).includes(props.rankingSystem as LeaderboardScoreRankingSystem)">
               <div class="font-bold font-mono">
                 {{ numberFmt(score.score) }}
               </div>

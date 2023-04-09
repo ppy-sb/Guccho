@@ -29,9 +29,7 @@ let prevSwitcherState = {
 }
 function stabilizeScoreRank(rankingSystem: LeaderboardRankingSystem) {
   if (
-    leaderboardScoreRankingSystems.includes(
-      rankingSystem as LeaderboardScoreRankingSystem,
-    )
+    leaderboardScoreRankingSystems.includes(rankingSystem as LeaderboardScoreRankingSystem)
   ) {
     return 'score' as ScoreRankingSystem
   }
@@ -71,7 +69,7 @@ const {
       handle: user.value.id,
       mode: switcher.mode,
       ruleset: switcher.ruleset,
-      rankingSystem: switcher.rankingSystem as PPRankingSystem,
+      rankingSystem: switcher.rankingSystem,
       page: bpPage.value,
     }),
     page: bpPage.value,

@@ -10,7 +10,10 @@ const session = useSession()
 const slug = ref('')
 const app$ = useNuxtApp()
 const importArticleFile = ref<HTMLInputElement | null>(null)
-const { data: content, refresh } = await useAsyncData(async () => slug.value ? app$.$client.article.get.query(slug.value) : undefined)
+const {
+  data: content,
+  refresh,
+} = await useAsyncData(async () => slug.value ? app$.$client.article.get.query(slug.value) : undefined)
 const editor = ref<InstanceType<typeof Editor> | null>(null)
 const editing = ref({ ...content.value?.json })
 async function save() {
@@ -61,7 +64,8 @@ const privileges: Partial<Record<AccessPrivilege, string>> = {
   moderator: 'Moderator',
   beatmapNominator: 'BN',
 }
-const options = Object.entries(privileges).map(([value, label]) => ({ label, value, disabled: value === 'self' }))
+const options = Object.entries(privileges)
+  .map(([value, label]) => ({ label, value, disabled: value === 'self' }))
 
 function resetRead(e: Event) {
   // @ts-expect-error checkbox event

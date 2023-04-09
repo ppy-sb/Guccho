@@ -8,9 +8,7 @@ const { hasRuleset, hasLeaderboardRankingSystem }
 const config = useAppConfig()
 const rankingSystem = config.overallRankingSystem
 
-const [switcher, setSwitcher] = inject(
-  'switcher',
-) as LeaderboardSwitcherComposableType
+const [switcher, setSwitcher] = inject('switcher') as LeaderboardSwitcherComposableType
 
 interface RankConf {
   userpage: {

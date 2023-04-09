@@ -7,15 +7,10 @@ import type { AppRouter } from '~/server/trpc/routers'
 type RouterOutput = inferRouterOutputs<AppRouter>
 
 type Statistics = NonNullable<RouterOutput['user']['userpage']['statistics']>[Mode][AvailableRuleset<Mode>]
-const currentRankingSystem = inject('user.statistics') as ComputedRef<
-  Statistics
->
+const currentRankingSystem = inject('user.statistics') as ComputedRef<Statistics>
 
 const totalCount = computed(() => {
-  return Object.values(currentRankingSystem.value.scoreRankComposition).reduce(
-    (acc, cur) => acc + cur,
-    0,
-  )
+  return Object.values(currentRankingSystem.value.scoreRankComposition).reduce((acc, cur) => acc + cur, 0)
 })
 const fmt = new Intl.NumberFormat(undefined, {
   style: 'percent',
