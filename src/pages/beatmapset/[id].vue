@@ -1,6 +1,7 @@
 <script setup lang="ts">
 // @ts-expect-error no d.ts
 import VLazyImage from 'v-lazy-image'
+import AppScoresRankingSystemSwitcher from '~/components/app/scores/ranking-system-switcher.vue'
 import {
   includes,
   isBanchoBeatmapset,
@@ -8,7 +9,6 @@ import {
   noop,
   placeholder,
 } from '~/utils'
-import type { RankingSystem } from '~/types/common'
 
 const app$ = useNuxtApp()
 const route = useRoute()
@@ -120,7 +120,7 @@ async function update() {
   rewriteAnchor()
 }
 
-const beatmapRankingSystems = ref<RankingSystem[]>([])
+const scoreRS = ref<InstanceType<typeof AppScoresRankingSystemSwitcher> | null>(null)
 
 onBeforeMount(() => {
   bgCover
@@ -359,9 +359,9 @@ onBeforeMount(() => {
       </div>
     </div>
     <div class="container custom-container mx-auto mt-4">
-      <app-scores-ranking-system-switcher
+      <AppScoresRankingSystemSwitcher
+        ref="scoreRS"
         v-model="switcher.rankingSystem"
-        v-model:ranking-system-list="beatmapRankingSystems"
         :mode="switcher.mode"
         :ruleset="switcher.ruleset"
         class="mx-auto"
@@ -375,7 +375,7 @@ onBeforeMount(() => {
           class="w-full"
           :class="{
             'clear-rounded-tl':
-              beatmapRankingSystems[0] === switcher.rankingSystem,
+              scoreRS?.rankingSystems[0] === switcher.rankingSystem,
           }"
         />
       </div>

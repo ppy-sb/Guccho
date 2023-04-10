@@ -6,7 +6,6 @@ const props = defineProps<{
   modelValue: RankingSystem
   mode: Mode
   ruleset: Ruleset
-  rankingSystemList?: RankingSystem[]
 }>()
 const emit = defineEmits<{
   (e: 'update:modelValue', v: RankingSystem): void
@@ -21,6 +20,9 @@ const show = computed(() => {
       hasRuleset(props.mode, props.ruleset)
       && hasRankingSystem(props.mode, props.ruleset, rs),
   )
+})
+defineExpose({
+  rankingSystems: show,
 })
 watch([() => props.mode, () => props.ruleset], () => {
   emit('update:rankingSystemList', show.value)
