@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { EditorContent } from '@tiptap/vue-3'
 import type { JSONContent } from '@tiptap/vue-3'
 import '@/assets/styles/typography.scss'
 
@@ -8,18 +9,28 @@ const props = defineProps<{
 }>()
 const { parseAndImportHighlightLibFromHtml } = useEditorLazyLoadHighlight()
 await parseAndImportHighlightLibFromHtml(props.html)
-const show = ref(true)
-onBeforeMount(() => [
-  show.value = false,
-])
+
+const { editor } = useEditor()
+const takeOver = ref(false)
+
+onBeforeMount(async () => {
+  if (!props.json) {
+    return
+  }
+  await parseAndImportHighlightLibFromHtml(props.html)
+  editor.value?.setEditable(false)
+  editor.value?.commands.setContent(props.json)
+  takeOver.value = true
+})
 </script>
 
 <template>
   <div
-    v-if="show"
     class="container mx-auto mt-4 custom-container"
   >
+    <EditorContent v-if="takeOver" class="custom-typography" :editor="editor" />
     <div
+      v-else-if="props.html"
       class="custom-typography ssr"
       v-html="props.html"
     />
