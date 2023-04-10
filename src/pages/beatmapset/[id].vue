@@ -178,7 +178,7 @@ onBeforeMount(() => {
       </div>
       <div
         v-if="selectedMap"
-        class="flex flex-col md:flex-row card bg-gbase-100 "
+        class="flex flex-col md:flex-row card bg-gbase-100 dark:bg-gbase-900"
       >
         <div class="w-full md:w-1/3 grow">
           <div class="p-8 h-full flex flex-col justify-around">
@@ -198,7 +198,7 @@ onBeforeMount(() => {
                   </button>
                   <template #popper>
                     <ul
-                      class="menu menu-compact border-[1px] border-base-300/20 bg-gbase-200/80 w-max rounded-box"
+                      class="menu menu-compact border-[1px] border-base-300/20 bg-base-200/80 w-max rounded-box"
                     >
                       <template v-if="isBanchoBeatmapset(beatmapset)">
                         <li class="menu-title">

@@ -88,7 +88,7 @@ async function logout() {
             </svg>
           </label>
           <template #popper>
-            <div class="menu bg-gbase-100/80 dark:bg-gbase-700/80">
+            <div class="menu">
               <li
                 v-for="menuItem in menu"
                 :key="`menu-${menuItem.name}`"
@@ -168,7 +168,7 @@ async function logout() {
             </div>
           </button>
           <template #popper>
-            <div class="menu bg-gbase-100/80 dark:bg-gbase-700/80">
+            <div class="menu">
               <ul
                 tabindex="0"
                 class="right-0 p-2 mt-2 shadow-xl menu menu-compact dropdown-content rounded-br-2xl rounded-bl-2xl w-52"
@@ -230,6 +230,8 @@ async function logout() {
 .detached > .navbar {
   @apply bg-gbase-100/80 dark:bg-gbase-700/80;
   @apply backdrop-blur-md shadow-xl;
+  @apply backdrop-saturate-[0.9] backdrop-brightness-[0.95];
+  @apply dark:backdrop-saturate-[1] dark:backdrop-brightness-[1];
 }
 .navbar {
   @apply border-[1px] border-gbase-50/0 dark:border-gbase-500/0;
