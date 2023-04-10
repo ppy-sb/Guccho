@@ -395,7 +395,7 @@ onBeforeMount(() => {
           </div>
         </div>
       </div>
-      <div class="grow lg:[max-width:50%] mt-4 lg:mt-0 lg:ml-4">
+      <div class="grow lg:[max-width:50%] mt-4 lg:mt-0 lg:ml-4 mr-2 lg:mr-0">
         <div class="text-red-500">
           {{ errorMessage.join(",") }}
         </div>

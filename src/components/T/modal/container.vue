@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Status } from './shared'
+import type { Status } from './wrapper.vue'
 
 const props = defineProps({
   teleportId: {

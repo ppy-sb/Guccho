@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Status } from './shared'
+export type Status = 'hidden' | 'show' | 'closed'
 
 const props = defineProps<{
   initStatus?: Status
@@ -59,7 +59,7 @@ defineExpose({
 @import "./shared.scss";
 
 $in: blur(0.5em) opacity(0) saturate(0.5);
-$scale: scale(1.07);
+$scale: scale(0.93);
 .zoom-modal-wrapper {
   position: fixed;
   left: 0;
