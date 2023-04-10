@@ -16,9 +16,10 @@ export const router = _router({
       if (!bs) {
         return
       }
-      return {
-        ...mapId(bs, map.idToString),
-        beatmaps: bs.beatmaps.map(bm => mapId(bm, map.idToString)),
+      const returnValue = {
+        ...mapId(bs, map.idToString, ['id', 'foreignId']),
+        beatmaps: bs.beatmaps.map(bm => mapId(bm, map.idToString, ['id', 'foreignId'])),
       }
+      return returnValue
     }),
 })

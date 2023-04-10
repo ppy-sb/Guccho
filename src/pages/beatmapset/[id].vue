@@ -192,41 +192,41 @@ onBeforeMount(() => {
             />
             <div class="pt-4">
               <div class="w-min">
-                <v-dropdown
-                  theme="guweb-dropdown"
-                  placement="auto"
-                  :distance="6"
-                >
+                <t-menu>
                   <button class="btn btn-sm btn-accent">
                     download
                   </button>
                   <template #popper>
                     <ul
-                      class="menu p-2 menu-compact border-[1px] border-base-300/20 bg-gbase-200/80 w-56 rounded-box"
+                      class="menu menu-compact border-[1px] border-base-300/20 bg-gbase-200/80 w-max rounded-box"
                     >
                       <template v-if="isBanchoBeatmapset(beatmapset)">
                         <li class="menu-title">
-                          <span>External Sources</span>
+                          <span>External Links</span>
                         </li>
                         <li>
                           <a
                             :href="`https://osu.ppy.sh/s/${beatmapset.foreignId}`"
                           >Bancho</a>
                         </li>
-                        <li>
-                          <a
-                            :href="`https://api.chimu.moe/v1/download/${beatmapset.foreignId}`"
-                          >Chimu.moe</a>
-                        </li>
-                        <li>
-                          <a
-                            :href="`https://kitsu.moe/api/d/${beatmapset.foreignId}`"
-                          >Kitsu.moe</a>
+                        <div class="divider" />
+                        <li class="menu-title">
+                          <span>Direct downloads</span>
                         </li>
                       </template>
+                      <li>
+                        <a
+                          :href="`https://api.chimu.moe/v1/download/${beatmapset.foreignId}`"
+                        >Chimu.moe</a>
+                      </li>
+                      <li>
+                        <a
+                          :href="`https://osu.direct/api/d/${beatmapset.foreignId}`"
+                        >osu.direct (formally known as Kitsu.moe)</a>
+                      </li>
                     </ul>
                   </template>
-                </v-dropdown>
+                </t-menu>
               </div>
             </div>
           </div>
