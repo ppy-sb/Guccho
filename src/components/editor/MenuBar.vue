@@ -286,6 +286,7 @@ export default defineComponent({
     padding: 0.25rem;
 
     svg {
+      @apply text-gbase-900 dark:text-gbase-100;
       width: 100%;
       height: 100%;
       fill: currentColor;
@@ -297,9 +298,12 @@ export default defineComponent({
 
     &.is-active,
     &:hover {
-      @apply text-gbase-100 bg-gbase-800 dark:text-gbase-900 dark:bg-gbase-900;
+      @apply text-gbase-100 bg-gbase-800 dark:text-gbase-900 dark:bg-gbase-100;
       // color:#FFF;
       // background-color:#0D0D0D;
+      svg {
+        @apply text-gbase-100 dark:text-gbase-900;
+      }
     }
   }
 
