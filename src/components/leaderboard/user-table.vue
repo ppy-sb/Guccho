@@ -30,7 +30,7 @@ const formatter = new Intl.NumberFormat(undefined, option)
 <template>
   <tr class="font-medium">
     <th class="px-4 py-3 font-bold">
-      <p class="text-kimberly-900 dark:text-kimberly-100">
+      <p class="text-gbase-900 dark:text-gbase-100">
         #{{ props.inThisLeaderboard.rank }}
       </p>
     </th>

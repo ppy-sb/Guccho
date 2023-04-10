@@ -85,7 +85,7 @@ const isFriend = haveRelation.bind(null, 'friend')
               <div class="flex justify-between w-full items-top">
                 <nuxt-link
                   :key="`${user.id}:${user.relationship.join('-')}`"
-                  class="text-lg text-left underline md:text-2xl decoration-sky-500 text-kimberly-600 dark:text-kimberly-300 hover:text-kimberly-500"
+                  class="text-lg text-left underline md:text-2xl decoration-sky-500 text-gbase-600 dark:text-gbase-300 hover:text-gbase-500"
                   :to="{
                     name: 'user-handle',
                     params: {
@@ -137,7 +137,7 @@ const isFriend = haveRelation.bind(null, 'friend')
       }
     }
 
-    @apply border-b-2 border-kimberly-500/30;
+    @apply border-b-2 border-gbase-500/30;
   }
   @apply grid xl:grid-cols-2 gap-x-8;
 }

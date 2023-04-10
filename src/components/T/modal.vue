@@ -2,7 +2,7 @@
   <div class="zoom-modal-inner">
     <slot name="root">
       <div
-        class="shadow-xl card bg-kimberly-50 dark:bg-kimberly-800 shadow-kimberly-800/20"
+        class="shadow-xl card bg-gbase-50 dark:bg-gbase-800 shadow-gbase-800/20"
       >
         <slot name="body">
           <div class="card-body" v-bind="$attrs">

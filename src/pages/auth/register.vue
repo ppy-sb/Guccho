@@ -101,13 +101,13 @@ async function userRegisterAction() {
     class="flex items-center justify-center px-4 py-12 my-auto sm:px-6 lg:px-8"
   >
     <div
-      class="relative w-full max-w-md p-6 overflow-hidden shadow-2xl space-y-8 bg-base-200/30 dark:bg-kimberly-800 rounded-3xl"
+      class="relative w-full max-w-md p-6 overflow-hidden shadow-2xl space-y-8 bg-gbase-200/30 dark:bg-gbase-800 rounded-3xl"
     >
       <fetch-overlay :fetching="fetching" />
 
       <div>
         <h2
-          class="text-3xl text-center text-kimberly-800 dark:text-kimberly-50"
+          class="text-3xl text-center text-gbase-800 dark:text-gbase-50"
         >
           Sign Up
         </h2>

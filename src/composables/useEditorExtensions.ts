@@ -45,7 +45,7 @@ export default <TEdit extends boolean>(config?: { indent?: string; edit?: TEdit 
     lowlight,
     exitOnArrowDown: true,
     HTMLAttributes: {
-      class: 'border border-kimberly-500/20',
+      class: 'border border-gbase-500/20',
     },
   }),
 ]

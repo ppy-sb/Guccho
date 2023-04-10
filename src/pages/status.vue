@@ -56,7 +56,7 @@ function createStyleObject(count: number) {
         <span class="text-xl">avg: {{ fmtPercent.format(data.load.system.avg) }}</span>
         <span class="text-xl">current: {{ fmtPercent.format(data.load.system.current / 100) }}</span>
       </div>
-      <div ref="systemLoad" class="multi-progress-bar-container bg-kimberly-500/10 shadow-lg">
+      <div ref="systemLoad" class="multi-progress-bar-container bg-gbase-500/10 shadow-lg">
         <div
           :style="createStyleObject(data.load.system.user)"
           class="multi-progress-bar bg-blue-500 text-white"
@@ -74,7 +74,7 @@ function createStyleObject(count: number) {
       <h1 class="text-3xl drop-shadow-lg my-1">
         App Load
       </h1>
-      <div ref="appLoad" class="multi-progress-bar-container bg-kimberly-500/10 shadow-lg">
+      <div ref="appLoad" class="multi-progress-bar-container bg-gbase-500/10 shadow-lg">
         <div
           v-for="(_data, app) of data.load.app"
           :key="app"
@@ -85,7 +85,7 @@ function createStyleObject(count: number) {
         </div>
         <div
           :style="createStyleObject((data.load.system.current - data.load.app.web.current) / data.load.system.current * 100)"
-          class="multi-progress-bar bg-base-300/10"
+          class="multi-progress-bar bg-gbase-300/10"
         >
           Other
         </div>
@@ -99,7 +99,7 @@ function createStyleObject(count: number) {
           Total: {{ fmtCompact.format(data.memory.system.total / 1_000_000) }}
         </h2>
       </div>
-      <div ref="appLoad" class="multi-progress-bar-container bg-kimberly-500/10 shadow-lg">
+      <div ref="appLoad" class="multi-progress-bar-container bg-gbase-500/10 shadow-lg">
         <div
           :style="createStyleObject(data.memory.system.active / data.memory.system.total * 100)"
           class="multi-progress-bar bg-blue-500 text-white"
@@ -114,7 +114,7 @@ function createStyleObject(count: number) {
         </div>
         <div
           :style="createStyleObject((data.memory.system.free) / data.memory.system.total * 100)"
-          class="multi-progress-bar bg-base-300/10"
+          class="multi-progress-bar bg-gbase-300/10"
         >
           free
         </div>

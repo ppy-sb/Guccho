@@ -37,7 +37,7 @@ onMounted(() => {
         v-if="appConfig.needConfirmWebsite && !confirmedWebsite"
         class="flex h-screen items-center"
       >
-        <div class="card bg-base-200 shadow-xl px-16 mx-auto gap-8">
+        <div class="card bg-gbase-200 shadow-xl px-16 mx-auto gap-8">
           <div class="card-body">
             <svg class="remix text-white invert">
               <use :xlink:href="`${remixiconUrl}#ri-folder-warning-line`" />

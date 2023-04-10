@@ -77,7 +77,7 @@ const dropdown = computed(() => filter('dropdown'))
           </div>
           <ul
             tabindex="0"
-            class="z-50 p-2 shadow dropdown-content menu bg-base-100 rounded-box rounded-3xl w-52"
+            class="z-50 p-2 shadow dropdown-content menu bg-gbase-100 rounded-box rounded-3xl w-52"
           >
             <li v-for="(_stats, key) of dropdown" :key="`user-tab-${key}`">
               <a class="z-50" @click="select(key)">{{

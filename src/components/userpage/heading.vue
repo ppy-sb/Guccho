@@ -94,7 +94,7 @@ async function toggleFriend() {
     </div>
     <!-- info -->
     <div
-      class="flex flex-col w-full pt-2 md:p-0 bg-base-200 dark:bg-kimberly-700 md:bg-transparent md:grow"
+      class="flex flex-col w-full pt-2 md:p-0 bg-gbase-200 dark:bg-gbase-700 md:bg-transparent md:grow"
     >
       <div
         v-if="session.$state.userId !== user.id"
@@ -103,7 +103,7 @@ async function toggleFriend() {
         <t-button
           ref="changeFriendStateButton"
           size="sm"
-          :variant="isMutualFriend ? 'primary' : 'neutral'"
+          :variant="isMutualFriend ? 'primary' : 'gbase'"
           class="gap-1"
           @click="toggleFriend"
         >
@@ -168,7 +168,7 @@ async function toggleFriend() {
           </h1>
           <nuxt-link
             :to="{ name: 'user-handle', params: { handle: `@${user.safeName}` } }"
-            class="text-3xl text-center underline md:text-left decoration-sky-500 text-kimberly-600 dark:text-kimberly-300"
+            class="text-3xl text-center underline md:text-left decoration-sky-500 text-gbase-600 dark:text-gbase-300"
           >
             @{{ user.safeName }}
           </nuxt-link>
@@ -195,7 +195,7 @@ async function toggleFriend() {
 
 <style scoped lang="scss">
 .user-status {
-  @apply text-center text-kimberly-600 dark:text-kimberly-400 bg-base-200/50 dark:bg-kimberly-700/50 px-2;
+  @apply text-center text-gbase-600 dark:text-gbase-400 bg-gbase-200/50 dark:bg-gbase-700/50 px-2;
   @apply md:text-left md:rounded;
   @apply md:[margin-left:-7em] md:[padding-left:7em];
 }

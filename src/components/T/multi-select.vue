@@ -47,7 +47,7 @@ watch(() => props.modelValue, () => {
         leave-to-class="opacity-0"
       >
         <ListboxOptions
-          class="absolute z-50 mt-2 menu menu-compact bg-base-100/80 backdrop-blur"
+          class="absolute z-50 mt-2 menu menu-compact bg-gbase-100/80 backdrop-blur"
           :class="[
             props.size === 'sm' || props.size === 'xs' ? 'rounded-xl' : 'rounded-box',
           ]"
@@ -82,7 +82,7 @@ watch(() => props.modelValue, () => {
     top: 30%;
     bottom: 20%;
     margin-left: -0.3rem;
-    @apply border-l-2 border-kimberly-500
+    @apply border-l-2 border-gbase-500
   }
 }
 </style>

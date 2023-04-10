@@ -38,8 +38,8 @@ export default {
 
 <style lang="postcss" scoped>
 .app-header {
-  @apply sm:flex mt-2 items-center justify-between text-kimberly-900 dark:text-kimberly-100 pl-2;
-  /* @apply sm:flex sm:w-full mt-2 items-center justify-between  text-kimberly-900 dark:text-kimberly-100 ; */
+  @apply sm:flex mt-2 items-center justify-between text-gbase-900 dark:text-gbase-100 pl-2;
+  /* @apply sm:flex sm:w-full mt-2 items-center justify-between  text-gbase-900 dark:text-gbase-100 ; */
   transition: 0.3s ease;
   @apply pb-2;
 

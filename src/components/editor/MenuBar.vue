@@ -204,7 +204,7 @@ export default defineComponent({
           </svg>
         </button>
         <template #popper>
-          <div class="card bg-base-100/30">
+          <div class="card bg-gbase-100/30">
             <div class="card-body p-2">
               <div class="input-group input-group-sm">
                 <span>URL</span>
@@ -297,7 +297,7 @@ export default defineComponent({
 
     &.is-active,
     &:hover {
-      @apply text-kimberly-100 bg-kimberly-800 dark:text-kimberly-900 dark:bg-base-100;
+      @apply text-gbase-100 bg-gbase-800 dark:text-gbase-900 dark:bg-gbase-900;
       // color:#FFF;
       // background-color:#0D0D0D;
     }

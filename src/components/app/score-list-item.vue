@@ -200,6 +200,6 @@ const meta = computed(
 }
 
 .score + .score {
-  @apply border-t-2 border-kimberly-300/50;
+  @apply border-t-2 border-gbase-300/50;
 }
 </style>

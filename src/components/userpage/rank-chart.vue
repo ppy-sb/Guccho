@@ -14,7 +14,7 @@ function hsl([h, s, l]: [any, any, any], a: any) {
   return `hsl(${h} ${s}% ${l}% / ${a}%)`
 }
 const gRankFill = hsl(hsvRaw.wewak[500], 20)
-const cRankFill = hsl(hsvRaw.kimberly[500], 30)
+const cRankFill = hsl(hsvRaw.gbase[500], 30)
 
 const chars = [
   ' ',

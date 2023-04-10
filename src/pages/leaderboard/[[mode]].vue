@@ -186,7 +186,7 @@ function reloadPage(i?: number) {
       </template>
       <template v-else>
         <div
-          class="pb-10 my-auto text-kimberly-900 dark:text-kimberly-100 grow"
+          class="pb-10 my-auto text-gbase-900 dark:text-gbase-100 grow"
         >
           <h1 class="text-xl font-semibold text-center">
             No one played this mode yet.

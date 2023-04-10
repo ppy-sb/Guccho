@@ -21,10 +21,10 @@ export default {
   >
     <div
       v-show="fetching"
-      class="absolute top-0 left-0 z-50 flex items-center justify-center w-full h-full pointer-events-none bg-base-200 backdrop-filter bg-opacity-20 backdrop-blur-sm"
+      class="absolute top-0 left-0 z-50 flex items-center justify-center w-full h-full pointer-events-none bg-gbase-200 backdrop-filter bg-opacity-20 backdrop-blur-sm"
     >
       <svg
-        class="w-12 h-12 text-kimberly-900 dark:text-kimberly-100 animate-spin"
+        class="w-12 h-12 text-gbase-900 dark:text-gbase-100 animate-spin"
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"

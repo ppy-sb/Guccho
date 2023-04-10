@@ -1,7 +1,7 @@
 .custom-typography {
   @apply prose prose-base lg:prose-lg xl:prose-xl prose-slate dark:prose-invert xl:prose-xl max-w-none;
 
-  @apply prose-pre:bg-kimberly-900 prose-pre:text-kimberly-50;
+  @apply prose-pre:bg-gbase-900 prose-pre:text-gbase-50;
 
   :where(li > p):not(:where([class~="not-prose"] *)) {
     margin: 0;
@@ -25,7 +25,7 @@
   }
 
   mark {
-    @apply bg-warning dark:bg-kimberly-200 rounded-sm;
+    @apply bg-warning dark:bg-gbase-200 rounded-sm;
   }
 
   &.ssr {

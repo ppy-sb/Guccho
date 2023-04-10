@@ -40,7 +40,7 @@ export const hex = {
     900: '#340919',
     950: '#0D0206',
   },
-  'kimberly': {
+  'gbase': {
     50: '#F0F0F5',
     100: '#E0E1EB',
     200: '#C1C4D7',

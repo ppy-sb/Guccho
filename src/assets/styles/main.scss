@@ -136,19 +136,34 @@ body:before {
   left: 0;
   right: 0;
   bottom: 0;
-  @apply bg-gradient-to-b from-kimberly-50/50 to-kimberly-50/90 dark:from-kimberly-800 dark:to-kimberly-900 -z-50;
+  @apply bg-gradient-to-b from-gbase-50/50 to-gbase-50/90 dark:from-gbase-800 dark:to-gbase-900 -z-50;
 }
-
 
 .two-tone {
   @apply relative;
   &::before {
-      @apply absolute top-0 left-0 right-0 bottom-0 -z-10;
-      @apply rounded-2xl;
-      content: '';
-      background: linear-gradient(110deg, transparent, theme('colors.kimberly.200 / 30%') 16.6% ,theme('colors.kimberly.300 / 50%') 16.7%,  theme('colors.kimberly.300 / 60%') 83.3%, theme('colors.kimberly.200 / 30%') 83.4%, transparent 100%);
-      @media (prefers-color-scheme: dark) {
-        background: linear-gradient(110deg, transparent, theme('colors.kimberly.700 / 30%') 16.6% ,theme('colors.kimberly.700 / 50%') 16.7%,  theme('colors.kimberly.700 / 60%') 83.3%, theme('colors.kimberly.700 / 30%') 83.4%, transparent 100%);
-      }
+    @apply absolute top-0 left-0 right-0 bottom-0 -z-10;
+    @apply rounded-2xl;
+    content: "";
+    background: linear-gradient(
+      110deg,
+      transparent,
+      theme("colors.gbase.200 / 30%") 16.6%,
+      theme("colors.gbase.300 / 50%") 16.7%,
+      theme("colors.gbase.300 / 60%") 83.3%,
+      theme("colors.gbase.200 / 30%") 83.4%,
+      transparent 100%
+    );
+    @media (prefers-color-scheme: dark) {
+      background: linear-gradient(
+        110deg,
+        transparent,
+        theme("colors.gbase.700 / 30%") 16.6%,
+        theme("colors.gbase.700 / 50%") 16.7%,
+        theme("colors.gbase.700 / 60%") 83.3%,
+        theme("colors.gbase.700 / 30%") 83.4%,
+        transparent 100%
+      );
+    }
   }
 }

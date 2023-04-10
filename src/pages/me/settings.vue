@@ -198,7 +198,7 @@ onBeforeMount(() => {
                 >
                   <svg
                     aria-hidden="true"
-                    class="w-10 h-10 mb-3 text-kimberly-600 dark:text-kimberly-400"
+                    class="w-10 h-10 mb-3 text-gbase-600 dark:text-gbase-400"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -212,12 +212,12 @@ onBeforeMount(() => {
                     />
                   </svg>
                   <p
-                    class="mb-2 text-sm text-kimberly-500 dark:text-kimberly-300"
+                    class="mb-2 text-sm text-gbase-500 dark:text-gbase-300"
                   >
                     <span class="font-semibold">Click to upload</span> or drag
                     and drop
                   </p>
-                  <!-- <p class="text-xs text-kimberly-500 dark:text-kimberly-300">
+                  <!-- <p class="text-xs text-gbase-500 dark:text-gbase-300">
                     SVG, PNG, JPG or GIF (MAX. 800x400px)
                   </p> -->
                   <p class="text-sm text-red-500">
@@ -249,7 +249,7 @@ onBeforeMount(() => {
               class="grow"
               :loading="uploadingAvatarStat === 'uploading'"
               :disabled="uploadingAvatarStat === 'succeed'"
-              :variant="uploadingAvatarStat === 'succeed' ? 'success' : 'neutral'"
+              :variant="uploadingAvatarStat === 'succeed' ? 'success' : 'gbase'"
               @click="saveAvatar"
             >
               {{
@@ -367,7 +367,7 @@ onBeforeMount(() => {
     <div class="flex flex-col flex-wrap justify-between md:flex-row">
       <div class="grow xl:max-w-2xl w-full lg:[max-width:50%]">
         <div
-          class="flex items-end justify-center p-3 overflow-hidden shadow-md gap-4 md:justify-start bg-base-200/30 dark:bg-kimberly-700/40 sm:rounded-3xl lg:mr-4"
+          class="flex items-end justify-center p-3 overflow-hidden shadow-md gap-4 md:justify-start bg-gbase-200/30 dark:bg-gbase-700/40 sm:rounded-3xl lg:mr-4"
         >
           <div class="relative z-10 mask mask-squircle hoverable w-100 self-center">
             <button
@@ -387,7 +387,7 @@ onBeforeMount(() => {
               {{ user.name }}
             </h1>
             <h2
-              class="text-3xl text-left underline decoration-sky-500 text-kimberly-600 dark:text-kimberly-300"
+              class="text-3xl text-left underline decoration-sky-500 text-gbase-600 dark:text-gbase-300"
             >
               @{{ user.safeName }}
             </h2>
@@ -593,8 +593,8 @@ onBeforeMount(() => {
 }
 
 .dropzone {
-  @apply flex flex-col justify-center items-center w-full h-64 bg-kimberly-50 rounded-lg border-2 border-kimberly-300 border-dashed cursor-pointer;
-  @apply dark:hover:bg-base-200 dark:bg-kimberly-300 dark:bg-kimberly-700 hover:bg-kimberly-50 dark:border-kimberly-600 dark:hover:border-kimberly-500 dark:hover:bg-kimberly-600;
+  @apply flex flex-col justify-center items-center w-full h-64 bg-gbase-50 rounded-lg border-2 border-gbase-300 border-dashed cursor-pointer;
+  @apply dark:hover:bg-gbase-200 dark:bg-gbase-300 dark:bg-gbase-700 hover:bg-gbase-50 dark:border-gbase-600 dark:hover:border-gbase-500 dark:hover:bg-gbase-600;
   @apply hover:shadow-lg;
   @apply transition-shadow transition-colors;
 }

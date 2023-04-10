@@ -180,7 +180,7 @@ const nextTop = nextPage.bind(null, topPage)
       <section v-if="top?.count" class="custom-container">
         <div class="card" :class="[pendingTop && 'pointer-events-none']">
           <!-- <div
-            class="justify-center p-1 card-title rounded-2xl bg-kimberly-300/30"
+            class="justify-center p-1 card-title rounded-2xl bg-gbase-300/30"
           >
             First Ranks ({{ top.count }})
           </div> -->
@@ -233,7 +233,7 @@ const nextTop = nextPage.bind(null, topPage)
             </div>
           </div>
           <div
-            class="btn-group d-flex w-full bg-kimberly-300/30 dark:bg-kimberly-700/50 rounded-2xl shadow"
+            class="btn-group d-flex w-full bg-gbase-300/30 dark:bg-gbase-700/50 rounded-2xl shadow"
             style="--rounded-btn: 1rem"
           >
             <button

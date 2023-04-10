@@ -30,7 +30,7 @@ const {
     <t-modal-wrapper ref="searchModal" v-slot="{ closeModal }">
       <div class="flex w-full justify-center pt-[1em]">
         <div
-          class="card w-11/12 lg:w-2/3 max-h-[calc(100vh-2em)] bg-gradient-to-b from-kimberly-100 to-kimberly-200 dark:from-kimberly-700 dark:to-kimberly-900 shadow-lg"
+          class="card w-11/12 lg:w-2/3 max-h-[calc(100vh-2em)] bg-gradient-to-b from-gbase-100 to-gbase-200 dark:from-gbase-700 dark:to-gbase-900 shadow-lg"
         >
           <div class="card-actions pt-2 px-1 flex">
             <div class="pl-3" />

@@ -178,7 +178,7 @@ onBeforeMount(() => {
       </div>
       <div
         v-if="selectedMap"
-        class="flex flex-col md:flex-row card bg-base-100 "
+        class="flex flex-col md:flex-row card bg-gbase-100 "
       >
         <div class="w-full md:w-1/3 grow">
           <div class="p-8 h-full flex flex-col justify-around">
@@ -202,7 +202,7 @@ onBeforeMount(() => {
                   </button>
                   <template #popper>
                     <ul
-                      class="menu p-2 menu-compact border-[1px] border-base-300/20 bg-base-200/80 w-56 rounded-box"
+                      class="menu p-2 menu-compact border-[1px] border-base-300/20 bg-gbase-200/80 w-56 rounded-box"
                     >
                       <template v-if="isBanchoBeatmapset(beatmapset)">
                         <li class="menu-title">
@@ -265,15 +265,15 @@ onBeforeMount(() => {
           </div>
           <dl>
             <div class="stripe-odd">
-              <dt class="text-sm font-medium text-kimberly-500">
+              <dt class="text-sm font-medium text-gbase-500">
                 Creator
               </dt>
               <dd class="stripe-even">
                 {{ selectedMap.creator }}
               </dd>
             </div>
-            <div class="bg-kimberly-50 dark:bg-kimberly-800 stripe-odd">
-              <dt class="text-sm font-medium text-kimberly-500">
+            <div class="bg-gbase-50 dark:bg-gbase-800 stripe-odd">
+              <dt class="text-sm font-medium text-gbase-500">
                 Status
               </dt>
               <dd class="stripe-even">
@@ -281,15 +281,15 @@ onBeforeMount(() => {
               </dd>
             </div>
             <div class="stripe-odd">
-              <dt class="text-sm font-medium text-kimberly-500">
+              <dt class="text-sm font-medium text-gbase-500">
                 Beatmap ID
               </dt>
               <dd class="stripe-even">
                 {{ selectedMap.id }}
               </dd>
             </div>
-            <div class="bg-kimberly-50 dark:bg-kimberly-800 stripe-odd">
-              <dt class="text-sm font-medium text-kimberly-500">
+            <div class="bg-gbase-50 dark:bg-gbase-800 stripe-odd">
+              <dt class="text-sm font-medium text-gbase-500">
                 Source | ID
               </dt>
               <dd class="stripe-even">
@@ -297,15 +297,15 @@ onBeforeMount(() => {
               </dd>
             </div>
             <div class="stripe-odd">
-              <dt class="text-sm font-medium text-kimberly-500">
+              <dt class="text-sm font-medium text-gbase-500">
                 Last Update
               </dt>
               <dd class="stripe-even">
                 {{ selectedMap.lastUpdate }}
               </dd>
             </div>
-            <div class="bg-kimberly-50 dark:bg-kimberly-800 stripe-odd">
-              <dt class="text-sm font-medium text-kimberly-500">
+            <div class="bg-gbase-50 dark:bg-gbase-800 stripe-odd">
+              <dt class="text-sm font-medium text-gbase-500">
                 BPM
               </dt>
               <dd class="stripe-even">
@@ -313,15 +313,15 @@ onBeforeMount(() => {
               </dd>
             </div>
             <div class="stripe-odd">
-              <dt class="text-sm font-medium text-kimberly-500">
+              <dt class="text-sm font-medium text-gbase-500">
                 Star Rate
               </dt>
               <dd class="stripe-even">
                 {{ selectedMap.properties.starRate }}
               </dd>
             </div>
-            <div class="bg-kimberly-50 dark:bg-kimberly-800 stripe-odd">
-              <dt class="text-sm font-medium text-kimberly-500">
+            <div class="bg-gbase-50 dark:bg-gbase-800 stripe-odd">
+              <dt class="text-sm font-medium text-gbase-500">
                 Circle Size
               </dt>
               <dd class="stripe-even">
@@ -329,15 +329,15 @@ onBeforeMount(() => {
               </dd>
             </div>
             <div class="stripe-odd">
-              <dt class="text-sm font-medium text-kimberly-500">
+              <dt class="text-sm font-medium text-gbase-500">
                 HP Drain
               </dt>
               <dd class="stripe-even">
                 {{ selectedMap.properties.hpDrain }}
               </dd>
             </div>
-            <div class="bg-kimberly-50 dark:bg-kimberly-800 stripe-odd">
-              <dt class="text-sm font-medium text-kimberly-500">
+            <div class="bg-gbase-50 dark:bg-gbase-800 stripe-odd">
+              <dt class="text-sm font-medium text-gbase-500">
                 Duration
               </dt>
               <dd class="stripe-even">
@@ -345,7 +345,7 @@ onBeforeMount(() => {
               </dd>
             </div>
             <div class="stripe-odd">
-              <dt class="text-sm font-medium text-kimberly-500">
+              <dt class="text-sm font-medium text-gbase-500">
                 Hit Object
               </dt>
               <dd class="stripe-even">
@@ -385,7 +385,7 @@ onBeforeMount(() => {
 
 <style scoped lang="postcss">
 .header-with-maps {
-  @apply sm:flex pt-20 lg:pt-0 mt-2 items-center justify-between text-kimberly-900 dark:text-kimberly-100;
+  @apply sm:flex pt-20 lg:pt-0 mt-2 items-center justify-between text-gbase-900 dark:text-gbase-100;
   transition: 0.3s ease;
   @apply pb-0;
 
@@ -397,7 +397,7 @@ onBeforeMount(() => {
 }
 
 .stripe-even {
-  @apply mt-1 text-sm text-kimberly-900 dark:text-kimberly-100 sm:col-span-2 sm:mt-0;
+  @apply mt-1 text-sm text-gbase-900 dark:text-gbase-100 sm:col-span-2 sm:mt-0;
 }
 </style>
 

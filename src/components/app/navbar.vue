@@ -88,7 +88,7 @@ async function logout() {
             </svg>
           </label>
           <template #popper>
-            <div class="menu bg-base-100/80 dark:bg-base-300/80">
+            <div class="menu bg-gbase-100/80 dark:bg-gbase-700/80">
               <li
                 v-for="menuItem in menu"
                 :key="`menu-${menuItem.name}`"
@@ -161,14 +161,14 @@ async function logout() {
             <div class="indicator avatar">
               <img
                 :src="session.$state.user?.avatarSrc"
-                class="rounded-full avatar-img ring ring-kimberly-600/70 ring-offset-base-100 ring-offset-2 pointer-events-none"
+                class="rounded-full avatar-img ring ring-gbase-600/70 ring-offset-gbase-100 ring-offset-2 pointer-events-none"
                 alt=""
               >
               <span class="badge badge-xs badge-success indicator-item" />
             </div>
           </button>
           <template #popper>
-            <div class="menu bg-base-100/80 dark:bg-base-300/80">
+            <div class="menu bg-gbase-100/80 dark:bg-gbase-700/80">
               <ul
                 tabindex="0"
                 class="right-0 p-2 mt-2 shadow-xl menu menu-compact dropdown-content rounded-br-2xl rounded-bl-2xl w-52"
@@ -228,11 +228,11 @@ async function logout() {
 <style lang="postcss">
 .navbar-tint,
 .detached > .navbar {
-  @apply bg-base-100/80 dark:bg-base-300/80;
+  @apply bg-gbase-100/80 dark:bg-gbase-700/80;
   @apply backdrop-blur-md shadow-xl;
 }
 .navbar {
-  @apply border-[1px] border-kimberly-50/0 dark:border-kimberly-500/0;
+  @apply border-[1px] border-gbase-50/0 dark:border-gbase-500/0;
   transition: all 0.5s cubic-bezier(0.05, 1, 0.4, 0.95);
   .btn {
     @apply transition-all;
@@ -264,7 +264,7 @@ async function logout() {
 .detached {
   @apply px-2 pt-1;
   & .navbar {
-    @apply border-kimberly-50/30 dark:border-kimberly-500/30;
+    @apply border-gbase-50/30 dark:border-gbase-500/30;
     @apply rounded-2xl;
     @apply min-h-0;
 
