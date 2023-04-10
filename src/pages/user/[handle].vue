@@ -168,6 +168,6 @@ onMounted(() => {
 <style lang="postcss" scoped>
 .handle {
   /* @apply bg-gradient-to-b from-gbase-50/50 to-gbase-50/90 dark:from-gbase-800 dark:to-gbase-900; */
-  @apply h-full;
+  @apply h-screen overflow-scroll
 }
 </style>
