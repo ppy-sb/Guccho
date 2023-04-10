@@ -188,7 +188,6 @@ export class UserProvider implements Base<Id> {
         userId: id,
         mode: _mode,
         status: {
-          // TODO remove unranked map from user bests
           in: banchoPyRankingStatus,
         },
       },

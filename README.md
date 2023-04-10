@@ -56,7 +56,6 @@ Checkout the [deployment documentation](https://v3.nuxtjs.org/guide/deploy/prese
 
 ### todo(s)
 
-TODO Register
 TODO Give first registered user owner privilege
 
 ## AppConfig and ServerConfig

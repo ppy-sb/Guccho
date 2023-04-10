@@ -53,9 +53,6 @@ export const router = _router({
     .mutation(async ({ ctx, input }) => {
       const update: Partial<typeof input & { userpageContent: string }> = {}
       // TODO: check email(should verified by frontend with another request (not impl'd yet ))
-      // if (input.email) {
-      //   const user = await provider.essential({ handle: input.email, includes: { email: true } })
-      // }
       if (input.name) {
         const existedUser = await users.getEssential({
           handle: input.name,
