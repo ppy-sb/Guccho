@@ -1,8 +1,9 @@
 import { fileURLToPath } from 'node:url'
+
 import hljs from './configs/hljs'
 import postcss from './postcss.config'
 
-const activeAdapter = 'ppy.sb@bancho.py'
+import './scripts/ensure-env'
 
 export default defineNuxtConfig({
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
@@ -64,7 +65,7 @@ export default defineNuxtConfig({
   ],
 
   alias: {
-    $active: fileURLToPath(new URL(`./src/adapters/${activeAdapter}`, import.meta.url)),
+    $active: fileURLToPath(new URL(`./src/adapters/${process.env.EXTERNAL}`, import.meta.url)),
     $def: fileURLToPath(new URL('./src/adapters/base', import.meta.url)),
     $articles: fileURLToPath(new URL('./articles', import.meta.url)),
   },

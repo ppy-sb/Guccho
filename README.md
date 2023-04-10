@@ -11,8 +11,10 @@ Guccho is a web interface to interact with osu private servers with compatibilit
 
 ## Setup
 
-- Config .env
-- Config `activeAdapter` in nuxt.config.ts
+- Config .env *important*
+for production, create .env from .env.example.
+for development please create both .env and .env.development. `build` will use `.env` as environments to ensure you don't made any secrets to the
+
 - Run `yarn`
 
 ## platforms
@@ -44,7 +46,7 @@ Locally preview production build:
 
 ```bash
 # yarn
-yarn preview
+yarn preview:dev # or yarn preview:prod
 ```
 
 Checkout the [deployment documentation](https://v3.nuxtjs.org/guide/deploy/presets) for more information.
