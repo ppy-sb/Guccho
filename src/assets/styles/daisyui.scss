@@ -1,17 +1,16 @@
-$variants: primary, secondary, accent, neutral, base-100, info, success, warning,
-  error;
+$variants: primary, secondary, accent, neutral, base-100, info, success, warning, error;
 html {
   @apply bg-transparent #{!important};
 }
 
 .btn {
-  @apply transition-shadow;
+  @apply transition-shadow transition-[background];
   @apply shadow-lg;
   @apply dark:shadow-md;
 
   @each $variant in $variants {
     &.btn-#{$variant} {
-      @apply shadow-#{$variant}/40 hover:shadow-#{$variant}/50 dark:shadow-#{$variant}/20 hover:dark:shadow-#{$variant}/30;
+      @apply shadow-#{$variant}/40 hover:shadow-#{$variant}/60 dark:shadow-#{$variant}/20 hover:dark:shadow-#{$variant}/30;
     }
   }
 
