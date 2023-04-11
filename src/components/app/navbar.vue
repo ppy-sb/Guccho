@@ -185,7 +185,7 @@ async function logout() {
                 <li>
                   <nuxt-link
                     :to="{
-                      name: 'me-friends',
+                      name: 'me-relations',
                     }"
                   >
                     Friends & Blocks

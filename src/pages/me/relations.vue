@@ -53,6 +53,8 @@ async function toggleRelation(type: Relationship, user: UserRelationship<string>
 
 const toggleFriend = toggleRelation.bind(null, 'friend')
 const isFriend = haveRelation.bind(null, 'friend')
+const toggleBlock = toggleRelation.bind(null, 'block')
+const isBlocked = haveRelation.bind(null, 'block')
 </script>
 
 <template>
@@ -79,7 +81,7 @@ const isFriend = haveRelation.bind(null, 'friend')
               >
             </div>
             <div class="grow">
-              <h1 class="text-2xl text-left md:text-4xl">
+              <h1 class="text-2xl text-left md:text-3xl">
                 {{ user.name }}
               </h1>
               <div class="flex justify-between w-full items-top">
@@ -100,8 +102,11 @@ const isFriend = haveRelation.bind(null, 'friend')
                     chat
                   </t-button> -->
                   <t-button :loading="pendingUser.has(user.id)" variant="warning" size="xs" class="md:btn-sm" @click="toggleFriend(user)">
-                    {{ pendingUser.has(user.id) ? '' : isFriend(user) ? 'remove' : 'regret' }}
+                    {{ pendingUser.has(user.id) ? '' : isFriend(user) ? 'remove friend' : 'regret' }}
                   </t-button>
+                  <!-- <t-button :loading="pendingUser.has(user.id)" variant="warning" size="xs" class="md:btn-sm" @click="toggleBlock(user)">
+                    {{ pendingUser.has(user.id) ? '' : isBlocked(user) ? 'remove block' : 'regret' }}
+                  </t-button> -->
                 </div>
               </div>
             </div>
@@ -139,6 +144,6 @@ const isFriend = haveRelation.bind(null, 'friend')
 
     @apply border-b-2 border-gbase-500/30;
   }
-  @apply grid xl:grid-cols-2 gap-x-8;
+  @apply grid lg:grid-cols-2 gap-x-8;
 }
 </style>
