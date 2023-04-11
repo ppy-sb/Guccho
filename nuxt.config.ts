@@ -15,29 +15,27 @@ export default defineNuxtConfig({
     transpile: ['trpc-nuxt'],
   },
 
-  // Global page headers: https://go.nuxtjs.dev/config-head
-  // head: {
-  //   title: 'Guccho',
-  //   meta: [
-  //     { charset: 'utf-8' },
-  //     { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-  //     { hid: 'description', name: 'description', content: '' },
-  //     { name: 'format-detection', content: 'telephone=no' }
-  //   ],
-  //   link: [
-  //     { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
-  //   ]
-  // },
-
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
     '~/assets/styles/main.scss',
+    '~/assets/styles/transitions.scss',
     '~/assets/styles/daisyui.scss',
     '~/assets/styles/popper.scss',
     '@fortawesome/fontawesome-svg-core/styles.css',
   ],
 
   runtimeConfig: { public: { hljs } },
+
+  app: {
+    pageTransition: {
+      name: 'page',
+      mode: 'out-in', // default
+    },
+    layoutTransition: {
+      name: 'page',
+      mode: 'out-in', // default
+    },
+  },
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: {

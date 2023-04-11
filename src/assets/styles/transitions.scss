@@ -1,0 +1,21 @@
+
+.page-leave-to {
+	animation: moveToLeft .7s ease-in-out both;
+}
+.page-enter-from {
+  animation: moveFromRight .6s ease both;
+}
+
+.page-enter-active,
+.page-leave-active {
+  transition: all 0.4s;
+}
+
+@keyframes moveToLeft {
+	from { }
+	to { -webkit-transform: translateX(-100%); transform: translateX(-100%); opacity: 0 }
+}
+
+@keyframes moveFromRight {
+	from { -webkit-transform: translateX(100%); transform: translateX(100%); opacity: 0 }
+}

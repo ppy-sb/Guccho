@@ -1,7 +1,7 @@
-const el = ref<HTMLElement>()
+const el = ref<Element>()
 const scrollY = ref(0)
 function observer(e: Event) {
-  if (!(e.target instanceof HTMLElement)) {
+  if (!(e.target instanceof Element)) {
     return
   }
   scrollY.value = e.target?.scrollTop
@@ -22,7 +22,7 @@ export default function () {
 
   // const pageObserver =
 
-  const setElement = (element: HTMLElement) => {
+  const setElement = (element: Element) => {
     if (el.value) {
       el.value.removeEventListener('scroll', observer)
     }
