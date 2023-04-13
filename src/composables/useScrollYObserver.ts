@@ -15,12 +15,6 @@ export default function () {
     document.removeEventListener('scroll', handleScroll)
     document.addEventListener('scroll', handleScroll)
   })
-  // onBeforeUnmount(() => {
-  //   scrollY.value = 0
-  //   document.removeEventListener('scroll', handleScroll)
-  // })
-
-  // const pageObserver =
 
   const setElement = (element: Element) => {
     if (el.value) {

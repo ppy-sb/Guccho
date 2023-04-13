@@ -1,21 +1,45 @@
-
-.page-leave-to {
-	animation: moveToLeft .7s ease-in-out both;
+.slide-leave-to {
+  /* animation: moveToLeft 0.2s ease-in-out both; */
+  /* animation: scaleDown .7s ease both; */
 }
-.page-enter-from {
-  animation: moveFromRight .6s ease both;
+.slide-enter-from {
+  /* animation: moveFromBottom .6s ease both; */
+  /* animation: moveFromRight 0.5s ease both; */
 }
 
-.page-enter-active,
-.page-leave-active {
-  transition: all 0.4s;
+.slide-enter-active,
+.slide-leave-active {
+  /* position: absolute */
+}
+.slide-enter-active {
+  animation: moveFromRight 0.5s ease both;
+}
+.slide-leave-active {
+  animation: moveToLeft 0.2s ease-in-out both;
 }
 
 @keyframes moveToLeft {
-	from { }
-	to { -webkit-transform: translateX(-100%); transform: translateX(-100%); opacity: 0 }
+  from {
+  }
+  to {
+    transform: translateX(-1%);
+    opacity: 0;
+  }
 }
 
 @keyframes moveFromRight {
-	from { -webkit-transform: translateX(100%); transform: translateX(100%); opacity: 0 }
+  from {
+    transform: translateX(1%);
+    opacity: 0;
+  }
+  to {
+  }
 }
+/* 
+@keyframes moveFromBottom {
+	from { -webkit-transform: translateY(100%); transform: translateY(100%); }
+}
+@keyframes scaleDown {
+	from { }
+	to { opacity: 0; -webkit-transform: scale(.8); transform: scale(.8); }
+} */

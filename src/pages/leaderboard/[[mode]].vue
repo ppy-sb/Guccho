@@ -3,6 +3,9 @@ import type { LeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
 import type { SwitcherPropType } from '~/composables/useSwitcher'
 import { isString } from '~/utils'
 
+// definePageMeta({
+//   layout: 'screen',
+// })
 const config = useAppConfig()
 
 const route = useRoute()

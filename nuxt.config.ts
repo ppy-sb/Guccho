@@ -28,13 +28,17 @@ export default defineNuxtConfig({
 
   app: {
     pageTransition: {
-      name: 'page',
-      mode: 'out-in', // default
+      name: 'slide',
+      mode: 'out-in',
     },
     layoutTransition: {
-      name: 'page',
+      name: 'slide',
       mode: 'out-in', // default
     },
+  },
+  experimental: {
+    viewTransition: true,
+    renderJsonPayloads: true,
   },
 
   // Auto import components: https://go.nuxtjs.dev/config-components
