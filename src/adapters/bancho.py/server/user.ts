@@ -3,7 +3,7 @@ import { unlink, writeFile } from 'node:fs/promises'
 import { isAbsolute, join, resolve, sep } from 'node:path'
 import { TRPCError } from '@trpc/server'
 
-import glob from 'glob-promise'
+import { glob } from 'glob'
 import imageType from 'image-type'
 import type { Prisma } from '.prisma/bancho.py'
 import type { JSONContent } from '@tiptap/core'
