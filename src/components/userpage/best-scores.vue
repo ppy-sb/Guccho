@@ -261,16 +261,16 @@ const nextBp = nextPage.bind(null, bpPage)
   filter: opacity(0) blur(2px);
 }
 .left-enter-from {
-  transform: translateX(-2%) translateY(1%);
+  transform: translateX(-2%);
 }
 .left-leave-to {
-  transform: translateX(2%) translateY(1%);
+  transform: translateX(2%);
 }
 .right-enter-from {
-  transform: translateX(2%) translateY(1%);
+  transform: translateX(2%);
 }
 .right-leave-to {
-  transform: translateX(-2%) translateY(1%);
+  transform: translateX(-2%);
 }
 
 /* ensure leaving items are taken out of layout flow so that moving
