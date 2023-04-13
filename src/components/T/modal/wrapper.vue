@@ -59,7 +59,6 @@ defineExpose({
 @import "./shared.scss";
 
 $in: blur(0.5em) opacity(0) saturate(0.5);
-$scale: scale(0.93);
 .zoom-modal-wrapper {
   position: fixed;
   left: 0;
@@ -82,14 +81,14 @@ $scale: scale(0.93);
 
   &[data-wrapper-status="closed"] {
     > .zoom-modal {
-      animation: zoomOut $duration $animate-function forwards;
+      animation: zoomOut $duration * 1.5 $animate-function forwards;
     }
   }
 }
 
 @keyframes zoomIn {
   0% {
-    transform: $scale;
+    transform: scale(0.96);
     filter: $in;
   }
 
@@ -104,7 +103,7 @@ $scale: scale(0.93);
   }
 
   100% {
-    transform: $scale;
+    transform: scale(0.93);
     filter: $in;
   }
 }

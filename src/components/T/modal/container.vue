@@ -112,8 +112,8 @@ defineExpose({
 $zoom-content-stage1: opacity(0.4) saturate(0.7);
 $zoom-content-stage2: opacity(0.2) saturate(0.3);
 
-$scale: scale(0.97);
-$scale2: scale(0.95);
+$scale: scale(0.98);
+$scale2: scale(0.96);
 
 .safari {
   .notify-safari-something-will-change {
