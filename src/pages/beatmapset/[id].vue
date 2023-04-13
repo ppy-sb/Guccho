@@ -9,6 +9,7 @@ import {
   noop,
   placeholder,
 } from '~/utils'
+import type { Label } from '~/composables/useLinks'
 
 const app$ = useNuxtApp()
 const route = useRoute()
@@ -122,6 +123,11 @@ async function update() {
 
 const scoreRS = ref<InstanceType<typeof AppScoresRankingSystemSwitcher> | null>(null)
 
+const links = ref<{
+  external: Label[]
+  directDownload: Label[]
+}>()
+
 onBeforeMount(() => {
   bgCover
     && loadImage(bgCover.cover)
@@ -129,6 +135,8 @@ onBeforeMount(() => {
         lazyBgCover.value = `url(${bgCover.cover})`
       })
       .catch(noop)
+
+  links.value = beatmapset.value ? useExternalBeatmapsetLinks(beatmapset.value) : undefined
 })
 </script>
 
@@ -190,7 +198,8 @@ onBeforeMount(() => {
               alt="list"
               :onerror="placeholder"
             />
-            <div class="pt-4">
+            <!-- // TODO in house beatmap links -->
+            <div v-if="links" class="pt-4">
               <div class="w-min">
                 <t-menu>
                   <button class="btn btn-sm btn-accent">
@@ -200,30 +209,27 @@ onBeforeMount(() => {
                     <ul
                       class="menu menu-compact border-[1px] border-base-300/20 bg-base-200/80 w-max rounded-box"
                     >
-                      <template v-if="isBanchoBeatmapset(beatmapset)">
+                      <template v-if="links.external.length">
                         <li class="menu-title">
                           <span>External Links</span>
                         </li>
-                        <li>
+                        <li v-for="{ link, label } in links.external" :key="`external-${label}`">
                           <a
-                            :href="`https://osu.ppy.sh/s/${beatmapset.foreignId}`"
-                          >Bancho</a>
+                            :href="link"
+                          >{{ label }}</a>
                         </li>
+                      </template>
+                      <template v-if="links.directDownload.length">
                         <div class="divider" />
                         <li class="menu-title">
                           <span>Direct downloads</span>
                         </li>
+                        <li v-for="{ link, label } in links.directDownload" :key="`direct-${label}`">
+                          <a
+                            :href="link"
+                          >{{ label }}</a>
+                        </li>
                       </template>
-                      <li>
-                        <a
-                          :href="`https://api.chimu.moe/v1/download/${beatmapset.foreignId}`"
-                        >Chimu.moe</a>
-                      </li>
-                      <li>
-                        <a
-                          :href="`https://osu.direct/api/d/${beatmapset.foreignId}`"
-                        >osu.direct (formally known as Kitsu.moe)</a>
-                      </li>
                     </ul>
                   </template>
                 </t-menu>

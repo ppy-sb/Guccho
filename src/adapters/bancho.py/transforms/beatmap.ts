@@ -18,12 +18,9 @@ import type { StableMod } from '~/types/score'
 export function toBeatmapset(
   beatmapset: Source,
   beatmap: DBMap,
-): Beatmapset<
-      (typeof beatmapset)['server'],
-      (typeof beatmapset)['id'],
-      (typeof beatmapset)['id']
-    > {
-  return {
+) {
+  const isBancho = beatmapset.server === 'bancho'
+  const rest = {
     id: beatmap.setId,
     foreignId: beatmapset.id || beatmap.setId,
     source: beatmapset.server || 'unknown',
@@ -33,7 +30,16 @@ export function toBeatmapset(
         title: beatmap.title,
       },
     },
+    assets: {},
+  } as Beatmapset<typeof beatmapset['server'], typeof beatmapset['id'], typeof beatmapset['id']>
+  if (isBancho) {
+    const v = Math.floor(new Date().getTime() / 1000)
+    rest.assets.cover = `https://assets.ppy.sh/beatmaps/${beatmapset.id}/covers/cover.jpg?${v}`
+    rest.assets['cover@2x'] = `https://assets.ppy.sh/beatmaps/${beatmapset.id}/covers/cover@2x.jpg?${v}`
+    rest.assets.list = `https://assets.ppy.sh/beatmaps/${beatmapset.id}/covers/list.jpg?${v}`
+    rest.assets['list@2x'] = `https://assets.ppy.sh/beatmaps/${beatmapset.id}/covers/list@2x.jpg?${v}`
   }
+  return rest
 }
 
 export function toBeatmapEssential(beatmap: {

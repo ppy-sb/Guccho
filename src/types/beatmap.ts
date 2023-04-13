@@ -39,6 +39,12 @@ export interface Beatmapset<Source extends BeatmapSource, LocalId, ForeignId> {
   id: LocalId
   source: Source
   foreignId: Source extends ForeignSource ? ForeignId : never
+  assets: {
+    cover?: string
+    'cover@2x'?: string
+    list?: string
+    'list@2x'?: string
+  }
 }
 export interface BeatmapEssential<Id, ForeignId = never> {
   id: Id
