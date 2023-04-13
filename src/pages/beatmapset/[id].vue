@@ -405,10 +405,8 @@ onBeforeMount(() => {
 .stripe-even {
   @apply mt-1 text-sm text-gbase-900 dark:text-gbase-100 sm:col-span-2 sm:mt-0;
 }
-</style>
 
-<style lang="scss">
-table.table.clear-rounded-tl {
+:deep(table.table.clear-rounded-tl) {
   > thead {
     > tr:first-child {
       > th:first-child {
@@ -416,6 +414,9 @@ table.table.clear-rounded-tl {
       }
     }
   }
+}
+.safari .pre-bg-cover {
+  -webkit-transform: translate3d(0, 0, 0);
 }
 .pre-bg-cover {
   &:before {
