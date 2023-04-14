@@ -37,8 +37,9 @@ export default defineNuxtConfig({
     },
   },
   experimental: {
-    viewTransition: true,
+    // viewTransition: true,
     renderJsonPayloads: true,
+    // componentIslands: true,
   },
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -97,8 +98,5 @@ export default defineNuxtConfig({
   postcss,
   typescript: {
     strict: true,
-  },
-  experimental: {
-    componentIslands: true,
   },
 })
