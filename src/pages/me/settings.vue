@@ -378,7 +378,7 @@ onBeforeMount(() => {
               change
             </button>
             <img
-              :src="newAvatarURL || `${user.avatarSrc}?${Date.now()}`"
+              :src="newAvatarURL || `${user.avatarSrc}`"
               class="pointer-events-none _avatar"
             >
           </div>

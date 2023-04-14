@@ -88,7 +88,7 @@ async function toggleFriend() {
     <!-- Logo -->
     <div>
       <div
-        :style="`background-image: url(${user.avatarSrc}?${Date.now()}); background-position: center`"
+        :style="`background-image: url(${user.avatarSrc}); background-position: center`"
         class="mask mask-squircle w-[150px] md:w-[300px] bg-cover aspect-square"
       />
     </div>
