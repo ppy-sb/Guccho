@@ -43,7 +43,7 @@ export default async function () {
 
   const keyword = shallowRef('')
   const lastKw = shallowRef('')
-  const tags = shallowRef<Tag[]>([])
+  const tags = ref<Tag[]>([])
   const includes = reactive({
     beatmaps: true,
     beatmapsets: true,
