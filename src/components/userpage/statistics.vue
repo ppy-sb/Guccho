@@ -5,7 +5,7 @@ import type {
 } from '~/types/common'
 import { ppRankingSystems } from '~/types/defs'
 import type { PPRank, ScoreRank } from '~/types/statistics'
-import { createScoreFormatter, toDuration } from '~/common/varkaUtils'
+import { createScoreFormatter, getFlagURL, toDuration } from '~/common/varkaUtils'
 
 import { getRequiredScoreForLevel } from '~/utils/level-calc'
 
@@ -77,7 +77,7 @@ const ScoreToNextLevel = computed(
             />
           </div>
           <div class="stat-desc flex gap-2 items-center">
-            <img :href="`assets/flags/${user.flag}.png`">
+            <img :href="getFlagURL(user.flag)">
             <div class="font-mono flex items-center gap-[0.1em]">
               #
               <Roller
