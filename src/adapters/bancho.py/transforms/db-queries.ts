@@ -88,31 +88,31 @@ export function createFilter(tags: Tag[]) {
         break
       }
       case 'starRating': {
-        filter.push({ diff: { [operator]: BanchoMode[value] } })
+        filter.push({ diff: { [operator]: value } })
         break
       }
       case 'accuracy': {
-        filter.push({ od: { [operator]: BanchoMode[value] } })
+        filter.push({ od: { [operator]: value } })
         break
       }
       case 'approachRate': {
-        filter.push({ ar: { [operator]: BanchoMode[value] } })
+        filter.push({ ar: { [operator]: value } })
         break
       }
       case 'circleSize': {
-        filter.push({ cs: { [operator]: BanchoMode[value] } })
+        filter.push({ cs: { [operator]: value } })
         break
       }
       case 'hpDrain': {
-        filter.push({ hp: { [operator]: BanchoMode[value] } })
+        filter.push({ hp: { [operator]: value } })
         break
       }
       case 'length': {
-        filter.push({ totalLength: { [operator]: BanchoMode[value] } })
+        filter.push({ totalLength: { [operator]: value } })
         break
       }
       default: {
-        filter.push({ [key]: { [operator]: BanchoMode[value] } })
+        filter.push({ [key]: { [operator]: value } })
       }
     }
   })
