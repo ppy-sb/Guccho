@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { isBanchoBeatmapset, placeholder } from '~/utils'
 
-const searchModal = ref<{
+const searchModal = shallowRef<{
   openModal: () => void
 }>()
 defineExpose({
@@ -88,7 +88,7 @@ const {
               </svg>
             </button>
           </div>
-          <div class="mx-4 bg-gbase-100 dark:bg-gbase-800 shadow-2xl rounded-2xl h-max overflow-hidden">
+          <div class="mx-4 bg-gbase-50 dark:bg-gbase-800 shadow-2xl rounded-2xl h-max overflow-hidden">
             <div class="form-control">
               <label v-if="mode === 'beatmap'" class="input-group">
                 <span class="flex gap-2 bg-transparent">
@@ -102,7 +102,7 @@ const {
                   v-model="keyword"
                   type="text"
                   placeholder="Search User and Beatmaps..."
-                  class="input grow border-label-0 rounded-b-none focus:input-primary bg-transparent !outline-0"
+                  class="input grow border-label-0 focus:input-primary bg-transparent !outline-0"
                   @input="onInput"
                   @keyup.enter="raw(true)"
                 >
@@ -112,7 +112,7 @@ const {
                 v-model="keyword"
                 type="text"
                 placeholder="Search User and Beatmaps..."
-                class="input grow border-label-0 rounded-b-none focus:input-primary bg-transparent !outline-0"
+                class="input grow border-label-0 focus:input-primary bg-transparent !outline-0"
                 @input="onInput"
                 @keyup.enter="raw(true)"
               >

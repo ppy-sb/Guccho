@@ -7,15 +7,15 @@ definePageMeta({
   middleware: ['auth', 'admin'],
 })
 const session = useSession()
-const slug = ref('')
+const slug = shallowRef('')
 const app$ = useNuxtApp()
-const importArticleFile = ref<HTMLInputElement | null>(null)
+const importArticleFile = shallowRef<HTMLInputElement | null>(null)
 const {
   data: content,
   refresh,
 } = await useAsyncData(async () => slug.value ? app$.$client.article.get.query(slug.value) : undefined)
-const editor = ref<InstanceType<typeof Editor> | null>(null)
-const editing = ref({ ...content.value?.json })
+const editor = shallowRef<InstanceType<typeof Editor> | null>(null)
+const editing = shallowRef({ ...content.value?.json })
 async function save() {
   await app$.$client.article.save.mutate({
     slug: slug.value,

@@ -6,7 +6,7 @@ import {
   faRankingStar,
 } from '@fortawesome/free-solid-svg-icons'
 import { faPiedPiperPp } from '@fortawesome/free-brands-svg-icons'
-import __store from '~/store/userpage'
+import userpageStore from '~/store/userpage'
 
 const { addToLibrary } = useFAIconLib()
 
@@ -19,17 +19,19 @@ const appConf = useAppConfig()
 
 const [_, setScroll] = useScrollYObserver()
 
-const store = await __store()
+const page = userpageStore()
+
+await page.refresh()
 
 const {
   switcherCtx: [switcher],
-} = store
+} = page
 
 useHead({
   titleTemplate: `%s - ${appConf.title}`,
   title: computed(
     () =>
-      `${store.user?.name} | ${switcher.mode} | ${switcher.ruleset} | ${switcher.rankingSystem}`,
+      `${page.user?.name} | ${switcher.mode} | ${switcher.ruleset} | ${switcher.rankingSystem}`,
   ),
 })
 
@@ -47,11 +49,11 @@ const icons: Partial<Record<keyof typeof visible, string>> = {
   heading: 'fa-solid fa-house-user',
 }
 const [handle, heading, statistics, bestScores, topScores] = [
-  ref<HTMLElement | null>(null),
-  ref<HTMLElement | null>(null),
-  ref<HTMLElement | null>(null),
-  ref<HTMLElement | null>(null),
-  ref<HTMLElement | null>(null),
+  shallowRef<HTMLElement | null>(null),
+  shallowRef<HTMLElement | null>(null),
+  shallowRef<HTMLElement | null>(null),
+  shallowRef<HTMLElement | null>(null),
+  shallowRef<HTMLElement | null>(null),
 ]
 onMounted(() => {
   if (handle.value) {
@@ -79,13 +81,13 @@ onMounted(() => {
 
 <template>
   <div ref="handle" class="handle">
-    <section v-if="store.error" class="min-h-screen">
+    <section v-if="page.error" class="min-h-screen">
       <div class="mx-auto my-auto flex flex-col justify-between gap-3">
         <h1 class="self-center text-3xl">
           Oops...
         </h1>
-        <h2 v-if="store.error.message !== ''" class="self-center text-2xl">
-          {{ store.error.message }}
+        <h2 v-if="page.error.message !== ''" class="self-center text-2xl">
+          {{ page.error.message }}
         </h2>
         <h2 v-else class="self-center text-2xl">
           something went wrong.
@@ -94,13 +96,13 @@ onMounted(() => {
           <t-button variant="primary" @click="$router.back()">
             bring me back
           </t-button>
-          <t-button variant="secondary" @click="store.refresh">
+          <t-button variant="secondary" @click="page.refresh">
             try again
           </t-button>
         </div>
       </div>
     </section>
-    <div v-else-if="store.user" class="flex flex-col mt-20 justify-stretch md:mt-0">
+    <div v-else-if="page.user" class="flex flex-col mt-20 justify-stretch md:mt-0">
       <userpage-heading id="heading" ref="heading" />
       <userpage-profile />
       <userpage-ranking-system-switcher class="z-10" />
@@ -109,10 +111,10 @@ onMounted(() => {
         <userpage-score-rank-composition />
       </div>
       <div id="bestScores" ref="bestScores" class="container custom-container mx-auto py-2">
-        <userpage-best-scores v-if="store.currentRankingSystem" />
+        <userpage-best-scores v-if="page.currentRankingSystem" />
       </div>
       <div id="topScores" ref="topScores" class="container custom-container mx-auto py-4">
-        <userpage-top-scores v-if="store.currentRankingSystem" />
+        <userpage-top-scores v-if="page.currentRankingSystem" />
       </div>
       <!-- placeholder for bottom nav -->·
       <div class="my-8 -z-50" />

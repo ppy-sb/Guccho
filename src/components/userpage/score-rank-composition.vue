@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import userpageStore from '~/store/userpage'
 
-const page = await userpageStore()
+const page = userpageStore()
 
 const totalCount = computed(() => {
   return Object.values(page.currentStatistic.scoreRankComposition).reduce((acc, cur) => acc + cur, 0)

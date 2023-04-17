@@ -35,17 +35,17 @@ if (!user.value) {
     },
   })
 }
-const unchanged = ref({ ...user.value as Exclude<typeof user['value'], null> })
+const unchanged = shallowRef({ ...user.value as Exclude<typeof user['value'], null> })
 
-const profile = ref<JSONContent>()
-const profileEdited = ref(false)
-const editor = ref<InstanceType<typeof Edit>>()
+const profile = shallowRef<JSONContent>()
+const profileEdited = shallowRef(false)
+const editor = shallowRef<InstanceType<typeof Edit>>()
 
-const newAvatar = ref<File>()
-const newAvatarURL = ref<string>()
-const cropper = ref<InstanceType<typeof Cropper> | null>(null)
-const croppedAvatar = ref<ArrayBuffer>()
-const avatarError = ref<string>()
+const newAvatar = shallowRef<File>()
+const newAvatarURL = shallowRef<string>()
+const cropper = shallowRef<InstanceType<typeof Cropper> | null>(null)
+const croppedAvatar = shallowRef<ArrayBuffer>()
+const avatarError = shallowRef<string>()
 async function selectAvatarFile(e: Event) {
   avatarError.value = undefined
   const file = (e?.target as HTMLInputElement)?.files?.[0]
@@ -68,11 +68,11 @@ function crop({ canvas }: { canvas: HTMLCanvasElement }) {
   }, 'image/png', 1)
 }
 
-const uploadingAvatarStat = ref<'idle' | 'uploading' | 'succeed' | 'errored'>('idle')
-const changeAvatar = ref<{
+const uploadingAvatarStat = shallowRef<'idle' | 'uploading' | 'succeed' | 'errored'>('idle')
+const changeAvatar = shallowRef<{
   openModal: (arg0?: CallableFunction) => void
 }>()
-const changePassword = ref<{
+const changePassword = shallowRef<{
   openModal: (arg0?: CallableFunction) => void
 }>()
 async function saveAvatar() {
@@ -92,9 +92,9 @@ async function saveAvatar() {
   editor.value?.reload()
 }
 // update settings
-const errorMessage = ref<string[]>([])
-const updateResult = ref(false)
-const posting = ref(false)
+const errorMessage = shallowRef<string[]>([])
+const updateResult = shallowRef(false)
+const posting = shallowRef(false)
 async function updateUserSettings() {
   if (!user.value) {
     return
@@ -144,7 +144,7 @@ const changePasswordForm = reactive<{
   repeatNewPassword: undefined,
 })
 
-const changePasswordError = ref('')
+const changePasswordError = shallowRef('')
 
 async function updatePassword(closeModal: () => void) {
   if (!changePasswordForm.newPassword) {
@@ -365,7 +365,7 @@ onBeforeMount(() => {
     </div>
 
     <div class="flex flex-col flex-wrap justify-between md:flex-row">
-      <div class="grow xl:max-w-2xl w-full lg:[max-width:50%]">
+      <div class="grow w-full lg:[max-width:50%]">
         <div
           class="flex items-end justify-center p-3 overflow-hidden shadow-md gap-4 md:justify-start bg-gbase-200/30 dark:bg-gbase-700/40 sm:rounded-3xl lg:mr-4"
         >
@@ -395,7 +395,7 @@ onBeforeMount(() => {
           </div>
         </div>
       </div>
-      <div class="grow lg:[max-width:50%] mt-4 lg:mt-0 lg:ml-4 mr-2 lg:mr-0">
+      <div class="grow lg:[max-width:50%] mt-4 lg:mt-0 lg:pl-4 pr-2 lg:mr-0">
         <div class="text-red-500">
           {{ errorMessage.join(",") }}
         </div>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import userpageStore from '~/store/userpage'
 
-const page = await userpageStore()
+const page = userpageStore()
 </script>
 
 <template>

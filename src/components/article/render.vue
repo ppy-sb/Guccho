@@ -11,7 +11,7 @@ const { parseAndImportHighlightLibFromHtml } = useEditorLazyLoadHighlight()
 await parseAndImportHighlightLibFromHtml(props.html)
 
 const { editor } = useEditor()
-const takeOver = ref(false)
+const takeOver = shallowRef(false)
 
 onBeforeMount(async () => {
   if (!props.json) {

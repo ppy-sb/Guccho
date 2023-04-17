@@ -21,7 +21,7 @@ const {
   hasRuleset,
 } = useAdapterConfig()
 const [switcher, setSwitcher] = useSwitcher()
-const lazyBgCover = ref('')
+const lazyBgCover = shallowRef('')
 
 const { data: beatmapset, error } = await useAsyncData(
   async () =>
@@ -30,7 +30,7 @@ const { data: beatmapset, error } = await useAsyncData(
 const hashed = beatmapset.value?.beatmaps.find(
   bm => bm.id === route.query.beatmap?.toString(),
 )
-const selectedMapId = ref<string>(
+const selectedMapId = shallowRef<string>(
   hashed?.id || beatmapset.value?.beatmaps[0].id || '',
 )
 const selectedMap = computed(() =>
@@ -121,9 +121,9 @@ async function update() {
   rewriteAnchor()
 }
 
-const scoreRS = ref<InstanceType<typeof AppScoresRankingSystemSwitcher> | null>(null)
+const scoreRS = shallowRef<InstanceType<typeof AppScoresRankingSystemSwitcher> | null>(null)
 
-const links = ref<{
+const links = shallowRef<{
   external: Label[]
   directDownload: Label[]
 }>()

@@ -24,7 +24,7 @@ const { addToLibrary } = useFAIconLib()
 addToLibrary(faRankingStar)
 const app$ = useNuxtApp()
 
-const page = await userpageStore()
+const page = userpageStore()
 
 let prevSwitcherState = {
   ...page.switcher,
@@ -44,7 +44,7 @@ function switchBetweenScoreRanks() {
   && stabilizeScoreRank(prevSwitcherState.rankingSystem)
     === stabilizeScoreRank(page.switcher.rankingSystem)
 }
-const topPage = ref<NumberRange<0, 10>>(0)
+const topPage = shallowRef<NumberRange<0, 10>>(0)
 
 const {
   data: top,
@@ -90,7 +90,7 @@ watch([() => page.user, topPage], async () => {
   }
   await refreshTop()
 })
-const transition = ref<'left' | 'right'>('left')
+const transition = shallowRef<'left' | 'right'>('left')
 onMounted(() => {
   const animationDirection = <T extends readonly any[]>(
     val: T[number],

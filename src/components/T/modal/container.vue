@@ -11,10 +11,10 @@ const emit = defineEmits<{
   (event: 'closed'): void
   (event: 'shown'): void
 }>()
-const modal = ref<HTMLElement>()
+const modal = shallowRef<HTMLElement>()
 
-const stat = ref<Status>('hidden')
-const l2Status = ref<Status>('hidden')
+const stat = shallowRef<Status>('hidden')
+const l2Status = shallowRef<Status>('hidden')
 
 function l2(value: Status) {
   l2Status.value = value

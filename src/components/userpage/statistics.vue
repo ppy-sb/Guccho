@@ -15,7 +15,7 @@ const numbers = [...Array(10).keys()].map(String)
 const chars = [...numbers, ',', '.', 'K', 'M', 'B', 'T', '-']
 const percent = [...numbers, ',', '.', '%']
 
-const page = await userpageStore()
+const page = userpageStore()
 const {
   currentStatistic: data,
   user,

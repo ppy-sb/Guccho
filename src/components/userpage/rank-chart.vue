@@ -27,7 +27,7 @@ const chars = [
   'a',
 ]
 
-const update = ref(0)
+const update = shallowRef(0)
 
 onMounted(() => {
   setTimeout(() => {
@@ -35,7 +35,7 @@ onMounted(() => {
   }, 100)
 })
 
-const page = await userpageStore()
+const page = userpageStore()
 /* mock */
 const globalRank = {
   labels: ['Paris', 'Nîmes', 'Toulon', 'Perpignan', 'Autre'],

@@ -14,7 +14,7 @@ if (!session.$state.loggedIn) {
     },
   })
 }
-const relations = ref(await app$.$client.me.relations.query())
+const relations = shallowRef(await app$.$client.me.relations.query())
 const config = useAppConfig()
 
 useHead({
@@ -24,7 +24,7 @@ if (!relations.value) {
   throw new Error('user not exists')
 }
 
-const errorMessage = ref('')
+const errorMessage = shallowRef('')
 
 onErrorCaptured((err) => {
   errorMessage.value = err.message || 'something went wrong.'

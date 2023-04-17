@@ -1,34 +1,47 @@
+import type { inferRouterError, inferRouterOutputs } from '@trpc/server'
 import { defineStore } from 'pinia'
+import type { AppRouter } from '~/server/trpc/routers'
+
+type RouterOutput = inferRouterOutputs<AppRouter>
+type RouterError = inferRouterError<AppRouter>
 
 export default defineStore('userpage', () => {
   const { hasRuleset } = useAdapterConfig()
-  const route = useRoute()
 
   const app = useNuxtApp()
 
   const switcherCtx = useLeaderboardSwitcher()
   const [switcher] = switcherCtx
 
-  const { data: user, error, refresh } = useAsyncData(() => app.$client.user.userpage.query({
-    handle: `${route.params.handle}`,
-  }))
+  const error = shallowRef<RouterError | null>(null)
+  const user = shallowRef<RouterOutput['user']['userpage']>()
 
-  const currentStatistic = computed(() => {
-    const returnValue = hasRuleset(switcher.mode, switcher.ruleset)
-      ? user.value?.statistics?.[switcher.mode][switcher.ruleset]
-      : user.value?.statistics?.osu.standard
-    if (!returnValue) {
-      throw new Error('unknown mode & ruleset')
-    }
-    return returnValue
-  })
-  const currentRankingSystem = computed(
-    () => currentStatistic.value?.[switcher.rankingSystem],
-  )
+  const _computeStatistic = () => hasRuleset(switcher.mode, switcher.ruleset)
+    ? user.value?.statistics?.[switcher.mode][switcher.ruleset]
+    : user.value?.statistics?.osu.standard
+
+  const currentStatistic = shallowRef(_computeStatistic())
+
+  const _computeRankingSystem = () => currentStatistic.value?.[switcher.rankingSystem]
+
+  const currentRankingSystem = shallowRef(_computeRankingSystem())
+
+  const refresh = async () => {
+    error.value = null
+    const route = useRoute()
+    user.value = await app.$client.user.userpage.query({
+      handle: `${route.params.handle}`,
+    }).catch((_e) => {
+      error.value = _e
+      return undefined
+    })
+    currentStatistic.value = _computeStatistic()
+    currentRankingSystem.value = _computeRankingSystem()
+  }
 
   return {
-    error,
     refresh,
+    error,
     user,
     switcherCtx,
     switcher,

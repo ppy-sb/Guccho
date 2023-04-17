@@ -33,7 +33,7 @@ const rankingSystem = (
     ? pRankingSystem
     : availableRankingSystems[0]
 ) as LeaderboardRankingSystem
-const page = ref((isString(pPage) && parseInt(pPage)) || 1)
+const page = shallowRef((isString(pPage) && parseInt(pPage)) || 1)
 
 const perPage = 20
 
@@ -51,7 +51,7 @@ if (!pMode || !pRuleset || !pRankingSystem) {
   })
 }
 
-const selected = ref<Required<SwitcherPropType<LeaderboardRankingSystem>>>({
+const selected = shallowRef<Required<SwitcherPropType<LeaderboardRankingSystem>>>({
   mode,
   ruleset,
   rankingSystem,

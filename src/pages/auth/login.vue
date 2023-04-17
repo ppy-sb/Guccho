@@ -16,9 +16,9 @@ useHead({
   titleTemplate: `Login - ${config.title}`,
 })
 
-const error = ref('')
+const error = shallowRef('')
 
-const registerButton = ref<string>('Do not have an account?')
+const registerButton = shallowRef<string>('Do not have an account?')
 
 const login = reactive<{
   user: string
@@ -28,7 +28,7 @@ const login = reactive<{
   password: '',
 })
 
-const fetching = ref(false)
+const fetching = shallowRef(false)
 
 async function userLogin() {
   fetching.value = true

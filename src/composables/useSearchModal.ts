@@ -41,9 +41,9 @@ function query<T extends keyof typeof queryable, K>(key: T, op: keyof typeof com
 export default async function () {
   const app = useNuxtApp()
 
-  const keyword = ref('')
-  const lastKw = ref('')
-  const tags = ref<Tag[]>([])
+  const keyword = shallowRef('')
+  const lastKw = shallowRef('')
+  const tags = shallowRef<Tag[]>([])
   const includes = reactive({
     beatmaps: true,
     beatmapsets: true,

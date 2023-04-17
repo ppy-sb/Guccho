@@ -11,7 +11,7 @@ import { useSession } from '~/store/session'
 
 import userpageStore from '~/store/userpage'
 
-const page = await userpageStore()
+const page = userpageStore()
 
 const {
   switcherCtx: [switcher, setSwitcher],
@@ -23,7 +23,7 @@ addToLibrary(faUserGroup, faHeartCrack, faHeart, faEnvelope)
 const hasBeatmap = ['playing', 'modding', 'multiplaying', 'editing', 'watching', 'testing', 'submitting']
 const app$ = useNuxtApp()
 const session = useSession()
-const changeFriendStateButton = ref(null)
+const changeFriendStateButton = shallowRef(null)
 
 const { data, refresh } = await useAsyncData(async () => {
   if (!page.user) {
@@ -55,7 +55,7 @@ const isMutualFriend = computed(
 const isFriend = computed(() =>
   data.value?.relationWithMe?.self.includes('friend'),
 )
-let isFriendButtonHovered = ref(false)
+let isFriendButtonHovered = shallowRef(false)
 onBeforeMount(() => {
   isFriendButtonHovered = useElementHover(changeFriendStateButton)
 })

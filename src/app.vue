@@ -3,8 +3,8 @@
 import remixiconUrl from 'remixicon/fonts/remixicon.symbol.svg'
 
 const appConfig = useAppConfig()
-const safari = ref(false)
-const modalContainer = ref()
+const safari = shallowRef(false)
+const modalContainer = shallowRef()
 
 const oneYearLater = new Date()
 oneYearLater.setFullYear(oneYearLater.getFullYear() + 1)
@@ -15,7 +15,7 @@ const confirmed = useCookie('confirmed-website', {
 
 const confirmedWebsite = computed(() => confirmed.value === 'ok')
 
-const checked = ref(false)
+const checked = shallowRef(false)
 
 const config = useAppConfig()
 onMounted(() => {

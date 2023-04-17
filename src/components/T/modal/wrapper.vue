@@ -4,11 +4,11 @@ export type Status = 'hidden' | 'show' | 'closed'
 const props = defineProps<{
   initStatus?: Status
 }>()
-const wrapper = ref(null)
-// const status = ref(0)
+const wrapper = shallowRef(null)
+// const status = shallowRef(0)
 const openModalContainer = inject<(cb?: () => void) => void>('openModal')
 const closeModalContainer = inject<(cb?: () => void) => void>('closeModal')
-const stat = ref(props.initStatus || 'hidden')
+const stat = shallowRef(props.initStatus || 'hidden')
 
 function openModal(cb?: () => void) {
   stat.value = 'show'
@@ -81,7 +81,7 @@ $in: blur(0.5em) opacity(0) saturate(0.5);
 
   &[data-wrapper-status="closed"] {
     > .zoom-modal {
-      animation: zoomOut $duration * 1.5 $animate-function forwards;
+      animation: zoomOut $duration $animate-function forwards;
     }
   }
 }

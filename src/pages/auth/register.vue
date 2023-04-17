@@ -3,7 +3,7 @@ import md5 from 'md5'
 import type { Awaitable } from '~/types/common'
 import { useSession } from '~/store/session'
 
-const loginButton = ref('Have account?')
+const loginButton = shallowRef('Have account?')
 const shape = {
   name: '',
   safeName: '',
@@ -12,8 +12,8 @@ const shape = {
 }
 const reg = reactive({ ...shape })
 const error = reactive({ ...shape })
-// const serverError = ref('')
-const fetching = ref(false)
+// const serverError = shallowRef('')
+const fetching = shallowRef(false)
 const config = useAppConfig()
 const app$ = useNuxtApp()
 

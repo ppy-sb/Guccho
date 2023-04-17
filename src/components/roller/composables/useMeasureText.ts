@@ -1,5 +1,5 @@
 import type { Ref } from 'vue'
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, watch } from 'vue'
 
 /**
 
@@ -7,7 +7,7 @@ import { onMounted, ref, watch } from 'vue'
 export default function useMeasureText(
   itemElement: Ref<HTMLDivElement | null>,
 ) {
-  const width = ref(0)
+  const width = shallowRef(0)
 
   function updateWidth() {
     width.value = itemElement.value?.clientWidth || 16

@@ -28,7 +28,7 @@ const { isReady, isEnd, targetIdx, prevTargetIdx } = useAnimationManager(
   duration,
 )
 
-const itemElements = ref<HTMLDivElement[]>([])
+const itemElements = shallowRef<HTMLDivElement[]>([])
 const { itemElement } = useSelectElement(itemElements, targetIdx)
 const { width } = useMeasureText(itemElement)
 

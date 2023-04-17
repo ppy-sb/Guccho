@@ -23,7 +23,7 @@ const { addToLibrary } = useFAIconLib()
 addToLibrary(faPiedPiperPp)
 const app$ = useNuxtApp()
 
-const page = await userpageStore()
+const page = userpageStore()
 
 let prevSwitcherState = {
   ...page.switcher,
@@ -41,7 +41,7 @@ function switchBetweenScoreRanks() {
   && stabilizeScoreRank(prevSwitcherState.rankingSystem)
     === stabilizeScoreRank(page.switcher.rankingSystem)
 }
-const bpPage = ref<NumberRange<0, 10>>(0)
+const bpPage = shallowRef<NumberRange<0, 10>>(0)
 
 const {
   data: bp,
@@ -79,14 +79,14 @@ const {
     },
   }
 })
-watch([page.user, bpPage], async () => {
+watch([() => page.user, bpPage], async () => {
   if (!page.user) {
     return
   }
   await refreshBP()
 })
 
-const transition = ref<'left' | 'right'>('left')
+const transition = shallowRef<'left' | 'right'>('left')
 onMounted(() => {
   const animationDirection = <T extends readonly any[]>(
     val: T[number],

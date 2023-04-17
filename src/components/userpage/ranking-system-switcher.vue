@@ -2,13 +2,11 @@
 import type { LeaderboardRankingSystem } from '~/types/common'
 import userpageStore from '~/store/userpage'
 
-const { hasRuleset, hasLeaderboardRankingSystem }
-  = await useAdapterConfig()
-
+const { hasRuleset, hasLeaderboardRankingSystem } = await useAdapterConfig()
 const config = useAppConfig()
 const rankingSystem = config.overallRankingSystem
 
-const page = await userpageStore()
+const page = userpageStore()
 
 interface RankConf {
   userpage: {

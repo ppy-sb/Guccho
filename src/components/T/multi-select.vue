@@ -23,7 +23,7 @@ const e = defineEmits<{
 function reset() {
   return props.modelValue?.map((v: any) => props.options.find(opt => opt.value === v))
 }
-const selected = ref(reset() || [])
+const selected = shallowRef(reset() || [])
 watch(() => props.modelValue, () => {
   selected.value = props.modelValue?.map((v: any) => props.options.find(opt => opt.value === v)) || []
 })

@@ -8,7 +8,7 @@ export default function useSelectElement(
   itemElements: Ref<HTMLDivElement[]>,
   targetIdx: Ref<number>,
 ) {
-  const itemElement: Ref<HTMLDivElement | null> = ref(null)
+  const itemElement: Ref<HTMLDivElement | null> = shallowRef(null)
 
   function updateItemElement() {
     itemElement.value = itemElements.value[targetIdx.value]

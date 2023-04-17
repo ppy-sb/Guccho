@@ -1,5 +1,5 @@
 import type { Ref } from 'vue'
-import { computed, ref, watch } from 'vue'
+import { computed, watch } from 'vue'
 import useReloadAnimation from './useReloadAnimation'
 
 /**
@@ -15,7 +15,7 @@ export default function useAnimationManager(
   duration: Ref<number>,
 ) {
   const targetIdx = computed(() => charSet.value.indexOf(char.value)) // Target index in charSet
-  const prevTargetIdx = ref(charSet.value.indexOf(defaultChar.value)) // Target index in charSet just before
+  const prevTargetIdx = shallowRef(charSet.value.indexOf(defaultChar.value)) // Target index in charSet just before
 
   const { reloadAnimation, isReady, isEnd } = useReloadAnimation(duration)
 

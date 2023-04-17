@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 const [_, setScroll] = useScrollYObserver()
 
-const scroll = ref<HTMLElement>()
+const scroll = shallowRef<HTMLElement>()
 
 onMounted(() => {
   scroll.value && setScroll(scroll.value)

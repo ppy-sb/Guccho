@@ -1,5 +1,5 @@
-const el = ref<Element>()
-const scrollY = ref(0)
+const el = shallowRef<Element>()
+const scrollY = shallowRef(0)
 function observer(e: Event) {
   if (!(e.target instanceof Element)) {
     return

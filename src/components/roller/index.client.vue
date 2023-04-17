@@ -42,7 +42,7 @@ const computedCharSet = computed(() => {
   }
   return RollerCharSet[props.charSet as RollerItemCharSet]
 })
-const client = ref(false)
+const client = shallowRef(false)
 onBeforeMount(() => {
   client.value = true
 })

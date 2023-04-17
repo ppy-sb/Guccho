@@ -10,7 +10,7 @@ const [scrollY] = useScrollYObserver()
 const session = useSession()
 const $route = useRoute()
 
-const searchModalWrapper = ref<{
+const searchModalWrapper = shallowRef<{
   searchModal: {
     openModal: () => void
   }
@@ -31,9 +31,9 @@ const menu = computed(() => [
   },
 ])
 const config = useAppConfig()
-const detached = ref(false)
+const detached = shallowRef(false)
 watch(scrollY, () => (detached.value = scrollY.value > 0))
-const root = ref<HTMLElement>()
+const root = shallowRef<HTMLElement>()
 
 const shownMenu = reactive({
   left: false,

@@ -2,8 +2,8 @@ import type { Ref } from 'vue'
 import { ref } from 'vue'
 
 export default function useReloadAnimation(duration: Ref<number>) {
-  const isReady = ref(false) // Ready to run animation (default 100ms)
-  const isEnd = ref(false) // End all animations
+  const isReady = shallowRef(false) // Ready to run animation (default 100ms)
+  const isEnd = shallowRef(false) // End all animations
 
   let outerTimer: ReturnType<typeof setTimeout>
   let innerTimer: ReturnType<typeof setTimeout>

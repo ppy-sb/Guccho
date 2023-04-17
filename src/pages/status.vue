@@ -27,9 +27,9 @@ const { data, refresh } = await useAsyncData(
 
 const serverConfig = session.user?.roles.includes('staff') ? await app$.$client.status.config.query() : undefined
 
-const systemLoad = ref<HTMLDivElement | null>(null)
-const appLoad = ref<HTMLDivElement | null>(null)
-const box = ref<HTMLDivElement | null>(null)
+const systemLoad = shallowRef<HTMLDivElement | null>(null)
+const appLoad = shallowRef<HTMLDivElement | null>(null)
+const box = shallowRef<HTMLDivElement | null>(null)
 
 onMounted(() => {
   clearInterval(interval)

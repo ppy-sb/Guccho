@@ -13,7 +13,7 @@ export default (
 ) => {
   const extensions = useEditorExtensions(reactiveConfig)
   const { load: lazy } = useEditorLazyLoadHighlight()
-  const editor = ref<EditorVue>()
+  const editor = shallowRef<EditorVue>()
   let created = false
   const lazyLoadCodeBlock = ({ editor }: { editor: EditorCore }) => {
     const json = editor.getJSON()
