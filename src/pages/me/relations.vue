@@ -53,8 +53,8 @@ async function toggleRelation(type: Relationship, user: UserRelationship<string>
 
 const toggleFriend = toggleRelation.bind(null, 'friend')
 const isFriend = haveRelation.bind(null, 'friend')
-const toggleBlock = toggleRelation.bind(null, 'block')
-const isBlocked = haveRelation.bind(null, 'block')
+// const toggleBlock = toggleRelation.bind(null, 'block')
+// const isBlocked = haveRelation.bind(null, 'block')
 </script>
 
 <template>
