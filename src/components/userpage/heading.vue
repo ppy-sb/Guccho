@@ -177,16 +177,16 @@ async function toggleFriend() {
         </div>
       </div>
       <template v-if="live">
-        <div v-if="live.status === 'offline'" class="order-3 store.user-status">
+        <div v-if="live.status === 'offline'" class="order-3 user-status">
           Offline, last seen at {{ live.lastSeen.toLocaleString() }}
         </div>
-        <div v-else-if="live && hasBeatmap.includes(live.status)" class="order-3 store.user-status">
+        <div v-else-if="live && hasBeatmap.includes(live.status)" class="order-3 user-status">
           {{ capitalizeFirstLetter(live.status) }} {{ live.beatmap?.beatmapset.meta.intl.artist }} - {{ live.beatmap?.beatmapset.meta.intl.title }} [{{ live.beatmap?.version }}]
         </div>
-        <div v-else-if="live.status === 'idle'" class="order-3 store.user-status">
+        <div v-else-if="live.status === 'idle'" class="order-3 user-status">
           Online.
         </div>
-        <div v-else-if="live.status === 'afk'" class="order-3 store.user-status">
+        <div v-else-if="live.status === 'afk'" class="order-3 user-status">
           afk
         </div>
       </template>
@@ -195,7 +195,7 @@ async function toggleFriend() {
 </template>
 
 <style scoped lang="scss">
-.store.user-status {
+.user-status {
   @apply text-center text-gbase-600 dark:text-gbase-400 bg-gbase-200/50 dark:bg-gbase-700/50 px-2;
   @apply md:text-left md:rounded;
   @apply md:[margin-left:-7em] md:[padding-left:7em];
