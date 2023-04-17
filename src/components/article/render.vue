@@ -4,7 +4,7 @@ import type { JSONContent } from '@tiptap/vue-3'
 import '@/assets/styles/typography.scss'
 
 const props = defineProps<{
-  json: JSONContent
+  json?: JSONContent
   html: string
 }>()
 const { parseAndImportHighlightLibFromHtml } = useEditorLazyLoadHighlight()

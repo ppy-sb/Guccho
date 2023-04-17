@@ -3,8 +3,6 @@ import type { Ref } from 'vue'
 import {
   faRankingStar,
 } from '@fortawesome/free-solid-svg-icons'
-import type { inferRouterOutputs } from '@trpc/server'
-import type { AppRouter } from '~/server/trpc/routers'
 import type {
   LeaderboardRankingSystem,
   LeaderboardScoreRankingSystem,
@@ -19,19 +17,17 @@ import {
   rulesets,
 } from '~/types/defs'
 
-import type { LeaderboardSwitcherComposableType } from '~/composables/useSwitcher'
-
-type RouterOutput = inferRouterOutputs<AppRouter>
-
-type User = RouterOutput['user']['userpage']
+import userpageStore from '~/store/userpage'
 
 const { addToLibrary } = useFAIconLib()
 
 addToLibrary(faRankingStar)
 const app$ = useNuxtApp()
-const [switcher] = inject('switcher') as LeaderboardSwitcherComposableType
+
+const page = await userpageStore()
+
 let prevSwitcherState = {
-  ...switcher,
+  ...page.switcher,
 }
 function stabilizeScoreRank(rankingSystem: LeaderboardRankingSystem) {
   if (
@@ -44,13 +40,12 @@ function stabilizeScoreRank(rankingSystem: LeaderboardRankingSystem) {
   return rankingSystem as PPRankingSystem
 }
 function switchBetweenScoreRanks() {
-  return prevSwitcherState.rankingSystem !== switcher.rankingSystem
+  return prevSwitcherState.rankingSystem !== page.switcher.rankingSystem
   && stabilizeScoreRank(prevSwitcherState.rankingSystem)
-    === stabilizeScoreRank(switcher.rankingSystem)
+    === stabilizeScoreRank(page.switcher.rankingSystem)
 }
 const topPage = ref<NumberRange<0, 10>>(0)
 
-const user = inject('user') as Ref<User>
 const {
   data: top,
   error: errorTop,
@@ -58,39 +53,39 @@ const {
   pending: pendingTop,
 } = await useAsyncData(async () => {
   if (
-    !user.value
-    || !switcher.mode
-    || !switcher.ruleset
-    || !switcher.rankingSystem
+    !page.user
+    || !page.switcher.mode
+    || !page.switcher.ruleset
+    || !page.switcher.rankingSystem
   ) {
     return {
       count: 0,
       scores: [],
-      handle: user.value.id,
+      handle: page.user?.id,
       page: topPage.value,
       lastSwitcherStatus: {
-        ...switcher,
+        ...page.switcher,
       },
     }
   }
   return {
     ...(await app$.$client.user.tops.query({
-      handle: user.value.id,
-      mode: switcher.mode,
-      ruleset: switcher.ruleset,
-      rankingSystem: switcher.rankingSystem as PPRankingSystem,
+      handle: page.user.id,
+      mode: page.switcher.mode,
+      ruleset: page.switcher.ruleset,
+      rankingSystem: page.switcher.rankingSystem as PPRankingSystem,
       page: topPage.value,
     })),
 
     page: topPage.value,
-    handle: user.value.id,
+    handle: page.user.id,
     lastSwitcherStatus: {
-      ...switcher,
+      ...page.switcher,
     },
   }
 })
-watch([user, topPage], async () => {
-  if (!user.value) {
+watch([() => page.user, topPage], async () => {
+  if (!page.user) {
     return
   }
   await refreshTop()
@@ -122,7 +117,7 @@ onMounted(() => {
   } as const
 
   const computeAnimateDirection = () => {
-    const sw = switcher
+    const sw = page.switcher
 
     for (const [key, switcherState] of Object.entries(sw)) {
       const [value, previousValue] = [
@@ -141,7 +136,7 @@ onMounted(() => {
       break
     }
   }
-  watch(switcher, (sw) => {
+  watch(() => page.switcher, (sw) => {
     if (switchBetweenScoreRanks()) {
       prevSwitcherState = { ...sw }
       return
@@ -175,7 +170,7 @@ const nextTop = nextPage.bind(null, topPage)
   <div v-if="errorTop">
     {{ errorTop }}
   </div>
-  <template v-else>
+  <template v-else-if="page.user">
     <div class="flex flex-col gap-6">
       <section v-if="top?.count" class="custom-container">
         <div class="card" :class="[pendingTop && 'pointer-events-none']">
@@ -212,7 +207,7 @@ const nextTop = nextPage.bind(null, topPage)
                     top.lastSwitcherStatus.mode
                       + top.lastSwitcherStatus.ruleset
                       + stabilizeScoreRank(top.lastSwitcherStatus.rankingSystem)
-                      + user.id
+                      + page.user.id
                       + top.page
                   "
                 >

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { LeaderboardSwitcherComposableType } from '~/composables/useSwitcher'
 import type { LeaderboardRankingSystem } from '~/types/common'
+import userpageStore from '~/store/userpage'
 
 const { hasRuleset, hasLeaderboardRankingSystem }
   = await useAdapterConfig()
@@ -8,7 +8,7 @@ const { hasRuleset, hasLeaderboardRankingSystem }
 const config = useAppConfig()
 const rankingSystem = config.overallRankingSystem
 
-const [switcher, setSwitcher] = inject('switcher') as LeaderboardSwitcherComposableType
+const page = await userpageStore()
 
 interface RankConf {
   userpage: {
@@ -28,8 +28,8 @@ function filter(showType: 'tab' | 'dropdown') {
       return acc
     }
     if (
-      !hasRuleset(switcher.mode, switcher.ruleset)
-      || !hasLeaderboardRankingSystem(switcher.mode, switcher.ruleset, key)
+      !hasRuleset(page.switcher.mode, page.switcher.ruleset)
+      || !hasLeaderboardRankingSystem(page.switcher.mode, page.switcher.ruleset, key)
     ) {
       return acc
     }
@@ -45,9 +45,9 @@ const dropdown = computed(() => filter('dropdown'))
   <section class="w-full pt-4 mx-auto">
     <t-tabs
       v-slot="{ select }"
-      :model-value="switcher.rankingSystem"
+      :model-value="page.switcher.rankingSystem"
       variant="bordered"
-      @update:model-value="(v: LeaderboardRankingSystem) => setSwitcher({ rankingSystem: v })"
+      @update:model-value="(v: LeaderboardRankingSystem) => page.setSwitcher({ rankingSystem: v })"
     >
       <t-tab disabled class="p-0 m-0 f-tab grow" />
       <!-- <t-tab class="f-tab" value="Timeline">
@@ -67,8 +67,8 @@ const dropdown = computed(() => filter('dropdown'))
         v-if="Object.keys(dropdown).length"
         class="tab f-tab tab-bordered"
         :active="
-          switcher.rankingSystem
-            && Object.keys(dropdown).includes(switcher.rankingSystem)
+          page.switcher.rankingSystem
+            && Object.keys(dropdown).includes(page.switcher.rankingSystem)
         "
       >
         <div class="dropdown dropdown-end dropdown-hover">
@@ -84,8 +84,6 @@ const dropdown = computed(() => filter('dropdown'))
                 rankingSystem[key].name
               }}</a>
             </li>
-
-            <!-- <li><a>Acc Only(v2)</a></li> -->
           </ul>
         </div>
       </div>

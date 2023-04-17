@@ -16,16 +16,17 @@ import {
   rulesets,
 } from '~/types/defs'
 
-import type { UserEssential } from '~/types/user'
-import type { LeaderboardSwitcherComposableType } from '~/composables/useSwitcher'
+import userpageStore from '~/store/userpage'
 
 const { addToLibrary } = useFAIconLib()
 
 addToLibrary(faPiedPiperPp)
 const app$ = useNuxtApp()
-const [switcher] = inject('switcher') as LeaderboardSwitcherComposableType
+
+const page = await userpageStore()
+
 let prevSwitcherState = {
-  ...switcher,
+  ...page.switcher,
 }
 function stabilizeScoreRank(rankingSystem: LeaderboardRankingSystem) {
   if (
@@ -36,13 +37,12 @@ function stabilizeScoreRank(rankingSystem: LeaderboardRankingSystem) {
   return rankingSystem as PPRankingSystem
 }
 function switchBetweenScoreRanks() {
-  return prevSwitcherState.rankingSystem !== switcher.rankingSystem
+  return prevSwitcherState.rankingSystem !== page.switcher.rankingSystem
   && stabilizeScoreRank(prevSwitcherState.rankingSystem)
-    === stabilizeScoreRank(switcher.rankingSystem)
+    === stabilizeScoreRank(page.switcher.rankingSystem)
 }
 const bpPage = ref<NumberRange<0, 10>>(0)
 
-const user = inject('user') as Ref<UserEssential<string>>
 const {
   data: bp,
   error: bpError,
@@ -50,37 +50,37 @@ const {
   pending: pendingBP,
 } = await useAsyncData(async () => {
   if (
-    !user.value
-    || !switcher.mode
-    || !switcher.ruleset
-    || !switcher.rankingSystem
+    !page.user
+    || !page.switcher.mode
+    || !page.switcher.ruleset
+    || !page.switcher.rankingSystem
   ) {
     return {
       scores: [],
-      handle: user.value.id,
+      handle: page.user?.id,
       bpPage: bpPage.value,
       lastSwitcherStatus: {
-        ...switcher,
+        ...page.switcher,
       },
     }
   }
   return {
     scores: await app$.$client.user.best.query({
-      handle: user.value.id,
-      mode: switcher.mode,
-      ruleset: switcher.ruleset,
-      rankingSystem: switcher.rankingSystem,
+      handle: page.user.id,
+      mode: page.switcher.mode,
+      ruleset: page.switcher.ruleset,
+      rankingSystem: page.switcher.rankingSystem,
       page: bpPage.value,
     }),
     page: bpPage.value,
-    handle: user.value.id,
+    handle: page.user.id,
     lastSwitcherStatus: {
-      ...switcher,
+      ...page.switcher,
     },
   }
 })
-watch([user, bpPage], async () => {
-  if (!user.value) {
+watch([page.user, bpPage], async () => {
+  if (!page.user) {
     return
   }
   await refreshBP()
@@ -112,7 +112,7 @@ onMounted(() => {
     rankingSystem: leaderboardRankingSystems,
   } as const
   const computeAnimateDirection = () => {
-    const sw = switcher
+    const sw = page.switcher
 
     for (const [key, switcherState] of Object.entries(sw)) {
       const [value, previousValue] = [
@@ -131,7 +131,7 @@ onMounted(() => {
       break
     }
   }
-  watch(switcher, (sw) => {
+  watch(page.switcher, (sw) => {
     if (switchBetweenScoreRanks()) {
       prevSwitcherState = { ...sw }
       return
@@ -165,7 +165,7 @@ const nextBp = nextPage.bind(null, bpPage)
   <div v-if="bpError">
     {{ bpError }}
   </div>
-  <template v-else>
+  <template v-else-if="page.user">
     <div class="flex flex-col gap-6">
       <section v-if="bp?.scores?.length" class="custom-container">
         <div class="card" :class="[pendingBP && 'pointer-events-none']">
@@ -192,7 +192,7 @@ const nextBp = nextPage.bind(null, bpPage)
                     bp.lastSwitcherStatus.mode
                       + bp.lastSwitcherStatus.ruleset
                       + stabilizeScoreRank(bp.lastSwitcherStatus.rankingSystem)
-                      + user.id
+                      + page.user.id
                       + bp.page
                   "
                 >

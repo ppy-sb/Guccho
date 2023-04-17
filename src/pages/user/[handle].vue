@@ -6,8 +6,7 @@ import {
   faRankingStar,
 } from '@fortawesome/free-solid-svg-icons'
 import { faPiedPiperPp } from '@fortawesome/free-brands-svg-icons'
-
-const { hasRuleset } = useAdapterConfig()
+import __store from '~/store/userpage'
 
 const { addToLibrary } = useFAIconLib()
 
@@ -17,43 +16,22 @@ definePageMeta({
   layout: 'screen',
 })
 const appConf = useAppConfig()
-const route = useRoute()
-
-const app = useNuxtApp()
-
-const switcherCtx = useLeaderboardSwitcher()
-const [switcher] = switcherCtx
 
 const [_, setScroll] = useScrollYObserver()
-const { data: user, error, refresh } = await useAsyncData(() => app.$client.user.userpage.query({
-  handle: `${route.params.handle}`,
-}))
 
-const currentStatistic = computed(() => {
-  const returnValue = hasRuleset(switcher.mode, switcher.ruleset)
-    ? user.value?.statistics?.[switcher.mode][switcher.ruleset]
-    : user.value?.statistics?.osu.standard
-  if (!returnValue) {
-    throw new Error('unknown mode & ruleset')
-  }
-  return returnValue
-})
-const currentRankingSystem = computed(
-  () => currentStatistic.value?.[switcher.rankingSystem],
-)
+const store = await __store()
+
+const {
+  switcherCtx: [switcher],
+} = store
 
 useHead({
   titleTemplate: `%s - ${appConf.title}`,
   title: computed(
     () =>
-      `${user.value?.name} | ${switcher.mode} | ${switcher.ruleset} | ${switcher.rankingSystem}`,
+      `${store.user?.name} | ${switcher.mode} | ${switcher.ruleset} | ${switcher.rankingSystem}`,
   ),
 })
-provide('user', user)
-provide('switcher', switcherCtx)
-
-provide('user.statistics', currentStatistic)
-provide('user.currentRankingSystem', currentRankingSystem)
 
 // directive is not working: yield error when navigate to other page
 const visible = reactive({
@@ -101,13 +79,13 @@ onMounted(() => {
 
 <template>
   <div ref="handle" class="handle">
-    <section v-if="error" class="min-h-screen">
+    <section v-if="store.error" class="min-h-screen">
       <div class="mx-auto my-auto flex flex-col justify-between gap-3">
         <h1 class="self-center text-3xl">
           Oops...
         </h1>
-        <h2 v-if="error.message !== ''" class="self-center text-2xl">
-          {{ error.message }}
+        <h2 v-if="store.error.message !== ''" class="self-center text-2xl">
+          {{ store.error.message }}
         </h2>
         <h2 v-else class="self-center text-2xl">
           something went wrong.
@@ -116,13 +94,13 @@ onMounted(() => {
           <t-button variant="primary" @click="$router.back()">
             bring me back
           </t-button>
-          <t-button variant="secondary" @click="refresh">
+          <t-button variant="secondary" @click="store.refresh">
             try again
           </t-button>
         </div>
       </div>
     </section>
-    <div v-else-if="user" class="flex flex-col mt-20 justify-stretch md:mt-0">
+    <div v-else-if="store.user" class="flex flex-col mt-20 justify-stretch md:mt-0">
       <userpage-heading id="heading" ref="heading" />
       <userpage-profile />
       <userpage-ranking-system-switcher class="z-10" />
@@ -131,12 +109,12 @@ onMounted(() => {
         <userpage-score-rank-composition />
       </div>
       <div id="bestScores" ref="bestScores" class="container custom-container mx-auto py-2">
-        <userpage-best-scores v-if="currentRankingSystem" />
+        <userpage-best-scores v-if="store.currentRankingSystem" />
       </div>
       <div id="topScores" ref="topScores" class="container custom-container mx-auto py-4">
-        <userpage-top-scores v-if="currentRankingSystem" />
+        <userpage-top-scores v-if="store.currentRankingSystem" />
       </div>
-      <!-- placeholder for bottom nav -->
+      <!-- placeholder for bottom nav -->·
       <div class="my-8 -z-50" />
       <client-only>
         <teleport to="#footer">

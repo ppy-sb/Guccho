@@ -1,18 +1,9 @@
 <script setup lang="ts">
-import type { JSONContent } from '@tiptap/vue-3'
-import type { Ref } from 'vue'
+import userpageStore from '~/store/userpage'
 
-const user = inject<
-  Ref<{
-    id: unknown
-    profile: {
-      html: string
-      raw: JSONContent
-    }
-  }>
->('user')
+const page = await userpageStore()
 </script>
 
 <template>
-  <article-render v-if="user?.profile.html" :json="user.profile.raw" :html="user.profile.html" />
+  <article-render v-if="page.user?.profile?.html" :json="page.user.profile.raw" :html="page.user.profile.html" />
 </template>

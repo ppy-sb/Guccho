@@ -6,7 +6,7 @@ import { Atropos } from 'atropos/vue'
 import { userpageLineChartOptions } from '~/common/shared-chart-options'
 
 import { hsvRaw } from '~/palette'
-import type { BaseRank } from '~/types/statistics'
+import userpageStore from '~/store/userpage'
 
 // import 'chart.js/auto/auto.js'
 
@@ -34,8 +34,8 @@ onMounted(() => {
     update.value = 1
   }, 100)
 })
-// const user = inject('user')
-const currentRankingSystem = inject<BaseRank>('user.currentRankingSystem')
+
+const page = await userpageStore()
 /* mock */
 const globalRank = {
   labels: ['Paris', 'Nîmes', 'Toulon', 'Perpignan', 'Autre'],
@@ -64,7 +64,7 @@ const countryRank = {
 </script>
 
 <template>
-  <ClientOnly v-if="currentRankingSystem">
+  <ClientOnly v-if="page.currentRankingSystem">
     <section class="container mx-auto custom-container" v-bind="$attrs">
       <div class="atropos-wrap">
         <Atropos class="my-atropos" :shadow-offset="-3">
@@ -73,7 +73,7 @@ const countryRank = {
             class="relative w-full h-full atropos-bg"
           />
           <LineChart
-            v-if="currentRankingSystem.rankHistory"
+            v-if="page.currentRankingSystem.rankHistory"
             data-atropos-offset="-3"
             :chart-data="countryRank"
             style="
@@ -96,7 +96,7 @@ const countryRank = {
             </div>
           </div>
           <LineChart
-            v-if="currentRankingSystem.countryRankHistory"
+            v-if="page.currentRankingSystem.countryRankHistory"
             data-atropos-offset="3"
             :chart-data="globalRank"
             style="
@@ -110,7 +110,7 @@ const countryRank = {
             :options="userpageLineChartOptions"
           />
           <div
-            v-else-if="currentRankingSystem.countryRank"
+            v-else-if="page.currentRankingSystem.countryRank"
             class="absolute top-0 items-center justify-center w-full h-full -z-10 grid"
             data-atropos-offset="3"
           >
@@ -132,7 +132,7 @@ const countryRank = {
                     :value="
                       update
                         ? `#${Intl.NumberFormat().format(
-                          currentRankingSystem.rank || 0,
+                          page.currentRankingSystem.rank || 0,
                         )}`
                         : ' '
                     "
@@ -142,7 +142,7 @@ const countryRank = {
             </dl>
           </div>
           <div
-            v-if="currentRankingSystem.countryRank"
+            v-if="page.currentRankingSystem.countryRank"
             data-atropos-offset="0"
             class="absolute top-0 w-full h-full"
           >
@@ -159,7 +159,7 @@ const countryRank = {
                     :value="
                       update
                         ? `#${Intl.NumberFormat().format(
-                          currentRankingSystem.countryRank,
+                          page.currentRankingSystem.countryRank,
                         )}`
                         : ' '
                     "

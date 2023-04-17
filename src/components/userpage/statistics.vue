@@ -1,33 +1,29 @@
 <script setup lang="ts">
-import type { Ref } from 'vue'
-import type { inferRouterOutputs } from '@trpc/server'
+import { storeToRefs } from 'pinia'
 import type {
-  AvailableRuleset,
-  LeaderboardRankingSystem,
-
-  Mode, PPRankingSystem,
+  LeaderboardRankingSystem, PPRankingSystem,
 } from '~/types/common'
 import { ppRankingSystems } from '~/types/defs'
 import type { PPRank, ScoreRank } from '~/types/statistics'
 import { createScoreFormatter, toDuration } from '~/common/varkaUtils'
-import type { LeaderboardSwitcherComposableType } from '~/composables/useSwitcher'
 
-import type { AppRouter } from '~/server/trpc/routers'
 import { getRequiredScoreForLevel } from '~/utils/level-calc'
 
-type RouterOutput = inferRouterOutputs<AppRouter>
-
-type Statistics = NonNullable<RouterOutput['user']['userpage']['statistics']>[Mode][AvailableRuleset<Mode>]
-type BR = Statistics[LeaderboardRankingSystem]
+import userpageStore from '~/store/userpage'
 
 const numbers = [...Array(10).keys()].map(String)
 const chars = [...numbers, ',', '.', 'K', 'M', 'B', 'T', '-']
 const percent = [...numbers, ',', '.', '%']
 
-const data = inject('user.statistics') as Ref<
-  Statistics
->
-const currentRankingSystem = inject<BR>('user.currentRankingSystem')
+const page = await userpageStore()
+const {
+  currentStatistic: data,
+  user,
+  currentRankingSystem,
+} = storeToRefs(page)
+
+// const setSwitcher = computed(() => page.switcher[1])
+
 const scoreFmtCompact = createScoreFormatter({
   notation: 'compact',
   maximumFractionDigits: 2,
@@ -39,9 +35,8 @@ const playTime = computed(() =>
     ? toDuration(new Date(deferredRender.playTime * 1000), new Date(0))
     : { hours: 0, minutes: 0, seconds: 0 },
 )
-const switcher = inject<LeaderboardSwitcherComposableType>('switcher')
 
-const sw = computed(() => switcher?.[0].rankingSystem)
+const selectedRankingSystem = computed(() => page.switcher.rankingSystem)
 
 watch(data, () => {
   for (const key in deferredRender) {
@@ -65,7 +60,7 @@ const ScoreToNextLevel = computed(
 </script>
 
 <template>
-  <div class="card">
+  <div v-if="user" class="card">
     <div class="card-body p-0 md:p-4 xl:p-3">
       <div class="stats bg-transparent stats-vertical md:stats-horizontal">
         <div v-if="currentRankingSystem" class="stat">
@@ -82,7 +77,7 @@ const ScoreToNextLevel = computed(
             />
           </div>
           <div class="stat-desc flex gap-2 items-center">
-            country rank:
+            <img :href="`assets/flags/${user.flag}.png`">
             <div class="font-mono flex items-center gap-[0.1em]">
               #
               <Roller
@@ -94,10 +89,10 @@ const ScoreToNextLevel = computed(
             </div>
           </div>
         </div>
-        <div v-if="sw" class="stat">
+        <div v-if="selectedRankingSystem" class="stat">
           <div class="stat-title">
             {{
-              ppRankingSystems.includes(sw as PPRankingSystem)
+              ppRankingSystems.includes(selectedRankingSystem as PPRankingSystem)
                 ? "Performance"
                 : "Score"
             }}
@@ -107,7 +102,7 @@ const ScoreToNextLevel = computed(
             <roller
               :char-set="chars"
               class="font-mono"
-              :value="ppRankingSystems.includes(sw as PPRankingSystem) ? `${scoreFmt((currentRankingSystem as PPRank)?.performance)}` : scoreFmtCompact((deferredRender[sw as LeaderboardRankingSystem] as ScoreRank).score as bigint)"
+              :value="ppRankingSystems.includes(selectedRankingSystem as PPRankingSystem) ? `${scoreFmt((currentRankingSystem as PPRank)?.performance)}` : scoreFmtCompact((deferredRender[selectedRankingSystem as LeaderboardRankingSystem] as ScoreRank).score as bigint)"
               default-value="-"
               :title="deferredRender.totalScore.score"
             />

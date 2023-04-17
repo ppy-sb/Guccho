@@ -1,16 +1,10 @@
 <script setup lang="ts">
-import type { ComputedRef } from 'vue'
-import type { inferRouterOutputs } from '@trpc/server'
-import type { AvailableRuleset, Mode } from '~/types/common'
-import type { AppRouter } from '~/server/trpc/routers'
+import userpageStore from '~/store/userpage'
 
-type RouterOutput = inferRouterOutputs<AppRouter>
-
-type Statistics = NonNullable<RouterOutput['user']['userpage']['statistics']>[Mode][AvailableRuleset<Mode>]
-const currentRankingSystem = inject('user.statistics') as ComputedRef<Statistics>
+const page = await userpageStore()
 
 const totalCount = computed(() => {
-  return Object.values(currentRankingSystem.value.scoreRankComposition).reduce((acc, cur) => acc + cur, 0)
+  return Object.values(page.currentStatistic.scoreRankComposition).reduce((acc, cur) => acc + cur, 0)
 })
 const fmt = new Intl.NumberFormat(undefined, {
   style: 'percent',
@@ -20,7 +14,7 @@ function percent(num: number) {
   return fmt.format(num)
 }
 const composition = computed(
-  () => currentRankingSystem.value.scoreRankComposition,
+  () => page.currentStatistic.scoreRankComposition,
 )
 
 function createStyleObject(count: number) {
