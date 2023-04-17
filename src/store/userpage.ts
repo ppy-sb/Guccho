@@ -39,6 +39,11 @@ export default defineStore('userpage', () => {
     currentRankingSystem.value = _computeRankingSystem()
   }
 
+  watch([
+    () => switcher.mode,
+    () => switcher.ruleset,
+  ], refresh)
+
   return {
     refresh,
     error,

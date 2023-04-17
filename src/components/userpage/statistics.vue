@@ -32,7 +32,7 @@ const scoreFmt = createScoreFormatter({ notation: undefined })
 const deferredRender = reactive({ ...data.value })
 const playTime = computed(() =>
   deferredRender
-    ? toDuration(new Date(deferredRender.playTime * 1000), new Date(0))
+    ? toDuration(new Date(deferredRender.playTime || 0 * 1000), new Date(0))
     : { hours: 0, minutes: 0, seconds: 0 },
 )
 
@@ -45,9 +45,9 @@ watch(data, () => {
   }
 })
 
-const userLevelInt = computed(() => Math.floor(deferredRender.level) || 0)
+const userLevelInt = computed(() => Math.floor(deferredRender.level || 0))
 const userLevelPercent = computed(() =>
-  ((deferredRender.level % 1) / 100).toLocaleString('en-US', {
+  (((deferredRender.level || 0) % 1) / 100).toLocaleString('en-US', {
     style: 'percent',
     maximumFractionDigits: 2,
   }),
@@ -104,14 +104,14 @@ const ScoreToNextLevel = computed(
               class="font-mono"
               :value="ppRankingSystems.includes(selectedRankingSystem as PPRankingSystem) ? `${scoreFmt((currentRankingSystem as PPRank)?.performance)}` : scoreFmtCompact((deferredRender[selectedRankingSystem as LeaderboardRankingSystem] as ScoreRank).score as bigint)"
               default-value="-"
-              :title="deferredRender.totalScore.score"
+              :title="deferredRender.totalScore?.score"
             />
           </div>
           <div class="stat-desc flex gap-1 items-center">
             <roller
               :char-set="chars"
               class="font-mono"
-              :value="scoreFmt(deferredRender.totalHits)"
+              :value="scoreFmt(deferredRender.totalHits || 0)"
               default-value="-"
             />
             total hits
@@ -150,7 +150,7 @@ const ScoreToNextLevel = computed(
             <roller
               class="font-mono"
               :char-set="chars"
-              :value="scoreFmt(deferredRender.playCount)"
+              :value="scoreFmt(deferredRender.playCount || 0)"
             />
           </div>
           <div class="stat-desc flex gap-2">
@@ -166,7 +166,7 @@ const ScoreToNextLevel = computed(
             <roller
               class="font-mono"
               :char-set="chars"
-              :value="scoreFmt(deferredRender.maxCombo)"
+              :value="scoreFmt(deferredRender.maxCombo || 0)"
             />
             <span class="font-light">x</span>
           </div>

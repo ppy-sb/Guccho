@@ -13,10 +13,6 @@ import userpageStore from '~/store/userpage'
 
 const page = userpageStore()
 
-const {
-  switcherCtx: [switcher, setSwitcher],
-} = page
-
 const { addToLibrary } = useFAIconLib()
 addToLibrary(faUserGroup, faHeartCrack, faHeart, faEnvelope)
 
@@ -30,10 +26,11 @@ const { data, refresh } = await useAsyncData(async () => {
     return {}
   }
   const relationWithMe
-    = (session.loggedIn && app$.$client.me.relation.query({
-      target: page.user.id,
-    }))
-    || undefined
+    = session.loggedIn
+      ? app$.$client.me.relation.query({
+        target: page.user.id,
+      })
+      : undefined
   const friendCount = app$.$client.user.countRelations.query({
     handle: page.user.id,
     type: 'friend',
@@ -155,9 +152,9 @@ async function toggleFriend() {
       >
         <div class="order-2 mx-10 sm:mx-32 md:mx-0 md:order-1 lg:order-2 md:ml-auto md:pt-4 lg:py-2">
           <app-mode-switcher
-            :model-value="switcher"
+            :model-value="page.switcher"
             class="self-start"
-            @update:model-value="setSwitcher"
+            @update:model-value="page.setSwitcher"
           />
         </div>
         <div class="order-1 md:order-2 lg:order-1 self-center md:self-start">
