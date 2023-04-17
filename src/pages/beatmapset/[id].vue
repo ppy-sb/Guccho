@@ -157,12 +157,12 @@ onBeforeMount(() => {
       <div class="header-with-maps flex-wrap">
         <div class="text-center flex gap-2 items-baseline pb-2 pl-4">
           <h1
-            class="text-3xl font-bold text-center sm:text-left lg:whitespace-nowrap"
+            class="text-3xl font-bold text-center sm:text-left lg:whitespace-nowrap z-10"
           >
             {{ beatmapset.meta.intl.title }}
           </h1>
           <h2
-            class="text-lg font-semibold text-center whitespace-pre opacity-40 sm:text-left"
+            class="text-lg font-semibold text-center whitespace-pre opacity-40 sm:text-left z-10"
           >
             by {{ beatmapset.meta.intl.artist }}
           </h2>
