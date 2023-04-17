@@ -118,29 +118,30 @@ onMounted(() => {
       </div>
       <!-- placeholder for bottom nav -->·
       <div class="my-8 -z-50" />
-      <client-only>
+      <!-- <client-only>
         <teleport to="#footer">
-          <div class="btm-nav">
-            <template v-for="(isVisible, el) of visible" :key="el">
-              <a
-                v-if="icons[el]"
-                :class="{
-                  active: isVisible,
-                }" :href="`#${el}`"
-              >
-                <font-awesome-icon :icon="icons[el]" class="fa-xl" />
-              </a>
-              <a
-                v-else :class="{
-                  active: isVisible,
-                }" :href="`#${el}`"
-              >
-                {{ el }}
-              </a>
-            </template>
-          </div>
+
         </teleport>
-      </client-only>
+      </client-only> -->
+      <div class="btm-nav fuck">
+        <template v-for="(isVisible, el) of visible" :key="el">
+          <a
+            v-if="icons[el]"
+            :class="{
+              active: isVisible,
+            }" :href="`#${el}`"
+          >
+            <font-awesome-icon :icon="icons[el]" class="fa-xl" />
+          </a>
+          <a
+            v-else :class="{
+              active: isVisible,
+            }" :href="`#${el}`"
+          >
+            {{ el }}
+          </a>
+        </template>
+      </div>
     </div>
   </div>
 </template>
@@ -149,5 +150,11 @@ onMounted(() => {
 .handle {
   /* @apply bg-gradient-to-b from-gbase-50/50 to-gbase-50/90 dark:from-gbase-800 dark:to-gbase-900; */
   @apply h-screen overflow-scroll
+}
+.fuck {
+  justify-content: center;
+}
+.fuck > * {
+  @apply md:basis-32
 }
 </style>
