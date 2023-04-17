@@ -32,7 +32,7 @@ const scoreFmt = createScoreFormatter({ notation: undefined })
 const deferredRender = reactive({ ...data.value })
 const playTime = computed(() =>
   deferredRender
-    ? toDuration(new Date(deferredRender.playTime || 0 * 1000), new Date(0))
+    ? toDuration(new Date((deferredRender.playTime || 0) * 1000), new Date(0))
     : { hours: 0, minutes: 0, seconds: 0 },
 )
 
