@@ -1,9 +1,5 @@
 import type { Ref } from 'vue'
-import { nextTick, onMounted, ref, watch } from 'vue'
 
-/**
-
- */
 export default function useSelectElement(
   itemElements: Ref<HTMLDivElement[]>,
   targetIdx: Ref<number>,

@@ -1,5 +1,4 @@
 import type { Ref } from 'vue'
-import { ref } from 'vue'
 
 export default function useReloadAnimation(duration: Ref<number>) {
   const isReady = shallowRef(false) // Ready to run animation (default 100ms)

@@ -4,7 +4,7 @@ import userpageStore from '~/store/userpage'
 const page = userpageStore()
 
 const totalCount = computed(() => {
-  return Object.values(page.currentStatistic.scoreRankComposition).reduce((acc, cur) => acc + cur, 0)
+  return Object.values(page.currentStatistic?.scoreRankComposition || {}).reduce((acc, cur) => acc + cur, 0)
 })
 const fmt = new Intl.NumberFormat(undefined, {
   style: 'percent',
@@ -14,7 +14,7 @@ function percent(num: number) {
   return fmt.format(num)
 }
 const composition = computed(
-  () => page.currentStatistic.scoreRankComposition,
+  () => page.currentStatistic?.scoreRankComposition,
 )
 
 function createStyleObject(count: number) {
@@ -25,7 +25,7 @@ function createStyleObject(count: number) {
 </script>
 
 <template>
-  <VDropdown :triggers="['hover', 'focus', 'click']">
+  <VDropdown v-if="composition" :triggers="['hover', 'focus', 'click']">
     <div v-if="totalCount" class="relative">
       <div class="multi-progress-bar-container bg-emerald-200">
         <div
