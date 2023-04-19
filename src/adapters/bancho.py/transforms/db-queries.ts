@@ -74,6 +74,7 @@ const prismaOperator: Record<OP, keyof Prisma.IntFilter> = {
   gt: 'gt',
   gte: 'gte',
 }
+
 export function createFilter(tags: Tag[]) {
   type Filter = Prisma.Enumerable<Prisma.MapWhereInput>
 

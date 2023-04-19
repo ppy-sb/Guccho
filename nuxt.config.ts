@@ -1,5 +1,4 @@
 import { fileURLToPath } from 'node:url'
-
 import hljs from './configs/hljs'
 import postcss from './postcss.config'
 
