@@ -1,9 +1,20 @@
 <script setup lang="ts">
-
+definePageMeta({
+  middleware: ['auth', 'admin'],
+})
 </script>
 
 <template>
-  <div />
+  <section class="container custom-container mx-auto">
+    <div class="pt-20" />
+    <t-nuxt-link-button
+      :to="{
+        name: 'admin-article',
+      }"
+    >
+      articles
+    </t-nuxt-link-button>
+  </section>
 </template>
 
 <style scoped>

@@ -203,11 +203,11 @@ async function logout() {
                     My Profile
                   </nuxt-link>
                 </li>
-                <li class="disabled">
+                <li>
                   <nuxt-link
                     v-if="session.$state.privilege.staff"
                     :to="{
-                      name: 'index',
+                      name: 'admin',
                     }"
                   >
                     Admin Panel
