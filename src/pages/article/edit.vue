@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useSession } from '~/store/session'
-import type Editor from '~/components/editor/index.vue'
+import type Editor from '~/components/editor/index.client.vue'
 import type { AccessPrivilege, Content } from '$def/server/article'
 
 definePageMeta({
@@ -66,6 +66,8 @@ async function importArticle() {
   }
   editing.value = json.json
   privilege.value = json.privilege
+
+  editor.value?.reload()
 }
 
 const privileges: Partial<Record<AccessPrivilege, string>> = {
@@ -95,6 +97,7 @@ function resetRead(e: Event) {
       <button class="btn btn-sm btn-success" @click="() => save()">
         Save
       </button>
+      <div class="divider divider-horizontal" />
       <button class="btn btn-sm btn-error" @click="() => del()">
         Delete
       </button>
