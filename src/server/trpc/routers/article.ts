@@ -14,4 +14,7 @@ export const router = _router({
       return !!arg
     }),
   })).mutation(({ input, ctx }) => sp.save(Object.assign(input, { user: ctx.user }))),
+  delete: adminProcedure.input(object({
+    slug: string(),
+  })).mutation(({ input, ctx }) => sp.delete(Object.assign(input, { user: ctx.user }))),
 })

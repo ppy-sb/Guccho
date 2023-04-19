@@ -22,6 +22,16 @@ async function save() {
     content: editing.value,
   })
 }
+async function del() {
+  // eslint-disable-next-line no-alert
+  const conf = confirm('are you sure? you cannot revert this process.')
+  if (!conf) {
+    return
+  }
+  await app$.$client.article.delete.mutate({
+    slug: slug.value,
+  })
+}
 const privilege = ref<NonNullable<Content['privilege']>>({
   write: ['self', 'staff'],
   delete: ['self', 'staff'],
@@ -77,13 +87,16 @@ function resetRead(e: Event) {
 
 <template>
   <section class="container pt-20 pb-8 mx-auto custom-container lg:px-2">
-    <div class="flex gap-4 items-baseline">
+    <div class="flex gap-2 items-baseline">
       Editing: <input v-model="slug" type="text" class="input input-sm shadow-lg">
       <button class="btn btn-sm btn-info" @click="() => update()">
         Load
       </button>
       <button class="btn btn-sm btn-success" @click="() => save()">
         Save
+      </button>
+      <button class="btn btn-sm btn-error" @click="() => del()">
+        Delete
       </button>
       <div class="divider divider-horizontal" />
       <button class="btn btn-sm btn-secondary" @click="exportArticle">

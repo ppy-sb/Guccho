@@ -1,13 +1,13 @@
-// import { useRuntimeConfig } from '#app'
 import type { JSONContent } from '@tiptap/core'
 import { lowlight } from 'lowlight/lib/core.js'
 import hljs from '~~/configs/hljs.json'
 
 async function importLib(language: string) {
+  return await import(`../../node_modules/highlight.js/es/languages/${language}.js`)
+}
+async function useLib(language: string) {
   try {
-    const f = await import(
-      `../../node_modules/highlight.js/es/languages/${language}.js`
-    )
+    const f = await importLib(language)
     lowlight.registerLanguage(language, f.default)
     // eslint-disable-next-line no-console
     console.info('loaded hljs lib:', language)
@@ -38,10 +38,11 @@ export default () => {
           if (!hljs[_key]) {
             return
           }
-          return importLib(hljs[_key].slice(1))
+          return useLib(hljs[_key].slice(1))
         }) || [],
       )
     },
+    useLib,
     importLib,
     async parseAndImportHighlightLibFromHtml(html: string) {
       const ssrCodeLanguages = html.matchAll(/language-(\w+)/gm)
@@ -50,21 +51,21 @@ export default () => {
         if (!hljs[language]) {
           continue
         }
-        await importLib(hljs[language].slice(1))
+        await useLib(hljs[language].slice(1))
       }
     },
 
-    // async getLanguages(html: string) {
-    //   const ssrCodeLanguages = html.matchAll(/language-(\w+)/gm)
-    //   const languages = []
-    //   for (const _language of ssrCodeLanguages) {
-    //     const language = `#${_language[1]}` as keyof typeof hljs
-    //     if (!hljs[language]) {
-    //       continue
-    //     }
-    //     languages.push(`#${_language[1]}` as keyof typeof hljs)
-    //   }
-    //   return languages
-    // },
+    getLanguages(html: string) {
+      const ssrCodeLanguages = html.matchAll(/language-(\w+)/gm)
+      const languages = []
+      for (const _language of ssrCodeLanguages) {
+        const language = `#${_language[1]}` as keyof typeof hljs
+        if (!hljs[language]) {
+          continue
+        }
+        languages.push(`#${_language[1]}` as keyof typeof hljs)
+      }
+      return languages
+    },
   }
 }

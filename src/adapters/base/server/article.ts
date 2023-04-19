@@ -144,6 +144,25 @@ export abstract class ArticleProvider {
     await fs.writeFile(loc, this.serialize(_content))
   }
 
+  async delete(opt: { slug: string; user: UserEssential<any> }) {
+    return this.deleteLocal(opt)
+  }
+
+  async deleteLocal(opt: { slug: string; user: UserEssential<any> }) {
+    const { user, slug } = opt
+    if (!user.roles.find(role => ['admin', 'owner'].includes(role))) {
+      throw new Error('you have insufficient privilege to edit this article')
+    }
+    const loc = join(this.articles, slug)
+    if (!this.inside(loc)) {
+      throw new Error('dangerous operation')
+    }
+    if (!relative(join(this.articles, './fallbacks'), loc).startsWith('..')) {
+      throw new Error('trying to delete fallback contents')
+    }
+    return await fs.rm(loc)
+  }
+
   render(content: JSONContent) {
     const renderExtensions = useEditorExtensions()
     return generateHTML(content, renderExtensions)

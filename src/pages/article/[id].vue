@@ -2,6 +2,7 @@
 import '@/assets/styles/typography.scss'
 
 const route = useRoute()
+
 const id = route.params.id
 if (!id) {
   throw new Error('id required')
