@@ -32,7 +32,7 @@ async function onUpdated() {
   if (!props.modelValue) {
     return
   }
-  await Promise.all(lazy(props.modelValue))
+  await lazy(props.modelValue)
   editor.value?.commands.setContent(props.modelValue)
 }
 

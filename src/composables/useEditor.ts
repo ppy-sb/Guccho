@@ -17,7 +17,7 @@ export default (
   let created = false
   const lazyLoadCodeBlock = ({ editor }: { editor: EditorCore }) => {
     const json = editor.getJSON()
-    return Promise.all(lazy(json))
+    return lazy(json)
   }
 
   const subscribedBeforeMounted: CallableFunction[] = []

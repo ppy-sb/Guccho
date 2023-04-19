@@ -254,3 +254,4 @@ dump.rdb
 
 articles/*
 !articles/fallbacks
+configs/hljs.json

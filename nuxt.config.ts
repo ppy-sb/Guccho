@@ -1,5 +1,4 @@
 import { fileURLToPath } from 'node:url'
-import hljs from './configs/hljs'
 import postcss from './postcss.config'
 
 import './scripts/ensure-env'
@@ -23,8 +22,6 @@ export default defineNuxtConfig({
     '@fortawesome/fontawesome-svg-core/styles.css',
   ],
 
-  runtimeConfig: { public: { hljs } },
-
   app: {
     pageTransition: {
       name: 'slide',
@@ -38,7 +35,7 @@ export default defineNuxtConfig({
   experimental: {
     // viewTransition: true,
     renderJsonPayloads: true,
-    // componentIslands: true,
+    componentIslands: true,
   },
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -53,6 +50,7 @@ export default defineNuxtConfig({
   vite: {
     build: {
       minify: true,
+      sourcemap: 'inline',
     },
   },
 

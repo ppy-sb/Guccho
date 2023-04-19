@@ -1,27 +1,25 @@
-import { useRuntimeConfig } from '#app'
+// import { useRuntimeConfig } from '#app'
 import type { JSONContent } from '@tiptap/core'
 import { lowlight } from 'lowlight/lib/core.js'
+import hljs from '~~/configs/hljs.json'
 
-export default () => {
-  const {
-    public: { hljs },
-  } = useRuntimeConfig()
-  async function importLib(language: string) {
-    try {
-      const f = await import(
-        `../../node_modules/highlight.js/es/languages/${language}.js`
-      )
-      lowlight.registerLanguage(language, f.default)
-      // eslint-disable-next-line no-console
-      console.info('loaded hljs lib:', language)
-    }
-    catch (e) {
-      console.error('error on loading hljs lib:', e)
-    }
+async function importLib(language: string) {
+  try {
+    const f = await import(
+      `../../node_modules/highlight.js/es/languages/${language}.js`
+    )
+    lowlight.registerLanguage(language, f.default)
+    // eslint-disable-next-line no-console
+    console.info('loaded hljs lib:', language)
   }
+  catch (e) {
+    console.error('error on loading hljs lib:', e)
+  }
+}
+export default () => {
   return {
     load: (json: JSONContent) => {
-      return (
+      return Promise.all(
         json.content?.map(async (node) => {
           if (node.type !== 'codeBlock') {
             return
@@ -41,7 +39,7 @@ export default () => {
             return
           }
           return importLib(hljs[_key].slice(1))
-        }) || []
+        }) || [],
       )
     },
     importLib,
@@ -55,5 +53,18 @@ export default () => {
         await importLib(hljs[language].slice(1))
       }
     },
+
+    // async getLanguages(html: string) {
+    //   const ssrCodeLanguages = html.matchAll(/language-(\w+)/gm)
+    //   const languages = []
+    //   for (const _language of ssrCodeLanguages) {
+    //     const language = `#${_language[1]}` as keyof typeof hljs
+    //     if (!hljs[language]) {
+    //       continue
+    //     }
+    //     languages.push(`#${_language[1]}` as keyof typeof hljs)
+    //   }
+    //   return languages
+    // },
   }
 }
