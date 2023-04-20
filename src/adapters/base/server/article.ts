@@ -191,7 +191,7 @@ export abstract class ArticleProvider {
   async checkPrivilege(
     access: 'read' | 'write',
     content: ContentPrivilege,
-    user?: { id: unknown; roles: UserPrivilegeString[] },
+    user?: { id: unknown; roles: UserPrivilegeString[] }
   ) {
     const privRequired = content.privilege?.[access]
 

@@ -22,7 +22,7 @@ const app$ = useNuxtApp()
 let browser = false
 let interval: ReturnType<typeof setInterval>
 const { data, refresh } = await useAsyncData(
-  async () => browser && app$.$client.status.public.query(),
+  async () => browser && app$.$client.status.public.query()
 )
 
 const serverConfig = session.user?.roles.includes('staff') ? await app$.$client.status.config.query() : undefined

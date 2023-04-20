@@ -6,7 +6,7 @@ import type {
 } from '~/types/beatmap'
 
 export function beatmapIsVisible<T extends RankingStatus>(
-  beatmap: BeatmapWithMeta<BeatmapSource, T, any, any>,
+  beatmap: BeatmapWithMeta<BeatmapSource, T, any, any>
 ): beatmap is NormalBeatmapWithMeta<
   BeatmapSource,
   Exclude<T, 'notFound' | 'deleted'>,

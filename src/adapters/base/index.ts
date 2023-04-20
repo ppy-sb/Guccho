@@ -24,18 +24,18 @@ export function stringToScoreId(id: string): ScoreId {
 export const hasRankingSystem: HasRankingSystem = (
   _1,
   _2,
-  rankingSystem,
+  rankingSystem
 ): rankingSystem is RankingSystem => false
 
 export const hasLeaderboardRankingSystem: HasLeaderboardRankingSystem = (
   _1,
   _2,
-  rankingSystem,
+  rankingSystem
 ): rankingSystem is LeaderboardRankingSystem => false
 
 export const hasRuleset: HasRuleset = <M extends Mode>(
   mode: M,
-  ruleset: Ruleset,
+  ruleset: Ruleset
 ): ruleset is AvailableRuleset<M> => false
 
 export const features: Set<Feature> = new Set([])

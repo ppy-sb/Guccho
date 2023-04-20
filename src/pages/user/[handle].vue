@@ -31,7 +31,7 @@ useHead({
   titleTemplate: `%s - ${appConf.title}`,
   title: computed(
     () =>
-      `${page.user?.name} | ${switcher.mode} | ${switcher.ruleset} | ${switcher.rankingSystem}`,
+      `${page.user?.name} | ${switcher.mode} | ${switcher.ruleset} | ${switcher.rankingSystem}`
   ),
 })
 

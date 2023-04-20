@@ -16,7 +16,7 @@ import type {
 
 export function compareScope(
   scope: Scope,
-  requiredScope: Partial<Record<Scope, boolean>>,
+  requiredScope: Partial<Record<Scope, boolean>>
 ) {
   if (scope === 'public') {
     return requiredScope.public

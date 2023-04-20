@@ -16,8 +16,8 @@ export function getRequiredScoreForLevel(level: number) {
       return BigInt(
         Math.floor(
           (5000 / 3) * (4 * level ** 3 - 3 * level ** 2 - level)
-            + Math.floor(1.25 * 1.8 ** (level - 60)),
-        ),
+            + Math.floor(1.25 * 1.8 ** (level - 60))
+        )
       )
     }
 

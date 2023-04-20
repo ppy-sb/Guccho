@@ -71,7 +71,7 @@ export class UserRelationProvider implements Base<Id> {
       _user.relationshipFromTarget = reverse
       _user.mutualRelationship = calculateMutualRelationships(
         _user.relationship,
-        _user.relationshipFromTarget,
+        _user.relationshipFromTarget
       )
     }
 

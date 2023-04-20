@@ -24,7 +24,7 @@ export const router = _router({
       z.object({
         handle: zodHandle,
         md5HashedPassword: z.string(),
-      }),
+      })
     )
     .query(async ({ input: { handle, md5HashedPassword }, ctx }) => {
       try {
@@ -68,7 +68,7 @@ export const router = _router({
         .object({
           sessionId: z.string().optional(),
         })
-        .optional(),
+        .optional()
     )
     .query(async ({ ctx, input }) => {
       let session

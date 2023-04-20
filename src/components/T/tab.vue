@@ -21,10 +21,10 @@ const disabled = computed(
   () =>
     props.value === disabledSymbol
     || props.disabled === ''
-    || props.disabled === true,
+    || props.disabled === true
 )
 const active = computed(
-  () => !disabled.value && current?.value === props.value,
+  () => !disabled.value && current?.value === props.value
 )
 </script>
 

@@ -100,11 +100,11 @@ export class UserProvider implements Base<Id> {
       return {
         rank: await this.redisClient.zRevRank(
           `bancho:leaderboard:${mode}`,
-          idToString(id),
+          idToString(id)
         ),
         countryRank: await this.redisClient.zRevRank(
           `bancho:leaderboard:${mode}:${country}`,
-          idToString(id),
+          idToString(id)
         ),
       }
     }
@@ -116,7 +116,7 @@ export class UserProvider implements Base<Id> {
   }: Base.OptType<number, Record<never, never>>) {
     return (
       (await this.db.user.count(
-        createUserQuery(handle, keys || ['id', 'name', 'safeName', 'email']),
+        createUserQuery(handle, keys || ['id', 'name', 'safeName', 'email'])
       )) > 0
     )
   }
@@ -205,7 +205,7 @@ export class UserProvider implements Base<Id> {
     return toRankingSystemScores({ scores, rankingSystem, mode }).map(score =>
       Object.assign(score, {
         id: score.id.toString(),
-      }),
+      })
     )
   }
 
@@ -228,7 +228,7 @@ INNER JOIN (
   INNER JOIN scores s ON s.userid = u.id
   WHERE u.priv > 2 AND s.mode = ${toBanchoPyMode(
         mode,
-        ruleset,
+        ruleset
       )} AND s.score > 0 AND s.status in (${banchoPyRankingStatus.join(',')})
   GROUP BY s.map_md5
 ) tmp ON tmp.maxScore = s2.score AND tmp.md5 = s2.map_md5
@@ -245,7 +245,7 @@ INNER JOIN (
     INNER JOIN scores AS s ON s.userid = u.id
     WHERE u.priv > 2 AND s.mode = ${toBanchoPyMode(
         mode,
-        ruleset,
+        ruleset
       )} AND s.pp > 0 AND s.status in (${banchoPyRankingStatus.join(',')})
     GROUP BY s.map_md5
 ) AS tmp ON tmp.maxPP = s2.pp AND tmp.md5 = s2.map_md5
@@ -283,7 +283,7 @@ WHERE s2.userid = ${id}
         score =>
           Object.assign(score, {
             id: score.id.toString(),
-          }),
+          })
       ),
     }
   }
@@ -351,7 +351,7 @@ WHERE s2.userid = ${id}
       osu: {
         standard: createRulesetData({
           databaseResult: results.find(
-            i => i.mode === BanchoPyMode.osuStandard,
+            i => i.mode === BanchoPyMode.osuStandard
           ),
           ranks: ranks.find(i => i.mode === BanchoPyMode.osuStandard),
           livePPRank: livePPRank?.osu.standard,
@@ -363,7 +363,7 @@ WHERE s2.userid = ${id}
         }),
         autopilot: createRulesetData({
           databaseResult: results.find(
-            i => i.mode === BanchoPyMode.osuAutopilot,
+            i => i.mode === BanchoPyMode.osuAutopilot
           ),
           ranks: ranks.find(i => i.mode === BanchoPyMode.osuAutopilot),
           livePPRank: livePPRank?.osu.autopilot,
@@ -372,14 +372,14 @@ WHERE s2.userid = ${id}
       taiko: {
         standard: createRulesetData({
           databaseResult: results.find(
-            i => i.mode === BanchoPyMode.taikoStandard,
+            i => i.mode === BanchoPyMode.taikoStandard
           ),
           ranks: ranks.find(i => i.mode === BanchoPyMode.taikoStandard),
           livePPRank: livePPRank?.taiko.standard,
         }),
         relax: createRulesetData({
           databaseResult: results.find(
-            i => i.mode === BanchoPyMode.taikoRelax,
+            i => i.mode === BanchoPyMode.taikoRelax
           ),
           ranks: ranks.find(i => i.mode === BanchoPyMode.taikoRelax),
           livePPRank: livePPRank?.taiko.relax,
@@ -388,14 +388,14 @@ WHERE s2.userid = ${id}
       fruits: {
         standard: createRulesetData({
           databaseResult: results.find(
-            i => i.mode === BanchoPyMode.fruitsStandard,
+            i => i.mode === BanchoPyMode.fruitsStandard
           ),
           ranks: ranks.find(i => i.mode === BanchoPyMode.fruitsStandard),
           livePPRank: livePPRank?.fruits.standard,
         }),
         relax: createRulesetData({
           databaseResult: results.find(
-            i => i.mode === BanchoPyMode.fruitsRelax,
+            i => i.mode === BanchoPyMode.fruitsRelax
           ),
           ranks: ranks.find(i => i.mode === BanchoPyMode.fruitsRelax),
           livePPRank: livePPRank?.fruits.relax,
@@ -404,7 +404,7 @@ WHERE s2.userid = ${id}
       mania: {
         standard: createRulesetData({
           databaseResult: results.find(
-            i => i.mode === BanchoPyMode.maniaStandard,
+            i => i.mode === BanchoPyMode.maniaStandard
           ),
           ranks: ranks.find(i => i.mode === BanchoPyMode.maniaStandard),
           livePPRank: livePPRank?.mania.standard,
@@ -423,20 +423,20 @@ WHERE s2.userid = ${id}
         standard: await this.getLiveRank(
           id,
           BanchoPyMode.osuStandard,
-          country,
+          country
         ),
         relax: await this.getLiveRank(id, BanchoPyMode.osuRelax, country),
         autopilot: await this.getLiveRank(
           id,
           BanchoPyMode.osuAutopilot,
-          country,
+          country
         ),
       },
       taiko: {
         standard: await this.getLiveRank(
           id,
           BanchoPyMode.osuStandard,
-          country,
+          country
         ),
         relax: await this.getLiveRank(id, BanchoPyMode.osuRelax, country),
       },
@@ -444,7 +444,7 @@ WHERE s2.userid = ${id}
         standard: await this.getLiveRank(
           id,
           BanchoPyMode.osuStandard,
-          country,
+          country
         ),
         relax: await this.getLiveRank(id, BanchoPyMode.osuRelax, country),
       },
@@ -452,7 +452,7 @@ WHERE s2.userid = ${id}
         standard: await this.getLiveRank(
           id,
           BanchoPyMode.osuStandard,
-          country,
+          country
         ),
       },
     }
@@ -481,14 +481,14 @@ WHERE s2.userid = ${id}
       parallels.push(
         this.getStatistics(user).then((res) => {
           returnValue.statistics = res
-        }),
+        })
       )
     }
     if (excludes.relationships !== true) {
       parallels.push(
         this.relationships.get({ user }).then((res) => {
           returnValue.relationships = res
-        }),
+        })
       )
     }
     if (excludes.email !== true) {
@@ -521,7 +521,7 @@ WHERE s2.userid = ${id}
     input: {
       email?: string
       name?: string
-    },
+    }
   ) {
     const result = await this.db.user.update({
       where: {
@@ -539,7 +539,7 @@ WHERE s2.userid = ${id}
     user: UserEssential<Id>,
     input: {
       profile: JSONContent
-    },
+    }
   ) {
     const html = article.render(input.profile)
     try {

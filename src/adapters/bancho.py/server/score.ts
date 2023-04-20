@@ -39,7 +39,7 @@ export class ScoreProvider implements Base<bigint, Id> {
         mode,
         ruleset,
       }),
-      { user: toUserEssential({ user: dbScore.user, config: this.config }) },
+      { user: toUserEssential({ user: dbScore.user, config: this.config }) }
     )
   }
 

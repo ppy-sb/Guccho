@@ -36,7 +36,7 @@ export class LeaderboardProvider implements Base<Id> {
     banchoPyMode: number,
     start: number,
     end: number,
-    country?: string,
+    country?: string
   ) {
     if (this.redisClient?.isReady) {
       return await this.redisClient.zRange(
@@ -52,7 +52,7 @@ export class LeaderboardProvider implements Base<Id> {
             offset: start,
             count: end,
           },
-        },
+        }
       )
     }
     throw new Error('redis is not ready')
@@ -91,7 +91,7 @@ export class LeaderboardProvider implements Base<Id> {
         const rank = await this.getPPv2LiveLeaderboard(
           bPyMode,
           0,
-          start + pageSize * 2,
+          start + pageSize * 2
         ).then(res => res.map(Number))
 
         const [users, stats] = await Promise.all([
@@ -241,7 +241,7 @@ export class LeaderboardProvider implements Base<Id> {
     query: Base.BaseQuery & {
       rankingSystem: RankingSystem
       id: Id
-    },
+    }
   ) {
     const { ruleset, rankingSystem, id } = query
     let { mode } = query

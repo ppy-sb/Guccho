@@ -5,7 +5,7 @@ import { onMounted, watch } from 'vue'
 
  */
 export default function useMeasureText(
-  itemElement: Ref<HTMLDivElement | null>,
+  itemElement: Ref<HTMLDivElement | null>
 ) {
   const width = shallowRef(0)
 

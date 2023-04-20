@@ -33,7 +33,7 @@ const props = withDefaults(
   }>(),
   {
     useIntl: true,
-  },
+  }
 )
 const { addToLibrary } = useFAIconLib()
 addToLibrary(faBan, faCheckDouble, faHeart, faPause)
@@ -81,7 +81,7 @@ const meta = computed(
           || beatmap.value.beatmapset.meta.intl.title,
       }
     }
-  },
+  }
 )
 </script>
 

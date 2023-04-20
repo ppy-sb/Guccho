@@ -2,7 +2,7 @@ import type { Ref } from 'vue'
 
 export default function useSelectElement(
   itemElements: Ref<HTMLDivElement[]>,
-  targetIdx: Ref<number>,
+  targetIdx: Ref<number>
 ) {
   const itemElement: Ref<HTMLDivElement | null> = shallowRef(null)
 

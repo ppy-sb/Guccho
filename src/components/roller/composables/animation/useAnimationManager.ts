@@ -12,7 +12,7 @@ export default function useAnimationManager(
   char: Ref<string>,
   defaultChar: Ref<string>,
   charSet: Ref<string[]>,
-  duration: Ref<number>,
+  duration: Ref<number>
 ) {
   const targetIdx = computed(() => charSet.value.indexOf(char.value)) // Target index in charSet
   const prevTargetIdx = shallowRef(charSet.value.indexOf(defaultChar.value)) // Target index in charSet just before

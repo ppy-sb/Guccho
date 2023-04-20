@@ -62,7 +62,7 @@ export function convertSingle(colors: Record<string, any>,
       acc[key] = transform(converter(value))
       return acc
     },
-    {},
+    {}
   )
 }
 
@@ -77,6 +77,6 @@ function to<ConverterReturn extends Return, Return = ConverterReturn>(converter:
 }
 export const palette = to(
   convert.hex.hsl,
-  ([h, s, l]) => `hsl(${h} ${s}% ${l}%)`,
+  ([h, s, l]) => `hsl(${h} ${s}% ${l}%)`
 ) as unknown as typeof hex
 export const hsvRaw = to(convert.hex.hsl)

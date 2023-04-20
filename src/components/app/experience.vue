@@ -16,7 +16,7 @@ addToLibrary(
   faBatteryThreeQuarters,
   faBatteryHalf,
   faBatteryQuarter,
-  faBatteryEmpty,
+  faBatteryEmpty
 )
 const fps = useFps()
 function size(v: number) {

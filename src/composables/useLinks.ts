@@ -26,7 +26,7 @@ export function useExternalBeatmapsetLinks(beatmapset: AnyBeatmapset) {
       {
         label: 'osu.direct (previously known as Kitsu.moe)',
         link: `https://osu.direct/api/d/${beatmapset.foreignId}`,
-      },
+      }
     )
   }
   return returnValue

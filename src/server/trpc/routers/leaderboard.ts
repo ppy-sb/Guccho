@@ -38,7 +38,7 @@ export const router = _router({
         rankingSystem: zodLeaderboardRankingSystem,
         page: z.number().gte(0).lt(10),
         pageSize: z.number().gte(20).lt(51),
-      }),
+      })
     )
     .query(
       async ({ input }) => {
@@ -57,7 +57,7 @@ export const router = _router({
           ...item,
           user: mapId(item.user, provider.idToString),
         }))
-      },
+      }
     ),
   beatmap: publicProcedure
     .input(
@@ -68,7 +68,7 @@ export const router = _router({
         page: z.number().gte(0).lt(10),
         pageSize: z.number().gte(20).lt(51),
         beatmapId: z.string(),
-      }),
+      })
     )
     .query(
       async ({
@@ -94,6 +94,6 @@ export const router = _router({
           ...item,
           user: mapId(item.user, provider.idToString),
         }))
-      },
+      }
     ),
 })

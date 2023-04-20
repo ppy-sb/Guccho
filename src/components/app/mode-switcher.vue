@@ -19,7 +19,7 @@ const config = useAppConfig()
 const { hasLeaderboardRankingSystem, hasRuleset } = useAdapterConfig()
 
 const [switcher, setSwitcher] = useLeaderboardSwitcher(
-  toRaw(props.modelValue) || {},
+  toRaw(props.modelValue) || {}
 )
 function emitData() {
   emit('input', toRaw(switcher))

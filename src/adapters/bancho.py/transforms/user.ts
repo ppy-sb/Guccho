@@ -114,7 +114,7 @@ export function dedupeUserRelationship(
     type: RelationshipType
     toUserId: Id
     toUser: UserEssential<Id>
-  }>,
+  }>
 ) {
   const reduceUserRelationships = relations.reduce((acc, cur) => {
     if (!acc.has(cur.toUserId)) {
@@ -140,7 +140,7 @@ export function toFullUser(
     avatar: {
       domain?: string
     }
-  },
+  }
 ): UserEssential<Id> &
   Pick<UserExtra<Id>, 'settings'> &
   Pick<UserOptional, 'oldNames'> {

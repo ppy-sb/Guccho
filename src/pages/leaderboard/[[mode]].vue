@@ -67,7 +67,7 @@ const {
     rankingSystem: selected.value.rankingSystem,
     page: page.value - 1,
     pageSize: perPage,
-  }),
+  })
 )
 
 useHead({

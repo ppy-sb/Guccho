@@ -4,7 +4,7 @@ import type { RulesetScore } from '~/types/score'
 
 export function createHitCount<_Mode extends Mode>(
   mode: _Mode,
-  score: DBScore,
+  score: DBScore
 ): RulesetScore<unknown, unknown, _Mode, Ruleset, PPRankingSystem>['hit'] {
   return mode === 'mania'
     ? ({

@@ -39,7 +39,7 @@ export default () => {
             return
           }
           return useLib(hljs[_key].slice(1))
-        }) || [],
+        }) || []
       )
     },
     useLib,

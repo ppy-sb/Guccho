@@ -127,7 +127,7 @@ export function toRankingSystemScores<RS extends LeaderboardRankingSystem>({
   mode: Mode
 }) {
   return scores.map((score, index) =>
-    toRankingSystemScore({ score, rankingSystem, mode, rank: index + 1 }),
+    toRankingSystemScore({ score, rankingSystem, mode, rank: index + 1 })
   )
 }
 // : Flavor extends 'ranking-system' ? :

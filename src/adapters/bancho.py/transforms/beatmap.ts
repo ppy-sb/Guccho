@@ -17,7 +17,7 @@ import type { StableMod } from '~/types/score'
 // this does not deserves exporting
 export function toBeatmapset(
   beatmapset: Source,
-  beatmap: DBMap,
+  beatmap: DBMap
 ) {
   const isBancho = beatmapset.server === 'bancho'
   const rest = {
@@ -96,7 +96,7 @@ export function toBeatmapEssential(beatmap: {
 export function toBeatmapWithBeatmapset(
   beatmap: DBMap & {
     source: Source
-  },
+  }
 ) {
   const status = toRankingStatus(beatmap.status) || 'WIP'
   const beatmapset = toBeatmapset(beatmap.source, beatmap)
@@ -116,10 +116,10 @@ export type AbleToTransformToScores = DBScore & {
 
 export function toBanchoPyMode(
   mode: Mode,
-  ruleset: Ruleset,
+  ruleset: Ruleset
 ): BanchoPyMode | undefined {
   const joined: `${Mode}${Capitalize<Ruleset>}` = `${mode}${capitalizeFirstLetter(
-    ruleset,
+    ruleset
   )}`
   switch (joined) {
     case 'maniaRelax':
@@ -152,7 +152,7 @@ export function fromBanchoPyMode(input: BanchoPyMode): [Mode, Ruleset] {
 }
 
 export function toBanchoRankingStatus(
-  input: BanchoPyRankedStatus,
+  input: BanchoPyRankedStatus
 ): RankingStatusEnum {
   switch (input) {
     case BanchoPyRankedStatus.NotSubmitted:

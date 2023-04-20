@@ -25,16 +25,16 @@ const lazyBgCover = shallowRef('')
 
 const { data: beatmapset, error } = await useAsyncData(
   async () =>
-    await app$.$client.map.beatmapset.query({ id: route.params.id.toString() }),
+    await app$.$client.map.beatmapset.query({ id: route.params.id.toString() })
 )
 const hashed = beatmapset.value?.beatmaps.find(
-  bm => bm.id === route.query.beatmap?.toString(),
+  bm => bm.id === route.query.beatmap?.toString()
 )
 const selectedMapId = shallowRef<string>(
-  hashed?.id || beatmapset.value?.beatmaps[0].id || '',
+  hashed?.id || beatmapset.value?.beatmaps[0].id || ''
 )
 const selectedMap = computed(() =>
-  beatmapset.value?.beatmaps.find(bm => bm.id === selectedMapId.value),
+  beatmapset.value?.beatmaps.find(bm => bm.id === selectedMapId.value)
 )
 const allowedModes = computed(() => {
   if (!selectedMap.value?.mode) {

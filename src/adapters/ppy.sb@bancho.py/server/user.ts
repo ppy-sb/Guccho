@@ -20,7 +20,7 @@ export class UserProvider extends BanchoPyUser implements Base<Id> {
 
   async changeUserpage(
     user: UserEssential<number>,
-    input: { profile: JSONContent },
+    input: { profile: JSONContent }
   ) {
     const renderExtensions = useEditorExtensions()
     try {

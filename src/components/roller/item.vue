@@ -25,7 +25,7 @@ const { isReady, isEnd, targetIdx, prevTargetIdx } = useAnimationManager(
   char,
   defaultChar,
   charSet,
-  duration,
+  duration
 )
 
 const itemElements = shallowRef<HTMLDivElement[]>([])

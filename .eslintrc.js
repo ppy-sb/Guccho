@@ -22,5 +22,15 @@ module.exports = {
     'vue/no-v-model-argument': ['off'],
     '@typescript-eslint/type-annotation-spacing': 'warn',
     'curly': ['error', 'multi-line', 'consistent'],
+    '@typescript-eslint/comma-dangle': ['error', {
+      arrays: 'always-multiline',
+      objects: 'always-multiline',
+      imports: 'always-multiline',
+      exports: 'always-multiline',
+      functions: 'only-multiline',
+      enums: 'always-multiline',
+      generics: 'always-multiline',
+      tuples: 'always-multiline',
+    }],
   },
 }

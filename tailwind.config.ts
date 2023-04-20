@@ -9,13 +9,13 @@ import { convertSingle, palette } from './src/palette'
 const cupcake = convertSingle(
   themes['[data-theme=cupcake]'],
   convert.hex.hsl,
-  ([h, s, l]: [string, string, string]) => `hsl(${h} ${s}% ${l}%)`,
+  ([h, s, l]: [string, string, string]) => `hsl(${h} ${s}% ${l}%)`
 ) as Record<keyof typeof themes['[data-theme=cupcake]'], string>
 // const valentine = convertSingle(themes['[data-theme=valentine]'], convert.hex.hsl, ([h, s, l]: [string, string, string]) => `hsl(${h} ${s}% ${l}%)`) as Record<keyof typeof themes['[data-theme=cupcake]'], string>
 const dracula = convertSingle(
   themes['[data-theme=dracula]'],
   convert.hex.hsl,
-  ([h, s, l]: [string, string, string]) => `hsl(${h} ${s}% ${l}%)`,
+  ([h, s, l]: [string, string, string]) => `hsl(${h} ${s}% ${l}%)`
 ) as Record<keyof typeof themes['[data-theme=dracula]'], string>
 const base = {
   '--rounded-btn': '1rem',

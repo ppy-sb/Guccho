@@ -14,7 +14,7 @@ function percent(num: number) {
   return fmt.format(num)
 }
 const composition = computed(
-  () => page.currentStatistic?.scoreRankComposition,
+  () => page.currentStatistic?.scoreRankComposition
 )
 
 function createStyleObject(count: number) {

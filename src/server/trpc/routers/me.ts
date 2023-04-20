@@ -34,7 +34,7 @@ export const router = _router({
     .input(
       z.object({
         profile: zodTipTapJSONContent,
-      }),
+      })
     )
     .mutation(async ({ ctx, input }) => {
       const result = await users.changeUserpage?.(ctx.user, {
@@ -48,7 +48,7 @@ export const router = _router({
       z.object({
         email: z.string().email().optional(),
         name: z.string().optional(),
-      }),
+      })
     )
     .mutation(async ({ ctx, input }) => {
       const update: Partial<typeof input & { userpageContent: string }> = {}
@@ -88,7 +88,7 @@ export const router = _router({
       z.object({
         oldPassword: z.string(),
         newPassword: z.string(),
-      }),
+      })
     )
     .mutation(async ({ ctx, input }) => {
       const userWithPassword = await users.getEssentialById({
@@ -98,7 +98,7 @@ export const router = _router({
       if (
         !(await compare(
           input.oldPassword,
-          userWithPassword.secrets.password,
+          userWithPassword.secrets.password
         ))
       ) {
         throw new TRPCError({
@@ -109,7 +109,7 @@ export const router = _router({
 
       return await users.changePassword(
         userWithPassword,
-        input.newPassword,
+        input.newPassword
       )
     }),
 
@@ -117,7 +117,7 @@ export const router = _router({
     .input(
       z.object({
         target: zodHandle,
-      }),
+      })
     )
     .query(async ({ input: { target }, ctx }) => {
       const [fromUser, targetUser] = await Promise.all([
@@ -140,7 +140,7 @@ export const router = _router({
           && targetRelationship
           && calculateMutualRelationships(
             [fromRelationship],
-            [targetRelationship],
+            [targetRelationship]
           ),
       }
     }),
@@ -154,7 +154,7 @@ export const router = _router({
       z.object({
         target: zodHandle,
         type: zodRelationType,
-      }),
+      })
     )
     .mutation(async ({ input, ctx }) => {
       const [fromUser, targetUser] = await Promise.all([
@@ -191,7 +191,7 @@ export const router = _router({
       z.object({
         target: zodHandle,
         type: zodRelationType,
-      }),
+      })
     )
     .mutation(async ({ input, ctx }) => {
       const [fromUser, targetUser] = await Promise.all([

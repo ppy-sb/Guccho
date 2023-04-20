@@ -10,7 +10,7 @@ export const router = _router({
     .input(
       z.object({
         id: string(),
-      }),
+      })
     )
     .query(async ({ input }) => {
       const score = await s.id(s.stringToScoreId(input.id))

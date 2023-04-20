@@ -28,7 +28,7 @@ export const router = _router({
     .input(
       object({
         handle: zodHandle,
-      }),
+      })
     )
     .query(async ({ input: { handle } }) => {
       return userProvider.exists({ handle })
@@ -37,7 +37,7 @@ export const router = _router({
     .input(
       object({
         handle: zodHandle,
-      }),
+      })
     )
     .query(async ({ input: { handle } }) => {
       const user = await userProvider.getFull({
@@ -50,7 +50,7 @@ export const router = _router({
     .input(
       object({
         handle: zodHandle,
-      }),
+      })
     )
     .query(async ({ input: { handle } }) => {
       const user = await userProvider.getFull({
@@ -68,7 +68,7 @@ export const router = _router({
         rankingSystem: zodLeaderboardRankingSystem,
         page: number().gte(0).lt(10),
         includes: array(zodRankingStatus).default(['ranked', 'loved', 'approved']),
-      }),
+      })
     )
     .query(async ({ input }) => {
       const user = await userProvider.getEssential({ handle: input.handle })
@@ -107,7 +107,7 @@ export const router = _router({
         rankingSystem: zodLeaderboardRankingSystem,
         page: number().gte(0).lt(10),
         includes: array(zodRankingStatus).default(['ranked', 'loved', 'approved']),
-      }),
+      })
     )
     .query(async ({ input }) => {
       const user = await userProvider.getEssential({ handle: input.handle })
@@ -141,7 +141,7 @@ export const router = _router({
     .input(
       object({
         handle: zodHandle,
-      }),
+      })
     )
     .query(async ({ input }) => {
       const user = await userProvider.getEssential({ handle: input.handle })
@@ -153,7 +153,7 @@ export const router = _router({
       object({
         handle: zodHandle,
         type: zodRelationType,
-      }),
+      })
     )
     .query(async ({ input: { handle, type } }) => {
       const user = await userProvider.getEssential({ handle })

@@ -13,7 +13,7 @@ export const router = _router({
       z.object({
         keyword: z.string(),
         limit: z.number().optional().default(10),
-      }),
+      })
     )
     .query(async ({ input: { keyword, limit } }) => {
       const users = await user.search({
@@ -29,7 +29,7 @@ export const router = _router({
         keyword: z.string(),
         limit: z.number().optional().default(5),
         filters: z.array(zodSearchBeatmap).optional(),
-      }),
+      })
     )
     .query(async ({ input: { keyword, limit, filters } }) => {
       const beatmaps = await map.searchBeatmap({
@@ -46,7 +46,7 @@ export const router = _router({
         keyword: z.string(),
         limit: z.number().optional().default(5),
         filters: z.array(zodSearchBeatmap).optional(),
-      }),
+      })
     )
     .query(async ({ input: { keyword, limit, filters } }) => {
       const beatmapsets = await map.searchBeatmapset({
