@@ -9,7 +9,7 @@ definePageMeta({
     <div class="pt-20" />
     <t-nuxt-link-button
       :to="{
-        name: 'admin-article',
+        name: 'article-edit',
       }"
     >
       articles

@@ -101,7 +101,7 @@ async function userRegisterAction() {
     class="flex items-center justify-center px-4 py-12 my-auto sm:px-6 lg:px-8"
   >
     <div
-      class="relative w-full max-w-md p-6 overflow-hidden shadow-2xl space-y-8 bg-gbase-200/30 dark:bg-gbase-800 rounded-3xl"
+      class="half-box"
     >
       <fetch-overlay :fetching="fetching" />
 
@@ -219,6 +219,16 @@ async function userRegisterAction() {
 
 <style lang="postcss" scoped>
 .auth-error-text {
-  @apply text-red-500 text-sm font-medium mb-2;
+  @apply text-red-500 text-sm font-medium;
+}
+
+.half-box {
+  @apply relative w-full max-w-md p-6 overflow-hidden space-y-8 rounded-3xl;
+  &::before {
+    content: "";
+    @apply absolute left-0 top-0 right-0 bottom-0;
+    @apply bg-gradient-to-t from-gbase-500/5 to-transparent rounded-3xl;
+    @apply blur-sm -z-10;
+  }
 }
 </style>

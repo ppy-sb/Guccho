@@ -7,28 +7,37 @@ import type { UserEssential, UserPrivilegeString } from '~/types/user'
 import useEditorExtensions from '~/composables/useEditorExtensions'
 import { UserRelationProvider } from '$active/server'
 
-export type AccessPrivilege = UserPrivilegeString | 'self'
-export interface Content<ownerId = any> {
+export type Access = 'staff' | 'moderator' | 'beatmapNominator'
+export type ReadAccess = Access | 'public'
+
+export interface Content {
   json: JSONContent
   html: string
-
-  privilege?: {
-    read?: AccessPrivilege[]
-    delete?: AccessPrivilege[]
-    write?: AccessPrivilege[]
+}
+export interface ContentPrivilege<ownerId = any> extends Content {
+  privilege: {
+    read: ReadAccess[]
+    write: Access[]
   }
   owner?: ownerId
 }
 
-const defaultContentPrivilege: NonNullable<Content['privilege']> = {
-  delete: ['staff', 'self'],
-  write: ['staff', 'self'],
+export interface AccessControl {
+  access: {
+    read: boolean
+    write: boolean
+  }
+}
+
+const defaultContentPrivilege: ContentPrivilege['privilege'] = {
+  read: ['public'],
+  write: ['staff'],
 }
 
 export abstract class ArticleProvider {
   relation = new UserRelationProvider()
   articles = resolve('articles')
-  fallbacks = new Map<string, Content>()
+  fallbacks = new Map<string, Content & ContentPrivilege>()
   constructor() {
     this.initFallbacks()
   }
@@ -52,11 +61,12 @@ export abstract class ArticleProvider {
     slug: string
     fallback: boolean
     user: UserEssential<any>
-  }): Promise<Content | undefined>
+  }): Promise<(ContentPrivilege & Content & AccessControl) | undefined>
+
   abstract save(opt: {
     slug: string
     content: JSONContent
-    access: Content['privilege']
+    privilege: ContentPrivilege['privilege']
     user: UserEssential<any>
   }): Promise<void>
 
@@ -64,21 +74,10 @@ export abstract class ArticleProvider {
     slug: string
     fallback?: boolean
     user?: UserEssential<any>
-  }): Promise<Content | undefined> {
+  }): Promise<(ContentPrivilege & Content) | undefined> {
     const content = await this.getLocalArticleData(opt)
     if (!content) {
       return undefined
-    }
-    if (
-      !(await this.checkPrivilege(
-        'read',
-        Object.assign(content, {
-          privilege: { ...defaultContentPrivilege, ...content.privilege },
-        }),
-        opt.user,
-      ))
-    ) {
-      throw new Error('insufficient privilege')
     }
     return content
   }
@@ -112,7 +111,7 @@ export abstract class ArticleProvider {
     }
   }
 
-  protected serialize(content: Content) {
+  protected serialize(content: Content & ContentPrivilege) {
     return BSON.serialize(content)
   }
 
@@ -122,7 +121,7 @@ export abstract class ArticleProvider {
     if (!succeed) {
       throw new Error('unable to deserialize content')
     }
-    return content as Content
+    return content as ContentPrivilege & Content
   }
 
   async saveLocal({
@@ -133,14 +132,18 @@ export abstract class ArticleProvider {
   }: {
     slug: string
     content: JSONContent
-    privilege?: Content['privilege']
+    privilege: ContentPrivilege['privilege']
     user: UserEssential<any>
   }): Promise<void> {
     if (!user.roles.find(role => ['admin', 'owner'].includes(role))) {
       throw new Error('you have insufficient privilege to edit this article')
     }
     const loc = join(this.articles, slug)
-    const _content = this.createContent({ json: content, privilege, owner: user.id })
+    const _content = this.createContent({
+      json: content,
+      privilege,
+      owner: user.id,
+    })
     await fs.writeFile(loc, this.serialize(_content))
   }
 
@@ -170,11 +173,11 @@ export abstract class ArticleProvider {
 
   createContent(opt: {
     json: JSONContent
-    privilege?: Content['privilege']
+    privilege?: ContentPrivilege['privilege']
     owner: any
   }) {
     const { json, privilege, owner } = opt
-    return <Content>{
+    return <ContentPrivilege>{
       json,
       html: this.render(json),
       privilege: {
@@ -186,18 +189,28 @@ export abstract class ArticleProvider {
   }
 
   async checkPrivilege(
-    access: 'read' | 'write' | 'delete',
-    content: Content,
-    user?: { id: any; roles: UserPrivilegeString[] },
+    access: 'read' | 'write',
+    content: ContentPrivilege,
+    user?: { id: unknown; roles: UserPrivilegeString[] },
   ) {
     const privRequired = content.privilege?.[access]
-    if (!privRequired) {
+
+    // legacy optional read
+    if (!privRequired && access === 'read') {
       return true
     }
-    return user && (
-      (privRequired.includes('self') && user.id === content.owner)
-      || (privRequired as UserPrivilegeString[]).some(priv => user.roles.includes(priv))
-      // || (privRequired.includes('friends') && (await this.relation.getOne(user, { id: content.owner })))
+    if (!privRequired) {
+      return false
+    }
+    return (
+      (access === 'read' && content.privilege?.read.includes('public'))
+      || (user
+        && (
+          (user.id === content.owner)
+          || (privRequired).some(priv => user.roles.includes(priv as any))
+        )
+      )
+      || false
     )
   }
 }

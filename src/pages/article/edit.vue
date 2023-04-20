@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import { useSession } from '~/store/session'
 import type Editor from '~/components/editor/index.client.vue'
-import type { AccessPrivilege, Content } from '$def/server/article'
+import type { Access, ContentPrivilege, ReadAccess } from '$def/server/article'
 
 definePageMeta({
   middleware: ['auth', 'admin'],
 })
-const session = useSession()
+
 const slug = shallowRef('')
 const app$ = useNuxtApp()
 const importArticleFile = shallowRef<HTMLInputElement | null>(null)
@@ -16,25 +15,10 @@ const {
 } = await useAsyncData(async () => slug.value ? app$.$client.article.get.query(slug.value) : undefined)
 const editor = shallowRef<InstanceType<typeof Editor> | null>(null)
 const editing = shallowRef({ ...content.value?.json })
-async function save() {
-  await app$.$client.article.save.mutate({
-    slug: slug.value,
-    content: editing.value,
-  })
-}
-async function del() {
-  // eslint-disable-next-line no-alert
-  const conf = confirm('are you sure? you cannot revert this process.')
-  if (!conf) {
-    return
-  }
-  await app$.$client.article.delete.mutate({
-    slug: slug.value,
-  })
-}
-const privilege = ref<NonNullable<Content['privilege']>>({
-  write: ['self', 'staff'],
-  delete: ['self', 'staff'],
+
+const privilege = ref<NonNullable<ContentPrivilege['privilege']>>({
+  read: ['public'],
+  write: ['staff'],
 })
 async function update() {
   await refresh()
@@ -61,8 +45,8 @@ async function importArticle() {
   const data = new Uint8Array(await file.arrayBuffer())
   const decode = new TextDecoder('utf-8')
   const json = JSON.parse(decode.decode(data)) as {
-    json: Content['json']
-    privilege: NonNullable<Content['privilege']>
+    json: ContentPrivilege['json']
+    privilege: NonNullable<ContentPrivilege['privilege']>
   }
   editing.value = json.json
   privilege.value = json.privilege
@@ -70,20 +54,34 @@ async function importArticle() {
   editor.value?.reload()
 }
 
-const privileges: Partial<Record<AccessPrivilege, string>> = {
-  self: `me ${session.user && `(@${session.user.safeName})`}`,
+const privileges: Partial<Record<Access, string>> = {
   staff: 'Admin',
   moderator: 'Moderator',
   beatmapNominator: 'BN',
 }
-const options = Object.entries(privileges)
-  .map(([value, label]) => ({ label, value, disabled: value === 'self' }))
+const readPriv: Partial<Record<ReadAccess, string>> = Object.assign(privileges, { public: 'public' })
 
-function resetRead(e: Event) {
-  // @ts-expect-error checkbox event
-  if (!e.target?.checked) {
-    privilege.value.read = undefined
+function options(priv: typeof privileges | typeof readPriv) {
+  return Object.entries(priv)
+    .map(([value, label]) => ({ label, value }))
+}
+
+async function save() {
+  await app$.$client.article.save.mutate({
+    slug: slug.value,
+    content: editing.value,
+    privilege: privilege.value,
+  })
+}
+async function del() {
+  // eslint-disable-next-line no-alert
+  const conf = confirm('are you sure? you cannot revert this process.')
+  if (!conf) {
+    return
   }
+  await app$.$client.article.delete.mutate({
+    slug: slug.value,
+  })
 }
 </script>
 
@@ -94,13 +92,15 @@ function resetRead(e: Event) {
       <button class="btn btn-sm btn-info" @click="() => update()">
         Load
       </button>
-      <button class="btn btn-sm btn-success" @click="() => save()">
-        Save
-      </button>
-      <div class="divider divider-horizontal" />
-      <button class="btn btn-sm btn-error" @click="() => del()">
-        Delete
-      </button>
+      <template v-if="content?.access.write">
+        <button class="btn btn-sm btn-success" @click="() => save()">
+          Save
+        </button>
+        <div class="divider divider-horizontal" />
+        <button class="btn btn-sm btn-error" @click="() => del()">
+          Delete
+        </button>
+      </template>
       <div class="divider divider-horizontal" />
       <button class="btn btn-sm btn-secondary" @click="exportArticle">
         Export
@@ -113,24 +113,12 @@ function resetRead(e: Event) {
     <label class="label text-lg px-0">privileges</label>
     <form class="flex flex-col md:flex-row gap-3 flex-wrap">
       <div class="form-control">
-        <div class="flex gap-1 items-center">
-          <input
-            :model-value="!!privilege.read"
-            type="checkbox"
-            class="checkbox checkbox-sm"
-            @change="resetRead"
-          >
-          <label class="label">limit read</label>
-        </div>
-        <t-multi-select size="sm" :options="options" :model-value="privilege.read" />
+        <label class="label">read*</label>
+        <t-multi-select v-model="privilege.read" size="sm" :options="options(readPriv)" />
       </div>
       <div class="form-control">
         <label class="label">write*</label>
-        <t-multi-select size="sm" :options="options" :model-value="privilege.write" />
-      </div>
-      <div class="form-control">
-        <label class="label">delete*</label>
-        <t-multi-select size="sm" :options="options" :model-value="privilege.delete" />
+        <t-multi-select v-model="privilege.write" size="sm" :options="options(privileges)" />
       </div>
     </form>
     <lazy-editor ref="editor" v-model="editing" class="safari-performance-boost mt-2" />

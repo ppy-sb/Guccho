@@ -25,7 +25,7 @@ export const sessionProcedure = publicProcedure
       return await next({
         ctx: Object.assign(ctx, {
           session: {
-            id: ctx.session.id,
+            id: sessionId,
           },
         }),
       })
@@ -45,7 +45,7 @@ export const sessionProcedure = publicProcedure
       return await next({
         ctx: Object.assign(ctx, {
           session: {
-            id: ctx.session.id,
+            id: refreshed,
           },
         }),
       })
@@ -53,12 +53,10 @@ export const sessionProcedure = publicProcedure
   })
   .use(async ({ ctx, next }) => {
     return await next({
-      ctx: {
-        ...ctx,
+      ctx: Object.assign(ctx, {
         session: Object.assign(ctx.session, {
-          async getBinding<Additional extends Record<string, any>>() {
-            type _ReturnType = Awaited<ReturnType<typeof getSession>> &
-            Partial<Additional>
+          async getBinding<Additional extends Record<string, unknown>>() {
+            type _ReturnType = Awaited<ReturnType<typeof getSession>> & Partial<Additional>
             if (!ctx.session.id) {
               return null
             }
@@ -67,6 +65,6 @@ export const sessionProcedure = publicProcedure
             }
           },
         }),
-      },
+      }),
     })
   })

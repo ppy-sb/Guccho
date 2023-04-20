@@ -9,31 +9,28 @@ import {
 
 interface Option {
   label: string | number
-  value: any
-  disabled: boolean
+  value: unknown
+  disabled?: boolean
 }
 const props = defineProps<{
   size?: 'xs' | 'sm' | 'lg'
   options: Option[]
-  modelValue?: Option['value']
+  modelValue?: Option['value'][]
 }>()
 const e = defineEmits<{
-  (e: 'update:modelValue', value: Option): void
+  (e: 'update:modelValue', value: Option[]): void
 }>()
 function reset() {
-  return props.modelValue?.map((v: any) => props.options.find(opt => opt.value === v))
+  return props.modelValue?.map((v: unknown) => props.options.find(opt => opt.value === v)).filter(TSFilter) || []
 }
-const selected = shallowRef(reset() || [])
-watch(() => props.modelValue, () => {
-  selected.value = props.modelValue?.map((v: any) => props.options.find(opt => opt.value === v)) || []
-})
+const selected = computed(() => reset())
 </script>
 
 <template>
-  <Listbox v-model="selected" multiple @update:model-value="(value) => e('update:modelValue', value.map((v: Option) => v.value))">
+  <Listbox :model-value="selected" multiple @update:model-value="(value) => e('update:modelValue', value.map((v: Option) => v.value))">
     <div class="relative">
       <ListboxButton class="select" :class="[props.size && `select-${props.size}`]">
-        <div v-if="selected.length" class="flex gap-2">
+        <div v-if="selected.length" class="flex gap-3">
           <span v-for="s in selected" :key="s.label" selected class="_item">
             {{ s.label }}
           </span>
@@ -47,7 +44,7 @@ watch(() => props.modelValue, () => {
         leave-to-class="opacity-0"
       >
         <ListboxOptions
-          class="absolute z-50 mt-2 menu menu-compact bg-gbase-100/80 backdrop-blur"
+          class="absolute z-50 mt-1 menu menu-compact bg-gbase-100/80 backdrop-blur shadow"
           :class="[
             props.size === 'sm' || props.size === 'xs' ? 'rounded-xl' : 'rounded-box',
           ]"
@@ -79,10 +76,10 @@ watch(() => props.modelValue, () => {
   &::before {
     content: '';
     position: absolute;
-    top: 30%;
-    bottom: 20%;
-    margin-left: -0.3rem;
-    @apply border-l-2 border-gbase-500
+    top: 40%;
+    bottom: 30%;
+    margin-left: -0.45rem;
+    @apply border-l-[1px] border-base-content
   }
 }
 </style>

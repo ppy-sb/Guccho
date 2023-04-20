@@ -154,17 +154,20 @@ async function logout() {
           strategy="fixed"
         >
           <button
-            v-if="session.$state.loggedIn"
             class="btn btn-ghost btn-circle"
             @click="shownMenu.user = true"
           >
             <div class="indicator avatar">
-              <img
-                :src="session.$state.user?.avatarSrc"
-                class="rounded-full avatar-img ring ring-gbase-600/70 ring-offset-gbase-100 ring-offset-2 pointer-events-none"
-                alt=""
+              <template
+                v-if="session.loggedIn"
               >
-              <span class="badge badge-xs badge-success indicator-item" />
+                <img
+                  :src="session.$state.user?.avatarSrc"
+                  class="rounded-full avatar-img ring ring-gbase-600/70 ring-offset-gbase-100 ring-offset-2 pointer-events-none"
+                  alt=""
+                >
+                <span class="badge badge-xs badge-success indicator-item" />
+              </template>
             </div>
           </button>
           <template #popper>
@@ -173,49 +176,63 @@ async function logout() {
                 tabindex="0"
                 class="right-0 p-2 mt-2 shadow-xl menu menu-compact dropdown-content rounded-br-2xl rounded-bl-2xl w-52"
               >
-                <li>
-                  <nuxt-link
-                    :to="{
-                      name: 'me-settings',
-                    }"
-                  >
-                    Settings
-                  </nuxt-link>
-                </li>
-                <li>
-                  <nuxt-link
-                    :to="{
-                      name: 'me-relations',
-                    }"
-                  >
-                    Friends & Blocks
-                  </nuxt-link>
-                </li>
-                <li>
-                  <nuxt-link
-                    :to="{
-                      name: 'user-handle',
-                      params: {
-                        handle: session.$state.userId || 0,
-                      },
-                    }"
-                  >
-                    My Profile
-                  </nuxt-link>
-                </li>
-                <li>
-                  <nuxt-link
-                    v-if="session.$state.privilege.staff"
-                    :to="{
-                      name: 'admin',
-                    }"
-                  >
-                    Admin Panel
-                  </nuxt-link>
-                </li>
-                <li>
-                  <a href="#" @click="logout">log out</a>
-                </li>
+                <template v-if="session.loggedIn">
+                  <li>
+                    <nuxt-link
+                      :to="{
+                        name: 'me-settings',
+                      }"
+                    >
+                      Settings
+                    </nuxt-link>
+                  </li>
+                  <li>
+                    <nuxt-link
+                      :to="{
+                        name: 'me-relations',
+                      }"
+                    >
+                      Friends & Blocks
+                    </nuxt-link>
+                  </li>
+                  <li>
+                    <nuxt-link
+                      :to="{
+                        name: 'user-handle',
+                        params: {
+                          handle: session.$state.userId || 0,
+                        },
+                      }"
+                    >
+                      My Profile
+                    </nuxt-link>
+                  </li>
+                  <li>
+                    <nuxt-link
+                      v-if="session.$state.privilege.staff"
+                      :to="{
+                        name: 'admin',
+                      }"
+                    >
+                      Admin Panel
+                    </nuxt-link>
+                  </li>
+                  <li>
+                    <a href="#" @click="logout">log out</a>
+                  </li>
+                </template>
+                <template v-else>
+                  <li>
+                    <nuxt-link :to="{ name: 'auth-login' }">
+                      Login
+                    </nuxt-link>
+                  </li>
+                  <li>
+                    <nuxt-link :to="{ name: 'auth-register' }">
+                      Register
+                    </nuxt-link>
+                  </li>
+                </template>
               </ul>
             </div>
           </template>
