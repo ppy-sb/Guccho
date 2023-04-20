@@ -6,7 +6,7 @@ definePageMeta({
   middleware: ['auth', 'admin'],
 })
 
-const slug = shallowRef('')
+const slug = shallowRef<string>()
 const app$ = useNuxtApp()
 const importArticleFile = shallowRef<HTMLInputElement | null>(null)
 const {
@@ -67,6 +67,9 @@ function options(priv: typeof privileges | typeof readPriv) {
 }
 
 async function save() {
+  if (!slug.value) {
+    return
+  }
   await app$.$client.article.save.mutate({
     slug: slug.value,
     content: editing.value,
@@ -74,6 +77,9 @@ async function save() {
   })
 }
 async function del() {
+  if (!slug.value) {
+    return
+  }
   // eslint-disable-next-line no-alert
   const conf = confirm('are you sure? you cannot revert this process.')
   if (!conf) {
@@ -88,7 +94,11 @@ async function del() {
 <template>
   <section class="container pt-20 pb-8 mx-auto custom-container lg:px-2">
     <div class="flex gap-2 items-baseline">
-      Editing: <input v-model="slug" type="text" class="input input-sm shadow-lg">
+      Editing: <input
+        v-model="slug" type="text" class="input input-sm shadow-lg" :class="{
+          'input-error': !slug,
+        }"
+      >
       <button class="btn btn-sm btn-info" @click="() => update()">
         Load
       </button>
@@ -110,17 +120,16 @@ async function del() {
         Export
       </button>
     </div>
-    <label class="label text-lg px-0">Privileges</label>
-    <form class="flex flex-col md:flex-row gap-3 flex-wrap">
-      <div class="form-control">
-        <label class="label">Read*</label>
+    <div class="flex flex-col md:flex-row gap-3 flex-wrap mt-2">
+      <div class="form-control flex-row items-baseline gap-2">
+        <label class="label pl-0">Read</label>
         <t-multi-select v-model="privilege.read" size="sm" :options="options(readPriv)" />
       </div>
-      <div class="form-control">
-        <label class="label">Write*</label>
+      <div class="form-control  flex-row items-baseline gap-2">
+        <label class="label">Write</label>
         <t-multi-select v-model="privilege.write" size="sm" :options="options(privileges)" />
       </div>
-    </form>
+    </div>
     <lazy-editor ref="editor" v-model="editing" class="safari-performance-boost mt-2" />
   </section>
 </template>
