@@ -22,8 +22,13 @@ const privilege = ref<NonNullable<ContentPrivilege['privilege']>>({
 })
 async function update() {
   await refresh()
-  editing.value = content.value?.json || {}
+  if (!content.value) {
+    return
+  }
+  editing.value = content.value.json || {}
   editor.value?.reload()
+
+  privilege.value = content.value.privilege
 }
 function exportArticle() {
   const file = new File([JSON.stringify({
@@ -130,6 +135,6 @@ async function del() {
         <t-multi-select v-model="privilege.write" size="sm" :options="options(privileges)" />
       </div>
     </div>
-    <lazy-editor ref="editor" v-model="editing" class="safari-performance-boost mt-2" />
+    <lazy-editor v-if="content?.json" ref="editor" v-model="editing" class="safari-performance-boost mt-2" />
   </section>
 </template>
