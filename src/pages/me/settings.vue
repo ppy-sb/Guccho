@@ -134,7 +134,7 @@ async function updateUserSettings() {
   profile.value = profileResult.raw
 }
 
-const changePasswordForm = reactive<{
+const changePasswordForm = shallowReactive<{
   oldPassword?: string
   newPassword?: string
   repeatNewPassword?: string

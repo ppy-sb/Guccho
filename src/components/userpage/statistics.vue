@@ -29,7 +29,7 @@ const scoreFmtCompact = createScoreFormatter({
   maximumFractionDigits: 2,
 })
 const scoreFmt = createScoreFormatter({ notation: undefined })
-const deferredRender = reactive({ ...data.value })
+const deferredRender = shallowReactive({ ...data.value })
 const playTime = computed(() =>
   deferredRender
     ? toDuration(new Date((deferredRender.playTime || 0) * 1000), new Date(0))

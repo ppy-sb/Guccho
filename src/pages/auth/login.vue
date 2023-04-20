@@ -20,7 +20,7 @@ const error = shallowRef('')
 
 const registerButton = shallowRef<string>('Do not have an account?')
 
-const login = reactive<{
+const login = shallowReactive<{
   user: string
   password: string
 }>({

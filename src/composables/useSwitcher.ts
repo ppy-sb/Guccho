@@ -23,7 +23,7 @@ export function useLeaderboardSwitcher(
     hasLeaderboardRankingSystem,
     hasRuleset,
   } = useAdapterConfig()
-  const data = reactive({
+  const data = shallowReactive({
     mode: mode || supportedModes[0],
     ruleset: ruleset || supportedRulesets[0],
     rankingSystem: rankingSystem || 'ppv2',
@@ -76,7 +76,7 @@ export function useSwitcher(initial?: SwitcherPropType<RankingSystem>) {
     hasRankingSystem,
     hasRuleset,
   } = useAdapterConfig()
-  const data = reactive({
+  const data = shallowReactive({
     mode: mode || supportedModes[0],
     ruleset: ruleset || supportedRulesets[0],
     rankingSystem: rankingSystem || 'ppv2',

@@ -14,13 +14,13 @@ const emit = defineEmits<{
 const app = useAppConfig()
 const { hasRankingSystem, hasRuleset } = useAdapterConfig()
 
-const show = computed(() => {
-  return rankingSystems.filter(
+const show = computed(() =>
+  rankingSystems.filter(
     rs =>
       hasRuleset(props.mode, props.ruleset)
       && hasRankingSystem(props.mode, props.ruleset, rs),
-  )
-})
+  ),
+)
 defineExpose({
   rankingSystems: show,
 })

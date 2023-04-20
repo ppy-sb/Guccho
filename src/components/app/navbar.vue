@@ -35,7 +35,7 @@ const detached = shallowRef(false)
 watch(scrollY, () => (detached.value = scrollY.value > 0))
 const root = shallowRef<HTMLElement>()
 
-const shownMenu = reactive({
+const shownMenu = shallowReactive({
   left: false,
   right: false,
   user: false,

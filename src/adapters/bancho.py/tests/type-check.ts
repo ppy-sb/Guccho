@@ -74,8 +74,6 @@ interface ShouldMatch {
   rulesets: typeof BaseRulesets
 }
 
-// @ts-expect-error namespace type check
-
 interface ActiveNameSpace extends ShouldMatch {
   // idToString: typeof idToString
   // stringToId: typeof stringToId

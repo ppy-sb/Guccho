@@ -21,7 +21,7 @@ const props = withDefaults(
 )
 const emit = defineEmits(['update:modelValue'])
 
-const editorConf = reactive({
+const editorConf = shallowReactive({
   indent: props.indent,
 })
 const context = useEditor(editorConf)

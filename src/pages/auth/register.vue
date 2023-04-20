@@ -10,8 +10,8 @@ const shape = {
   email: '',
   password: '',
 }
-const reg = reactive({ ...shape })
-const error = reactive({ ...shape })
+const reg = shallowReactive({ ...shape })
+const error = shallowReactive({ ...shape })
 // const serverError = shallowRef('')
 const fetching = shallowRef(false)
 const config = useAppConfig()
