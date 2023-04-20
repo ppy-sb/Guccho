@@ -102,22 +102,22 @@ async function del() {
         </button>
       </template>
       <div class="divider divider-horizontal" />
-      <button class="btn btn-sm btn-secondary" @click="exportArticle">
-        Export
-      </button>
       <input ref="importArticleFile" type="file" hidden @change="importArticle">
       <button class="btn btn-sm btn-primary" @click="importArticleFile?.click">
         Import
       </button>
+      <button class="btn btn-sm btn-secondary" @click="exportArticle">
+        Export
+      </button>
     </div>
-    <label class="label text-lg px-0">privileges</label>
+    <label class="label text-lg px-0">Privileges</label>
     <form class="flex flex-col md:flex-row gap-3 flex-wrap">
       <div class="form-control">
-        <label class="label">read*</label>
+        <label class="label">Read*</label>
         <t-multi-select v-model="privilege.read" size="sm" :options="options(readPriv)" />
       </div>
       <div class="form-control">
-        <label class="label">write*</label>
+        <label class="label">Write*</label>
         <t-multi-select v-model="privilege.write" size="sm" :options="options(privileges)" />
       </div>
     </form>
