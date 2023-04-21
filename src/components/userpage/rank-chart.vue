@@ -127,7 +127,7 @@ const countryRank = {
                   Global Rank:
                 </dt>
                 <dd class="self-end text-5xl">
-                  <Roller
+                  <!-- <Roller
                     :char-set="chars"
                     :value="
                       update
@@ -136,7 +136,7 @@ const countryRank = {
                         )}`
                         : ' '
                     "
-                  />
+                  /> -->
                 </dd>
               </div>
             </dl>
@@ -154,7 +154,7 @@ const countryRank = {
                   Country Rank:
                 </dt>
                 <dd class="ml-20 text-3xl">
-                  <Roller
+                  <!-- <Roller
                     :char-set="chars"
                     :value="
                       update
@@ -163,7 +163,7 @@ const countryRank = {
                         )}`
                         : ' '
                     "
-                  />
+                  /> -->
                 </dd>
               </div>
             </dl>
