@@ -74,8 +74,7 @@ interface ShouldMatch {
   rulesets: typeof BaseRulesets
 }
 
-// eslint-disable-next-line unused-imports/no-unused-vars
-interface ActiveNameSpace extends ShouldMatch {
+export interface ActiveNameSpace extends ShouldMatch {
   // idToString: typeof idToString
   // stringToId: typeof stringToId
   // scoreIdToString: typeof scoreIdToString

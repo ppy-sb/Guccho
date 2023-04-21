@@ -19,9 +19,6 @@
     "allowJs": true,
     "strictNullChecks": true,
     "strictFunctionTypes": true,
-    "types": [
-      "./src/types/good-to-have.d.ts"
-    ]
   },
   "exclude": [
     "node_modules",
