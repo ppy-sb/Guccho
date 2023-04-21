@@ -18,7 +18,14 @@
     "resolveJsonModule": true,
     "allowJs": true,
     "strictNullChecks": true,
-    "strictFunctionTypes": true
+    "strictFunctionTypes": true,
+    "types": [
+      "./src/types/good-to-have.d.ts"
+    ]
   },
-  "exclude": ["node_modules", "dist", ".prisma"]
+  "exclude": [
+    "node_modules",
+    "dist",
+    ".prisma"
+  ]
 }

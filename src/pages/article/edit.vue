@@ -67,8 +67,7 @@ const privileges: Partial<Record<Access, string>> = {
 const readPriv: Partial<Record<ReadAccess, string>> = Object.assign(privileges, { public: 'public' })
 
 function options(priv: typeof privileges | typeof readPriv) {
-  return Object.entries(priv)
-    .map(([value, label]) => ({ label, value }))
+  return Object.entries(priv).map(([value, label]) => ({ label, value }))
 }
 
 async function save() {

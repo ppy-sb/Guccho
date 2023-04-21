@@ -27,7 +27,7 @@ const app$ = useNuxtApp()
 const page = userpageStore()
 
 let prevSwitcherState = {
-  ...page.switcher,
+  ...page.switcher as UnwrapShallowReactive<typeof page['switcher']>,
 }
 function stabilizeScoreRank(rankingSystem: LeaderboardRankingSystem) {
   if (
@@ -260,41 +260,3 @@ const nextTop = nextPage.bind(null, topPage)
     </div>
   </template>
 </template>
-
-<style scoped lang="postcss">
-.left-move,
-.right-move,
-/* apply transition to moving elements */
-.left-enter-active,
-.right-enter-active,
-.left-leave-active,
-.right-leave-active {
-  transition: all 0.25s ease;
-}
-
-.left-enter-from,
-.right-enter-from,
-.left-leave-to,
-.right-leave-to {
-  filter: opacity(0) blur(2px);
-}
-.left-enter-from {
-  transform: translateX(-2%);
-}
-.left-leave-to {
-  transform: translateX(2%);
-}
-.right-enter-from {
-  transform: translateX(2%);
-}
-.right-leave-to {
-  transform: translateX(-2%);
-}
-
-/* ensure leaving items are taken out of layout flow so that moving
-   animations can be calculated correctly. */
-.left-leave-active,
-.right-leave-active {
-  @apply absolute left-0 right-0 -z-10;
-}
-</style>

@@ -10,14 +10,15 @@ const tagOperators = {
   eq: '=',
   ne: '!=',
 }
-const compareOperators: Record<OP, string> = {
+const compareOperators = {
   eq: '=',
   ne: '!=',
   lte: '<',
   lt: '<=',
   gte: '>=',
   gt: '>',
-}
+} as const satisfies Record<OP, string>
+
 const queryable = {
   bpm: ['bpm'],
   starRating: ['star', 'sr', 'starRating'],
@@ -26,17 +27,7 @@ const queryable = {
   accuracy: ['od', 'accuracy', 'overallDifficulty'],
   hpDrain: ['hp', 'hpDrain'],
   length: ['length', 'time', 'len'],
-}
-function tag<T extends keyof typeof taggable, K extends (typeof taggable)[T][number]>(key: T, op: keyof typeof tagOperators, value: K) {
-  const t = [key, op, value] as [T, typeof op, K]
-  t.toString = () => `<b>${key}</b> ${tagOperators[op]} <b>${value}</b>`
-  return t
-}
-function query<T extends keyof typeof queryable, K>(key: T, op: keyof typeof compareOperators, value: K) {
-  const t = [key, op, value] as [T, OP, K]
-  t.toString = () => `<b>${key}</b> ${compareOperators[op]} <b>${value}</b>`
-  return t
-}
+} as const
 
 export default async function () {
   const app = useNuxtApp()
@@ -44,7 +35,7 @@ export default async function () {
   const keyword = shallowRef('')
   const lastKw = shallowRef('')
   const tags = ref<Tag[]>([])
-  const includes = reactive({
+  const includes = shallowReactive({
     beatmaps: true,
     beatmapsets: true,
     users: true,
@@ -160,7 +151,7 @@ export default async function () {
         }
         let field: keyof typeof queryable
         for (field in queryable) {
-          const keywords = queryable[field]
+          const keywords: readonly string[] = queryable[field]
           if (!keywords.includes(left)) {
             continue
           }
@@ -206,7 +197,7 @@ export default async function () {
 
   watch(tags, () => raw(), { deep: true })
 
-  const loading = reactive({
+  const loading = shallowReactive({
     users: pendingUsers,
     beatmaps: pendingBeatmaps,
     beatmapsets: pendingBeatmapsets,
@@ -236,4 +227,15 @@ export default async function () {
     keyword,
     tags,
   }
+}
+
+function tag<T extends keyof typeof taggable, K extends (typeof taggable)[T][number]>(key: T, op: keyof typeof tagOperators, value: K) {
+  const t = [key, op, value] as [T, typeof op, K]
+  t.toString = () => `<b>${key}</b> ${tagOperators[op]} <b>${value}</b>`
+  return t
+}
+function query<T extends keyof typeof queryable, K>(key: T, op: keyof typeof compareOperators, value: K) {
+  const t = [key, op, value] as [T, OP, K]
+  t.toString = () => `<b>${key}</b> ${compareOperators[op]} <b>${value}</b>`
+  return t
 }

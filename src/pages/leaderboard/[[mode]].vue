@@ -97,6 +97,7 @@ function reloadPage(i?: number) {
   if (i) {
     page.value = i
   }
+  table.value && (table.value.length = 0)
   rewriteHistory()
   refresh()
 }
@@ -125,80 +126,90 @@ function reloadPage(i?: number) {
     </header-simple-title-with-sub>
     <div
       v-if="table"
-      class="container flex mx-auto grow"
+      class="container flex flex-col mx-auto grow"
       :class="{
         content: table.length,
       }"
     >
-      <fetch-overlay :fetching="pending" />
-      <template v-if="table.length">
-        <div class="relative mx-auto overflow-hidden xl:rounded-lg">
-          <div class="px-8 pt-2">
-            <div class="relative overflow-x-auto">
-              <table
-                class="table table-compact w-full border-separate whitespace-nowrap"
-              >
-                <thead class="rounded-lg">
-                  <tr>
-                    <th>rank</th>
-                    <th>flag</th>
-                    <th>player</th>
-                    <th class="px-4 font-semibold text-center">
-                      {{
-                        config.overallRankingSystem[selected.rankingSystem].name
-                      }}
-                    </th>
-                    <th class="px-4 font-medium text-center">
-                      Accuracy
-                    </th>
-                    <th class="px-4 font-medium text-center">
-                      Play Count
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <template v-if="!pending">
-                    <leaderboard-user-table
-                      v-for="(item, index) in table"
-                      :key="index"
-                      :user="item.user"
-                      :in-this-leaderboard="item.inThisLeaderboard"
-                      :sort="selected.rankingSystem"
-                    />
-                  </template>
-                  <template v-else>
+      <!-- <fetch-overlay :fetching="pending" /> -->
+
+      <div v-if="table.length" class="relative mx-auto overflow-hidden xl:rounded-lg">
+        <div class="px-8 pt-2">
+          <div class="relative overflow-x-auto">
+            <table
+              class="table table-compact w-full border-separate whitespace-nowrap"
+            >
+              <thead class="rounded-lg">
+                <tr>
+                  <th>rank</th>
+                  <th>flag</th>
+                  <th>player</th>
+                  <th class="px-4 font-semibold text-center">
+                    {{
+                      config.overallRankingSystem[selected.rankingSystem].name
+                    }}
+                  </th>
+                  <th class="px-4 font-medium text-center">
+                    Accuracy
+                  </th>
+                  <th class="px-4 font-medium text-center">
+                    Play Count
+                  </th>
+                </tr>
+              </thead>
+              <transition name="slide">
+                <tbody v-if="!pending">
+                  <leaderboard-user-table
+                    v-for="(item, index) in table"
+                    :key="index"
+                    :user="item.user"
+                    :in-this-leaderboard="item.inThisLeaderboard"
+                    :sort="selected.rankingSystem"
+                  />
+
+                  <!-- <template v-else>
                     Loading...
-                  </template>
+                  </template> -->
                 </tbody>
-              </table>
-            </div>
-          </div>
-          <div class="flex py-4">
-            <div class="btn-group btn-base-100 mx-auto">
-              <t-button
-                v-for="i in 5"
-                :key="`pagination-${i}`"
-                class="!shadow-none"
-                @click="reloadPage(i)"
-              >
-                {{ i }}
-              </t-button>
-            </div>
+              </transition>
+            </table>
           </div>
         </div>
-      </template>
-      <template v-else>
-        <div
-          class="pb-10 my-auto text-gbase-900 dark:text-gbase-100 grow"
+      </div>
+      <div
+        v-else-if="!pending"
+        class="pb-10 my-auto text-gbase-900 dark:text-gbase-100 grow"
+      >
+        <h1 class="text-xl font-semibold text-center">
+          No one played this mode yet.
+        </h1>
+        <h2 class="text-sm font-semibold text-center opacity-60">
+          Wanna be the first one? Go for it.
+        </h2>
+      </div>
+      <div class="flex py-4">
+        <t-tabs
+          :model-value="page"
+          class="mx-auto items-baseline"
+          size="lg"
+          @update:model-value="v => reloadPage(v)"
         >
-          <h1 class="text-xl font-semibold text-center">
-            No one played this mode yet.
-          </h1>
-          <h2 class="text-sm font-semibold text-center opacity-60">
-            Maybe you will be the first one? Go for it.
-          </h2>
-        </div>
-      </template>
+          <t-tab
+            v-for="i in 5"
+            :key="`pagination-${i}`"
+            :value="i"
+            class="bigger-when-active"
+          >
+            {{ i }}
+          </t-tab>
+        </t-tabs>
+      </div>
     </div>
   </div>
 </template>
+
+<style lang="postcss">
+.bigger-when-active.tab-active {
+  @apply font-semibold drop-shadow-md border-2 rounded-lg
+}
+</style>
