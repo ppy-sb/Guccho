@@ -1,7 +1,9 @@
 import { exec } from 'node:child_process'
 import { readdirSync } from 'node:fs'
-import { join, relative } from 'node:path'
+import { dirname, join, relative } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
+const __dirname = dirname(fileURLToPath(import.meta.url))
 const root = join(__dirname, '..')
 const schemaPath = join(__dirname, '../prisma')
 
