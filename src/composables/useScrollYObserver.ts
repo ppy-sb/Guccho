@@ -24,9 +24,5 @@ function setElement(element: Element | Document) {
   })
 }
 export default function () {
-  // onBeforeMount(() => {
-  //   setElement(document)
-  // })
-
   return [scrollY, setElement] as const
 }
