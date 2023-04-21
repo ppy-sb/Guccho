@@ -5,6 +5,7 @@ import type {
   LeaderboardRankingSystem,
   Mode,
   RankingSystem,
+  Ruleset,
 } from '~/types/common'
 import type {
   BeatmapLeaderboard,
@@ -12,8 +13,14 @@ import type {
 } from '~/types/leaderboard'
 
 export namespace LeaderboardProvider {
-  export interface BaseQuery<M extends Mode = Mode> {
+  export interface BaseQueryOptionalMode<M extends Mode = Mode> {
     mode?: M
+    ruleset: Ruleset
+    page: number
+    pageSize: number
+  }
+  export interface BaseQuery<M extends Mode = Mode> {
+    mode: M
     ruleset: AvailableRuleset<M>
     page: number
     pageSize: number
@@ -21,15 +28,15 @@ export namespace LeaderboardProvider {
 }
 export interface LeaderboardProvider<Id> extends idTransformable {
   getLeaderboard(
-    query: Required<LeaderboardProvider.BaseQuery> & {
+    query: LeaderboardProvider.BaseQuery & {
       rankingSystem: LeaderboardRankingSystem
     }
   ): Awaitable<ComponentLeaderboard<Id>[]>
 
   getBeatmapLeaderboard(
-    query: LeaderboardProvider.BaseQuery & {
+    query: LeaderboardProvider.BaseQueryOptionalMode & {
       rankingSystem: RankingSystem
-      id: Id
+      md5: string
     }
   ): Awaitable<BeatmapLeaderboard<Id>[]>
 }

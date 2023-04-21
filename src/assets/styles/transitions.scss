@@ -26,13 +26,9 @@
 }
 
 .slide-enter-active {
-  /* & span,
-  & p, */
   & a,
   & img,
   & input,
-  /* & td,
-  & th > *, */
   & .btn,
   & .tab {
     animation-name: elementsInitial;

@@ -197,7 +197,7 @@ export default async function () {
 
   watch(tags, () => raw(), { deep: true })
 
-  const loading = shallowReactive({
+  const loading = reactive({
     users: pendingUsers,
     beatmaps: pendingBeatmaps,
     beatmapsets: pendingBeatmapsets,

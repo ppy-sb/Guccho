@@ -1,6 +1,7 @@
 import { idToString, stringToId, toBanchoPyMode, toMods, toRoles, toUserEssential, userEssentials } from '../transforms'
 import { client as redisClient } from '../redis-client'
 import type { Id } from '..'
+import { hasRuleset } from '..'
 import { getPrismaClient } from './prisma'
 
 import { modes as _modes } from '~/types/defs'
@@ -238,15 +239,15 @@ export class LeaderboardProvider implements Base<Id> {
   }
 
   async getBeatmapLeaderboard(
-    query: Base.BaseQuery & {
+    query: Base.BaseQueryOptionalMode & {
       rankingSystem: RankingSystem
-      id: Id
+      md5: string
     }
   ) {
-    const { ruleset, rankingSystem, id } = query
+    const { ruleset, rankingSystem, md5 } = query
     let { mode } = query
     if (!mode) {
-      const beatmap = await this.db.map.findFirst({ where: { id } })
+      const beatmap = await this.db.map.findFirst({ where: { md5 } })
       if (!beatmap) {
         mode = 'osu'
       }
@@ -254,7 +255,11 @@ export class LeaderboardProvider implements Base<Id> {
         mode = _modes[beatmap.mode]
       }
     }
-    let sort = {}
+    if (!hasRuleset(mode, ruleset)) {
+      return []
+    }
+
+    let sort: { score: 'desc' } | { pp: 'desc' }
     if (rankingSystem === 'score') {
       sort = {
         score: 'desc',
@@ -275,7 +280,7 @@ export class LeaderboardProvider implements Base<Id> {
       },
       where: {
         beatmap: {
-          id,
+          md5,
         },
         mode: toBanchoPyMode(mode, ruleset),
         status: {

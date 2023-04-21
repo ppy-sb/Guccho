@@ -23,18 +23,18 @@ const {
 const [switcher, setSwitcher] = useSwitcher()
 const lazyBgCover = shallowRef('')
 
-const { data: beatmapset, error } = await useAsyncData(
-  async () =>
-    await app$.$client.map.beatmapset.query({ id: route.params.id.toString() })
-)
+const { data: beatmapset, error } = await useAsyncData(() => app$.$client.map.beatmapset.query({ id: route.params.id.toString() }))
+
+const queryBeatmap = route.query.beatmap?.toString()
+
 const hashed = beatmapset.value?.beatmaps.find(
-  bm => bm.id === route.query.beatmap?.toString()
+  bm => bm.md5 === queryBeatmap || bm.id === queryBeatmap
 )
-const selectedMapId = shallowRef<string>(
-  hashed?.id || beatmapset.value?.beatmaps[0].id || ''
+const selectedMapMd5 = shallowRef<string>(
+  hashed?.md5 || beatmapset.value?.beatmaps[0].md5 || ''
 )
 const selectedMap = computed(() =>
-  beatmapset.value?.beatmaps.find(bm => bm.id === selectedMapId.value)
+  beatmapset.value?.beatmaps.find(bm => bm.md5 === selectedMapMd5.value)
 )
 const allowedModes = computed(() => {
   if (!selectedMap.value?.mode) {
@@ -75,7 +75,7 @@ if (queryRankingSystem) {
 function rewriteAnchor() {
   const url = new URL(window.location.toString())
   if (selectedMap.value) {
-    url.searchParams.set('beatmap', selectedMap.value.id)
+    url.searchParams.set('beatmap', selectedMap.value.md5)
   }
 
   url.searchParams.set('rank', switcher.rankingSystem)
@@ -93,7 +93,7 @@ function updateSwitcher() {
   }
 }
 
-watch(selectedMapId, updateSwitcher)
+watch(selectedMapMd5, updateSwitcher)
 
 const { data: leaderboard, refresh } = await useAsyncData(async () => {
   if (!selectedMap.value) {
@@ -104,7 +104,7 @@ const { data: leaderboard, refresh } = await useAsyncData(async () => {
     ...switcher,
     page: 0,
     pageSize: 20,
-    beatmapId: selectedMap.value.id.toString(),
+    md5: selectedMap.value.md5,
   })
 })
 
@@ -168,7 +168,7 @@ onBeforeMount(() => {
           </h2>
         </div>
         <t-tabs
-          v-model="selectedMapId"
+          v-model="selectedMapMd5"
           variant="bordered"
           size="md"
           class="mx-4 self-end bg-transparent"
@@ -176,8 +176,8 @@ onBeforeMount(() => {
         >
           <t-tab
             v-for="bm in beatmapset.beatmaps"
-            :key="bm.id"
-            :value="bm.id"
+            :key="bm.md5"
+            :value="bm.md5"
             class="whitespace-nowrap grow"
           >
             {{ bm.version }}

@@ -67,29 +67,21 @@ export const router = _router({
         rankingSystem: zodRankingSystem,
         page: z.number().gte(0).lt(10),
         pageSize: z.number().gte(20).lt(51),
-        beatmapId: z.string(),
+        md5: z.string(),
       })
     )
     .query(
       async ({
-        input: { mode, ruleset, rankingSystem, page, pageSize, beatmapId },
+        input: { mode, ruleset, rankingSystem, page, pageSize, md5 },
       }) => {
-        if (!mode) {
-          // TODO return default modes
-          mode = 'osu'
-          // return []
-        }
-        if (!hasRuleset(mode, ruleset)) {
-          return []
-        }
-        const result = await getBeatmapLeaderboard(mapId({
+        const result = await getBeatmapLeaderboard({
           mode,
           ruleset,
           rankingSystem,
           page,
           pageSize,
-          id: beatmapId,
-        }, provider.stringToId))
+          md5,
+        })
         return result.map(item => ({
           ...item,
           user: mapId(item.user, provider.idToString),

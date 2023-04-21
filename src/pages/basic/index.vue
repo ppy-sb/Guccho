@@ -7,8 +7,6 @@ useHead({
 })
 const session = useSession()
 
-const router = useRouter()
-
 definePageMeta({
   layout: 'basic',
 })
