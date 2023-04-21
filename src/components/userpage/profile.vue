@@ -5,5 +5,5 @@ const page = userpageStore()
 </script>
 
 <template>
-  <article-render v-if="page.user?.profile?.html" :json="page.user.profile.raw" :html="page.user.profile.html" />
+  <article-render v-if="page.user?.profile" :json="page.user.profile.raw" :html="page.user.profile.html" />
 </template>
