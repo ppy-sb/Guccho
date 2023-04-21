@@ -59,7 +59,7 @@
 
 @keyframes elementsInitial {
   from {
-    transform: translateX(0.3em) scaleX(1.005);
+    transform: translateX(0.3em);
     transform-origin: 0%
   }
   to {
@@ -69,8 +69,7 @@
 @keyframes elementsDisappear {
   from {}
   to {
-    transform: scaleX(1.005);
-    transform-origin: 0%
+    transform: translateX(-0.3em);
   }
 }
 
