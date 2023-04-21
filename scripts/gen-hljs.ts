@@ -9,6 +9,7 @@ const files = readdirSync('./node_modules/highlight.js/es/languages').filter(fil
 
 ;(async () => {
   await Promise.all (files.map(async (file) => {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const mod = require(`highlight.js/lib/languages/${file}`)
     const { aliases } = mod(highlight)
     const language = `#${file}`
