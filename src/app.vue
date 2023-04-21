@@ -1,21 +1,18 @@
 <script setup lang="ts">
-// @ts-expect-error string, no declaration file exists
-import remixiconUrl from 'remixicon/fonts/remixicon.symbol.svg'
-
-const appConfig = useAppConfig()
+// const appConfig = useAppConfig()
 const safari = shallowRef(false)
 const modalContainer = shallowRef()
 
 const oneYearLater = new Date()
 oneYearLater.setFullYear(oneYearLater.getFullYear() + 1)
 
-const confirmed = useCookie('confirmed-website', {
-  expires: oneYearLater,
-})
+// const confirmed = useCookie('confirmed-website', {
+//   expires: oneYearLater,
+// })
 
-const confirmedWebsite = computed(() => confirmed.value === 'ok')
+// const confirmedWebsite = computed(() => confirmed.value === 'ok')
 
-const checked = shallowRef(false)
+// const checked = shallowRef(false)
 
 const config = useAppConfig()
 onMounted(() => {
@@ -25,7 +22,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div :class="[safari ? 'safari' : 'not-safari']">
+  <div :class="[safari ? 'safari' : 'not-safari']" class="overflow-hidden">
     <t-modal-container
       ref="modalContainer"
       :teleport-id="config.appModalTeleportTargetId"
@@ -33,51 +30,9 @@ onMounted(() => {
       <teleport to="body">
         <app-navbar :disabled="modalContainer?.stat === 'show'" />
       </teleport>
-      <div
-        v-if="appConfig.needConfirmWebsite && !confirmedWebsite"
-        class="flex h-screen items-center"
-      >
-        <div class="card bg-gbase-200 shadow-xl px-16 mx-auto gap-8">
-          <div class="card-body">
-            <svg class="remix text-white invert">
-              <use :xlink:href="`${remixiconUrl}#ri-folder-warning-line`" />
-            </svg>
-            <div class="form-control">
-              <label class="cursor-pointer label">
-                <input
-                  v-model="checked"
-                  type="checkbox"
-                  class="checkbox checkbox-error mx-2"
-                >
-                <span class="label-text text-4xl">I understand this is not the
-                  <a class="link" href="https://osu.ppy.sh">Official Osu Website</a></span>
-              </label>
-            </div>
-            <div
-              class="text-center lg:text-left lg:grid lg:grid-cols-2 items-baseline"
-            >
-              <div>
-                <t-button
-                  :class="{
-                    invisible: !checked,
-                  }"
-                  variant="primary"
-                  class="w-80"
-                  @click="confirmed = 'ok'"
-                >
-                  Confirm
-                </t-button>
-              </div>
-              <a class="link text-center" href="https://osu.ppy.sh">No, take me to the official one pls</a>
-            </div>
-          </div>
-        </div>
-      </div>
-      <template v-else>
-        <NuxtLayout>
-          <NuxtPage />
-        </NuxtLayout>
-      </template>
+      <NuxtLayout>
+        <NuxtPage />
+      </NuxtLayout>
     </t-modal-container>
     <div
       id="footer" class="relative" :class="{
