@@ -1,34 +1,32 @@
-const el = shallowRef<Element>()
+const el = shallowRef<Element | Document>()
 const scrollY = shallowRef(0)
-function observer(e: Event) {
-  if (!(e.target instanceof Element)) {
-    return
+function observer(e: Event | Document) {
+  if (e instanceof Document) {
+    scrollY.value = window.pageYOffset
   }
-  scrollY.value = e.target?.scrollTop
+  else if (e.target instanceof Element) {
+    scrollY.value = e.target?.scrollTop
+  }
+  else {
+    throw new TypeError('unknown source')
+  }
 }
-function handleScroll() {
-  scrollY.value = window.pageYOffset
-}
+function setElement(element: Element | Document) {
+  if (el.value) {
+    el.value.removeEventListener('scroll', observer)
+  }
+  el.value = element
+  element.addEventListener('scroll', observer)
 
-export default function () {
-  onBeforeMount(() => {
-    document.removeEventListener('scroll', handleScroll)
-    document.addEventListener('scroll', handleScroll)
+  onBeforeUnmount(() => {
+    element.removeEventListener('scroll', observer)
+    scrollY.value = 0
   })
-
-  const setElement = (element: Element) => {
-    if (el.value) {
-      el.value.removeEventListener('scroll', observer)
-    }
-    el.value = element
-
-    element.addEventListener('scroll', observer)
-
-    onBeforeUnmount(() => {
-      element.removeEventListener('scroll', observer)
-      scrollY.value = 0
-    })
-  }
+}
+export default function () {
+  // onBeforeMount(() => {
+  //   setElement(document)
+  // })
 
   return [scrollY, setElement] as const
 }

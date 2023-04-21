@@ -12,12 +12,7 @@ const { addToLibrary } = useFAIconLib()
 
 addToLibrary(faRankingStar, faPiedPiperPp, faBarsStaggered, faHouseUser)
 
-definePageMeta({
-  layout: 'screen',
-})
 const appConf = useAppConfig()
-
-const [_, setScroll] = useScrollYObserver()
 
 const page = userpageStore()
 
@@ -56,9 +51,6 @@ const [handle, heading, statistics, bestScores, topScores] = [
   shallowRef<HTMLElement | null>(null),
 ]
 onMounted(() => {
-  if (handle.value) {
-    setScroll(handle.value)
-  }
   const stop = Object.entries({
     heading,
     statistics,
@@ -117,31 +109,30 @@ onMounted(() => {
         <userpage-top-scores v-if="page.currentRankingSystem" />
       </div>
       <!-- placeholder for bottom nav -->·
-      <div class="my-8 -z-50" />
-      <!-- <client-only>
+      <!-- <div class="my-8 -z-50" /> -->
+      <client-only>
         <teleport to="#footer">
-
+          <div class="btm-nav fuck">
+            <template v-for="(isVisible, el) of visible" :key="el">
+              <a
+                v-if="icons[el]"
+                :class="{
+                  active: isVisible,
+                }" :href="`#${el}`"
+              >
+                <font-awesome-icon :icon="icons[el]" class="fa-xl" />
+              </a>
+              <a
+                v-else :class="{
+                  active: isVisible,
+                }" :href="`#${el}`"
+              >
+                {{ el }}
+              </a>
+            </template>
+          </div>
         </teleport>
-      </client-only> -->
-      <div class="btm-nav fuck">
-        <template v-for="(isVisible, el) of visible" :key="el">
-          <a
-            v-if="icons[el]"
-            :class="{
-              active: isVisible,
-            }" :href="`#${el}`"
-          >
-            <font-awesome-icon :icon="icons[el]" class="fa-xl" />
-          </a>
-          <a
-            v-else :class="{
-              active: isVisible,
-            }" :href="`#${el}`"
-          >
-            {{ el }}
-          </a>
-        </template>
-      </div>
+      </client-only>
     </div>
   </div>
 </template>
