@@ -9,7 +9,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div ref="scroll" class="h-[100dvh] overflow-scroll" viewport>
+  <div ref="scroll" class="h-[100dvh]" viewport>
     <div class="flex flex-col min-h-full flex-grow">
       <slot />
       <slot name="footer">

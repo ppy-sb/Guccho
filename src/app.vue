@@ -22,7 +22,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div :class="[safari ? 'safari' : 'not-safari']" class="overflow-hidden">
+  <div :class="[safari ? 'safari' : 'not-safari']" class="overflow-hidden overflow-y-auto">
     <t-modal-container
       ref="modalContainer"
       :teleport-id="config.appModalTeleportTargetId"

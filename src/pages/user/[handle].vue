@@ -80,7 +80,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div ref="handle" class="handle">
+  <div ref="handle">
     <section v-if="page.error" class="min-h-screen">
       <div class="mx-auto my-auto flex flex-col justify-between gap-3">
         <h1 class="self-center text-3xl">
@@ -147,10 +147,6 @@ onMounted(() => {
 </template>
 
 <style lang="postcss" scoped>
-.handle {
-  /* @apply bg-gradient-to-b from-gbase-50/50 to-gbase-50/90 dark:from-gbase-800 dark:to-gbase-900; */
-  @apply h-screen overflow-scroll
-}
 .fuck {
   justify-content: center;
 }
