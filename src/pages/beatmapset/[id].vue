@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { faEllipsisH } from '@fortawesome/free-solid-svg-icons'
 import AppScoresRankingSystemSwitcher from '~/components/app/scores/ranking-system-switcher.vue'
 import {
   includes,
@@ -8,6 +9,10 @@ import {
   placeholder,
 } from '~/utils'
 import type { Label } from '~/composables/useLinks'
+
+const { addToLibrary } = useFAIconLib()
+
+addToLibrary(faEllipsisH)
 
 const app$ = useNuxtApp()
 const route = useRoute()
@@ -168,155 +173,157 @@ onBeforeMount(() => {
           </t-tab>
         </t-tabs>
       </div>
-      <div v-if="selectedMap" class="flex flex-col md:flex-row card bg-gbase-100 dark:bg-gbase-900">
-        <div class="w-full md:w-1/3 grow">
-          <div class="p-8 h-full flex flex-col justify-around">
-            <img class="rounded-xl shadow-md" :src="beatmapset.assets['list@2x']" :alt="selectedMap.version" :onerror="placeholder">
-            <!-- // TODO in house beatmap links -->
-            <div v-if="links" class="pt-4">
-              <div class="w-min">
-                <t-menu>
-                  <button class="btn btn-sm btn-accent">
-                    download
-                  </button>
-                  <template #popper>
-                    <ul class="menu menu-compact border-[1px] border-base-300/20 bg-base-200/80 w-max rounded-box">
-                      <template v-if="links.external.length">
-                        <li class="menu-title">
-                          <span>External Links</span>
-                        </li>
-                        <li v-for="{ link, label } in links.external" :key="`external-${label}`">
-                          <a :href="link">{{ label }}</a>
-                        </li>
-                      </template>
-                      <template v-if="links.directDownload.length">
-                        <div class="divider" />
-                        <li class="menu-title">
-                          <span>Direct downloads</span>
-                        </li>
-                        <li v-for="{ link, label } in links.directDownload" :key="`direct-${label}`">
-                          <a :href="link">{{ label }}</a>
-                        </li>
-                      </template>
-                    </ul>
-                  </template>
-                </t-menu>
-              </div>
+      <div v-if="selectedMap" class="card bg-gbase-100 dark:bg-gbase-900 overflow-hidden">
+        <div class="p-0 pt-2 md:p-2 flex flex-col md:flex-row items-center">
+          <t-tabs v-model="switcher.mode" class="md:mr-auto" @update:model-value="update">
+            <template v-for="m in allowedModes">
+              <t-tab v-if="hasRuleset(m, switcher.ruleset)" :key="`sw-${m}`" :value="m">
+                <img
+                  :src="`/icons/mode/${m}.svg`"
+                  class="color-theme-light-invert h-mode"
+                >
+              </t-tab>
+            </template>
+          </t-tabs>
+          <t-tabs v-model="switcher.ruleset" variant="" @update:model-value="update">
+            <template v-for="r in supportedRulesets">
+              <t-tab v-if="hasRuleset(switcher.mode, r)" :key="`sw-${r}`" :value="r">
+                {{ r }}
+              </t-tab>
+            </template>
+          </t-tabs>
+          <!-- // TODO in house beatmap links -->
+          <div v-if="links" class="absolute md:relative right-0">
+            <div class="w-min">
+              <t-menu>
+                <button class="btn btn-sm btn-ghost">
+                  <font-awesome-icon icon="fa-solid fa-ellipsis-h" size="xl" />
+                </button>
+                <template #popper>
+                  <ul class="menu menu-compact border-[1px] border-base-300/20 bg-base-200/80 w-max rounded-box">
+                    <template v-if="links.external.length">
+                      <li class="menu-title">
+                        <span>External Links</span>
+                      </li>
+                      <li v-for="{ link, label } in links.external" :key="`external-${label}`">
+                        <a :href="link">{{ label }}</a>
+                      </li>
+                    </template>
+                    <template v-if="links.directDownload.length">
+                      <div class="divider" />
+                      <li class="menu-title">
+                        <span>Direct downloads</span>
+                      </li>
+                      <li v-for="{ link, label } in links.directDownload" :key="`direct-${label}`">
+                        <a :href="link">{{ label }}</a>
+                      </li>
+                    </template>
+                  </ul>
+                </template>
+              </t-menu>
             </div>
           </div>
         </div>
-        <div class="w-full md:w-2/3">
-          <div class="p-0 md:p-2 flex flex-col md:flex-row items-center md:justify-between">
-            <t-tabs v-model="switcher.mode" @update:model-value="update">
-              <template v-for="m in allowedModes">
-                <t-tab v-if="hasRuleset(m, switcher.ruleset)" :key="`sw-${m}`" :value="m">
-                  <img
-                    :src="`/icons/mode/${m}.svg`"
-                    class="color-theme-light-invert h-mode"
-                  >
-                </t-tab>
-              </template>
-            </t-tabs>
-            <t-tabs v-model="switcher.ruleset" variant="" @update:model-value="update">
-              <template v-for="r in supportedRulesets">
-                <t-tab v-if="hasRuleset(switcher.mode, r)" :key="`sw-${r}`" :value="r">
-                  {{ r }}
-                </t-tab>
-              </template>
-            </t-tabs>
+        <div class="flex flex-col md:flex-row">
+          <div class="w-full md:w-1/3 grow">
+            <div class="flex flex-col p-4 md:p-2 h-full">
+              <img class="rounded-xl shadow-md max-w-content" :src="beatmapset.assets['list@2x']" :alt="selectedMap.version" :onerror="placeholder">
+            </div>
           </div>
-          <dl>
-            <div class="stripe-odd">
-              <dt class="text-sm font-medium text-gbase-500">
-                Creator
-              </dt>
-              <dd class="stripe-even">
-                {{ selectedMap.creator }}
-              </dd>
-            </div>
-            <div class="bg-gbase-50 dark:bg-gbase-800 stripe-odd">
-              <dt class="text-sm font-medium text-gbase-500">
-                Status
-              </dt>
-              <dd class="stripe-even">
-                {{ selectedMap.status }}
-              </dd>
-            </div>
-            <div class="stripe-odd">
-              <dt class="text-sm font-medium text-gbase-500">
-                Beatmap ID
-              </dt>
-              <dd class="stripe-even">
-                {{ selectedMap.id }}
-              </dd>
-            </div>
-            <div class="bg-gbase-50 dark:bg-gbase-800 stripe-odd">
-              <dt class="text-sm font-medium text-gbase-500">
-                Source | ID
-              </dt>
-              <dd class="stripe-even">
-                {{ beatmapset.source }} | {{ selectedMap.foreignId }}
-              </dd>
-            </div>
-            <div class="stripe-odd">
-              <dt class="text-sm font-medium text-gbase-500">
-                Last Update
-              </dt>
-              <dd class="stripe-even">
-                {{ selectedMap.lastUpdate }}
-              </dd>
-            </div>
-            <!-- <div class="bg-gbase-50 dark:bg-gbase-800 stripe-odd">
-              <dt class="text-sm font-medium text-gbase-500">
-                BPM
-              </dt>
-              <dd class="stripe-even">
-                {{ selectedMap.properties.bpm }}
-              </dd>
-            </div>
-            <div class="stripe-odd">
-              <dt class="text-sm font-medium text-gbase-500">
-                Star Rate
-              </dt>
-              <dd class="stripe-even">
-                {{ selectedMap.properties.starRate }}
-              </dd>
-            </div>
-            <div class="bg-gbase-50 dark:bg-gbase-800 stripe-odd">
-              <dt class="text-sm font-medium text-gbase-500">
-                Circle Size
-              </dt>
-              <dd class="stripe-even">
-                {{ selectedMap.properties.circleSize }}
-              </dd>
-            </div>
-            <div class="stripe-odd">
-              <dt class="text-sm font-medium text-gbase-500">
-                HP Drain
-              </dt>
-              <dd class="stripe-even">
-                {{ selectedMap.properties.hpDrain }}
-              </dd>
-            </div>
-            <div class="bg-gbase-50 dark:bg-gbase-800 stripe-odd">
-              <dt class="text-sm font-medium text-gbase-500">
-                Duration
-              </dt>
-              <dd class="stripe-even">
-                {{ selectedMap.properties.totalLength }} seconds
-              </dd>
-            </div> -->
-            <div class="stripe-odd">
-              <dt class="text-sm font-medium text-gbase-500">
-                Hit Object
-              </dt>
-              <dd class="stripe-even">
-                {{ selectedMap.properties.count.circles }} circles,<br>
-                {{ selectedMap.properties.count.sliders }} sliders,<br>
-                {{ selectedMap.properties.count.spinners }} spinners,<br>
-              </dd>
-            </div>
-          </dl>
+          <div class="w-full md:w-2/3">
+            <dl>
+              <div class="stripe-odd">
+                <dt class="text-sm font-medium text-gbase-500">
+                  Creator
+                </dt>
+                <dd class="stripe-even">
+                  {{ selectedMap.creator }}
+                </dd>
+              </div>
+              <div class="bg-gbase-50 dark:bg-gbase-800 stripe-odd">
+                <dt class="text-sm font-medium text-gbase-500">
+                  Status
+                </dt>
+                <dd class="stripe-even">
+                  {{ selectedMap.status }}
+                </dd>
+              </div>
+              <div class="stripe-odd">
+                <dt class="text-sm font-medium text-gbase-500">
+                  Beatmap ID
+                </dt>
+                <dd class="stripe-even">
+                  {{ selectedMap.id }}
+                </dd>
+              </div>
+              <div class="bg-gbase-50 dark:bg-gbase-800 stripe-odd">
+                <dt class="text-sm font-medium text-gbase-500">
+                  Source | ID
+                </dt>
+                <dd class="stripe-even">
+                  {{ beatmapset.source }} | {{ selectedMap.foreignId }}
+                </dd>
+              </div>
+              <div class="stripe-odd">
+                <dt class="text-sm font-medium text-gbase-500">
+                  Last Update
+                </dt>
+                <dd class="stripe-even">
+                  {{ selectedMap.lastUpdate }}
+                </dd>
+              </div>
+              <!-- <div class="bg-gbase-50 dark:bg-gbase-800 stripe-odd">
+                <dt class="text-sm font-medium text-gbase-500">
+                  BPM
+                </dt>
+                <dd class="stripe-even">
+                  {{ selectedMap.properties.bpm }}
+                </dd>
+              </div>
+              <div class="stripe-odd">
+                <dt class="text-sm font-medium text-gbase-500">
+                  Star Rate
+                </dt>
+                <dd class="stripe-even">
+                  {{ selectedMap.properties.starRate }}
+                </dd>
+              </div>
+              <div class="bg-gbase-50 dark:bg-gbase-800 stripe-odd">
+                <dt class="text-sm font-medium text-gbase-500">
+                  Circle Size
+                </dt>
+                <dd class="stripe-even">
+                  {{ selectedMap.properties.circleSize }}
+                </dd>
+              </div>
+              <div class="stripe-odd">
+                <dt class="text-sm font-medium text-gbase-500">
+                  HP Drain
+                </dt>
+                <dd class="stripe-even">
+                  {{ selectedMap.properties.hpDrain }}
+                </dd>
+              </div>
+              <div class="bg-gbase-50 dark:bg-gbase-800 stripe-odd">
+                <dt class="text-sm font-medium text-gbase-500">
+                  Duration
+                </dt>
+                <dd class="stripe-even">
+                  {{ selectedMap.properties.totalLength }} seconds
+                </dd>
+              </div> -->
+              <div class="bg-gbase-50 dark:bg-gbase-800 stripe-odd">
+                <dt class="text-sm font-medium text-gbase-500">
+                  Hit Object
+                </dt>
+                <dd class="stripe-even">
+                  {{ selectedMap.properties.count.circles }} circles,<br>
+                  {{ selectedMap.properties.count.sliders }} sliders,<br>
+                  {{ selectedMap.properties.count.spinners }} spinners,<br>
+                </dd>
+              </div>
+            </dl>
+          </div>
         </div>
       </div>
     </div>
