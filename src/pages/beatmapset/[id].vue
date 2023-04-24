@@ -174,7 +174,7 @@ onBeforeMount(() => {
         </t-tabs>
       </div>
       <div v-if="selectedMap" class="card bg-gbase-100 dark:bg-gbase-900 overflow-hidden">
-        <div class="p-0 pt-2 md:p-2 flex flex-col md:flex-row items-center">
+        <div class="m-2 relative flex flex-col md:flex-row items-center">
           <t-tabs v-model="switcher.mode" class="md:mr-auto" @update:model-value="update">
             <template v-for="m in allowedModes">
               <t-tab v-if="hasRuleset(m, switcher.ruleset)" :key="`sw-${m}`" :value="m">
