@@ -46,7 +46,7 @@ const config: {
     },
     fruits: {
       name: 'CTB',
-      icon: 'catch',
+      icon: 'fruits',
     },
     mania: {
       name: 'Mania',

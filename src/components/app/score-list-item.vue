@@ -84,7 +84,6 @@ const meta = computed(
 </script>
 
 <template>
-  <!-- style="background: linear-gradient(hsl(var(--main,200 ), 25%, 25%, 0%), hsl(var(--main, 200), 25%, 25%, 90%)), url(https\:\/\/assets\.ppy\.sh\/beatmaps\/746506\/covers\/cover\.jpg);" -->
   <div v-if="score" class="score">
     <div class="flex justify-between">
       <div class="flex min-w-0 gap-4">
@@ -93,9 +92,10 @@ const meta = computed(
             v-if=" beatmap
               && beatmapIsVisible(beatmap)
               && beatmap.beatmapset.source === 'bancho'"
-            :src="beatmap.beatmapset.assets.list"
+            :src="beatmap.beatmapset.assets['list@2x']"
             :alt="beatmap.beatmapset.meta.title"
             :onerror="placeholder"
+            class="object-cover w-20 h-16 rounded-xl shadow-md"
           >
           <div v-else class="w-20 h-16">
             <font-awesome-icon icon="fa-solid fa-ban" size="4x" class="w-full" />

@@ -41,11 +41,6 @@ const allowedModes = computed(() => {
     : supportedModes
 })
 
-const bgCover = beatmapset.value
-  && isBanchoBeatmapset(beatmapset.value) && {
-  cover: beatmapset.value.assets.cover,
-  listUrl: beatmapset.value.assets['list@2x'],
-}
 const queryRankingSystem = route.query.rank?.toString()
 const queryMode = route.query.mode?.toString()
 const queryRuleset = route.query.ruleset?.toString()
@@ -127,11 +122,12 @@ const links = shallowRef<{
 }>()
 
 onBeforeMount(() => {
-  bgCover
-    && bgCover.cover
-    && loadImage(bgCover.cover)
+  beatmapset.value
+    && isBanchoBeatmapset(beatmapset.value)
+    && beatmapset.value.assets.cover
+    && loadImage(beatmapset.value.assets.cover)
       .then(() => {
-        lazyBgCover.value = `url(${bgCover.cover})`
+        lazyBgCover.value = `url(${beatmapset.value?.assets.cover})`
       })
       .catch(noop)
 
@@ -148,8 +144,7 @@ onBeforeMount(() => {
     </div>
   </section>
   <div
-    v-else-if="beatmapset"
-    :class="[
+    v-else-if="beatmapset" :class="[
       isBanchoBeatmapset(beatmapset) && `pre-bg-cover`,
       lazyBgCover !== '' && 'ready',
     ]"
@@ -157,46 +152,26 @@ onBeforeMount(() => {
     <div class="container custom-container mx-auto">
       <div class="header-with-maps flex-wrap">
         <div class="text-center flex gap-2 items-baseline pb-2 pl-4">
-          <h1
-            class="text-3xl font-bold text-center sm:text-left lg:whitespace-nowrap z-10"
-          >
+          <h1 class="text-3xl font-bold text-center sm:text-left lg:whitespace-nowrap z-10">
             {{ beatmapset.meta.intl.title }}
           </h1>
-          <h2
-            class="text-lg font-semibold text-center whitespace-pre opacity-40 sm:text-left z-10"
-          >
+          <h2 class="text-lg font-semibold text-center whitespace-pre opacity-40 sm:text-left z-10">
             by {{ beatmapset.meta.intl.artist }}
           </h2>
         </div>
         <t-tabs
-          v-model="selectedMapMd5"
-          variant="bordered"
-          size="md"
-          class="mx-4 self-end bg-transparent"
+          v-model="selectedMapMd5" variant="bordered" size="md" class="mx-4 self-end bg-transparent"
           @update:model-value="update"
         >
-          <t-tab
-            v-for="bm in beatmapset.beatmaps"
-            :key="bm.md5"
-            :value="bm.md5"
-            class="whitespace-nowrap grow"
-          >
+          <t-tab v-for="bm in beatmapset.beatmaps" :key="bm.md5" :value="bm.md5" class="whitespace-nowrap grow">
             {{ bm.version }}
           </t-tab>
         </t-tabs>
       </div>
-      <div
-        v-if="selectedMap"
-        class="flex flex-col md:flex-row card bg-gbase-100 dark:bg-gbase-900"
-      >
+      <div v-if="selectedMap" class="flex flex-col md:flex-row card bg-gbase-100 dark:bg-gbase-900">
         <div class="w-full md:w-1/3 grow">
           <div class="p-8 h-full flex flex-col justify-around">
-            <img
-              v-if="bgCover"
-              :src="bgCover.listUrl"
-              :alt="selectedMap.version"
-              :onerror="placeholder"
-            >
+            <img class="rounded-xl shadow-md" :src="beatmapset.assets['list@2x']" :alt="selectedMap.version" :onerror="placeholder">
             <!-- // TODO in house beatmap links -->
             <div v-if="links" class="pt-4">
               <div class="w-min">
@@ -205,17 +180,12 @@ onBeforeMount(() => {
                     download
                   </button>
                   <template #popper>
-                    <ul
-                      class="menu menu-compact border-[1px] border-base-300/20 bg-base-200/80 w-max rounded-box"
-                    >
+                    <ul class="menu menu-compact border-[1px] border-base-300/20 bg-base-200/80 w-max rounded-box">
                       <template v-if="links.external.length">
                         <li class="menu-title">
                           <span>External Links</span>
                         </li>
-                        <li
-                          v-for="{ link, label } in links.external"
-                          :key="`external-${label}`"
-                        >
+                        <li v-for="{ link, label } in links.external" :key="`external-${label}`">
                           <a :href="link">{{ label }}</a>
                         </li>
                       </template>
@@ -224,10 +194,7 @@ onBeforeMount(() => {
                         <li class="menu-title">
                           <span>Direct downloads</span>
                         </li>
-                        <li
-                          v-for="{ link, label } in links.directDownload"
-                          :key="`direct-${label}`"
-                        >
+                        <li v-for="{ link, label } in links.directDownload" :key="`direct-${label}`">
                           <a :href="link">{{ label }}</a>
                         </li>
                       </template>
@@ -239,29 +206,20 @@ onBeforeMount(() => {
           </div>
         </div>
         <div class="w-full md:w-2/3">
-          <div class="p-2 flex justify-between">
+          <div class="p-0 md:p-2 flex flex-col md:flex-row items-center md:justify-between">
             <t-tabs v-model="switcher.mode" @update:model-value="update">
               <template v-for="m in allowedModes">
-                <t-tab
-                  v-if="hasRuleset(m, switcher.ruleset)"
-                  :key="`sw-${m}`"
-                  :value="m"
-                >
-                  {{ m }}
+                <t-tab v-if="hasRuleset(m, switcher.ruleset)" :key="`sw-${m}`" :value="m">
+                  <img
+                    :src="`/icons/mode/${m}.svg`"
+                    class="color-theme-light-invert h-mode"
+                  >
                 </t-tab>
               </template>
             </t-tabs>
-            <t-tabs
-              v-model="switcher.ruleset"
-              variant=""
-              @update:model-value="update"
-            >
+            <t-tabs v-model="switcher.ruleset" variant="" @update:model-value="update">
               <template v-for="r in supportedRulesets">
-                <t-tab
-                  v-if="hasRuleset(switcher.mode, r)"
-                  :key="`sw-${r}`"
-                  :value="r"
-                >
+                <t-tab v-if="hasRuleset(switcher.mode, r)" :key="`sw-${r}`" :value="r">
                   {{ r }}
                 </t-tab>
               </template>
@@ -308,7 +266,7 @@ onBeforeMount(() => {
                 {{ selectedMap.lastUpdate }}
               </dd>
             </div>
-            <div class="bg-gbase-50 dark:bg-gbase-800 stripe-odd">
+            <!-- <div class="bg-gbase-50 dark:bg-gbase-800 stripe-odd">
               <dt class="text-sm font-medium text-gbase-500">
                 BPM
               </dt>
@@ -347,7 +305,7 @@ onBeforeMount(() => {
               <dd class="stripe-even">
                 {{ selectedMap.properties.totalLength }} seconds
               </dd>
-            </div>
+            </div> -->
             <div class="stripe-odd">
               <dt class="text-sm font-medium text-gbase-500">
                 Hit Object
@@ -364,19 +322,12 @@ onBeforeMount(() => {
     </div>
     <div class="container custom-container mx-auto mt-4">
       <AppScoresRankingSystemSwitcher
-        ref="scoreRS"
-        v-model="switcher.rankingSystem"
-        :mode="switcher.mode"
-        :ruleset="switcher.ruleset"
-        class="mx-auto"
-        @update:model-value="update"
+        ref="scoreRS" v-model="switcher.rankingSystem" :mode="switcher.mode"
+        :ruleset="switcher.ruleset" class="mx-auto" @update:model-value="update"
       />
       <div class="overflow-auto">
         <app-scores-table
-          v-if="leaderboard"
-          :scores="leaderboard"
-          :ranking-system="switcher.rankingSystem"
-          class="w-full"
+          v-if="leaderboard" :scores="leaderboard" :ranking-system="switcher.rankingSystem" class="w-full"
           :class="{
             'clear-rounded-tl':
               scoreRS?.rankingSystems[0] === switcher.rankingSystem,
@@ -389,11 +340,8 @@ onBeforeMount(() => {
 
 <style scoped lang="postcss">
 .header-with-maps {
-  @apply sm:flex pt-20 lg:pt-0 mt-2 items-center justify-between text-gbase-900 dark:text-gbase-100;
+  @apply sm:flex pt-20 pb-0 lg:pt-0 mt-2 items-center justify-between text-gbase-900 dark:text-gbase-100;
   transition: 0.3s ease;
-  @apply pb-0;
-
-  @apply md:pt-20;
 }
 
 .stripe-odd {
@@ -405,18 +353,19 @@ onBeforeMount(() => {
 }
 
 :deep(table.table.clear-rounded-tl) {
-  > thead {
-    > tr:first-child {
-      > th:first-child {
+  >thead {
+    >tr:first-child {
+      >th:first-child {
         @apply rounded-tl-none;
       }
     }
   }
 }
+
 .safari .pre-bg-cover {
-  /* stylelint-disable-next-line vendor-prefix */
-  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
 }
+
 .pre-bg-cover {
   &:before {
     content: "";
@@ -424,15 +373,18 @@ onBeforeMount(() => {
     @apply top-20 left-0 right-0 bg-cover;
     height: 30vmin;
   }
+
   &.ready::before {
     background-image: v-bind("lazyBgCover");
     animation: fadeIn 0.5s ease-out forwards;
   }
 }
+
 @keyframes fadeIn {
   0% {
     filter: opacity(0) contrast(0.5) brightness(1) blur(5em);
   }
+
   100% {
     filter: opacity(0.4) contrast(0.2) brightness(1.5) blur(3em);
   }
@@ -443,9 +395,23 @@ onBeforeMount(() => {
     0% {
       filter: opacity(0) contrast(0.5) brightness(1) blur(5em);
     }
+
     100% {
       filter: opacity(1) contrast(0.5) brightness(0.5) blur(3em);
     }
   }
+}
+
+.color-theme-light-invert {
+  filter: invert(100%);
+  @apply dark:[filter:invert(0)];
+}
+.h-mode {
+  @apply transition duration-200 ease-in-out font-semibold cursor-pointer opacity-50;
+  @apply sm:py-1 sm:my-0;
+  @apply w-7 h-7;
+}
+.tab-active .h-mode {
+  @apply opacity-100;
 }
 </style>
