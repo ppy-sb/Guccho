@@ -1,6 +1,4 @@
 <script setup lang="ts">
-// @ts-expect-error There's no such declaration file for me to include, nor do I felt to declare it myself. It's a Vue SFC How do you expecting me to declare it myself... by hand? Are you really respecting my time?
-import VLazyImage from 'v-lazy-image'
 import {
   faBan,
   faCheckDouble,
@@ -15,7 +13,7 @@ import {
 } from '~/types/defs'
 import { createAddCommasFormatter } from '~/common/varkaUtils'
 
-import { beatmapIsVisible, placeholder } from '~/utils'
+import { beatmapIsVisible } from '~/utils'
 import type { RankingStatus } from '~/types/beatmap'
 
 const props = withDefaults(
@@ -91,15 +89,14 @@ const meta = computed(
     <div class="flex justify-between">
       <div class="flex min-w-0 gap-4">
         <div class="hidden md:block">
-          <VLazyImage
-            v-if="
-              beatmap
-                && beatmapIsVisible(beatmap)
-                && beatmap.beatmapset.source === 'bancho'
-            " class="object-cover w-20 h-16 rounded-xl" src-placeholder="/images/image-placeholder.svg"
-            :src="`https://assets.ppy.sh/beatmaps/${beatmap.beatmapset.foreignId}/covers/list.jpg`" alt="list"
+          <img
+            v-if=" beatmap
+              && beatmapIsVisible(beatmap)
+              && beatmap.beatmapset.source === 'bancho'"
+            :src="beatmap.beatmapset.assets.list"
+            :alt="beatmap.beatmapset.meta.title"
             :onerror="placeholder"
-          />
+          >
           <div v-else class="w-20 h-16">
             <font-awesome-icon icon="fa-solid fa-ban" size="4x" class="w-full" />
           </div>

@@ -1,6 +1,4 @@
 <script setup lang="ts">
-// @ts-expect-error no d.ts
-import VLazyImage from 'v-lazy-image'
 import AppScoresRankingSystemSwitcher from '~/components/app/scores/ranking-system-switcher.vue'
 import {
   includes,
@@ -14,16 +12,14 @@ import type { Label } from '~/composables/useLinks'
 const app$ = useNuxtApp()
 const route = useRoute()
 const config = useAppConfig()
-const {
-  supportedModes,
-  supportedRulesets,
-  hasRankingSystem,
-  hasRuleset,
-} = useAdapterConfig()
+const { supportedModes, supportedRulesets, hasRankingSystem, hasRuleset }
+  = useAdapterConfig()
 const [switcher, setSwitcher] = useSwitcher()
 const lazyBgCover = shallowRef('')
 
-const { data: beatmapset, error } = await useAsyncData(() => app$.$client.map.beatmapset.query({ id: route.params.id.toString() }))
+const { data: beatmapset, error } = await useAsyncData(() =>
+  app$.$client.map.beatmapset.query({ id: route.params.id.toString() })
+)
 
 const queryBeatmap = route.query.beatmap?.toString()
 
@@ -40,17 +36,15 @@ const allowedModes = computed(() => {
   if (!selectedMap.value?.mode) {
     return supportedModes
   }
-  return (selectedMap.value.mode !== 'osu') ? [selectedMap.value.mode] : supportedModes
+  return selectedMap.value.mode !== 'osu'
+    ? [selectedMap.value.mode]
+    : supportedModes
 })
 
 const bgCover = beatmapset.value
   && isBanchoBeatmapset(beatmapset.value) && {
-  cover: `https://assets.ppy.sh/beatmaps/${
-      beatmapset.value.foreignId
-    }/covers/cover.jpg?${Math.floor(new Date().getTime() / 1000)}`,
-  listUrl: `https://assets.ppy.sh/beatmaps/${
-      beatmapset.value.foreignId
-    }/covers/list@2x.jpg?${Math.floor(new Date().getTime() / 1000)}`,
+  cover: beatmapset.value.assets.cover,
+  listUrl: beatmapset.value.assets['list@2x'],
 }
 const queryRankingSystem = route.query.rank?.toString()
 const queryMode = route.query.mode?.toString()
@@ -58,17 +52,16 @@ const queryRuleset = route.query.ruleset?.toString()
 
 setSwitcher({
   mode: includes(queryMode, supportedModes) ? queryMode : undefined,
-  ruleset: includes(queryRuleset, supportedRulesets)
-    ? queryRuleset
-    : undefined,
+  ruleset: includes(queryRuleset, supportedRulesets) ? queryRuleset : undefined,
 })
 
-if (queryRankingSystem) {
+if (
+  queryRankingSystem
+  && hasRuleset(switcher.mode, switcher.ruleset)
+  && hasRankingSystem(switcher.mode, switcher.ruleset, queryRankingSystem)
+) {
   setSwitcher({
-    rankingSystem: (hasRuleset(switcher.mode, switcher.ruleset)
-      && hasRankingSystem(switcher.mode, switcher.ruleset, queryRankingSystem))
-      ? queryRankingSystem
-      : undefined,
+    rankingSystem: queryRankingSystem,
   })
 }
 
@@ -112,7 +105,10 @@ updateSwitcher()
 
 useHead({
   titleTemplate: `%s - ${config.title}`,
-  title: computed(() => `${beatmapset.value?.meta.intl.artist} - ${beatmapset.value?.meta.intl.title} > ${selectedMap.value?.version}`),
+  title: computed(
+    () =>
+      `${beatmapset.value?.meta.intl.artist} - ${beatmapset.value?.meta.intl.title} > ${selectedMap.value?.version}`
+  ),
 })
 
 async function update() {
@@ -121,7 +117,9 @@ async function update() {
   rewriteAnchor()
 }
 
-const scoreRS = shallowRef<InstanceType<typeof AppScoresRankingSystemSwitcher> | null>(null)
+const scoreRS = shallowRef<InstanceType<
+  typeof AppScoresRankingSystemSwitcher
+> | null>(null)
 
 const links = shallowRef<{
   external: Label[]
@@ -130,13 +128,16 @@ const links = shallowRef<{
 
 onBeforeMount(() => {
   bgCover
+    && bgCover.cover
     && loadImage(bgCover.cover)
       .then(() => {
         lazyBgCover.value = `url(${bgCover.cover})`
       })
       .catch(noop)
 
-  links.value = beatmapset.value ? useExternalBeatmapsetLinks(beatmapset.value) : undefined
+  links.value = beatmapset.value
+    ? useExternalBeatmapsetLinks(beatmapset.value)
+    : undefined
 })
 </script>
 
@@ -190,14 +191,12 @@ onBeforeMount(() => {
       >
         <div class="w-full md:w-1/3 grow">
           <div class="p-8 h-full flex flex-col justify-around">
-            <VLazyImage
+            <img
               v-if="bgCover"
-              class="rounded-xl w-full shadow-md"
-              src-placeholder="/images/image-placeholder.svg"
               :src="bgCover.listUrl"
-              alt="list"
+              :alt="selectedMap.version"
               :onerror="placeholder"
-            />
+            >
             <!-- // TODO in house beatmap links -->
             <div v-if="links" class="pt-4">
               <div class="w-min">
@@ -213,10 +212,11 @@ onBeforeMount(() => {
                         <li class="menu-title">
                           <span>External Links</span>
                         </li>
-                        <li v-for="{ link, label } in links.external" :key="`external-${label}`">
-                          <a
-                            :href="link"
-                          >{{ label }}</a>
+                        <li
+                          v-for="{ link, label } in links.external"
+                          :key="`external-${label}`"
+                        >
+                          <a :href="link">{{ label }}</a>
                         </li>
                       </template>
                       <template v-if="links.directDownload.length">
@@ -224,10 +224,11 @@ onBeforeMount(() => {
                         <li class="menu-title">
                           <span>Direct downloads</span>
                         </li>
-                        <li v-for="{ link, label } in links.directDownload" :key="`direct-${label}`">
-                          <a
-                            :href="link"
-                          >{{ label }}</a>
+                        <li
+                          v-for="{ link, label } in links.directDownload"
+                          :key="`direct-${label}`"
+                        >
+                          <a :href="link">{{ label }}</a>
                         </li>
                       </template>
                     </ul>
@@ -239,10 +240,7 @@ onBeforeMount(() => {
         </div>
         <div class="w-full md:w-2/3">
           <div class="p-2 flex justify-between">
-            <t-tabs
-              v-model="switcher.mode"
-              @update:model-value="update"
-            >
+            <t-tabs v-model="switcher.mode" @update:model-value="update">
               <template v-for="m in allowedModes">
                 <t-tab
                   v-if="hasRuleset(m, switcher.ruleset)"
@@ -416,6 +414,7 @@ onBeforeMount(() => {
   }
 }
 .safari .pre-bg-cover {
+  /* stylelint-disable-next-line vendor-prefix */
   -webkit-transform: translate3d(0, 0, 0);
 }
 .pre-bg-cover {
