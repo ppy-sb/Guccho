@@ -236,15 +236,15 @@ onBeforeMount(() => {
                 <dt class="text-sm font-medium text-gbase-500">
                   Creator
                 </dt>
-                <dd class="stripe-even">
+                <dd class="stripe-even  flex gap-1 items-center">
                   {{ selectedMap.creator }}
                 </dd>
               </div>
-              <div class="bg-gbase-50 dark:bg-gbase-800 stripe-odd">
+              <div class="stripe-odd">
                 <dt class="text-sm font-medium text-gbase-500">
                   Status
                 </dt>
-                <dd class="stripe-even">
+                <dd class="stripe-even  flex gap-1 items-center">
                   {{ selectedMap.status }}
                 </dd>
               </div>
@@ -252,15 +252,15 @@ onBeforeMount(() => {
                 <dt class="text-sm font-medium text-gbase-500">
                   Beatmap ID
                 </dt>
-                <dd class="stripe-even">
+                <dd class="stripe-even  flex gap-1 items-center">
                   {{ selectedMap.id }}
                 </dd>
               </div>
-              <div class="bg-gbase-50 dark:bg-gbase-800 stripe-odd">
+              <div class="stripe-odd">
                 <dt class="text-sm font-medium text-gbase-500">
                   Source | ID
                 </dt>
-                <dd class="stripe-even">
+                <dd class="stripe-even  flex gap-1 items-center">
                   {{ beatmapset.source }} | {{ selectedMap.foreignId }}
                 </dd>
               </div>
@@ -268,58 +268,80 @@ onBeforeMount(() => {
                 <dt class="text-sm font-medium text-gbase-500">
                   Last Update
                 </dt>
-                <dd class="stripe-even">
+                <dd class="stripe-even  flex gap-1 items-center">
                   {{ selectedMap.lastUpdate }}
                 </dd>
               </div>
-              <!-- <div class="bg-gbase-50 dark:bg-gbase-800 stripe-odd">
+              <div class="stripe-odd">
                 <dt class="text-sm font-medium text-gbase-500">
                   BPM
                 </dt>
-                <dd class="stripe-even">
-                  {{ selectedMap.properties.bpm }}
+                <dd class="stripe-even  flex gap-1 items-center">
+                  <img src="~/assets/icons/bpm.png" alt="" class="w-5 color-theme-light-invert">{{ selectedMap.properties.bpm }}
                 </dd>
               </div>
               <div class="stripe-odd">
                 <dt class="text-sm font-medium text-gbase-500">
                   Star Rate
                 </dt>
-                <dd class="stripe-even">
-                  {{ selectedMap.properties.starRate }}
+                <dd class="stripe-even  flex gap-1 items-center">
+                  <img src="~/assets/icons/overall-difficulty.png" alt="" class="w-5 color-theme-light-invert">{{ selectedMap.properties.starRate }}
                 </dd>
               </div>
-              <div class="bg-gbase-50 dark:bg-gbase-800 stripe-odd">
+              <div class="stripe-odd">
                 <dt class="text-sm font-medium text-gbase-500">
                   Circle Size
                 </dt>
-                <dd class="stripe-even">
-                  {{ selectedMap.properties.circleSize }}
+                <dd class="stripe-even  flex gap-1 items-center">
+                  <img src="~/assets/icons/size.png" alt="" class="w-5 color-theme-light-invert">{{ selectedMap.properties.circleSize }}
+                </dd>
+              </div>
+              <div class="stripe-odd">
+                <dt class="text-sm font-medium text-gbase-500">
+                  Approach Rate
+                </dt>
+                <dd class="stripe-even flex gap-1 items-center">
+                  <img src="~/assets/icons/approach-rate.png" alt="" class="w-5 color-theme-light-invert">{{ selectedMap.properties.approachRate }}
+                </dd>
+              </div>
+              <div class="stripe-odd">
+                <dt class="text-sm font-medium text-gbase-500">
+                  Accuracy
+                </dt>
+                <dd class="stripe-even flex gap-1 items-center">
+                  <img src="~/assets/icons/accuracy.png" alt="" class="w-5 color-theme-light-invert">{{ selectedMap.properties.accuracy }}
                 </dd>
               </div>
               <div class="stripe-odd">
                 <dt class="text-sm font-medium text-gbase-500">
                   HP Drain
                 </dt>
-                <dd class="stripe-even">
-                  {{ selectedMap.properties.hpDrain }}
+                <dd class="stripe-even  flex gap-1 items-center">
+                  <img src="~/assets/icons/hp-drain.png" alt="" class="w-5 color-theme-light-invert">{{ selectedMap.properties.hpDrain }}
                 </dd>
               </div>
-              <div class="bg-gbase-50 dark:bg-gbase-800 stripe-odd">
+              <div class="stripe-odd">
                 <dt class="text-sm font-medium text-gbase-500">
                   Duration
                 </dt>
-                <dd class="stripe-even">
-                  {{ selectedMap.properties.totalLength }} seconds
+                <dd class="stripe-even  flex gap-1 items-center">
+                  <img src="~/assets/icons/length.png" alt="" class="w-5 color-theme-light-invert">{{ selectedMap.properties.totalLength }} seconds
                 </dd>
-              </div> -->
-              <div class="bg-gbase-50 dark:bg-gbase-800 stripe-odd">
+              </div>
+              <div class="stripe-odd">
                 <dt class="text-sm font-medium text-gbase-500">
                   Hit Object
                 </dt>
                 <dd class="stripe-even">
-                  {{ selectedMap.properties.count.circles }} circles,<br>
-                  {{ selectedMap.properties.count.sliders }} sliders,<br>
-                  {{ selectedMap.properties.count.spinners }} spinners,<br>
+                  <div class="flex gap-1 items-center">
+                    <img src="~/assets/icons/circles.png" alt="" class="w-5 color-theme-light-invert"> {{ selectedMap.properties.count.circles }} circles,
+                  </div>
+                  <div class="flex gap-1 items-center">
+                    <img src="~/assets/icons/sliders.png" alt="" class="w-5 color-theme-light-invert">{{ selectedMap.properties.count.sliders }} sliders,
+                  </div>
+                  <div class="flex gap-1 items-center">
+                    <img src="~/assets/icons/spinners.png" alt="" class="w-5 color-theme-light-invert">{{ selectedMap.properties.count.spinners }} spinners,<br>
+                  </div>
                 </dd>
               </div>
             </dl>
@@ -353,9 +375,12 @@ onBeforeMount(() => {
 
 .stripe-odd {
   @apply px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6;
+  &:nth-child(odd){
+    @apply bg-gbase-50 dark:bg-gbase-800
+  }
 }
 
-.stripe-even {
+.stripe-even  flex gap-1 items-center {
   @apply mt-1 text-sm text-gbase-900 dark:text-gbase-100 sm:col-span-2 sm:mt-0;
 }
 
