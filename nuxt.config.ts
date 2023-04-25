@@ -32,6 +32,7 @@ export default defineNuxtConfig({
       mode: 'out-in', // default
     },
   },
+
   experimental: {
     // viewTransition: true,
     renderJsonPayloads: true,
@@ -47,6 +48,7 @@ export default defineNuxtConfig({
   nitro: {
     minify: true,
   },
+
   vite: {
     build: {
       minify: true,
@@ -55,13 +57,12 @@ export default defineNuxtConfig({
   },
 
   // Modules: https://go.nuxtjs.dev/config-modules
+
   modules: [
     // '@nuxtjs/auth-next',
     // '@nuxtjs/color-mode',
-    // 'floating-vue/nuxt',
     '@nuxtjs/tailwindcss',
     '@pinia/nuxt',
-    '@nuxtjs/robots',
   ],
 
   alias: {
@@ -70,30 +71,11 @@ export default defineNuxtConfig({
     $articles: fileURLToPath(new URL('./articles', import.meta.url)),
   },
 
-  // auth: {
-  //   strategies: {
-  //     local: {
-  //       token: {
-  //         property: 'access_token',
-  //         global: true,
-  //         required: true,
-  //         maxAge: 60 * 60,
-  //         type: 'Bearer'
-  //       },
-  //       user: {
-  //         property: '',
-  //         autoFetch: true
-  //       },
-  //       endpoints: {
-  //         login: { url: 'http://localhost:3001/v1/auth/token', method: 'post' },
-  //         logout: false,
-  //         user: { url: 'http://localhost:3001/v1/auth/user/me', method: 'get' }
-  //       }
-  //     }
-  //   }
-  // },
   postcss,
+
   typescript: {
     strict: true,
   },
+
+  devtools: true,
 })

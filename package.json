@@ -30,7 +30,6 @@
     "@headlessui/vue": "^1.7.13",
     "@nuxtjs/auth-next": "5.0.0-1667386184.dfbbb54",
     "@nuxtjs/color-mode": "^3.2.0",
-    "@nuxtjs/robots": "^3.0.0",
     "@pinia/nuxt": "^0.4.8",
     "@prisma/client": "^4.12.0",
     "@tailwindcss/typography": "^0.5.9",
@@ -96,6 +95,7 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "^0.38.4",
+    "@nuxt/devtools": "^0.4.2",
     "@nuxtjs/eslint-config-typescript": "^12.0.0",
     "@nuxtjs/tailwindcss": "^6.6.6",
     "@types/bcryptjs": "^2.4.2",
