@@ -25,7 +25,7 @@ const relations = new UserRelationProvider()
 export const router = _router({
   settings: pUser.query(async ({ ctx }) => {
     return await users.getFull({
-      handle: users.idToString(ctx.user.id),
+      handle: UserProvider.idToString(ctx.user.id),
       excludes: { statistics: true, relationships: true, secrets: false },
     })
   }),
@@ -146,7 +146,7 @@ export const router = _router({
     }),
 
   relations: pUser.query(async ({ ctx }) => {
-    return await (await relations.get({ user: ctx.user })).map(f => mapId(f, relations.idToString))
+    return await (await relations.get({ user: ctx.user })).map(f => mapId(f, UserRelationProvider.idToString))
   }),
 
   removeOneRelation: pUser

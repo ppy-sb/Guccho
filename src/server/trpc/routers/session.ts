@@ -12,12 +12,12 @@ import { sessionProcedure as pSession } from '../middleware/session'
 import { zodHandle } from '../shapes'
 import { router as _router } from '../trpc'
 import { mapId } from '../../transforms/mapId'
-import { getSession } from '~/server/session'
-import { UserProvider } from '$active/server'
+import { SessionProvider, UserProvider } from '$active/server'
 
 const { compare } = bcrypt
 
 const userProvider = new UserProvider()
+const sessionProvider = new SessionProvider()
 export const router = _router({
   login: pSession
     .input(
@@ -46,9 +46,9 @@ export const router = _router({
             message: unableToRetrieveSession,
           })
         }
-        session.userId = user.id
+        session.userId = UserProvider.idToString(user.id)
         return {
-          user: mapId(user, userProvider.idToString),
+          user: mapId(user, UserProvider.idToString),
         }
       }
       catch (err) {
@@ -73,7 +73,7 @@ export const router = _router({
     .query(async ({ ctx, input }) => {
       let session
       if (input?.sessionId) {
-        session = await getSession(input.sessionId)
+        session = await sessionProvider.get(input.sessionId)
       }
       else {
         session = await ctx.session.getBinding()
@@ -88,10 +88,10 @@ export const router = _router({
       if (session.userId) {
         try {
           const user = await userProvider.getEssentialById({
-            id: session.userId,
+            id: UserProvider.stringToId(session.userId),
           })
           return {
-            user: mapId(user, userProvider.idToString),
+            user: mapId(user, UserProvider.idToString),
           }
         }
         catch (_) {
@@ -104,4 +104,7 @@ export const router = _router({
         user: null,
       }
     }),
+  destroy: pSession.mutation(() => {
+
+  }),
 })

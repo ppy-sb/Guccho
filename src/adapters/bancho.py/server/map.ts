@@ -15,8 +15,8 @@ import type { MapProvider as Base } from '~/adapters/base/server'
 import type { BeatmapSource, Beatmapset } from '~/types/beatmap'
 
 export class MapProvider implements Base<Id> {
-  idToString = idToString
-  stringToId = stringToId
+  static idToString = idToString
+  static stringToId = stringToId
   db = getPrismaClient()
 
   async getBeatmap(query: { id: Id }) {

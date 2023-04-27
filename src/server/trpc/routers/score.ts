@@ -13,15 +13,15 @@ export const router = _router({
       })
     )
     .query(async ({ input }) => {
-      const score = await s.id(s.stringToScoreId(input.id))
+      const score = await s.id(ScoreProvider.stringToScoreId(input.id))
 
       return {
         ...score,
-        id: s.scoreIdToString(score.id),
+        id: ScoreProvider.scoreIdToString(score.id),
         beatmap: beatmapIsVisible(score.beatmap)
           ? {
-              ...mapId(score.beatmap, s.idToString),
-              beatmapset: mapId(score.beatmap.beatmapset, s.idToString),
+              ...mapId(score.beatmap, ScoreProvider.idToString),
+              beatmapset: mapId(score.beatmap.beatmapset, ScoreProvider.idToString),
             }
           : score.beatmap,
       }

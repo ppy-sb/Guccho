@@ -13,7 +13,7 @@ export const optionalUserProcedure = sessionProcedure.use(async ({ ctx, next }) 
   if (!session.userId) {
     return await next({ ctx: returnCtx })
   }
-  const user = await userProvider.getEssentialById({ id: session.userId }).catch(_ => undefined)
+  const user = await userProvider.getEssentialById({ id: UserProvider.stringToId(session.userId) }).catch(_ => undefined)
   returnCtx.user = user
   return await next({ ctx: returnCtx })
 })

@@ -21,7 +21,7 @@ export const router = _router({
         limit,
       })
 
-      return users.map(u => mapId(u, user.idToString))
+      return users.map(u => mapId(u, UserProvider.idToString))
     }),
   searchBeatmap: p
     .input(
@@ -38,7 +38,7 @@ export const router = _router({
         filters,
       })
 
-      return beatmaps.map(b => mapId(b, map.idToString))
+      return beatmaps.map(b => mapId(b, MapProvider.idToString))
     }),
   searchBeatmapset: p
     .input(
@@ -55,6 +55,6 @@ export const router = _router({
         filters,
       })
 
-      return beatmapsets.map(bs => mapId(bs, map.idToString))
+      return beatmapsets.map(bs => mapId(bs, MapProvider.idToString))
     }),
 })

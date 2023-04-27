@@ -52,9 +52,14 @@ export const useSession = defineStore('session', {
       return true
     },
     async destroy() {
-      this.$reset()
-      const cookie = useCookie('session')
-      cookie.value = ''
+      const app$ = useNuxtApp()
+      app$.$client.session.destroy.mutate()
+        .then(() => {
+          this.$reset()
+          const cookie = useCookie('session')
+          cookie.value = ''
+        })
+        .catch()
     },
     async retrieve() {
       try {

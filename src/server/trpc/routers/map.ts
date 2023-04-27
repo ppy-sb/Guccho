@@ -12,13 +12,13 @@ export const router = _router({
       })
     )
     .query(async ({ input }) => {
-      const bs = await map.getBeatmapset({ id: map.stringToId(input.id) })
+      const bs = await map.getBeatmapset({ id: MapProvider.stringToId(input.id) })
       if (!bs) {
         return
       }
       const returnValue = {
-        ...mapId(bs, map.idToString, ['id', 'foreignId']),
-        beatmaps: bs.beatmaps.map(bm => mapId(bm, map.idToString, ['id', 'foreignId'])),
+        ...mapId(bs, MapProvider.idToString, ['id', 'foreignId']),
+        beatmaps: bs.beatmaps.map(bm => mapId(bm, MapProvider.idToString, ['id', 'foreignId'])),
       }
       return returnValue
     }),

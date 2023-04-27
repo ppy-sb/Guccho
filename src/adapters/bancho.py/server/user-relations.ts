@@ -9,8 +9,8 @@ import type { Relationship } from '~/types/common'
 import type { UserEssential } from '~/types/user'
 
 export class UserRelationProvider implements Base<Id> {
-  stringToId = stringToId
-  idToString = idToString
+  static stringToId = stringToId
+  static idToString = idToString
   db = getPrismaClient()
 
   config = {

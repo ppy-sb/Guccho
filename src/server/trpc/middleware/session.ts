@@ -3,12 +3,15 @@ import { setCookie } from 'h3'
 import { publicProcedure } from '../trpc'
 
 import { unableToRefreshToken } from '../messages'
-import { createSession, getSession, refresh } from '~/server/session'
+import { SessionProvider } from '$active/server'
+// import { create, get, refresh } from '~/server/session'
+
+const sessionProvider = new SessionProvider()
 
 export const sessionProcedure = publicProcedure
   .use(async ({ ctx, next }) => {
     if (!ctx.session.id) {
-      const sessionId = await createSession()
+      const sessionId = await sessionProvider.create()
       setCookie(ctx.h3Event, 'session', sessionId)
       return await next({
         ctx: Object.assign(ctx, {
@@ -18,9 +21,9 @@ export const sessionProcedure = publicProcedure
         }),
       })
     }
-    const session = await getSession(ctx.session.id)
+    const session = await sessionProvider.get(ctx.session.id)
     if (session == null) {
-      const sessionId = await createSession()
+      const sessionId = await sessionProvider.create()
       setCookie(ctx.h3Event, 'session', sessionId)
       return await next({
         ctx: Object.assign(ctx, {
@@ -31,7 +34,7 @@ export const sessionProcedure = publicProcedure
       })
     }
     else {
-      const refreshed = await refresh(ctx.session.id)
+      const refreshed = await sessionProvider.refresh(ctx.session.id)
       if (!refreshed) {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -56,13 +59,10 @@ export const sessionProcedure = publicProcedure
       ctx: Object.assign(ctx, {
         session: Object.assign(ctx.session, {
           async getBinding<Additional extends Record<string, unknown>>() {
-            type _ReturnType = Awaited<ReturnType<typeof getSession>> & Partial<Additional>
             if (!ctx.session.id) {
-              return null
+              return undefined
             }
-            return (await getSession(ctx.session.id)) as {
-              [K in keyof _ReturnType]: _ReturnType[K];
-            }
+            return (await sessionProvider.get(ctx.session.id)) as Awaited<ReturnType<SessionProvider['get']>> & Partial<Additional>
           },
         }),
       }),

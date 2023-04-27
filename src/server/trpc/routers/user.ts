@@ -13,15 +13,15 @@ import {
 } from '../shapes'
 import { router as _router, publicProcedure as p } from '../trpc'
 import { sessionProcedure } from '../middleware/session'
-import { updateSession } from '../../session'
-import { mapId } from '../../transforms/mapId'
+import { mapId } from '~/server/transforms/mapId'
 import { followUserSettings } from '~/server/transforms'
-import { UserProvider, UserRelationProvider } from '$active/server'
+import { SessionProvider, UserProvider, UserRelationProvider } from '$active/server'
 
 import type { NumberRange } from '~/types/common'
 
 const userProvider = new UserProvider()
 const userRelationshipProvider = new UserRelationProvider()
+const session = new SessionProvider()
 
 export const router = _router({
   exists: p
@@ -44,7 +44,7 @@ export const router = _router({
         handle,
         excludes: { relationships: true, secrets: true },
       })
-      return mapId(followUserSettings({ user, scope: 'public' }), userProvider.idToString)
+      return mapId(followUserSettings({ user, scope: 'public' }), UserProvider.idToString)
     }),
   full: p
     .input(
@@ -57,7 +57,7 @@ export const router = _router({
         handle,
         excludes: { email: true },
       })
-      return mapId(followUserSettings({ user, scope: 'public' }), userProvider.idToString)
+      return mapId(followUserSettings({ user, scope: 'public' }), UserProvider.idToString)
     }),
   best: p
     .input(
@@ -146,7 +146,7 @@ export const router = _router({
     .query(async ({ input }) => {
       const user = await userProvider.getEssential({ handle: input.handle })
 
-      return mapId(user, userProvider.idToString)
+      return mapId(user, UserProvider.idToString)
     }),
   countRelations: p
     .input(
@@ -165,7 +165,7 @@ export const router = _router({
     .input(object({
       id: string(),
     })).query(async ({ input: { id } }) => {
-      return await userProvider.status({ id: userProvider.stringToId(id) })
+      return await userProvider.status({ id: UserProvider.stringToId(id) })
     }),
   register: sessionProcedure
     .input(object({
@@ -176,7 +176,7 @@ export const router = _router({
     })).mutation(async ({ input, ctx }) => {
       const user = await userProvider.register(input)
       const sessionId = ctx.session.id
-      updateSession(sessionId, { userId: user.id })
+      session.update(sessionId, { userId: UserProvider.idToString(user.id) })
       return user
     }),
 })

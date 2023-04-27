@@ -71,8 +71,8 @@ function mkDirByPathSync(targetDir: string, { isRelativeToScript = false } = {})
 const bpyNumModes = Object.values(BanchoPyMode).filter(v => !isNaN(Number(v))) as BanchoPyMode[]
 
 export class UserProvider implements Base<Id> {
-  stringToId = stringToId
-  idToString = idToString
+  static stringToId = stringToId
+  static idToString = idToString
   db = getPrismaClient()
 
   relationships: UserRelationProvider

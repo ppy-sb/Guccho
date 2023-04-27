@@ -22,8 +22,8 @@ const leaderboardFields = {
   plays: true,
 } as const
 export class LeaderboardProvider implements Base<Id> {
-  stringToId = stringToId
-  idToString = idToString
+  static stringToId = stringToId
+  static idToString = idToString
   db = getPrismaClient()
   redisClient = redisClient()
 

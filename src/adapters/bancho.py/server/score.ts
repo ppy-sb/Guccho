@@ -16,11 +16,11 @@ import type {
 } from '~/adapters/base/server'
 
 export class ScoreProvider implements Base<bigint, Id> {
-  idToString = idToString
-  stringToId = stringToId
+  static idToString = idToString
+  static stringToId = stringToId
 
-  stringToScoreId = stringToScoreId
-  scoreIdToString = scoreIdToString
+  static stringToScoreId = stringToScoreId
+  static scoreIdToString = scoreIdToString
 
   db = getPrismaClient()
 

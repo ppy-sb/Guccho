@@ -55,7 +55,7 @@ export const router = _router({
         })
         return result.map(item => ({
           ...item,
-          user: mapId(item.user, provider.idToString),
+          user: mapId(item.user, LeaderboardProvider.idToString),
         }))
       }
     ),
@@ -84,7 +84,7 @@ export const router = _router({
         })
         return result.map(item => ({
           ...item,
-          user: mapId(item.user, provider.idToString),
+          user: mapId(item.user, LeaderboardProvider.idToString),
         }))
       }
     ),
