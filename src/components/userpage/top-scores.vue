@@ -19,7 +19,7 @@ import {
 
 import userpageStore from '~/store/userpage'
 
-const { addToLibrary } = useFAIconLib()
+const { addToLibrary } = useFAIcon()
 
 addToLibrary(faRankingStar)
 const app$ = useNuxtApp()

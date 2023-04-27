@@ -13,7 +13,7 @@ import userpageStore from '~/store/userpage'
 
 const page = userpageStore()
 
-const { addToLibrary } = useFAIconLib()
+const { addToLibrary } = useFAIcon()
 addToLibrary(faUserGroup, faHeartCrack, faHeart, faEnvelope)
 
 const hasBeatmap = ['playing', 'modding', 'multiplaying', 'editing', 'watching', 'testing', 'submitting']

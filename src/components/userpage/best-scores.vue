@@ -18,7 +18,7 @@ import {
 
 import userpageStore from '~/store/userpage'
 
-const { addToLibrary } = useFAIconLib()
+const { addToLibrary } = useFAIcon()
 
 addToLibrary(faPiedPiperPp)
 const app$ = useNuxtApp()

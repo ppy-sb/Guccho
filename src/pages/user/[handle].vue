@@ -8,7 +8,7 @@ import {
 import { faPiedPiperPp } from '@fortawesome/free-brands-svg-icons'
 import userpageStore from '~/store/userpage'
 
-const { addToLibrary } = useFAIconLib()
+const { addToLibrary } = useFAIcon()
 
 addToLibrary(faRankingStar, faPiedPiperPp, faBarsStaggered, faHouseUser)
 

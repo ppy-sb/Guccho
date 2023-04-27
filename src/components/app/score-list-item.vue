@@ -33,7 +33,7 @@ const props = withDefaults(
     useIntl: true,
   }
 )
-const { addToLibrary } = useFAIconLib()
+const { addToLibrary } = useFAIcon()
 addToLibrary(faBan, faCheckDouble, faHeart, faPause)
 
 const rankingStatusIconMapping: Partial<Record<RankingStatus, string>> = {

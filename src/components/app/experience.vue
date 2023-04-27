@@ -9,7 +9,7 @@ import {
   faChargingStation,
 } from '@fortawesome/free-solid-svg-icons'
 
-const { addToLibrary } = useFAIconLib()
+const { addToLibrary } = useFAIcon()
 addToLibrary(
   faChargingStation,
   faBatteryFull,

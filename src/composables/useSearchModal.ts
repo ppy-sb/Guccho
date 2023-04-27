@@ -1,4 +1,5 @@
 import { useDebounceFn } from '@vueuse/core'
+import useSearchablePages from './useSearchablePages'
 import { modes } from '~/types/defs'
 import type { Mode } from '~/types/common'
 import type { OP, Tag } from '~/types/search'
@@ -40,9 +41,8 @@ export default async function () {
     beatmapsets: true,
     users: true,
   })
-  const mode = computed(() => ((includes.beatmaps || includes.beatmapsets) && !includes.users) ? 'beatmap' : 'all')
-
-  const auto = computed(() => mode.value === 'all' ? 5 : 10)
+  const searchMode = computed(() => ((includes.beatmaps || includes.beatmapsets) && !includes.users) ? 'beatmap' : 'all')
+  const autoResultSize = computed(() => searchMode.value === 'all' ? 5 : 10)
 
   const {
     data: users,
@@ -54,7 +54,7 @@ export default async function () {
     }
     return await app.$client.search.searchUser.query({
       keyword: keyword.value,
-      limit: auto.value,
+      limit: autoResultSize.value,
     })
   })
 
@@ -69,7 +69,7 @@ export default async function () {
     return await app.$client.search.searchBeatmap.query({
       keyword: keyword.value,
       filters: tags.value,
-      limit: auto.value,
+      limit: autoResultSize.value,
     })
   })
 
@@ -84,7 +84,7 @@ export default async function () {
     return await app.$client.search.searchBeatmapset.query({
       keyword: keyword.value,
       filters: tags.value,
-      limit: auto.value,
+      limit: autoResultSize.value,
     })
   })
 
@@ -168,7 +168,7 @@ export default async function () {
   }
 
   const extract = (force = false) => {
-    if (mode.value === 'beatmap') {
+    if (searchMode.value === 'beatmap') {
       extractTags(force)
       extractQueries(force)
     }
@@ -203,12 +203,17 @@ export default async function () {
     beatmapsets: pendingBeatmapsets,
   })
 
+  const searchablePages = useSearchablePages()
+
+  const sr = computed(() => searchablePages.search(keyword.value))
+
   return {
     loading,
     results: {
       users,
       beatmaps,
       beatmapsets,
+      pages: sr,
     },
     nothing: computed(() => {
       const nothingBS = Array.isArray(beatmapsets.value) ? !beatmapsets.value.length : true
@@ -223,7 +228,7 @@ export default async function () {
       search(false)
     },
     raw,
-    mode,
+    mode: searchMode,
     keyword,
     tags,
   }

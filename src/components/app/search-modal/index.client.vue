@@ -19,6 +19,7 @@ const {
     beatmaps,
     beatmapsets,
     users,
+    pages,
   },
   loading,
   nothing,
@@ -101,7 +102,7 @@ const {
                 <input
                   v-model="keyword"
                   type="text"
-                  placeholder="Search User and Beatmaps..."
+                  placeholder="Search..."
                   class="input grow border-label-0 focus:input-primary bg-transparent !outline-0"
                   @input="onInput"
                   @keyup.enter="raw(true)"
@@ -111,13 +112,36 @@ const {
                 v-else
                 v-model="keyword"
                 type="text"
-                placeholder="Search User and Beatmaps..."
+                placeholder="Search..."
                 class="input grow border-label-0 focus:input-primary bg-transparent !outline-0"
                 @input="onInput"
                 @keyup.enter="raw(true)"
               >
             </div>
             <div class="pt-0 h-full overflow-auto menus">
+              <template
+                v-if="pages.length"
+              >
+                <div class="divider font-bold">
+                  Quick Link
+                </div>
+                <ul class="menu">
+                  <li
+                    v-for="page in pages"
+                    :key="`searchResult-page-${page.route.name}`"
+                  >
+                    <nuxt-link
+                      :to="page.route"
+                      @click="() => closeModal()"
+                    >
+                      <div class="flex gap-2 items-center">
+                        <!-- <page.render /> -->
+                        <component :is="page.render" />
+                      </div>
+                    </nuxt-link>
+                  </li>
+                </ul>
+              </template>
               <template v-if="loading.beatmapsets">
                 <div class="divider" />
                 <div class="p-5 pt-0">

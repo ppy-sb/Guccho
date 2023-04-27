@@ -16,7 +16,7 @@ defineProps<{
   rankingSystem: RankingSystem
 }>()
 
-const { addToLibrary } = useFAIconLib()
+const { addToLibrary } = useFAIcon()
 
 addToLibrary(faEllipsisH)
 

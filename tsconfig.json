@@ -19,10 +19,7 @@
     "allowJs": true,
     "strictNullChecks": true,
     "strictFunctionTypes": true,
+    "jsx": "preserve"
   },
-  "exclude": [
-    "node_modules",
-    "dist",
-    ".prisma"
-  ]
+  "exclude": ["node_modules", "dist", ".prisma"]
 }

@@ -10,7 +10,7 @@ import {
 } from '~/utils'
 import type { Label } from '~/composables/useLinks'
 
-const { addToLibrary } = useFAIconLib()
+const { addToLibrary } = useFAIcon()
 
 addToLibrary(faEllipsisH)
 
