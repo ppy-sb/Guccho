@@ -20,16 +20,6 @@ const privilege = ref<NonNullable<ContentPrivilege['privilege']>>({
   read: ['public'],
   write: ['staff'],
 })
-async function update() {
-  await refresh()
-  if (!content.value) {
-    return
-  }
-  editing.value = content.value.json || {}
-  editor.value?.reload()
-
-  privilege.value = content.value.privilege
-}
 function exportArticle() {
   const file = new File([JSON.stringify({
     privilege: privilege.value,
@@ -70,6 +60,29 @@ function options(priv: typeof privileges | typeof readPriv) {
   return Object.entries(priv).map(([value, label]) => ({ label, value }))
 }
 
+async function create() {
+  content.value = {
+    json: {},
+    html: '',
+    access: {
+      write: true,
+      read: true,
+    },
+    privilege: privilege.value,
+  }
+}
+
+async function update() {
+  await refresh()
+  if (!content.value) {
+    return
+  }
+  editing.value = content.value.json || {}
+  editor.value?.reload()
+
+  privilege.value = content.value.privilege
+}
+
 async function save() {
   if (!slug.value) {
     return
@@ -106,7 +119,10 @@ async function del() {
       <button class="btn btn-sm btn-info" @click="() => update()">
         Load
       </button>
-      <template v-if="content?.access.write">
+      <button class="btn btn-sm btn-primary" @click="() => create()">
+        New
+      </button>
+      <template v-if="content?.access.write && slug">
         <button class="btn btn-sm btn-success" @click="() => save()">
           Save
         </button>

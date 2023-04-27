@@ -28,7 +28,7 @@ export default () => {
           if (!language) {
             return
           }
-          const _key = `#${node.attrs?.language}` as keyof typeof hljs
+          const _key = node.attrs?.language as keyof typeof hljs
           if (!_key) {
             return
           }
@@ -38,7 +38,7 @@ export default () => {
           if (!hljs[_key]) {
             return
           }
-          return useLib(hljs[_key].slice(1))
+          return useLib(hljs[_key])
         }) || []
       )
     },
@@ -47,11 +47,11 @@ export default () => {
     async parseAndImportHighlightLibFromHtml(html: string) {
       const ssrCodeLanguages = html.matchAll(/language-(\w+)/gm)
       for (const _language of ssrCodeLanguages) {
-        const language = `#${_language[1]}` as keyof typeof hljs
+        const language = _language[1] as keyof typeof hljs
         if (!hljs[language]) {
           continue
         }
-        await useLib(hljs[language].slice(1))
+        await useLib(hljs[language])
       }
     },
 
@@ -59,11 +59,11 @@ export default () => {
       const ssrCodeLanguages = html.matchAll(/language-(\w+)/gm)
       const languages = []
       for (const _language of ssrCodeLanguages) {
-        const language = `#${_language[1]}` as keyof typeof hljs
+        const language = _language[1] as keyof typeof hljs
         if (!hljs[language]) {
           continue
         }
-        languages.push(`#${_language[1]}` as keyof typeof hljs)
+        languages.push(_language[1] as keyof typeof hljs)
       }
       return languages
     },

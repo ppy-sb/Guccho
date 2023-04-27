@@ -1,24 +1,26 @@
 import { readdirSync } from 'node:fs'
 import { writeFile } from 'node:fs/promises'
-import { resolve } from 'node:path'
+import { dirname, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import highlight from 'highlight.js'
 
-const hljs: Record<string, string> = {}
+const __dirname = dirname(fileURLToPath(import.meta.url))
+
+const hljs = {}
 
 const files = readdirSync('./node_modules/highlight.js/es/languages').filter(file => !file.endsWith('.js.js')).map(file => file.slice(0, -3))
 
 ;(async () => {
   await Promise.all (files.map(async (file) => {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const mod = require(`highlight.js/lib/languages/${file}`)
-    const { aliases } = mod(highlight)
-    const language = `#${file}`
+    const mod = await import(`highlight.js/lib/languages/${file}`)
+    const { aliases } = mod.default(highlight)
+    const language = file
     hljs[language] = language
     if (!aliases) {
       return
     }
-    aliases.forEach((alias: string) => {
-      hljs[`#${alias}`] = language
+    aliases.forEach((alias) => {
+      hljs[alias] = language
     })
   }))
 

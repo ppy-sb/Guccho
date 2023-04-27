@@ -1,5 +1,5 @@
-import type { Tag } from './../../../types/search'
 import type { idTransformable } from './extends'
+import type { Tag } from '~/types/search'
 import type {
   BeatmapEssential, BeatmapSource, BeatmapWithMeta, Beatmapset, RankingStatus,
 } from '~/types/beatmap'

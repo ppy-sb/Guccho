@@ -56,10 +56,7 @@ export default defineNuxtConfig({
     },
   },
 
-  // Modules: https://go.nuxtjs.dev/config-modules
-
   modules: [
-    // '@nuxtjs/auth-next',
     // '@nuxtjs/color-mode',
     '@nuxtjs/tailwindcss',
     '@pinia/nuxt',
