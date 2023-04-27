@@ -1,7 +1,7 @@
 import { dedupeUserRelationship, idToString, stringToId, toUserEssential } from '../transforms'
 // import { idToString, stringToId } from '../transforms'
 import type { Id } from '..'
-import { getPrismaClient } from './prisma'
+import { getPrismaClient } from './source/prisma'
 
 import { calculateMutualRelationships } from '~/server/transforms'
 import type { UserRelationProvider as Base } from '~/adapters/base/server'

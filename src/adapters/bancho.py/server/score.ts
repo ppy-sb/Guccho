@@ -9,7 +9,7 @@ import {
 
 import type { Id } from '..'
 import type { AbleToTransformToScores } from '../transforms'
-import { getPrismaClient } from './prisma'
+import { getPrismaClient } from './source/prisma'
 import { TSFilter } from '~/utils'
 import type {
   ScoreProvider as Base,

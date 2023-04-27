@@ -10,7 +10,7 @@ export interface Session<Id = string> {
 
 export interface SessionStore<TSessionId, TSession> {
   get(key: TSessionId): Promise<TSession | undefined>
-  set(key: TSessionId, value: TSession): Promise<void>
+  set(key: TSessionId, value: TSession): Promise<TSessionId>
   destroy(key: TSessionId): Promise<boolean>
   forEach(cb: (arg0: TSession, arg1: TSessionId) => Promise<void>): Promise<void>
 }
@@ -18,7 +18,7 @@ export const config = {
   expire: 1000 * 60 * 60,
 }
 
-function createSessionStore<TSessionId, TSession>() {
+export function createSessionStore<TSessionId, TSession>() {
   const store = new Map<TSessionId, TSession>()
   return <SessionStore<TSessionId, TSession>>{
     async get(key: TSessionId) {
@@ -45,7 +45,9 @@ export class SessionProvider<TSessionId, TSession extends Session> {
 
   store: SessionStore<TSessionId, TSession> = createSessionStore()
   constructor() {
-    setInterval(() => this.houseKeeping.minutely?.(this.store, config), 1000 * 60)
+    setInterval(() => this.houseKeeping.minutely?.call(this, this.store, config), 1000 * 60)
+    setInterval(() => this.houseKeeping.hourly?.call(this, this.store, config), 1000 * 60 * 60)
+    setInterval(() => this.houseKeeping.daily?.call(this, this.store, config), 1000 * 60 * 60 * 24)
   }
 
   async create(data?: { id: string }) {
@@ -73,10 +75,11 @@ export class SessionProvider<TSessionId, TSession extends Session> {
 
   async refresh(sessionId: TSessionId) {
     const _session = await this.store.get(sessionId)
-    if (_session == null) {
+    if (!_session) {
       return
     }
     _session.lastActivity = Date.now()
+    this.store.set(sessionId, _session)
     return sessionId
   }
 
@@ -85,17 +88,14 @@ export class SessionProvider<TSessionId, TSession extends Session> {
   }
 
   async update(sessionId: TSessionId, data: Partial<TSession>) {
-    const _session = await await this.store.get(sessionId)
+    const _session = await this.store.get(sessionId)
     if (!_session) {
       return undefined
     }
-    const newSession = {
-      ..._session,
-      ...data,
-    }
+    const newSession = Object.assign(_session, data)
     newSession.lastActivity = Date.now()
-    await this.store.set(sessionId, newSession)
-    return sessionId
+    const maybeNewSessionId = await this.store.set(sessionId, newSession)
+    return maybeNewSessionId
   }
 
   async removeIfExpired(session: TSession, sessionId: TSessionId) {

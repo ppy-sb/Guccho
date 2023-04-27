@@ -135,7 +135,6 @@ const {
                       @click="() => closeModal()"
                     >
                       <div class="flex gap-2 items-center">
-                        <!-- <page.render /> -->
                         <component :is="page.render" />
                       </div>
                     </nuxt-link>

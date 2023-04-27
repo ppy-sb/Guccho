@@ -1,8 +1,8 @@
 import { idToString, stringToId, toBanchoPyMode, toMods, toRoles, toUserEssential, userEssentials } from '../transforms'
-import { client as redisClient } from '../redis-client'
 import type { Id } from '..'
 import { hasRuleset } from '..'
-import { getPrismaClient } from './prisma'
+import { client as redisClient } from './source/redis'
+import { getPrismaClient } from './source/prisma'
 
 import { modes as _modes } from '~/types/defs'
 import type {

@@ -8,7 +8,6 @@ import imageType from 'image-type'
 import type { Prisma } from '.prisma/bancho.py'
 import type { JSONContent } from '@tiptap/core'
 import { BanchoPyMode } from '../enums'
-import { client as redisClient } from '../redis-client'
 import {
   createRulesetData,
   createUserQuery,
@@ -25,7 +24,8 @@ import {
 import type { Id } from '..'
 import { getLiveUserStatus } from '../api-client'
 import { encrypt } from '../crypto'
-import { getPrismaClient } from './prisma'
+import { client as redisClient } from './source/redis'
+import { getPrismaClient } from './source/prisma'
 import { UserRelationProvider } from './user-relations'
 import { ArticleProvider } from './article'
 import { userNotFound } from '~/server/trpc/messages'

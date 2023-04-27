@@ -46,7 +46,10 @@ export const router = _router({
             message: unableToRetrieveSession,
           })
         }
-        session.userId = UserProvider.idToString(user.id)
+        const newSessionId = await sessionProvider.update(ctx.session.id, { userId: UserProvider.idToString(user.id) })
+        if (newSessionId && newSessionId !== ctx.session.id) {
+          setCookie(ctx.h3Event, 'session', newSessionId)
+        }
         return {
           user: mapId(user, UserProvider.idToString),
         }

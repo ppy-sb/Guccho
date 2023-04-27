@@ -7,7 +7,7 @@ import {
   toBeatmapWithBeatmapset, toBeatmapset, toRankingStatus,
 } from '../transforms'
 import type { Id } from '..'
-import { getPrismaClient } from './prisma'
+import { getPrismaClient } from './source/prisma'
 import type { Tag } from '~/types/search'
 
 import { TSFilter } from '~/utils'
