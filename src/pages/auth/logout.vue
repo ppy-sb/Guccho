@@ -1,12 +1,14 @@
-<script>
+<script lang="ts">
+import { useSession } from '../../store/session'
+
 export default {
-  name: 'LogoutPage',
-  mounted() {
-    // this.$auth.logout()
-    this.$router.push('/')
-    this.$toast.show({
-      type: 'success',
-      message: 'You have been logged out!',
+  name: 'Logout',
+  setup() {
+    const $router = useRouter()
+    const session = useSession()
+    onMounted(() => {
+      session.destroy()
+      $router.push('/')
     })
   },
 }
