@@ -10,7 +10,6 @@ const scroll = shallowRef<HTMLElement>()
 onMounted(() => {
   safari.value = useSafariDetector()
   nextTick(() => {
-    // window.addEventListener('scroll', console.log, true)
     scroll.value && setScroll(scroll.value)
   })
 })

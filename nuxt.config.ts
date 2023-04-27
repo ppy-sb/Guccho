@@ -77,5 +77,6 @@ export default defineNuxtConfig({
     strict: true,
   },
 
+  // @ts-expect-error typedef is wrong
   devtools: true,
 })

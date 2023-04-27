@@ -16,16 +16,16 @@ function hsl([h, s, l]: [any, any, any], a: any) {
 const gRankFill = hsl(hsvRaw.wewak[500], 20)
 const cRankFill = hsl(hsvRaw.gbase[500], 30)
 
-const chars = [
-  ' ',
-  ...[...Array(10).keys()].map(String),
-  ',',
-  '#',
-  'N',
-  '/',
-  'A',
-  'a',
-]
+// const chars = [
+//   ' ',
+//   ...[...Array(10).keys()].map(String),
+//   ',',
+//   '#',
+//   'N',
+//   '/',
+//   'A',
+//   'a',
+// ]
 
 const update = shallowRef(0)
 
