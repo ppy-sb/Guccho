@@ -1,10 +1,14 @@
 import {
+  faBriefcase,
+  faHeartCrack,
+  faParagraph,
   faRightFromBracket,
   faRightToBracket,
   faSignature,
   faSliders,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import type { RouteLocationRaw } from 'vue-router'
 import { useSession } from '~/store/session'
 
 const { addToLibrary } = useFAIcon()
@@ -12,7 +16,10 @@ addToLibrary(
   faRightFromBracket,
   faRightToBracket,
   faSignature,
-  faSliders
+  faSliders,
+  faBriefcase,
+  faHeartCrack,
+  faParagraph
 )
 function loggedIn() {
   const session = useSession()
@@ -22,11 +29,14 @@ function notLoggedIn() {
   return !loggedIn()
 }
 
+function admin() {
+  const session = useSession()
+  return session.user?.roles.includes('staff') || false
+}
+
 const pages: {
   render: () => JSX.Element
-  route: {
-    name: string
-  }
+  route: RouteLocationRaw
   keyword?: string[]
   show?(keyword: string): boolean
 }[] = [
@@ -45,6 +55,31 @@ const pages: {
     },
     keyword: ['register', 'sign up'],
     show: notLoggedIn,
+  },
+
+  {
+    render: () => <><FontAwesomeIcon icon="fa-solid fa-briefcase" class="w-5" />Admin Panel</>,
+    route: {
+      name: 'admin',
+    },
+    keyword: ['settings', 'admin'],
+    show: admin,
+  },
+  {
+    render: () => <><FontAwesomeIcon icon="fa-solid fa-paragraph" class="w-5" />Articles</>,
+    route: {
+      name: 'article-edit',
+    },
+    keyword: ['settings', 'article'],
+    show: admin,
+  },
+  {
+    render: () => <><FontAwesomeIcon icon="fa-solid fa-heart-crack" class="w-5" />Friends & Blocks</>,
+    route: {
+      name: 'me-relations',
+    },
+    keyword: ['settings', 'friends', 'blocks', 'relationship', 'revoke'],
+    show: loggedIn,
   },
   {
     render: () => <><FontAwesomeIcon icon="fa-solid fa-sliders" class="w-5" />Settings</>,

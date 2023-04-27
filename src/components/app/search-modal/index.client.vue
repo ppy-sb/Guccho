@@ -123,12 +123,12 @@ const {
                 v-if="pages.length"
               >
                 <div class="divider font-bold">
-                  Quick Link
+                  Quick Links
                 </div>
                 <ul class="menu">
                   <li
-                    v-for="page in pages"
-                    :key="`searchResult-page-${page.route.name}`"
+                    v-for="page, index in pages"
+                    :key="`searchResult-page-${index}`"
                   >
                     <nuxt-link
                       :to="page.route"
