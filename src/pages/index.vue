@@ -41,13 +41,13 @@ useHead({
           </template>
           <template v-else>
             <t-nuxt-link-button :to="{ name: 'auth-login' }" variant="primary">
-              Login
+              Sign in
             </t-nuxt-link-button>
             <t-nuxt-link-button
               :to="{ name: 'auth-register' }"
               variant="secondary"
             >
-              Register
+              Sign up
             </t-nuxt-link-button>
           </template>
         </div>

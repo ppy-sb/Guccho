@@ -23,19 +23,18 @@ const {
   },
   loading,
   nothing,
-} = await useSearchModal()
+} = await useSearchResult()
 </script>
 
 <template>
   <t-modal-root>
     <t-modal-wrapper ref="searchModal" v-slot="{ closeModal }">
-      <div class="flex w-full justify-center pt-[1em]">
+      <div class="flex w-full justify-center h-[100dvh]">
         <div
-          class="card w-11/12 lg:w-2/3 max-h-[calc(100vh-2em)]"
+          class="card w-full max-w-screen-md py-8"
         >
-          <div class="card-actions pt-2 px-1 flex">
-            <div class="pl-3" />
-            <div class="flex flex-col gap-4 md:flex-row items-baseline pt-1">
+          <div class="card-actions flex">
+            <div class="flex flex-col gap-4 sm:flex-row items-baseline pl-3">
               <div class="form-control">
                 <label class="label cursor-pointer p-0 flex gap-2">
                   <input
@@ -89,7 +88,7 @@ const {
               </svg>
             </button>
           </div>
-          <div class="mx-4 bg-gbase-50 dark:bg-gbase-800 shadow-2xl rounded-2xl h-max overflow-hidden">
+          <div class="bg-gbase-50 dark:bg-gbase-800 shadow-2xl md:rounded-2xl h-max overflow-hidden">
             <div class="form-control">
               <label v-if="mode === 'beatmap'" class="input-group">
                 <span class="flex gap-2 bg-transparent">

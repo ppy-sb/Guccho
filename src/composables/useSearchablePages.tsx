@@ -34,7 +34,7 @@ function admin() {
   return session.user?.roles.includes('staff') || false
 }
 
-const pages: {
+export const pages: {
   render: () => JSX.Element
   route: RouteLocationRaw
   keyword?: string[]

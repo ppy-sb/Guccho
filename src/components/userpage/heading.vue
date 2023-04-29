@@ -87,7 +87,7 @@ async function toggleFriend() {
     <div>
       <div
         :style="`background-image: url(${page.user.avatarSrc}); background-position: center`"
-        class="mask mask-squircle w-[150px] md:w-[300px] bg-cover aspect-square"
+        class="mask mask-squircle w-44 sm:w-56 md:w-72 lg:w-64 bg-cover aspect-square"
       />
     </div>
     <!-- info -->

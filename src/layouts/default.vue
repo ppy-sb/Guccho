@@ -9,9 +9,7 @@ const scroll = shallowRef<HTMLElement>()
 
 onMounted(() => {
   safari.value = useSafariDetector()
-  nextTick(() => {
-    scroll.value && setScroll(scroll.value)
-  })
+  scroll.value && setScroll(scroll.value)
 })
 </script>
 

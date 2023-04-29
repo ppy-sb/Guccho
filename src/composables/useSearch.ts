@@ -30,19 +30,19 @@ const queryable = {
   length: ['length', 'time', 'len'],
 } as const
 
-export default async function () {
-  const app = useNuxtApp()
+const keyword = shallowRef('')
+const lastKw = shallowRef('')
+const tags = ref<Tag[]>([])
+const includes = shallowReactive({
+  beatmaps: true,
+  beatmapsets: true,
+  users: true,
+})
+const searchMode = computed(() => ((includes.beatmaps || includes.beatmapsets) && !includes.users) ? 'beatmap' : 'all')
+const autoResultSize = computed(() => searchMode.value === 'all' ? 5 : 10)
 
-  const keyword = shallowRef('')
-  const lastKw = shallowRef('')
-  const tags = ref<Tag[]>([])
-  const includes = shallowReactive({
-    beatmaps: true,
-    beatmapsets: true,
-    users: true,
-  })
-  const searchMode = computed(() => ((includes.beatmaps || includes.beatmapsets) && !includes.users) ? 'beatmap' : 'all')
-  const autoResultSize = computed(() => searchMode.value === 'all' ? 5 : 10)
+export async function useSearchResult() {
+  const app = useNuxtApp()
 
   const {
     data: users,
@@ -88,93 +88,7 @@ export default async function () {
     })
   })
 
-  const extractTags = (force: boolean) => {
-    // user input space to confirm tag
-    if (!force && !keyword.value.endsWith(' ')) {
-      return
-    }
-
-    const tokens = keyword.value.split(' ')
-    keyword.value = tokens.filter((token) => {
-      if (!token.includes('=')) {
-        return true
-      }
-
-      let op: keyof typeof tagOperators
-      for (op in tagOperators) {
-        const operator = tagOperators[op]
-        if (!token.includes(operator)) {
-          continue
-        }
-        if (!token.includes(operator)) {
-          continue
-        }
-
-        const [left, right] = token.split(operator)
-        if (!left || !right) {
-          continue
-        }
-        let field: keyof typeof taggable
-        for (field in taggable) {
-          if (left !== field) {
-            continue
-          }
-
-          const keywords = taggable[field]
-          if (!keywords.includes(right as Mode)) {
-            continue
-          }
-          tags.value.push(tag(field, op, right as Mode))
-          return false
-        }
-      }
-      return true
-    }).join(' ')
-  }
-  const extractQueries = (force: boolean) => {
-  // user input space to confirm tag
-    if (!force && !keyword.value.endsWith(' ')) {
-      return
-    }
-    const tokens = keyword.value.split(' ')
-    keyword.value = tokens.filter((token) => {
-      let op: keyof typeof compareOperators
-      for (op in compareOperators) {
-        const operator = compareOperators[op]
-        if (!token.includes(operator)) {
-          continue
-        }
-
-        const [left, right] = token.split(operator)
-        if (!left || !right) {
-          continue
-        }
-        let field: keyof typeof queryable
-        for (field in queryable) {
-          const keywords: readonly string[] = queryable[field]
-          if (!keywords.includes(left)) {
-            continue
-          }
-          const nRight = +right
-          if (isNaN(nRight)) {
-            continue
-          }
-          tags.value.push(query(field, op, nRight))
-          return false
-        }
-      }
-      return true
-    }).join(' ')
-  }
-
-  const extract = (force = false) => {
-    if (searchMode.value === 'beatmap') {
-      extractTags(force)
-      extractQueries(force)
-    }
-  }
-
-  const raw = (_extract = false) => {
+  function raw(_extract = false) {
     _extract && extract(true)
 
     if (tags.value.length < 1) {
@@ -197,23 +111,21 @@ export default async function () {
 
   watch(tags, () => raw(), { deep: true })
 
-  const loading = reactive({
-    users: pendingUsers,
-    beatmaps: pendingBeatmaps,
-    beatmapsets: pendingBeatmapsets,
-  })
-
   const searchablePages = useSearchablePages()
 
-  const sr = computed(() => searchablePages.search(keyword.value))
+  const pages = computed(() => searchablePages.search(keyword.value))
 
   return {
-    loading,
+    loading: reactive({
+      users: pendingUsers,
+      beatmaps: pendingBeatmaps,
+      beatmapsets: pendingBeatmapsets,
+    }),
     results: {
       users,
       beatmaps,
       beatmapsets,
-      pages: sr,
+      pages,
     },
     nothing: computed(() => {
       const nothingBS = Array.isArray(beatmapsets.value) ? !beatmapsets.value.length : true
@@ -243,4 +155,90 @@ function query<T extends keyof typeof queryable, K>(key: T, op: keyof typeof com
   const t = [key, op, value] as [T, OP, K]
   t.toString = () => `<b>${key}</b> ${compareOperators[op]} <b>${value}</b>`
   return t
+}
+
+function extractTags(force: boolean) {
+  // user input space to confirm tag
+  if (!force && !keyword.value.endsWith(' ')) {
+    return
+  }
+
+  const tokens = keyword.value.split(' ')
+  keyword.value = tokens.filter((token) => {
+    if (!token.includes('=')) {
+      return true
+    }
+
+    let op: keyof typeof tagOperators
+    for (op in tagOperators) {
+      const operator = tagOperators[op]
+      if (!token.includes(operator)) {
+        continue
+      }
+      if (!token.includes(operator)) {
+        continue
+      }
+
+      const [left, right] = token.split(operator)
+      if (!left || !right) {
+        continue
+      }
+      let field: keyof typeof taggable
+      for (field in taggable) {
+        if (left !== field) {
+          continue
+        }
+
+        const keywords = taggable[field]
+        if (!keywords.includes(right as Mode)) {
+          continue
+        }
+        tags.value.push(tag(field, op, right as Mode))
+        return false
+      }
+    }
+    return true
+  }).join(' ')
+}
+function extractQueries(force: boolean) {
+  // user input space to confirm tag
+  if (!force && !keyword.value.endsWith(' ')) {
+    return
+  }
+  const tokens = keyword.value.split(' ')
+  keyword.value = tokens.filter((token) => {
+    let op: keyof typeof compareOperators
+    for (op in compareOperators) {
+      const operator = compareOperators[op]
+      if (!token.includes(operator)) {
+        continue
+      }
+
+      const [left, right] = token.split(operator)
+      if (!left || !right) {
+        continue
+      }
+      let field: keyof typeof queryable
+      for (field in queryable) {
+        const keywords: readonly string[] = queryable[field]
+        if (!keywords.includes(left)) {
+          continue
+        }
+        const nRight = +right
+        if (isNaN(nRight)) {
+          continue
+        }
+        tags.value.push(query(field, op, nRight))
+        return false
+      }
+    }
+    return true
+  }).join(' ')
+}
+
+function extract(force = false) {
+  if (searchMode.value === 'beatmap') {
+    extractTags(force)
+    extractQueries(force)
+  }
 }

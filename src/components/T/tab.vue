@@ -1,10 +1,16 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
 
-const props = withDefaults(defineProps<{
-  value: any
-  disabled: string | boolean
-}>(), { value: Symbol('tab'), disabled: false })
+const props = withDefaults(
+  defineProps<{
+    value?: any
+    disabled?: string | boolean
+  }>(),
+  {
+    value: Symbol('tab'),
+    disabled: false,
+  })
+
 const variant = inject<string>('variant')
 const size = inject<string>('size')
 const current = inject<Ref<unknown>>('current')

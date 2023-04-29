@@ -30,8 +30,8 @@ const serverConfig = session.user?.roles.includes('staff') ? await app$.$client.
 const systemLoad = shallowRef<HTMLDivElement | null>(null)
 const appLoad = shallowRef<HTMLDivElement | null>(null)
 const box = shallowRef<HTMLDivElement | null>(null)
-
-onMounted(() => {
+onBeforeMount(async () => {
+  await refresh()
   clearInterval(interval)
   browser = true
   interval = setInterval(async () => {
