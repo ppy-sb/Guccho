@@ -594,7 +594,7 @@ onBeforeMount(() => {
 
 .dropzone {
   @apply flex flex-col justify-center items-center w-full h-64 bg-gbase-50 rounded-lg border-2 border-gbase-300 border-dashed cursor-pointer;
-  @apply hover:bg-gbase-200 bg-gbase-300 dark:bg-gbase-700 hover:bg-gbase-50 dark:border-gbase-600 dark:hover:border-gbase-500 dark:hover:bg-gbase-600;
+  @apply dark:bg-gbase-700 hover:bg-gbase-100 dark:border-gbase-600 dark:hover:border-gbase-500 dark:hover:bg-gbase-600;
   @apply hover:shadow-lg;
   @apply transition-shadow transition-colors;
 }
