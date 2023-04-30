@@ -32,5 +32,8 @@ module.exports = {
       generics: 'always-multiline',
       tuples: 'always-multiline',
     }],
+    '@typescript-eslint/no-namespace': ['error', {
+      allowDeclarations: true,
+    }],
   },
 }

@@ -1,29 +1,65 @@
 import { createClient } from 'redis'
+import { fromZodError } from 'zod-validation-error'
 
-import * as z from 'zod'
+import type { ZodError } from 'zod'
+import { literal, object, string, union } from 'zod'
 
-const _z = z.object({
-  BANCHO_PY_REDIS_URI: z.string().optional(),
-})
+const envFalse = union([literal('false'), literal('False'), literal('0')]).transform(() => false as const)
+const envTrue = union([literal('true'), literal('True'), literal('1')]).transform(() => true as const)
+const envBool = union([envTrue, envFalse])
 
-declare global {
-  namespace NodeJS {
-    interface ProcessEnv extends z.infer<typeof _z> {}
+const _z = union([
+  object({
+    USE_REDIS_LEADERBOARD: envBool,
+    USE_REDIS_SESSION_STORE: envBool,
+    BANCHO_PY_REDIS_URI: string(),
+  }),
+  object({
+    USE_REDIS_LEADERBOARD: envFalse,
+    USE_REDIS_SESSION_STORE: envFalse,
+    BANCHO_PY_REDIS_URI: string().optional(),
+  }),
+])
+
+// declare global {
+//   namespace NodeJS {
+//     interface ProcessEnv extends z.infer<typeof _z> {}
+//   }
+// }
+
+export function getEnv() {
+  try {
+    return _z.parse(process.env)
+  }
+  catch (e) {
+    console.error(
+      fromZodError(
+        e as ZodError,
+        {
+          prefix: 'env validation error:\n',
+          prefixSeparator: '',
+          issueSeparator: ';\n',
+          unionSeparator: ',\n',
+        }
+      ).message
+    )
   }
 }
 
-const checked = _z.parse(process.env)
-
+export const env = getEnv()
 export function client() {
-  const client
-    = checked.BANCHO_PY_REDIS_URI
-      ? createClient({
-        url: checked.BANCHO_PY_REDIS_URI,
-      })
-      : undefined
-  if (client) {
-    client.on('error', err => console.error('Redis Client', err))
-    client.connect()
+  if (!env) {
+    return
   }
+  if (!env.USE_REDIS_LEADERBOARD && !env.USE_REDIS_SESSION_STORE) {
+    return
+  }
+
+  const client = createClient({
+    url: env.BANCHO_PY_REDIS_URI,
+  })
+  client.on('error', err => console.error('Redis Client', err))
+  client.connect()
+
   return client
 }

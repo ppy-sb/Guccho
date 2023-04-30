@@ -134,6 +134,10 @@ export interface UserProvider<Id> extends idTransformable {
     limit: number
   }): Awaitable<UserEssential<Id>[]>
 
+  count(opt: {
+    keyword?: string
+  }): Awaitable<number>
+
   status({ id }: { id: Id }): Promise<{
     status: 'offline'
     lastSeen: Date

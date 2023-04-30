@@ -210,16 +210,16 @@ export class LeaderboardProvider implements Base<Id> {
       },
       orderBy: rankingSystem === 'ppv2'
         ? {
-          pp: 'desc',
-        }
+            pp: 'desc',
+          }
         : rankingSystem === 'rankedScore'
           ? {
-            rankedScore: 'desc',
-          }
+              rankedScore: 'desc',
+            }
           : rankingSystem === 'totalScore'
             ? {
-              totalScore: 'desc',
-            }
+                totalScore: 'desc',
+              }
             : {},
       skip: start,
       take: pageSize,

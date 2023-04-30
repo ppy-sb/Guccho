@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 /* eslint-env node */
 import * as convert from 'color-convert'
+
 // @ts-expect-error got nothing
 import themes from 'daisyui/src/colors/themes'
 import { convertSingle, palette } from './src/palette'

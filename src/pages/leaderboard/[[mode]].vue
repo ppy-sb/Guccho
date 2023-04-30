@@ -1,11 +1,9 @@
 <script setup lang="ts">
+// TODO check max pages
 import type { LeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
 import type { SwitcherPropType } from '~/composables/useSwitcher'
 import { isString } from '~/utils'
 
-// definePageMeta({
-//   layout: 'screen',
-// })
 const config = useAppConfig()
 
 const route = useRoute()
@@ -49,6 +47,13 @@ if (!pMode || !pRuleset || !pRankingSystem) {
       ranking: rankingSystem,
     },
   })
+}
+
+const total = await app$.$client.leaderboard.overallRange.query()
+
+const outOfRange = page.value * perPage - perPage > total
+if (outOfRange) {
+  page.value = Math.floor(total / perPage)
 }
 
 const selected = shallowRef<Required<SwitcherPropType<LeaderboardRankingSystem>>>({

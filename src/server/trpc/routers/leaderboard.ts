@@ -8,28 +8,18 @@ import {
 } from '../shapes'
 import { router as _router, publicProcedure } from '../trpc'
 import { mapId } from '~/server/transforms/mapId'
-import { LeaderboardProvider } from '$active/server'
+import { LeaderboardProvider, UserProvider } from '$active/server'
 import { hasRuleset } from '$active'
 
 const provider = new LeaderboardProvider()
+const u = new UserProvider()
 
 const getLeaderboard = provider.getLeaderboard.bind(provider)
 const getBeatmapLeaderboard = provider.getBeatmapLeaderboard.bind(provider)
-// const getLeaderboard = memoize(arg => provider.getLeaderboard(arg), {
-//   promise: true,
-//   maxAge: 10 * 60 * 1000,
-//   normalizer(args) {
-//     return stringify(args[0])
-//   },
-// })
-// const getBeatmapLeaderboard = memoize((arg: Parameters<typeof provider.getBeatmapLeaderboard>[0]) => provider.getBeatmapLeaderboard(arg), {
-//   promise: true,
-//   maxAge: 10 * 60 * 1000,
-//   normalizer(args: Parameters<typeof provider.getBeatmapLeaderboard>) {
-//     return stringify(args[0])
-//   },
-// })
+
 export const router = _router({
+  overallRange: publicProcedure
+    .query(() => u.count()),
   overall: publicProcedure
     .input(
       z.object({

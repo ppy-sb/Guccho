@@ -9,7 +9,7 @@ const _z = z.object({
 _z.parse(process.env)
 declare global {
   namespace NodeJS {
-    interface ProcessEnv extends z.infer<typeof _z> {}
+    interface ProcessEnv extends z.infer<typeof _z> { }
   }
 }
 

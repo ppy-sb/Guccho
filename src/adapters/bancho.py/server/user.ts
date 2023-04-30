@@ -662,6 +662,17 @@ WHERE s2.userid = ${id}
     return result.map(user => toUserEssential({ user, config: this.config }))
   }
 
+  async count() {
+    /* optimized */
+    return await this.db.user.count({
+      where: {
+        priv: {
+          gte: 2,
+        },
+      },
+    })
+  }
+
   status(opt: { id: Id }) {
     return getLiveUserStatus(opt)
   }

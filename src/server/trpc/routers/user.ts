@@ -176,7 +176,7 @@ export const router = _router({
     })).mutation(async ({ input, ctx }) => {
       const user = await userProvider.register(input)
       const sessionId = ctx.session.id
-      session.update(sessionId, { userId: UserProvider.idToString(user.id) })
+      await session.update(sessionId, { userId: UserProvider.idToString(user.id) })
       return user
     }),
 })
