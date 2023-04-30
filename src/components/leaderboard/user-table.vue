@@ -30,7 +30,7 @@ const formatter = new Intl.NumberFormat(undefined, option)
 <template>
   <tr class="font-medium">
     <th class="px-4 py-3 font-bold">
-      <p class="text-gbase-900 dark:text-gbase-100">
+      <p class="text-gbase-900 dark:text-gbase-100" :data-rank="props.inThisLeaderboard.rank?.toString()">
         #{{ props.inThisLeaderboard.rank }}
       </p>
     </th>
@@ -78,3 +78,22 @@ const formatter = new Intl.NumberFormat(undefined, option)
     </td>
   </tr>
 </template>
+
+<style scoped lang="scss">
+@import '~/assets/styles/text-shadow';
+tr [data-rank="1"] {
+  @apply text-yellow-100 dark:text-yellow-400;
+  @apply shadow-yellow-600/80 dark:shadow-yellow-200/30;
+  @extend .text-shadow-sm;
+}
+tr [data-rank="2"] {
+  @apply text-gray-50 dark:text-white;
+  @apply shadow-gray-600/70 dark:shadow-gray-400/30;
+  @extend .text-shadow-sm;
+}
+tr [data-rank="3"] {
+  @apply text-orange-50 dark:text-orange-400;
+  @apply shadow-yellow-700/80 dark:shadow-yellow-500/20;
+  @extend .text-shadow-sm;
+}
+</style>
