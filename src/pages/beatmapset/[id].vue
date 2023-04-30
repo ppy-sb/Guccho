@@ -154,7 +154,7 @@ onBeforeMount(() => {
       lazyBgCover !== '' && 'ready',
     ]"
   >
-    <div class="container custom-container mx-auto">
+    <div class="container custom-container mx-auto pt-20">
       <div class="header-with-maps flex-wrap">
         <div class="text-center flex gap-2 items-baseline pb-2 pl-4">
           <h1 class="text-3xl font-bold text-center sm:text-left lg:whitespace-nowrap z-10">
@@ -369,7 +369,7 @@ onBeforeMount(() => {
 
 <style scoped lang="postcss">
 .header-with-maps {
-  @apply sm:flex pt-20 pb-0 lg:pt-0 mt-2 items-center justify-between text-gbase-900 dark:text-gbase-100;
+  @apply sm:flex pb-0 mt-2 items-center justify-between text-gbase-900 dark:text-gbase-100;
   transition: 0.3s ease;
 }
 
