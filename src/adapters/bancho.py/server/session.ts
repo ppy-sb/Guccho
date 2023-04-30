@@ -2,9 +2,9 @@ import { Buffer } from 'node:buffer'
 import type { Document } from 'bson'
 import { BSON } from 'bson'
 import { commandOptions } from 'redis'
-import { client as getRedis } from './source/redis'
+import { env, client as getRedis } from './source/redis'
 import type { Session, SessionStore } from '$def/server/session'
-import { SessionProvider as Base, createSessionStore as createMemorySessionStore } from '$def/server/session'
+import { SessionProvider as Base } from '$def/server/session'
 
 const r = getRedis()
 
@@ -42,9 +42,8 @@ function createStore<T extends string, K extends Session & Document>(): SessionS
   }
 }
 
-if (!r) {
-  console.error('You are using memory session store.')
-}
 export class SessionProvider extends Base<string, Session> {
-  store = r ? createStore() : createMemorySessionStore<string, Session>()
+  prepareStore() {
+    return env?.USE_REDIS_SESSION_STORE ? createStore() : super.prepareStore()
+  }
 }

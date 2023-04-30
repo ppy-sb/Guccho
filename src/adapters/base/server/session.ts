@@ -18,20 +18,31 @@ export const config = {
   expire: 1000 * 60 * 60,
 }
 
+// const store = new Map<any, any>()
+let store: Map<any, any>
+function createStoreSingleton<TSessionId, TSession>() {
+  console.warn('Warn: You are using memory session store.')
+  store = new Map<TSessionId, TSession>()
+}
 export function createSessionStore<TSessionId, TSession>() {
-  const store = new Map<TSessionId, TSession>()
+  if (!store) {
+    createStoreSingleton<TSessionId, TSession>()
+  }
+
+  const typedStore = <Map<TSessionId, TSession>>store
   return <SessionStore<TSessionId, TSession>>{
     async get(key: TSessionId) {
-      return store.get(key)
+      return typedStore.get(key)
     },
     async set(key: TSessionId, value: TSession) {
-      store.set(key, value)
+      typedStore.set(key, value)
+      return key
     },
     async destroy(key: TSessionId) {
-      return store.delete(key)
+      return typedStore.delete(key)
     },
     async forEach(cb) {
-      return store.forEach(cb)
+      return typedStore.forEach(cb)
     },
   }
 }
@@ -43,11 +54,16 @@ export class SessionProvider<TSessionId, TSession extends Session> {
     },
   }
 
-  store: SessionStore<TSessionId, TSession> = createSessionStore()
+  store: SessionStore<TSessionId, TSession>
   constructor() {
+    this.store = this.prepareStore()
     setInterval(() => this.houseKeeping.minutely?.call(this, this.store, config), 1000 * 60)
     setInterval(() => this.houseKeeping.hourly?.call(this, this.store, config), 1000 * 60 * 60)
     setInterval(() => this.houseKeeping.daily?.call(this, this.store, config), 1000 * 60 * 60 * 24)
+  }
+
+  prepareStore() {
+    return createSessionStore<TSessionId, TSession>()
   }
 
   async create(data?: { id: string }) {
@@ -92,7 +108,10 @@ export class SessionProvider<TSessionId, TSession extends Session> {
     if (!_session) {
       return undefined
     }
-    const newSession = Object.assign(_session, data)
+    const newSession = {
+      ..._session,
+      ...data,
+    }
     newSession.lastActivity = Date.now()
     const maybeNewSessionId = await this.store.set(sessionId, newSession)
     return maybeNewSessionId
