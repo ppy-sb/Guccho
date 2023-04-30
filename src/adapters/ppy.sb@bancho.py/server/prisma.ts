@@ -1,17 +1,9 @@
 import type { PrismaClient as ImportedPrismaClient } from '.prisma/ppy.sb'
-import * as z from 'zod'
+
+import { ensureAndGetDBEnv } from '../../bancho.py/server/source/prisma'
 import { createCursedRequire } from '~/server'
 
-const _z = z.object({
-  BANCHO_PY_DB_DSN: z.string(),
-})
-
-_z.parse(process.env)
-declare global {
-  namespace NodeJS {
-    interface ProcessEnv extends z.infer<typeof _z> {}
-  }
-}
+ensureAndGetDBEnv()
 
 const require = createCursedRequire(import.meta.url ?? __filename)
 const { PrismaClient } = require<{

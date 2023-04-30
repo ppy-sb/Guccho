@@ -8,7 +8,7 @@ const envFalse = union([literal('false'), literal('False'), literal('0')]).trans
 const envTrue = union([literal('true'), literal('True'), literal('1')]).transform(() => true as const)
 const envBool = union([envTrue, envFalse])
 
-const _z = union([
+export const validator = union([
   object({
     USE_REDIS_LEADERBOARD: envBool,
     USE_REDIS_SESSION_STORE: envBool,
@@ -27,12 +27,12 @@ const _z = union([
 //   }
 // }
 
-export function getEnv() {
+export function ensureAndGetRedisEnv() {
   try {
-    return _z.parse(process.env)
+    return validator.parse(process.env)
   }
   catch (e) {
-    console.error(
+    throw new Error(
       fromZodError(
         e as ZodError,
         {
@@ -46,7 +46,7 @@ export function getEnv() {
   }
 }
 
-export const env = getEnv()
+export const env = ensureAndGetRedisEnv()
 export function client() {
   if (!env) {
     return

@@ -1,15 +1,36 @@
-import type { PrismaClient as ImportedPrismaClient } from '.prisma/bancho.py'
+import { fromZodError } from 'zod-validation-error'
+import type { ZodError } from 'zod'
 import * as z from 'zod'
+
+import type { PrismaClient as ImportedPrismaClient } from '.prisma/bancho.py'
 import { createCursedRequire } from '~/server'
 
-const _z = z.object({
+export const validator = z.object({
   BANCHO_PY_DB_DSN: z.string(),
 })
 
-_z.parse(process.env)
+export function ensureAndGetDBEnv() {
+  try {
+    return validator.parse(process.env)
+  }
+  catch (e) {
+    throw new Error(
+      fromZodError(
+        e as ZodError,
+        {
+          prefix: 'env validation error:\n',
+          prefixSeparator: '',
+          issueSeparator: ';\n',
+          unionSeparator: ',\n',
+        }
+      ).message
+    )
+  }
+}
+
 declare global {
   namespace NodeJS {
-    interface ProcessEnv extends z.infer<typeof _z> { }
+    interface ProcessEnv extends z.infer<typeof validator> { }
   }
 }
 
