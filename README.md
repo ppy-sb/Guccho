@@ -49,6 +49,13 @@ Locally preview production build:
 yarn preview:dev # or yarn preview:prod
 ```
 
+Start Production server
+
+```bash
+# yarn
+yarn start:prod
+```
+
 Checkout the [deployment documentation](https://v3.nuxtjs.org/guide/deploy/presets) for more information.
 
 ## The team (Guccho)
