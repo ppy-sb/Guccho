@@ -138,48 +138,44 @@ function reloadPage(i?: number) {
     >
       <!-- <fetch-overlay :fetching="pending" /> -->
 
-      <div v-if="table.length" class="relative mx-auto overflow-hidden xl:rounded-lg">
-        <div class="px-8 pt-2">
-          <div class="relative overflow-x-auto">
-            <table
-              class="table table-compact w-full border-separate whitespace-nowrap"
-            >
-              <thead class="rounded-lg">
-                <tr>
-                  <th>rank</th>
-                  <th>flag</th>
-                  <th>player</th>
-                  <th class="px-4 font-semibold text-center">
-                    {{
-                      config.overallRankingSystem[selected.rankingSystem].name
-                    }}
-                  </th>
-                  <th class="px-4 font-medium text-center">
-                    Accuracy
-                  </th>
-                  <th class="px-4 font-medium text-center">
-                    Play Count
-                  </th>
-                </tr>
-              </thead>
-              <transition name="slide">
-                <tbody v-if="!pending">
-                  <leaderboard-user-table
-                    v-for="(item, index) in table"
-                    :key="index"
-                    :user="item.user"
-                    :in-this-leaderboard="item.inThisLeaderboard"
-                    :sort="selected.rankingSystem"
-                  />
+      <div v-if="table.length" class="relative mx-auto xl:rounded-lg w-full max-w-max overflow-y-scroll">
+        <table
+          class="table mx-2 table-compact border-separate whitespace-nowrap"
+        >
+          <thead class="rounded-lg">
+            <tr>
+              <th>rank</th>
+              <th>flag</th>
+              <th>player</th>
+              <th class="px-4 font-semibold text-center">
+                {{
+                  config.overallRankingSystem[selected.rankingSystem].name
+                }}
+              </th>
+              <th class="px-4 font-medium text-center">
+                Accuracy
+              </th>
+              <th class="px-4 font-medium text-center">
+                Play Count
+              </th>
+            </tr>
+          </thead>
+          <transition name="slide">
+            <tbody v-if="!pending">
+              <leaderboard-user-table
+                v-for="(item, index) in table"
+                :key="index"
+                :user="item.user"
+                :in-this-leaderboard="item.inThisLeaderboard"
+                :sort="selected.rankingSystem"
+              />
 
-                  <!-- <template v-else>
+              <!-- <template v-else>
                     Loading...
                   </template> -->
-                </tbody>
-              </transition>
-            </table>
-          </div>
-        </div>
+            </tbody>
+          </transition>
+        </table>
       </div>
       <div
         v-else-if="!pending"

@@ -35,15 +35,15 @@ const formatter = new Intl.NumberFormat(undefined, option)
       </p>
     </th>
     <th>
-      <div class="flex items-center">
+      <div class="flex justify-center items-center w-full">
         <div class="flex-shrink-0">
-          <img class="w-auto h-6" :src="getFlagURL(props.user.flag)">
+          <img class="w-6" :src="getFlagURL(props.user.flag)">
         </div>
       </div>
     </th>
     <th>
       <div class="flex gap-2 items-center">
-        <div class="aspect-square mask mask-squircle overflow-hidden object-cover flex">
+        <div class="aspect-square mask mask-squircle w-7 overflow-hidden object-cover flex">
           <img
             class="m-auto"
             :src="user.avatarSrc"
