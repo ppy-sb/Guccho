@@ -88,7 +88,7 @@ $in: blur(0.5em) opacity(0) saturate(0.5);
       animation: zoomOut $duration $animate-function forwards;
     }
     > [response-modal] {
-      animation: slideToBottom $duration / 1.4 $animate-function forwards;
+      animation: slideToBottom $duration / 1.2 $animate-function forwards;
       @screen md {
         animation: zoomOut $duration $animate-function forwards;
       }
@@ -112,14 +112,14 @@ $in: blur(0.5em) opacity(0) saturate(0.5);
 }
 @keyframes slideFromBottom {
   0% {
-    transform: translateY(10%) scale(1.05);
+    transform: translateY(5%) scale(0.98);
     filter: $in;
   }
 }
 @keyframes slideToBottom {
   100% {
     filter: $in;
-    transform: translateY(10%) scale(1.05);
+    transform: translateY(5%) scale(0.98);
   }
 }
 </style>
