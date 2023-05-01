@@ -96,13 +96,6 @@ export class ServiceStatusProvider {
   }
 
   async config() {
-    // const npmPackage = {
-    //   dependencies: {
-    //   } as Record<string, any>,
-    //   devDependencies: {
-
-    //   } as Record<string, any>,
-    // }
     const npm: Record<string, unknown> = {}
     const npmConfig: Record<string, unknown> = {}
     const returnValue: Record<string, unknown> = {}

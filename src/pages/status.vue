@@ -15,31 +15,24 @@ const fmtCompact = new Intl.NumberFormat('en-US', {
   unitDisplay: 'narrow',
 })
 const config = useAppConfig()
-
 const session = useSession()
+const app = useNuxtApp()
 
-const app$ = useNuxtApp()
-let browser = false
+const serverConfig = session.user?.roles.includes('staff')
+  ? await app.$client.status.config.query()
+  : undefined
+
 let interval: ReturnType<typeof setInterval>
-const { data, refresh } = await useAsyncData(
-  async () => browser && app$.$client.status.public.query()
-)
+const { data, refresh } = await useAsyncData(async () => app.$client.status.public.query())
 
-const serverConfig = session.user?.roles.includes('staff') ? await app$.$client.status.config.query() : undefined
-
-const systemLoad = shallowRef<HTMLDivElement | null>(null)
-const appLoad = shallowRef<HTMLDivElement | null>(null)
-const box = shallowRef<HTMLDivElement | null>(null)
 onBeforeMount(async () => {
-  await refresh()
   clearInterval(interval)
-  browser = true
   interval = setInterval(async () => {
     await refresh()
   }, 2000)
 })
-onUnmounted(() => clearInterval(interval))
-function createStyleObject(count: number) {
+onBeforeUnmount(() => clearInterval(interval))
+function percentWidth(count: number) {
   return {
     width: `${count}%`,
   }
@@ -48,80 +41,87 @@ function createStyleObject(count: number) {
 
 <template>
   <div v-if="data" class="container mx-auto custom-container mt-20">
-    <div ref="box" class="py-8">
-      <div class="flex gap-2 my-1 items-baseline drop-shadow-lg">
-        <h1 class="text-3xl">
-          System Load
-        </h1>
-        <span class="text-xl">avg: {{ fmtPercent.format(data.load.system.avg) }}</span>
-        <span class="text-xl">current: {{ fmtPercent.format(data.load.system.current / 100) }}</span>
-      </div>
-      <div ref="systemLoad" class="multi-progress-bar-container bg-gbase-500/10 shadow-lg">
-        <div
-          :style="createStyleObject(data.load.system.user)"
-          class="multi-progress-bar bg-blue-500 text-white"
-        >
-          user
-        </div>
-        <div
-          :style="createStyleObject(data.load.system.system)"
-          class="multi-progress-bar bg-teal-500 text-white"
-        >
-          system
-        </div>
-      </div>
-
-      <h1 class="text-3xl drop-shadow-lg my-1">
-        App Load
+    <div class="flex gap-1 my-1 items-baseline drop-shadow-lg">
+      <h1 class="text-xl">
+        System Load
       </h1>
-      <div ref="appLoad" class="multi-progress-bar-container bg-gbase-500/10 shadow-lg">
-        <div
-          v-for="(_data, app) of data.load.app"
-          :key="app"
-          :style="createStyleObject(_data.current / data.load.system.current * 100)"
-          class="multi-progress-bar bg-blue-500 text-white"
-        >
-          {{ app }}
-        </div>
-        <div
-          :style="createStyleObject((data.load.system.current - data.load.app.web.current) / data.load.system.current * 100)"
-          class="multi-progress-bar bg-gbase-300/10"
-        >
-          Other
-        </div>
+      <span class="badge">user: {{ fmtPercent.format(data.load.system.user / 100) }}</span>
+      <span class="badge">system: {{ fmtPercent.format(data.load.system.system / 100) }}</span>
+    </div>
+    <div class="multi-progress-bar-container bg-gbase-500/10 shadow-lg">
+      <div
+        :style="percentWidth(data.load.system.user)"
+        class="multi-progress-bar bg-blue-500 text-white"
+      >
+        user
       </div>
-
-      <div class="flex gap-2 my-1 drop-shadow-lg items-baseline">
-        <h1 class="text-3xl">
-          Memory
-        </h1>
-        <h2 class="text-xl">
-          Total: {{ fmtCompact.format(data.memory.system.total / 1_000_000) }}
-        </h2>
-      </div>
-      <div ref="appLoad" class="multi-progress-bar-container bg-gbase-500/10 shadow-lg">
-        <div
-          :style="createStyleObject(data.memory.system.active / data.memory.system.total * 100)"
-          class="multi-progress-bar bg-blue-500 text-white"
-        >
-          active
-        </div>
-        <div
-          :style="createStyleObject(data.memory.system.buffcache / data.memory.system.total * 100)"
-          class="multi-progress-bar bg-teal-500 text-white"
-        >
-          cache
-        </div>
-        <div
-          :style="createStyleObject((data.memory.system.free) / data.memory.system.total * 100)"
-          class="multi-progress-bar bg-gbase-300/10"
-        >
-          free
-        </div>
+      <div
+        :style="percentWidth(data.load.system.system)"
+        class="multi-progress-bar bg-teal-500 text-white"
+      >
+        system
       </div>
     </div>
+
+    <h1 class="flex items-baseline gap-1 drop-shadow-lg my-1">
+      <div class="text-xl">
+        App Load
+      </div>
+      <span class="badge">total: {{ fmtPercent.format(data.load.system.current / 100) }}</span>
+      <span
+        v-for="(_data, key) of data.load.app" :key="key"
+        class="badge"
+      >{{ key }}: {{ fmtPercent.format(_data.current / data.load.system.current) }}</span>
+    </h1>
+    <div class="multi-progress-bar-container bg-gbase-500/10 shadow-lg">
+      <div
+        v-for="(_data, key) of data.load.app"
+        :key="key"
+        :style="percentWidth(_data.current / data.load.system.current * 100)"
+        class="multi-progress-bar bg-blue-500 text-white"
+      >
+        {{ key }}
+      </div>
+      <div
+        :style="percentWidth((data.load.system.current - data.load.app.web.current) / data.load.system.current * 100)"
+        class="multi-progress-bar bg-gbase-300/10"
+      >
+        Other
+      </div>
+    </div>
+
+    <div class="flex gap-1 my-1 drop-shadow-lg items-baseline">
+      <h1 class="text-xl">
+        Memory
+      </h1>
+      <span class="badge">Total: {{ fmtCompact.format(data.memory.system.total / 1_000_000) }}</span>
+      <span class="badge">Active: {{ fmtCompact.format(data.memory.system.active / 1_000_000) }}</span>
+      <span class="badge">Cache: {{ fmtCompact.format(data.memory.system.buffcache / 1_000_000) }}</span>
+      <span class="badge">Free: {{ fmtCompact.format(data.memory.system.free / 1_000_000) }}</span>
+    </div>
+    <div class="multi-progress-bar-container bg-gbase-500/10 shadow-lg">
+      <div
+        :style="percentWidth(data.memory.system.active / data.memory.system.total * 100)"
+        class="multi-progress-bar bg-blue-500 text-white"
+      >
+        active
+      </div>
+      <div
+        :style="percentWidth(data.memory.system.buffcache / data.memory.system.total * 100)"
+        class="multi-progress-bar bg-teal-500 text-white"
+      >
+        cache
+      </div>
+      <div
+        :style="percentWidth((data.memory.system.free) / data.memory.system.total * 100)"
+        class="multi-progress-bar bg-gbase-300/10"
+      >
+        free
+      </div>
+    </div>
+
     <template v-if="session.user?.roles.includes('staff')">
-      <h1 class="text-3xl drop-shadow-lg my-1">
+      <h1 class="text-xl drop-shadow-lg my-1">
         Web App Config
       </h1>
       <JsonViewer
@@ -131,11 +131,24 @@ function createStyleObject(count: number) {
         copyable
         class="rounded-3xl"
       />
-      <h1 class="text-3xl drop-shadow-lg my-1">
-        Server Config
+      <h1 class="text-xl drop-shadow-lg my-1">
+        npm env
       </h1>
       <JsonViewer
-        :value="serverConfig"
+        :value="serverConfig?.npm"
+        :expand-depth="999"
+        theme="light"
+        copyable
+        class="rounded-3xl"
+      />
+      <h1 class="text-xl drop-shadow-lg my-1">
+        env
+      </h1>
+      <JsonViewer
+        :value="{
+          ...serverConfig,
+          npm: '...',
+        }"
         :expand-depth="999"
         theme="light"
         copyable

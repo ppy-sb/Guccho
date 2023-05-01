@@ -55,17 +55,18 @@
 
 @keyframes elementsInitial {
   from {
-    transform: translateX(0.3em);
-    transform-origin: 0%
+    transform: translateX(0.2em);
+    transform-origin: 0%;
   }
   to {
   }
 }
 
 @keyframes elementsDisappear {
-  from {}
+  from {
+  }
   to {
-    transform: translateX(-0.3em);
+    transform: translateX(-0.1em);
   }
 }
 
@@ -77,8 +78,6 @@
 	from { }
 	to { opacity: 0; -webkit-transform: scale(.8); transform: scale(.8); }
 } */
-
-
 
 .left-move,
 .right-move,
