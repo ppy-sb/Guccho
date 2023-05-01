@@ -27,9 +27,7 @@ defineExpose({
 
 <template>
   <div ref="wrapper" class="zoom-modal-wrapper" :data-wrapper-status="stat">
-    <div class="zoom-modal">
-      <slot v-bind="{ openModal, closeModal }" />
-    </div>
+    <slot v-bind="{ openModal, closeModal }" />
   </div>
 </template>
 
@@ -74,14 +72,26 @@ $in: blur(0.5em) opacity(0) saturate(0.5);
   &[data-wrapper-status="show"] {
     z-index: 50;
 
-    > .zoom-modal {
+    > * {
       animation: zoomIn $duration $animate-function forwards;
+    }
+    > [response-modal] {
+      animation: slideFromBottom $duration / 1.4 $animate-function forwards;
+      @screen md {
+        animation: zoomIn $duration $animate-function forwards;
+      }
     }
   }
 
   &[data-wrapper-status="closed"] {
-    > .zoom-modal {
+    > * {
       animation: zoomOut $duration $animate-function forwards;
+    }
+    > [response-modal] {
+      animation: slideToBottom $duration / 1.4 $animate-function forwards;
+      @screen md {
+        animation: zoomOut $duration $animate-function forwards;
+      }
     }
   }
 }
@@ -91,20 +101,25 @@ $in: blur(0.5em) opacity(0) saturate(0.5);
     transform: scale(0.96);
     filter: $in;
   }
-
-  100% {
-    transform: scale(1);
-  }
 }
 
 @keyframes zoomOut {
-  0% {
-    transform: scale(1);
-  }
 
   100% {
     transform: scale(0.93);
     filter: $in;
+  }
+}
+@keyframes slideFromBottom {
+  0% {
+    transform: translateY(10%) scale(1.05);
+    filter: $in;
+  }
+}
+@keyframes slideToBottom {
+  100% {
+    filter: $in;
+    transform: translateY(10%) scale(1.05);
   }
 }
 </style>

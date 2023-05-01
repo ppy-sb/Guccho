@@ -41,7 +41,7 @@ function percentWidth(count: number) {
 
 <template>
   <div v-if="data" class="container mx-auto custom-container mt-20">
-    <div class="flex gap-1 my-1 items-baseline drop-shadow-lg">
+    <div class="flex flex-wrap gap-1 my-1 items-baseline drop-shadow-lg">
       <h1 class="text-xl">
         System Load
       </h1>
@@ -63,7 +63,7 @@ function percentWidth(count: number) {
       </div>
     </div>
 
-    <h1 class="flex items-baseline gap-1 drop-shadow-lg my-1">
+    <h1 class="flex flex-wrap items-baseline gap-1 drop-shadow-lg my-1">
       <div class="text-xl">
         App Load
       </div>
@@ -90,7 +90,7 @@ function percentWidth(count: number) {
       </div>
     </div>
 
-    <div class="flex gap-1 my-1 drop-shadow-lg items-baseline">
+    <div class="flex flex-wrap gap-1 my-1 drop-shadow-lg items-baseline">
       <h1 class="text-xl">
         Memory
       </h1>
@@ -129,7 +129,7 @@ function percentWidth(count: number) {
         :expand-depth="999"
         theme="light"
         copyable
-        class="rounded-3xl"
+        class="rounded-xl shadow"
       />
       <h1 class="text-xl drop-shadow-lg my-1">
         npm env
@@ -139,7 +139,7 @@ function percentWidth(count: number) {
         :expand-depth="999"
         theme="light"
         copyable
-        class="rounded-3xl"
+        class="rounded-xl shadow"
       />
       <h1 class="text-xl drop-shadow-lg my-1">
         env
@@ -152,7 +152,7 @@ function percentWidth(count: number) {
         :expand-depth="999"
         theme="light"
         copyable
-        class="rounded-3xl"
+        class="rounded-xl shadow"
       />
     </template>
   </div>
@@ -160,7 +160,7 @@ function percentWidth(count: number) {
 
 <style scoped lang="postcss">
 .multi-progress-bar-container {
-  @apply overflow-hidden h-4 mb-4 text-xs flex rounded-xl;
+  @apply overflow-hidden h-4 mb-4 text-xs flex rounded-xl shadow;
   .multi-progress-bar {
     @apply shadow-none flex flex-col text-center whitespace-nowrap justify-center transition-[width] duration-300 overflow-hidden text-clip;
   }

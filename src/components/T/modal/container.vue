@@ -144,7 +144,6 @@ $scale2: scale(0.96);
   &[data-l1-status="show"] {
 
     > .zoom-modal-background {
-      // background: rgba(0, 0, 0, .1);
       z-index: 40;
       @apply backdrop-blur-md;
       @apply backdrop-saturate-[0.8] backdrop-contrast-[1.02] backdrop-brightness-[1.02];
@@ -186,7 +185,6 @@ $scale2: scale(0.96);
 @keyframes zoomOutModalContent {
   0% {
     transform: scale(1);
-
   }
 
   100% {

@@ -212,9 +212,8 @@ function clearFocus() {
                   My Profile
                 </nuxt-link>
               </li>
-              <li>
+              <li v-if="session.$state.privilege.staff">
                 <nuxt-link
-                  v-if="session.$state.privilege.staff"
                   :to="{
                     name: 'admin',
                   }"
@@ -224,6 +223,7 @@ function clearFocus() {
                   Admin Panel
                 </nuxt-link>
               </li>
+              <div class="divider my-0" />
               <li>
                 <nuxt-link :to="{ name: 'auth-logout' }" @click="clearFocus">
                   <FontAwesomeIcon

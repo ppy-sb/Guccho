@@ -188,100 +188,94 @@ onBeforeMount(() => {
   <section v-if="user" class="container mx-auto custom-container">
     <t-modal-root>
       <t-modal-wrapper ref="changeAvatar" v-slot="{ closeModal }">
-        <t-modal class="max-w-3xl">
-          <div class="flex flex-col gap-2">
-            <div class="flex items-center justify-center w-full">
-              <label v-if="!newAvatar" for="dropzone-file" class="dropzone">
-                <div
+        <t-responsive-modal>
+          <div class="flex items-center justify-center w-full">
+            <label v-if="!newAvatar" for="dropzone-file" class="dropzone">
+              <div
 
-                  class="flex flex-col items-center justify-center px-3 pt-5 pb-6"
+                class="flex flex-col items-center justify-center px-3 pt-5 pb-6"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="w-10 h-10 mb-3 text-gbase-600 dark:text-gbase-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
                 >
-                  <svg
-                    aria-hidden="true"
-                    class="w-10 h-10 mb-3 text-gbase-600 dark:text-gbase-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                    />
-                  </svg>
-                  <p
-                    class="mb-2 text-sm text-gbase-500 dark:text-gbase-300"
-                  >
-                    <span class="font-semibold">Click to upload</span> or drag
-                    and drop
-                  </p>
-                  <!-- <p class="text-xs text-gbase-500 dark:text-gbase-300">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                  />
+                </svg>
+                <p
+                  class="mb-2 text-sm text-gbase-500 dark:text-gbase-300"
+                >
+                  <span class="font-semibold">Click to upload</span> or drag
+                  and drop
+                </p>
+                <!-- <p class="text-xs text-gbase-500 dark:text-gbase-300">
                     SVG, PNG, JPG or GIF (MAX. 800x400px)
                   </p> -->
-                  <p class="text-sm text-red-500">
-                    {{ avatarError }}
-                  </p>
-                </div>
-                <input id="dropzone-file" accept="image/*" type="file" class="hidden" @change="selectAvatarFile">
-              </label>
-              <output v-else-if="uploadingAvatarStat !== 'succeed'" class="drop-shadow m-2 w-96">
-                <Cropper
-                  ref="cropper"
-                  class="cropper"
-                  :src="newAvatarURL"
-                  :stencil-props="{
-                    aspectRatio: 1,
-                  }"
-                  :canvas="{
-                    minHeight: 64,
-                    minWidth: 64,
-                    maxHeight: 640,
-                    maxWidth: 640,
-                  }"
-                  @change="crop"
-                />
-              </output>
-              <img v-else :src="newAvatarURL" class="mask mask-squircle overflow-hidden _avatar">
-            </div>
-            <t-button
-              class="grow"
-              :loading="uploadingAvatarStat === 'uploading'"
-              :disabled="uploadingAvatarStat === 'succeed'"
-              :variant="uploadingAvatarStat === 'succeed' ? 'success' : 'gbase'"
-              @click="saveAvatar"
-            >
-              {{
-                uploadingAvatarStat === 'idle'
-                  ? "Save"
-                  : uploadingAvatarStat === 'uploading'
-                    ? "Uploading"
-                    : uploadingAvatarStat === 'succeed'
-                      ? "done"
-                      : ""
-              }}
-            </t-button>
-            <t-button
-              class="grow"
-              @click="
-                () => {
-                  closeModal(() => {
-                    newAvatar = undefined
-                    newAvatarURL = undefined
-                    uploadingAvatarStat = 'idle';
-                  });
-                }
-              "
-            >
-              close
-            </t-button>
+                <p class="text-sm text-red-500">
+                  {{ avatarError }}
+                </p>
+              </div>
+              <input id="dropzone-file" accept="image/*" type="file" class="hidden" @change="selectAvatarFile">
+            </label>
+            <output v-else-if="uploadingAvatarStat !== 'succeed'" class="drop-shadow m-2 w-96">
+              <Cropper
+                ref="cropper"
+                class="cropper"
+                :src="newAvatarURL"
+                :stencil-props="{
+                  aspectRatio: 1,
+                }"
+                :canvas="{
+                  minHeight: 64,
+                  minWidth: 64,
+                  maxHeight: 640,
+                  maxWidth: 640,
+                }"
+                @change="crop"
+              />
+            </output>
+            <img v-else :src="newAvatarURL" class="mask mask-squircle overflow-hidden _avatar">
           </div>
-        </t-modal>
+          <t-button
+            class="grow"
+            :loading="uploadingAvatarStat === 'uploading'"
+            :disabled="uploadingAvatarStat === 'succeed'"
+            :variant="uploadingAvatarStat === 'succeed' ? 'success' : 'gbase'"
+            @click="saveAvatar"
+          >
+            {{
+              uploadingAvatarStat === 'idle'
+                ? "Save"
+                : uploadingAvatarStat === 'uploading'
+                  ? "Uploading"
+                  : uploadingAvatarStat === 'succeed'
+                    ? "done"
+                    : ""
+            }}
+          </t-button>
+          <t-button
+            class="grow"
+            @click="closeModal(() => {
+              newAvatar = undefined
+              newAvatarURL = undefined
+              uploadingAvatarStat = 'idle'
+            })"
+          >
+            close
+          </t-button>
+        </t-responsive-modal>
       </t-modal-wrapper>
 
       <t-modal-wrapper ref="changePassword" v-slot="{ closeModal }">
-        <t-modal>
+        <t-responsive-modal>
           <template #body>
             <form action="#" @submit.prevent="updatePassword(closeModal)">
               <div class="card-body w-96">
@@ -331,7 +325,8 @@ onBeforeMount(() => {
                   type="button"
                   @click="
                     closeModal(() => {
-                      (changePasswordForm = {}), (changePasswordError = '');
+                      changePasswordForm = {}
+                      changePasswordError = ''
                     })
                   "
                 >
@@ -340,7 +335,7 @@ onBeforeMount(() => {
               </div>
             </form>
           </template>
-        </t-modal>
+        </t-responsive-modal>
       </t-modal-wrapper>
     </t-modal-root>
     <!-- used as padding placeholders -->
@@ -426,8 +421,8 @@ onBeforeMount(() => {
               :disabled="unchanged.name === user.name"
               @click="
                 () => {
-                  if (!user || !unchanged) return;
-                  user.name = unchanged.name;
+                  if (!user || !unchanged) return
+                  user.name = unchanged.name
                 }
               "
             >
@@ -483,8 +478,8 @@ onBeforeMount(() => {
               :disabled="unchanged.email === user.email"
               @click="
                 () => {
-                  if (!user || !unchanged) return;
-                  user.email = unchanged.email;
+                  if (!user || !unchanged) return
+                  user.email = unchanged.email
                 }
               "
             >
