@@ -317,15 +317,15 @@ export class RedisLeaderboardProvider extends LeaderboardDatabaseProvider {
   }
 }
 
-export class LeaderboardProvider {
-  constructor() {
-    switch (env.LEADERBOARD_SOURCE) {
-      case 'database': {
-        return new LeaderboardDatabaseProvider()
-      }
-      case 'redis': {
-        return new RedisLeaderboardProvider()
-      }
+function create() {
+  switch (env.LEADERBOARD_SOURCE) {
+    case 'database': {
+      return LeaderboardDatabaseProvider
+    }
+    case 'redis': {
+      return RedisLeaderboardProvider
     }
   }
 }
+
+export const LeaderboardProvider = create()
