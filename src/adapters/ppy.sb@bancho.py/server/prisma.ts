@@ -1,9 +1,6 @@
 import type { PrismaClient as ImportedPrismaClient } from '.prisma/ppy.sb'
 
-import { ensureAndGetDBEnv } from '../../bancho.py/server/source/prisma'
 import { createCursedRequire } from '~/server'
-
-ensureAndGetDBEnv()
 
 const require = createCursedRequire(import.meta.url ?? __filename)
 const { PrismaClient } = require<{

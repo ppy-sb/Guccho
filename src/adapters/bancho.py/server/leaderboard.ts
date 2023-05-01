@@ -1,7 +1,16 @@
-import { idToString, stringToId, toBanchoPyMode, toMods, toRoles, toUserEssential, userEssentials } from '../transforms'
+import {
+  idToString,
+  stringToId,
+  toBanchoPyMode,
+  toMods,
+  toRoles,
+  toUserEssential,
+  userEssentials,
+} from '../transforms'
 import type { Id } from '..'
 import { hasRuleset } from '..'
 import { client as redisClient } from './source/redis'
+import { env } from './source/env'
 import { getPrismaClient } from './source/prisma'
 
 import { modes as _modes } from '~/types/defs'
@@ -21,17 +30,143 @@ const leaderboardFields = {
   rankedScore: true,
   plays: true,
 } as const
-export class LeaderboardProvider implements Base<Id> {
+
+export class LeaderboardDatabaseProvider implements Base<Id> {
   static stringToId = stringToId
   static idToString = idToString
   db = getPrismaClient()
-  redisClient = redisClient()
 
   config = {
     avatar: {
-      domain: process.env.BANCHO_PY_AVATAR_DOMAIN,
+      domain: process.env.AVATAR_DOMAIN,
     },
   }
+
+  async getLeaderboard<M extends Mode, RS extends LeaderboardRankingSystem>({
+    mode,
+    ruleset,
+    rankingSystem,
+    page,
+    pageSize,
+  }: {
+    mode: M
+    ruleset: AvailableRuleset<M>
+    rankingSystem: RS
+    page: number
+    pageSize: number
+  }) {
+    const start = page * pageSize
+    const result = await this.db.stat.findMany({
+      where: {
+        user: {
+          priv: {
+            gt: 2,
+          },
+        },
+        mode: toBanchoPyMode(mode, ruleset),
+      },
+      select: {
+        user: true,
+        ...leaderboardFields,
+      },
+      orderBy: rankingSystem === 'ppv2'
+        ? {
+            pp: 'desc',
+          }
+        : rankingSystem === 'rankedScore'
+          ? {
+              rankedScore: 'desc',
+            }
+          : rankingSystem === 'totalScore'
+            ? {
+                totalScore: 'desc',
+              }
+            : {},
+      skip: start,
+      take: pageSize,
+    })
+
+    return result.map(({ user, ...stat }, index) => ({
+      user: toUserEssential({ user, config: this.config }),
+      inThisLeaderboard: {
+        ppv2: stat.pp,
+        rankedScore: stat.rankedScore,
+        totalScore: stat.totalScore,
+        accuracy: stat.accuracy,
+        playCount: stat.plays,
+        rank: BigInt(start + index + 1),
+      },
+    }))
+  }
+
+  async getBeatmapLeaderboard(
+    query: Base.BaseQueryOptionalMode & {
+      rankingSystem: RankingSystem
+      md5: string
+    }
+  ) {
+    const { ruleset, rankingSystem, md5 } = query
+    let { mode } = query
+    if (!mode) {
+      const beatmap = await this.db.map.findFirst({ where: { md5 } })
+      if (!beatmap) {
+        mode = 'osu'
+      }
+      else {
+        mode = _modes[beatmap.mode]
+      }
+    }
+    if (!hasRuleset(mode, ruleset)) {
+      return []
+    }
+
+    let sort: { score: 'desc' } | { pp: 'desc' }
+    if (rankingSystem === 'score') {
+      sort = {
+        score: 'desc',
+      }
+    }
+    else if (rankingSystem === 'ppv2') {
+      sort = {
+        pp: 'desc',
+      }
+    }
+    else {
+      return []
+    }
+
+    const scores = await this.db.score.findMany({
+      include: {
+        user: true,
+      },
+      where: {
+        beatmap: {
+          md5,
+        },
+        mode: toBanchoPyMode(mode, ruleset),
+        status: {
+          in: [2, 3],
+        },
+      },
+      orderBy: sort,
+    })
+    return scores.map((item, index) => ({
+      user: toUserEssential({ user: item.user, config: this.config }),
+      score: {
+        id: item.id.toString(),
+        ppv2: item.pp,
+        accuracy: item.acc,
+        score: item.score,
+        playedAt: item.playTime,
+        mods: toMods(item.mods),
+      },
+      rank: index,
+    }))
+  }
+}
+
+export class RedisLeaderboardProvider extends LeaderboardDatabaseProvider {
+  redisClient = redisClient()
 
   async getPPv2LiveLeaderboard(
     banchoPyMode: number,
@@ -69,7 +204,10 @@ export class LeaderboardProvider implements Base<Id> {
     const { mode, ruleset, rankingSystem, page, pageSize } = opt
 
     const start = page * pageSize
-    if (this.redisClient?.isReady && rankingSystem === 'ppv2') {
+    if (
+      this.redisClient.isReady
+      && rankingSystem === 'ppv2'
+    ) {
       try {
         const result: {
           id: number
@@ -170,136 +308,24 @@ export class LeaderboardProvider implements Base<Id> {
       }
       catch (e) {
         console.error(e)
-        return this.getDatabaseLeaderboard(opt)
+        return super.getLeaderboard(opt)
       }
     }
     else {
-      return this.getDatabaseLeaderboard(opt)
+      return super.getLeaderboard(opt)
     }
   }
+}
 
-  async getDatabaseLeaderboard<M extends Mode, RS extends LeaderboardRankingSystem>({
-    mode,
-    ruleset,
-    rankingSystem,
-    page,
-    pageSize,
-  }: {
-    mode: M
-    ruleset: AvailableRuleset<M>
-    rankingSystem: RS
-    page: number
-    pageSize: number
-  }) {
-    const start = page * pageSize
-    const result = await this.db.stat.findMany({
-      where: {
-        user: {
-          priv: {
-            gt: 2,
-          },
-        },
-        mode: toBanchoPyMode(mode, ruleset),
-      },
-      // include: {
-      //   user: true,
-      // },
-      select: {
-        user: true,
-        ...leaderboardFields,
-      },
-      orderBy: rankingSystem === 'ppv2'
-        ? {
-            pp: 'desc',
-          }
-        : rankingSystem === 'rankedScore'
-          ? {
-              rankedScore: 'desc',
-            }
-          : rankingSystem === 'totalScore'
-            ? {
-                totalScore: 'desc',
-              }
-            : {},
-      skip: start,
-      take: pageSize,
-    })
-
-    return result.map(({ user, ...stat }, index) => ({
-      user: toUserEssential({ user, config: this.config }),
-      inThisLeaderboard: {
-        ppv2: stat.pp,
-        rankedScore: stat.rankedScore,
-        totalScore: stat.totalScore,
-        accuracy: stat.accuracy,
-        playCount: stat.plays,
-        rank: BigInt(start + index + 1),
-      },
-    }))
-  }
-
-  async getBeatmapLeaderboard(
-    query: Base.BaseQueryOptionalMode & {
-      rankingSystem: RankingSystem
-      md5: string
-    }
-  ) {
-    const { ruleset, rankingSystem, md5 } = query
-    let { mode } = query
-    if (!mode) {
-      const beatmap = await this.db.map.findFirst({ where: { md5 } })
-      if (!beatmap) {
-        mode = 'osu'
+export class LeaderboardProvider {
+  constructor() {
+    switch (env.LEADERBOARD_SOURCE) {
+      case 'database': {
+        return new LeaderboardDatabaseProvider()
       }
-      else {
-        mode = _modes[beatmap.mode]
+      case 'redis': {
+        return new RedisLeaderboardProvider()
       }
     }
-    if (!hasRuleset(mode, ruleset)) {
-      return []
-    }
-
-    let sort: { score: 'desc' } | { pp: 'desc' }
-    if (rankingSystem === 'score') {
-      sort = {
-        score: 'desc',
-      }
-    }
-    else if (rankingSystem === 'ppv2') {
-      sort = {
-        pp: 'desc',
-      }
-    }
-    else {
-      return []
-    }
-
-    const scores = await this.db.score.findMany({
-      include: {
-        user: true,
-      },
-      where: {
-        beatmap: {
-          md5,
-        },
-        mode: toBanchoPyMode(mode, ruleset),
-        status: {
-          in: [2, 3],
-        },
-      },
-      orderBy: sort,
-    })
-    return scores.map((item, index) => ({
-      user: toUserEssential({ user: item.user, config: this.config }),
-      score: {
-        id: item.id.toString(),
-        ppv2: item.pp,
-        accuracy: item.acc,
-        score: item.score,
-        playedAt: item.playTime,
-        mods: toMods(item.mods),
-      },
-      rank: index,
-    }))
   }
 }

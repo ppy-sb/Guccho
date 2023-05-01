@@ -2,10 +2,9 @@ import { v4 } from 'uuid'
 
 import type { Awaitable } from '~/types/common'
 
-// type inferMapType<T> = T extends Map<infer K, infer U> ? [K, U] : never
 export interface Session<Id = string> {
   userId?: Id
-  lastActivity: number
+  lastActivity: Date
 }
 
 export interface SessionStore<TSessionId, TSession> {
@@ -70,7 +69,7 @@ export class SessionProvider<TSessionId, TSession extends Session> {
     const sessionId = <TSessionId>v4()
     const _session = <TSession>{
       userId: data?.id,
-      lastActivity: Date.now(),
+      lastActivity: new Date(),
     }
     await this.store.set(sessionId, _session)
     return sessionId
@@ -94,13 +93,13 @@ export class SessionProvider<TSessionId, TSession extends Session> {
     if (!_session) {
       return
     }
-    _session.lastActivity = Date.now()
+    _session.lastActivity = new Date()
     this.store.set(sessionId, _session)
     return sessionId
   }
 
   expired(session: TSession) {
-    return Date.now() - session.lastActivity > config.expire
+    return Date.now() - session.lastActivity.getTime() > config.expire
   }
 
   async update(sessionId: TSessionId, data: Partial<TSession>) {
@@ -112,7 +111,7 @@ export class SessionProvider<TSessionId, TSession extends Session> {
       ..._session,
       ...data,
     }
-    newSession.lastActivity = Date.now()
+    newSession.lastActivity = new Date()
     const maybeNewSessionId = await this.store.set(sessionId, newSession)
     return maybeNewSessionId
   }

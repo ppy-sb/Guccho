@@ -80,7 +80,7 @@ export class UserProvider implements Base<Id> {
 
   config = {
     avatar: {
-      domain: process.env.BANCHO_PY_AVATAR_DOMAIN,
+      domain: process.env.AVATAR_DOMAIN,
       location: process.env.BANCHO_PY_AVATAR_LOCATION,
     },
   }
