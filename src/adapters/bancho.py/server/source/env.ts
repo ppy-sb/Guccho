@@ -5,7 +5,7 @@ export const database = literal('database')
 export const memory = literal('memory')
 export const redis = literal('redis')
 
-const redisURL = string().url()
+export const redisURL = string().url()
 export const dsn = string().url()
 
 const validateSessionStore = union([

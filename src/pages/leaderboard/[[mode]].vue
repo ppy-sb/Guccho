@@ -138,7 +138,7 @@ function reloadPage(i?: number) {
     >
       <!-- <fetch-overlay :fetching="pending" /> -->
 
-      <div v-if="table.length" class="relative mx-auto xl:rounded-lg w-full max-w-max overflow-y-scroll">
+      <div v-if="table.length" class="relative mx-auto xl:rounded-lg w-full max-w-max overflow-x-auto">
         <table
           class="table mx-2 table-compact border-separate whitespace-nowrap"
         >

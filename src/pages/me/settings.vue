@@ -37,7 +37,7 @@ if (!user.value) {
 }
 const unchanged = shallowRef({ ...user.value as Exclude<typeof user['value'], null> })
 
-const profile = shallowRef<JSONContent>()
+const profile = shallowRef<JSONContent>({})
 const profileEdited = shallowRef(false)
 const editor = shallowRef<InstanceType<typeof Edit>>()
 
