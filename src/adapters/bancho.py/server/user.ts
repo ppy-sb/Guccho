@@ -220,36 +220,30 @@ export class UserProvider implements Base<Id> {
     let scoreIds: number[]
     if (rankingSystem === 'rankedScore' || rankingSystem === 'totalScore') {
       scoreIds = await this.db.$queryRaw<{ id: string }[]>`
-SELECT s2.id
-FROM scores s2
+SELECT s.id
+FROM scores AS s
 INNER JOIN (
-  SELECT s.map_md5 AS md5, MAX(s.score) AS maxScore
-  FROM users u
-  INNER JOIN scores s ON s.userid = u.id
-  WHERE u.priv > 2 AND s.mode = ${toBanchoPyMode(
-        mode,
-        ruleset
-      )} AND s.score > 0 AND s.status in (${banchoPyRankingStatus.join(',')})
-  GROUP BY s.map_md5
-) tmp ON tmp.maxScore = s2.score AND tmp.md5 = s2.map_md5
-WHERE s2.userid = ${id}
+    SELECT s.map_md5, MAX(s.pp) AS maxPP
+    FROM users AS u
+    INNER JOIN scores AS s ON s.userid = u.id
+    WHERE u.priv > 2 AND s.mode = ${toBanchoPyMode(mode, ruleset)} AND s.pp > 0 AND s.status in (${banchoPyRankingStatus.join(',')})
+    GROUP BY s.map_md5
+) AS tmp ON tmp.maxPP = s.pp AND tmp.map_md5 = s.map_md5
+WHERE s.userid = ${id}
 `.then(res => res.map(res => parseInt(res.id)))
     }
     else if (rankingSystem === 'ppv2') {
       scoreIds = await this.db.$queryRaw<{ id: string }[]>`
-SELECT s2.id
-FROM scores AS s2
+SELECT s.id
+FROM scores s
 INNER JOIN (
-    SELECT s.map_md5 AS md5, MAX(s.pp) AS maxPP
-    FROM users AS u
-    INNER JOIN scores AS s ON s.userid = u.id
-    WHERE u.priv > 2 AND s.mode = ${toBanchoPyMode(
-        mode,
-        ruleset
-      )} AND s.pp > 0 AND s.status in (${banchoPyRankingStatus.join(',')})
+    SELECT s.map_md5, MAX(s.score) AS maxScore
+    FROM users u
+    INNER JOIN scores s ON s.userid = u.id
+    WHERE u.priv > 2 AND s.mode = ${toBanchoPyMode(mode, ruleset)} AND s.score > 0 AND s.status in (${banchoPyRankingStatus.join(',')})
     GROUP BY s.map_md5
-) AS tmp ON tmp.maxPP = s2.pp AND tmp.md5 = s2.map_md5
-WHERE s2.userid = ${id}
+) tmp ON tmp.maxScore = s.score AND tmp.map_md5 = s.map_md5
+WHERE s.userid = ${id}
 `.then(res => res.map(res => parseInt(res.id)))
     }
     else {
