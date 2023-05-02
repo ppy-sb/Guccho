@@ -167,3 +167,10 @@ body:before {
     }
   }
 }
+
+dialog {
+  @apply bg-transparent p-0 m-0 mx-auto;
+  &::backdrop {
+    @apply bg-transparent;
+  }
+}

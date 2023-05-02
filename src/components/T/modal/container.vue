@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { Status } from './wrapper.vue'
-
 const props = defineProps({
   teleportId: {
     type: [String, Number],
@@ -12,11 +10,12 @@ const emit = defineEmits<{
   (event: 'shown'): void
 }>()
 const modal = shallowRef<HTMLElement>()
+const d = shallowRef<HTMLDialogElement>()
 
-const stat = shallowRef<Status>('hidden')
-const l2Status = shallowRef<Status>('hidden')
+const stat = shallowRef('hidden')
+const l2Status = shallowRef('hidden')
 
-function l2(value: Status) {
+function l2(value: string) {
   l2Status.value = value
 }
 
@@ -24,12 +23,13 @@ const modalShownCallback: (() => void)[] = []
 const modalClosedCallback: (() => void)[] = []
 
 const outerL2 = inject<typeof l2 | undefined>('openL2', undefined)
-function openModal(cb?: () => void) {
+function showModal(cb?: () => void) {
   if (outerL2) {
     outerL2('show')
   }
 
   stat.value = 'show'
+  d.value?.showModal()
   if (cb) {
     modalShownCallback.push(cb)
   }
@@ -40,11 +40,12 @@ function closeModal(cb?: () => void) {
   }
 
   stat.value = 'closed'
+  d.value?.close()
   if (cb) {
     modalClosedCallback.push(cb)
   }
 }
-provide('openModal', openModal)
+provide('showModal', showModal)
 provide('closeModal', closeModal)
 provide('stat', stat)
 
@@ -87,7 +88,7 @@ onMounted(() => {
   })
 })
 defineExpose({
-  openModal,
+  showModal,
   closeModal,
   stat,
 })
@@ -95,140 +96,14 @@ defineExpose({
 
 <template>
   <div class="zoom-modal-container" :data-l1-status="stat" :data-l2-status="l2Status">
-    <div class="zoom-modal-background">
-      <slot name="modal" v-bind="{ openModal, closeModal }">
+    <dialog ref="d">
+      <slot name="modal" v-bind="{ showModal, closeModal }">
         <div v-if="props.teleportId" :id="props.teleportId.toString()" />
       </slot>
-    </div>
+    </dialog>
 
     <div ref="modal" class="zoom-modal-content notify-safari-something-will-change">
-      <slot v-bind="{ openModal, closeModal }" />
+      <slot v-bind="{ showModal, closeModal }" />
     </div>
   </div>
 </template>
-
-<style lang="scss">
-@import "./shared.scss";
-$zoom-content-stage1: opacity(0.4) saturate(0.7);
-$zoom-content-stage2: opacity(0.2) saturate(0.3);
-
-$scale: scale(0.98);
-$scale2: scale(0.96);
-
-.safari {
-  .notify-safari-something-will-change {
-    will-change: transform, filter;
-  }
-}
-
-.zoom-modal-container {
-  &[data-l1-status="hidden"] {
-    .zoom-modal {
-      filter: opacity(0);
-    }
-
-    // pointer-events: none;
-  }
-
-  .zoom-modal-background {
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    z-index: -50;
-
-    @apply transition-[filter] transition-[backdrop-filter];
-  }
-
-  &[data-l1-status="show"] {
-
-    > .zoom-modal-background {
-      z-index: 40;
-      @apply backdrop-blur-md;
-      @apply backdrop-saturate-[0.8] backdrop-contrast-[1.02] backdrop-brightness-[1.02];
-      @apply dark:backdrop-contrast-[1.05] dark:backdrop-brightness-[0.9];
-    }
-
-    &[data-l2-status="hidden"] > .zoom-modal-content {
-      animation: zoomOutModalContent $duration $animate-function forwards;
-    }
-
-    &[data-l2-status="show"] {
-
-      > .zoom-modal-background {
-        @apply backdrop-blur;
-      }
-
-      > .zoom-modal-content {
-        animation: zoomOutModalContentL2 $duration $animate-function forwards !important;
-      }
-    }
-
-    &[data-l2-status="closed"] > .zoom-modal-content {
-      animation: zoomInModalContentL2 $duration $animate-function forwards;
-    }
-
-  }
-
-  &[data-l1-status="closed"] {
-    .zoom-modal-background {
-      z-index: 0;
-    }
-
-    > .zoom-modal-content {
-      animation: zoomInModalContent $duration $animate-function forwards;
-    }
-  }
-}
-
-@keyframes zoomOutModalContent {
-  0% {
-    transform: scale(1);
-  }
-
-  100% {
-    transform: $scale;
-    filter: $zoom-content-stage1;
-  }
-}
-
-@keyframes zoomInModalContent {
-  0% {
-    transform: $scale;
-    filter: $zoom-content-stage1;
-  }
-
-  100% {
-    transform: scale(1);
-  }
-}
-
-@keyframes zoomOutModalContentL2 {
-  0% {
-    transform: $scale;
-    filter: $zoom-content-stage1;
-  }
-
-  100% {
-    transform: $scale2;
-    filter: $zoom-content-stage2;
-  }
-}
-
-@keyframes zoomInModalContentL2 {
-  0% {
-    transform: $scale2;
-    filter: $zoom-content-stage2;
-  }
-
-  100% {
-    transform: $scale;
-    filter: $zoom-content-stage1;
-  }
-}
-
-.zoom-modal-container[data-l2-status="show"] > .zoom-modal-background {
-  z-index: 1000 !important;
-}
-</style>

@@ -13,12 +13,12 @@ const data = await app$.$client.score.id.query({ id })
 
 <template>
   <div v-if="data" class="container custom-container mx-auto mt-20">
-    <!-- <t-modal-root>
-      <t-modal-wrapper ref="changeAvatar" v-slot="{ closeModal }">
+    <!-- <t-modal>
+      <t-modal ref="changeAvatar" v-slot="{ closeModal }">
         <t-modal v-if="data">
         </t-modal>
-      </t-modal-wrapper>
-    </t-modal-root> -->
+      </t-modal>
+    </t-modal> -->
     <template v-if="data">
       <app-score-heading :score="data" ranking-system="ppv2" />
       <!-- <div>

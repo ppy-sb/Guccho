@@ -36,7 +36,7 @@ const session = useSession()
 
 const searchModalWrapper = shallowRef<{
   searchModal: {
-    openModal: () => void
+    showModal: () => void
   }
 }>()
 
@@ -99,7 +99,7 @@ function clearFocus() {
             }"
           >
             <app-navbar-navs
-              @search="() => searchModalWrapper?.searchModal?.openModal()"
+              @search="() => searchModalWrapper?.searchModal?.showModal()"
             />
           </ul>
         </div>
@@ -112,7 +112,7 @@ function clearFocus() {
         </nuxt-link>
         <button
           class="btn btn-ghost btn-circle lg:hidden"
-          @click.prevent="() => searchModalWrapper?.searchModal?.openModal()"
+          @click.prevent="() => searchModalWrapper?.searchModal?.showModal()"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -133,14 +133,14 @@ function clearFocus() {
       <div class="navbar-center hidden lg:flex">
         <ul class="menu nav-menu menu-horizontal px-1">
           <app-navbar-navs
-            @search="() => searchModalWrapper?.searchModal?.openModal()"
+            @search="() => searchModalWrapper?.searchModal?.showModal()"
           />
         </ul>
       </div>
       <div class="navbar-end">
         <button
           class="btn btn-ghost btn-circle hidden lg:flex"
-          @click.prevent="() => searchModalWrapper?.searchModal?.openModal()"
+          @click.prevent="() => searchModalWrapper?.searchModal?.showModal()"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

@@ -2,7 +2,7 @@
 import { isBanchoBeatmapset, placeholder } from '~/utils'
 
 const searchModal = shallowRef<{
-  openModal: () => void
+  showModal: () => void
 }>()
 defineExpose({
   searchModal,
@@ -27,247 +27,238 @@ const {
 </script>
 
 <template>
-  <t-modal-root>
-    <t-modal-wrapper ref="searchModal" v-slot="{ closeModal }">
-      <div class="flex w-full justify-center h-[100dvh]">
-        <div
-          class="card w-full max-w-screen-md py-8"
-        >
-          <div class="card-actions flex">
-            <div class="flex flex-col gap-4 sm:flex-row items-baseline pl-3">
-              <div class="form-control">
-                <label class="label cursor-pointer p-0 flex gap-2">
-                  <input
-                    v-model="includes.beatmapsets" type="checkbox" class="checkbox checkbox-sm" @change="() => {
-                      includes.users = !includes.beatmaps && !includes.beatmapsets
-                      raw(true)
-                    }"
-                  >
-                  <span class="label-text">Include beatmapsets</span>
-                </label>
-              </div>
-              <div class="form-control">
-                <label class="label cursor-pointer p-0 flex gap-2">
-                  <input
-                    v-model="includes.beatmaps" type="checkbox" class="checkbox checkbox-sm" @change="() => {
-                      includes.users = !includes.beatmaps && !includes.beatmapsets
-                      raw(true)
-                    }"
-                  >
-                  <span class="label-text">Include beatmaps</span>
-                </label>
-              </div>
-              <div class="form-control">
-                <label class="label cursor-pointer p-0 flex gap-2">
-                  <input
-                    v-model="includes.users" type="checkbox" class="checkbox checkbox-sm" @change="() => {
-                      includes.beatmaps = !includes.users
-                      includes.beatmapsets = !includes.users
-                      raw(false)
-                    }"
-                  >
-                  <span class="label-text">Include users</span>
-                </label>
-              </div>
-            </div>
-            <div class="ml-auto" />
-            <button class="btn btn-ghost btn-sm" @click="() => closeModal()">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
-          </div>
-          <div class="bg-gbase-50 dark:bg-gbase-800 shadow-2xl md:rounded-2xl h-max overflow-hidden">
-            <div class="form-control">
-              <label v-if="mode === 'beatmap'" class="input-group">
-                <span class="flex gap-2 bg-transparent">
-                  <span v-if="!tags.length" class="opacity-50 bg-transparent">Tags</span>
-                  <span v-for="tag, index in tags" :key="index" class="badge badge-md badge-primary gap-1 cursor-pointer whitespace-nowrap" @click="tags.splice(index, 1)">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-4 h-4 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-                    <div v-html="tag.toString()" />
-                  </span>
-                </span>
-                <input
-                  v-model="keyword"
-                  type="text"
-                  placeholder="Search..."
-                  class="input grow border-label-0 focus:input-primary bg-transparent !outline-0"
-                  @input="onInput"
-                  @keyup.enter="raw(true)"
-                >
-              </label>
-              <input
-                v-else
-                v-model="keyword"
-                type="text"
-                placeholder="Search..."
-                class="input grow border-label-0 focus:input-primary bg-transparent !outline-0"
-                @input="onInput"
-                @keyup.enter="raw(true)"
-              >
-            </div>
-            <div class="pt-0 h-full overflow-auto menus">
-              <template
-                v-if="pages.length"
-              >
-                <div class="divider font-bold">
-                  Quick Links
-                </div>
-                <ul class="menu">
-                  <li
-                    v-for="page, index in pages"
-                    :key="`searchResult-page-${index}`"
-                  >
-                    <nuxt-link
-                      :to="page.route"
-                      @click="() => closeModal()"
-                    >
-                      <div class="flex gap-2 items-center">
-                        <component :is="page.render" />
-                      </div>
-                    </nuxt-link>
-                  </li>
-                </ul>
-              </template>
-              <template v-if="loading.beatmapsets">
-                <div class="divider" />
-                <div class="p-5 pt-0">
-                  Finding beatmapsets...
-                </div>
-              </template>
-              <template
-                v-else-if="Array.isArray(beatmapsets) && beatmapsets.length"
-              >
-                <div class="divider font-bold">
-                  beatmapsets
-                </div>
-                <ul class="menu">
-                  <li
-                    v-for="bs in beatmapsets"
-                    :key="`searchResult-bs-${bs.id}`"
-                  >
-                    <nuxt-link
-                      :to="{
-                        name: 'beatmapset-id',
-                        params: {
-                          id: bs.id,
-                        },
-                      }"
-                      @click="() => closeModal()"
-                    >
-                      <div class="flex gap-2 items-center">
-                        <img
-                          v-if="isBanchoBeatmapset(bs)"
-                          class="h-[30px] mask mask-squircle overflow-hidden object-cover aspect-square"
-                          :src="`https://b.ppy.sh/thumb/${bs.foreignId}.jpg`"
-                          :onerror="placeholder"
-                        >
-                        <span>{{ bs.meta.intl.artist }} -
-                          {{ bs.meta.intl.title }}</span>
-                      </div>
-                    </nuxt-link>
-                  </li>
-                </ul>
-              </template>
-              <template v-if="loading.beatmaps">
-                <div class="divider" />
-                <div class="p-5 pt-0">
-                  Finding beatmaps...
-                </div>
-              </template>
-              <template v-else-if="Array.isArray(beatmaps) && beatmaps.length">
-                <div class="divider font-bold">
-                  beatmaps
-                </div>
-                <ul class="menu">
-                  <li
-                    v-for="bm in beatmaps"
-                    :key="`searchResult-bm-${bm.id}`"
-                  >
-                    <nuxt-link
-                      :to="{
-                        name: 'beatmapset-id',
-                        params: {
-                          id: bm.beatmapset.id,
-                        },
-                      }"
-                      @click="() => closeModal()"
-                    >
-                      <div class="flex gap-2 items-center">
-                        <img
-                          v-if="isBanchoBeatmapset(bm.beatmapset)"
-                          class="h-[30px] mask mask-squircle overflow-hidden object-cover aspect-square"
-                          :src="`https://b.ppy.sh/thumb/${bm.beatmapset.foreignId}.jpg`"
-                          :onerror="placeholder"
-                        >
-                        <span>{{ bm.beatmapset.meta.intl.artist }} -
-                          {{ bm.beatmapset.meta.intl.title }} [{{
-                            bm.version
-                          }}]</span>
-                      </div>
-                    </nuxt-link>
-                  </li>
-                </ul>
-              </template>
-              <template v-if="loading.users">
-                <div class="divider" />
-                <div class="p-5 pt-0">
-                  Finding users...
-                </div>
-              </template>
-              <template v-else-if="Array.isArray(users) && users.length">
-                <div class="divider font-bold">
-                  users
-                </div>
-                <ul class="menu">
-                  <li
-                    v-for="user in users"
-                    :key="`searchResult-user-${user.safeName}`"
-                  >
-                    <nuxt-link
-                      :to="{
-                        name: 'user-handle',
-                        params: {
-                          handle: `@${user.safeName}`,
-                        },
-                      }"
-                      @click="() => closeModal()"
-                    >
-                      <div class="flex gap-2 items-center">
-                        <img
-                          :src="user.avatarSrc"
-                          class="w-[30px] mask mask-squircle overflow"
-                          :onerror="placeholder"
-                        >
-                        <span>{{ user.name }}</span>
-                      </div>
-                    </nuxt-link>
-                  </li>
-                </ul>
-              </template>
-              <template v-if="nothing">
-                <div class="divider" />
-                <div class="p-5 pt-0">
-                  Found nothing.
-                </div>
-              </template>
-            </div>
-          </div>
+  <t-modal ref="searchModal" v-slot="{ closeModal }" class="m-0 w-full max-h-[100dvh] my-8 max-w-screen-md mx-auto overflow-visible">
+    <div class="card-actions">
+      <div class="flex flex-col gap-4 sm:flex-row items-baseline pl-3">
+        <div class="form-control">
+          <label class="label cursor-pointer p-0 flex gap-2">
+            <input
+              v-model="includes.beatmapsets" type="checkbox" class="checkbox checkbox-sm" @change="() => {
+                includes.users = !includes.beatmaps && !includes.beatmapsets
+                raw(true)
+              }"
+            >
+            <span class="label-text">Include beatmapsets</span>
+          </label>
+        </div>
+
+        <div class="form-control">
+          <label class="label cursor-pointer p-0 flex gap-2">
+            <input
+              v-model="includes.beatmaps" type="checkbox" class="checkbox checkbox-sm" @change="() => {
+                includes.users = !includes.beatmaps && !includes.beatmapsets
+                raw(true)
+              }"
+            >
+            <span class="label-text">Include beatmaps</span>
+          </label>
+        </div>
+        <div class="form-control">
+          <label class="label cursor-pointer p-0 flex gap-2">
+            <input
+              v-model="includes.users" type="checkbox" class="checkbox checkbox-sm" @change="() => {
+                includes.beatmaps = !includes.users
+                includes.beatmapsets = !includes.users
+                raw(false)
+              }"
+            >
+            <span class="label-text">Include users</span>
+          </label>
         </div>
       </div>
-    </t-modal-wrapper>
-  </t-modal-root>
+      <div class="ml-auto" />
+      <button class="btn btn-ghost btn-sm" @click="() => closeModal()">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-6 w-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+      </button>
+    </div>
+    <div class="bg-gbase-50 dark:bg-gbase-800 shadow-2xl md:rounded-2xl relative max-h-[calc(100dvh-32px-4rem)] flex flex-col overflow-hidden">
+      <div class="form-control">
+        <label v-if="mode === 'beatmap'" class="input-group">
+          <span class="flex gap-2 bg-transparent">
+            <span v-if="!tags.length" class="opacity-50 bg-transparent">Tags</span>
+            <span v-for="tag, index in tags" :key="index" class="badge badge-md badge-primary gap-1 cursor-pointer whitespace-nowrap" @click="tags.splice(index, 1)">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-4 h-4 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+              <div v-html="tag.toString()" />
+            </span>
+          </span>
+          <input
+            v-model="keyword"
+            type="text"
+            placeholder="Search..."
+            class="input grow border-label-0 focus:input-primary bg-transparent !outline-0"
+            @input="onInput"
+            @keyup.enter="raw(true)"
+          >
+        </label>
+        <input
+          v-else
+          v-model="keyword"
+          type="text"
+          placeholder="Search..."
+          class="input grow border-label-0 focus:input-primary bg-transparent !outline-0"
+          @input="onInput"
+          @keyup.enter="raw(true)"
+        >
+      </div>
+      <div class="overflow-auto">
+        <template
+          v-if="pages.length"
+        >
+          <!-- <div class="divider font-bold">
+            Quick Links
+          </div> -->
+          <ul class="menu">
+            <li
+              v-for="page, index in pages"
+              :key="`searchResult-page-${index}`"
+            >
+              <nuxt-link
+                :to="page.route"
+                @click="() => closeModal()"
+              >
+                <div class="flex gap-2 items-center">
+                  <component :is="page.render" />
+                </div>
+              </nuxt-link>
+            </li>
+          </ul>
+        </template>
+        <template v-if="loading.beatmapsets">
+          <div class="divider" />
+          <div class="p-5 pt-0">
+            Finding beatmapsets...
+          </div>
+        </template>
+        <template
+          v-else-if="Array.isArray(beatmapsets) && beatmapsets.length"
+        >
+          <div class="divider font-bold">
+            beatmapsets
+          </div>
+          <ul class="menu">
+            <li
+              v-for="bs in beatmapsets"
+              :key="`searchResult-bs-${bs.id}`"
+            >
+              <nuxt-link
+                :to="{
+                  name: 'beatmapset-id',
+                  params: {
+                    id: bs.id,
+                  },
+                }"
+                @click="() => closeModal()"
+              >
+                <div class="flex gap-2 items-center">
+                  <img
+                    v-if="isBanchoBeatmapset(bs)"
+                    class="h-[30px] mask mask-squircle overflow-hidden object-cover aspect-square"
+                    :src="`https://b.ppy.sh/thumb/${bs.foreignId}.jpg`"
+                    :onerror="placeholder"
+                  >
+                  <span>{{ bs.meta.intl.artist }} -
+                    {{ bs.meta.intl.title }}</span>
+                </div>
+              </nuxt-link>
+            </li>
+          </ul>
+        </template>
+        <template v-if="loading.beatmaps">
+          <div class="divider" />
+          <div class="p-5 pt-0">
+            Finding beatmaps...
+          </div>
+        </template>
+        <template v-else-if="Array.isArray(beatmaps) && beatmaps.length">
+          <div class="divider font-bold">
+            beatmaps
+          </div>
+          <ul class="menu">
+            <li
+              v-for="bm in beatmaps"
+              :key="`searchResult-bm-${bm.id}`"
+            >
+              <nuxt-link
+                :to="{
+                  name: 'beatmapset-id',
+                  params: {
+                    id: bm.beatmapset.id,
+                  },
+                }"
+                @click="() => closeModal()"
+              >
+                <div class="flex gap-2 items-center">
+                  <img
+                    v-if="isBanchoBeatmapset(bm.beatmapset)"
+                    class="h-[30px] mask mask-squircle overflow-hidden object-cover aspect-square"
+                    :src="`https://b.ppy.sh/thumb/${bm.beatmapset.foreignId}.jpg`"
+                    :onerror="placeholder"
+                  >
+                  <span>{{ bm.beatmapset.meta.intl.artist }} -
+                    {{ bm.beatmapset.meta.intl.title }} [{{
+                      bm.version
+                    }}]</span>
+                </div>
+              </nuxt-link>
+            </li>
+          </ul>
+        </template>
+        <template v-if="loading.users">
+          <div class="divider" />
+          <div class="p-5 pt-0">
+            Finding users...
+          </div>
+        </template>
+        <template v-else-if="Array.isArray(users) && users.length">
+          <div class="divider font-bold">
+            users
+          </div>
+          <ul class="menu">
+            <li
+              v-for="user in users"
+              :key="`searchResult-user-${user.safeName}`"
+            >
+              <nuxt-link
+                :to="{
+                  name: 'user-handle',
+                  params: {
+                    handle: `@${user.safeName}`,
+                  },
+                }"
+                @click="() => closeModal()"
+              >
+                <div class="flex gap-2 items-center">
+                  <img
+                    :src="user.avatarSrc"
+                    class="w-[30px] mask mask-squircle overflow"
+                    :onerror="placeholder"
+                  >
+                  <span>{{ user.name }}</span>
+                </div>
+              </nuxt-link>
+            </li>
+          </ul>
+        </template>
+        <template v-if="nothing">
+          <div class="divider" />
+          <div class="p-5 pt-0">
+            Found nothing.
+          </div>
+        </template>
+      </div>
+    </div>
+  </t-modal>
 </template>
-
-<style scoped></style>

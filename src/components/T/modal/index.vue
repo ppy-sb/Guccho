@@ -1,0 +1,129 @@
+<script setup lang="ts">
+const { status } = useZoomModal()
+
+const wrapper = shallowRef<HTMLDialogElement>()
+// const status = shallowRef(0)
+
+function showModal(cb?: () => void) {
+  status.value = 'show'
+  cb?.()
+  wrapper.value?.showModal()
+}
+function closeModal(cb?: () => void) {
+  status.value = 'closed'
+  cb?.()
+  if (!wrapper.value) {
+    return
+  }
+  wrapper.value.onanimationend = () => {
+    wrapper.value?.close()
+    if (!wrapper.value) {
+      return
+    }
+    wrapper.value.onanimationend = null
+  }
+}
+defineExpose({
+  showModal,
+  closeModal,
+  wrapper,
+})
+</script>
+
+<template>
+  <dialog
+    ref="wrapper"
+    class="t-modal overflow-visible"
+    :status="status"
+  >
+    <slot v-bind="{ showModal, closeModal }" />
+  </dialog>
+</template>
+
+<style lang="scss" scoped>
+// .t-modal {
+//   & .t-modal {
+//     position: fixed;
+//     left: 0;
+//     right: 0;
+//     top: 0;
+//     bottom: 0;
+//   }
+
+//   img {
+//     pointer-events: none;
+//   }
+
+//   &[status="show"] {
+//     img {
+//       pointer-events: all;
+//     }
+//   }
+// }
+</style>
+
+<style lang="scss">
+@import "~/assets/styles/modal.scss";
+
+$in: blur(0.5em) opacity(0) saturate(0.5);
+.t-modal {
+  // @apply max-h-[100dvh] overflow-scroll;
+  &::backdrop {
+    @apply transition-all;
+
+    &[status="show"] {
+      @apply backdrop-blur-md;
+      @apply backdrop-saturate-[0.8] backdrop-contrast-[1.02] backdrop-brightness-[1.02];
+      @apply dark:backdrop-contrast-[1.05] dark:backdrop-brightness-[0.9];
+    }
+  }
+  // &[status="hidden"] {
+  // }
+  &[status="show"] {
+    animation: zoomIn $duration $animate-function forwards;
+    > [response-modal] {
+      animation: slideFromBottom calc($duration / 1.4) $animate-function
+        forwards;
+      @screen md {
+        animation: zoomIn $duration $animate-function forwards;
+      }
+    }
+  }
+
+  &[status="closed"] {
+    animation: zoomOut $duration $animate-function forwards;
+    > [response-modal] {
+      animation: slideToBottom calc($duration / 1.2) $animate-function forwards;
+      @screen md {
+        animation: zoomOut $duration $animate-function forwards;
+      }
+    }
+  }
+}
+
+@keyframes zoomIn {
+  0% {
+    transform: scale(0.96);
+    filter: $in;
+  }
+}
+
+@keyframes zoomOut {
+  100% {
+    transform: scale(0.93);
+    filter: $in;
+  }
+}
+@keyframes slideFromBottom {
+  0% {
+    transform: translateY(5%) scale(0.98);
+    filter: $in;
+  }
+}
+@keyframes slideToBottom {
+  100% {
+    filter: $in;
+    transform: translateY(5%) scale(0.98);
+  }
+}
+</style>

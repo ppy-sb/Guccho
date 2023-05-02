@@ -7,6 +7,8 @@ import { checkAvatar } from '~/utils'
 
 import 'vue-advanced-cropper/dist/style.css'
 import type Edit from '~/components/editor/index.vue'
+import TResponsiveModal from '~/components/T/responsive-modal.client.vue'
+import TModal from '~/components/T/modal/index.vue'
 
 definePageMeta({
   middleware: ['auth'],
@@ -69,12 +71,8 @@ function crop({ canvas }: { canvas: HTMLCanvasElement }) {
 }
 
 const uploadingAvatarStat = shallowRef<'idle' | 'uploading' | 'succeed' | 'errored'>('idle')
-const changeAvatar = shallowRef<{
-  openModal: (arg0?: CallableFunction) => void
-}>()
-const changePassword = shallowRef<{
-  openModal: (arg0?: CallableFunction) => void
-}>()
+const changeAvatar = shallowRef<InstanceType<typeof TModal>>()
+const changePassword = shallowRef<InstanceType<typeof TModal>>()
 async function saveAvatar() {
   if (!croppedAvatar.value) {
     return
@@ -186,158 +184,153 @@ onBeforeMount(() => {
 
 <template>
   <section v-if="user" class="container mx-auto custom-container">
-    <t-modal-root>
-      <t-modal-wrapper ref="changeAvatar" v-slot="{ closeModal }">
-        <t-responsive-modal>
-          <div class="flex items-center justify-center w-full">
-            <label v-if="!newAvatar" for="dropzone-file" class="dropzone">
-              <div
-
-                class="flex flex-col items-center justify-center px-3 pt-5 pb-6"
+    <TResponsiveModal ref="changeAvatar" v-slot="{ closeModal }" class="my-auto">
+      <div class="p-4 rounded-xl flex flex-col gap-2 shadow-xl bg-gbase-50">
+        <div class="flex items-center justify-center w-full">
+          <label v-if="!newAvatar" for="dropzone-file" class="dropzone">
+            <div
+              class="flex flex-col items-center justify-center px-3 pt-5 pb-6"
+            >
+              <svg
+                aria-hidden="true"
+                class="w-10 h-10 mb-3 text-gbase-600 dark:text-gbase-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
               >
-                <svg
-                  aria-hidden="true"
-                  class="w-10 h-10 mb-3 text-gbase-600 dark:text-gbase-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                  />
-                </svg>
-                <p
-                  class="mb-2 text-sm text-gbase-500 dark:text-gbase-300"
-                >
-                  <span class="font-semibold">Click to upload</span> or drag
-                  and drop
-                </p>
-                <!-- <p class="text-xs text-gbase-500 dark:text-gbase-300">
-                    SVG, PNG, JPG or GIF (MAX. 800x400px)
-                  </p> -->
-                <p class="text-sm text-red-500">
-                  {{ avatarError }}
-                </p>
-              </div>
-              <input id="dropzone-file" accept="image/*" type="file" class="hidden" @change="selectAvatarFile">
-            </label>
-            <output v-else-if="uploadingAvatarStat !== 'succeed'" class="drop-shadow m-2 w-96">
-              <Cropper
-                ref="cropper"
-                class="cropper"
-                :src="newAvatarURL"
-                :stencil-props="{
-                  aspectRatio: 1,
-                }"
-                :canvas="{
-                  minHeight: 64,
-                  minWidth: 64,
-                  maxHeight: 640,
-                  maxWidth: 640,
-                }"
-                @change="crop"
-              />
-            </output>
-            <img v-else :src="newAvatarURL" class="mask mask-squircle overflow-hidden _avatar">
-          </div>
-          <t-button
-            class="grow"
-            :loading="uploadingAvatarStat === 'uploading'"
-            :disabled="uploadingAvatarStat === 'succeed'"
-            :variant="uploadingAvatarStat === 'succeed' ? 'success' : 'gbase'"
-            @click="saveAvatar"
-          >
-            {{
-              uploadingAvatarStat === 'idle'
-                ? "Save"
-                : uploadingAvatarStat === 'uploading'
-                  ? "Uploading"
-                  : uploadingAvatarStat === 'succeed'
-                    ? "done"
-                    : ""
-            }}
-          </t-button>
-          <t-button
-            class="grow"
-            @click="closeModal(() => {
-              newAvatar = undefined
-              newAvatarURL = undefined
-              uploadingAvatarStat = 'idle'
-            })"
-          >
-            close
-          </t-button>
-        </t-responsive-modal>
-      </t-modal-wrapper>
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                />
+              </svg>
+              <p
+                class="mb-2 text-sm text-gbase-500 dark:text-gbase-300"
+              >
+                <span class="font-semibold">Click to upload</span> or drag
+                and drop
+              </p>
+              <!-- <p class="text-xs text-gbase-500 dark:text-gbase-300">
+                        SVG, PNG, JPG or GIF (MAX. 800x400px)
+                      </p> -->
+              <p class="text-sm text-red-500">
+                {{ avatarError }}
+              </p>
+            </div>
+            <input id="dropzone-file" accept="image/*" type="file" class="hidden" @change="selectAvatarFile">
+          </label>
+          <output v-else-if="uploadingAvatarStat !== 'succeed'" class="drop-shadow m-2 w-96">
+            <Cropper
+              ref="cropper"
+              class="cropper"
+              :src="newAvatarURL"
+              :stencil-props="{
+                aspectRatio: 1,
+              }"
+              :canvas="{
+                minHeight: 64,
+                minWidth: 64,
+                maxHeight: 640,
+                maxWidth: 640,
+              }"
+              @change="crop"
+            />
+          </output>
+          <img v-else :src="newAvatarURL" class="mask mask-squircle overflow-hidden _avatar">
+        </div>
+        <t-button
+          class="grow"
+          :loading="uploadingAvatarStat === 'uploading'"
+          :disabled="uploadingAvatarStat === 'succeed'"
+          :variant="uploadingAvatarStat === 'succeed' ? 'success' : 'gbase'"
+          @click="saveAvatar"
+        >
+          {{
+            uploadingAvatarStat === 'idle'
+              ? "Save"
+              : uploadingAvatarStat === 'uploading'
+                ? "Uploading"
+                : uploadingAvatarStat === 'succeed'
+                  ? "done"
+                  : ""
+          }}
+        </t-button>
+        <t-button
+          class="grow"
+          @click="closeModal(() => {
+            newAvatar = undefined
+            newAvatarURL = undefined
+            uploadingAvatarStat = 'idle'
+          })"
+        >
+          close
+        </t-button>
+      </div>
+    </TResponsiveModal>
 
-      <t-modal-wrapper ref="changePassword" v-slot="{ closeModal }">
-        <t-responsive-modal>
-          <template #body>
-            <form action="#" @submit.prevent="updatePassword(closeModal)">
-              <div class="card-body w-96">
-                <div class="form-control">
-                  <label class="label" for="old-password">
-                    <span class="pl-2 label-text">Old Password</span>
-                  </label>
-                  <input
-                    v-model="changePasswordForm.oldPassword"
-                    type="password"
-                    class="input input-sm input-ghost"
-                    required
-                  >
-                </div>
-                <div class="form-control">
-                  <label class="label" for="old-password">
-                    <span class="pl-2 label-text">New Password</span>
-                  </label>
-                  <input
-                    v-model="changePasswordForm.newPassword"
-                    type="password"
-                    class="input input-sm input-ghost"
-                    required
-                  >
-                </div>
-                <div class="form-control">
-                  <label class="label" for="old-password">
-                    <span class="pl-2 label-text">Repeat Password</span>
-                  </label>
-                  <input
-                    v-model="changePasswordForm.repeatNewPassword"
-                    type="password"
-                    class="input input-sm input-ghost"
-                    required
-                  >
-                </div>
-                <span class="text-error px-2">{{ changePasswordError }}</span>
-              </div>
-              <div class="flex p-4 gap-2">
-                <t-button size="sm" variant="accent" class="grow">
-                  confirm
-                </t-button>
-                <t-button
-                  size="sm"
-                  variant="secondary"
-                  class="grow"
-                  type="button"
-                  @click="
-                    closeModal(() => {
-                      changePasswordForm = {}
-                      changePasswordError = ''
-                    })
-                  "
-                >
-                  cancel
-                </t-button>
-              </div>
-            </form>
-          </template>
-        </t-responsive-modal>
-      </t-modal-wrapper>
-    </t-modal-root>
+    <TModal ref="changePassword" v-slot="{ closeModal }" class="my-auto">
+      <div class="card bg-base-100 shadow-lg">
+        <form action="#" @submit.prevent="updatePassword(closeModal)">
+          <div class="card-body w-96">
+            <div class="form-control">
+              <label class="label" for="old-password">
+                <span class="pl-2 label-text">Old Password</span>
+              </label>
+              <input
+                v-model="changePasswordForm.oldPassword"
+                type="password"
+                class="input input-sm input-ghost"
+                required
+              >
+            </div>
+            <div class="form-control">
+              <label class="label" for="old-password">
+                <span class="pl-2 label-text">New Password</span>
+              </label>
+              <input
+                v-model="changePasswordForm.newPassword"
+                type="password"
+                class="input input-sm input-ghost"
+                required
+              >
+            </div>
+            <div class="form-control">
+              <label class="label" for="old-password">
+                <span class="pl-2 label-text">Repeat Password</span>
+              </label>
+              <input
+                v-model="changePasswordForm.repeatNewPassword"
+                type="password"
+                class="input input-sm input-ghost"
+                required
+              >
+            </div>
+            <span class="text-error px-2">{{ changePasswordError }}</span>
+          </div>
+          <div class="flex p-4 gap-2">
+            <t-button size="sm" variant="accent" class="grow">
+              confirm
+            </t-button>
+            <t-button
+              size="sm"
+              variant="secondary"
+              class="grow"
+              type="button"
+              @click="
+                closeModal(() => {
+                  changePasswordForm = {}
+                  changePasswordError = ''
+                })
+              "
+            >
+              cancel
+            </t-button>
+          </div>
+        </form>
+      </div>
+    </TModal>
     <!-- used as padding placeholders -->
     <header-simple-title-with-sub />
     <div class="container mx-auto">
@@ -368,7 +361,7 @@ onBeforeMount(() => {
             <button
               class="absolute top-0 z-20 w-full h-full btn btn-primary hover:bg-wewak-500/30 hover:active:border-wewak-500/30 no-animation"
               type="button"
-              @click="() => changeAvatar?.openModal()"
+              @click="() => changeAvatar?.showModal()"
             >
               change
             </button>
@@ -508,7 +501,7 @@ onBeforeMount(() => {
             <button
               class="btn btn-sm btn-secondary"
               type="button"
-              @click="() => changePassword?.openModal()"
+              @click="() => changePassword?.showModal()"
             >
               Change
             </button>
