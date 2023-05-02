@@ -24,17 +24,6 @@ export type AvailableRankingSystem<
   R extends AvailableRuleset<M>,
 > = ModeRulesetRankingSystemDef[M][R]
 
-// export type RulesetAvailableInMode = {
-//   [R in Ruleset]: {
-//     [M in keyof ModeRulesetRankingSystemDef]: ModeRulesetRankingSystemDef[M][R &
-//     keyof ModeRulesetRankingSystemDef[M]] extends never
-//       ? never
-//       : M;
-//   }[keyof ModeRulesetRankingSystemDef];
-// }
-// export type StandardAvailable = RulesetAvailableInMode['standard']
-// export type RelaxAvailable = RulesetAvailableInMode['relax']
-// export type AutopilotAvailable = RulesetAvailableInMode['autopilot']
 export type AllRankingSystemDefs =
   ModeRulesetRankingSystemDef[Mode][keyof ModeRulesetRankingSystemDef[Mode]]
 

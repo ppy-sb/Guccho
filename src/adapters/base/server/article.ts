@@ -7,9 +7,8 @@ import type { UserEssential, UserPrivilegeString } from '~/types/user'
 import useEditorExtensions from '~/composables/useEditorExtensions'
 import { UserRelationProvider } from '$active/server'
 
-export type Access = 'staff' | 'moderator' | 'beatmapNominator'
-export type ReadAccess = Access | 'public'
-
+export type WriteAccess = 'staff' | 'moderator' | 'beatmapNominator'
+export type ReadAccess = WriteAccess | 'public'
 export interface Content {
   json: JSONContent
   html: string
@@ -17,7 +16,7 @@ export interface Content {
 export interface ContentPrivilege<ownerId = any> extends Content {
   privilege: {
     read: ReadAccess[]
-    write: Access[]
+    write: WriteAccess[]
   }
   owner?: ownerId
 }

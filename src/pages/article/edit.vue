@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type Editor from '~/components/editor/index.client.vue'
-import type { Access, ContentPrivilege, ReadAccess } from '$def/server/article'
+import type { ContentPrivilege, ReadAccess, WriteAccess } from '$def/server/article'
 
 definePageMeta({
   middleware: ['auth', 'admin'],
@@ -49,7 +49,7 @@ async function importArticle() {
   editor.value?.reload()
 }
 
-const privileges: Partial<Record<Access, string>> = {
+const privileges: Partial<Record<WriteAccess, string>> = {
   staff: 'Admin',
   moderator: 'Moderator',
   beatmapNominator: 'BN',

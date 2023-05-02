@@ -76,7 +76,7 @@ $in: blur(0.5em) opacity(0) saturate(0.5);
       animation: zoomIn $duration $animate-function forwards;
     }
     > [response-modal] {
-      animation: slideFromBottom $duration / 1.4 $animate-function forwards;
+      animation: slideFromBottom calc($duration / 1.4) $animate-function forwards;
       @screen md {
         animation: zoomIn $duration $animate-function forwards;
       }
@@ -88,7 +88,7 @@ $in: blur(0.5em) opacity(0) saturate(0.5);
       animation: zoomOut $duration $animate-function forwards;
     }
     > [response-modal] {
-      animation: slideToBottom $duration / 1.2 $animate-function forwards;
+      animation: slideToBottom calc($duration / 1.2) $animate-function forwards;
       @screen md {
         animation: zoomOut $duration $animate-function forwards;
       }

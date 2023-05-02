@@ -1,3 +1,5 @@
+import type { ReadAccess, WriteAccess } from '../base/server'
+
 //  privileges intended for all normal players.
 export enum BanchoPyPrivilege {
   Normal = 1 << 0, //  is an unbanned player.
@@ -63,4 +65,28 @@ export enum BanchoMode {
   taiko,
   fruits,
   mania,
+}
+
+export enum Access {
+  public = 1 << 1,
+  moderator = 1 << 2,
+  beatmapNominator = 1 << 3,
+  staff = 1 << 4,
+}
+
+export function toBanchoPyAccess(priv: (ReadAccess | WriteAccess)[]): Access {
+  let carry = 0
+  if (priv.includes('public')) {
+    carry &= Access.public
+  }
+  if (priv.includes('moderator')) {
+    carry &= Access.moderator
+  }
+  if (priv.includes('beatmapNominator')) {
+    carry &= Access.beatmapNominator
+  }
+  if (priv.includes('staff')) {
+    carry &= Access.staff
+  }
+  return carry
 }
