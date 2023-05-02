@@ -5,7 +5,7 @@ import { TRPCError } from '@trpc/server'
 
 import { glob } from 'glob'
 import imageType from 'image-type'
-import type { Prisma } from '.prisma/bancho.py'
+import type { Prisma, Stat } from '.prisma/bancho.py'
 import type { JSONContent } from '@tiptap/core'
 import { BanchoPyMode } from '../enums'
 import {
@@ -28,6 +28,7 @@ import { client as redisClient } from './source/redis'
 import { getPrismaClient } from './source/prisma'
 import { UserRelationProvider } from './user-relations'
 import { ArticleProvider } from './article'
+import { env } from './source/env'
 import { userNotFound } from '~/server/trpc/messages'
 
 import { RankingStatusEnum } from '~/types/beatmap'
@@ -70,13 +71,12 @@ function mkDirByPathSync(targetDir: string, { isRelativeToScript = false } = {})
 
 const bpyNumModes = Object.values(BanchoPyMode).filter(v => !isNaN(Number(v))) as BanchoPyMode[]
 
-export class UserProvider implements Base<Id> {
+class DBUserProvider implements Base<Id> {
   static stringToId = stringToId
   static idToString = idToString
   db = getPrismaClient()
 
   relationships: UserRelationProvider
-  redisClient?: ReturnType<typeof redisClient>
 
   config = {
     avatar: {
@@ -88,25 +88,9 @@ export class UserProvider implements Base<Id> {
   constructor() {
     this.db = getPrismaClient()
     this.relationships = new UserRelationProvider()
-    this.redisClient = redisClient()
 
     if (this.config.avatar.location) {
       mkDirByPathSync(this.config.avatar.location)
-    }
-  }
-
-  async getLiveRank(id: number, mode: number, country: string) {
-    if (this.redisClient?.isReady) {
-      return {
-        rank: await this.redisClient.zRevRank(
-          `bancho:leaderboard:${mode}`,
-          idToString(id)
-        ),
-        countryRank: await this.redisClient.zRevRank(
-          `bancho:leaderboard:${mode}:${country}`,
-          idToString(id)
-        ),
-      }
     }
   }
 
@@ -282,7 +266,7 @@ WHERE s.userid = ${id}
     }
   }
 
-  async getStatistics(opt: { id: Id; country: string }) {
+  async _getStatistics(opt: { id: Id; country: string }) {
     const { id } = opt
     const results = await this.db.stat.findMany({
       where: {
@@ -335,121 +319,13 @@ WHERE s.userid = ${id}
         totalScoreRank: totalScore + 1,
       }
     }))
-    const livePPRank = await this.getRedisRanks(opt)
-
-    const statistics: UserStatistic<
-      Mode,
-      Ruleset,
-      LeaderboardRankingSystem
-    > = {
-      osu: {
-        standard: createRulesetData({
-          databaseResult: results.find(
-            i => i.mode === BanchoPyMode.osuStandard
-          ),
-          ranks: ranks.find(i => i.mode === BanchoPyMode.osuStandard),
-          livePPRank: livePPRank?.osu.standard,
-        }),
-        relax: createRulesetData({
-          databaseResult: results.find(i => i.mode === BanchoPyMode.osuRelax),
-          ranks: ranks.find(i => i.mode === BanchoPyMode.osuRelax),
-          livePPRank: livePPRank?.osu.relax,
-        }),
-        autopilot: createRulesetData({
-          databaseResult: results.find(
-            i => i.mode === BanchoPyMode.osuAutopilot
-          ),
-          ranks: ranks.find(i => i.mode === BanchoPyMode.osuAutopilot),
-          livePPRank: livePPRank?.osu.autopilot,
-        }),
-      },
-      taiko: {
-        standard: createRulesetData({
-          databaseResult: results.find(
-            i => i.mode === BanchoPyMode.taikoStandard
-          ),
-          ranks: ranks.find(i => i.mode === BanchoPyMode.taikoStandard),
-          livePPRank: livePPRank?.taiko.standard,
-        }),
-        relax: createRulesetData({
-          databaseResult: results.find(
-            i => i.mode === BanchoPyMode.taikoRelax
-          ),
-          ranks: ranks.find(i => i.mode === BanchoPyMode.taikoRelax),
-          livePPRank: livePPRank?.taiko.relax,
-        }),
-      },
-      fruits: {
-        standard: createRulesetData({
-          databaseResult: results.find(
-            i => i.mode === BanchoPyMode.fruitsStandard
-          ),
-          ranks: ranks.find(i => i.mode === BanchoPyMode.fruitsStandard),
-          livePPRank: livePPRank?.fruits.standard,
-        }),
-        relax: createRulesetData({
-          databaseResult: results.find(
-            i => i.mode === BanchoPyMode.fruitsRelax
-          ),
-          ranks: ranks.find(i => i.mode === BanchoPyMode.fruitsRelax),
-          livePPRank: livePPRank?.fruits.relax,
-        }),
-      },
-      mania: {
-        standard: createRulesetData({
-          databaseResult: results.find(
-            i => i.mode === BanchoPyMode.maniaStandard
-          ),
-          ranks: ranks.find(i => i.mode === BanchoPyMode.maniaStandard),
-          livePPRank: livePPRank?.mania.standard,
-        }),
-      },
-    }
-    return statistics
+    return { results, ranks }
   }
 
-  async getRedisRanks({ id, country }: { id: Id; country: string }) {
-    if (!this.redisClient) {
-      return undefined
-    }
-    return {
-      osu: {
-        standard: await this.getLiveRank(
-          id,
-          BanchoPyMode.osuStandard,
-          country
-        ),
-        relax: await this.getLiveRank(id, BanchoPyMode.osuRelax, country),
-        autopilot: await this.getLiveRank(
-          id,
-          BanchoPyMode.osuAutopilot,
-          country
-        ),
-      },
-      taiko: {
-        standard: await this.getLiveRank(
-          id,
-          BanchoPyMode.osuStandard,
-          country
-        ),
-        relax: await this.getLiveRank(id, BanchoPyMode.osuRelax, country),
-      },
-      fruits: {
-        standard: await this.getLiveRank(
-          id,
-          BanchoPyMode.osuStandard,
-          country
-        ),
-        relax: await this.getLiveRank(id, BanchoPyMode.osuRelax, country),
-      },
-      mania: {
-        standard: await this.getLiveRank(
-          id,
-          BanchoPyMode.osuStandard,
-          country
-        ),
-      },
-    }
+  async getStatistics(opt: { id: Id; country: string }) {
+    const { results, ranks } = await this._getStatistics(opt)
+
+    return this._toStatistics(results, ranks)
   }
 
   async getFull<
@@ -695,4 +571,161 @@ WHERE s.userid = ${id}
 
     return toUserEssential({ user, config: this.config })
   }
+
+  async _toStatistics(
+    results: Stat[],
+    ranks: {
+      mode: number
+      ppv2Rank: number
+      rankedScoreRank: number
+      totalScoreRank: number
+    }[],
+    livePPRank?: Awaited<ReturnType<RedisUserProvider['getRedisRanks']>>
+  ) {
+    const statistics: UserStatistic<
+      Mode,
+      Ruleset,
+      LeaderboardRankingSystem
+    > = {
+      osu: {
+        standard: createRulesetData({
+          databaseResult: results.find(
+            i => i.mode === BanchoPyMode.osuStandard
+          ),
+          ranks: ranks.find(i => i.mode === BanchoPyMode.osuStandard),
+          livePPRank: livePPRank?.osu.standard,
+        }),
+        relax: createRulesetData({
+          databaseResult: results.find(i => i.mode === BanchoPyMode.osuRelax),
+          ranks: ranks.find(i => i.mode === BanchoPyMode.osuRelax),
+          livePPRank: livePPRank?.osu.relax,
+        }),
+        autopilot: createRulesetData({
+          databaseResult: results.find(
+            i => i.mode === BanchoPyMode.osuAutopilot
+          ),
+          ranks: ranks.find(i => i.mode === BanchoPyMode.osuAutopilot),
+          livePPRank: livePPRank?.osu.autopilot,
+        }),
+      },
+      taiko: {
+        standard: createRulesetData({
+          databaseResult: results.find(
+            i => i.mode === BanchoPyMode.taikoStandard
+          ),
+          ranks: ranks.find(i => i.mode === BanchoPyMode.taikoStandard),
+          livePPRank: livePPRank?.taiko.standard,
+        }),
+        relax: createRulesetData({
+          databaseResult: results.find(
+            i => i.mode === BanchoPyMode.taikoRelax
+          ),
+          ranks: ranks.find(i => i.mode === BanchoPyMode.taikoRelax),
+          livePPRank: livePPRank?.taiko.relax,
+        }),
+      },
+      fruits: {
+        standard: createRulesetData({
+          databaseResult: results.find(
+            i => i.mode === BanchoPyMode.fruitsStandard
+          ),
+          ranks: ranks.find(i => i.mode === BanchoPyMode.fruitsStandard),
+          livePPRank: livePPRank?.fruits.standard,
+        }),
+        relax: createRulesetData({
+          databaseResult: results.find(
+            i => i.mode === BanchoPyMode.fruitsRelax
+          ),
+          ranks: ranks.find(i => i.mode === BanchoPyMode.fruitsRelax),
+          livePPRank: livePPRank?.fruits.relax,
+        }),
+      },
+      mania: {
+        standard: createRulesetData({
+          databaseResult: results.find(
+            i => i.mode === BanchoPyMode.maniaStandard
+          ),
+          ranks: ranks.find(i => i.mode === BanchoPyMode.maniaStandard),
+          livePPRank: livePPRank?.mania.standard,
+        }),
+      },
+    }
+    return statistics
+  }
 }
+
+export class RedisUserProvider extends DBUserProvider {
+  redisClient?: ReturnType<typeof redisClient>
+  constructor() {
+    super()
+    this.redisClient = redisClient()
+  }
+
+  async getLiveRank(id: number, mode: number, country: string) {
+    if (this.redisClient?.isReady) {
+      return {
+        rank: await this.redisClient.zRevRank(
+          `bancho:leaderboard:${mode}`,
+          idToString(id)
+        ),
+        countryRank: await this.redisClient.zRevRank(
+          `bancho:leaderboard:${mode}:${country}`,
+          idToString(id)
+        ),
+      }
+    }
+  }
+
+  async getRedisRanks({ id, country }: { id: Id; country: string }) {
+    if (!this.redisClient) {
+      return undefined
+    }
+    return {
+      osu: {
+        standard: await this.getLiveRank(
+          id,
+          BanchoPyMode.osuStandard,
+          country
+        ),
+        relax: await this.getLiveRank(id, BanchoPyMode.osuRelax, country),
+        autopilot: await this.getLiveRank(
+          id,
+          BanchoPyMode.osuAutopilot,
+          country
+        ),
+      },
+      taiko: {
+        standard: await this.getLiveRank(
+          id,
+          BanchoPyMode.osuStandard,
+          country
+        ),
+        relax: await this.getLiveRank(id, BanchoPyMode.osuRelax, country),
+      },
+      fruits: {
+        standard: await this.getLiveRank(
+          id,
+          BanchoPyMode.osuStandard,
+          country
+        ),
+        relax: await this.getLiveRank(id, BanchoPyMode.osuRelax, country),
+      },
+      mania: {
+        standard: await this.getLiveRank(
+          id,
+          BanchoPyMode.osuStandard,
+          country
+        ),
+      },
+    }
+  }
+
+  async getStatistics(opt: { id: Id; country: string }) {
+    const { results, ranks } = await this._getStatistics(opt)
+    const livePPRank = await this.getRedisRanks(opt)
+
+    return this._toStatistics(results, ranks, livePPRank)
+  }
+}
+
+export const UserProvider = env.LEADERBOARD_SOURCE === 'redis' ? RedisUserProvider : DBUserProvider
