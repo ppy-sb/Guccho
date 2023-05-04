@@ -117,7 +117,7 @@ async function toggleFriend() {
           />
           <span>{{ friendButtonContent }}</span>
         </t-button>
-        <t-button
+        <!-- <t-button
           v-if="session.$state.loggedIn"
           size="sm"
           variant="secondary"
@@ -125,7 +125,7 @@ async function toggleFriend() {
         >
           <font-awesome-icon icon="fas fa-envelope" />
           <span>send message</span>
-        </t-button>
+        </t-button> -->
       </div>
       <div
         v-else
