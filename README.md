@@ -16,6 +16,7 @@ for production, create .env from .env.example.
 for development please create both .env and .env.development. `build` will use `.env` as environments to ensure you don't made any secrets to the public.
 
 - Run `yarn`
+- Run `yarn build:hljs`
 
 ## platforms
 

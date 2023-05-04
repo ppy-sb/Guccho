@@ -37,11 +37,14 @@ jobs:
       - name: install dependencies 🎁
         run: yarn --frozen-lockfile
 
-      - name: build schemas
-        run: yarn build:schemas
+      - name: build gen
+        run: yarn build:gen
 
       - name: type check ⚙️
         run: yarn lint:type-check
 
       - name: Run linter 👀
         run: yarn lint
+
+      - name: Test build 👀
+        run: yarn build
