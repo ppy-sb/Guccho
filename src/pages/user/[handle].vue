@@ -111,7 +111,7 @@ onMounted(() => {
       <!-- placeholder for bottom nav -->·
       <!-- <div class="my-8 -z-50" /> -->
       <client-only>
-        <teleport to="#footer">
+        <teleport to="body">
           <div class="btm-nav fuck">
             <template v-for="(isVisible, el) of visible" :key="el">
               <a
