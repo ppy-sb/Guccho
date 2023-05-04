@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type Editor from '~/components/editor/index.client.vue'
+import { Editor } from '#components'
 import type { ContentPrivilege, ReadAccess, WriteAccess } from '$def/server/article'
 
 definePageMeta({

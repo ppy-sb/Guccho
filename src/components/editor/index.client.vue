@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { HTMLContent, JSONContent } from '@tiptap/vue-3'
 import { EditorContent } from '@tiptap/vue-3'
-import '@/assets/styles/typography.scss'
-
 import { generateJSON } from '@tiptap/html'
-import MenuBar from './MenuBar.vue'
+
 import useEditor from '~/composables/useEditor'
 import useEditorLazyLoadHighlight from '~/composables/useEditorLazyLoadHighlight'
+
+import '@/assets/styles/typography.scss'
 
 const props = withDefaults(
   defineProps<{
@@ -59,7 +59,7 @@ defineExpose({
 
 <template>
   <div v-if="editor" class="editor">
-    <MenuBar
+    <editor-menu-bar
       v-model:indent="editorConf.indent"
       class="editor__header"
       :editor="editor"

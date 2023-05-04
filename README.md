@@ -18,6 +18,12 @@ for development please create both .env and .env.development. `build` will use `
 - Run `yarn`
 - Run `yarn build:hljs`
 
+## upgrade
+
+```sh
+yarn && yarn build:all
+```
+
 ## platforms
 
 - ### bancho.py (aka gulag)

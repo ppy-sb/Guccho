@@ -5,11 +5,9 @@ import { BubbleMenu } from '@tiptap/vue-3'
 // @ts-expect-error it's an url
 import remixiconUrl from 'remixicon/fonts/remixicon.symbol.svg'
 import type { PropType } from 'vue'
-import MenuItem from './MenuItem.vue'
 
 export default defineComponent({
   components: {
-    MenuItem,
     BubbleMenu,
   },
 
@@ -228,7 +226,7 @@ export default defineComponent({
         :key="`divider${index}`"
         class="divider"
       />
-      <MenuItem v-else :key="index" v-bind="item" class="menu-item icon" />
+      <editor-menu-item v-else :key="index" v-bind="item" class="menu-item icon" />
     </template>
     <template v-if="editor.isActive('codeBlock')">
       <label for="indent" class="label">Indent:</label>

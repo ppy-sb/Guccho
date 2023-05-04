@@ -2,13 +2,13 @@
 import md5 from 'md5'
 import type { JSONContent } from '@tiptap/core'
 import { Cropper } from 'vue-advanced-cropper'
+
+import type { Editor, TModal, TResponsiveModal } from '#components'
+
 import { useSession } from '~/store/session'
 import { checkAvatar } from '~/utils'
 
 import 'vue-advanced-cropper/dist/style.css'
-import type Edit from '~/components/editor/index.client.vue'
-import TResponsiveModal from '~/components/T/responsive-modal.client.vue'
-import TModal from '~/components/T/modal.client.vue'
 
 definePageMeta({
   middleware: ['auth'],
@@ -41,7 +41,7 @@ const unchanged = shallowRef({ ...user.value as Exclude<typeof user['value'], nu
 
 const profile = shallowRef<JSONContent>()
 const profileEdited = shallowRef(false)
-const editor = shallowRef<InstanceType<typeof Edit>>()
+const editor = shallowRef<InstanceType<typeof Editor>>()
 
 const newAvatar = shallowRef<File>()
 const newAvatarURL = shallowRef<string>()
@@ -187,7 +187,7 @@ onMounted(() => {
 
 <template>
   <section v-if="user" class="container mx-auto custom-container">
-    <TResponsiveModal ref="changeAvatar" v-slot="{ closeModal }" class="my-auto">
+    <t-responsive-modal ref="changeAvatar" v-slot="{ closeModal }" class="my-auto">
       <div class="p-4 rounded-xl flex flex-col gap-2 shadow-xl bg-gbase-50">
         <div class="flex items-center justify-center w-full">
           <label v-if="!newAvatar" for="dropzone-file" class="dropzone">
@@ -271,9 +271,9 @@ onMounted(() => {
           close
         </t-button>
       </div>
-    </TResponsiveModal>
+    </t-responsive-modal>
 
-    <TModal ref="changePassword" v-slot="{ closeModal }" class="my-auto">
+    <t-modal ref="changePassword" v-slot="{ closeModal }" class="my-auto">
       <div class="card bg-base-100 shadow-lg">
         <form action="#" @submit.prevent="updatePassword(closeModal)">
           <div class="card-body w-96">
@@ -333,7 +333,7 @@ onMounted(() => {
           </div>
         </form>
       </div>
-    </TModal>
+    </t-modal>
     <!-- used as padding placeholders -->
     <header-simple-title-with-sub />
     <div class="container mx-auto">

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { faEllipsisH } from '@fortawesome/free-solid-svg-icons'
-import AppScoresRankingSystemSwitcher from '~/components/app/scores/ranking-system-switcher.vue'
+import type { AppScoresRankingSystemSwitcher } from '#components'
 import {
   includes,
   isBanchoBeatmapset,
@@ -350,7 +350,7 @@ onBeforeMount(() => {
       </div>
     </div>
     <div class="container custom-container mx-auto mt-4">
-      <AppScoresRankingSystemSwitcher
+      <app-scores-ranking-system-switcher
         ref="scoreRS" v-model="switcher.rankingSystem" :mode="switcher.mode"
         :ruleset="switcher.ruleset" class="mx-auto" @update:model-value="update"
       />

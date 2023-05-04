@@ -33,5 +33,6 @@ module.exports = {
       tuples: 'always-multiline',
     }],
     '@typescript-eslint/no-namespace': 'off',
+    '@typescript-eslint/consistent-type-imports': 'off',
   },
 }
