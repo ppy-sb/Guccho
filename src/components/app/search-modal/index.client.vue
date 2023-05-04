@@ -27,7 +27,7 @@ const {
 </script>
 
 <template>
-  <t-modal ref="searchModal" v-slot="{ closeModal }" class="m-0 w-full max-h-[100dvh] my-8 max-w-screen-md mx-auto overflow-visible">
+  <t-modal ref="searchModal" v-slot="{ closeModal }" class="m-0 w-full max-h-[100dvh] my-8 max-w-screen-md mx-auto overflow-visible text-base-content ">
     <div class="card-actions">
       <div class="flex flex-col gap-4 sm:flex-row items-baseline pl-3">
         <div class="form-control">
