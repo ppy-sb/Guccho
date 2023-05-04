@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import type { JSONContent } from '@tiptap/vue-3'
+import type { HTMLContent, JSONContent } from '@tiptap/vue-3'
 import { EditorContent } from '@tiptap/vue-3'
 import '@/assets/styles/typography.scss'
 
+import { generateJSON } from '@tiptap/html'
 import MenuBar from './MenuBar.vue'
 import useEditor from '~/composables/useEditor'
 import useEditorLazyLoadHighlight from '~/composables/useEditorLazyLoadHighlight'
@@ -10,6 +11,7 @@ import useEditorLazyLoadHighlight from '~/composables/useEditorLazyLoadHighlight
 const props = withDefaults(
   defineProps<{
     modelValue?: JSONContent
+    html?: HTMLContent
     editable?: boolean
     indent?: string
   }>(),
@@ -25,15 +27,16 @@ const editorConf = shallowReactive({
   indent: props.indent,
 })
 const context = useEditor(editorConf)
-const { editor, subscribe } = context
+const { editor, subscribe, extensions } = context
 
 async function onUpdated() {
   const { load: lazy } = useEditorLazyLoadHighlight()
-  if (!props.modelValue) {
+  if (!props.modelValue && !props.html) {
     return
   }
-  await lazy(props.modelValue)
-  editor.value?.commands.setContent(props.modelValue)
+  const value = props.modelValue || generateJSON(props.html || '', extensions)
+  await lazy(value)
+  editor.value?.commands.setContent(value)
 }
 
 onBeforeMount(async () => {
@@ -50,6 +53,7 @@ defineExpose({
   reload() {
     onUpdated()
   },
+  generateJSON: (content: HTMLContent) => generateJSON(content, extensions) as JSONContent,
 })
 </script>
 

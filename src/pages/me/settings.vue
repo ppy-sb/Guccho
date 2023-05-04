@@ -6,9 +6,9 @@ import { useSession } from '~/store/session'
 import { checkAvatar } from '~/utils'
 
 import 'vue-advanced-cropper/dist/style.css'
-import type Edit from '~/components/editor/index.vue'
+import type Edit from '~/components/editor/index.client.vue'
 import TResponsiveModal from '~/components/T/responsive-modal.client.vue'
-import TModal from '~/components/T/modal/index.vue'
+import TModal from '~/components/T/modal.client.vue'
 
 definePageMeta({
   middleware: ['auth'],
@@ -39,7 +39,7 @@ if (!user.value) {
 }
 const unchanged = shallowRef({ ...user.value as Exclude<typeof user['value'], null> })
 
-const profile = shallowRef<JSONContent>({})
+const profile = shallowRef<JSONContent>()
 const profileEdited = shallowRef(false)
 const editor = shallowRef<InstanceType<typeof Edit>>()
 
@@ -174,11 +174,14 @@ async function updatePassword(closeModal: () => void) {
     changePasswordError.value = error.message
   }
 }
-onBeforeMount(() => {
+onMounted(() => {
   if (!user.value?.profile) {
     return
   }
-  profile.value = user.value.profile.raw
+  const pf = user.value.profile
+  if (pf.raw) {
+    profile.value = pf.raw
+  }
 })
 </script>
 
@@ -552,6 +555,7 @@ onBeforeMount(() => {
     <lazy-editor
       ref="editor"
       v-model.lazy="profile"
+      :html="user.profile?.html"
       class="safari-performance-boost"
       @update:model-value="profileEdited = true"
     />

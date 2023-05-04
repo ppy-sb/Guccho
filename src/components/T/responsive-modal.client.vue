@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import TModal from './modal/index.vue'
+import TModal from './modal.client.vue'
 
 type I = InstanceType<typeof TModal>
 const e = shallowRef<I>()
