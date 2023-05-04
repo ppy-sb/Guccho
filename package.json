@@ -62,7 +62,7 @@
     "daisyui-vue": "^0.0.1-alpha.15",
     "dotenv-cli": "^7.2.1",
     "floating-vue": "^2.0.0-beta.20",
-    "glob": "^10",
+    "glob": "10.1.0",
     "highlight.js": "^11.8.0",
     "image-type": "^5.2.0",
     "install": "^0.13.0",
