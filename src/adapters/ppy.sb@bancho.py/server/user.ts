@@ -3,6 +3,7 @@ import { TRPCError } from '@trpc/server'
 import type { JSONContent } from '@tiptap/core'
 import type { Id } from '..'
 import { getPrismaClient } from './prisma'
+import { BanchoPyPrivilege } from '~/adapters/bancho.py/enums'
 import { UserProvider as BanchoPyUser } from '~/adapters/bancho.py/server'
 import { createUserQuery, toFullUser } from '~/adapters/bancho.py/transforms'
 import useEditorExtensions from '~/composables/useEditorExtensions'
@@ -83,11 +84,14 @@ export class UserProvider extends BanchoPyUser implements Base<Id> {
     Excludes extends Partial<
       Record<keyof Base.ComposableProperties<Id>, boolean>
     >,
-  >({ handle, excludes }: { handle: string; excludes?: Excludes }) {
+  >({ handle, excludes, includeHidden }: { handle: string; excludes?: Excludes; includeHidden?: boolean }) {
     if (!excludes) {
       excludes = <Excludes>{ secrets: true }
     }
-    const user = await this.sbDb.user.findFirstOrThrow(createUserQuery(handle))
+    const user = await this.sbDb.user.findFirstOrThrow(createUserQuery({
+      handle,
+      privilege: includeHidden ? BanchoPyPrivilege.Any : undefined,
+    }))
 
     const fullUser = await toFullUser(user, this.config)
     const profile = await this.sbDb.userpage.findFirst({

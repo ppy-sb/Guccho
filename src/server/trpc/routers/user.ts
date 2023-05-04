@@ -13,6 +13,8 @@ import {
 } from '../shapes'
 import { router as _router, publicProcedure as p } from '../trpc'
 import { sessionProcedure } from '../middleware/session'
+import { optionalUserProcedure } from '../middleware/optional-user'
+import { userNotFound } from '../messages'
 import { mapId } from '~/server/transforms/mapId'
 import { followUserSettings } from '~/server/transforms'
 import { SessionProvider, UserProvider, UserRelationProvider } from '$active/server'
@@ -33,17 +35,22 @@ export const router = _router({
     .query(async ({ input: { handle } }) => {
       return userProvider.exists({ handle })
     }),
-  userpage: p
+  userpage: optionalUserProcedure
     .input(
       object({
         handle: zodHandle,
       })
     )
-    .query(async ({ input: { handle } }) => {
+    .query(async ({ input: { handle }, ctx }) => {
       const user = await userProvider.getFull({
         handle,
         excludes: { relationships: true, secrets: true },
+        includeHidden: true,
       })
+      const isSelf = user.id === ctx.user?.id
+      if (!user.roles.includes('normal') && !isSelf) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: userNotFound })
+      }
       return mapId(followUserSettings({ user, scope: 'public' }), UserProvider.idToString)
     }),
   full: p

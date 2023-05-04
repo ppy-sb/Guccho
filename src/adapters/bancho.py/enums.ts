@@ -2,6 +2,7 @@ import type { ReadAccess, WriteAccess } from '../base/server'
 
 //  privileges intended for all normal players.
 export enum BanchoPyPrivilege {
+  Any = 0,
   Normal = 1 << 0, //  is an unbanned player.
   Verified = 1 << 1, //  has logged in to the server in-game.
 

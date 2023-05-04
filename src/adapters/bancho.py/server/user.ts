@@ -7,7 +7,7 @@ import { glob } from 'glob'
 import imageType from 'image-type'
 import type { Prisma, Stat } from '.prisma/bancho.py'
 import type { JSONContent } from '@tiptap/core'
-import { BanchoPyMode } from '../enums'
+import { BanchoPyMode, BanchoPyPrivilege } from '../enums'
 import {
   createRulesetData,
   createUserQuery,
@@ -32,7 +32,6 @@ import { env } from './source/env'
 import { userNotFound } from '~/server/trpc/messages'
 
 import { RankingStatusEnum } from '~/types/beatmap'
-import { TSFilter } from '~/utils'
 
 import type { UserProvider as Base } from '~/adapters/base/server'
 import type { LeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
@@ -99,9 +98,11 @@ class DBUserProvider implements Base<Id> {
     keys,
   }: Base.OptType<number, Record<never, never>>) {
     return (
-      (await this.db.user.count(
-        createUserQuery(handle, keys || ['id', 'name', 'safeName', 'email'])
-      )) > 0
+      (await this.db.user.count(createUserQuery({
+        handle,
+        selectAgainst: keys || ['id', 'name', 'safeName', 'email'],
+        privilege: BanchoPyPrivilege.Normal,
+      }))) > 0
     )
   }
 
@@ -125,7 +126,11 @@ class DBUserProvider implements Base<Id> {
     const { handle, includes, keys } = opt
     /* optimized */
     const user = await this.db.user.findFirstOrThrow({
-      ...createUserQuery(handle, keys || ['id', 'name', 'safeName', 'email']),
+      ...createUserQuery({
+        handle,
+        selectAgainst: keys || ['id', 'name', 'safeName', 'email'],
+        privilege: BanchoPyPrivilege.Normal,
+      }),
       ...userEssentials,
     })
       .catch(() => {
@@ -332,11 +337,14 @@ WHERE s.userid = ${id}
     Excludes extends Partial<
       Record<keyof Base.ComposableProperties<Id>, boolean>
     >,
-  >({ handle, excludes }: { handle: string; excludes?: Excludes }) {
+  >({ handle, excludes, includeHidden }: { handle: string; excludes?: Excludes; includeHidden?: boolean }) {
     if (!excludes) {
       excludes = <Excludes>{ secrets: true }
     }
-    const user = await this.db.user.findFirstOrThrow(createUserQuery(handle))
+    const user = await this.db.user.findFirstOrThrow(createUserQuery({
+      handle,
+      privilege: includeHidden ? BanchoPyPrivilege.Any : undefined,
+    }))
 
     // type check will not find any missing params here.
     const returnValue = <
@@ -490,42 +498,10 @@ WHERE s.userid = ${id}
   }
 
   async search({ keyword, limit }: { keyword: string; limit: number }) {
-    const idKw = stringToId(keyword)
     /* optimized */
     const result = await this.db.user.findMany({
       ...userEssentials,
-      where: {
-        OR: [
-          keyword.startsWith('@')
-            ? {
-                safeName: {
-                  contains: keyword.slice(1),
-                },
-              }
-            : undefined,
-          {
-            safeName: {
-              contains: keyword,
-            },
-          },
-          {
-            name: {
-              contains: keyword,
-            },
-          },
-          isNaN(idKw)
-            ? undefined
-            : {
-                id: idKw,
-              },
-          // TODO: search by email after preferences implemented
-          // {
-          //   email: {
-          //     contains: keyword,
-          //   },
-          // },
-        ].filter(TSFilter),
-      },
+      ...createUserQuery({ handle: keyword }),
       take: limit,
     })
 

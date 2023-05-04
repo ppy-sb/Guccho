@@ -1,5 +1,5 @@
 import type { Prisma } from '.prisma/bancho.py'
-import { BanchoMode } from '../enums'
+import { BanchoMode, BanchoPyPrivilege } from '../enums'
 import type { DatabaseUserEssentialFields } from './user'
 import type { OP, Tag } from '~/types/search'
 import { TSFilter, includes } from '~/utils'
@@ -18,12 +18,17 @@ export const userEssentials: Prisma.UserFindManyArgs = {
 } as const satisfies {
   select: Record<DatabaseUserEssentialFields, true>
 }
-export function createUserQuery(handle: string,
-  selectAgainst: Array<'id' | 'name' | 'safeName' | 'email'> = [
-    'id',
-    'name',
-    'safeName',
-  ]) {
+export function createUserQuery(
+  {
+    handle,
+    selectAgainst = ['id', 'name', 'safeName'],
+    privilege = BanchoPyPrivilege.Verified,
+  }: {
+    handle: string
+    selectAgainst?: Array<'id' | 'name' | 'safeName' | 'email'>
+    privilege?: BanchoPyPrivilege
+  }
+) {
   let handleNum = +handle
   if (isNaN(handleNum)) {
     handleNum = -1
@@ -58,7 +63,7 @@ export function createUserQuery(handle: string,
         },
         {
           priv: {
-            gte: 1,
+            gte: privilege,
           },
         },
       ],

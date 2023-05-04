@@ -18,17 +18,13 @@ const page = userpageStore()
 
 await page.refresh()
 
-const {
-  switcherCtx: [switcher],
-} = page
-
-useHead({
-  titleTemplate: `%s - ${appConf.title}`,
-  title: computed(
-    () =>
-      `${page.user?.name} | ${switcher.mode} | ${switcher.ruleset} | ${switcher.rankingSystem}`
-  ),
-})
+// useHead({
+//   titleTemplate: `%s - ${appConf.title}`,
+//   title: computed(
+//     () =>
+//       `${page.user?.name} | ${page.switcher.mode} | ${page.switcher.ruleset} | ${page.switcher.rankingSystem}`
+//   ),
+// })
 
 // directive is not working: yield error when navigate to other page
 const visible = reactive({
@@ -72,68 +68,67 @@ onMounted(() => {
 </script>
 
 <template>
-  <div ref="handle">
-    <section v-if="page.error" class="min-h-screen">
-      <div class="mx-auto my-auto flex flex-col justify-between gap-3">
-        <h1 class="self-center text-3xl">
-          Oops...
-        </h1>
-        <h2 v-if="page.error.message !== ''" class="self-center text-2xl">
-          {{ page.error.message }}
-        </h2>
-        <h2 v-else class="self-center text-2xl">
-          something went wrong.
-        </h2>
-        <div class="grid grid-cols-2 gap-2">
-          <t-button variant="primary" @click="$router.back()">
-            bring me back
-          </t-button>
-          <t-button variant="secondary" @click="page.refresh">
-            try again
-          </t-button>
-        </div>
+  <section v-if="page.error" class="grow flex">
+    <div class="m-auto flex flex-col items-center justify-center gap-3">
+      <h1 class="text-3xl">
+        Oops...
+      </h1>
+      <h2 v-if="page.error.message !== ''" class="text-2xl">
+        {{ page.error.message }}
+      </h2>
+      <h2 v-else class="text-2xl">
+        something went wrong.
+      </h2>
+      <div class="grid grid-cols-2 gap-2">
+        <t-button variant="primary" @click="$router.back()">
+          bring me back
+        </t-button>
+        <t-button variant="secondary" @click="page.refresh">
+          try again
+        </t-button>
       </div>
-    </section>
-    <div v-else-if="page.user" class="flex flex-col mt-20 justify-stretch md:mt-0">
-      <userpage-heading id="heading" ref="heading" />
-      <userpage-profile />
-      <userpage-ranking-system-switcher class="z-10" />
-      <div class="container custom-container mx-auto">
-        <userpage-statistics id="statistics" ref="statistics" />
-        <userpage-score-rank-composition />
-      </div>
-      <div id="bestScores" ref="bestScores" class="container custom-container mx-auto py-2">
-        <userpage-best-scores v-if="page.currentRankingSystem" />
-      </div>
-      <div id="topScores" ref="topScores" class="container custom-container mx-auto py-4">
-        <userpage-top-scores v-if="page.currentRankingSystem" />
-      </div>
-      <!-- placeholder for bottom nav -->·
-      <!-- <div class="my-8 -z-50" /> -->
-      <client-only>
-        <teleport to="body">
-          <div class="btm-nav fuck">
-            <template v-for="(isVisible, el) of visible" :key="el">
-              <a
-                v-if="icons[el]"
-                :class="{
-                  active: isVisible,
-                }" :href="`#${el}`"
-              >
-                <font-awesome-icon :icon="icons[el]" class="fa-xl" />
-              </a>
-              <a
-                v-else :class="{
-                  active: isVisible,
-                }" :href="`#${el}`"
-              >
-                {{ el }}
-              </a>
-            </template>
-          </div>
-        </teleport>
-      </client-only>
     </div>
+  </section>
+
+  <div v-else-if="page.user" ref="handle" class="flex flex-col mt-20 justify-stretch md:mt-0">
+    <userpage-heading id="heading" ref="heading" />
+    <userpage-profile />
+    <userpage-ranking-system-switcher class="z-10" />
+    <div class="container custom-container mx-auto">
+      <userpage-statistics id="statistics" ref="statistics" />
+      <userpage-score-rank-composition />
+    </div>
+    <div id="bestScores" ref="bestScores" class="container custom-container mx-auto py-2">
+      <userpage-best-scores v-if="page.currentRankingSystem" />
+    </div>
+    <div id="topScores" ref="topScores" class="container custom-container mx-auto py-4">
+      <userpage-top-scores v-if="page.currentRankingSystem" />
+    </div>
+    <!-- placeholder for bottom nav -->·
+    <!-- <div class="my-8 -z-50" /> -->
+    <client-only>
+      <teleport to="body">
+        <div class="btm-nav fuck">
+          <template v-for="(isVisible, el) of visible" :key="el">
+            <a
+              v-if="icons[el]"
+              :class="{
+                active: isVisible,
+              }" :href="`#${el}`"
+            >
+              <font-awesome-icon :icon="icons[el]" class="fa-xl" />
+            </a>
+            <a
+              v-else :class="{
+                active: isVisible,
+              }" :href="`#${el}`"
+            >
+              {{ el }}
+            </a>
+          </template>
+        </div>
+      </teleport>
+    </client-only>
   </div>
 </template>
 

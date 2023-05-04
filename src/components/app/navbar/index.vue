@@ -98,9 +98,7 @@ function clearFocus() {
               'dropdown-open': shownMenu.left,
             }"
           >
-            <app-navbar-navs
-              @search="() => searchModalWrapper?.searchModal?.showModal()"
-            />
+            <app-navbar-navs />
           </ul>
         </div>
         <nuxt-link
@@ -132,9 +130,7 @@ function clearFocus() {
       </div>
       <div class="navbar-center hidden lg:flex">
         <ul class="menu nav-menu menu-horizontal px-1">
-          <app-navbar-navs
-            @search="() => searchModalWrapper?.searchModal?.showModal()"
-          />
+          <app-navbar-navs />
         </ul>
       </div>
       <div class="navbar-end">

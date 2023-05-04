@@ -82,6 +82,7 @@ export interface UserProvider<Id> extends idTransformable {
   >(query: {
     handle: string
     excludes?: Excludes
+    includeHidden?: boolean
   }): Awaitable<
     | (UserEssential<Id> & {
       [K in keyof UserProvider.ComposableProperties<Id> as Exclude<
