@@ -43,7 +43,7 @@ export abstract class ArticleProvider {
 
   initFallbacks() {
     (['404', '403'] as const).forEach(async (code) => {
-      const fb = await this.getLocalArticleData({ slug: `fallbacks/${code}` })
+      const fb = await this.getLocalArticleData({ slug: code, fallback: true })
       if (!fb) {
         return
       }
