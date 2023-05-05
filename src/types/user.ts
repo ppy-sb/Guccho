@@ -72,7 +72,7 @@ export interface UserEssential<Id> {
   roles: UserPrivilegeString[]
 }
 
-export interface UserOptional<Id = unknown> {
+export interface UserOptional {
   reachable: boolean
   oldNames: UserHistoricalName[]
   email: string
@@ -81,8 +81,8 @@ export interface UserOptional<Id = unknown> {
 }
 
 export interface UserSettings {
-  visibility: Record<
-    Exclude<keyof UserOptional | 'privateMessage', 'secrets'>,
+  accessControl: Record<
+    Exclude<keyof UserOptional, 'secrets'> | 'privateMessage',
     Partial<Record<Exclude<Scope, 'self'>, boolean>>
   >
 }
@@ -120,5 +120,5 @@ export type UserFull<
   IncludeRuleset extends Ruleset = Ruleset,
   Ranking extends LeaderboardRankingSystem = LeaderboardRankingSystem,
 > = UserEssential<Id> &
-Partial<UserOptional<Id>> &
+Partial<UserOptional> &
 Partial<UserExtra<Id, IncludeMode, IncludeRuleset, Ranking>>

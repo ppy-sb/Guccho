@@ -16,10 +16,10 @@ import type {
 } from '~/types/user'
 
 export namespace UserProvider {
-  export type ComposableProperties<Id> = UserExtra<Id> & UserOptional<Id>
+  export type ComposableProperties<Id> = UserExtra<Id> & UserOptional
   export interface OptType<
     Id,
-    Includes extends Partial<Record<keyof UserOptional<Id>, boolean>> = Record<
+    Includes extends Partial<Record<keyof UserOptional, boolean>> = Record<
       never,
       never
     >,
@@ -43,13 +43,13 @@ export interface UserProvider<Id> extends idTransformable {
   exists({ handle, keys }: UserProvider.OptType<Id>): Awaitable<boolean>
 
   getEssential<
-    Includes extends Partial<Record<keyof UserOptional<Id>, boolean>>,
+    Includes extends Partial<Record<keyof UserOptional, boolean>>,
   >(
     opt: UserProvider.OptType<Id, Includes>
   ): Awaitable<UserEssential<Id>>
 
   getEssentialById<
-    Includes extends Partial<Record<keyof UserOptional<Id>, boolean>>,
+    Includes extends Partial<Record<keyof UserOptional, boolean>>,
   >(opt: {
     id: Id
     includes: Includes

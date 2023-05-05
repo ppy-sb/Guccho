@@ -42,7 +42,7 @@ export function followUserSettings<
 }: {
   user: UserEssential<Id> &
   Partial<
-      UserExtra<Id, _Mode, AvailableRuleset<_Mode, _Ruleset>, _RankingSystem> & Partial<UserOptional<Id>>
+      UserExtra<Id, _Mode, AvailableRuleset<_Mode, _Ruleset>, _RankingSystem> & Partial<UserOptional>
     > & {
     settings: UserSettings
   }
@@ -54,16 +54,16 @@ export function followUserSettings<
 
   return {
     ...user,
-    email: compareScope(scope, user.settings.visibility.email)
+    email: compareScope(scope, user.settings.accessControl.email)
       ? user.email
       : undefined,
-    oldNames: compareScope(scope, user.settings.visibility.oldNames)
+    oldNames: compareScope(scope, user.settings.accessControl.oldNames)
       ? user.oldNames
       : undefined,
-    reachable: compareScope(scope, user.settings.visibility.reachable)
+    reachable: compareScope(scope, user.settings.accessControl.reachable)
       ? user.reachable
       : undefined,
-    status: compareScope(scope, user.settings.visibility.status)
+    status: compareScope(scope, user.settings.accessControl.status)
       ? user.status
       : undefined,
   }

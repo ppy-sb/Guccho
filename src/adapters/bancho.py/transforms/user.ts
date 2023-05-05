@@ -67,7 +67,7 @@ export function toRoles(priv: number): UserPrivilegeString[] {
 }
 export type DatabaseUserEssentialFields = 'id' | 'name' | 'safeName' | 'country' | 'priv' | 'pwBcrypt' | 'apiKey' | 'email'
 export function toUserEssential<
-  Includes extends Partial<Record<keyof UserOptional<Id>, boolean>> = Record<
+  Includes extends Partial<Record<keyof UserOptional, boolean>> = Record<
     never,
     never
   >,
@@ -80,7 +80,7 @@ export function toUserEssential<
     }
   }
 }) {
-  const returnValue: UserEssential<Id> & Partial<UserOptional<Id>> = {
+  const returnValue: UserEssential<Id> & Partial<UserOptional> = {
     id: user.id,
     ingameId: user.id,
     name: user.name,
@@ -156,7 +156,7 @@ export function toFullUser(
       || undefined,
     roles: toRoles(user.priv),
     settings: {
-      visibility: {
+      accessControl: {
         reachable: { public: true },
         status: { public: true },
         privateMessage: { public: true },

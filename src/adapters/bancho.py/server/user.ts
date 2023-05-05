@@ -107,7 +107,7 @@ class DBUserProvider implements Base<Id> {
   }
 
   async getEssentialById<
-    Includes extends Partial<Record<keyof UserOptional<unknown>, boolean>>,
+    Includes extends Partial<Record<keyof UserOptional, boolean>>,
   >({ id, includes }: { id: Id; includes?: Includes }) {
     /* optimized */
     const user = await this.db.user.findFirstOrThrow({
@@ -121,7 +121,7 @@ class DBUserProvider implements Base<Id> {
   }
 
   async getEssential<
-    Includes extends Partial<Record<keyof UserOptional<unknown>, boolean>>,
+    Includes extends Partial<Record<keyof UserOptional, boolean>>,
   >(opt: Base.OptType<Id, Includes>) {
     const { handle, includes, keys } = opt
     /* optimized */
