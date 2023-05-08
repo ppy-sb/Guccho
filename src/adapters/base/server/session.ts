@@ -1,17 +1,15 @@
 import { v4 } from 'uuid'
 
-import type { Awaitable } from '~/types/common'
-
 export interface Session<Id = string> {
   userId?: Id
   lastActivity: Date
 }
 
 export interface SessionStore<TSessionId, TSession> {
-  get(key: TSessionId): Promise<TSession | undefined>
-  set(key: TSessionId, value: TSession): Promise<TSessionId>
-  destroy(key: TSessionId): Promise<boolean>
-  forEach(cb: (arg0: TSession, arg1: TSessionId) => Promise<void>): Promise<void>
+  get(key: TSessionId): PromiseLike<TSession | undefined>
+  set(key: TSessionId, value: TSession): PromiseLike<TSessionId>
+  destroy(key: TSessionId): PromiseLike<boolean>
+  forEach(cb: (arg0: TSession, arg1: TSessionId) => PromiseLike<void>): PromiseLike<void>
 }
 export const config = {
   expire: 1000 * 60 * 60,
@@ -47,8 +45,8 @@ export function createSessionStore<TSessionId, TSession>() {
 }
 
 export class SessionProvider<TSessionId, TSession extends Session> {
-  houseKeeping: Partial<Record<'minutely' | 'hourly' | 'daily', (store: SessionStore<TSessionId, TSession>, _config: typeof config) => Awaitable<void>>> = {
-    minutely: (sessionStore) => {
+  houseKeeping: Partial<Record<'minutely' | 'hourly' | 'daily', (store: SessionStore<TSessionId, TSession>, _config: typeof config) => PromiseLike<void>>> = {
+    minutely: async (sessionStore) => {
       sessionStore.forEach((a, b) => this.removeIfExpired(a, b))
     },
   }

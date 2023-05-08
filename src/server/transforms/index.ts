@@ -14,10 +14,7 @@ import type {
   UserSettings,
 } from '~/types/user'
 
-export function compareScope(
-  scope: Scope,
-  requiredScope: Partial<Record<Scope, boolean>>
-) {
+export function compareScope(scope: Scope, requiredScope: Partial<Record<Scope, boolean>>) {
   if (scope === 'public') {
     return requiredScope.public
   }

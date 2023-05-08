@@ -60,20 +60,20 @@ export abstract class ArticleProvider {
     slug: string
     fallback: boolean
     user: UserEssential<any>
-  }): Promise<(ContentPrivilege & Content & AccessControl) | undefined>
+  }): PromiseLike<(ContentPrivilege & Content & AccessControl) | undefined>
 
   abstract save(opt: {
     slug: string
     content: JSONContent
     privilege: ContentPrivilege['privilege']
     user: UserEssential<any>
-  }): Promise<void>
+  }): PromiseLike<void>
 
   async getLocal(opt: {
     slug: string
     fallback?: boolean
     user?: UserEssential<any>
-  }): Promise<(ContentPrivilege & Content) | undefined> {
+  }): Promise<(ContentPrivilege<any> & Content) | undefined> {
     const content = await this.getLocalArticleData(opt)
     if (!content) {
       return undefined

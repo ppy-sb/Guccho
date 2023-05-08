@@ -2,7 +2,6 @@ import type { JSONContent } from '@tiptap/core'
 import type { idTransformable } from './extends'
 import type { BeatmapSource, RankingStatus } from '~/types/beatmap'
 import type {
-  Awaitable,
   LeaderboardRankingSystem,
   Mode,
   Ruleset,
@@ -40,32 +39,32 @@ export namespace UserProvider {
   }
 }
 export interface UserProvider<Id> extends idTransformable {
-  exists({ handle, keys }: UserProvider.OptType<Id>): Awaitable<boolean>
+  exists({ handle, keys }: UserProvider.OptType<Id>): PromiseLike<boolean>
 
   getEssential<
     Includes extends Partial<Record<keyof UserOptional, boolean>>,
   >(
     opt: UserProvider.OptType<Id, Includes>
-  ): Awaitable<UserEssential<Id>>
+  ): PromiseLike<UserEssential<Id>>
 
   getEssentialById<
     Includes extends Partial<Record<keyof UserOptional, boolean>>,
   >(opt: {
     id: Id
     includes: Includes
-  }): Awaitable<UserEssential<Id>>
+  }): PromiseLike<UserEssential<Id>>
 
   getBests<
     _Mode extends Mode,
     _Ruleset extends Ruleset,
     _RankingSystem extends LeaderboardRankingSystem,
-  >(query: UserProvider.BaseQuery<Id, _Mode, _Ruleset, _RankingSystem>): Awaitable<RankingSystemScore<string, Id, _Mode, _RankingSystem>[]>
+  >(query: UserProvider.BaseQuery<Id, _Mode, _Ruleset, _RankingSystem>): PromiseLike<RankingSystemScore<string, Id, _Mode, _RankingSystem>[]>
 
   getTops<
     _Mode extends Mode,
     _Ruleset extends Ruleset,
     _RankingSystem extends LeaderboardRankingSystem,
-  >(query: UserProvider.BaseQuery<Id, _Mode, _Ruleset, _RankingSystem>): Awaitable<{
+  >(query: UserProvider.BaseQuery<Id, _Mode, _Ruleset, _RankingSystem>): PromiseLike<{
     count: number
     scores: RankingSystemScore<string, Id, _Mode, _RankingSystem>[]
   }>
@@ -73,7 +72,7 @@ export interface UserProvider<Id> extends idTransformable {
   getStatistics(query: {
     id: Id
     country: string
-  }): Awaitable<UserStatistic>
+  }): PromiseLike<UserStatistic>
 
   getFull<
     Excludes extends Partial<
@@ -83,7 +82,7 @@ export interface UserProvider<Id> extends idTransformable {
     handle: string
     excludes?: Excludes
     includeHidden?: boolean
-  }): Awaitable<
+  }): PromiseLike<
     | (UserEssential<Id> & {
       [K in keyof UserProvider.ComposableProperties<Id> as Exclude<
           Excludes,
@@ -102,14 +101,14 @@ export interface UserProvider<Id> extends idTransformable {
       email?: string
       name?: string
     }
-  ): Awaitable<UserEssential<Id>>
+  ): PromiseLike<UserEssential<Id>>
 
   changeUserpage(
     user: { id: Id },
     input: {
       profile: JSONContent
     }
-  ): Awaitable<{
+  ): PromiseLike<{
     html: string
     raw: JSONContent
   }>
@@ -121,25 +120,25 @@ export interface UserProvider<Id> extends idTransformable {
       name?: string
       userpageContent?: string
     }
-  ): Awaitable<UserEssential<Id>>
+  ): PromiseLike<UserEssential<Id>>
 
   changePassword(
     user: { id: Id },
     newPasswordMD5: string
-  ): Awaitable<UserEssential<Id>>
+  ): PromiseLike<UserEssential<Id>>
 
-  changeAvatar(user: { id: Id }, avatar: Uint8Array): Awaitable<string>
+  changeAvatar(user: { id: Id }, avatar: Uint8Array): PromiseLike<string>
 
   search(opt: {
     keyword: string
     limit: number
-  }): Awaitable<UserEssential<Id>[]>
+  }): PromiseLike<UserEssential<Id>[]>
 
   count(opt: {
     keyword?: string
-  }): Awaitable<number>
+  }): PromiseLike<number>
 
-  status({ id }: { id: Id }): Promise<{
+  status({ id }: { id: Id }): PromiseLike<{
     status: 'offline'
     lastSeen: Date
   } | {
@@ -165,7 +164,7 @@ export interface UserProvider<Id> extends idTransformable {
         source: BeatmapSource
       }
     }
-  }>
+  } | null>
 
-  register(opt: { name: string; safeName: string; email: string; passwordMd5: string }): Awaitable<UserEssential<Id>>
+  register(opt: { name: string; safeName: string; email: string; passwordMd5: string }): PromiseLike<UserEssential<Id>>
 }

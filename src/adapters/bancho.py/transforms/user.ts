@@ -71,13 +71,10 @@ export function toUserEssential<
     never,
     never
   >,
->({ user, includes, config }: {
-  user: Pick<DatabaseUser, DatabaseUserEssentialFields>
+>(user: Pick<DatabaseUser, DatabaseUserEssentialFields>, { includes, avatar }: {
   includes?: Includes
-  config: {
-    avatar: {
-      domain?: string
-    }
+  avatar: {
+    domain?: string
   }
 }) {
   const returnValue: UserEssential<Id> & Partial<UserOptional> = {
@@ -86,10 +83,7 @@ export function toUserEssential<
     name: user.name,
     safeName: user.safeName,
     flag: user.country,
-    avatarSrc:
-      (config.avatar.domain
-        && `https://${config.avatar.domain}/${user.id}`)
-      || undefined,
+    avatarSrc: (avatar.domain && `https://${avatar.domain}/${user.id}`) || undefined,
     roles: toRoles(user.priv),
   }
 

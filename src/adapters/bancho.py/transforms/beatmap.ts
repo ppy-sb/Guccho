@@ -15,10 +15,7 @@ import type { Mode, Ruleset } from '~/types/common'
 import type { StableMod } from '~/types/score'
 
 // this does not deserves exporting
-export function toBeatmapset(
-  beatmapset: Source,
-  beatmap: DBMap
-) {
+export function toBeatmapset(beatmapset: Source, beatmap: DBMap) {
   const isBancho = beatmapset.server === 'bancho'
   const rest = {
     id: beatmap.setId,
@@ -132,23 +129,25 @@ export function toBanchoPyMode(
   }
 }
 
-const reverseRuleset: Record<number, Ruleset> = {
-  0: 'standard',
-  1: 'relax',
-  2: 'autopilot',
-}
-const reverseMode: Record<number, Mode> = {
-  0: 'osu',
-  1: 'taiko',
-  2: 'fruits',
-  3: 'mania',
+const reverseBPyMode = {
+  [BanchoPyMode.osuStandard]: ['osu', 'standard'],
+  [BanchoPyMode.taikoStandard]: ['taiko', 'standard'],
+  [BanchoPyMode.fruitsStandard]: ['fruits', 'standard'],
+  [BanchoPyMode.maniaStandard]: ['mania', 'standard'],
+  [BanchoPyMode.osuRelax]: ['osu', 'relax'],
+  [BanchoPyMode.taikoRelax]: ['taiko', 'relax'],
+  [BanchoPyMode.fruitsRelax]: ['fruits', 'relax'],
+  [BanchoPyMode.osuAutopilot]: ['osu', 'autopilot'],
+} as const
+
+export function fromBanchoPyMode<BMode extends BanchoPyMode>(input: BMode) {
+  return reverseBPyMode[input]
 }
 
-export function fromBanchoPyMode(input: BanchoPyMode): [Mode, Ruleset] {
-  const modeKey = input % 4
-  const rulesetKet = Math.floor(input / 4)
-
-  return [reverseMode[modeKey], reverseRuleset[rulesetKet]]
+export function assertIsBanchoPyMode(val: number): asserts val is BanchoPyMode {
+  if (!(val in BanchoMode)) {
+    throw new Error('unknown bancho.py mode')
+  }
 }
 
 export function toBanchoRankingStatus(

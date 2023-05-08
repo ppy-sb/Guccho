@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import md5 from 'md5'
-import type { Awaitable } from '~/types/common'
 import { useSession } from '~/store/session'
 
 const loginButton = shallowRef('Have account?')
@@ -36,7 +35,7 @@ const pwPattern = new RegExp(pwPatternStr)
 const safeNamePatternStr = '[a-z0-9][a-z0-9_]+[a-z0-9]'
 const safeNamePattern = new RegExp(safeNamePatternStr)
 const validate: {
-  [Key in keyof typeof shape]: () => Awaitable<boolean>
+  [Key in keyof typeof shape]: () => boolean | Promise<boolean>
 } = {
   name: unique('name'),
   safeName: async () => Boolean(reg.safeName.match(safeNamePattern)) && await unique('safeName')(),
@@ -49,11 +48,7 @@ const validate: {
 useHead({
   titleTemplate: `Register - ${config.title}`,
 })
-// function isValidationError(
-//   cause: any,
-// ): cause is TRPCClientError<AppRouter> {
-//   return cause.name === 'TRPCClientError'
-// }
+
 async function userRegisterAction() {
   fetching.value = true
   const result = (await Promise.all(Object.values(validate).map(test => test()))).every(Boolean)

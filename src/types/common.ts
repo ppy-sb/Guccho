@@ -46,7 +46,6 @@ export type Scope = (typeof scopes)[number]
 export type Grade = (typeof grades)[number]
 export type Feature = (typeof features)[number]
 
-export type Awaitable<T> = T | PromiseLike<T>
 export type NumberRange<F extends number, T extends number> = Exclude<
   Enumerate<T>,
   Enumerate<F>

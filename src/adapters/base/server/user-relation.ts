@@ -1,21 +1,21 @@
 import type { idTransformable } from './extends'
-import type { Awaitable, Relationship } from '~/types/common'
+import type { Relationship } from '~/types/common'
 import type { UserEssential } from '~/types/user'
 import type { UserRelationship } from '~/types/user-relationship'
 
 export interface UserRelationProvider<Id> extends idTransformable {
-  get(query: { user: { id: Id } }): Awaitable<UserRelationship<Id>[]>
+  get(query: { user: { id: Id } }): PromiseLike<UserRelationship<Id>[]>
   getOne(
     fromUser: { id: Id },
     toUser: { id: Id }
-  ): Awaitable<Relationship | void>
+  ): PromiseLike<Relationship | void>
   removeOne(query: {
     fromUser: UserEssential<Id>
     targetUser: UserEssential<Id>
     type: Relationship
-  }): Awaitable<void>
+  }): PromiseLike<void>
   count(query: {
     user: UserEssential<Id>
     type: Relationship
-  }): Awaitable<number>
+  }): PromiseLike<number>
 }

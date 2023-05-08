@@ -1,5 +1,5 @@
 import type { BanchoPyMode, BanchoPyRankedStatus } from '../enums'
-import { fromBanchoPyMode, toRankingStatus } from '../transforms'
+import { assertIsBanchoPyMode, fromBanchoPyMode, toRankingStatus } from '../transforms'
 
 enum Action {
   idle = 0,
@@ -48,7 +48,7 @@ type LiveUserStatus =
     status: 200
     statusText: string
     ok: true
-    json: () => Promise<
+    json: () => PromiseLike<
       | {
         status: 'success'
         player_status: {
@@ -88,16 +88,16 @@ type LiveUserStatus =
     ok: false
     status: 404
     statusText: string
-    json: () => Promise<{ status: 'Player not found.' }>
+    json: () => PromiseLike<{ status: 'Player not found.' }>
   }
   | {
     ok: false
     status: 400
     statusText: string
-    json: () => Promise<{ status: 'Must provide either id OR name!' }>
+    json: () => PromiseLike<{ status: 'Must provide either id OR name!' }>
   }
 
-function endpoint(endpoint: string) {
+function createFetch(endpoint: string) {
   if (endpoint.endsWith('/')) {
     endpoint = endpoint.slice(0, -1)
   }
@@ -112,17 +112,8 @@ function endpoint(endpoint: string) {
   }
 }
 
-function getEnvironmentVariable(name: string): string {
-  const value = process.env[name]
-  if (!value) {
-    throw new Error(`Missing required environment variable "${name}"`)
-  }
-  return value
-}
-
-export async function getLiveUserStatus({ id }: { id: number }) {
-  const _endpoint = getEnvironmentVariable('BANCHO_PY_API_V1_ENDPOINT')
-  const fetch = endpoint(_endpoint)
+export async function getLiveUserStatus({ id }: { id: number }, config: { api: { v1: string } }) {
+  const fetch = createFetch(config.api.v1)
   const result = <LiveUserStatus> await fetch('/get_player_status', {
     method: 'get',
     params: {
@@ -141,6 +132,7 @@ export async function getLiveUserStatus({ id }: { id: number }) {
       lastSeen: new Date(s.last_seen * 1000),
     } as const
   }
+  assertIsBanchoPyMode(s.status.mode)
   const [mode, ruleset] = fromBanchoPyMode(s.status.mode)
   const base = {
     status: Action[s.status.action] as keyof typeof Action,

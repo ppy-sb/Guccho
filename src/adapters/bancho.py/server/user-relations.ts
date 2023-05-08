@@ -4,6 +4,7 @@ import { dedupeUserRelationship, idToString, stringToId, toUserEssential } from 
 import type { Id } from '..'
 import { getPrismaClient } from './source/prisma'
 
+import { env } from './source/env'
 import { calculateMutualRelationships } from '~/server/transforms'
 import type { UserRelationProvider as Base } from '~/adapters/base/server'
 import type { Relationship } from '~/types/common'
@@ -16,7 +17,7 @@ export class UserRelationProvider implements Base<Id> {
 
   config = {
     avatar: {
-      domain: process.env.AVATAR_DOMAIN,
+      domain: env.AVATAR_DOMAIN,
     },
   }
 
@@ -61,7 +62,7 @@ export class UserRelationProvider implements Base<Id> {
 
     const transformed = relationships.map(r => ({
       ...r,
-      toUser: toUserEssential({ user: r.toUser, config: this.config }),
+      toUser: toUserEssential(r.toUser, this.config),
     }))
     const deduped = dedupeUserRelationship(transformed)
 

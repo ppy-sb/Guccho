@@ -39,7 +39,7 @@ import type { LeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
 import type { UserEssential, UserOptional, UserStatistic } from '~/types/user'
 
 const article = new ArticleProvider()
-function mkDirByPathSync(targetDir: string, { isRelativeToScript = false } = {}) {
+function ensureDirectorySync(targetDir: string, { isRelativeToScript = false } = {}) {
   const initDir = isAbsolute(targetDir) ? sep : ''
   const baseDir = isRelativeToScript ? __dirname : '.'
 
@@ -79,8 +79,11 @@ class DBUserProvider implements Base<Id> {
 
   config = {
     avatar: {
-      domain: process.env.AVATAR_DOMAIN,
-      location: process.env.BANCHO_PY_AVATAR_LOCATION,
+      domain: env.AVATAR_DOMAIN,
+      location: env.BANCHO_PY_AVATAR_LOCATION,
+    },
+    api: {
+      v1: env.BANCHO_PY_API_V1_ENDPOINT,
     },
   }
 
@@ -89,7 +92,7 @@ class DBUserProvider implements Base<Id> {
     this.relationships = new UserRelationProvider()
 
     if (this.config.avatar.location) {
-      mkDirByPathSync(this.config.avatar.location)
+      ensureDirectorySync(this.config.avatar.location)
     }
   }
 
@@ -117,7 +120,7 @@ class DBUserProvider implements Base<Id> {
       ...userEssentials,
     })
 
-    return toUserEssential({ user, includes, config: this.config })
+    return toUserEssential(user, { includes, ...this.config })
   }
 
   async getEssential<
@@ -136,7 +139,7 @@ class DBUserProvider implements Base<Id> {
       .catch(() => {
         throw new TRPCError({ code: 'NOT_FOUND', message: userNotFound })
       })
-    return toUserEssential({ user, includes, config: this.config })
+    return toUserEssential(user, { includes, ...this.config })
   }
 
   // https://github.com/prisma/prisma/issues/6570 need two separate query to get count for now
@@ -350,7 +353,7 @@ WHERE s.userid = ${id}
     const returnValue = <
       Exclude<Awaited<ReturnType<Base<Id>['getFull']>>, null>
       > await toFullUser(user, this.config)
-    const parallels: Promise<any>[] = []
+    const parallels: PromiseLike<any>[] = []
 
     returnValue.reachable = false
     returnValue.status = 'offline'
@@ -410,7 +413,7 @@ WHERE s.userid = ${id}
         name: input.name,
       },
     })
-    return toUserEssential({ user: result, config: this.config })
+    return toUserEssential(result, this.config)
   }
 
   async changeUserpage(
@@ -452,7 +455,7 @@ WHERE s.userid = ${id}
         pwBcrypt,
       },
     })
-    return toUserEssential({ user: result, config: this.config })
+    return toUserEssential(result, this.config)
   }
 
   async changeAvatar(user: { id: Id }, avatar: Uint8Array) {
@@ -505,7 +508,7 @@ WHERE s.userid = ${id}
       take: limit,
     })
 
-    return result.map(user => toUserEssential({ user, config: this.config }))
+    return result.map(user => toUserEssential(user, this.config))
   }
 
   async count() {
@@ -519,8 +522,11 @@ WHERE s.userid = ${id}
     })
   }
 
-  status(opt: { id: Id }) {
-    return getLiveUserStatus(opt)
+  async status(opt: { id: Id }) {
+    if (!this.config.api.v1) {
+      return null
+    }
+    return getLiveUserStatus(opt, this.config as { api: { v1: string } })
   }
 
   async register(opt: { name: string; safeName: string; email: string; passwordMd5: string }) {
@@ -545,7 +551,7 @@ WHERE s.userid = ${id}
       return user
     })
 
-    return toUserEssential({ user, config: this.config })
+    return toUserEssential(user, this.config)
   }
 
   async _toStatistics(

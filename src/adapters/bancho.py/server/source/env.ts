@@ -1,12 +1,19 @@
-import { intersection, literal, object, string, union } from 'zod'
+import { literal, object, string, union } from 'zod'
+import { zodFQDN, zodPath } from '~/server/trpc/shapes'
 import { ensureAndGetEnv } from '~/server'
 
 export const database = literal('database')
 export const memory = literal('memory')
 export const redis = literal('redis')
+export const header = literal('header')
+export const api = literal('api')
+export const bpy = literal('bancho.py')
+export const sbAtBpy = literal('ppy.sb@bancho.py')
 
 export const redisURL = string().url()
 export const dsn = string().url()
+
+export const EXTERNAL = union([bpy, sbAtBpy])
 
 const validateSessionStore = union([
   object({ SESSION_STORE: memory }),
@@ -20,14 +27,27 @@ const validateLeaderboard = union([
     LEADERBOARD_SOURCE: redis,
   }),
 ])
+
 const validateDB = object({ DB_DSN: dsn })
 
+const validateBase = object({
+  EXTERNAL,
+})
+
+const validateAvatar = object({
+  BANCHO_PY_AVATAR_LOCATION: zodPath,
+  AVATAR_DOMAIN: zodFQDN,
+})
+
+const validateApi = object({
+  BANCHO_PY_API_V1_ENDPOINT: string().url().optional(),
+})
+
 export const env = ensureAndGetEnv(
-  intersection(
-    validateDB,
-    intersection(
-      validateLeaderboard,
-      validateSessionStore
-    )
-  )
+  validateBase
+    .merge(validateDB)
+    .merge(validateAvatar)
+    .merge(validateApi)
+    .and(validateLeaderboard)
+    .and(validateSessionStore)
 )

@@ -38,7 +38,7 @@ export class LeaderboardDatabaseProvider implements Base<Id> {
 
   config = {
     avatar: {
-      domain: process.env.AVATAR_DOMAIN,
+      domain: env.AVATAR_DOMAIN,
     },
   }
 
@@ -87,7 +87,7 @@ export class LeaderboardDatabaseProvider implements Base<Id> {
     })
 
     return result.map(({ user, ...stat }, index) => ({
-      user: toUserEssential({ user, config: this.config }),
+      user: toUserEssential(user, this.config),
       inThisLeaderboard: {
         ppv2: stat.pp,
         rankedScore: stat.rankedScore,
@@ -151,7 +151,7 @@ export class LeaderboardDatabaseProvider implements Base<Id> {
       orderBy: sort,
     })
     return scores.map((item, index) => ({
-      user: toUserEssential({ user: item.user, config: this.config }),
+      user: toUserEssential(item.user, this.config),
       score: {
         id: item.id.toString(),
         ppv2: item.pp,
@@ -287,10 +287,7 @@ export class RedisLeaderboardProvider extends LeaderboardDatabaseProvider {
             name: item.name,
             safeName: item.safeName,
             flag: item.flag,
-            avatarSrc:
-              (this.config.avatar.domain
-                && `https://${this.config.avatar.domain}/${item.id}`)
-              || '',
+            avatarSrc: (this.config.avatar.domain && `https://${this.config.avatar.domain}/${item.id}`) || undefined,
             roles: toRoles(item.priv),
           },
           inThisLeaderboard: {

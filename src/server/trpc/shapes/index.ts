@@ -1,6 +1,8 @@
-import z, { literal, number, string, tuple, union } from 'zod'
+import { existsSync } from 'node:fs'
+import z, { ZodIssueCode, literal, number, string, tuple, union } from 'zod'
 
 import type { JSONContent } from '@tiptap/core'
+import validator from 'validator'
 import { hasRuleset } from '../config'
 
 import type { Mode, Ruleset } from '~/types/common'
@@ -100,3 +102,16 @@ export const zodSearchBeatmap = union([
     zodMode,
   ]),
 ])
+
+export const zodFQDN = string().refine((input) => {
+  return validator.isFQDN(input)
+})
+
+export const zodPath = string().superRefine((val, ctx) => {
+  if (!existsSync(val)) {
+    ctx.addIssue({
+      code: ZodIssueCode.custom,
+      message: 'invalid path: Guccho cannot access the path you provided',
+    })
+  }
+})

@@ -1,7 +1,6 @@
 import type { idTransformable } from './extends'
 import type {
   AvailableRuleset,
-  Awaitable,
   LeaderboardRankingSystem,
   Mode,
   RankingSystem,
@@ -31,12 +30,12 @@ export interface LeaderboardProvider<Id> extends idTransformable {
     query: LeaderboardProvider.BaseQuery & {
       rankingSystem: LeaderboardRankingSystem
     }
-  ): Awaitable<ComponentLeaderboard<Id>[]>
+  ): PromiseLike<ComponentLeaderboard<Id>[]>
 
   getBeatmapLeaderboard(
     query: LeaderboardProvider.BaseQueryOptionalMode & {
       rankingSystem: RankingSystem
       md5: string
     }
-  ): Awaitable<BeatmapLeaderboard<Id>[]>
+  ): PromiseLike<BeatmapLeaderboard<Id>[]>
 }

@@ -18,13 +18,13 @@ const page = userpageStore()
 
 await page.refresh()
 
-// useHead({
-//   titleTemplate: `%s - ${appConf.title}`,
-//   title: computed(
-//     () =>
-//       `${page.user?.name} | ${page.switcher.mode} | ${page.switcher.ruleset} | ${page.switcher.rankingSystem}`
-//   ),
-// })
+useHead({
+  titleTemplate: `%s - ${appConf.title}`,
+  title: computed(
+    () =>
+      `${page.user?.name} | ${page.switcher.mode} | ${page.switcher.ruleset} | ${page.switcher.rankingSystem}`
+  ),
+})
 
 // directive is not working: yield error when navigate to other page
 const visible = reactive({

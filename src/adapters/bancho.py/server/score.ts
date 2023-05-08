@@ -1,5 +1,6 @@
 import type { User } from '.prisma/bancho.py'
 import {
+  assertIsBanchoPyMode,
   fromBanchoPyMode,
   idToString,
   scoreIdToString,
@@ -10,6 +11,7 @@ import {
 import type { Id } from '..'
 import type { AbleToTransformToScores } from '../transforms'
 import { getPrismaClient } from './source/prisma'
+import { env } from './source/env'
 import { TSFilter } from '~/utils'
 import type {
   ScoreProvider as Base,
@@ -26,11 +28,12 @@ export class ScoreProvider implements Base<bigint, Id> {
 
   config = {
     avatar: {
-      domain: process.env.AVATAR_DOMAIN,
+      domain: env.AVATAR_DOMAIN,
     },
   }
 
   #transformScore(dbScore: (AbleToTransformToScores & { user: User })) {
+    assertIsBanchoPyMode(dbScore.mode)
     const [mode, ruleset] = fromBanchoPyMode(dbScore.mode)
 
     return Object.assign(
@@ -39,7 +42,7 @@ export class ScoreProvider implements Base<bigint, Id> {
         mode,
         ruleset,
       }),
-      { user: toUserEssential({ user: dbScore.user, config: this.config }) }
+      { user: toUserEssential(dbScore.user, this.config) }
     )
   }
 
@@ -57,15 +60,6 @@ export class ScoreProvider implements Base<bigint, Id> {
     })
     return this.#transformScore(dbScore)
   }
-
-  // #throw() {
-  //   if (!dbScore) {
-  //     throw new TRPCError({
-  //       code: 'NOT_FOUND',
-  //       message: `unable to find score ${id} in database`,
-  //     })
-  //   }
-  // }
 
   async findOne(opt: Base.SearchQueryMany<Id> | Base.SearchId<bigint>) {
     if ('id' in opt) {
