@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { isBanchoBeatmapset, placeholder } from '~/utils'
-
 const searchModal = shallowRef<{
   showModal: () => void
 }>()

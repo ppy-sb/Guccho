@@ -1,7 +1,6 @@
 import type { TRPCError } from '@trpc/server'
 import md5 from 'md5'
 import { defineStore } from 'pinia'
-import { calcUserPrivilege } from '../utils/checkUserPrivilege'
 import type { UserFull } from '~/types/user'
 
 export const useSession = defineStore('session', {
@@ -59,7 +58,6 @@ export const useSession = defineStore('session', {
           const cookie = useCookie('session')
           cookie.value = ''
         })
-        .catch()
     },
     async retrieve() {
       try {

@@ -1,7 +1,7 @@
 import { string, z } from 'zod'
 import { router as _router, publicProcedure as p } from '../trpc'
 import { mapId } from '~/server/transforms/mapId'
-import { MapProvider } from '$active/server'
+import { MapProvider } from '~/server/adapters/bancho.py/server'
 
 const map = new MapProvider()
 export const router = _router({

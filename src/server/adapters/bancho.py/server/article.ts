@@ -1,7 +1,7 @@
 import type { JSONContent } from '@tiptap/core'
 import type { UserEssential } from '~/types/user'
-import type { ContentPrivilege } from '$def/server/article'
-import { ArticleProvider as Base } from '$def/server/article'
+import type { ContentPrivilege } from '~/server/adapters/base/server/article'
+import { ArticleProvider as Base } from '~/server/adapters/base/server/article'
 
 export class ArticleProvider extends Base {
   async get(opt: { slug: string; fallback?: boolean; user?: UserEssential<unknown> }) {

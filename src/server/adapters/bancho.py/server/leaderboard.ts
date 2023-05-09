@@ -20,7 +20,7 @@ import type {
   Mode,
   RankingSystem,
 } from '~/types/common'
-import type { LeaderboardProvider as Base } from '~/adapters/base/server'
+import type { LeaderboardProvider as Base } from '~/server/adapters/base/server'
 
 const leaderboardFields = {
   id: true,

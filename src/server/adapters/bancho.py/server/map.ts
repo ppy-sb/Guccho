@@ -10,8 +10,7 @@ import type { Id } from '..'
 import { getPrismaClient } from './source/prisma'
 import type { Tag } from '~/types/search'
 
-import { TSFilter } from '~/utils'
-import type { MapProvider as Base } from '~/adapters/base/server'
+import type { MapProvider as Base } from '~/server/adapters/base/server'
 import type { BeatmapSource, Beatmapset } from '~/types/beatmap'
 
 export class MapProvider implements Base<Id> {

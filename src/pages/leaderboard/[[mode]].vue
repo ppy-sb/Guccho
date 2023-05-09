@@ -2,7 +2,6 @@
 // TODO check max pages
 import type { LeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
 import type { SwitcherPropType } from '~/composables/useSwitcher'
-import { isString } from '~/utils'
 
 const config = useAppConfig()
 

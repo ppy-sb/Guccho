@@ -58,7 +58,7 @@ async function userRegisterAction() {
     return
   }
 
-  type E = TRPCClientError<AppRouter>
+  type E = TRPCClientError<AppRouter['user']['register']>
 
   const result$ = await app$.$client.user.register.mutate({
     name: reg.name,

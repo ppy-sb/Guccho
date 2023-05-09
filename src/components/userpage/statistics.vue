@@ -7,8 +7,6 @@ import { ppRankingSystems } from '~/types/defs'
 import type { PPRank, ScoreRank } from '~/types/statistics'
 import { createScoreFormatter, getFlagURL, toDuration } from '~/common/varkaUtils'
 
-import { getRequiredScoreForLevel } from '~/utils/level-calc'
-
 import userpageStore from '~/store/userpage'
 
 // const numbers = [...Array(10).keys()].map(String)

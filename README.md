@@ -76,4 +76,4 @@ TODO Give first registered user owner privilege
 
 ## AppConfig and ServerConfig
 
-see `src/app.config.ts` and `src/adapters/bancho.py/exports.ts`, more detailed readme will be provided later.
+see `src/app.config.ts` and `src/server/adapters/bancho.py/exports.ts`, more detailed readme will be provided later.

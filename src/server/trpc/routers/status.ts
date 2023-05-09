@@ -1,6 +1,6 @@
 import { router as _router, publicProcedure as p } from '../trpc'
 import { adminProcedure } from '../middleware/admin'
-import { ServiceStatusProvider } from '$active/server'
+import { ServiceStatusProvider } from '~/server/adapters/bancho.py/server'
 
 const sp = new ServiceStatusProvider()
 export const router = _router({

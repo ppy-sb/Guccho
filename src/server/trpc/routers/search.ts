@@ -2,7 +2,7 @@ import { z } from 'zod'
 import { router as _router, publicProcedure as p } from '../trpc'
 import { zodSearchBeatmap } from '../shapes'
 import { mapId } from '~/server/transforms/mapId'
-import { MapProvider, UserProvider } from '$active/server'
+import { MapProvider, UserProvider } from '~/server/adapters/bancho.py/server'
 
 const map = new MapProvider()
 const user = new UserProvider()

@@ -13,7 +13,7 @@ import { router as _router } from '../trpc'
 import { mapId } from '~/server/transforms/mapId'
 import { userProcedure as pUser } from '~/server/trpc/middleware/user'
 import { calculateMutualRelationships } from '~/server/transforms'
-import { UserProvider, UserRelationProvider } from '$active/server'
+import { UserProvider, UserRelationProvider } from '~/server/adapters/bancho.py/server'
 
 const { compare } = bcrypt
 
@@ -57,7 +57,7 @@ export const router = _router({
         const existedUser = await users.getEssential({
           handle: input.name,
           keys: ['id', 'name', 'safeName'],
-        })
+        }).catch(noop<undefined>)
         if (existedUser?.name === input.name) {
           throw new TRPCError({
             code: 'PRECONDITION_FAILED',

@@ -1,5 +1,4 @@
 import type { Stat } from '.prisma/bancho.py'
-import { getLevelWithProgress } from '~/utils/level-calc'
 
 import type { LeaderboardRankingSystem } from '~/types/common'
 import type { UserModeRulesetStatistics } from '~/types/statistics'

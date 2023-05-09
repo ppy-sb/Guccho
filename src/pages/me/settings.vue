@@ -2,11 +2,8 @@
 import md5 from 'md5'
 import type { JSONContent } from '@tiptap/core'
 import { Cropper } from 'vue-advanced-cropper'
-
 import type { Editor, TModal, TResponsiveModal } from '#components'
-
 import { useSession } from '~/store/session'
-import { checkAvatar } from '~/utils'
 
 import 'vue-advanced-cropper/dist/style.css'
 

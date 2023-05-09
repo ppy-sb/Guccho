@@ -7,7 +7,6 @@ import { BanchoMode, BanchoPyMode, BanchoPyRankedStatus } from '../enums'
 import type { Id } from '..'
 import { RankingStatusEnum } from '~/types/beatmap'
 import { stableMod } from '~/types/score'
-import { capitalizeFirstLetter } from '~/utils'
 
 import type { BeatmapEssential, Beatmapset, RankingStatus } from '~/types/beatmap'
 

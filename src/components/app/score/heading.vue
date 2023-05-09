@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { faEllipsisH } from '@fortawesome/free-solid-svg-icons'
 import type { inferRouterOutputs } from '@trpc/server'
-import { beatmapIsVisible } from '~/utils'
 import {
   createScoreFormatter,
 } from '~/common/varkaUtils'

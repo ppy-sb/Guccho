@@ -13,7 +13,6 @@ import {
 } from '~/types/defs'
 import { createAddCommasFormatter } from '~/common/varkaUtils'
 
-import { beatmapIsVisible } from '~/utils'
 import type { RankingStatus } from '~/types/beatmap'
 
 const props = withDefaults(

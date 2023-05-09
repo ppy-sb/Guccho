@@ -1,6 +1,5 @@
 import { cpus } from 'node:os'
 import { currentLoad, mem } from 'systeminformation'
-import { pick } from '~/utils'
 
 function calcPercentageLoad(usage: number, time: ReturnType<typeof process['hrtime']>) {
   return 100 * (usage / (time[0] * 1e9 + time[1]))

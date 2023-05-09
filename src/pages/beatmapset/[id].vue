@@ -1,13 +1,6 @@
 <script setup lang="ts">
 import { faEllipsisH } from '@fortawesome/free-solid-svg-icons'
 import type { AppScoresRankingSystemSwitcher } from '#components'
-import {
-  includes,
-  isBanchoBeatmapset,
-  loadImage,
-  noop,
-  placeholder,
-} from '~/utils'
 import type { Label } from '~/composables/useLinks'
 
 const { addToLibrary } = useFAIcon()

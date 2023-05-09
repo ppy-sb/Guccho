@@ -2,7 +2,7 @@ import assert from 'node:assert'
 
 import { readdirSync } from 'node:fs'
 
-const adapters = readdirSync('./src/adapters').filter(adapter => adapter !== 'base')
+const adapters = readdirSync('./src/server/adapters').filter(adapter => adapter !== 'base')
 
 const LIST_AVAILABLE_ADAPTERS = `
 Available adapters: ${adapters.join(', ')}`

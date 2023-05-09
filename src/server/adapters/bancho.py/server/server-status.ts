@@ -1,5 +1,5 @@
 import { getPrismaClient } from './source/prisma'
-import { ServiceStatusProvider as Base } from '~/adapters/base/server'
+import { ServiceStatusProvider as Base } from '~/server/adapters/base/server'
 
 export class ServiceStatusProvider extends Base implements Base {
   prismaState = false

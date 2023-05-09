@@ -1,6 +1,4 @@
-export * from './asserts'
-export * from './guards'
-export * from './map'
+export * from '../universal/utils'
 
 export function loadImage(src: string) {
   return new Promise((resolve, reject) => {
@@ -11,23 +9,6 @@ export function loadImage(src: string) {
   })
 }
 
-export function noop() {}
-
 export function placeholder(e: Event & { target: HTMLImageElement }) {
   e.target.src = '/images/image-placeholder.svg'
-}
-
-export function TSFilter<T>(item: T): item is NonNullable<T> {
-  return item !== undefined && item !== null
-}
-
-export function pick<T extends Record<any, any>, K extends keyof T>(record: T, keys: K[]) {
-  return keys.reduce<Partial<T>>((acc, cur) => {
-    acc[cur] = record[cur]
-    return acc
-  }, {}) as { [P in K]: T[P]; }
-}
-
-export function capitalizeFirstLetter<T extends string>(string: T) {
-  return (string.charAt(0).toUpperCase() + string.slice(1)) as Capitalize<T>
 }

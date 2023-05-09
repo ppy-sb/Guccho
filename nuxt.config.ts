@@ -63,8 +63,8 @@ export default defineNuxtConfig({
   ],
 
   alias: {
-    $active: fileURLToPath(new URL(`./src/adapters/${process.env.EXTERNAL}`, import.meta.url)),
-    $def: fileURLToPath(new URL('./src/adapters/base', import.meta.url)),
+    $active: fileURLToPath(new URL(`./src/server/adapters/${process.env.EXTERNAL}`, import.meta.url)),
+    $def: fileURLToPath(new URL('./src/server/adapters/base', import.meta.url)),
     $articles: fileURLToPath(new URL('./articles', import.meta.url)),
   },
 
@@ -72,6 +72,8 @@ export default defineNuxtConfig({
 
   typescript: {
     strict: true,
+  },
+  imports: {
   },
 
   // @ts-expect-error typedef is wrong

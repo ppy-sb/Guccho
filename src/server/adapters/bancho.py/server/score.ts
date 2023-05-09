@@ -12,10 +12,10 @@ import type { Id } from '..'
 import type { AbleToTransformToScores } from '../transforms'
 import { getPrismaClient } from './source/prisma'
 import { env } from './source/env'
-import { TSFilter } from '~/utils'
+
 import type {
   ScoreProvider as Base,
-} from '~/adapters/base/server'
+} from '~/server/adapters/base/server'
 
 export class ScoreProvider implements Base<bigint, Id> {
   static idToString = idToString
