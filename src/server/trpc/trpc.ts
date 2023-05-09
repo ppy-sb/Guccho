@@ -8,13 +8,18 @@ import type { Context } from './context'
 // meaning translation in i18n libraries.
 export const t = initTRPC.context<Context>().create({
   transformer: superjson,
-  errorFormatter({ shape, error }) {
-    return error.cause instanceof ZodError
-      ? {
-          ...shape,
-          ...error.cause,
-        }
-      : { ...shape, error }
+  errorFormatter(opts) {
+    const { shape, error } = opts
+    return {
+      ...shape,
+      data: {
+        ...shape.data,
+        zodError:
+          (error.code === 'BAD_REQUEST' && error.cause instanceof ZodError)
+            ? error.cause.flatten()
+            : null,
+      },
+    }
   },
 
 })

@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import md5 from 'md5'
+import { TRPCClientError } from '@trpc/client'
+import { AppRouter } from '../../server/trpc/routers'
 import { useSession } from '~/store/session'
 
 const loginButton = shallowRef('Have account?')
@@ -11,7 +13,6 @@ const shape = {
 }
 const reg = shallowReactive({ ...shape })
 const error = shallowReactive({ ...shape })
-// const serverError = shallowRef('')
 const fetching = shallowRef(false)
 const config = useAppConfig()
 const app$ = useNuxtApp()
@@ -57,30 +58,28 @@ async function userRegisterAction() {
     return
   }
 
+  type E = TRPCClientError<AppRouter>
+
   const result$ = await app$.$client.user.register.mutate({
     name: reg.name,
     safeName: reg.safeName,
     email: reg.email,
     passwordMd5: md5(reg.password),
   })
-    .catch((ex: unknown) => {
-      if ((ex as any).cause.data.error.json.name === 'ZodError') {
-        const e = (ex as any).cause.data.error.json.issues as { validation: 'email' | 'passwordMd5'; message: string }[]
-        for (const f of e) {
-          switch (f.validation) {
-            case 'email': {
-              error.email = f.message
-              break
-            }
-            case 'passwordMd5': {
-              error.password = f.message
-              break
-            }
+    .catch((ex: E) => {
+      const e = ex.data?.zodError?.fieldErrors
+      for (const f in e) {
+        switch (f) {
+          case 'email': {
+            error.email = e[f]?.join(', ') || ''
+            break
+          }
+          case 'passwordMd5': {
+            error.password = e[f]?.join(', ') || ''
+            break
           }
         }
       }
-
-      // serverError.value = (ex as Error).message
     })
   fetching.value = false
   if (result$) {
