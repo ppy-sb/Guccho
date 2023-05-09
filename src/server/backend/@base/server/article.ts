@@ -5,7 +5,7 @@ import type { JSONContent } from '@tiptap/core'
 import { generateHTML } from '@tiptap/html'
 import type { UserEssential, UserPrivilegeString } from '~/types/user'
 import useEditorExtensions from '~/composables/useEditorExtensions'
-import { UserRelationProvider } from '~/server/adapters/bancho.py/server'
+import { UserRelationProvider } from '~/server/backend/bancho.py/server'
 
 export type WriteAccess = 'staff' | 'moderator' | 'beatmapNominator'
 export type ReadAccess = WriteAccess | 'public'

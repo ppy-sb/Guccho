@@ -17,7 +17,7 @@ import { optionalUserProcedure } from '../middleware/optional-user'
 import { userNotFound } from '../messages'
 import { mapId } from '~/server/transforms/mapId'
 import { followUserSettings } from '~/server/transforms'
-import { SessionProvider, UserProvider, UserRelationProvider } from '~/server/adapters/bancho.py/server'
+import { SessionProvider, UserProvider, UserRelationProvider } from '~/server/backend/bancho.py/server'
 
 import type { NumberRange } from '~/types/common'
 

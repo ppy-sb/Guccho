@@ -4,7 +4,7 @@ import {
   hasRuleset,
   modes,
   rulesets,
-} from '~/server/adapters/bancho.py'
+} from '~/server/backend/bancho.py'
 
 export {
   hasLeaderboardRankingSystem,

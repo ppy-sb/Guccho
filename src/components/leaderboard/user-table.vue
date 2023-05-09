@@ -1,10 +1,6 @@
 <script lang="ts" setup>
 import type { inferRouterOutputs } from '@trpc/server'
-import {
-  createAddCommasFormatter,
-  createScoreFormatter,
-  getFlagURL,
-} from '~/common/varkaUtils'
+
 import type { LeaderboardRankingSystem } from '~/types/common'
 import type { ComponentLeaderboard } from '~/types/leaderboard'
 import type { AppRouter } from '~/server/trpc/routers'

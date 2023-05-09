@@ -2,11 +2,11 @@ import assert from 'node:assert'
 
 import { readdirSync } from 'node:fs'
 
-const adapters = readdirSync('./src/server/adapters').filter(adapter => adapter !== 'base')
+const dataSources = readdirSync('./src/server/backend').filter(backend => backend !== 'base')
 
 const LIST_AVAILABLE_ADAPTERS = `
-Available adapters: ${adapters.join(', ')}`
+Available dataSources: ${dataSources.join(', ')}`
 
-assert(process.env.EXTERNAL, 'please setup env EXTERNAL={adapter}, see .env.example')
-assert(process.env.EXTERNAL !== 'base', `"base" adapter is only meant for type definition, and cannot be used to handle traffics. ${LIST_AVAILABLE_ADAPTERS}`)
-assert(adapters.includes(process.env.EXTERNAL), `"${process.env.EXTERNAL}" is not a valid adapter. ${LIST_AVAILABLE_ADAPTERS}`)
+assert(process.env.BACKEND, 'please setup env BACKEND={backend}, see .env.example')
+assert(process.env.BACKEND !== 'base', `"base" backend is only meant for type definition, and cannot be used to handle traffics. ${LIST_AVAILABLE_ADAPTERS}`)
+assert(dataSources.includes(process.env.BACKEND), `"${process.env.BACKEND}" is not a valid backend. ${LIST_AVAILABLE_ADAPTERS}`)

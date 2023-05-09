@@ -6,6 +6,6 @@ export {
   MapProvider,
   ServiceStatusProvider,
   SessionProvider,
-} from '~/server/adapters/bancho.py/server'
+} from '~/server/backend/bancho.py/server'
 
 export { UserProvider } from './user'

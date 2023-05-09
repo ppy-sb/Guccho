@@ -1,9 +1,6 @@
 <script setup lang="ts">
 import type { RankingSystem } from '~/types/common'
-import {
-  createAddCommasFormatter,
-  createPPFormatter,
-} from '~/common/varkaUtils'
+
 import type { BeatmapLeaderboard } from '~/types/leaderboard'
 
 const props = withDefaults(

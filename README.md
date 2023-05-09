@@ -24,7 +24,7 @@ for development please create both .env and .env.development. `build` will use `
 yarn && yarn build:all
 ```
 
-## platforms
+## backends
 
 - ### bancho.py (aka gulag)
 
@@ -76,4 +76,4 @@ TODO Give first registered user owner privilege
 
 ## AppConfig and ServerConfig
 
-see `src/app.config.ts` and `src/server/adapters/bancho.py/exports.ts`, more detailed readme will be provided later.
+see `src/app.config.ts` and `src/server/backend/bancho.py/exports.ts`, more detailed readme will be provided later.

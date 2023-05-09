@@ -8,8 +8,8 @@ import {
 } from '../shapes'
 import { router as _router, publicProcedure } from '../trpc'
 import { mapId } from '~/server/transforms/mapId'
-import { LeaderboardProvider, UserProvider } from '~/server/adapters/bancho.py/server'
-import { hasRuleset } from '~/server/adapters/bancho.py'
+import { LeaderboardProvider, UserProvider } from '~/server/backend/bancho.py/server'
+import { hasRuleset } from '~/server/backend/bancho.py'
 
 const provider = new LeaderboardProvider()
 const u = new UserProvider()

@@ -13,7 +13,7 @@ export const sbAtBpy = literal('ppy.sb@bancho.py')
 export const redisURL = string().url()
 export const dsn = string().url()
 
-export const EXTERNAL = union([bpy, sbAtBpy])
+export const BACKEND = union([bpy, sbAtBpy])
 
 const validateSessionStore = union([
   object({ SESSION_STORE: memory }),
@@ -31,7 +31,7 @@ const validateLeaderboard = union([
 const validateDB = object({ DB_DSN: dsn })
 
 const validateBase = object({
-  EXTERNAL,
+  BACKEND,
 })
 
 const validateAvatar = object({

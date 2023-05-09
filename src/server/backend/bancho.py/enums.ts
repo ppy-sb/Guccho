@@ -1,4 +1,4 @@
-import type { ReadAccess, WriteAccess } from '../base/server'
+import type { ReadAccess, WriteAccess } from '../@base/server'
 
 //  privileges intended for all normal players.
 export enum BanchoPyPrivilege {

@@ -11,7 +11,6 @@ import {
   leaderboardScoreRankingSystems,
   ppRankingSystems,
 } from '~/types/defs'
-import { createAddCommasFormatter } from '~/common/varkaUtils'
 
 import type { RankingStatus } from '~/types/beatmap'
 

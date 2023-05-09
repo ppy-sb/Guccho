@@ -3,14 +3,14 @@ import { TRPCError } from '@trpc/server'
 import type { JSONContent } from '@tiptap/core'
 import type { Id } from '..'
 import { getPrismaClient } from './prisma'
-import { BanchoPyPrivilege } from '~/server/adapters/bancho.py/enums'
-import { UserProvider as BanchoPyUser } from '~/server/adapters/bancho.py/server'
-import { createUserQuery, toFullUser } from '~/server/adapters/bancho.py/transforms'
+import { BanchoPyPrivilege } from '~/server/backend/bancho.py/enums'
+import { UserProvider as BanchoPyUser } from '~/server/backend/bancho.py/server'
+import { createUserQuery, toFullUser } from '~/server/backend/bancho.py/transforms'
 import useEditorExtensions from '~/composables/useEditorExtensions'
 
 import type { UserEssential } from '~/types/user'
 
-import type { UserProvider as Base } from '~/server/adapters/base/server'
+import type { UserProvider as Base } from '~/server/backend/@base/server'
 
 export class UserProvider extends BanchoPyUser implements Base<Id> {
   sbDb = getPrismaClient()

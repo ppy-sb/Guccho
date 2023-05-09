@@ -3,7 +3,6 @@ import type { RouterLinkProps } from 'vue-router'
 
 import type { inferRouterOutputs } from '@trpc/server'
 import type { AppRouter } from '~/server/trpc/routers'
-import { getFlagURL } from '~/common/varkaUtils'
 
 type RouterOutput = inferRouterOutputs<AppRouter>
 

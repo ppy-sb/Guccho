@@ -5,7 +5,6 @@ import type {
 } from '~/types/common'
 import { ppRankingSystems } from '~/types/defs'
 import type { PPRank, ScoreRank } from '~/types/statistics'
-import { createScoreFormatter, getFlagURL, toDuration } from '~/common/varkaUtils'
 
 import userpageStore from '~/store/userpage'
 

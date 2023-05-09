@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Editor } from '#components'
-import type { ContentPrivilege, ReadAccess, WriteAccess } from '~/server/adapters/base/server/article'
+import type { ContentPrivilege, ReadAccess, WriteAccess } from '~/server/backend/@base/server/article'
 
 definePageMeta({
   middleware: ['auth', 'admin'],
