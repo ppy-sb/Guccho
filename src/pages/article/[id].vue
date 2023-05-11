@@ -18,7 +18,7 @@ const content = await app$.$client.article.getRendered.query(id)
 
 <template>
   <section class="container mx-auto with-editor" :class="{ editable: $state.privilege.staff }">
-    <div class="mt-20 custom-typography ssr" v-html="content.html" />
+    <div class="custom-typography ssr" v-html="content.html" />
   </section>
 </template>
 

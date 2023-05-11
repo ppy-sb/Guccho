@@ -42,7 +42,5 @@ export default {
   /* @apply sm:flex sm:w-full mt-2 items-center justify-between  text-gbase-900 dark:text-gbase-100 ; */
   transition: 0.3s ease;
   @apply pb-2;
-
-  @apply pt-20;
 }
 </style>

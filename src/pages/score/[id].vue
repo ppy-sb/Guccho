@@ -12,7 +12,7 @@ const data = await app$.$client.score.id.query({ id })
 </script>
 
 <template>
-  <div v-if="data" class="container custom-container mx-auto mt-20">
+  <div v-if="data" class="container custom-container mx-auto">
     <!-- <t-modal>
       <t-modal ref="changeAvatar" v-slot="{ closeModal }">
         <t-modal v-if="data">

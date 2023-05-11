@@ -90,7 +90,7 @@ onMounted(() => {
     </div>
   </section>
 
-  <div v-else-if="page.user" ref="handle" class="flex flex-col mt-20 justify-stretch md:mt-0">
+  <div v-else-if="page.user" ref="handle" class="flex flex-col justify-stretch">
     <userpage-heading id="heading" ref="heading" />
     <userpage-profile />
     <userpage-ranking-system-switcher class="z-10" />
@@ -106,30 +106,29 @@ onMounted(() => {
     </div>
     <!-- placeholder for bottom nav -->·
     <!-- <div class="my-8 -z-50" /> -->
-    <!-- <client-only>
+    <client-only>
       <teleport to="body">
-
+        <div class="btm-nav sticky fuck">
+          <template v-for="(isVisible, el) of visible" :key="el">
+            <a
+              v-if="icons[el]"
+              :class="{
+                active: isVisible,
+              }" :href="`#${el}`"
+            >
+              <icon :name="icons[el]" size="2em" />
+            </a>
+            <a
+              v-else :class="{
+                active: isVisible,
+              }" :href="`#${el}`"
+            >
+              {{ el }}
+            </a>
+          </template>
+        </div>
       </teleport>
-    </client-only> -->
-    <div class="btm-nav sticky fuck">
-      <template v-for="(isVisible, el) of visible" :key="el">
-        <a
-          v-if="icons[el]"
-          :class="{
-            active: isVisible,
-          }" :href="`#${el}`"
-        >
-          <icon :name="icons[el]" size="2em" />
-        </a>
-        <a
-          v-else :class="{
-            active: isVisible,
-          }" :href="`#${el}`"
-        >
-          {{ el }}
-        </a>
-      </template>
-    </div>
+    </client-only>
   </div>
 </template>
 

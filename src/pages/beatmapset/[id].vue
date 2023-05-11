@@ -147,7 +147,7 @@ onBeforeMount(() => {
       lazyBgCover !== '' && 'ready',
     ]"
   >
-    <div class="container custom-container mx-auto pt-20">
+    <div class="container custom-container mx-auto">
       <div class="header-with-maps flex-wrap">
         <div class="text-center flex gap-2 items-baseline pb-2 pl-4">
           <h1 class="text-3xl font-bold text-center sm:text-left lg:whitespace-nowrap z-10">

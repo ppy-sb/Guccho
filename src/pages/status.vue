@@ -40,7 +40,7 @@ function percentWidth(count: number) {
 </script>
 
 <template>
-  <div v-if="data" class="container mx-auto custom-container mt-20">
+  <div v-if="data" class="container mx-auto custom-container">
     <div class="flex flex-wrap gap-1 my-1 items-baseline drop-shadow-lg">
       <h1 class="text-xl">
         System Load

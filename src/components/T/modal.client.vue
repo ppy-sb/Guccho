@@ -1,27 +1,22 @@
 <script setup lang="ts">
-const { status } = useZoomModal()
+import { Callback } from '~/composables/useZoomModal'
+
+const { status, close, show } = useZoomModal()
 
 const wrapper = shallowRef<HTMLDialogElement>()
 // const status = shallowRef(0)
 
-function showModal(cb?: () => void) {
-  status.value = 'show'
-  cb?.()
-  wrapper.value?.showModal()
-}
-function closeModal(cb?: () => void) {
-  status.value = 'closed'
-  cb?.()
+function showModal(cb: Callback) {
   if (!wrapper.value) {
     return
   }
-  wrapper.value.onanimationend = () => {
-    wrapper.value?.close()
-    if (!wrapper.value) {
-      return
-    }
-    wrapper.value.onanimationend = null
+  show(wrapper.value, cb)
+}
+function closeModal(cb: Callback) {
+  if (!wrapper.value) {
+    return
   }
+  close(wrapper.value, cb)
 }
 defineExpose({
   showModal,
@@ -90,7 +85,7 @@ $in: blur(0.5em) opacity(0) saturate(0.5);
     }
   }
 
-  &[status="closed"] {
+  &[status="closing"] {
     animation: zoomOut $duration $animate-function forwards;
     > [response-modal] {
       animation: slideToBottom calc($duration / 1.2) $animate-function forwards;

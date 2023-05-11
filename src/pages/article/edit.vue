@@ -109,7 +109,7 @@ async function del() {
 </script>
 
 <template>
-  <section class="container pt-20 pb-8 mx-auto custom-container lg:px-2">
+  <section class="container pb-8 mx-auto custom-container lg:px-2">
     <div class="flex gap-2 items-baseline">
       Editing: <input
         v-model="slug" type="text" class="input input-sm shadow-lg" :class="{
