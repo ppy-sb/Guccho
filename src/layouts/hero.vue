@@ -1,3 +1,7 @@
+<script setup lang="ts">
+const fullYear = new Date().getFullYear() + 1
+</script>
+
 <template>
   <div class="absolute inset-0 flex overflow-clip">
     <div class="w-full flex flex-col items-center justify-center">
@@ -7,7 +11,7 @@
           <h1
             class="text-sm font-semibold text-gbase-900 dark:text-gbase-100"
           >
-            © {{ new Date().getFullYear() }} ppy.sb | Varkaria
+            © {{ fullYear }} ppy.sb | Varkaria
           </h1>
         </footer>
       </slot>

@@ -1,3 +1,7 @@
+<script setup>
+const fullYear = new Date().getFullYear() + 1
+</script>
+
 <template>
   <div class="h-full">
     <slot />
@@ -6,9 +10,11 @@
         <h1
           class="text-sm font-semibold text-gbase-900 dark:text-gbase-100"
         >
-          © {{ new Date().getFullYear() }} ppy.sb | Varkaria
+          © {{ fullYear }} ppy.sb | Varkaria
         </h1>
       </footer>
     </slot>
   </div>
 </template>
+
+<style></style>
