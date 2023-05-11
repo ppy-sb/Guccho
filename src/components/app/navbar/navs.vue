@@ -20,7 +20,7 @@ const session = useSession()
 <template>
   <li>
     <nuxt-link :to="{ name: 'leaderboard-mode' }" @click="clearFocus">
-      <FontAwesomeIcon
+      <font-awesome-icon
         icon="fa-solid fa-ranking-star"
         class="w-5"
       />
@@ -29,7 +29,7 @@ const session = useSession()
   </li>
   <li v-if="session.user?.roles.includes('staff')">
     <nuxt-link :to="{ name: 'status' }" @click="clearFocus">
-      <FontAwesomeIcon
+      <font-awesome-icon
         icon="fa-solid fa-signal"
         class="w-5"
       />

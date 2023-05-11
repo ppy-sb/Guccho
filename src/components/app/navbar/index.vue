@@ -105,7 +105,7 @@ function clearFocus() {
           :to="{ name: 'index' }"
           class="btn btn-ghost normal-case text-xl hidden lg:flex gap-1"
         >
-          <FontAwesomeIcon icon="fa-solid fa-paw" class="w-4" />
+          <font-awesome-icon icon="fa-solid fa-paw" class="w-4" />
           {{ config.title }}
         </nuxt-link>
         <button
@@ -176,7 +176,7 @@ function clearFocus() {
                   }"
                   @click="clearFocus"
                 >
-                  <FontAwesomeIcon icon="fa-solid fa-sliders" class="w-5" />
+                  <font-awesome-icon icon="fa-solid fa-sliders" class="w-5" />
                   Settings
                 </nuxt-link>
               </li>
@@ -187,7 +187,7 @@ function clearFocus() {
                   }"
                   @click="clearFocus"
                 >
-                  <FontAwesomeIcon icon="fa-solid fa-heart-crack" class="w-5" />
+                  <font-awesome-icon icon="fa-solid fa-heart-crack" class="w-5" />
                   Friends & Blocks
                 </nuxt-link>
               </li>
@@ -201,7 +201,7 @@ function clearFocus() {
                   }"
                   @click="clearFocus"
                 >
-                  <FontAwesomeIcon
+                  <font-awesome-icon
                     icon="fa-solid fa-address-card"
                     class="w-5"
                   />
@@ -215,14 +215,14 @@ function clearFocus() {
                   }"
                   @click="clearFocus"
                 >
-                  <FontAwesomeIcon icon="fa-solid fa-briefcase" class="w-5" />
+                  <font-awesome-icon icon="fa-solid fa-briefcase" class="w-5" />
                   Admin Panel
                 </nuxt-link>
               </li>
               <div class="divider my-0" />
               <li>
                 <nuxt-link :to="{ name: 'auth-logout' }" @click="clearFocus">
-                  <FontAwesomeIcon
+                  <font-awesome-icon
                     icon="fa-solid fa-right-from-bracket"
                     class="w-5"
                   />
@@ -233,7 +233,7 @@ function clearFocus() {
             <template v-else>
               <li>
                 <nuxt-link :to="{ name: 'auth-login' }" @click="clearFocus">
-                  <FontAwesomeIcon
+                  <font-awesome-icon
                     icon="fa-solid fa-right-to-bracket"
                     class="w-5"
                   />
@@ -242,7 +242,7 @@ function clearFocus() {
               </li>
               <li>
                 <nuxt-link :to="{ name: 'auth-register' }" @click="clearFocus">
-                  <FontAwesomeIcon icon="fa-solid fa-signature" class="w-5" />
+                  <font-awesome-icon icon="fa-solid fa-signature" class="w-5" />
                   Sign up
                 </nuxt-link>
               </li>

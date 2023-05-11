@@ -39,12 +39,6 @@ export default defineNuxtConfig({
     componentIslands: true,
   },
 
-  // Auto import components: https://go.nuxtjs.dev/config-components
-  components: {
-    global: true,
-    dirs: ['~/components'],
-  },
-
   nitro: {
     minify: true,
   },

@@ -1,7 +1,7 @@
-<script setup>
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+<script setup lang="ts">
+import { FontAwesomeIcon as FAIcon } from '@fortawesome/vue-fontawesome'
 </script>
 
 <template>
-  <FontAwesomeIcon v-bind="$attrs" />
+  <FAIcon v-bind="$attr" />
 </template>

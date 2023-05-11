@@ -7,8 +7,9 @@ import {
   faSignature,
   faSliders,
 } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+
 import type { RouteLocationRaw } from 'vue-router'
+import { FontAwesomeIcon } from '#components'
 import { useSession } from '~/store/session'
 
 const { addToLibrary } = useFAIcon()
