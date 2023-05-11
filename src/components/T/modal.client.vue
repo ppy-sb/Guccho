@@ -6,13 +6,13 @@ const { status, close, show } = useZoomModal()
 const wrapper = shallowRef<HTMLDialogElement>()
 // const status = shallowRef(0)
 
-function showModal(cb: Callback) {
+function showModal(cb?: Callback) {
   if (!wrapper.value) {
     return
   }
   show(wrapper.value, cb)
 }
-function closeModal(cb: Callback) {
+function closeModal(cb?: Callback) {
   if (!wrapper.value) {
     return
   }

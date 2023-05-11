@@ -49,6 +49,9 @@ const validate: {
 useHead({
   titleTemplate: `Register - ${config.title}`,
 })
+definePageMeta({
+  layout: 'hero',
+})
 
 async function userRegisterAction() {
   fetching.value = true
@@ -92,10 +95,10 @@ async function userRegisterAction() {
 
 <template>
   <div
-    class="flex items-center justify-center px-4 py-12 my-auto sm:px-6 lg:px-8"
+    class="w-full flex flex-col"
   >
     <div
-      class="half-box"
+      class="mx-auto half-box"
     >
       <fetch-overlay :fetching="fetching" />
 

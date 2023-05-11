@@ -1,6 +1,9 @@
 <script lang="ts">
 import { useSession } from '~/store/session'
 
+definePageMeta({
+  layout: 'hero',
+})
 export default {
   name: 'Logout',
   setup() {
@@ -15,7 +18,7 @@ export default {
 </script>
 
 <template>
-  <div class="self-center h-[100dvh] flex items-center text-lg">
+  <div class="text-lg">
     Logging out...
   </div>
 </template>

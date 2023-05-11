@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="h-full">
     <slot />
     <slot name="footer">
       <footer class="py-4 text-center relative">

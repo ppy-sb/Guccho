@@ -150,7 +150,7 @@ async function toggleFriend() {
         </t-nuxt-link-button>
       </div>
       <div
-        class="container flex flex-col flex-wrap gap-8 mx-auto lg:flex-row md:gap-4 lg:gap-0 sm:order-2 md:items-end md:justify-between md:pb-2"
+        class="container flex flex-col flex-wrap gap-4 mx-auto lg:flex-row lg:gap-0 sm:order-2 md:items-end md:justify-between md:pb-2"
       >
         <div class="order-2 mx-10 sm:mx-32 md:mx-0 md:order-1 lg:order-2 md:ml-auto md:pt-4 lg:py-2">
           <app-mode-switcher

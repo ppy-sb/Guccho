@@ -34,7 +34,7 @@ function clearFocus() {
   <app-search-modal ref="searchModalWrapper" />
   <div
     ref="root"
-    class="w-full transition-[padding] sticky top-0 navbar-container z-40 h-[66px]"
+    class="w-full transition-[padding] sticky top-0 navbar-container z-40 h-16"
     :class="[detached && 'detached']"
   >
     <div

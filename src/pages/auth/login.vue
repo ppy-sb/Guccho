@@ -16,6 +16,9 @@ useHead({
   titleTemplate: `Login - ${config.title}`,
 })
 
+definePageMeta({
+  layout: 'hero',
+})
 const error = shallowRef('')
 
 const registerButton = shallowRef<string>('Do not have an account?')
@@ -58,10 +61,10 @@ async function userLogin() {
 
 <template>
   <div
-    class="flex items-center justify-center px-4 py-12 my-auto sm:px-6 lg:px-8"
+    class="w-full flex flex-col"
   >
     <div
-      class="half-box"
+      class="mx-auto half-box"
     >
       <fetch-overlay :fetching="fetching" />
       <div>
@@ -114,7 +117,7 @@ async function userLogin() {
             to="/auth/register"
             variant="accent"
             @mouseenter="registerButton = 'Sign up'"
-            @mouseleave="registerButton = 'Do not have an account?'"
+            @mouseleave="registerButton = 'Don\'t have an account?'"
           >
             {{ registerButton }}
           </t-nuxt-link-button>
@@ -133,7 +136,7 @@ async function userLogin() {
 }
 
 .half-box {
-  @apply relative w-full max-w-md p-6 overflow-hidden space-y-8 rounded-3xl;
+  @apply relative w-full min-w-max max-w-md p-6 overflow-hidden space-y-8 rounded-3xl;
   &::before {
     content: "";
     @apply absolute left-0 top-0 right-0 bottom-0;

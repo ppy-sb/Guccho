@@ -14,26 +14,26 @@ onMounted(() => {
 </script>
 
 <template>
-  <NuxtLayout
-    ref="scroll"
-    viewport
-    :class="[safari ? 'safari' : 'not-safari']"
-    class="zoom-modal-container overflow-x-hidden"
-    :data-l1-status="status"
-    data-l2-status="hidden"
-    :style="status !== 'closed' && {
-      'transform-origin': `center calc(${top} * 1px + 50dvh)`,
-    }"
-  >
-    <teleport to="body">
-      <app-navbar />
-      <DevOnly>
-        <app-experience />
-      </DevOnly>
-    </teleport>
+  <div>
     <NuxtLoadingIndicator />
-    <NuxtPage />
-  </NuxtLayout>
+    <app-navbar />
+    <DevOnly>
+      <app-experience />
+    </DevOnly>
+    <NuxtLayout
+      ref="scroll"
+      viewport
+      :class="[safari ? 'safari' : 'not-safari']"
+      class="zoom-modal-container overflow-x-hidden"
+      :data-l1-status="status"
+      data-l2-status="hidden"
+      :style="status !== 'closed' && {
+        'transform-origin': `center calc(${top} * 1px + 50dvh)`,
+      }"
+    >
+      <NuxtPage />
+    </NuxtLayout>
+  </div>
 </template>
 
 <style lang="scss">

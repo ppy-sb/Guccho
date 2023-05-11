@@ -1,6 +1,11 @@
 html {
   scroll-behavior: smooth;
 }
+/* html,
+body,
+#__nuxt {
+  @apply h-full;
+} */
 
 .custom-container {
   /* @apply md:px-4; */

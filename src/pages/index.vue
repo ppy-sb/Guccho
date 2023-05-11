@@ -6,10 +6,13 @@ const config = useAppConfig()
 useHead({
   titleTemplate: `${config.title}`,
 })
+definePageMeta({
+  layout: 'hero',
+})
 </script>
 
 <template>
-  <div class="container custom-container heading">
+  <div class="custom-container heading">
     <div class="content p-8">
       <div class="mb-6">
         <h1 class="mb-2 text-4xl font-bold text-center">
@@ -67,7 +70,7 @@ useHead({
   max-width: 32rem;
 }
 .heading {
-  @apply relative flex items-center justify-between px-4 lg:px-0 mx-auto my-auto text-left w-max text-gbase-900 dark:text-gbase-100;
+  @apply relative flex items-center justify-between px-4 lg:px-0 mx-auto my-auto text-left text-gbase-900 dark:text-gbase-100;
   &::before,
   &::after {
     content: "";
