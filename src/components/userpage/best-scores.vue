@@ -172,7 +172,7 @@ const nextBp = nextPage.bind(null, bpPage)
           <div
             class="p-1 two-tone flex items-center w-100"
           >
-            <font-awesome-icon icon="fa-brands fa-pied-piper-pp" class="text-4xl w-1/6 opacity-70" />
+            <icon name="carbon:letter-pp" class="w-1/6" size="2em" />
             <div class="w-2/3 flex">
               <div class="text-3xl font-semibold mx-auto">
                 Best Scores

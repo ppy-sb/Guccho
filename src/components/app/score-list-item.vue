@@ -1,10 +1,4 @@
 <script setup lang="ts">
-import {
-  faBan,
-  faCheckDouble,
-  faHeart,
-  faPause,
-} from '@fortawesome/free-solid-svg-icons'
 import type { RankingSystemScore } from '~/types/score'
 import type { LeaderboardPPRankingSystem, LeaderboardRankingSystem, LeaderboardScoreRankingSystem, Mode, Ruleset } from '~/types/common'
 import {
@@ -31,15 +25,13 @@ const props = withDefaults(
     useIntl: true,
   }
 )
-const { addToLibrary } = useFAIcon()
-addToLibrary(faBan, faCheckDouble, faHeart, faPause)
 
 const rankingStatusIconMapping: Partial<Record<RankingStatus, string>> = {
-  approved: 'fa-solid fa-check-double',
-  ranked: 'fa-solid fa-ranking-star',
-  pending: 'fa-solid fa-pause',
-  loved: 'fa-solid fa-heart',
-  qualified: 'fa-solid fa-fa-check-double',
+  approved: 'line-md:circle-to-confirm-circle-transition',
+  ranked: 'line-md:chevron-small-triple-up',
+  pending: 'line-md:alert',
+  loved: 'line-md:heart-filled',
+  qualified: 'line-md:confirm',
 }
 
 const numberFmt = createAddCommasFormatter()
@@ -96,7 +88,7 @@ const meta = computed(
             class="object-cover w-20 h-16 rounded-xl shadow-md"
           >
           <div v-else class="w-20 h-16">
-            <font-awesome-icon icon="fa-solid fa-ban" size="4x" class="w-full" />
+            <icon name="clarity:unknown-status-line" size="100%" />
           </div>
         </div>
         <div class="flex flex-col min-w-0">
@@ -121,7 +113,8 @@ const meta = computed(
             >
               <template v-if="meta">
                 <span class="text-sm truncate md:text-md lg:text-lg font-bold flex gap-2 items-center">
-                  <font-awesome-icon v-if="rankingStatusIconMapping[beatmap.status]" :icon="rankingStatusIconMapping[beatmap?.status]" class="opacity-50" :aria-label="beatmap.status" />
+                  <!-- eslint-disable-next-line vue/no-extra-parens -->
+                  <icon v-if="beatmap.status in rankingStatusIconMapping" :name="(rankingStatusIconMapping[beatmap.status] as string)" :aria-label="beatmap.status" />
                   {{ meta.artist }} - {{ meta.title }}</span>
               </template>
             </router-link>

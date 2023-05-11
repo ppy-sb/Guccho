@@ -31,8 +31,8 @@ const guweb = [
     'guweb-light': {
       ...cupcake,
       ...base,
-      // 'primary': palette.wewak[300],
-      // 'secondary': cupcake.primary,
+      'primary': cupcake.secondary,
+      'secondary': cupcake.primary,
       'neutral': palette.gbase[200],
       'base-50': palette.gbase[50],
       'base-100': palette.gbase[100],

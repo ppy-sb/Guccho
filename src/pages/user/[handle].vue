@@ -33,11 +33,11 @@ const visible = reactive({
   bestScores: false,
   topScores: false,
 })
-const icons: Partial<Record<keyof typeof visible, string>> = {
-  topScores: 'fa-solid fa-ranking-star',
-  bestScores: 'fa-brands fa-pied-piper-pp',
-  statistics: 'fa-solid fa-bars-staggered',
-  heading: 'fa-solid fa-house-user',
+const icons: Record<keyof typeof visible, string> = {
+  topScores: 'pajamas:first-contribution',
+  bestScores: 'fa6-brands:pied-piper-pp',
+  statistics: 'tabler:clipboard-data',
+  heading: 'material-symbols:home-health-rounded',
 }
 const [handle, heading, statistics, bestScores, topScores] = [
   shallowRef<HTMLElement | null>(null),
@@ -106,29 +106,30 @@ onMounted(() => {
     </div>
     <!-- placeholder for bottom nav -->·
     <!-- <div class="my-8 -z-50" /> -->
-    <client-only>
+    <!-- <client-only>
       <teleport to="body">
-        <div class="btm-nav fuck">
-          <template v-for="(isVisible, el) of visible" :key="el">
-            <a
-              v-if="icons[el]"
-              :class="{
-                active: isVisible,
-              }" :href="`#${el}`"
-            >
-              <font-awesome-icon :icon="icons[el]" class="fa-xl" />
-            </a>
-            <a
-              v-else :class="{
-                active: isVisible,
-              }" :href="`#${el}`"
-            >
-              {{ el }}
-            </a>
-          </template>
-        </div>
+
       </teleport>
-    </client-only>
+    </client-only> -->
+    <div class="btm-nav sticky fuck">
+      <template v-for="(isVisible, el) of visible" :key="el">
+        <a
+          v-if="icons[el]"
+          :class="{
+            active: isVisible,
+          }" :href="`#${el}`"
+        >
+          <icon :name="icons[el]" size="2em" />
+        </a>
+        <a
+          v-else :class="{
+            active: isVisible,
+          }" :href="`#${el}`"
+        >
+          {{ el }}
+        </a>
+      </template>
+    </div>
   </div>
 </template>
 

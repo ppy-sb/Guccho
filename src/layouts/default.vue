@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 const safari = shallowRef(false)
-const modalContainer = shallowRef()
 
 const [_, setScroll] = useScrollYObserver()
 
@@ -17,19 +16,19 @@ onMounted(() => {
   <div
     ref="scroll"
     :class="[safari ? 'safari' : 'not-safari']"
-    class="overflow-x-hidden overflow-y-auto zoom-modal-container"
+    class="zoom-modal-container h-[100dvh] overflow-x-hidden"
     :data-l1-status="status"
     data-l2-status="hidden"
   >
     <teleport to="body">
-      <app-navbar :disabled="modalContainer?.stat === 'show'" />
+      <app-navbar />
       <DevOnly>
         <app-experience />
       </DevOnly>
     </teleport>
 
     <div class="h-[100dvh]" viewport>
-      <div class="flex flex-col min-h-full flex-grow">
+      <div class="flex flex-col h-full flex-grow">
         <slot />
         <slot name="footer">
           <footer class="py-4 text-center relative">
@@ -42,11 +41,6 @@ onMounted(() => {
         </slot>
       </div>
     </div>
-    <div
-      id="footer" class="relative" :class="{
-        disabled: modalContainer?.stat === 'show',
-      }"
-    />
   </div>
 </template>
 
@@ -57,13 +51,11 @@ onMounted(() => {
 }
 </style>
 
-<style lang="postcss">
-#footer.disabled {
-  @apply blur-sm
-}
-</style>
-
 <style lang="scss">
+// body {
+//   @apply min-h-[100dvh] h-[100dvh];
+// }
+
 @import "~/assets/styles/modal.scss";
 $zoom-content-stage1: opacity(0.4) saturate(0.7);
 $zoom-content-stage2: opacity(0.2) saturate(0.3);

@@ -1,23 +1,6 @@
 <script setup lang="ts">
 import { useBattery, useFps, useMemory } from '@vueuse/core'
-import {
-  faBatteryEmpty,
-  faBatteryFull,
-  faBatteryHalf,
-  faBatteryQuarter,
-  faBatteryThreeQuarters,
-  faChargingStation,
-} from '@fortawesome/free-solid-svg-icons'
 
-const { addToLibrary } = useFAIcon()
-addToLibrary(
-  faChargingStation,
-  faBatteryFull,
-  faBatteryThreeQuarters,
-  faBatteryHalf,
-  faBatteryQuarter,
-  faBatteryEmpty
-)
 const fps = useFps()
 function size(v: number) {
   const kb = v / 1024 / 1024
@@ -44,21 +27,12 @@ const { charging, level } = useBattery()
         }}) | Alloc {{ size(memory.totalJSHeapSize) }}|
       </div>
       <div class="flex gap-1 items-center">
-        <font-awesome-icon
-          v-if="charging"
-          icon="fa-solid fa-charging-station"
-        />
-        <font-awesome-icon
-          :icon="
-            level >= 0.875
-              ? 'fa-solid fa-battery-full'
-              : level >= 0.625
-                ? 'fa-solid fa-battery-three-quarters'
-                : level >= 0.375
-                  ? 'fa-solid fa-battery-half'
-                  : level >= 0.125
-                    ? 'fa-solid fa-battery-quarter'
-                    : 'fa-solid fa-battery-empty'
+        <icon
+          :name="
+            charging ? 'ion:battery-charging'
+            : level > 75 ? 'ion:battery-full'
+              : level > 25 ? 'ion:battery-half'
+                : 'ion:battery-dead'
           "
         />
       </div>

@@ -1,33 +1,5 @@
 <script setup lang="ts">
-import {
-  faAddressCard,
-  faBriefcase,
-  faHeartCrack,
-  faParagraph,
-  faPaw,
-  faRightFromBracket,
-  faRightToBracket,
-  faSignature,
-  faSliders,
-} from '@fortawesome/free-solid-svg-icons'
 import { useSession } from '~/store/session'
-
-const props = defineProps<{
-  disabled?: boolean
-}>()
-
-const { addToLibrary } = useFAIcon()
-addToLibrary(
-  faAddressCard,
-  faBriefcase,
-  faHeartCrack,
-  faParagraph,
-  faRightFromBracket,
-  faRightToBracket,
-  faSignature,
-  faSliders,
-  faPaw
-)
 
 const [scrollY] = useScrollYObserver()
 
@@ -68,7 +40,6 @@ function clearFocus() {
     <div
       class="navbar transition-[border-radius]"
       :class="[
-        props.disabled && 'disabled',
         shownMenu.left && 'navbar-tint',
         shownMenu.user && 'navbar-tint',
       ]"
@@ -78,7 +49,7 @@ function clearFocus() {
           <label tabindex="0" class="btn btn-ghost lg:hidden">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5"
+              class="w-5 h-5"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -105,7 +76,7 @@ function clearFocus() {
           :to="{ name: 'index' }"
           class="btn btn-ghost normal-case text-xl hidden lg:flex gap-1"
         >
-          <font-awesome-icon icon="fa-solid fa-paw" class="w-4" />
+          <icon name="ion:paw" />
           {{ config.title }}
         </nuxt-link>
         <button
@@ -114,7 +85,7 @@ function clearFocus() {
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="w-5 h-5"
+            class="w-5 h-5" size="100%"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -140,7 +111,7 @@ function clearFocus() {
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="w-5 h-5"
+            class="w-5 h-5" size="100%"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -176,7 +147,7 @@ function clearFocus() {
                   }"
                   @click="clearFocus"
                 >
-                  <font-awesome-icon icon="fa-solid fa-sliders" class="w-5" />
+                  <icon name="solar:settings-bold" class="w-5 h-5" size="100%" />
                   Settings
                 </nuxt-link>
               </li>
@@ -187,7 +158,7 @@ function clearFocus() {
                   }"
                   @click="clearFocus"
                 >
-                  <font-awesome-icon icon="fa-solid fa-heart-crack" class="w-5" />
+                  <icon name="tabler:circles-relation" class="w-5 h-5" size="100%" />
                   Friends & Blocks
                 </nuxt-link>
               </li>
@@ -201,9 +172,10 @@ function clearFocus() {
                   }"
                   @click="clearFocus"
                 >
-                  <font-awesome-icon
-                    icon="fa-solid fa-address-card"
-                    class="w-5"
+                  <icon
+                    name="mingcute:profile-fill"
+
+                    class="w-5 h-5" size="100%"
                   />
                   My Profile
                 </nuxt-link>
@@ -215,17 +187,14 @@ function clearFocus() {
                   }"
                   @click="clearFocus"
                 >
-                  <font-awesome-icon icon="fa-solid fa-briefcase" class="w-5" />
+                  <icon name="material-symbols:admin-panel-settings-rounded" class="w-5 h-5" size="100%" />
                   Admin Panel
                 </nuxt-link>
               </li>
               <div class="divider my-0" />
               <li>
                 <nuxt-link :to="{ name: 'auth-logout' }" @click="clearFocus">
-                  <font-awesome-icon
-                    icon="fa-solid fa-right-from-bracket"
-                    class="w-5"
-                  />
+                  <icon name="majesticons:logout-half-circle-line" class="w-5 h-5" size="100%" />
                   Sign out
                 </nuxt-link>
               </li>
@@ -233,16 +202,13 @@ function clearFocus() {
             <template v-else>
               <li>
                 <nuxt-link :to="{ name: 'auth-login' }" @click="clearFocus">
-                  <font-awesome-icon
-                    icon="fa-solid fa-right-to-bracket"
-                    class="w-5"
-                  />
+                  <icon name="majesticons:login-half-circle-line" class="w-5 h-5" size="100%" />
                   Sign in
                 </nuxt-link>
               </li>
               <li>
                 <nuxt-link :to="{ name: 'auth-register' }" @click="clearFocus">
-                  <font-awesome-icon icon="fa-solid fa-signature" class="w-5" />
+                  <icon name="mingcute:signature-fill" class="w-5 h-5" size="100%" />
                   Sign up
                 </nuxt-link>
               </li>
@@ -283,12 +249,6 @@ function clearFocus() {
     @apply text-lg;
   }
 
-  &.disabled {
-    * {
-      @apply pointer-events-none;
-    }
-  }
-
   .avatar {
     & .avatar-img {
       @apply object-cover aspect-square;
@@ -312,7 +272,7 @@ function clearFocus() {
     .avatar {
       & .avatar-img {
         @apply transition-all;
-        @apply w-5;
+        @apply w-5 h-5;
       }
     }
     & .btn,

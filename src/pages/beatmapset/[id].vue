@@ -186,46 +186,46 @@ onBeforeMount(() => {
             </template>
           </t-tabs>
           <!-- // TODO in house beatmap links -->
-          <div v-if="links" class="absolute md:relative right-0">
-            <div class="w-min">
-              <t-menu>
-                <button class="btn btn-sm btn-ghost">
-                  <font-awesome-icon icon="fa-solid fa-ellipsis-h" size="xl" />
-                </button>
-                <template #popper>
-                  <ul class="menu menu-compact border-[1px] border-base-300/20 bg-base-200/80 w-max rounded-box">
-                    <template v-if="links.external.length">
-                      <li class="menu-title">
-                        <span>External Links</span>
-                      </li>
-                      <li v-for="{ link, label } in links.external" :key="`external-${label}`">
-                        <a :href="link">{{ label }}</a>
-                      </li>
-                    </template>
-                    <template v-if="links.directDownload.length">
-                      <div class="divider" />
-                      <li class="menu-title">
-                        <span>Direct downloads</span>
-                      </li>
-                      <li v-for="{ link, label } in links.directDownload" :key="`direct-${label}`">
-                        <a :href="link">{{ label }}</a>
-                      </li>
-                    </template>
-                  </ul>
-                </template>
-              </t-menu>
-            </div>
-          </div>
         </div>
         <div class="flex flex-col md:flex-row">
           <div class="w-full md:w-1/3 grow">
-            <div class="flex flex-col p-4 md:p-2 h-full">
+            <div class="flex flex-col p-4 md:p-3 h-full">
               <img class="rounded-xl shadow-md max-w-content" :src="beatmapset.assets['list@2x']" :alt="selectedMap.version" :onerror="placeholder">
+              <div v-if="links" class="pt-2">
+                <div class="w-min">
+                  <t-menu>
+                    <button class="btn btn-primary btn-circle rounded-full">
+                      <icon name="material-symbols:file-present-rounded" size="2em" />
+                    </button>
+                    <template #popper>
+                      <ul class="menu menu-compact border-[1px] border-base-300/20 bg-base-200/80 w-max rounded-box">
+                        <template v-if="links.external.length">
+                          <li class="menu-title">
+                            <span>External Links</span>
+                          </li>
+                          <li v-for="{ link, label } in links.external" :key="`external-${label}`">
+                            <a :href="link">{{ label }}</a>
+                          </li>
+                        </template>
+                        <template v-if="links.directDownload.length">
+                          <div class="divider" />
+                          <li class="menu-title">
+                            <span>Direct downloads</span>
+                          </li>
+                          <li v-for="{ link, label } in links.directDownload" :key="`direct-${label}`">
+                            <a :href="link">{{ label }}</a>
+                          </li>
+                        </template>
+                      </ul>
+                    </template>
+                  </t-menu>
+                </div>
+              </div>
             </div>
           </div>
           <div class="w-full md:w-2/3">
             <dl>
-              <div class="stripe-odd">
+              <div class="stripe-odd rounded-tl-xl">
                 <dt class="text-sm font-medium text-gbase-500">
                   Creator
                 </dt>

@@ -64,7 +64,7 @@ const scoreFmt = createScoreFormatter({ notation: undefined })
         </div>
         <div class="ml-auto">
           <t-button variant="ghost" size="sm">
-            <font-awesome-icon icon="fas fa-ellipsis-h" size="2xl" />
+            <!-- <font-awesome-icon icon="fas fa-ellipsis-h" size="2xl" /> -->
           </t-button>
         </div>
       </div>

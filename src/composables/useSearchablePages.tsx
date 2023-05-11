@@ -1,27 +1,6 @@
-import {
-  faBriefcase,
-  faHeartCrack,
-  faParagraph,
-  faRightFromBracket,
-  faRightToBracket,
-  faSignature,
-  faSliders,
-} from '@fortawesome/free-solid-svg-icons'
-
 import type { RouteLocationRaw } from 'vue-router'
-import { FontAwesomeIcon } from '#components'
 import { useSession } from '~/store/session'
 
-const { addToLibrary } = useFAIcon()
-addToLibrary(
-  faRightFromBracket,
-  faRightToBracket,
-  faSignature,
-  faSliders,
-  faBriefcase,
-  faHeartCrack,
-  faParagraph
-)
 function loggedIn() {
   const session = useSession()
   return session.loggedIn
@@ -42,7 +21,7 @@ export const pages: {
   show?(keyword: string): boolean
 }[] = [
   {
-    render: () => <><FontAwesomeIcon icon="fa-solid fa-right-to-bracket" class="w-5" />Sign in</>,
+    render: () => <><icon name="majesticons:login-half-circle-line" class="w-5 h-5" size="100%" />Sign in</>,
     route: {
       name: 'auth-login',
     },
@@ -50,7 +29,7 @@ export const pages: {
     show: notLoggedIn,
   },
   {
-    render: () => <><FontAwesomeIcon icon="fa-solid fa-signature" class="w-5"/>Sign up</>,
+    render: () => <><icon name="mingcute:signature-fill" class="w-5 h-5" size="100%" />Sign up</>,
     route: {
       name: 'auth-register',
     },
@@ -59,23 +38,23 @@ export const pages: {
   },
 
   {
-    render: () => <><FontAwesomeIcon icon="fa-solid fa-briefcase" class="w-5" />Admin Panel</>,
+    render: () => <><icon name="material-symbols:admin-panel-settings-rounded" class="w-5 h-5" size="100%" />Admin Panel</>,
     route: {
       name: 'admin',
     },
     keyword: ['settings', 'admin'],
     show: admin,
   },
+  // {
+  //   render: () => <><icon name="fa-solid fa-paragraph" class="w-5" />Articles</>,
+  //   route: {
+  //     name: 'article-edit',
+  //   },
+  //   keyword: ['settings', 'article'],
+  //   show: admin,
+  // },
   {
-    render: () => <><FontAwesomeIcon icon="fa-solid fa-paragraph" class="w-5" />Articles</>,
-    route: {
-      name: 'article-edit',
-    },
-    keyword: ['settings', 'article'],
-    show: admin,
-  },
-  {
-    render: () => <><FontAwesomeIcon icon="fa-solid fa-heart-crack" class="w-5" />Friends & Blocks</>,
+    render: () => <><icon name="tabler:circles-relation" class="w-5 h-5" size="100%" />Friends & Blocks</>,
     route: {
       name: 'me-relations',
     },
@@ -83,7 +62,7 @@ export const pages: {
     show: loggedIn,
   },
   {
-    render: () => <><FontAwesomeIcon icon="fa-solid fa-sliders" class="w-5" />Settings</>,
+    render: () => <><icon name="solar:settings-bold" class="w-5 h-5" size="100%" />Settings</>,
     route: {
       name: 'me-settings',
     },
@@ -91,7 +70,7 @@ export const pages: {
     show: loggedIn,
   },
   {
-    render: () => <><FontAwesomeIcon icon="fa-solid fa-right-from-bracket" class="w-5" />Sign out</>,
+    render: () => <><icon name="majesticons:logout-half-circle-line" class="w-5 h-5" size="100%" />Sign out</>,
     route: {
       name: 'auth-logout',
     },

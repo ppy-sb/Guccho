@@ -105,15 +105,17 @@ async function toggleFriend() {
           class="gap-1"
           @click="toggleFriend"
         >
-          <font-awesome-icon
-            :icon="
-              isFriendButtonHovered && isMutualFriend
-                ? 'fas fa-heart-crack'
-                : 'fas fa-heart'
+          <icon
+            :name="
+              isFriendButtonHovered && isFriend
+                ? 'solar:heart-broken-bold'
+                : 'solar:heart-bold'
             "
             :class="{
               'fa-bounce': isFriendButtonHovered,
             }"
+            class="w-4"
+            size="100%"
           />
           <span>{{ friendButtonContent }}</span>
         </t-button>
@@ -123,7 +125,7 @@ async function toggleFriend() {
           variant="secondary"
           class="gap-1"
         >
-          <font-awesome-icon icon="fas fa-envelope" />
+          icon[name=ph:chat-circle-dots-fill]
           <span>send message</span>
         </t-button> -->
       </div>
