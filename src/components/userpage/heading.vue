@@ -101,7 +101,7 @@ async function toggleFriend() {
         <t-button
           ref="changeFriendStateButton"
           size="sm"
-          :variant="isMutualFriend ? 'primary' : 'gbase'"
+          :variant="isMutualFriend ? 'primary' : isFriend ? 'secondary' : 'gbase'"
           class="gap-1"
           @click="toggleFriend"
         >
