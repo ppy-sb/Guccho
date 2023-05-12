@@ -5,8 +5,10 @@ import {
   toMods,
   toRoles,
   toUserEssential,
-  userEssentials,
 } from '../transforms'
+import {
+  userEssentials,
+} from '../db-query'
 import type { Id } from '..'
 import { hasRuleset } from '..'
 import { client as redisClient } from './source/redis'

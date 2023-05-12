@@ -10,17 +10,21 @@ import type { JSONContent } from '@tiptap/core'
 import { BanchoPyMode, BanchoPyPrivilege } from '../enums'
 import {
   createRulesetData,
-  createUserQuery,
   fromRankingStatus,
   idToString,
-
   stringToId,
 
   toBanchoPyMode,
   toFullUser,
   toRankingSystemScores,
-  toUserEssential, userEssentials,
+  toUserEssential,
 } from '../transforms'
+
+import {
+  createUserLikeQuery,
+  createUserQuery,
+  userEssentials,
+} from '../db-query'
 import type { Id } from '..'
 import { getLiveUserStatus } from '../api-client'
 import { encrypt } from '../crypto'
@@ -504,7 +508,7 @@ WHERE s.userid = ${id}
     /* optimized */
     const result = await this.db.user.findMany({
       ...userEssentials,
-      ...createUserQuery({ handle: keyword }),
+      ...createUserLikeQuery(keyword),
       take: limit,
     })
 

@@ -1,11 +1,14 @@
 import {
-  createFilter,
   idToString,
-
   stringToId,
   toBeatmapEssential,
   toBeatmapWithBeatmapset, toBeatmapset, toRankingStatus,
 } from '../transforms'
+
+import {
+  createFilter,
+} from '../db-query'
+
 import type { Id } from '..'
 import { getPrismaClient } from './source/prisma'
 import type { Tag } from '~/types/search'

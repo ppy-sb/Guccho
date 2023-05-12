@@ -1,6 +1,7 @@
 import type { Prisma } from '.prisma/bancho.py'
-import { BanchoMode, BanchoPyPrivilege } from '../enums'
-import type { DatabaseUserEssentialFields } from './user'
+import { BanchoMode, BanchoPyPrivilege } from './enums'
+import type { DatabaseUserEssentialFields } from './transforms/user'
+import { stringToId } from './transforms'
 import type { OP, Tag } from '~/types/search'
 
 export const userEssentials: Prisma.UserFindManyArgs = {
@@ -16,6 +17,44 @@ export const userEssentials: Prisma.UserFindManyArgs = {
   },
 } as const satisfies {
   select: Record<DatabaseUserEssentialFields, true>
+}
+
+export function createUserLikeQuery(keyword: string) {
+  const idKw = stringToId(keyword)
+  return {
+    where: {
+      OR: [
+        keyword.startsWith('@')
+          ? {
+              safeName: {
+                contains: keyword.slice(1),
+              },
+            }
+          : undefined,
+        {
+          safeName: {
+            contains: keyword,
+          },
+        },
+        {
+          name: {
+            contains: keyword,
+          },
+        },
+        isNaN(idKw)
+          ? undefined
+          : {
+              id: idKw,
+            },
+        // TODO: search by email after preferences implemented
+        // {
+        //   email: {
+        //     contains: keyword,
+        //   },
+        // },
+      ].filter(TSFilter),
+    },
+  }
 }
 export function createUserQuery(
   {

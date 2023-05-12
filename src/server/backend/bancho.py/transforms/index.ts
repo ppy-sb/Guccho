@@ -1,6 +1,5 @@
 export * from './beatmap'
 export * from './create-hit-count'
-export * from './db-queries'
 export * from './id-conversion'
 export * from './ruleset'
 export * from './score'
