@@ -6,6 +6,7 @@ import { Link } from '@tiptap/extension-link'
 import { TextAlign } from '@tiptap/extension-text-align'
 import { Typography } from '@tiptap/extension-typography'
 import { StarterKit } from '@tiptap/starter-kit'
+import { Image } from '@tiptap/extension-image'
 
 import { lowlight } from 'lowlight/lib/core.js'
 
@@ -47,5 +48,8 @@ export default <TEdit extends boolean>(config?: { indent?: string; edit?: TEdit 
     HTMLAttributes: {
       class: 'border border-gbase-500/20',
     },
+  }),
+  Image.configure({
+    allowBase64: true,
   }),
 ]

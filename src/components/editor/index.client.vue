@@ -59,6 +59,7 @@ defineExpose({
 
 <template>
   <div v-if="editor" class="editor">
+    <editor-bubble-menu :editor="editor" />
     <editor-menu-bar
       v-model:indent="editorConf.indent"
       class="editor__header"

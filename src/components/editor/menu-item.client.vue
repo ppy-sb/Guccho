@@ -25,17 +25,18 @@ export default defineComponent({
       default: null,
     },
   },
-
   data() {
     return {
       remixiconUrl,
     }
   },
+
 })
 </script>
 
 <template>
   <button
+
     :class="{ 'is-active': isActive ? isActive() : null }"
     :title="title"
     @click="action"

@@ -2,15 +2,14 @@ export type Status = 'show' | 'closing' | 'closed'
 const status = shallowRef<Status>('closed')
 
 export type Callback = undefined | (() => void)
-function show(wrapper: HTMLDialogElement, cb: Callback) {
+function show(wrapper: HTMLDialogElement, cb?: Callback) {
   status.value = 'show'
   cb?.()
   // give other things 1 tick to prepare
   nextTick(() => wrapper.showModal())
 }
-function close(wrapper: HTMLDialogElement, cb: Callback) {
+function close(wrapper: HTMLDialogElement, cb?: Callback) {
   status.value = 'closing'
-  cb?.()
   // give other things 1 tick to prepare
   nextTick(() => {
     if (!wrapper) {
@@ -20,9 +19,16 @@ function close(wrapper: HTMLDialogElement, cb: Callback) {
       wrapper.close()
       status.value = 'closed'
       wrapper.onanimationend = null
+      cb?.()
     }
   })
 }
+
+function onNativeCancel(e: Event) {
+  e.preventDefault()
+  close(e.target as HTMLDialogElement)
+  // status.value = 'closed'
+}
 export default function () {
-  return { status, show, close }
+  return { status, show, close, onNativeCancel }
 }

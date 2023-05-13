@@ -1,7 +1,13 @@
 <script setup lang="ts">
 import { Callback } from '~/composables/useZoomModal'
 
-const { status, close, show } = useZoomModal()
+const emits = defineEmits<{
+  (e: 'cancel', v: Event): void
+  (e: 'closed'): void
+  (e: 'shown'): void
+}>()
+
+const { status, close, show, onNativeCancel: onNativeClose } = useZoomModal()
 
 const wrapper = shallowRef<HTMLDialogElement>()
 // const status = shallowRef(0)
@@ -11,12 +17,16 @@ function showModal(cb?: Callback) {
     return
   }
   show(wrapper.value, cb)
+  emits('shown')
 }
 function closeModal(cb?: Callback) {
   if (!wrapper.value) {
     return
   }
-  close(wrapper.value, cb)
+  close(wrapper.value, () => {
+    cb?.()
+    emits('closed')
+  })
 }
 defineExpose({
   showModal,
@@ -30,6 +40,10 @@ defineExpose({
     ref="wrapper"
     class="t-modal overflow-visible"
     :status="status"
+    @cancel="(e: Event) => {
+      emits('cancel', e)
+      onNativeClose(e)
+    }"
   >
     <slot v-bind="{ showModal, closeModal }" />
   </dialog>

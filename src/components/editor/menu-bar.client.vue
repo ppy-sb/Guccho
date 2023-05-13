@@ -1,15 +1,12 @@
 <script lang="ts">
 import type { Editor } from '@tiptap/vue-3'
-import { BubbleMenu } from '@tiptap/vue-3'
 
 // @ts-expect-error it's an url
 import remixiconUrl from 'remixicon/fonts/remixicon.symbol.svg'
 import type { PropType } from 'vue'
+import { EditorInsertImage } from '#components'
 
 export default defineComponent({
-  components: {
-    BubbleMenu,
-  },
 
   props: {
     editor: {
@@ -25,7 +22,6 @@ export default defineComponent({
 
   data() {
     return {
-      link: '',
       remixiconUrl,
       items: [
         {
@@ -122,6 +118,14 @@ export default defineComponent({
           type: 'divider',
         },
         {
+          icon: 'image-add-line',
+          title: 'Insert Image',
+          action: () => (this.$refs.insertImage as InstanceType<typeof EditorInsertImage>)?.show(),
+        },
+        {
+          type: 'divider',
+        },
+        {
           icon: 'text-wrap',
           title: 'Hard Break',
           action: () => this.editor.chain().focus().setHardBreak().run(),
@@ -152,74 +156,12 @@ export default defineComponent({
     }
   },
 
-  methods: {
-    setLink() {
-      const url = this.link
-      // empty
-      if (!url) {
-        this.editor
-          .chain()
-          .focus()
-          .extendMarkRange('link')
-          .unsetLink()
-          .run()
-
-        return
-      }
-
-      // update link
-      this.editor
-        .chain()
-        .focus()
-        .extendMarkRange('link')
-        .setLink({ href: url })
-        .run()
-
-      this.link = ''
-    },
-    prevLink() {
-      const link = this.editor.getAttributes('link')
-      this.link = link.href
-    },
-  },
 })
 </script>
 
 <template>
   <div class="menubar">
-    <BubbleMenu
-      class="bubble-menu"
-      :tippy-options="{ duration: 100 }"
-      :editor="editor"
-    >
-      <v-dropdown
-        theme="guweb-dropdown"
-        :distance="10"
-        strategy="absolute"
-      >
-        <button @click="prevLink">
-          <svg class="remix" style="width: 1.2rem; height: 1.2rem">
-            <use :xlink:href="`${remixiconUrl}#ri-link`" fill="white" />
-          </svg>
-        </button>
-        <template #popper>
-          <div class="card bg-gbase-100/30">
-            <div class="card-body p-2">
-              <div class="input-group input-group-sm">
-                <span>URL</span>
-                <input id="url" v-model="link" type="url" class="input input-sm shadow-lg">
-                <button class="btn btn-sm btn-success" @click="setLink">
-                  apply
-                </button>
-              </div>
-            </div>
-          </div>
-        </template>
-      </v-dropdown>
-      <!-- <button v-else :disabled="!editor.isActive('link')" @click="editor.chain().focus().unsetLink().run()">
-        unsetLink
-      </button> -->
-    </BubbleMenu>
+    <editor-insert-image ref="insertImage" :editor="editor" />
     <template v-for="(item, index) in items">
       <div
         v-if="'type' in item && item.type === 'divider'"
@@ -309,27 +251,6 @@ export default defineComponent({
   .icon {
     width: 1.75rem !important;
     height: 1.75rem !important;
-  }
-}
-.bubble-menu {
-  display: flex;
-  background-color: #0d0d0d;
-  padding: 0.2rem;
-  border-radius: 0.5rem;
-
-  button {
-    border: none;
-    background: none;
-    color: #fff;
-    font-size: 0.85rem;
-    font-weight: 500;
-    padding: 0 0.2rem;
-    opacity: 0.6;
-
-    &:hover,
-    &.is-active {
-      opacity: 1;
-    }
   }
 }
 </style>
