@@ -36,8 +36,8 @@ defineExpose({
 </script>
 
 <template>
-  <t-responsive-modal ref="modal" v-slot="{ closeModal }" class="my-auto" @closed="reset">
-    <div class="card bg-base-100/50 shadow-lg">
+  <t-responsive-modal ref="modal" v-slot="{ closeModal }" class="my-auto max-w-full" @closed="reset">
+    <div class="card bg-base-100/50 shadow-lg w-full">
       <form action="#" @submit.prevent="setLink(closeModal)">
         <div class="card-body w-96">
           <div class="form-control">
