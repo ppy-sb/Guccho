@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Editor } from '@tiptap/vue-3'
-import { TResponsiveModal } from '#components'
+import type { TResponsiveModal } from '#components'
 
 const props = defineProps<{
   editor: Editor
@@ -36,7 +36,7 @@ defineExpose({
 </script>
 
 <template>
-  <t-modal ref="modal" v-slot="{ closeModal }" class="my-auto" @closed="reset">
+  <t-responsive-modal ref="modal" v-slot="{ closeModal }" class="my-auto" @closed="reset">
     <div class="card bg-base-100/50 shadow-lg">
       <form action="#" @submit.prevent="setLink(closeModal)">
         <div class="card-body w-96">
@@ -90,7 +90,7 @@ defineExpose({
         </div>
       </form>
     </div>
-  </t-modal>
+  </t-responsive-modal>
 </template>
 
 <style scoped>
