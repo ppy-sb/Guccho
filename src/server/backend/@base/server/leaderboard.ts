@@ -1,4 +1,4 @@
-import type { idTransformable } from './extends'
+import type { idTransformable } from './@extends'
 import type {
   AvailableRuleset,
   LeaderboardRankingSystem,
@@ -25,6 +25,7 @@ export namespace LeaderboardProvider {
     pageSize: number
   }
 }
+
 export interface LeaderboardProvider<Id> extends idTransformable {
   getLeaderboard(
     query: LeaderboardProvider.BaseQuery & {

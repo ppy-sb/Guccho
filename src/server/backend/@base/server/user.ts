@@ -1,5 +1,5 @@
 import type { JSONContent } from '@tiptap/core'
-import type { idTransformable } from './extends'
+import type { idTransformable } from './@extends'
 import type { BeatmapSource, RankingStatus } from '~/types/beatmap'
 import type {
   LeaderboardRankingSystem,

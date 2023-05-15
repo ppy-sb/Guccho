@@ -6,7 +6,6 @@ import { TRPCError } from '@trpc/server'
 import { glob } from 'glob'
 import imageType from 'image-type'
 import type { Prisma, Stat } from '.prisma/bancho.py'
-import type { JSONContent } from '@tiptap/core'
 import { BanchoPyMode, BanchoPyPrivilege } from '../enums'
 import {
   createRulesetData,
@@ -423,7 +422,7 @@ WHERE s.userid = ${id}
   async changeUserpage(
     user: UserEssential<Id>,
     input: {
-      profile: JSONContent
+      profile: ArticleProvider.JSONContent
     }
   ) {
     const html = article.render(input.profile)

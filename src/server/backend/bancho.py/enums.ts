@@ -1,4 +1,4 @@
-import type { ReadAccess, WriteAccess } from '../@base/server'
+import type { ArticleProvider } from '../@base/server'
 
 //  privileges intended for all normal players.
 export enum BanchoPyPrivilege {
@@ -75,7 +75,7 @@ export enum Access {
   staff = 1 << 4,
 }
 
-export function toBanchoPyAccess(priv: (ReadAccess | WriteAccess)[]): Access {
+export function toBanchoPyAccess(priv: (ArticleProvider.ReadAccess | ArticleProvider.WriteAccess)[]): Access {
   let carry = 0
   if (priv.includes('public')) {
     carry &= Access.public

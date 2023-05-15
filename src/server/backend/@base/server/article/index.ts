@@ -1,34 +1,53 @@
 import fs from 'node:fs/promises'
+
 import { isAbsolute, join, relative, resolve } from 'node:path'
 import { BSON } from 'bson'
-import type { JSONContent } from '@tiptap/core'
+import type { JSONContent as _JSONContent } from '@tiptap/core'
 import { generateHTML } from '@tiptap/html'
 import type { UserEssential, UserPrivilegeString } from '~/types/user'
 import useEditorExtensions from '~/composables/useEditorExtensions'
 import { UserRelationProvider } from '~/server/backend/bancho.py/server'
 
-export type WriteAccess = 'staff' | 'moderator' | 'beatmapNominator'
-export type ReadAccess = WriteAccess | 'public'
-export interface Content {
-  json: JSONContent
-  html: string
-}
-export interface ContentPrivilege<ownerId = any> extends Content {
-  privilege: {
-    read: ReadAccess[]
-    write: WriteAccess[]
+export namespace ArticleProvider {
+  export type JSONContent = _JSONContent & { brand: '__JSONContent' }
+  export type WriteAccess = 'staff' | 'moderator' | 'beatmapNominator'
+  export type ReadAccess = WriteAccess | 'public'
+  export interface BaseContent {
+    json: ArticleProvider.JSONContent
+    v: number
   }
-  owner?: ownerId
-}
-
-export interface AccessControl {
-  access: {
-    read: boolean
-    write: boolean
+  export interface DynamicContent extends BaseContent {
+    dynamic: true
   }
-}
 
-const defaultContentPrivilege: ContentPrivilege['privilege'] = {
+  export interface GeneratedContent extends BaseContent {
+    dynamic: false
+    html: string
+  }
+
+  export type Content = DynamicContent | GeneratedContent
+  export type OwnerId = any
+  export interface Meta<Id extends OwnerId = OwnerId> {
+    privilege: {
+      read: ReadAccess[]
+      write: WriteAccess[]
+    }
+    owner: Id
+    created: [Id, Date]
+    lastUpdate: [Id, Date]
+  }
+  export type BuiltInAuthor = 'built-in'
+  export type BuiltInMeta = ArticleProvider.Meta<BuiltInAuthor>
+
+  export interface AccessControl {
+    access: {
+      read: boolean
+      write: boolean
+    }
+  }
+
+}
+const defaultContentPrivilege: ArticleProvider.Meta['privilege'] = {
   read: ['public'],
   write: ['staff'],
 }
@@ -36,7 +55,7 @@ const defaultContentPrivilege: ContentPrivilege['privilege'] = {
 export abstract class ArticleProvider {
   relation = new UserRelationProvider()
   articles = resolve('articles')
-  fallbacks = new Map<string, Content & ContentPrivilege>()
+  fallbacks = new Map<string, ArticleProvider.Content & ArticleProvider.Meta>()
   constructor() {
     this.initFallbacks()
   }
@@ -47,6 +66,7 @@ export abstract class ArticleProvider {
       if (!fb) {
         return
       }
+
       this.fallbacks.set(code, fb)
     })
   }
@@ -60,12 +80,12 @@ export abstract class ArticleProvider {
     slug: string
     fallback: boolean
     user: UserEssential<any>
-  }): PromiseLike<(ContentPrivilege & Content & AccessControl) | undefined>
+  }): PromiseLike<(ArticleProvider.Content & ArticleProvider.Meta & ArticleProvider.AccessControl) | undefined>
 
   abstract save(opt: {
     slug: string
-    content: JSONContent
-    privilege: ContentPrivilege['privilege']
+    content: ArticleProvider.JSONContent
+    privilege: ArticleProvider.Meta['privilege']
     user: UserEssential<any>
   }): PromiseLike<void>
 
@@ -73,7 +93,7 @@ export abstract class ArticleProvider {
     slug: string
     fallback?: boolean
     user?: UserEssential<any>
-  }): Promise<(ContentPrivilege<any> & Content) | undefined> {
+  }): Promise<(ArticleProvider.Meta<any> & ArticleProvider.Content) | undefined> {
     const content = await this.getLocalArticleData(opt)
     if (!content) {
       return undefined
@@ -86,41 +106,49 @@ export abstract class ArticleProvider {
     fallback?: boolean
   }) {
     const { slug, fallback } = opt
-    let file = join(this.articles, slug)
+    const file = join(this.articles, slug)
     if (!this.inside(file)) {
       return this.fallbacks.get('403')
     }
+
     try {
-      let check = fs.access(file, fs.constants.R_OK)
-      if (fallback) {
-        check = check
-          .catch((_) => {
-            file = join(this.articles, './fallbacks', slug)
-          })
-          .then(() => fs.access(file, fs.constants.R_OK))
-      }
-      await check
-      const content = this.deserialize(await fs.readFile(file))
-      return Object.assign(content, {
-        privilege: { ...defaultContentPrivilege, ...content.privilege },
-      })
+      await fs.access(file, fs.constants.R_OK)
+        .catch((ex) => {
+          if (!fallback) {
+            throw ex
+          }
+          const fallbackFile = join(this.articles, './fallbacks', slug)
+          return fs.access(fallbackFile, fs.constants.R_OK)
+        })
     }
     catch (e) {
       return undefined
     }
+
+    const content = this.deserialize(await fs.readFile(file))
+    return Object.assign(content, {
+      privilege: { ...defaultContentPrivilege, ...content.privilege },
+    })
   }
 
-  protected serialize(content: Content & ContentPrivilege) {
+  protected serialize(content: ArticleProvider.Content & ArticleProvider.Meta) {
     return BSON.serialize(content)
   }
 
   protected deserialize(data: Uint8Array) {
     const content = BSON.deserialize(data)
-    const succeed = 'html' in content && 'json' in content
-    if (!succeed) {
+    return content as ArticleProvider.Content & ArticleProvider.Meta
+  }
+
+  toLatestFormat(content: BSON.Document) {
+    if (!('json' in content)) {
       throw new Error('unable to deserialize content')
     }
-    return content as ContentPrivilege & Content
+    if (!('html' in content)) {
+      content.dynamic ||= true
+    }
+
+    return content as ArticleProvider.Content & ArticleProvider.Meta
   }
 
   async saveLocal({
@@ -128,22 +156,28 @@ export abstract class ArticleProvider {
     content,
     user,
     privilege,
+    dynamic,
   }: {
     slug: string
-    content: JSONContent
-    privilege: ContentPrivilege['privilege']
+    content: ArticleProvider.JSONContent
+    privilege: ArticleProvider.Meta['privilege']
     user: UserEssential<any>
+    dynamic: boolean
   }): Promise<void> {
     if (!user.roles.find(role => ['admin', 'owner'].includes(role))) {
       throw new Error('you have insufficient privilege to edit this article')
     }
     const loc = join(this.articles, slug)
-    const _content = this.createContent({
-      json: content,
-      privilege,
-      owner: user.id,
-    })
-    await fs.writeFile(loc, this.serialize(_content))
+    const exists = await fs.access(loc).then(() => true).catch(() => false)
+    if (!exists) {
+      const _content = this.createContent({
+        json: content,
+        privilege,
+        owner: user.id,
+        dynamic,
+      })
+      await fs.writeFile(loc, this.serialize(_content))
+    }
   }
 
   async delete(opt: { slug: string; user: UserEssential<any> }) {
@@ -165,20 +199,17 @@ export abstract class ArticleProvider {
     return await fs.rm(loc)
   }
 
-  render(content: JSONContent) {
+  render(content: ArticleProvider.JSONContent) {
     const renderExtensions = useEditorExtensions()
     return generateHTML(content, renderExtensions)
   }
 
-  createContent(opt: {
-    json: JSONContent
-    privilege?: ContentPrivilege['privilege']
-    owner: any
-  }) {
-    const { json, privilege, owner } = opt
-    return <ContentPrivilege>{
+  createContent(opt: Pick<ArticleProvider.Content & ArticleProvider.Meta, 'json' | 'privilege' | 'owner' | 'dynamic'>) {
+    const { json, privilege, owner, dynamic } = opt
+    return <ArticleProvider.Content & ArticleProvider.Meta>{
       json,
-      html: this.render(json),
+      html: dynamic ? undefined : this.render(json),
+      dynamic,
       privilege: {
         ...defaultContentPrivilege,
         ...privilege,
@@ -187,9 +218,13 @@ export abstract class ArticleProvider {
     }
   }
 
+  // updateContent<T extends ArticleProvider.Content & ArticleProvider.Meta>(content: T, update: Partial<Pick<T, 'json' | 'privilege' | 'owner' | 'dynamic' | 'lastUpdate'>>) {
+  //   throw new Error('not impl\'d yet')
+  // }
+
   async checkPrivilege(
     access: 'read' | 'write',
-    content: ContentPrivilege,
+    content: ArticleProvider.Meta,
     user?: { id: unknown; roles: UserPrivilegeString[] }
   ) {
     const privRequired = content.privilege?.[access]

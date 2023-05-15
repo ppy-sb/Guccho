@@ -1,4 +1,4 @@
-import type { idTransformable } from './extends'
+import type { idTransformable } from './@extends'
 import type { Tag } from '~/types/search'
 import type {
   BeatmapEssential, BeatmapSource, BeatmapWithMeta, Beatmapset, RankingStatus,
@@ -11,9 +11,9 @@ export namespace MapProvider {
 }
 export interface MapProvider<Id> extends idTransformable {
   getBeatmapset(query: MapProvider.IdQuery<Id>): PromiseLike<
-    | (Beatmapset<BeatmapSource, Id, unknown> & {
+    Beatmapset<BeatmapSource, Id, unknown> & {
       beatmaps: BeatmapEssential<Id, unknown>[]
-    })
+    }
   >
   getBeatmap(
     query: MapProvider.IdQuery<Id>

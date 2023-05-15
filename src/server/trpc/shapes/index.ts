@@ -1,9 +1,9 @@
 import { existsSync } from 'node:fs'
 import z, { ZodIssueCode, literal, number, string, tuple, union } from 'zod'
 
-import type { JSONContent } from '@tiptap/core'
 import validator from 'validator'
 import { hasRuleset } from '../config'
+import type { ArticleProvider } from '$def/server/article'
 
 import type { Mode, Ruleset } from '~/types/common'
 
@@ -57,7 +57,7 @@ export const zodTipTapJSONContent = z
       })
       return z.NEVER
     }
-    return input as JSONContent
+    return input as ArticleProvider.JSONContent
   })
 
 export const zodRankingStatus = union([

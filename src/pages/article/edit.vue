@@ -1,109 +1,138 @@
 <script setup lang="ts">
+// Importing necessary components
 import { Editor } from '#components'
-import type { ContentPrivilege, ReadAccess, WriteAccess } from '~/server/backend/@base/server/article'
+import type { ArticleProvider } from '$def/server/article'
 
+// Define page middleware
 definePageMeta({
   middleware: ['auth', 'admin'],
 })
-
-const slug = shallowRef<string>()
 const app$ = useNuxtApp()
-const importArticleFile = shallowRef<HTMLInputElement | null>(null)
-const {
-  data: content,
-  refresh,
-} = await useAsyncData(async () => slug.value ? app$.$client.article.get.query(slug.value) : undefined)
-const editor = shallowRef<InstanceType<typeof Editor> | null>(null)
-const editing = shallowRef({ ...content.value?.json })
 
-const privilege = ref<NonNullable<ContentPrivilege['privilege']>>({
-  read: ['public'],
-  write: ['staff'],
+// Initializing shallow refs
+const importArticleFile = shallowRef<HTMLInputElement | null>(null)
+const editor = shallowRef<InstanceType<typeof Editor> | null>(null)
+
+const article = reactive<{
+  privilege: ArticleProvider.Meta['owner']
+  content?: ArticleProvider.Content['json']
+  owner?: ArticleProvider.Meta['owner']
+  dynamic: boolean
+  slug: string
+}>({
+  privilege: {
+    read: ['public'],
+    write: ['staff'],
+  },
+
+  content: undefined,
+  dynamic: false,
+  slug: '',
 })
+
+// Fetching article data from server
+const { data: content, refresh } = await useAsyncData(async () => {
+  if (article.slug) {
+    return app$.$client.article.get.query(article.slug)
+  }
+  return undefined
+})
+
+// Initializing default privileges for different access levels
+const privileges: Record<ArticleProvider.WriteAccess, string> = {
+  staff: 'Admin',
+  moderator: 'Moderator',
+  beatmapNominator: 'BN',
+}
+const readPrivileges: Record<ArticleProvider.ReadAccess, string> = {
+  ...privileges,
+  public: 'public',
+}
+
+// Helper function to convert privilege object to select options
+function options(priv: typeof privileges | typeof readPrivileges) {
+  return Object.entries(priv).map(([value, label]) => ({ label, value }))
+}
+
+// Export article data to a file
 function exportArticle() {
-  const file = new File([JSON.stringify({
-    privilege: privilege.value,
-    json: editing.value,
-  })], `${slug.value}.article`, { type: 'application/json' })
+  const file = new File(
+    [JSON.stringify({ privilege: article.privilege, json: article.content })],
+    `${article.slug || 'unnamed'}.article`,
+    { type: 'application/json' }
+  )
+
   const url = URL.createObjectURL(file)
 
   const a = document.createElement('a')
   a.href = url
-  a.download = `${slug.value || 'unnamed'}.article`
+  a.download = `${article.slug || 'unnamed'}.article`
   a.click()
 }
+
+// Import article data from a file
 async function importArticle() {
   const file = importArticleFile.value?.files?.[0]
   if (!file) {
     return
   }
+
   const data = new Uint8Array(await file.arrayBuffer())
   const decode = new TextDecoder('utf-8')
-  const json = JSON.parse(decode.decode(data)) as {
-    json: ContentPrivilege['json']
-    privilege: NonNullable<ContentPrivilege['privilege']>
+  const content = JSON.parse(decode.decode(data)) as {
+    json: ArticleProvider.Content['json']
+    privilege: ArticleProvider.Meta['privilege']
   }
-  editing.value = json.json
-  privilege.value = json.privilege
+
+  article.content = content.json
+  article.privilege = content.privilege
 
   editor.value?.reload()
 }
 
-const privileges: Partial<Record<WriteAccess, string>> = {
-  staff: 'Admin',
-  moderator: 'Moderator',
-  beatmapNominator: 'BN',
-}
-const readPriv: Partial<Record<ReadAccess, string>> = Object.assign(privileges, { public: 'public' })
-
-function options(priv: typeof privileges | typeof readPriv) {
-  return Object.entries(priv).map(([value, label]) => ({ label, value }))
-}
-
+// Create a new article
 async function create() {
-  content.value = {
-    json: {},
-    html: '',
-    access: {
-      write: true,
-      read: true,
-    },
-    privilege: privilege.value,
-  }
 }
 
+// Update article data from server
 async function update() {
   await refresh()
   if (!content.value) {
     return
   }
-  editing.value = content.value.json || {}
+
+  article.content = content.value.json || {}
   editor.value?.reload()
 
-  privilege.value = content.value.privilege
+  article.privilege = content.value.privilege
 }
 
+// Save article data to server
 async function save() {
-  if (!slug.value) {
+  if (!article.slug) {
     return
   }
-  await app$.$client.article.save.mutate({
-    slug: slug.value,
-    content: editing.value,
-    privilege: privilege.value,
-  })
+  if (!article.content) {
+    return
+  }
+
+  await app$.$client.article.save.mutate(article as Required<typeof article>)
 }
+
+// Delete article from server
 async function del() {
-  if (!slug.value) {
+  if (!article.slug) {
     return
   }
+
   // eslint-disable-next-line no-alert
-  const conf = confirm('are you sure? you cannot revert this process.')
+  const conf = confirm('Are you sure? You cannot revert this process.')
   if (!conf) {
     return
   }
+
   await app$.$client.article.delete.mutate({
-    slug: slug.value,
+    slug: article.slug,
   })
 }
 </script>
@@ -112,8 +141,8 @@ async function del() {
   <section class="container pb-8 mx-auto custom-container lg:px-2">
     <div class="flex gap-2 items-baseline">
       Editing: <input
-        v-model="slug" type="text" class="input input-sm shadow-lg" :class="{
-          'input-error': !slug,
+        v-model="article.slug" type="text" class="input input-sm shadow-lg" :class="{
+          'input-error': !article.slug,
         }"
       >
       <button class="btn btn-sm btn-info" @click="() => update()">
@@ -122,7 +151,7 @@ async function del() {
       <button class="btn btn-sm btn-primary" @click="() => create()">
         New
       </button>
-      <template v-if="content?.access.write && slug">
+      <template v-if="content?.access.write && article.slug">
         <button class="btn btn-sm btn-success" @click="() => save()">
           Save
         </button>
@@ -143,13 +172,13 @@ async function del() {
     <div class="flex flex-col md:flex-row gap-3 flex-wrap mt-2">
       <div class="form-control flex-row items-baseline gap-2">
         <label class="label pl-0">Read</label>
-        <t-multi-select v-model="privilege.read" size="sm" :options="options(readPriv)" />
+        <t-multi-select v-model="article.privilege.read" size="sm" :options="options(readPrivileges)" />
       </div>
       <div class="form-control  flex-row items-baseline gap-2">
         <label class="label">Write</label>
-        <t-multi-select v-model="privilege.write" size="sm" :options="options(privileges)" />
+        <t-multi-select v-model="article.privilege.write" size="sm" :options="options(privileges)" />
       </div>
     </div>
-    <lazy-editor v-if="content?.json" ref="editor" v-model="editing" class="safari-performance-boost mt-2" />
+    <lazy-editor v-if="article.content" ref="editor" v-model="article.content" class="safari-performance-boost mt-2" />
   </section>
 </template>

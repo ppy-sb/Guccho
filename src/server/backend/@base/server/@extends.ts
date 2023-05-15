@@ -9,9 +9,3 @@ export abstract class scoreIdTransformable {
   static scoreIdToString: typeof scoreIdToString
   static stringToScoreId: typeof stringToScoreId
 }
-
-// export {
-//   hasLeaderboardRankingSystem,
-//   hasRankingSystem,
-//   hasRuleset,
-// } from './guards'

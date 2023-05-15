@@ -1,7 +1,5 @@
-import type { JSONContent } from '@tiptap/core'
 import type { UserEssential } from '~/types/user'
-import type { ContentPrivilege } from '~/server/backend/@base/server/article'
-import { ArticleProvider as Base } from '~/server/backend/@base/server/article'
+import { ArticleProvider as Base } from '$def/server/article'
 
 export class ArticleProvider extends Base {
   async get(opt: { slug: string; fallback?: boolean; user?: UserEssential<unknown> }) {
@@ -22,7 +20,16 @@ export class ArticleProvider extends Base {
     return returnValue
   }
 
-  async save(opt: { slug: string; content: JSONContent; user: UserEssential<unknown>; privilege: ContentPrivilege['privilege'] }) {
+  async save(opt: {
+    slug: string
+    content: Base.JSONContent
+    user: UserEssential<unknown>
+    privilege: Base.Meta['privilege']
+    dynamic: boolean
+  }) {
     return this.saveLocal(opt)
   }
+}
+export namespace ArticleProvider {
+  export type JSONContent = Base.JSONContent
 }
