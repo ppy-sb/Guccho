@@ -182,6 +182,12 @@ onMounted(() => {
     profile.value = pf.raw
   }
 })
+
+function resetAvatar() {
+  newAvatar.value = undefined
+  newAvatarURL.value = undefined
+  uploadingAvatarStat.value = 'idle'
+}
 </script>
 
 <template>
@@ -243,31 +249,23 @@ onMounted(() => {
           <img v-else :src="newAvatarURL" class="mask mask-squircle overflow-hidden _avatar">
         </div>
         <t-button
+          v-if="uploadingAvatarStat !== 'succeed' && newAvatar"
           class="grow"
           :loading="uploadingAvatarStat === 'uploading'"
-          :disabled="uploadingAvatarStat === 'succeed'"
-          :variant="uploadingAvatarStat === 'succeed' ? 'success' : 'gbase'"
           @click="saveAvatar"
         >
           {{
             uploadingAvatarStat === 'idle'
               ? "Save"
-              : uploadingAvatarStat === 'uploading'
-                ? "Uploading"
-                : uploadingAvatarStat === 'succeed'
-                  ? "done"
-                  : ""
+              : "Uploading"
           }}
         </t-button>
         <t-button
+          :variant="uploadingAvatarStat === 'succeed' ? 'success' : 'gbase'"
           class="grow"
-          @click="closeModal(() => {
-            newAvatar = undefined
-            newAvatarURL = undefined
-            uploadingAvatarStat = 'idle'
-          })"
+          @click="closeModal(resetAvatar)"
         >
-          close
+          {{ uploadingAvatarStat === 'succeed' ? "Done" : "Cancel" }}
         </t-button>
       </div>
     </t-responsive-modal>
