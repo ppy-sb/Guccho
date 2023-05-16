@@ -1,55 +1,22 @@
 import fs from 'node:fs/promises'
 
 import { isAbsolute, join, relative, resolve } from 'node:path'
+import { PathLike } from 'node:fs'
 import { BSON } from 'bson'
-import type { JSONContent as _JSONContent } from '@tiptap/core'
+import type { JSONContent as TipTapJSONContent } from '@tiptap/core'
 import { generateHTML } from '@tiptap/html'
+import { z } from 'zod'
+
+import { Id } from '../..'
+import { latest, v0, versions } from './version-control/v'
+import { findShortestPath } from './version-control/path'
+import { paths } from './version-control'
 import type { UserEssential, UserPrivilegeString } from '~/types/user'
 import useEditorExtensions from '~/composables/useEditorExtensions'
 import { UserRelationProvider } from '~/server/backend/bancho.py/server'
 
-export namespace ArticleProvider {
-  export type JSONContent = _JSONContent & { brand: '__JSONContent' }
-  export type WriteAccess = 'staff' | 'moderator' | 'beatmapNominator'
-  export type ReadAccess = WriteAccess | 'public'
-  export interface BaseContent {
-    json: ArticleProvider.JSONContent
-    v: number
-  }
-  export interface DynamicContent extends BaseContent {
-    dynamic: true
-  }
-
-  export interface GeneratedContent extends BaseContent {
-    dynamic: false
-    html: string
-  }
-
-  export type Content = DynamicContent | GeneratedContent
-  export type OwnerId = any
-  export interface Meta<Id extends OwnerId = OwnerId> {
-    privilege: {
-      read: ReadAccess[]
-      write: WriteAccess[]
-    }
-    owner: Id
-    created: [Id, Date]
-    lastUpdate: [Id, Date]
-  }
-  export type BuiltInAuthor = 'built-in'
-  export type BuiltInMeta = ArticleProvider.Meta<BuiltInAuthor>
-
-  export interface AccessControl {
-    access: {
-      read: boolean
-      write: boolean
-    }
-  }
-
-}
-const defaultContentPrivilege: ArticleProvider.Meta['privilege'] = {
-  read: ['public'],
-  write: ['staff'],
+async function access(file: PathLike, constant?: typeof fs['constants'][keyof typeof fs['constants']]) {
+  return fs.access(file, constant).then(() => true).catch(() => false)
 }
 
 export abstract class ArticleProvider {
@@ -106,49 +73,53 @@ export abstract class ArticleProvider {
     fallback?: boolean
   }) {
     const { slug, fallback } = opt
-    const file = join(this.articles, slug)
+    let file = join(this.articles, slug)
     if (!this.inside(file)) {
       return this.fallbacks.get('403')
     }
 
-    try {
-      await fs.access(file, fs.constants.R_OK)
-        .catch((ex) => {
-          if (!fallback) {
-            throw ex
-          }
-          const fallbackFile = join(this.articles, './fallbacks', slug)
-          return fs.access(fallbackFile, fs.constants.R_OK)
-        })
-    }
-    catch (e) {
-      return undefined
+    const canAccessOriginalFile = await access(file, fs.constants.R_OK)
+    if (!canAccessOriginalFile) {
+      if (!fallback) {
+        return undefined
+      }
+      file = join(this.articles, './fallbacks', slug)
+      if (!await access(file, fs.constants.R_OK)) {
+        return undefined
+      }
     }
 
     const content = this.deserialize(await fs.readFile(file))
-    return Object.assign(content, {
-      privilege: { ...defaultContentPrivilege, ...content.privilege },
-    })
+    return this.validate(content, { file, tryUpdate: true, writeBack: true })
   }
 
-  protected serialize(content: ArticleProvider.Content & ArticleProvider.Meta) {
+  serialize(content: ArticleProvider.Content & ArticleProvider.Meta) {
     return BSON.serialize(content)
   }
 
-  protected deserialize(data: Uint8Array) {
-    const content = BSON.deserialize(data)
-    return content as ArticleProvider.Content & ArticleProvider.Meta
+  deserialize(data: Uint8Array) {
+    return BSON.deserialize(data)
   }
 
-  toLatestFormat(content: BSON.Document) {
-    if (!('json' in content)) {
-      throw new Error('unable to deserialize content')
+  validate(content: { v?: string | number | symbol }, opt: ArticleProvider.ValidateOpt) {
+    if (content.v === undefined) {
+      content.v = v0.v
     }
-    if (!('html' in content)) {
-      content.dynamic ||= true
+    if (!(content.v in versions)) {
+      throw new Error('unknown version')
+    }
+    const parsed = versions[(content.v as keyof typeof versions)].schema.safeParse(content)
+    if (!parsed.success) {
+      throw new Error('article may be broken')
+    }
+    const latestVersion = latest.v
+    const path = findShortestPath(paths, content.v, latestVersion)
+    if (!path) {
+      throw new Error('unable to update article to latest format')
     }
 
-    return content as ArticleProvider.Content & ArticleProvider.Meta
+    const result = path.rawPath.reduce((acc, cur) => cur.update(acc), parsed.data)
+    return latest.schema.parse(result)
   }
 
   async saveLocal({
@@ -204,17 +175,26 @@ export abstract class ArticleProvider {
     return generateHTML(content, renderExtensions)
   }
 
-  createContent(opt: Pick<ArticleProvider.Content & ArticleProvider.Meta, 'json' | 'privilege' | 'owner' | 'dynamic'>) {
+  createContent(opt: Pick<ArticleProvider.Content & ArticleProvider.Meta, 'json' | 'privilege' | 'owner' | 'dynamic'>): ArticleProvider.Content & ArticleProvider.Meta {
     const { json, privilege, owner, dynamic } = opt
-    return <ArticleProvider.Content & ArticleProvider.Meta>{
+    const base = {
       json,
-      html: dynamic ? undefined : this.render(json),
-      dynamic,
-      privilege: {
-        ...defaultContentPrivilege,
-        ...privilege,
-      },
+      privilege,
       owner,
+      v: latest.v,
+      created: [owner, new Date()] as ArticleProvider.Signature,
+      lastUpdated: [owner, new Date()] as ArticleProvider.Signature,
+    }
+    if (dynamic) {
+      return Object.assign(base, {
+        dynamic,
+      })
+    }
+    else {
+      return Object.assign(base, {
+        html: this.render(json),
+        dynamic: true,
+      })
     }
   }
 
@@ -247,4 +227,58 @@ export abstract class ArticleProvider {
       || false
     )
   }
+}
+
+export namespace ArticleProvider {
+
+  export const writeAccess = latest.writeAccess
+  export const readAccess = latest.readAccess
+  export const builtInAuthor = 'built-in'
+
+  export type WriteAccess = z.infer<typeof writeAccess>
+  export type ReadAccess = z.infer<typeof readAccess>
+  export type JSONContent = TipTapJSONContent & { __brand: 'JSONContent' }
+
+  export interface BaseContent {
+    json: ArticleProvider.JSONContent
+    v: number
+  }
+  export interface DynamicContent extends BaseContent {
+    dynamic: true
+  }
+
+  export interface GeneratedContent extends BaseContent {
+    dynamic: false
+    html: string
+  }
+
+  export type Content = DynamicContent | GeneratedContent
+  export type OwnerId = string | number
+  export type Signature = [Id, Date]
+  export interface Meta<Id extends OwnerId = OwnerId> {
+    privilege: {
+      read: ReadAccess[]
+      write: WriteAccess[]
+    }
+    owner: Id
+    created: Signature
+    lastUpdated: Signature
+  }
+  export type BuiltInMeta = ArticleProvider.Meta<typeof builtInAuthor>
+
+  export interface AccessControl {
+    access: {
+      read: boolean
+      write: boolean
+    }
+  }
+
+  export type ValidateOpt = {
+    tryUpdate: boolean
+    writeBack: boolean
+  } & ({
+    file: PathLike
+  } | {
+    id: Id
+  })
 }

@@ -1,5 +1,5 @@
 import { existsSync } from 'node:fs'
-import z, { ZodIssueCode, literal, number, string, tuple, union } from 'zod'
+import z, { ZodIssueCode, ZodSchema, literal, number, string, tuple, union } from 'zod'
 
 import validator from 'validator'
 import { hasRuleset } from '../config'
@@ -49,16 +49,15 @@ export function validateModeRuleset({
 
 export const zodTipTapJSONContent = z
   .record(string(), z.any())
-  .transform((input, ctx) => {
+  .superRefine((input, ctx): input is ArticleProvider.JSONContent => {
     if (!('content' in input) || !Array.isArray(input.content)) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'has on content',
       })
-      return z.NEVER
     }
-    return input as ArticleProvider.JSONContent
-  })
+    return z.NEVER
+  }) as unknown as ZodSchema<ArticleProvider.JSONContent>
 
 export const zodRankingStatus = union([
   literal('graveyard'),

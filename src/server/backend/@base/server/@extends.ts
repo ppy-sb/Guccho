@@ -1,4 +1,4 @@
-import type { idToString, scoreIdToString, stringToId, stringToScoreId } from '~/server/backend/@base'
+import type { idToString, scoreIdToString, stringToId, stringToScoreId } from '$def'
 
 export abstract class idTransformable {
   static idToString: typeof idToString

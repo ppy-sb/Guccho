@@ -14,7 +14,7 @@ const importArticleFile = shallowRef<HTMLInputElement | null>(null)
 const editor = shallowRef<InstanceType<typeof Editor> | null>(null)
 
 const article = reactive<{
-  privilege: ArticleProvider.Meta['owner']
+  privilege: ArticleProvider.Meta['privilege']
   content?: ArticleProvider.Content['json']
   owner?: ArticleProvider.Meta['owner']
   dynamic: boolean

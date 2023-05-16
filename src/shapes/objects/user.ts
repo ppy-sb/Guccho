@@ -6,6 +6,7 @@ import type {
   UserModeRulesetStatistics,
 } from '~/types/statistics'
 import type { UserFull } from '~/types/user'
+import { ArticleProvider } from '$def/server'
 
 export function createISODate(date: Date = new Date()) {
   return date.toUTCString()
@@ -175,7 +176,7 @@ export const sampleUserWithSecrets: Required<UserFull<unknown>> = {
   },
   profile: {
     html: '<h1>what</h1>',
-    raw: {},
+    raw: {} as ArticleProvider.JSONContent,
   },
 }
 

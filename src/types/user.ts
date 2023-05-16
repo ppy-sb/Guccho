@@ -1,5 +1,3 @@
-import type { JSONContent } from '@tiptap/core'
-
 import type {
   AvailableRuleset,
   LeaderboardRankingSystem,
@@ -9,6 +7,7 @@ import type {
 } from './common'
 import type { UserModeRulesetStatistics } from './statistics'
 import type { UserRelationship } from './user-relationship'
+import { ArticleProvider } from '$def/server'
 
 export interface UserStatus {
   Offline: 'offline'
@@ -108,7 +107,7 @@ export interface UserExtra<
 
   profile?: {
     html: string
-    raw?: JSONContent
+    raw?: ArticleProvider.JSONContent
   }
   relationships: Array<UserRelationship<Id>>
   settings: UserSettings

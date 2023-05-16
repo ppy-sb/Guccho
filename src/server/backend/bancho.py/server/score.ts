@@ -15,7 +15,7 @@ import { env } from './source/env'
 
 import type {
   ScoreProvider as Base,
-} from '~/server/backend/@base/server'
+} from '$def/server'
 
 export class ScoreProvider implements Base<bigint, Id> {
   static idToString = idToString

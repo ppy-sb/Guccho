@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import md5 from 'md5'
-import type { JSONContent } from '@tiptap/core'
+
+// import type { JSONContent } from '@tiptap/core'
 import { Cropper } from 'vue-advanced-cropper'
 import type { Editor, TModal, TResponsiveModal } from '#components'
 import { useSession } from '~/store/session'
 
 import 'vue-advanced-cropper/dist/style.css'
+import { ArticleProvider } from '$def/server/article'
 
 definePageMeta({
   middleware: ['auth'],
@@ -36,7 +38,7 @@ if (!user.value) {
 }
 const unchanged = shallowRef({ ...user.value as Exclude<typeof user['value'], null> })
 
-const profile = shallowRef<JSONContent>()
+const profile = shallowRef<ArticleProvider.JSONContent>()
 const profileEdited = shallowRef(false)
 const editor = shallowRef<InstanceType<typeof Editor>>()
 
