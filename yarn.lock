@@ -3659,6 +3659,11 @@ devalue@^4.3.0:
   resolved "https://registry.yarnpkg.com/devalue/-/devalue-4.3.0.tgz#d86db8fee63a70317c2355be0d3d1b4d8f89a44e"
   integrity sha512-n94yQo4LI3w7erwf84mhRUkUJfhLoCZiLyoOZ/QFsDbcWNZePrLwbQpvZBUG2TNxwV3VjCKPxkiiQA6pe3TrTA==
 
+devalue@^4.3.1:
+  version "4.3.1"
+  resolved "https://registry.yarnpkg.com/devalue/-/devalue-4.3.1.tgz#08f9a0b5375ad754167aa71872a9c911a46a5428"
+  integrity sha512-Kc0TSP9IUU9eg55au5Q3YtqaYI2cgntVpunJV9Exbm9nvlBeTE5p2NqYHfpuXK6+VF2hF5PI+BPFPUti7e2N1g==
+
 didyoumean@^1.2.2:
   version "1.2.2"
   resolved "https://registry.yarnpkg.com/didyoumean/-/didyoumean-1.2.2.tgz#989346ffe9e839b4555ecf5666edea0d3e8ad037"
