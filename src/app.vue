@@ -24,7 +24,7 @@ onMounted(() => {
       ref="scroll"
       viewport
       :class="[safari ? 'safari' : 'not-safari']"
-      class="zoom-modal-container overflow-x-hidden"
+      class="zoom-modal-container overflow-x-clip"
       :data-l1-status="status"
       data-l2-status="hidden"
       :style="status !== 'closed' && {

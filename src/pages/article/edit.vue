@@ -1,18 +1,15 @@
 <script setup lang="ts">
-// Importing necessary components
+import { parse, stringify } from 'devalue'
 import { Editor } from '#components'
 import type { ArticleProvider } from '$def/server/article'
 
-// Define page middleware
 definePageMeta({
   middleware: ['auth', 'admin'],
 })
 const app$ = useNuxtApp()
 
-// Initializing shallow refs
 const importArticleFile = shallowRef<HTMLInputElement | null>(null)
 const editor = shallowRef<InstanceType<typeof Editor> | null>(null)
-
 const article = ref<{
   privilege: ArticleProvider.Meta['privilege']
   json?: ArticleProvider.Content['json']
@@ -30,7 +27,8 @@ const article = ref<{
   slug: '',
 })
 
-// Fetching article data from server
+const access = shallowRef<Record<'write' | 'read', boolean>>()
+
 const { data: content, refresh } = await useAsyncData(async () => {
   if (article.value.slug) {
     return app$.$client.article.get.query(article.value.slug)
@@ -38,7 +36,6 @@ const { data: content, refresh } = await useAsyncData(async () => {
   return undefined
 })
 
-// Initializing default privileges for different access levels
 const privileges: Record<ArticleProvider.WriteAccess, string> = {
   staff: 'Admin',
   moderator: 'Moderator',
@@ -57,9 +54,9 @@ function options(priv: typeof privileges | typeof readPrivileges) {
 // Export article data to a file
 function exportArticle() {
   const file = new File(
-    [JSON.stringify({ privilege: article.value.privilege, json: article.value.json })],
+    [stringify(article.value)],
     `${article.value.slug || 'unnamed'}.article`,
-    { type: 'application/json' }
+    { type: 'application/text' }
   )
 
   const url = URL.createObjectURL(file)
@@ -79,19 +76,17 @@ async function importArticle() {
 
   const data = new Uint8Array(await file.arrayBuffer())
   const decode = new TextDecoder('utf-8')
-  const content = JSON.parse(decode.decode(data)) as {
-    json: ArticleProvider.Content['json']
-    privilege: ArticleProvider.Meta['privilege']
-  }
+  const code = decode.decode(data)
 
-  article.value.json = content.json
-  article.value.privilege = content.privilege
+  const value = parse(code)
+  article.value = value
 
   editor.value?.reload()
 }
 
 // Create a new article
 async function create() {
+  article.value.json = {} as ArticleProvider.JSONContent
 }
 
 // Update article data from server
@@ -101,6 +96,7 @@ async function update() {
     return
   }
 
+  access.value = content.value.access
   article.value = {
     ...content.value,
     slug: article.value.slug,
@@ -154,15 +150,21 @@ async function del() {
       <button class="btn btn-sm btn-primary" @click="() => create()">
         New
       </button>
-      <template v-if="content?.access.write && article.slug">
-        <button class="btn btn-sm btn-success" @click="() => save()">
-          Save
-        </button>
-        <div class="divider divider-horizontal" />
-        <button class="btn btn-sm btn-error" @click="() => del()">
-          Delete
-        </button>
-      </template>
+      <button
+        class="btn btn-sm btn-success" :class="{
+          'btn-disabled': !(article.slug && article.json),
+        }" @click="() => save()"
+      >
+        Save
+      </button>
+      <div class="divider divider-horizontal" />
+      <button
+        class="btn btn-sm btn-error" :class="{
+          'btn-disabled': !(article.slug && access?.write),
+        }" @click="() => del()"
+      >
+        Delete
+      </button>
       <div class="divider divider-horizontal" />
       <input ref="importArticleFile" type="file" hidden @change="importArticle">
       <button class="btn btn-sm btn-primary" @click="importArticleFile?.click">
