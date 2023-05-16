@@ -51,7 +51,7 @@ export abstract class ArticleProvider {
 
   abstract save(opt: {
     slug: string
-    content: ArticleProvider.JSONContent
+    json: ArticleProvider.JSONContent
     privilege: ArticleProvider.Meta['privilege']
     user: UserEssential<any>
   }): PromiseLike<void>
@@ -124,13 +124,13 @@ export abstract class ArticleProvider {
 
   async saveLocal({
     slug,
-    content,
+    json,
     user,
     privilege,
     dynamic,
   }: {
     slug: string
-    content: ArticleProvider.JSONContent
+    json: ArticleProvider.JSONContent
     privilege: ArticleProvider.Meta['privilege']
     user: UserEssential<any>
     dynamic: boolean
@@ -142,12 +142,25 @@ export abstract class ArticleProvider {
     const exists = await fs.access(loc).then(() => true).catch(() => false)
     if (!exists) {
       const _content = this.createContent({
-        json: content,
+        json,
         privilege,
         owner: user.id,
         dynamic,
       })
       await fs.writeFile(loc, this.serialize(_content))
+    }
+    else {
+      const oldContent = await this.getLocal({ slug, fallback: false, user })
+      const _content = this.createContent({
+        json,
+        privilege,
+        owner: user.id,
+        dynamic,
+      })
+      await fs.writeFile(loc, this.serialize({
+        ...oldContent,
+        ..._content,
+      }))
     }
   }
 

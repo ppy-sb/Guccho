@@ -13,9 +13,9 @@ const app$ = useNuxtApp()
 const importArticleFile = shallowRef<HTMLInputElement | null>(null)
 const editor = shallowRef<InstanceType<typeof Editor> | null>(null)
 
-const article = reactive<{
+const article = ref<{
   privilege: ArticleProvider.Meta['privilege']
-  content?: ArticleProvider.Content['json']
+  json?: ArticleProvider.Content['json']
   owner?: ArticleProvider.Meta['owner']
   dynamic: boolean
   slug: string
@@ -25,15 +25,15 @@ const article = reactive<{
     write: ['staff'],
   },
 
-  content: undefined,
+  json: undefined,
   dynamic: false,
   slug: '',
 })
 
 // Fetching article data from server
 const { data: content, refresh } = await useAsyncData(async () => {
-  if (article.slug) {
-    return app$.$client.article.get.query(article.slug)
+  if (article.value.slug) {
+    return app$.$client.article.get.query(article.value.slug)
   }
   return undefined
 })
@@ -57,8 +57,8 @@ function options(priv: typeof privileges | typeof readPrivileges) {
 // Export article data to a file
 function exportArticle() {
   const file = new File(
-    [JSON.stringify({ privilege: article.privilege, json: article.content })],
-    `${article.slug || 'unnamed'}.article`,
+    [JSON.stringify({ privilege: article.value.privilege, json: article.value.json })],
+    `${article.value.slug || 'unnamed'}.article`,
     { type: 'application/json' }
   )
 
@@ -66,7 +66,7 @@ function exportArticle() {
 
   const a = document.createElement('a')
   a.href = url
-  a.download = `${article.slug || 'unnamed'}.article`
+  a.download = `${article.value.slug || 'unnamed'}.article`
   a.click()
 }
 
@@ -84,8 +84,8 @@ async function importArticle() {
     privilege: ArticleProvider.Meta['privilege']
   }
 
-  article.content = content.json
-  article.privilege = content.privilege
+  article.value.json = content.json
+  article.value.privilege = content.privilege
 
   editor.value?.reload()
 }
@@ -101,27 +101,30 @@ async function update() {
     return
   }
 
-  article.content = content.value.json || {}
-  editor.value?.reload()
-
-  article.privilege = content.value.privilege
+  article.value = {
+    ...content.value,
+    slug: article.value.slug,
+  }
+  nextTick(() => {
+    editor.value?.reload()
+  })
 }
 
 // Save article data to server
 async function save() {
-  if (!article.slug) {
+  if (!article.value.slug) {
     return
   }
-  if (!article.content) {
+  if (!article.value.json) {
     return
   }
 
-  await app$.$client.article.save.mutate(article as Required<typeof article>)
+  await app$.$client.article.save.mutate(article.value as Required<typeof article['value']>)
 }
 
 // Delete article from server
 async function del() {
-  if (!article.slug) {
+  if (!article.value.slug) {
     return
   }
 
@@ -132,7 +135,7 @@ async function del() {
   }
 
   await app$.$client.article.delete.mutate({
-    slug: article.slug,
+    slug: article.value.slug,
   })
 }
 </script>
@@ -179,6 +182,6 @@ async function del() {
         <t-multi-select v-model="article.privilege.write" size="sm" :options="options(privileges)" />
       </div>
     </div>
-    <lazy-editor v-if="article.content" ref="editor" v-model="article.content" class="safari-performance-boost mt-2" />
+    <lazy-editor v-if="article.json" ref="editor" v-model="article.json" class="safari-performance-boost mt-2" />
   </section>
 </template>

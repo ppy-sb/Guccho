@@ -3,6 +3,7 @@ import { v0, v1 } from './v'
 
 export const paths = [
   createUpdatePath(v0, v1, (from) => {
+    console.log('update from v0 to v1', from)
     type TFrom = typeof from
     type TPriv = TFrom['privilege']['read'] | TFrom['privilege']['write']
     const filterSelf = <T extends TPriv[number]>(i: T): i is Exclude<T, 'self'> => i !== 'self'

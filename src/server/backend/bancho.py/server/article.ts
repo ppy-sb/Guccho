@@ -22,7 +22,7 @@ export class ArticleProvider extends Base {
 
   async save(opt: {
     slug: string
-    content: Base.JSONContent
+    json: Base.JSONContent
     user: UserEssential<unknown>
     privilege: Base.Meta['privilege']
     dynamic: boolean

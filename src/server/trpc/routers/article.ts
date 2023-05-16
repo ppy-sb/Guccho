@@ -31,7 +31,7 @@ export const router = _router({
   }),
   save: adminProcedure.input(object({
     slug: string(),
-    content: record(any(), any()).refine((arg): arg is ArticleProvider.JSONContent => {
+    json: record(any(), any()).refine((arg): arg is ArticleProvider.JSONContent => {
       return !!arg
     }),
     privilege: object({
