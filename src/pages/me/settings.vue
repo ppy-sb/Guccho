@@ -221,8 +221,8 @@ function resetAvatar() {
                 and drop
               </p>
               <!-- <p class="text-xs text-gbase-500 dark:text-gbase-300">
-                        SVG, PNG, JPG or GIF (MAX. 800x400px)
-                      </p> -->
+                SVG, PNG, JPG or GIF (MAX. 800x400px)
+              </p> -->
               <p class="text-sm text-red-500">
                 {{ avatarError }}
               </p>
@@ -246,7 +246,7 @@ function resetAvatar() {
               @change="crop"
             />
           </output>
-          <img v-else :src="newAvatarURL" class="mask mask-squircle overflow-hidden _avatar">
+          <img v-else :src="newAvatarURL" class="mask mask-squircle overflow-hidden _avatar w-56 h-56">
         </div>
         <t-button
           v-if="uploadingAvatarStat !== 'succeed' && newAvatar"
