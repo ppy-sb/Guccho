@@ -1,24 +1,22 @@
-import { ZodSchema, z } from 'zod'
-
-type Key = string | number | symbol
-
-interface UpdatePath<FromSchema extends ZodSchema, ToSchema extends ZodSchema> {
-  from: {
-    v: Key
-    schema: FromSchema
-  }
-  to: {
-    v: Key
-    schema: ToSchema
-  }
-  update: (from: z.infer<FromSchema>) => z.infer<ToSchema>
+type Key = string | number
+interface Schema<Result> {
+  v: Key
+  parse(data: unknown): Result
 }
 
-export function createUpdatePath<FromSchema extends ZodSchema, ToSchema extends ZodSchema>(
-  from: UpdatePath<FromSchema, ToSchema>['from'],
-  to: UpdatePath<FromSchema, ToSchema>['to'],
-  updateFn: UpdatePath<FromSchema, ToSchema>['update'],
-): UpdatePath<FromSchema, ToSchema> {
+type inferResult<T extends Schema<any>> = T extends Schema<infer R> ? R : never
+
+interface UpdatePath<FromSchema extends Schema<any>, ToSchema extends Schema<any>> {
+  from: FromSchema
+  to: ToSchema
+  update: (fromSchema: inferResult<FromSchema>) => inferResult<ToSchema>
+}
+
+export function createUpdatePath<From extends Schema<any>, To extends Schema<any>>(
+  from: UpdatePath<From, To>['from'],
+  to: UpdatePath<From, To>['to'],
+  updateFn: UpdatePath<From, To>['update'],
+): UpdatePath<From, To> {
   return {
     from,
     to,
@@ -26,15 +24,13 @@ export function createUpdatePath<FromSchema extends ZodSchema, ToSchema extends 
   }
 }
 
+// ChatGPT wrote this!
 export function findShortestPath<
   Graph extends UpdatePath<any, any>,
-  Graphs extends Graph[],
-  From extends Key,
-  To extends Key,
 >(
-  graph: Graphs,
-  from: From,
-  to: To
+  graph: readonly Graph[],
+  from: Graph['from'],
+  to: Graph['to']
 ) {
   const adjacencyMap: Record<Key, Key[]> = {}
 
@@ -49,17 +45,17 @@ export function findShortestPath<
     adjacencyMap[fromVertex].push(toVertex)
   }
 
-  const queue: [Key, Key[], Graph[]][] = [[from, [], []]]
+  const queue: [Key, Key[], Graph[]][] = [[from.v, [], []]]
   const visited: Record<Key, boolean> = {}
 
   while (queue.length > 0) {
-    const [currentVertex, path, rawPath] = queue.shift()!
+    const [currentVertex, path, raw] = queue.shift()!
 
-    if (currentVertex === to) {
+    if (currentVertex === to.v) {
       return {
-        path: [...path, currentVertex] as [From, ...Key[], To],
-        rawPath: [
-          ...rawPath,
+        path: [...path, currentVertex],
+        raw: [
+          ...raw,
           ...graph.filter(
             node =>
               path.includes(node.from.v) && currentVertex === node.to.v
@@ -81,7 +77,7 @@ export function findShortestPath<
         adjacentVertex,
         [...path, currentVertex],
         [
-          ...rawPath,
+          ...raw,
           ...graph.filter(
             node =>
               path.includes(node.from.v) && currentVertex === node.to.v
@@ -92,4 +88,22 @@ export function findShortestPath<
   }
 
   return null // No path found
+}
+
+export function convert<
+  Graph extends UpdatePath<Schema<any>, Schema<any>>,
+  From extends Graph['from'],
+  To extends Graph['to'],
+>(
+  graph: readonly Graph[],
+  from: From,
+  to: To,
+  data: inferResult<From>
+) {
+  const foundPath = findShortestPath(graph, from, to)
+  if (!foundPath) {
+    throw new Error('unable to do update')
+  }
+  console.log('Updating Schema:', foundPath.path.join(' -> '))
+  return foundPath.raw.reduce((acc, cur) => cur.update(acc), data) as unknown as inferResult<To>
 }

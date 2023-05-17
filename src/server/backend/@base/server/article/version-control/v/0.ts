@@ -1,7 +1,7 @@
 import { any, array, literal, number, object, string, union } from 'zod'
-import { zodTipTapJSONContent } from '../../../../../../trpc/shapes'
+import { zodTipTapJSONContent } from '~/server/trpc/shapes'
 
-export const v = Symbol('nothing')
+export const v = 'dev-unstable'
 export const writeAccess = union([
   literal('self'),
   literal('staff'),
@@ -16,13 +16,23 @@ export const defaultPrivilege = {
 }
 export const ownerId = union([string(), number()])
 
-export const schema = object({
+export const contentSchema = object({
   json: zodTipTapJSONContent,
-  v: any(),
+  html: string(),
+})
+
+export const metaSchema = object({
   privilege: object({
     read: array(readAccess).default(defaultPrivilege.read),
     write: array(writeAccess).default(defaultPrivilege.write),
   }).default(defaultPrivilege),
   owner: ownerId,
-  html: string(),
 })
+
+export const schema = object({
+  v: any(),
+})
+  .and(contentSchema)
+  .and(metaSchema)
+
+export const parse = schema.parse

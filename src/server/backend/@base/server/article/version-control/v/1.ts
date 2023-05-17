@@ -1,8 +1,7 @@
-import { ZodSchema, ZodTypeDef, array, date, literal, number, object, string, tuple, union } from 'zod'
-import { ArticleProvider } from '../../..'
+import { array, date, literal, number, object, string, tuple, union } from 'zod'
 import { zodTipTapJSONContent } from '../../../../../../trpc/shapes'
 
-export const v = 1
+export const v = 1 as const
 export const writeAccess = union([
   literal('staff'),
   literal('moderator'),
@@ -16,9 +15,20 @@ export const defaultPrivilege = {
 }
 export const ownerId = union([string(), number()])
 
-export const schema: ZodSchema<ArticleProvider.Content & ArticleProvider.Meta, ZodTypeDef, unknown> = object({
+export const contentSchema = object({
   json: zodTipTapJSONContent,
-  v: literal(v),
+})
+  .and(
+    object({
+      html: string(),
+      dynamic: literal(false),
+    })
+      .or(object({
+        dynamic: literal(true),
+      }))
+  )
+
+export const metaSchema = object({
   privilege: object({
     read: array(readAccess),
     write: array(writeAccess),
@@ -26,12 +36,12 @@ export const schema: ZodSchema<ArticleProvider.Content & ArticleProvider.Meta, Z
   owner: ownerId,
   created: tuple([ownerId, date()]),
   lastUpdated: tuple([ownerId, date()]),
-}).and(union([
-  object({
-    html: string(),
-    dynamic: literal(false),
-  }),
-  object({
-    dynamic: literal(true),
-  }),
-]))
+})
+
+export const schema = object({
+  v: literal(v),
+})
+  .and(metaSchema)
+  .and(contentSchema)
+
+export const parse = schema.parse

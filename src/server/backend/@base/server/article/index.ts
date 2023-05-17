@@ -7,9 +7,10 @@ import type { JSONContent as TipTapJSONContent } from '@tiptap/core'
 import { generateHTML } from '@tiptap/html'
 import { z } from 'zod'
 
+import { DeepPartial } from '@trpc/server'
 import { Id } from '../..'
 import { latest, v0, versions } from './version-control/v'
-import { findShortestPath } from './version-control/path'
+import { convert } from './version-control/path'
 import { paths } from './version-control'
 import type { UserEssential, UserPrivilegeString } from '~/types/user'
 import useEditorExtensions from '~/composables/useEditorExtensions'
@@ -22,7 +23,7 @@ async function access(file: PathLike, constant?: typeof fs['constants'][keyof ty
 export abstract class ArticleProvider {
   relation = new UserRelationProvider()
   articles = resolve('articles')
-  fallbacks = new Map<string, ArticleProvider.Content & ArticleProvider.Meta>()
+  fallbacks = new Map<string, ArticleProvider.Content & ArticleProvider.Meta & ArticleProvider.Version>()
   constructor() {
     this.initFallbacks()
   }
@@ -47,7 +48,7 @@ export abstract class ArticleProvider {
     slug: string
     fallback: boolean
     user: UserEssential<any>
-  }): PromiseLike<(ArticleProvider.Content & ArticleProvider.Meta & ArticleProvider.AccessControl) | undefined>
+  }): PromiseLike<(ArticleProvider.Content & ArticleProvider.Meta & ArticleProvider.Version & ArticleProvider.AccessControl) | undefined>
 
   abstract save(opt: {
     slug: string
@@ -60,7 +61,7 @@ export abstract class ArticleProvider {
     slug: string
     fallback?: boolean
     user?: UserEssential<any>
-  }): Promise<(ArticleProvider.Meta<any> & ArticleProvider.Content) | undefined> {
+  }): Promise<(ArticleProvider.Meta & ArticleProvider.Content & ArticleProvider.Version) | undefined> {
     const content = await this.getLocalArticleData(opt)
     if (!content) {
       return undefined
@@ -93,7 +94,7 @@ export abstract class ArticleProvider {
     return this.validate(content, { file, tryUpdate: true, writeBack: true })
   }
 
-  serialize(content: ArticleProvider.Content & ArticleProvider.Meta) {
+  serialize(content: ArticleProvider.Content & ArticleProvider.Meta & ArticleProvider.Version) {
     return BSON.serialize(content)
   }
 
@@ -101,67 +102,61 @@ export abstract class ArticleProvider {
     return BSON.deserialize(data)
   }
 
-  validate(content: { v?: string | number | symbol }, opt: ArticleProvider.ValidateOpt) {
+  validate(content: { v?: keyof typeof versions }, opt: ArticleProvider.ValidateOpt): (ArticleProvider.Meta & ArticleProvider.Content & ArticleProvider.Version) | undefined {
+    let flagDiff = false
+
     if (content.v === undefined) {
       content.v = v0.v
+      flagDiff = true
     }
     if (!(content.v in versions)) {
       throw new Error('unknown version')
     }
-    const parsed = versions[(content.v as keyof typeof versions)].schema.safeParse(content)
-    if (!parsed.success) {
-      throw new Error('article may be broken')
-    }
-    const latestVersion = latest.v
-    const path = findShortestPath(paths, content.v, latestVersion)
-    if (!path) {
-      throw new Error('unable to update article to latest format')
+    if (content.v === latest.v) {
+      return latest.parse(content)
     }
 
-    const result = path.rawPath.reduce((acc, cur) => cur.update(acc), parsed.data)
-    return latest.schema.parse(result)
+    const head = versions[content.v].parse(content)
+    return latest.parse(convert(paths, versions[content.v], latest, head))
   }
 
-  async saveLocal({
-    slug,
-    json,
-    user,
-    privilege,
-    dynamic,
-  }: {
+  async saveLocal(opt: {
     slug: string
     json: ArticleProvider.JSONContent
     privilege: ArticleProvider.Meta['privilege']
     user: UserEssential<any>
     dynamic: boolean
   }): Promise<void> {
-    if (!user.roles.find(role => ['admin', 'owner'].includes(role))) {
+    if (!opt.user.roles.find(role => ['admin', 'owner'].includes(role))) {
       throw new Error('you have insufficient privilege to edit this article')
     }
-    const loc = join(this.articles, slug)
+    const content = this.createContent(opt)
+    let meta: ArticleProvider.Meta
+
+    const loc = join(this.articles, opt.slug)
     const exists = await fs.access(loc).then(() => true).catch(() => false)
-    if (!exists) {
-      const _content = this.createContent({
-        json,
-        privilege,
-        owner: user.id,
-        dynamic,
+
+    const oldContent = exists && await this.getLocal({ slug: opt.slug, fallback: false, user: opt.user })
+    if (oldContent) {
+      const oldMeta: ArticleProvider.Meta = pick(oldContent, ['created', 'lastUpdated', 'owner', 'privilege'])
+      meta = this.createMeta({
+        ...oldMeta,
+        privilege: oldMeta.privilege ?? opt.privilege,
       })
-      await fs.writeFile(loc, this.serialize(_content))
     }
     else {
-      const oldContent = await this.getLocal({ slug, fallback: false, user })
-      const _content = this.createContent({
-        json,
-        privilege,
-        owner: user.id,
-        dynamic,
+      meta = this.createMeta({
+        owner: opt.user.id,
+        privilege: opt.privilege,
+        created: [opt.user.id, new Date()],
+        lastUpdated: [opt.user.id, new Date()],
       })
-      await fs.writeFile(loc, this.serialize({
-        ...oldContent,
-        ..._content,
-      }))
     }
+    await fs.writeFile(loc, this.serialize({
+      ...content,
+      ...meta,
+      v: latest.v,
+    }))
   }
 
   async delete(opt: { slug: string; user: UserEssential<any> }) {
@@ -188,32 +183,29 @@ export abstract class ArticleProvider {
     return generateHTML(content, renderExtensions)
   }
 
-  createContent(opt: Pick<ArticleProvider.Content & ArticleProvider.Meta, 'json' | 'privilege' | 'owner' | 'dynamic'>): ArticleProvider.Content & ArticleProvider.Meta {
-    const { json, privilege, owner, dynamic } = opt
+  createContent(opt: Omit<ArticleProvider.Content, 'html'>) {
     const base = {
-      json,
-      privilege,
-      owner,
-      v: latest.v,
-      created: [owner, new Date()] as ArticleProvider.Signature,
-      lastUpdated: [owner, new Date()] as ArticleProvider.Signature,
+      ...opt,
     }
-    if (dynamic) {
-      return Object.assign(base, {
-        dynamic,
-      })
+    if (opt.dynamic) {
+      return base as ArticleProvider.DynamicContent
     }
     else {
       return Object.assign(base, {
-        html: this.render(json),
-        dynamic: true,
-      })
+        html: this.render(opt.json),
+        dynamic: false,
+      }) as ArticleProvider.StaticContent
     }
   }
 
-  // updateContent<T extends ArticleProvider.Content & ArticleProvider.Meta>(content: T, update: Partial<Pick<T, 'json' | 'privilege' | 'owner' | 'dynamic' | 'lastUpdate'>>) {
-  //   throw new Error('not impl\'d yet')
-  // }
+  createMeta(opt: DeepPartial<ArticleProvider.Meta>): ArticleProvider.Meta {
+    return latest.metaSchema.parse({
+      privilege: opt.privilege,
+      owner: opt.owner ?? ArticleProvider.builtInAuthor,
+      created: opt.created ?? [opt.owner, new Date()],
+      lastUpdated: opt.created ?? [opt.owner, new Date()],
+    })
+  }
 
   async checkPrivilege(
     access: 'read' | 'write',
@@ -254,18 +246,20 @@ export namespace ArticleProvider {
 
   export interface BaseContent {
     json: ArticleProvider.JSONContent
-    v: number
+  }
+  export interface Version {
+    v: string | number
   }
   export interface DynamicContent extends BaseContent {
     dynamic: true
   }
 
-  export interface GeneratedContent extends BaseContent {
+  export interface StaticContent extends BaseContent {
     dynamic: false
     html: string
   }
 
-  export type Content = DynamicContent | GeneratedContent
+  export type Content = DynamicContent | StaticContent
   export type OwnerId = string | number
   export type Signature = [Id, Date]
   export interface Meta<Id extends OwnerId = OwnerId> {

@@ -12,7 +12,7 @@ export const paths = [
       write: from.privilege.write.filter(filterSelf),
     },
     dynamic: false as const,
-    v: 1,
+    v: v1.v,
     created: [from.owner, new Date()] as [string | number, Date],
     lastUpdated: [from.owner, new Date()] as [string | number, Date],
   })),
