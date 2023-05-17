@@ -1,6 +1,6 @@
-type Key = string | number
+type Key = string | number | symbol
 interface Schema<Result> {
-  v: Key
+  v?: Key
   parse(data: unknown): Result
 }
 
@@ -27,10 +27,11 @@ export function createUpdatePath<From extends Schema<any>, To extends Schema<any
 // ChatGPT wrote this!
 export function findShortestPath<
   Graph extends UpdatePath<any, any>,
+  From extends Graph['from']['v'],
 >(
-  graph: readonly Graph[],
-  from: Graph['from'],
-  to: Graph['to']
+  graph: Graph[],
+  from: From,
+  to: Exclude<Graph['to']['v'], From>
 ) {
   const adjacencyMap: Record<Key, Key[]> = {}
 
@@ -45,21 +46,18 @@ export function findShortestPath<
     adjacencyMap[fromVertex].push(toVertex)
   }
 
-  const queue: [Key, Key[], Graph[]][] = [[from.v, [], []]]
+  const queue: [Key, Key[], Graph[]][] = [[from, [], []]]
   const visited: Record<Key, boolean> = {}
 
   while (queue.length > 0) {
     const [currentVertex, path, raw] = queue.shift()!
 
-    if (currentVertex === to.v) {
+    if (currentVertex === to) {
       return {
         path: [...path, currentVertex],
         raw: [
           ...raw,
-          ...graph.filter(
-            node =>
-              path.includes(node.from.v) && currentVertex === node.to.v
-          ),
+          ...graph.filter(node => path.includes(node.from.v) && currentVertex === node.to.v),
         ] as const,
       }
     }
@@ -78,10 +76,7 @@ export function findShortestPath<
         [...path, currentVertex],
         [
           ...raw,
-          ...graph.filter(
-            node =>
-              path.includes(node.from.v) && currentVertex === node.to.v
-          ),
+          ...graph.filter(node => path.includes(node.from.v) && currentVertex === node.to.v),
         ],
       ])
     }
@@ -95,15 +90,15 @@ export function convert<
   From extends Graph['from'],
   To extends Graph['to'],
 >(
-  graph: readonly Graph[],
-  from: From,
-  to: To,
+  graph: Graph[],
+  from: From['v'],
+  to: Exclude<To['v'], From['v']>,
   data: inferResult<From>
 ) {
-  const foundPath = findShortestPath(graph, from, to)
-  if (!foundPath) {
-    throw new Error('unable to do update')
+  const found = findShortestPath(graph, from, to)
+  if (!found) {
+    throw new Error('No path found')
   }
-  console.log('Updating Schema:', foundPath.path.join(' -> '))
-  return foundPath.raw.reduce((acc, cur) => cur.update(acc), data) as unknown as inferResult<To>
+  console.log('Updating Schema:', found.path.map(String).join(' -> '))
+  return found.raw.reduce((acc, cur) => cur.update(acc), data) as unknown as inferResult<To>
 }

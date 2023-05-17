@@ -1,5 +1,16 @@
+import * as v0 from './v/alpha'
+import * as v1 from './v/v1'
+
 import { createUpdatePath } from './path'
-import { v0, v1 } from './v'
+
+export * as v0 from './v/alpha'
+export * as v1 from './v/v1'
+export * as latest from './v/v1'
+
+export const versions = {
+  [v0.v]: v0,
+  [v1.v]: v1,
+}
 
 const filterSelf = <T>(i: T): i is Exclude<T, 'self'> => i !== 'self'
 export const paths = [

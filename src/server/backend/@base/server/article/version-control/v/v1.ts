@@ -1,5 +1,5 @@
 import { array, date, literal, number, object, string, tuple, union } from 'zod'
-import { zodTipTapJSONContent } from '../../../../../../trpc/shapes'
+import { zodTipTapJSONContent } from '~/server/trpc/shapes'
 
 export const v = 1 as const
 export const writeAccess = union([

@@ -9,9 +9,8 @@ import { z } from 'zod'
 
 import { DeepPartial } from '@trpc/server'
 import { Id } from '../..'
-import { latest, v0, versions } from './version-control/v'
+import { latest, paths, v0, versions } from './version-control'
 import { convert } from './version-control/path'
-import { paths } from './version-control'
 import type { UserEssential, UserPrivilegeString } from '~/types/user'
 import useEditorExtensions from '~/composables/useEditorExtensions'
 import { UserRelationProvider } from '~/server/backend/bancho.py/server'
@@ -117,7 +116,7 @@ export abstract class ArticleProvider {
     }
 
     const head = versions[content.v].parse(content)
-    return latest.parse(convert(paths, versions[content.v], latest, head))
+    return latest.parse(convert(paths, content.v, latest.v, head))
   }
 
   async saveLocal(opt: {
@@ -235,13 +234,10 @@ export abstract class ArticleProvider {
 }
 
 export namespace ArticleProvider {
-
-  export const writeAccess = latest.writeAccess
-  export const readAccess = latest.readAccess
   export const builtInAuthor = 'built-in'
 
-  export type WriteAccess = z.infer<typeof writeAccess>
-  export type ReadAccess = z.infer<typeof readAccess>
+  export type WriteAccess = z.infer<typeof latest['writeAccess']>
+  export type ReadAccess = z.infer<typeof latest['readAccess']>
   export type JSONContent = TipTapJSONContent & { __brand: 'JSONContent' }
 
   export interface BaseContent {

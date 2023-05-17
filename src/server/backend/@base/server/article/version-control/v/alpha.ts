@@ -1,7 +1,7 @@
 import { any, array, literal, number, object, string, union } from 'zod'
 import { zodTipTapJSONContent } from '~/server/trpc/shapes'
 
-export const v = 'dev-unstable'
+export const v = Symbol('dev-unstable')
 export const writeAccess = union([
   literal('self'),
   literal('staff'),

@@ -39,10 +39,6 @@ export default defineNuxtConfig({
     componentIslands: true,
   },
 
-  nitro: {
-    minify: true,
-  },
-
   vite: {
     build: {
       minify: true,

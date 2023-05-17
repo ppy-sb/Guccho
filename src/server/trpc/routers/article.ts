@@ -16,6 +16,7 @@ export const router = _router({
         throw new Error('404 not found')
       }
       const html = notFound.dynamic ? sp.render(notFound.json) : notFound.html
+
       return {
         html,
         access: {
