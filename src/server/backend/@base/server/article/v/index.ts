@@ -1,11 +1,10 @@
-import * as v0 from './v/alpha'
-import * as v1 from './v/v1'
+import { createEdge } from 'schema-evolution'
+import * as v0 from './alpha'
+import * as v1 from './v1'
 
-import { createUpdatePath } from './path'
-
-export * as v0 from './v/alpha'
-export * as v1 from './v/v1'
-export * as latest from './v/v1'
+export * as v0 from './alpha'
+export * as v1 from './v1'
+export * as latest from './v1'
 
 export const versions = {
   [v0.v]: v0,
@@ -14,7 +13,7 @@ export const versions = {
 
 const filterSelf = <T>(i: T): i is Exclude<T, 'self'> => i !== 'self'
 export const paths = [
-  createUpdatePath(v0, v1, from => ({
+  createEdge(v0, v1, from => ({
     html: from.html,
     json: from.json,
     owner: from.owner,

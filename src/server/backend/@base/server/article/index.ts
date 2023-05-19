@@ -8,9 +8,9 @@ import { generateHTML } from '@tiptap/html'
 import { z } from 'zod'
 
 import { DeepPartial } from '@trpc/server'
+import { compileGraph, migrate } from 'schema-evolution'
 import { Id } from '../..'
-import { latest, paths, v0, versions } from './version-control'
-import { convert } from './version-control/path'
+import { latest, paths, v0, versions } from './v'
 import type { UserEssential, UserPrivilegeString } from '~/types/user'
 import useEditorExtensions from '~/composables/useEditorExtensions'
 import { UserRelationProvider } from '~/server/backend/bancho.py/server'
@@ -116,7 +116,7 @@ export abstract class ArticleProvider {
     }
 
     const head = versions[content.v].parse(content)
-    return latest.parse(convert(paths, content.v, latest.v, head))
+    return latest.parse(migrate(compileGraph(paths), content.v, latest.v, head))
   }
 
   async saveLocal(opt: {

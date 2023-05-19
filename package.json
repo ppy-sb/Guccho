@@ -83,6 +83,7 @@
     "prosemirror-view": "^1.31.1",
     "redis": "^4.6.6",
     "remixicon": "^3.2.0",
+    "schema-evolution": "^0.0.2",
     "superjson": "^1.12.3",
     "systeminformation": "^5.17.12",
     "tailwind-highlightjs": "^2.0.1",
