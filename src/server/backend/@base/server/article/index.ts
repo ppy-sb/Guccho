@@ -8,7 +8,7 @@ import { generateHTML } from '@tiptap/html'
 import { z } from 'zod'
 
 import { DeepPartial } from '@trpc/server'
-import { compileGraph, migrate } from 'schema-evolution'
+import { compileGraph, createPipeline, hops } from 'schema-evolution'
 import { Id } from '../..'
 import { latest, paths, v0, versions } from './v'
 import type { UserEssential, UserPrivilegeString } from '~/types/user'
@@ -116,7 +116,14 @@ export abstract class ArticleProvider {
     }
 
     const head = versions[content.v].parse(content)
-    return latest.parse(migrate(compileGraph(paths), content.v, latest.v, head))
+    const pipeline = createPipeline(compileGraph(paths), content.v, latest.v)
+    const route = hops(pipeline.path)
+    if (route?.length) {
+      flagDiff = true
+      const fileOrId = 'id' in opt ? `ID = ${opt.id}` : `File = ${opt.file}`
+      console.log(`migrate Article<${fileOrId}> to latest version: ${route.map(String).join(' -> ')}`)
+    }
+    return latest.parse(pipeline.migrate(head))
   }
 
   async saveLocal(opt: {

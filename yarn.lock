@@ -8360,10 +8360,10 @@ sass@^1.62.1:
     immutable "^4.0.0"
     source-map-js ">=0.6.2 <2.0.0"
 
-schema-evolution@^0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/schema-evolution/-/schema-evolution-0.0.2.tgz#b2ea387a23bd4951a3382a28f5f21e8c5f06095a"
-  integrity sha512-bOXYmjt+wUn9VtO8jbky058owh7x8gQETMdqNC0fMEZXdqDQwtOqPD723GNdT+oaLhJ2sYXOTzOissnTSFzD8w==
+schema-evolution@^0.0.5:
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/schema-evolution/-/schema-evolution-0.0.5.tgz#c623cce99b0cc0e3bed0ce11adb737cd13be5e06"
+  integrity sha512-hRoortYqFEHuaCJzMphf/f8K1x8mI5IdnDMamkODeGqKF5zIbKBtm+xp+7vFD7LI+M2O1hhwsWThfWo27yTDNQ==
 
 schema-utils@^3.0.0:
   version "3.1.2"
