@@ -55,7 +55,7 @@ export default defineNuxtConfig({
 
   alias: {
     $active: fileURLToPath(new URL(`./src/server/backend/${process.env.BACKEND}`, import.meta.url)),
-    $def: fileURLToPath(new URL('./src/server/backend/@base', import.meta.url)),
+    $base: fileURLToPath(new URL('./src/server/backend/$base', import.meta.url)),
     $articles: fileURLToPath(new URL('./articles', import.meta.url)),
   },
 

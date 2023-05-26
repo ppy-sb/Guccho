@@ -3,7 +3,7 @@ import z, { ZodIssueCode, ZodSchema, literal, number, string, tuple, union } fro
 
 import validator from 'validator'
 import { hasRuleset } from '../config'
-import type { ArticleProvider } from '$def/server/article'
+import type { ArticleProvider } from '$base/server/article'
 
 import type { Mode, Ruleset } from '~/types/common'
 

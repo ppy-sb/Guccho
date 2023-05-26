@@ -1,5 +1,5 @@
 import type { UserEssential } from '~/types/user'
-import { ArticleProvider as Base } from '$def/server/article'
+import { ArticleProvider as Base } from '$base/server/article'
 
 export class ArticleProvider extends Base {
   async get(opt: { slug: string; fallback?: boolean; user?: UserEssential<unknown> }) {
@@ -7,17 +7,14 @@ export class ArticleProvider extends Base {
     if (!content) {
       return undefined
     }
-    const returnValue = Object.assign(content, {
+
+    const [read, write] = await Promise.all([this.checkPrivilege('read', content, opt.user), this.checkPrivilege('write', content, opt.user)])
+    return Object.assign(content, {
       access: {
-        read: false,
-        write: false,
+        read,
+        write,
       },
     })
-    const write = this.checkPrivilege('write', content, opt.user)
-    returnValue.access.read = true
-    returnValue.access.write = await write
-
-    return returnValue
   }
 
   async save(opt: {

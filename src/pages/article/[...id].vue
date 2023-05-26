@@ -9,9 +9,7 @@ const id = route.params.id
 if (!id) {
   throw new Error('id required')
 }
-if (Array.isArray(id)) {
-  throw new TypeError('bad id')
-}
+
 const app$ = useNuxtApp()
 const content = await app$.$client.article.getRendered.query(id)
 </script>

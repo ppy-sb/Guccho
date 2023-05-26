@@ -7,7 +7,7 @@ import type {
 } from './common'
 import type { UserModeRulesetStatistics } from './statistics'
 import type { UserRelationship } from './user-relationship'
-import { ArticleProvider } from '$def/server'
+import { ArticleProvider } from '$base/server'
 
 export interface UserStatus {
   Offline: 'offline'

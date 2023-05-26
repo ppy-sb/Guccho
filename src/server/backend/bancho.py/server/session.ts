@@ -4,8 +4,8 @@ import { BSON } from 'bson'
 import { commandOptions } from 'redis'
 import { client as getRedis } from './source/redis'
 import { env } from './source/env'
-import type { Session, SessionStore } from '$def/server/session'
-import { SessionProvider as Base } from '$def/server/session'
+import type { Session, SessionStore } from '$base/server/session'
+import { SessionProvider as Base } from '$base/server/session'
 
 const REDIS_SESSION_PREFIX = 'session.guccho'
 

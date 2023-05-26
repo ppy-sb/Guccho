@@ -8,7 +8,10 @@ import { ArticleProvider } from '~/server/backend/bancho.py/server'
 const sp = new ArticleProvider()
 export const router = _router({
   get: userProcedure.input(string()).query(({ input, ctx }) => sp.get({ slug: input, user: ctx.user })),
-  getRendered: optionalUserProcedure.input(string()).query(async ({ input, ctx }) => {
+  getRendered: optionalUserProcedure.input(union([string(), array(string())])).query(async ({ input, ctx }) => {
+    if (Array.isArray(input)) {
+      input = input.join('/')
+    }
     const r = await sp.get({ slug: input, fallback: true, user: ctx.user })
     if (!r) {
       const notFound = sp.fallbacks.get('404')

@@ -1,4 +1,7 @@
 import { v4 } from 'uuid'
+import { Logger } from '~/server/backend/$base/log'
+
+const logger = Logger.child({ label: 'session' })
 
 export interface Session<Id = string> {
   userId?: Id
@@ -18,7 +21,7 @@ export const config = {
 // const store = new Map<any, any>()
 let store: Map<any, any>
 function createStoreSingleton<TSessionId, TSession>() {
-  console.warn('Warn: You are using memory session store.')
+  logger.warn('Warn: You are using memory session store.')
   store = new Map<TSessionId, TSession>()
 }
 export function createSessionStore<TSessionId, TSession>() {

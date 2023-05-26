@@ -6,7 +6,7 @@ import type {
   UserModeRulesetStatistics,
 } from '~/types/statistics'
 import type { UserFull } from '~/types/user'
-import { ArticleProvider } from '$def/server'
+import { ArticleProvider } from '$base/server'
 
 export function createISODate(date: Date = new Date()) {
   return date.toUTCString()

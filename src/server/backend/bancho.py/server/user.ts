@@ -36,7 +36,7 @@ import { userNotFound } from '~/server/trpc/messages'
 
 import { RankingStatusEnum } from '~/types/beatmap'
 
-import type { UserProvider as Base } from '$def/server'
+import type { UserProvider as Base } from '$base/server'
 import type { LeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
 
 import type { UserEssential, UserOptional, UserStatistic } from '~/types/user'

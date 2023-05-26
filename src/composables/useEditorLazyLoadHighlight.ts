@@ -9,8 +9,6 @@ async function useLib(language: string) {
   try {
     const f = await importLib(language)
     lowlight.registerLanguage(language, f.default)
-    // eslint-disable-next-line no-console
-    console.info('loaded hljs lib:', language)
   }
   catch (e) {
     console.error('error on loading hljs lib:', e)

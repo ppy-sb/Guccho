@@ -1,3 +1,4 @@
+import { Logger } from '../log'
 import {
   idToString,
   stringToId,
@@ -22,7 +23,9 @@ import type {
   Mode,
   RankingSystem,
 } from '~/types/common'
-import type { LeaderboardProvider as Base } from '$def/server'
+import type { LeaderboardProvider as Base } from '$base/server'
+
+const logger = Logger.child({ label: 'leaderboard', backend: 'bancho.py' })
 
 const leaderboardFields = {
   id: true,
@@ -306,7 +309,7 @@ export class RedisLeaderboardProvider extends LeaderboardDatabaseProvider {
         }))
       }
       catch (e) {
-        console.error(e)
+        logger.error(e)
         return super.getLeaderboard(opt)
       }
     }

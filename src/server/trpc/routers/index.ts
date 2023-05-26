@@ -10,8 +10,11 @@ import { router as session } from './session'
 import { router as status } from './status'
 import { router as user } from './user'
 import { router as article } from './article'
+import { router as admin } from './admin'
 
 export const appRouter = router({
+  admin,
+
   session,
   me,
 

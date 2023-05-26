@@ -9,7 +9,14 @@
         name: 'article-edit',
       }"
     >
-      articles (outside from admin)
+      Edit Articles (outside from admin)
+    </t-nuxt-link-button>
+    <t-nuxt-link-button
+      :to="{
+        name: 'admin-logs',
+      }"
+    >
+      Logs
     </t-nuxt-link-button>
   </div>
 </template>

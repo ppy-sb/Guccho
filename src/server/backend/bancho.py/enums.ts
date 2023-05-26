@@ -1,4 +1,4 @@
-import type { ArticleProvider } from '../@base/server'
+import type { ArticleProvider } from '../$base/server'
 
 //  privileges intended for all normal players.
 export enum BanchoPyPrivilege {

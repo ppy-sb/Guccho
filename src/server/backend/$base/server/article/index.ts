@@ -9,11 +9,13 @@ import { z } from 'zod'
 
 import { DeepPartial } from '@trpc/server'
 import { compileGraph, createPipeline, hops } from 'schema-evolution'
-import { Id } from '../..'
 import { latest, paths, v0, versions } from './v'
 import type { UserEssential, UserPrivilegeString } from '~/types/user'
 import useEditorExtensions from '~/composables/useEditorExtensions'
 import { UserRelationProvider } from '~/server/backend/bancho.py/server'
+import { Logger } from '~/server/backend/$base/log'
+
+const logger = Logger.child({ label: 'article' })
 
 async function access(file: PathLike, constant?: typeof fs['constants'][keyof typeof fs['constants']]) {
   return fs.access(file, constant).then(() => true).catch(() => false)
@@ -102,11 +104,11 @@ export abstract class ArticleProvider {
   }
 
   validate(content: { v?: keyof typeof versions }, opt: ArticleProvider.ValidateOpt): (ArticleProvider.Meta & ArticleProvider.Content & ArticleProvider.Version) | undefined {
-    let flagDiff = false
+    // let flagDiff = false
 
     if (content.v === undefined) {
       content.v = v0.v
-      flagDiff = true
+      // flagDiff = true
     }
     if (!(content.v in versions)) {
       throw new Error('unknown version')
@@ -119,9 +121,12 @@ export abstract class ArticleProvider {
     const pipeline = createPipeline(compileGraph(paths), content.v, latest.v)
     const route = hops(pipeline.path)
     if (route?.length) {
-      flagDiff = true
-      const fileOrId = 'id' in opt ? `ID = ${opt.id}` : `File = ${opt.file}`
-      console.log(`migrate Article<${fileOrId}> to latest version: ${route.map(String).join(' -> ')}`)
+      // flagDiff = true
+      const fileOrId = 'id' in opt ? `unknown = ${opt.id}` : `File = ${opt.file}`
+      logger.info({
+        message: `Migrate Article<${fileOrId}> to latest version: ${route.map(String).join(' -> ')}.`,
+        fix: 'To get rid of logs like this please open then save this article in the article editor.',
+      })
     }
     return latest.parse(pipeline.migrate(head))
   }
@@ -214,29 +219,16 @@ export abstract class ArticleProvider {
   }
 
   async checkPrivilege(
-    access: 'read' | 'write',
+    access: keyof ArticleProvider.Meta['privilege'],
     content: ArticleProvider.Meta,
     user?: { id: unknown; roles: UserPrivilegeString[] }
   ) {
-    const privRequired = content.privilege?.[access]
+    const privRequired = content.privilege[access]
 
-    // legacy optional read
-    if (!privRequired && access === 'read') {
-      return true
-    }
-    if (!privRequired) {
-      return false
-    }
     return (
       (access === 'read' && content.privilege?.read.includes('public'))
-      || (user
-        && (
-          (user.id === content.owner)
-          || (privRequired).some(priv => user.roles.includes(priv as any))
-        )
-      )
-      || false
-    )
+      || (user && ((user.id === content.owner) || (privRequired).some(priv => user.roles.includes(priv as any))))
+    ) || false
   }
 }
 
@@ -264,7 +256,7 @@ export namespace ArticleProvider {
 
   export type Content = DynamicContent | StaticContent
   export type OwnerId = string | number
-  export type Signature = [Id, Date]
+  export type Signature = [unknown, Date]
   export interface Meta<Id extends OwnerId = OwnerId> {
     privilege: {
       read: ReadAccess[]
@@ -289,6 +281,6 @@ export namespace ArticleProvider {
   } & ({
     file: PathLike
   } | {
-    id: Id
+    id: unknown
   })
 }
