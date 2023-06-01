@@ -5,5 +5,7 @@ const page = userpageStore()
 </script>
 
 <template>
-  <article-render v-if="page.user?.profile" :json="page.user.profile.raw" :html="page.user.profile.html" />
+  <div class="container mx-auto mt-4 custom-container">
+    <content-renderer v-if="page.user?.profile" :json="page.user.profile.raw" :html="page.user.profile.html" />
+  </div>
 </template>

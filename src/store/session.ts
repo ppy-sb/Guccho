@@ -47,7 +47,7 @@ export const useSession = defineStore('session', {
         userId: result.user.id,
         user: result.user,
       })
-      this.setAvatarTimestamp()
+      // this.setAvatarTimestamp()
       return true
     },
     async destroy() {
@@ -74,7 +74,7 @@ export const useSession = defineStore('session', {
           userId: result.user.id,
           user: result.user,
         })
-        this.setAvatarTimestamp()
+        // this.setAvatarTimestamp()
         await this.gotSession()
         return true
       }

@@ -11,7 +11,7 @@ import { DeepPartial } from '@trpc/server'
 import { compileGraph, createPipeline, hops } from 'schema-evolution'
 import { latest, paths, v0, versions } from './v'
 import type { UserEssential, UserPrivilegeString } from '~/types/user'
-import useEditorExtensions from '~/composables/useEditorExtensions'
+import useEditorExtensions from '~/composables/useEditorExtensionsServer'
 import { UserRelationProvider } from '~/server/backend/bancho.py/server'
 import { Logger } from '~/server/backend/$base/log'
 
@@ -141,7 +141,7 @@ export abstract class ArticleProvider {
     if (!opt.user.roles.find(role => ['admin', 'owner'].includes(role))) {
       throw new Error('you have insufficient privilege to edit this article')
     }
-    const content = this.createContent(opt)
+    const pContent = this.createContent(opt)
     let meta: ArticleProvider.Meta
 
     const loc = join(this.articles, opt.slug)
@@ -164,7 +164,7 @@ export abstract class ArticleProvider {
       })
     }
     await fs.writeFile(loc, this.serialize({
-      ...content,
+      ...await pContent,
       ...meta,
       v: latest.v,
     }))
@@ -189,12 +189,14 @@ export abstract class ArticleProvider {
     return await fs.rm(loc)
   }
 
-  render(content: ArticleProvider.JSONContent) {
+  async render(content: ArticleProvider.JSONContent) {
+    // const { load } = useEditorLazyLoadHighlight()
+    // await load(content)
     const renderExtensions = useEditorExtensions()
     return generateHTML(content, renderExtensions)
   }
 
-  createContent(opt: Omit<ArticleProvider.Content, 'html'>) {
+  async createContent(opt: Omit<ArticleProvider.Content, 'html'>) {
     const base = {
       ...opt,
     }
@@ -203,7 +205,7 @@ export abstract class ArticleProvider {
     }
     else {
       return Object.assign(base, {
-        html: this.render(opt.json),
+        html: await this.render(opt.json),
         dynamic: false,
       }) as ArticleProvider.StaticContent
     }

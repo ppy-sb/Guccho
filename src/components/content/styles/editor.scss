@@ -1,0 +1,38 @@
+.editor {
+  display: flex;
+  flex-direction: column;
+
+  // border-radius: 0.75rem;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    flex: 0 0 auto;
+    flex-wrap: wrap;
+    border-top: 2px solid;
+    border-bottom: 2px solid;
+  }
+
+  &__content {
+    flex: 1 1 auto;
+    // overflow-x: hidden;
+    // overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    // border-bottom: 2px solid ;
+
+    .ProseMirror {
+      min-height: 10vh;
+      @apply outline-offset-4 overflow-visible;
+      &[contenteditable="true"] {
+        .custom-variable {
+          @apply outline outline-1 outline-offset-1 rounded;
+          @apply text-base-content/60 italic;
+        }
+      }
+    }
+  }
+  &__footer {
+    @apply mt-2 pt-1;
+    border-top: 2px solid;
+  }
+}

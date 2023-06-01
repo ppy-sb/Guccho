@@ -382,7 +382,6 @@ WHERE s.userid = ${id}
     if (excludes.profile !== true) {
       returnValue.profile = {
         html: user.userpageContent || '',
-        raw: undefined,
       }
     }
 
@@ -432,7 +431,7 @@ WHERE s.userid = ${id}
           id: user.id,
         },
         data: {
-          userpageContent: html,
+          userpageContent: await html,
         },
       })
       return {

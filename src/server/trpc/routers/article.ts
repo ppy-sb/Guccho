@@ -18,7 +18,7 @@ export const router = _router({
       if (!notFound) {
         throw new Error('404 not found')
       }
-      const html = notFound.dynamic ? sp.render(notFound.json) : notFound.html
+      const html = notFound.dynamic ? await sp.render(notFound.json) : notFound.html
 
       return {
         html,
@@ -29,7 +29,7 @@ export const router = _router({
       }
     }
     return {
-      html: r.dynamic ? sp.render(r.json) : r.html,
+      html: r.dynamic ? await sp.render(r.json) : r.html,
       access: r.access,
     }
   }),

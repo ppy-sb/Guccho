@@ -1,13 +1,14 @@
 <script setup lang="ts">
+import { Cropper } from 'vue-advanced-cropper'
+import 'vue-advanced-cropper/dist/style.css'
+
 import md5 from 'md5'
 
 // import type { JSONContent } from '@tiptap/core'
-import { Cropper } from 'vue-advanced-cropper'
-import type { Editor, TModal, TResponsiveModal } from '#components'
+import type { ContentEditor, TModal, TResponsiveModal } from '#components'
 import { useSession } from '~/store/session'
 
-import 'vue-advanced-cropper/dist/style.css'
-import { ArticleProvider } from '$def/server/article'
+import { ArticleProvider } from '$base/server/article'
 
 definePageMeta({
   middleware: ['auth'],
@@ -40,7 +41,7 @@ const unchanged = shallowRef({ ...user.value as Exclude<typeof user['value'], nu
 
 const profile = shallowRef<ArticleProvider.JSONContent>()
 const profileEdited = shallowRef(false)
-const editor = shallowRef<InstanceType<typeof Editor>>()
+const editor = shallowRef<InstanceType<typeof ContentEditor>>()
 
 const newAvatar = shallowRef<File>()
 const newAvatarURL = shallowRef<string>()
@@ -79,7 +80,6 @@ async function saveAvatar() {
 
   uploadingAvatarStat.value = 'uploading'
 
-  // const ab = await newAvatar.value.arrayBuffer()
   const url = await app$.$client.me.changeAvatar.mutate({ avatar: new Uint8Array(croppedAvatar.value) })
 
   uploadingAvatarStat.value = 'succeed'
@@ -549,7 +549,7 @@ function resetAvatar() {
     <label class="label">
       <span class="pl-3 label-text">profile</span>
     </label>
-    <lazy-editor
+    <lazy-content-editor
       ref="editor"
       v-model.lazy="profile"
       :html="user.profile?.html"

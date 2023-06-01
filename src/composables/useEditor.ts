@@ -1,8 +1,68 @@
 import type { Editor as EditorCore, JSONContent } from '@tiptap/core'
 import { Editor as EditorVue } from '@tiptap/vue-3'
 
-import useEditorExtensions from './useEditorExtensions'
-import useEditorLazyLoadHighlight from './useEditorLazyLoadHighlight'
+import { lowlight } from 'lowlight/lib/core.js'
+import useEditorExtensions from './useEditorExtensionsClient'
+import hljs from '~~/configs/hljs'
+
+type JSONCallback = (content: JSONContent) => void
+type LanguageKey = keyof typeof hljs
+type Language = typeof hljs[LanguageKey]
+
+export async function importLowlightLanguage(language: Language) {
+  return await import(`../../node_modules/highlight.js/es/languages/${language}.js`)
+}
+
+export async function useLowlightLanguage(language: Language) {
+  try {
+    const f = await importLowlightLanguage(language)
+    lowlight.registerLanguage(language, f.default)
+  }
+  catch (e) {
+    console.error('error on loading hljs lib:', e)
+  }
+}
+export async function parseAndImportHighlightLibFromHtml(html: string) {
+  const languages = getLanguagesFromHTML(html)
+  return Promise.all(languages.map(lKey => useLowlightLanguage(hljs[lKey])))
+}
+
+export function getLanguagesFromHTML(html: string) {
+  const matchedLanguages = html.matchAll(/language-(\w+)/gm)
+  const languages = <LanguageKey[]>[]
+  for (const _language of matchedLanguages) {
+    const language = _language[1] as LanguageKey
+    if (!hljs[language]) {
+      continue
+    }
+    languages.push(_language[1] as LanguageKey)
+  }
+  return languages
+}
+export function loadAllLanguagesInJSONContent(json: JSONContent) {
+  return json.content
+    ? Promise.allSettled(json.content?.map((node) => {
+      if (node.type !== 'codeBlock') {
+        return undefined
+      }
+
+      const language = node.attrs?.language as LanguageKey | undefined
+      if (!language) {
+        return undefined
+      }
+
+      if (lowlight.registered(language)) {
+        return undefined
+      }
+
+      if (!hljs[language]) {
+        return undefined
+      }
+
+      return useLowlightLanguage(hljs[language])
+    })).then(noop)
+    : Promise.resolve()
+}
 
 export default (
   reactiveConfig: {
@@ -12,15 +72,14 @@ export default (
   }
 ) => {
   const extensions = useEditorExtensions(reactiveConfig)
-  const { load: lazy } = useEditorLazyLoadHighlight()
   const editor = shallowRef<EditorVue>()
   let created = false
   const lazyLoadCodeBlock = ({ editor }: { editor: EditorCore }) => {
     const json = editor.getJSON()
-    return lazy(json)
+    return loadAllLanguagesInJSONContent(json)
   }
 
-  const subscribedBeforeMounted: CallableFunction[] = []
+  const subscribedBeforeMounted = new Set<JSONCallback>()
   onBeforeMount(() => {
     editor.value = new EditorVue({
       extensions,
@@ -31,6 +90,7 @@ export default (
     subscribedBeforeMounted.forEach(subscriber =>
       editor.value?.on('update', ({ editor }) => subscriber(editor.getJSON()))
     )
+    subscribedBeforeMounted.clear()
   })
   onUnmounted(() => {
     editor.value?.commands.clearContent()
@@ -40,13 +100,13 @@ export default (
   return {
     editor,
     extensions,
-    subscribe: (cb: (content: JSONContent) => void) => {
+    subscribe(cb: JSONCallback) {
       if (created) {
         return editor.value?.on('update', ({ editor }) => {
           cb(editor.getJSON())
         })
       }
-      subscribedBeforeMounted.push(cb)
+      subscribedBeforeMounted.add(cb)
     },
   }
 }

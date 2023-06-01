@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import '@/assets/styles/typography.scss'
+import '@/components/content/styles/typography.scss'
 import { useSession } from '~/store/session'
 
 const route = useRoute()
@@ -16,7 +16,7 @@ const content = await app$.$client.article.getRendered.query(id)
 
 <template>
   <section class="container mx-auto with-editor" :class="{ editable: $state.privilege.staff }">
-    <div class="custom-typography ssr" v-html="content.html" />
+    <content-renderer v-bind="content" />
   </section>
 </template>
 

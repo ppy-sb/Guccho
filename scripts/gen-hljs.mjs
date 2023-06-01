@@ -3,6 +3,7 @@ import { writeFile } from 'node:fs/promises'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import highlight from 'highlight.js'
+import { uneval } from 'devalue'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -24,7 +25,7 @@ const files = readdirSync('./node_modules/highlight.js/es/languages').filter(fil
     })
   }))
 
-  return writeFile(resolve(__dirname, '../configs/hljs.json'), JSON.stringify(hljs), {
+  return writeFile(resolve(__dirname, '../configs/hljs.ts'), `export default ${uneval(hljs)} as const`, {
     flag: 'w',
     encoding: 'utf-8',
   })

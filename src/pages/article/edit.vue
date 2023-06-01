@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { parse, stringify } from 'devalue'
-import { Editor } from '#components'
-import type { ArticleProvider } from '$def/server/article'
+import { ContentEditor } from '#components'
+import type { ArticleProvider } from '$base/server'
 
 definePageMeta({
   middleware: ['auth', 'admin'],
@@ -9,7 +9,7 @@ definePageMeta({
 const app$ = useNuxtApp()
 
 const importArticleFile = shallowRef<HTMLInputElement | null>(null)
-const editor = shallowRef<InstanceType<typeof Editor> | null>(null)
+const editor = shallowRef<InstanceType<typeof ContentEditor> | null>(null)
 const article = ref<{
   privilege: ArticleProvider.Meta['privilege']
   json?: ArticleProvider.Content['json']
@@ -174,16 +174,22 @@ async function del() {
         Export
       </button>
     </div>
-    <div class="flex flex-col md:flex-row gap-3 flex-wrap mt-2">
-      <div class="form-control flex-row items-baseline gap-2">
-        <label class="label pl-0">Read</label>
+    <div class="divider" />
+    <div class="flex flex-col md:flex-row gap-3 flex-wrap">
+      <div class="form-control flex-row items-center gap-2">
+        <input v-model="article.dynamic" class="checkbox" type="checkbox">
+        <label class="label">Dynamic Content</label>
+      </div>
+      <div class="divider divider-horizontal" />
+      <div class="form-control flex-row items-center gap-2">
+        <label class="label pl-0">Read Access</label>
         <t-multi-select v-model="article.privilege.read" size="sm" :options="options(readPrivileges)" />
       </div>
-      <div class="form-control  flex-row items-baseline gap-2">
-        <label class="label">Write</label>
+      <div class="form-control  flex-row items-center gap-2">
+        <label class="label">Write Access</label>
         <t-multi-select v-model="article.privilege.write" size="sm" :options="options(privileges)" />
       </div>
     </div>
-    <lazy-editor v-if="article.json" ref="editor" v-model="article.json" class="safari-performance-boost mt-2" />
+    <lazy-content-editor v-if="article.json" ref="editor" v-model="article.json" class="safari-performance-boost mt-2" />
   </section>
 </template>

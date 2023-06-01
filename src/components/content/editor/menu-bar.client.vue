@@ -4,7 +4,7 @@ import type { Editor } from '@tiptap/vue-3'
 // @ts-expect-error it's an url
 import remixiconUrl from 'remixicon/fonts/remixicon.symbol.svg'
 import type { PropType } from 'vue'
-import { EditorInsertImage } from '#components'
+import { type ContentEditorInsertImage } from '#components'
 
 export default defineComponent({
 
@@ -120,7 +120,7 @@ export default defineComponent({
         {
           icon: 'image-add-line',
           title: 'Insert Image',
-          action: () => (this.$refs.insertImage as InstanceType<typeof EditorInsertImage>)?.show(),
+          action: () => (this.$refs.insertImage as InstanceType<typeof ContentEditorInsertImage>)?.show(),
         },
         {
           type: 'divider',
@@ -161,14 +161,14 @@ export default defineComponent({
 
 <template>
   <div class="menubar">
-    <editor-insert-image ref="insertImage" :editor="editor" />
+    <content-editor-insert-image ref="insertImage" :editor="editor" />
     <template v-for="(item, index) in items">
       <div
         v-if="'type' in item && item.type === 'divider'"
         :key="`divider${index}`"
         class="divider"
       />
-      <editor-menu-item v-else :key="index" v-bind="item" class="menu-item icon" />
+      <content-editor-menu-item v-else :key="index" v-bind="item" class="menu-item icon" />
     </template>
     <template v-if="editor.isActive('codeBlock')">
       <label for="indent" class="label">Indent:</label>

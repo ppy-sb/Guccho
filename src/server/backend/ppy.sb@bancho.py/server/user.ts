@@ -7,7 +7,7 @@ import { BanchoPyPrivilege } from '~/server/backend/bancho.py/enums'
 import { UserProvider as BanchoPyUser } from '~/server/backend/bancho.py/server'
 import { toFullUser } from '~/server/backend/bancho.py/transforms'
 import { createUserQuery } from '~/server/backend/bancho.py/db-query'
-import useEditorExtensions from '~/composables/useEditorExtensions'
+import useEditorExtensions from '~/composables/useEditorExtensionsServer'
 
 import type { UserEssential } from '~/types/user'
 

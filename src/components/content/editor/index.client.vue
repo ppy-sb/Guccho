@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import type { HTMLContent, JSONContent } from '@tiptap/vue-3'
-import { EditorContent } from '@tiptap/vue-3'
+import { EditorContent, type HTMLContent, type JSONContent } from '@tiptap/vue-3'
 import { generateJSON } from '@tiptap/html'
 
 import useEditor from '~/composables/useEditor'
-import useEditorLazyLoadHighlight from '~/composables/useEditorLazyLoadHighlight'
 
-import '@/assets/styles/typography.scss'
+import '@/components/content/styles/typography.scss'
+import '@/components/content/styles/editor.scss'
 
 const props = withDefaults(
   defineProps<{
@@ -30,12 +29,11 @@ const context = useEditor(editorConf)
 const { editor, subscribe, extensions } = context
 
 async function onUpdated() {
-  const { load: lazy } = useEditorLazyLoadHighlight()
   if (!props.modelValue && !props.html) {
     return
   }
   const value = props.modelValue || generateJSON(props.html || '', extensions)
-  await lazy(value)
+  await loadAllLanguagesInJSONContent(value)
   editor.value?.commands.setContent(value)
 }
 
@@ -59,8 +57,8 @@ defineExpose({
 
 <template>
   <div v-if="editor" class="editor">
-    <editor-bubble-menu :editor="editor" />
-    <editor-menu-bar
+    <content-editor-bubble-menu :editor="editor" />
+    <content-editor-menu-bar
       v-model:indent="editorConf.indent"
       class="editor__header"
       :editor="editor"
@@ -68,38 +66,3 @@ defineExpose({
     <EditorContent class="editor__content custom-typography" :editor="editor" />
   </div>
 </template>
-
-<style lang="scss">
-.editor {
-  display: flex;
-  flex-direction: column;
-
-  // border-radius: 0.75rem;
-
-  &__header {
-    display: flex;
-    align-items: center;
-    flex: 0 0 auto;
-    flex-wrap: wrap;
-    border-top: 2px solid;
-    border-bottom: 2px solid;
-  }
-
-  &__content {
-    flex: 1 1 auto;
-    // overflow-x: hidden;
-    // overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    // border-bottom: 2px solid ;
-
-    .ProseMirror {
-      min-height: 10vh;
-      @apply outline-offset-4 overflow-visible;
-    }
-  }
-  &__footer {
-    @apply mt-2 pt-1;
-    border-top: 2px solid;
-  }
-}
-</style>

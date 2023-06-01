@@ -42,6 +42,7 @@
     "nuxtjs",
     "pinia",
     "postcss",
+    "prosemirror",
     "registerables",
     "remixicon",
     "riru",

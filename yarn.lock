@@ -1666,6 +1666,11 @@
     "@tiptap/extension-strike" "^2.0.3"
     "@tiptap/extension-text" "^2.0.3"
 
+"@tiptap/suggestion@^2.0.3":
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/@tiptap/suggestion/-/suggestion-2.0.3.tgz#3f25e20f50de6748f2b65a88e264d9b5887ca16a"
+  integrity sha512-1y3palQStGZq13UtHjouZ50k4sotM+N56cIlFeygIv3gqdai2zGPaPQtqV9FOVVQizXpUbQMTlPSDC5Ej4SPnQ==
+
 "@tiptap/vue-3@^2.0.3":
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/@tiptap/vue-3/-/vue-3-2.0.3.tgz#a2f1fd7f55bee1815dfb905e03f788099748938e"
