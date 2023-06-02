@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import '@/components/content/styles/typography.scss'
-import { useSession } from '~/store/session'
 
 const route = useRoute()
-const { $state } = useSession()
 
 const id = route.params.id
 if (!id) {
@@ -15,8 +13,11 @@ const content = await app$.$client.article.getRendered.query(id)
 </script>
 
 <template>
-  <section class="container mx-auto with-editor" :class="{ editable: $state.privilege.staff }">
+  <section class="container mx-auto with-editor relative">
     <content-renderer v-bind="content" />
+    <button v-if="content.access.write" class="btn btn-neutral d-flex gap-1 absolute top-0 right-0">
+      Edit <icon name="ic:round-edit-note" class="w-5 h-5" />
+    </button>
   </section>
 </template>
 

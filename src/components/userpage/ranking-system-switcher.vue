@@ -4,7 +4,7 @@ import userpageStore from '~/store/userpage'
 
 const { hasRuleset, hasLeaderboardRankingSystem } = await useAdapterConfig()
 const config = useAppConfig()
-const rankingSystem = config.overallRankingSystem
+const rankingSystem = config.leaderboardRankingSystem
 
 const page = userpageStore()
 

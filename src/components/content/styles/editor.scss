@@ -1,3 +1,5 @@
+@use "./variable";
+
 .editor {
   display: flex;
   flex-direction: column;
@@ -24,10 +26,7 @@
       min-height: 10vh;
       @apply outline-offset-4 overflow-visible;
       &[contenteditable="true"] {
-        .custom-variable {
-          @apply outline outline-1 outline-offset-1 rounded;
-          @apply text-base-content/60 italic;
-        }
+        @include variable.editing;
       }
     }
   }

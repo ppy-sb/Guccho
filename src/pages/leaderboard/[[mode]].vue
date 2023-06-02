@@ -14,7 +14,7 @@ const { ruleset: pRuleset, ranking: pRankingSystem, page: pPage } = route.query
 
 const availableModes = Object.keys(config.mode)
 const availableRulesets = Object.keys(config.ruleset)
-const availableRankingSystems = Object.keys(config.overallRankingSystem)
+const availableRankingSystems = Object.keys(config.leaderboardRankingSystem)
 const mode = (
   (isString(pMode) && availableModes.includes(pMode))
     ? pMode
@@ -118,7 +118,7 @@ function reloadPage(i?: number) {
           && selected.rankingSystem
           && `${config.mode[selected.mode].name} - ${
             config.ruleset[selected.ruleset].name
-          } | ${config.overallRankingSystem[selected.rankingSystem].name}`)
+          } | ${config.leaderboardRankingSystem[selected.rankingSystem].name}`)
           || ''
       "
     >
@@ -148,7 +148,7 @@ function reloadPage(i?: number) {
               <th>player</th>
               <th class="px-4 font-semibold text-center">
                 {{
-                  config.overallRankingSystem[selected.rankingSystem].name
+                  config.leaderboardRankingSystem[selected.rankingSystem].name
                 }}
               </th>
               <th class="px-4 font-medium text-center">

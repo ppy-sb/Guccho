@@ -1,13 +1,13 @@
 import { Editor, InputRule, PasteRule } from '@tiptap/core'
 import { NodeType } from 'prosemirror-model'
 
-import useEditorTemplates from '~/composables/useEditorTemplates'
+import useEditorVariables from '~/composables/useEditorVariables'
 
 export const starInputRegex = /(?:^|\s)((?:{{ ?)((?:[^}}]+))(?: ?}}))$/
 export const starPasteRegex = /(?:^|\s)((?:{{ ?)((?:[^}}]+))(?: ?}}))/g
 
 export default function () {
-  const { variables } = useEditorTemplates()
+  const { variables } = useEditorVariables()
 
   function handleRule(this: {
     name: string

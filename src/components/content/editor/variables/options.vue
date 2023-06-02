@@ -1,5 +1,5 @@
 <script>
-const { variables: template } = useEditorTemplates()
+const { variables: template } = useEditorVariables()
 
 export default {
   props: {
@@ -21,7 +21,7 @@ export default {
     availableOptions() {
       return [...template.entries()].filter(([k]) => k.toLowerCase().includes(this.query.toLowerCase())).map(([_k, v]) => ({
         ...v,
-        key: _k,
+        name: _k,
       }))
     },
   },
@@ -48,18 +48,26 @@ export default {
       return false
     },
     selectItem(selectedIndex) {
-      if (this.availableOptions[selectedIndex]) {
-        this.command({ name: this.availableOptions[selectedIndex].key })
+      const variable = this.availableOptions[selectedIndex]
+      if (!variable) {
+        return
       }
+      this.command({ name: variable.name })
     },
   },
 }
 </script>
 
 <template>
-  <ul class="menu bg-base-100 w-min-content rounded-box">
+  <ul class="menu bg-base-100 w-max rounded-box">
     <li v-for="(option, index) in availableOptions" :key="index" class="whitespace-nowrap" :class="{ 'bg-base-200': selectedIndex === index }" @click="selectItem(index)">
-      <div><strong>{{ option.key }}</strong> <em>{{ option.description }}</em></div>
+      <div class="flex flex-col items-start">
+        <div class="flex gap-2">
+          <strong>{{ option.name }}</strong>
+          <span class="text-muted">{{ option.value }} | {{ option.fallback }}</span>
+        </div>
+        <em class="text-sm">{{ option.description }}</em>
+      </div>
     </li>
   </ul>
 </template>

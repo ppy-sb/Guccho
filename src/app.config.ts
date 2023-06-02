@@ -1,3 +1,4 @@
+import PackageJSON from '../package.json'
 import type {
   LeaderboardRankingSystem,
   Mode,
@@ -12,15 +13,12 @@ interface AppConfigItemBase {
 
 const config: {
   baseUrl: string
-  version: {
-    api: string
-    front: string
-  }
+  version: `${number}.${number}.${number}`
   title: string
   mode: Record<Mode, AppConfigItemBase>
   ruleset: Record<Ruleset, AppConfigItemBase>
   rankingSystem: Record<RankingSystem, { name: string }>
-  overallRankingSystem: Record<
+  leaderboardRankingSystem: Record<
     LeaderboardRankingSystem,
     AppConfigItemBase & {
       userpage: {
@@ -30,10 +28,7 @@ const config: {
   >
 } = {
   baseUrl: 'dev.ppy.sb',
-  version: {
-    api: '1.0.3',
-    front: '1.0.3',
-  },
+  version: PackageJSON.version as `${number}.${number}.${number}`,
   title: 'Guccho',
   mode: {
     osu: {
@@ -67,7 +62,7 @@ const config: {
       icon: 'autopilot',
     },
   },
-  overallRankingSystem: {
+  leaderboardRankingSystem: {
     ppv2: {
       userpage: {
         show: 'tab',

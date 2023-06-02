@@ -28,7 +28,7 @@ export default function () {
         name: {
           default: null,
           parseHTML: (element) => {
-            return element.getAttribute('data-name')
+            return element.getAttribute('data-key')
           },
           renderHTML: (attributes) => {
             if (!attributes.name) {
@@ -36,14 +36,14 @@ export default function () {
             }
 
             return {
-              'data-name': attributes.name,
+              'data-key': attributes.name,
             }
           },
         },
         fallback: {
           default: null,
           parseHTML: (element) => {
-            return element.getAttribute('data-fallback')
+            return element.getAttribute('fallback')
           },
           renderHTML: (attributes) => {
             if (!attributes.fallback) {
@@ -51,7 +51,7 @@ export default function () {
             }
 
             return {
-              'data-fallback': attributes.fallback,
+              fallback: attributes.fallback,
             }
           },
         },
@@ -60,21 +60,19 @@ export default function () {
 
     parseHTML() {
     // @ts-expect-error L80
-      return [{ tag: `span.custom-variable[data-name="${this.name}"][data-fallback="${this.fallback}"]` }]
+      return [{ tag: `span.custom-variable[data-key="${this.name}"][fallback="${this.fallback}"]` }]
     },
 
     renderHTML({ node, HTMLAttributes }) {
       const attributes = mergeAttributes(this.options.HTMLAttributes, HTMLAttributes)
-      if (!node.attrs.fallback) {
-        attributes.class += ' variable--missing-fallback'
-      }
       const _entry = variables.get(`${node.attrs.name}`)
 
-      if (this.editor?.isEditable) {
-        return ['span', attributes, `${node.attrs.name}`]
+      if (!_entry) {
+        attributes['missing-key'] = ''
       }
+      attributes.fallback ||= _entry?.fallback
 
-      return ['span', attributes, _entry?.value || _entry?.defaultFallback || node.attrs.name]
+      return ['span', attributes, _entry?.value || attributes.fallback || attributes.name]
     },
 
     renderText({ node }) {

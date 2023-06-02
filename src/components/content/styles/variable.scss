@@ -1,0 +1,27 @@
+@mixin editing {
+  .custom-variable {
+    @apply outline outline-1 outline-offset-1 rounded;
+
+    /* @apply text-base-content/50;
+    @include popup
+    &:not(:has([fallback])) {
+      @apply text-jaffa-700/50 dark:text-jaffa-300/50;
+    }
+    &:has([missing-key]) {
+      @apply text-error;
+    } */
+
+    /* compatibility is not great, following is old code */
+    /* no fallback */
+    @apply tooltip inline tooltip-warning;
+    @apply text-warning-content/60;
+
+    &[missing-key] {
+      @apply text-error tooltip inline tooltip-error;
+    }
+
+    &[fallback] {
+      @apply text-base-content/40 tooltip inline;
+    }
+  }
+}
