@@ -2,12 +2,29 @@ import { Buffer } from 'node:buffer'
 import type { Document } from 'bson'
 import { BSON } from 'bson'
 import { commandOptions } from 'redis'
+import { Logger } from '../log'
 import { client as getRedis } from './source/redis'
 import { env } from './source/env'
 import type { Session, SessionStore } from '$base/server/session'
 import { SessionProvider as Base } from '$base/server/session'
 
+const logger = Logger.child({ label: 'session' })
+
 const REDIS_SESSION_PREFIX = 'session.guccho'
+
+const _logger = logger.child({ store: 'redis' })
+function parseSession<TSession>(_session: Buffer): TSession | undefined {
+  const session = BSON.deserialize(_session)
+  if (!('lastActivity' in _session)) {
+    _logger.error({ message: 'found invalid session', session })
+    return
+  }
+  if (!(session.lastActivity instanceof Date)) {
+    _logger.error({ message: 'found invalid session lastActivity', session })
+    return
+  }
+  return session as TSession
+}
 
 function createStore<
 TSessionKey extends string,
@@ -24,7 +41,7 @@ TSession extends Session & Document,
       if (!result) {
         return
       }
-      return <TSession>BSON.deserialize(result)
+      return BSON.deserialize(result) as TSession
     },
     async set(key: TSessionKey, value: TSession) {
       const stream = BSON.serialize(value)
@@ -39,7 +56,12 @@ TSession extends Session & Document,
       const results = await r.hGetAll(askForBuffer, REDIS_SESSION_PREFIX)
 
       for (const sessionId in results) {
-        cb(<TSession>BSON.deserialize(results[sessionId]), <TSessionKey>sessionId)
+        const session = parseSession<TSession>(results[sessionId])
+        if (!session) {
+          this.destroy(sessionId as TSessionKey)
+          return
+        }
+        cb(session, sessionId as TSessionKey)
       }
     },
   }

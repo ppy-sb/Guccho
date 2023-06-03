@@ -24,13 +24,13 @@ function createStoreSingleton<TSessionId, TSession>() {
   logger.warn('Warn: You are using memory session store.')
   store = new Map<TSessionId, TSession>()
 }
-export function createSessionStore<TSessionId, TSession>() {
+export function createSessionStore<TSessionId, TSession>(): SessionStore<TSessionId, TSession> {
   if (!store) {
     createStoreSingleton<TSessionId, TSession>()
   }
 
-  const typedStore = <Map<TSessionId, TSession>>store
-  return <SessionStore<TSessionId, TSession>>{
+  const typedStore = store as Map<TSessionId, TSession>
+  return {
     async get(key: TSessionId) {
       return typedStore.get(key)
     },
@@ -44,13 +44,13 @@ export function createSessionStore<TSessionId, TSession>() {
     async forEach(cb) {
       return typedStore.forEach(cb)
     },
-  }
+  } satisfies SessionStore<TSessionId, TSession>
 }
 
 export class SessionProvider<TSessionId, TSession extends Session> {
   houseKeeping: Partial<Record<'minutely' | 'hourly' | 'daily', (store: SessionStore<TSessionId, TSession>, _config: typeof config) => PromiseLike<void>>> = {
     minutely: async (sessionStore) => {
-      sessionStore.forEach((a, b) => this.removeIfExpired(a, b))
+      sessionStore.forEach((session, sessionId) => this.removeIfExpired(session, sessionId))
     },
   }
 
@@ -67,11 +67,12 @@ export class SessionProvider<TSessionId, TSession extends Session> {
   }
 
   async create(data?: { id: string }) {
-    const sessionId = <TSessionId>v4()
-    const _session = <TSession>{
+    const sessionId = v4() as TSessionId
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    const _session = {
       userId: data?.id,
       lastActivity: new Date(),
-    }
+    } as TSession
     await this.store.set(sessionId, _session)
     return sessionId
   }
