@@ -15,7 +15,7 @@ const REDIS_SESSION_PREFIX = 'session.guccho'
 const _logger = logger.child({ store: 'redis' })
 function parseSession<TSession>(_session: Buffer): TSession | undefined {
   const session = BSON.deserialize(_session)
-  if (!('lastActivity' in _session)) {
+  if (!('lastActivity' in session)) {
     _logger.error({ message: 'found invalid session', session })
     return
   }
