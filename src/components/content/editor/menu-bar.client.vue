@@ -1,7 +1,6 @@
 <script lang="ts">
 import type { Editor } from '@tiptap/vue-3'
 
-// @ts-expect-error it's an url
 import remixiconUrl from 'remixicon/fonts/remixicon.symbol.svg'
 import type { PropType } from 'vue'
 import { type ContentEditorInsertImage } from '#components'

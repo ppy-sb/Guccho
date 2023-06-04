@@ -114,12 +114,12 @@ function createFetch(endpoint: string) {
 
 export async function getLiveUserStatus({ id }: { id: number }, config: { api: { v1: string } }) {
   const fetch = createFetch(config.api.v1)
-  const result = <LiveUserStatus> await fetch('/get_player_status', {
+  const result = await fetch('/get_player_status', {
     method: 'get',
     params: {
       id,
     },
-  })
+  }) as LiveUserStatus
   if (!result.ok) {
     throw new Error(result.statusText)
   }

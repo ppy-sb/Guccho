@@ -1,6 +1,6 @@
 import { createClient } from 'redis'
 import { Logger } from '../../log'
-import { env } from './env'
+import { env } from '../../../../env'
 
 const logger = Logger.child({ label: 'redis' })
 

@@ -11,7 +11,7 @@ import {
 import type { Id } from '..'
 import type { AbleToTransformToScores } from '../transforms'
 import { getPrismaClient } from './source/prisma'
-import { env } from './source/env'
+import { env } from '../../../env'
 
 import type {
   ScoreProvider as Base,

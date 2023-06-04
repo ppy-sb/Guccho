@@ -4,7 +4,7 @@ import { BSON } from 'bson'
 import { commandOptions } from 'redis'
 import { Logger } from '../log'
 import { client as getRedis } from './source/redis'
-import { env } from './source/env'
+import { env } from '../../../env'
 import type { Session, SessionStore } from '$base/server/session'
 import { SessionProvider as Base } from '$base/server/session'
 

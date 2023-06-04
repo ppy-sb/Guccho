@@ -13,7 +13,7 @@ import {
 import type { Id } from '..'
 import { hasRuleset } from '..'
 import { client as redisClient } from './source/redis'
-import { env } from './source/env'
+import { env } from '../../../env'
 import { getPrismaClient } from './source/prisma'
 
 import { modes as _modes } from '~/types/defs'

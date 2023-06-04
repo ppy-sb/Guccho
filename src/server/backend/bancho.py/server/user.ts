@@ -31,7 +31,7 @@ import { client as redisClient } from './source/redis'
 import { getPrismaClient } from './source/prisma'
 import { UserRelationProvider } from './user-relations'
 import { ArticleProvider } from './article'
-import { env } from './source/env'
+import { env } from '../../../env'
 import { userNotFound } from '~/server/trpc/messages'
 
 import { RankingStatusEnum } from '~/types/beatmap'

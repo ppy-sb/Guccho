@@ -1,5 +1,4 @@
 <script lang="ts">
-// @ts-expect-error string
 import remixiconUrl from 'remixicon/fonts/remixicon.symbol.svg'
 import type { PropType } from 'vue'
 
