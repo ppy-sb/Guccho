@@ -346,6 +346,7 @@ WHERE s.userid = ${id}
     >,
   >({ handle, excludes, includeHidden }: { handle: string; excludes?: Excludes; includeHidden?: boolean }) {
     if (!excludes) {
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       excludes = { secrets: true } as Excludes
     }
     const user = await this.db.user.findFirstOrThrow(createUserQuery({
