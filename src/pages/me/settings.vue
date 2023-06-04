@@ -123,7 +123,7 @@ async function updateUserSettings() {
   }, 3000)
   if (result) {
     unchanged.value = { ...unchanged.value, ...result }
-    user.value = unchanged.value
+    user.value = { ...unchanged.value }
   }
   if (profileResult) {
     profile.value = profileResult.raw
