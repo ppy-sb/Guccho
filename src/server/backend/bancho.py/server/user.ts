@@ -16,6 +16,7 @@ import {
   toBanchoPyMode,
   toFullUser,
   toRankingSystemScores,
+  toSafeName,
   toUserEssential,
 } from '../transforms'
 
@@ -31,7 +32,7 @@ import { client as redisClient } from './source/redis'
 import { getPrismaClient } from './source/prisma'
 import { UserRelationProvider } from './user-relations'
 import { ArticleProvider } from './article'
-import { env } from '../../../env'
+import { env } from '~/server/env'
 import { userNotFound } from '~/server/trpc/messages'
 
 import { RankingStatusEnum } from '~/types/beatmap'
@@ -225,7 +226,7 @@ INNER JOIN (
     GROUP BY s.map_md5
 ) AS tmp ON tmp.maxPP = s.pp AND tmp.map_md5 = s.map_md5
 WHERE s.userid = ${id}
-`.then(res => res.map(res => parseInt(res.id)))
+`.then(res => res.map(res => Number.parseInt(res.id)))
     }
     else if (rankingSystem === 'ppv2') {
       scoreIds = await this.db.$queryRaw<{ id: string }[]>`
@@ -345,7 +346,7 @@ WHERE s.userid = ${id}
     >,
   >({ handle, excludes, includeHidden }: { handle: string; excludes?: Excludes; includeHidden?: boolean }) {
     if (!excludes) {
-      excludes = <Excludes>{ secrets: true }
+      excludes = { secrets: true } as Excludes
     }
     const user = await this.db.user.findFirstOrThrow(createUserQuery({
       handle,
@@ -353,9 +354,7 @@ WHERE s.userid = ${id}
     }))
 
     // type check will not find any missing params here.
-    const returnValue = <
-      Exclude<Awaited<ReturnType<Base<Id>['getFull']>>, null>
-      > await toFullUser(user, this.config)
+    const returnValue = await toFullUser(user, this.config) as Exclude<Awaited<ReturnType<Base<Id>['getFull']>>, null>
     const parallels: PromiseLike<any>[] = []
 
     returnValue.reachable = false
@@ -413,6 +412,7 @@ WHERE s.userid = ${id}
       data: {
         email: input.email,
         name: input.name,
+        safeName: (env.CHANGE_SAFE_NAME && input.name) ? toSafeName(input.name) : undefined,
       },
     })
     return toUserEssential(result, this.config)

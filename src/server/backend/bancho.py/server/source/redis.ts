@@ -1,18 +1,23 @@
-import { createClient } from 'redis'
+import { RedisClientType, createClient } from 'redis'
 import { Logger } from '../../log'
-import { env } from '../../../../env'
+import { env } from '~/server/env'
 
 const logger = Logger.child({ label: 'redis' })
 
+let _client: RedisClientType | undefined
 export function client() {
   if (!('REDIS_URL' in env)) {
     throw new Error('required redis client without set env')
   }
-  const client = createClient({
+  if (_client) {
+    return _client
+  }
+
+  _client = createClient({
     url: env.REDIS_URL,
   })
-  client.on('error', err => logger.error('Redis Client', err))
-  client.connect()
+  _client.on('error', err => logger.error('Redis Client', err))
+  _client.connect()
 
-  return client
+  return _client
 }

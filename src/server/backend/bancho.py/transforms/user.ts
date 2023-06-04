@@ -161,3 +161,7 @@ export function toFullUser(
     oldNames: [],
   }
 }
+
+export function toSafeName(name: string) {
+  return name.toLocaleLowerCase().replaceAll(' ', '_')
+}

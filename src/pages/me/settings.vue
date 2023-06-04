@@ -121,14 +121,13 @@ async function updateUserSettings() {
   setTimeout(() => {
     updateResult.value = false
   }, 3000)
-  if (!result) {
-    return
+  if (result) {
+    unchanged.value = { ...unchanged.value, ...result }
+    user.value = unchanged.value
   }
-  unchanged.value = { ...unchanged.value, ...result }
-  if (!profileResult) {
-    return
+  if (profileResult) {
+    profile.value = profileResult.raw
   }
-  profile.value = profileResult.raw
 }
 
 const changePasswordForm = shallowReactive<{

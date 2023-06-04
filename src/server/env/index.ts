@@ -14,7 +14,9 @@ export const sbAtBpy = literal('ppy.sb@bancho.py')
 
 export const redisURL = string().url()
 export const dsn = string().url()
-
+export const literalTrue = string().transform(input => input.toLocaleLowerCase() === 'true')
+export const literalFalse = string().transform(input => input.toLocaleLowerCase() === 'false')
+export const literalBoolean = literalTrue.or(literalFalse)
 export const BACKEND = union([bpy, sbAtBpy])
 
 const validateSessionStore = union([
@@ -45,6 +47,10 @@ const validateApi = object({
   BANCHO_PY_API_V1_ENDPOINT: string().url().optional(),
 })
 
+const validateBehavior = object({
+  CHANGE_SAFE_NAME: literalBoolean,
+})
+
 export const env = ensureAndGetEnv(
   validateBase
     .merge(validateDB)
@@ -52,6 +58,7 @@ export const env = ensureAndGetEnv(
     .merge(validateApi)
     .and(validateLeaderboard)
     .and(validateSessionStore)
+    .and(validateBehavior)
 )
 
 export function ensureEnv<Z extends ZodType>(zod: Z) {
