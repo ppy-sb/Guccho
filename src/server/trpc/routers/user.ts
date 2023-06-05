@@ -170,16 +170,16 @@ export const router = _router({
     }),
   status: p
     .input(object({
-      id: string(),
+      id: string().trim(),
     })).query(async ({ input: { id } }) => {
       return await userProvider.status({ id: UserProvider.stringToId(id) })
     }),
   register: sessionProcedure
     .input(object({
-      name: string(),
-      safeName: string(),
-      email: string().email(),
-      passwordMd5: string(),
+      name: string().trim(),
+      safeName: string().trim(),
+      email: string().trim().email(),
+      passwordMd5: string().trim(),
     })).mutation(async ({ input, ctx }) => {
       const user = await userProvider.register(input)
       const sessionId = ctx.session.id

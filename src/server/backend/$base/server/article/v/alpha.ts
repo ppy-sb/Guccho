@@ -14,7 +14,7 @@ export const defaultPrivilege = {
   read: ['public' as const],
   write: ['staff' as const],
 }
-export const ownerId = union([string(), number()])
+export const ownerId = union([string().trim(), number()])
 
 export const contentSchema = object({
   json: zodTipTapJSONContent,

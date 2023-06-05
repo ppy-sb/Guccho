@@ -47,7 +47,7 @@ export const router = _router({
     .input(
       z.object({
         email: z.string().email().optional(),
-        name: z.string().optional(),
+        name: z.string().trim().optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {

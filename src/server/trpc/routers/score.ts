@@ -8,7 +8,7 @@ export const router = _router({
   id: p
     .input(
       z.object({
-        id: string(),
+        id: string().trim(),
       })
     )
     .query(async ({ input }) => {

@@ -7,8 +7,8 @@ import { ArticleProvider } from '~/server/backend/bancho.py/server'
 
 const sp = new ArticleProvider()
 export const router = _router({
-  get: userProcedure.input(string()).query(({ input, ctx }) => sp.get({ slug: input, user: ctx.user })),
-  getRendered: optionalUserProcedure.input(union([string(), array(string())])).query(async ({ input, ctx }) => {
+  get: userProcedure.input(string().trim()).query(({ input, ctx }) => sp.get({ slug: input, user: ctx.user })),
+  getRendered: optionalUserProcedure.input(union([string().trim(), array(string().trim())])).query(async ({ input, ctx }) => {
     if (Array.isArray(input)) {
       input = input.join('/')
     }
@@ -34,7 +34,7 @@ export const router = _router({
     }
   }),
   save: adminProcedure.input(object({
-    slug: string(),
+    slug: string().trim(),
     json: record(any(), any()).refine((arg): arg is ArticleProvider.JSONContent => {
       return !!arg
     }),
@@ -45,6 +45,6 @@ export const router = _router({
     dynamic: boolean(),
   })).mutation(({ input, ctx }) => sp.save(Object.assign(input, { user: ctx.user }))),
   delete: adminProcedure.input(object({
-    slug: string(),
+    slug: string().trim(),
   })).mutation(({ input, ctx }) => sp.delete(Object.assign(input, { user: ctx.user }))),
 })

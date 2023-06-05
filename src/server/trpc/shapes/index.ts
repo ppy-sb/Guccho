@@ -7,7 +7,7 @@ import type { ArticleProvider } from '$base/server/article'
 
 import type { Mode, Ruleset } from '~/types/common'
 
-export const zodHandle = string()
+export const zodHandle = string().trim()
 export const zodRelationType = union([literal('friend'), literal('block')])
 
 export const zodMode = union([
@@ -102,11 +102,11 @@ export const zodSearchBeatmap = union([
   ]),
 ])
 
-export const zodFQDN = string().refine((input) => {
+export const zodFQDN = string().trim().refine((input) => {
   return validator.isFQDN(input)
 })
 
-export const zodPath = string().superRefine((val, ctx) => {
+export const zodPath = string().trim().superRefine((val, ctx) => {
   if (!existsSync(val)) {
     ctx.addIssue({
       code: ZodIssueCode.custom,
