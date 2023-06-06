@@ -51,8 +51,8 @@ function addAppConfigVariables() {
   }
 
   for (const [ruleset, item] of Object.entries(config.ruleset)) {
-    setVariable(`ruleset:${item}`, {
-      description: `name of ruleset ${item}`,
+    setVariable(`ruleset:${ruleset}`, {
+      description: `name of ruleset ${ruleset}`,
       fallback: ruleset,
       value: item.name,
     })

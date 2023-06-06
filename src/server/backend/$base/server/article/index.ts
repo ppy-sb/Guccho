@@ -7,6 +7,7 @@ import { generateHTML } from '@tiptap/html'
 
 import { DeepPartial } from '@trpc/server'
 import { compileGraph, createPipeline, hops } from 'schema-evolution'
+import dirTree from 'directory-tree'
 import { latest, paths, v0, versions } from './v'
 import { UserEssential, UserPrivilege } from '~/types/user'
 import useEditorExtensions from '~/composables/useEditorExtensionsServer'
@@ -21,7 +22,8 @@ async function access(file: PathLike, constant?: typeof fs['constants'][keyof ty
 
 export abstract class ArticleProvider {
   relation = new UserRelationProvider()
-  articles = resolve('articles')
+  relative = 'articles'
+  articles = resolve(this.relative)
   fallbacks = new Map<string, ArticleProvider.Content & ArticleProvider.Meta & ArticleProvider.Version>()
   static ReadAccess = latest.ReadAccess
   static WriteAccess = latest.WriteAccess
@@ -231,6 +233,12 @@ export abstract class ArticleProvider {
       (access === 'read' && content.privilege?.read.includes(ArticleProvider.ReadAccess.Public))
       || (user && ((user.id === content.owner) || (privRequired).some(priv => user.roles.includes(priv as any))))
     ) || false
+  }
+
+  async getLocalSlugs(query?: string) {
+    return dirTree(relative('.', this.articles), { normalizePath: true }, (item, PATH, stats) => {
+      item.path = relative(this.relative, item.path)
+    })
   }
 }
 

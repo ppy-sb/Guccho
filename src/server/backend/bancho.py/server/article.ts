@@ -1,5 +1,5 @@
-import type { UserEssential } from '~/types/user'
 import { ArticleProvider as Base } from '$base/server/article'
+import type { UserEssential } from '~/types/user'
 
 export class ArticleProvider extends Base {
   async get(opt: { slug: string; fallback?: boolean; user?: UserEssential<unknown> }) {

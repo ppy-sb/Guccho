@@ -31,12 +31,14 @@ const article = ref<{
 
 const access = shallowRef<Record<'write' | 'read', boolean>>()
 
-const { data: content, refresh } = await useAsyncData(async () => {
+const { data: content, refresh: refreshContent } = await useAsyncData(async () => {
   if (article.value.slug) {
     return app$.$client.article.get.query(article.value.slug)
   }
   return undefined
 })
+
+const { data: articles, refresh: refreshTree } = app$.$client.article.localSlugs.useQuery()
 
 const privileges: Record<ArticleProvider.TWriteAccess, string> = {
   staff: 'Admin',
@@ -93,7 +95,7 @@ async function create() {
 
 // Update article data from server
 async function update() {
-  await refresh()
+  await refreshContent()
   if (!content.value) {
     return
   }
@@ -136,26 +138,36 @@ async function del() {
     slug: article.value.slug,
   })
 }
+async function postFetch() {
+  await refreshTree()
+}
 </script>
 
 <template>
   <section class="container pb-8 mx-auto custom-container lg:px-2">
+    <tree
+      v-bind="articles" @select="(entry) => {
+        article.slug = entry.path
+        update()
+        postFetch()
+      }"
+    />
     <div class="flex gap-2 items-baseline">
       Editing: <input
         v-model="article.slug" type="text" class="input input-sm shadow-lg" :class="{
           'input-error': !article.slug,
         }"
       >
-      <button class="btn btn-sm btn-info" @click="() => update()">
+      <button class="btn btn-sm btn-info" @click="() => { update(); postFetch() }">
         Load
       </button>
-      <button class="btn btn-sm btn-primary" @click="() => create()">
+      <button class="btn btn-sm btn-primary" @click="() => { create(); postFetch() }">
         New
       </button>
       <button
         class="btn btn-sm btn-success" :class="{
           'btn-disabled': !(article.slug && article.json),
-        }" @click="() => save()"
+        }" @click="() => { save(); postFetch() }"
       >
         Save
       </button>
@@ -163,7 +175,7 @@ async function del() {
       <button
         class="btn btn-sm btn-error" :class="{
           'btn-disabled': !(article.slug && access?.write),
-        }" @click="() => del()"
+        }" @click="() => { del().then(postFetch) }"
       >
         Delete
       </button>

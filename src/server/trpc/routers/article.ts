@@ -33,6 +33,7 @@ export const router = _router({
       access: r.access,
     }
   }),
+
   save: adminProcedure.input(object({
     slug: string().trim(),
     json: record(any(), any()).refine((arg): arg is ArticleProvider.JSONContent => {
@@ -44,7 +45,10 @@ export const router = _router({
     }),
     dynamic: boolean(),
   })).mutation(({ input, ctx }) => sp.save(Object.assign(input, { user: ctx.user }))),
+
   delete: adminProcedure.input(object({
     slug: string().trim(),
   })).mutation(({ input, ctx }) => sp.delete(Object.assign(input, { user: ctx.user }))),
+
+  localSlugs: adminProcedure.input(string().trim().optional()).query(({ input, ctx }) => sp.getLocalSlugs(input)),
 })
