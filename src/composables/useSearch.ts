@@ -1,16 +1,18 @@
 import { useDebounceFn } from '@vueuse/core'
 import useSearchablePages from './useSearchablePages'
 import { modes } from '~/types/defs'
-import type { Mode } from '~/types/common'
+import type { ActiveMode } from '~/types/common'
 import type { OP, Tag } from '~/types/search'
 
 const taggable = {
   mode: modes,
-}
+} as const
+
 const tagOperators = {
   eq: '=',
   ne: '!=',
-}
+} as const
+
 const compareOperators = {
   eq: '=',
   ne: '!=',
@@ -169,9 +171,7 @@ function extractTags(force: boolean) {
       return true
     }
 
-    let op: keyof typeof tagOperators
-    for (op in tagOperators) {
-      const operator = tagOperators[op]
+    for (const [op, operator] of Object.entries(tagOperators)) {
       if (!token.includes(operator)) {
         continue
       }
@@ -183,17 +183,15 @@ function extractTags(force: boolean) {
       if (!left || !right) {
         continue
       }
-      let field: keyof typeof taggable
-      for (field in taggable) {
+      for (const [field, keywords] of Object.entries(taggable)) {
         if (left !== field) {
           continue
         }
 
-        const keywords = taggable[field]
-        if (!keywords.includes(right as Mode)) {
+        if (!keywords.includes(right as unknown as ActiveMode)) {
           continue
         }
-        tags.value.push(tag(field, op, right as Mode))
+        tags.value.push(tag(field as 'mode', op as keyof typeof tagOperators, right as unknown as ActiveMode))
         return false
       }
     }
@@ -225,7 +223,7 @@ function extractQueries(force: boolean) {
           continue
         }
         const nRight = +right
-        if (isNaN(nRight)) {
+        if (Number.isNaN(nRight)) {
           continue
         }
         tags.value.push(query(field, op, nRight))

@@ -1,11 +1,13 @@
-import type {
-  AvailableRuleset,
-  LeaderboardRankingSystem,
-  Mode,
+import {
   MutualRelationship,
   Relationship,
-  Ruleset,
   Scope,
+} from '~/types/defs'
+import type {
+  ActiveMode,
+  ActiveRuleset,
+  AvailableRuleset,
+  LeaderboardRankingSystem,
 } from '~/types/common'
 import type {
   UserEssential,
@@ -15,27 +17,27 @@ import type {
 } from '~/types/user'
 
 export function compareScope(scope: Scope, requiredScope: Partial<Record<Scope, boolean>>) {
-  if (scope === 'public') {
-    return requiredScope.public
+  if (scope === Scope.Public) {
+    return requiredScope[Scope.Public]
   }
 
-  if (scope === 'friends') {
-    return requiredScope.friends || requiredScope.public
+  if (scope === Scope.Friends) {
+    return requiredScope[Scope.Friends] || requiredScope[Scope.Public]
   }
 
-  if (scope === 'self') {
+  if (scope === Scope.Self) {
     return true
   }
 }
 
 export function followUserSettings<
   Id,
-  _Mode extends Mode,
-  _Ruleset extends Ruleset,
+  _Mode extends ActiveMode,
+  _Ruleset extends ActiveRuleset,
   _RankingSystem extends LeaderboardRankingSystem,
 >({
   user,
-  scope = 'public',
+  scope = Scope.Public,
 }: {
   user: UserEssential<Id> &
   Partial<
@@ -45,7 +47,7 @@ export function followUserSettings<
   }
   scope?: Scope
 }) {
-  if (scope === 'self') {
+  if (scope === Scope.Self) {
     return user
   }
 
@@ -66,26 +68,17 @@ export function followUserSettings<
   }
 }
 
-const rel: Record<
-  Relationship,
-  {
-    mutual: MutualRelationship
-  }
-> = {
-  friend: {
-    mutual: 'mutual-friend',
-  },
-  block: {
-    mutual: 'mutual-block',
-  },
-}
+const rel = [
+  [Relationship.Friend, MutualRelationship.MutualFriend],
+  [Relationship.Blocked, MutualRelationship.MutualBlocked],
+] as const
 export function calculateMutualRelationships(relationships: Relationship[],
   passiveRelationships: Relationship[]) {
   const mutualRelationships: MutualRelationship[] = []
 
-  for (const [relation, { mutual }] of Object.entries(rel)) {
-    if (passiveRelationships.includes(relation as Relationship)) {
-      if (relationships.includes(relation as Relationship)) {
+  for (const [relation, mutual] of rel) {
+    if (passiveRelationships.includes(relation)) {
+      if (relationships.includes(relation)) {
         mutualRelationships.push(mutual)
       }
     }

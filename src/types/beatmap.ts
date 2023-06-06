@@ -1,28 +1,33 @@
-import type { Mode } from './common'
+import type { ActiveMode } from './common'
 
-export type UnknownSource = 'unknown'
-export type LocalSource = 'local'
-export type ForeignSource = 'bancho' | 'privateServer'
-export type BeatmapSource = LocalSource | ForeignSource | UnknownSource
+export enum BeatmapSource {
+  Unknown = -1,
+  Local = 0,
+  Bancho = 1,
+  PrivateServer = 2,
+}
+export type UnknownSource = BeatmapSource.Unknown
+export type LocalSource = BeatmapSource.Local
+export type ForeignSource = BeatmapSource.Bancho | BeatmapSource.PrivateServer
 
 // https://osu.ppy.sh/docs/index.html#beatmapsetcompact-rank-status
-export enum RankingStatusEnum {
-  graveyard = -2,
+export enum RankingStatus {
+  Graveyard = -2,
   WIP = -1,
-  pending = 0,
-  ranked = 1,
-  approved = 2,
-  qualified = 3,
-  loved = 4,
+  Pending = 0,
+  Ranked = 1,
+  Approved = 2,
+  Qualified = 3,
+  Loved = 4,
 
-  deleted = 'deleted',
-  notFound = 'notFound', // should not be saved in db
+  Deleted = 'deleted',
+  NotFound = 'notFound', // should not be saved in db
+  Unknown = 'unknown',
 }
 
-export type RankingStatus = keyof typeof RankingStatusEnum
 export type AbnormalStatus =
-  | (keyof typeof RankingStatusEnum & 'deleted')
-  | 'notFound'
+  | RankingStatus.Deleted
+  | RankingStatus.NotFound
 
 export interface Beatmapset<Source extends BeatmapSource, LocalId, ForeignId> {
   meta: {
@@ -69,7 +74,7 @@ export interface BeatmapEssential<Id, ForeignId = never> {
     maxCombo: number
     starRate: number
   }
-  mode: Mode
+  mode: ActiveMode
   md5: string
   version: string
   creator: string

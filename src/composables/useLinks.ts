@@ -1,4 +1,4 @@
-import type { BeatmapSource, Beatmapset } from '../types/beatmap'
+import type { BeatmapSource, Beatmapset } from '~/types/beatmap'
 
 type AnyBeatmapset = Beatmapset<BeatmapSource, any, any>
 // type BanchoBeatmapset = Beatmapset<'bancho', any, any>
@@ -9,8 +9,8 @@ export interface Label {
 
 export function useExternalBeatmapsetLinks(beatmapset: AnyBeatmapset) {
   const returnValue = {
-    external: <Label[]>[],
-    directDownload: <Label[]>[],
+    external: [] as Label[],
+    directDownload: [] as Label[],
   }
   if (isBanchoBeatmapset(beatmapset)) {
     returnValue.external.push({

@@ -1,4 +1,4 @@
-import type { BeatmapSource, Beatmapset } from '~/types/beatmap'
+import { BeatmapSource, Beatmapset } from '~/types/beatmap'
 
 export function isString(input: unknown): input is string {
   return typeof input === 'string'
@@ -6,8 +6,8 @@ export function isString(input: unknown): input is string {
 
 export function isBanchoBeatmapset(
   test: Beatmapset<BeatmapSource, any, unknown>
-): test is Beatmapset<'bancho', any, string | number> {
-  return test.source === 'bancho'
+): test is Beatmapset<BeatmapSource.Bancho, any, string | number> {
+  return test.source === BeatmapSource.Bancho
 }
 
 export function includes<T>(input: any, array: readonly T[]): input is T {

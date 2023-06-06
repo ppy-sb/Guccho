@@ -1,17 +1,29 @@
-import { array, date, literal, number, object, string, tuple, union } from 'zod'
+import { array, date, literal, nativeEnum, number, object, string, tuple, union } from 'zod'
 import { zodTipTapJSONContent } from '~/server/trpc/shapes'
+import { UserPrivilege } from '~/types/user'
 
 export const v = 1 as const
-export const writeAccess = union([
-  literal('staff'),
-  literal('moderator'),
-  literal('beatmapNominator'),
-])
-export const readAccess = writeAccess.or(literal('public'))
+
+export type TWriteAccess = typeof WriteAccess[keyof typeof WriteAccess]
+export const WriteAccess = {
+  Staff: UserPrivilege.Staff,
+  Moderator: UserPrivilege.Moderator,
+  BeatmapNominator: UserPrivilege.BeatmapNominator,
+} as const
+
+export type TReadAccess = typeof ReadAccess[keyof typeof ReadAccess]
+export const ReadAccess = {
+  ...WriteAccess,
+  Public: 'public',
+} as const
+
+export const writeAccess = nativeEnum(WriteAccess)
+
+export const readAccess = nativeEnum(ReadAccess)
 
 export const defaultPrivilege = {
-  read: ['public' as const],
-  write: ['staff' as const],
+  read: [ReadAccess.Public],
+  write: [WriteAccess.Staff],
 }
 export const ownerId = union([string().trim(), number()])
 
@@ -45,3 +57,5 @@ export const schema = object({
   .and(contentSchema)
 
 export const parse = schema.parse
+
+export const filterSelf = <T>(i: T): i is Exclude<T, 'self'> => i !== 'self'

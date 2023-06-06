@@ -1,10 +1,10 @@
 import type { idTransformable } from './@extends'
 import type {
+  ActiveMode,
+  ActiveRuleset,
   AvailableRuleset,
   LeaderboardRankingSystem,
-  Mode,
   RankingSystem,
-  Ruleset,
 } from '~/types/common'
 import type {
   BeatmapLeaderboard,
@@ -12,13 +12,13 @@ import type {
 } from '~/types/leaderboard'
 
 export namespace LeaderboardProvider {
-  export interface BaseQueryOptionalMode<M extends Mode = Mode> {
+  export interface BaseQueryOptionalMode<M extends ActiveMode = ActiveMode> {
     mode?: M
-    ruleset: Ruleset
+    ruleset: ActiveRuleset
     page: number
     pageSize: number
   }
-  export interface BaseQuery<M extends Mode = Mode> {
+  export interface BaseQuery<M extends ActiveMode = ActiveMode> {
     mode: M
     ruleset: AvailableRuleset<M>
     page: number

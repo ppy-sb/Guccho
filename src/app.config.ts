@@ -1,10 +1,11 @@
 import PackageJSON from '../package.json'
 import type {
+  ActiveMode,
+  ActiveRuleset,
   LeaderboardRankingSystem,
-  Mode,
   RankingSystem,
-  Ruleset,
 } from '~/types/common'
+import { Mode, Rank, Ruleset } from '~/types/defs'
 
 interface AppConfigItemBase {
   name: string
@@ -15,8 +16,8 @@ const config: {
   baseUrl: string
   version: `${number}.${number}.${number}`
   title: string
-  mode: Record<Mode, AppConfigItemBase>
-  ruleset: Record<Ruleset, AppConfigItemBase>
+  mode: Record<ActiveMode, AppConfigItemBase>
+  ruleset: Record<ActiveRuleset, AppConfigItemBase>
   rankingSystem: Record<RankingSystem, { name: string }>
   leaderboardRankingSystem: Record<
     LeaderboardRankingSystem,
@@ -31,60 +32,60 @@ const config: {
   version: PackageJSON.version as `${number}.${number}.${number}`,
   title: 'Guccho',
   mode: {
-    osu: {
+    [Mode.Osu]: {
       name: 'Osu',
       icon: 'osu',
     },
-    taiko: {
+    [Mode.Taiko]: {
       name: 'Taiko',
       icon: 'taiko',
     },
-    fruits: {
+    [Mode.Fruits]: {
       name: 'CTB',
       icon: 'fruits',
     },
-    mania: {
+    [Mode.Mania]: {
       name: 'Mania',
       icon: 'mania',
     },
   },
   ruleset: {
-    standard: {
+    [Ruleset.Standard]: {
       name: 'Standard',
       icon: 'vn',
     },
-    relax: {
+    [Ruleset.Relax]: {
       name: 'Relax',
       icon: 'relax',
     },
-    autopilot: {
+    [Ruleset.Autopilot]: {
       name: 'Autopilot',
       icon: 'autopilot',
     },
   },
   leaderboardRankingSystem: {
-    ppv2: {
+    [Rank.PPv2]: {
       userpage: {
         show: 'tab',
       },
       name: 'Performance(v2)',
       icon: 'pp',
     },
-    ppv1: {
+    [Rank.PPv1]: {
       userpage: {
         show: 'dropdown',
       },
       name: 'Performance(v1)',
       icon: 'pp',
     },
-    rankedScore: {
+    [Rank.RankedScore]: {
       userpage: {
         show: 'tab',
       },
       name: 'Ranked Score',
       icon: 'score',
     },
-    totalScore: {
+    [Rank.TotalScore]: {
       userpage: {
         show: 'tab',
       },
@@ -93,13 +94,13 @@ const config: {
     },
   },
   rankingSystem: {
-    ppv2: {
+    [Rank.PPv2]: {
       name: 'Performance(v2)',
     },
-    ppv1: {
+    [Rank.PPv1]: {
       name: 'Performance(v1)',
     },
-    score: {
+    [Rank.Score]: {
       name: 'Score',
     },
   },

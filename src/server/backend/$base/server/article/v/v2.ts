@@ -1,26 +1,25 @@
-import { any, array, nativeEnum, number, object, string, union } from 'zod'
+import { array, date, literal, nativeEnum, number, object, string, tuple, union } from 'zod'
 
 import { zodTipTapJSONContent } from '~/server/trpc/shapes'
+import { Scope } from '~/types/defs'
 import { UserPrivilege } from '~/types/user'
 
-export const v = Symbol('dev-unstable')
+export const v = 2 as const
 
 export type TWriteAccess = typeof WriteAccess[keyof typeof WriteAccess]
 export const WriteAccess = {
-  Self: 'self',
   Staff: UserPrivilege.Staff,
   Moderator: UserPrivilege.Moderator,
   BeatmapNominator: UserPrivilege.BeatmapNominator,
 } as const
 
+export const writeAccess = nativeEnum(WriteAccess)
+
 export type TReadAccess = typeof ReadAccess[keyof typeof ReadAccess]
 export const ReadAccess = {
   ...WriteAccess,
-  Public: 'public',
+  Public: Scope.Public,
 } as const
-
-export const writeAccess = nativeEnum(WriteAccess)
-
 export const readAccess = nativeEnum(ReadAccess)
 
 export const defaultPrivilege = {
@@ -31,21 +30,31 @@ export const ownerId = union([string().trim(), number()])
 
 export const contentSchema = object({
   json: zodTipTapJSONContent,
-  html: string(),
 })
+  .and(
+    object({
+      html: string(),
+      dynamic: literal(false),
+    })
+      .or(object({
+        dynamic: literal(true),
+      }))
+  )
 
 export const metaSchema = object({
   privilege: object({
-    read: array(readAccess).default(defaultPrivilege.read),
-    write: array(writeAccess).default(defaultPrivilege.write),
+    read: array(readAccess),
+    write: array(writeAccess),
   }).default(defaultPrivilege),
   owner: ownerId,
+  created: tuple([ownerId, date()]),
+  lastUpdated: tuple([ownerId, date()]),
 })
 
 export const schema = object({
-  v: any(),
+  v: literal(v),
 })
-  .and(contentSchema)
   .and(metaSchema)
+  .and(contentSchema)
 
 export const parse = schema.parse

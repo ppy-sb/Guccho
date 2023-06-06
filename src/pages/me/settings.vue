@@ -9,6 +9,7 @@ import type { ContentEditor, TModal, TResponsiveModal } from '#components'
 import { useSession } from '~/store/session'
 
 import { ArticleProvider } from '$base/server/article'
+import { UserPrivilege } from '~/types/user'
 
 definePageMeta({
   middleware: ['auth'],
@@ -400,7 +401,7 @@ function resetAvatar() {
               type="text"
               placeholder="Username"
               class="w-full input input-sm"
-              :disabled="user.roles.includes('supporter')"
+              :disabled="user.roles.includes(UserPrivilege.Supporter)"
               :class="{
                 'input-bordered input-primary': unchanged.name !== user.name,
                 'input-ghost': unchanged.name === user.name,

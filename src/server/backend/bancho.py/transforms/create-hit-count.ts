@@ -1,12 +1,14 @@
 import type { Score as DBScore } from '.prisma/bancho.py'
-import type { Mode, PPRankingSystem, Ruleset } from '~/types/common'
+import { Mode } from '~/types/defs'
+import type { ActiveMode, ActiveRuleset, PPRankingSystem } from '~/types/common'
 import type { RulesetScore } from '~/types/score'
 
-export function createHitCount<_Mode extends Mode>(
+export function createHitCount<_Mode extends ActiveMode>(
   mode: _Mode,
   score: DBScore
-): RulesetScore<unknown, unknown, _Mode, Ruleset, PPRankingSystem>['hit'] {
-  return mode === 'mania'
+): RulesetScore<unknown, unknown, _Mode, ActiveRuleset, PPRankingSystem>['hit'] {
+  return mode === Mode.Mania
+
     ? ({
         max: score.ngeki,
         300: score.n300,
@@ -17,10 +19,11 @@ export function createHitCount<_Mode extends Mode>(
       } as RulesetScore<
         unknown,
         unknown,
-        _Mode & 'mania',
-        Ruleset,
+        _Mode & Mode.Mania,
+        ActiveRuleset,
         PPRankingSystem
       >['hit'])
+
     : ({
         300: score.n300,
         geki: score.ngeki,
@@ -31,8 +34,8 @@ export function createHitCount<_Mode extends Mode>(
       } as RulesetScore<
         unknown,
         unknown,
-        _Mode & Exclude<Mode, 'mania'>,
-        Ruleset,
+        _Mode & Exclude<ActiveMode, Mode.Mania>,
+        ActiveRuleset,
         PPRankingSystem
       >['hit'])
 }

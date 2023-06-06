@@ -12,15 +12,15 @@ import {
 } from '../db-query'
 import type { Id } from '..'
 import { hasRuleset } from '..'
-import { client as redisClient } from './source/redis'
 import { env } from '../../../env'
+import { client as redisClient } from './source/redis'
 import { getPrismaClient } from './source/prisma'
 
-import { modes as _modes } from '~/types/defs'
+import { Mode, Rank, modes as _modes } from '~/types/defs'
 import type {
+  ActiveMode,
   AvailableRuleset,
   LeaderboardRankingSystem,
-  Mode,
   RankingSystem,
 } from '~/types/common'
 import type { LeaderboardProvider as Base } from '$base/server'
@@ -31,8 +31,8 @@ const leaderboardFields = {
   id: true,
   pp: true,
   accuracy: true,
-  totalScore: true,
-  rankedScore: true,
+  [Rank.TotalScore]: true,
+  [Rank.RankedScore]: true,
   plays: true,
 } as const
 
@@ -47,7 +47,7 @@ export class LeaderboardDatabaseProvider implements Base<Id> {
     },
   }
 
-  async getLeaderboard<M extends Mode, RS extends LeaderboardRankingSystem>({
+  async getLeaderboard<M extends ActiveMode, RS extends LeaderboardRankingSystem>({
     mode,
     ruleset,
     rankingSystem,
@@ -74,17 +74,17 @@ export class LeaderboardDatabaseProvider implements Base<Id> {
         user: true,
         ...leaderboardFields,
       },
-      orderBy: rankingSystem === 'ppv2'
+      orderBy: rankingSystem === Rank.PPv2
         ? {
             pp: 'desc',
           }
-        : rankingSystem === 'rankedScore'
+        : rankingSystem === Rank.RankedScore
           ? {
-              rankedScore: 'desc',
+              [Rank.RankedScore]: 'desc',
             }
-          : rankingSystem === 'totalScore'
+          : rankingSystem === Rank.TotalScore
             ? {
-                totalScore: 'desc',
+                [Rank.TotalScore]: 'desc',
               }
             : {},
       skip: start,
@@ -94,9 +94,9 @@ export class LeaderboardDatabaseProvider implements Base<Id> {
     return result.map(({ user, ...stat }, index) => ({
       user: toUserEssential(user, this.config),
       inThisLeaderboard: {
-        ppv2: stat.pp,
-        rankedScore: stat.rankedScore,
-        totalScore: stat.totalScore,
+        [Rank.PPv2]: stat.pp,
+        [Rank.RankedScore]: stat[Rank.RankedScore],
+        [Rank.TotalScore]: stat[Rank.TotalScore],
         accuracy: stat.accuracy,
         playCount: stat.plays,
         rank: BigInt(start + index + 1),
@@ -115,7 +115,7 @@ export class LeaderboardDatabaseProvider implements Base<Id> {
     if (!mode) {
       const beatmap = await this.db.map.findFirst({ where: { md5 } })
       if (!beatmap) {
-        mode = 'osu'
+        mode = Mode.Osu
       }
       else {
         mode = _modes[beatmap.mode]
@@ -131,7 +131,7 @@ export class LeaderboardDatabaseProvider implements Base<Id> {
         score: 'desc',
       }
     }
-    else if (rankingSystem === 'ppv2') {
+    else if (rankingSystem === Rank.PPv2) {
       sort = {
         pp: 'desc',
       }
@@ -159,7 +159,7 @@ export class LeaderboardDatabaseProvider implements Base<Id> {
       user: toUserEssential(item.user, this.config),
       score: {
         id: item.id.toString(),
-        ppv2: item.pp,
+        [Rank.PPv2]: item.pp,
         accuracy: item.acc,
         score: item.score,
         playedAt: item.playTime,
@@ -199,7 +199,7 @@ export class RedisLeaderboardProvider extends LeaderboardDatabaseProvider {
     throw new Error('redis is not ready')
   }
 
-  async getLeaderboard<M extends Mode, RS extends LeaderboardRankingSystem>(opt: {
+  async getLeaderboard<M extends ActiveMode, RS extends LeaderboardRankingSystem>(opt: {
     mode: M
     ruleset: AvailableRuleset<M>
     rankingSystem: RS
@@ -211,7 +211,7 @@ export class RedisLeaderboardProvider extends LeaderboardDatabaseProvider {
     const start = page * pageSize
     if (
       this.redisClient.isReady
-      && rankingSystem === 'ppv2'
+      && rankingSystem === Rank.PPv2
     ) {
       try {
         const result: {
@@ -222,9 +222,9 @@ export class RedisLeaderboardProvider extends LeaderboardDatabaseProvider {
           priv: number
           _rank: bigint
           accuracy: number
-          totalScore: bigint
-          rankedScore: bigint
-          ppv2: number
+          [Rank.TotalScore]: bigint
+          [Rank.RankedScore]: bigint
+          [Rank.PPv2]: number
           playCount: number
         }[] = []
         const bPyMode = toBanchoPyMode(mode, ruleset)
@@ -276,12 +276,12 @@ export class RedisLeaderboardProvider extends LeaderboardDatabaseProvider {
             name: user.name,
             safeName: user.safeName,
             flag: user.country,
-            ppv2: stat.pp,
+            [Rank.PPv2]: stat.pp,
+            [Rank.TotalScore]: stat[Rank.TotalScore],
+            [Rank.RankedScore]: stat[Rank.RankedScore],
             priv: user.priv,
-            _rank: BigInt(start + parseInt(index) + 1),
+            _rank: BigInt(start + Number.parseInt(index) + 1),
             accuracy: stat.accuracy,
-            totalScore: stat.totalScore,
-            rankedScore: stat.rankedScore,
             playCount: stat.plays,
           })
         }
@@ -296,11 +296,11 @@ export class RedisLeaderboardProvider extends LeaderboardDatabaseProvider {
             roles: toRoles(item.priv),
           },
           inThisLeaderboard: {
-            ppv2: item.ppv2,
+            [Rank.PPv2]: item[Rank.PPv2],
+            [Rank.TotalScore]: item[Rank.TotalScore],
+            [Rank.RankedScore]: item[Rank.RankedScore],
             accuracy: item.accuracy,
             playCount: item.playCount,
-            totalScore: item.totalScore,
-            rankedScore: item.rankedScore,
             // rank: item._rank,
             // order is correct but rank contains banned user, since we didn't check user priv before when selecting count.
             // calculate rank based on page size * index of this page.

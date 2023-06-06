@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { LeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
+import type { ActiveMode, ActiveRuleset, LeaderboardRankingSystem } from '~/types/common'
 
 interface modelValue {
-  mode?: Mode
-  ruleset?: Ruleset
+  mode?: ActiveMode
+  ruleset?: ActiveRuleset
   rankingSystem?: LeaderboardRankingSystem
 }
 const props = defineProps<{

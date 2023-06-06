@@ -1,9 +1,9 @@
-import type { UserEssential } from '~/types/user'
+import { UserEssential, UserPrivilege } from '~/types/user'
 
 export function calcUserPrivilege(user: UserEssential<unknown>) {
-  const admin = user.roles.includes('admin')
-  const owner = user.roles.includes('owner')
-  const staff = user.roles.includes('staff')
+  const admin = user.roles.includes(UserPrivilege.Admin)
+  const owner = user.roles.includes(UserPrivilege.Owner)
+  const staff = user.roles.includes(UserPrivilege.Staff)
 
   return {
     admin,

@@ -1,24 +1,7 @@
 import type { BanchoPyMode, BanchoPyRankedStatus } from '../enums'
 import { assertIsBanchoPyMode, fromBanchoPyMode, toRankingStatus } from '../transforms'
-
-enum Action {
-  idle = 0,
-  afk = 1,
-  playing = 2,
-  editing = 3,
-  modding = 4,
-  multiplayer = 5,
-  watching = 6,
-  unknown = 7,
-  testing = 8,
-  submitting = 9,
-  paused = 10,
-  lobby = 11,
-  multiplaying = 12,
-  osuDirect = 13,
-}
-
-type HasBeatmapMeta = Action.playing | Action.editing | Action.editing | Action.modding | Action.modding | Action.watching | Action.testing | Action.multiplaying | Action.osuDirect
+import { BeatmapSource } from '~/types/beatmap'
+import { StatusWithBeatmap, UserStatus } from '~/types/user'
 
 interface GulagStatusBeatmap {
   md5: string
@@ -55,7 +38,7 @@ type LiveUserStatus =
           online: true
           login_time: number
           status: {
-            action: Exclude<Action, HasBeatmapMeta> // int(player.status.action),
+            action: Exclude<UserStatus, UserStatus.Offline | StatusWithBeatmap> // int(player.status.UserStatus),
             info_text: string // player.status.info_text,
             mode: number // int(player.status.mode),
             mods: number // int(player.status.mods),
@@ -68,7 +51,7 @@ type LiveUserStatus =
           online: true
           login_time: number
           status: {
-            action: HasBeatmapMeta // int(player.status.action),
+            action: StatusWithBeatmap // int(player.status.UserStatus),
             info_text: string // player.status.info_text,
             mode: number // int(player.status.mode),
             mods: number // int(player.status.mods),
@@ -80,6 +63,7 @@ type LiveUserStatus =
         status: 'success'
         player_status: {
           online: false
+          status: UserStatus.Offline
           last_seen: number
         }
       }>
@@ -128,14 +112,14 @@ export async function getLiveUserStatus({ id }: { id: number }, config: { api: {
 
   if (!s.online) {
     return {
-      status: 'offline',
+      status: UserStatus.Offline,
       lastSeen: new Date(s.last_seen * 1000),
     } as const
   }
   assertIsBanchoPyMode(s.status.mode)
   const [mode, ruleset] = fromBanchoPyMode(s.status.mode)
   const base = {
-    status: Action[s.status.action] as keyof typeof Action,
+    status: s.status.action,
     description: s.status.info_text,
     mode,
     ruleset,
@@ -183,7 +167,7 @@ export async function getLiveUserStatus({ id }: { id: number }, config: { api: {
             title: bm.title,
           },
         },
-        source: 'bancho',
+        source: BeatmapSource.Bancho,
       },
     },
   } as const

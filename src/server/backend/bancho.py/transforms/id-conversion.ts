@@ -1,7 +1,7 @@
 import type { Id, ScoreId } from '..'
 
 export function stringToId(input: string): Id {
-  return parseInt(input)
+  return Number.parseInt(input)
 }
 export function stringToScoreId(input: string): ScoreId {
   return BigInt(input)

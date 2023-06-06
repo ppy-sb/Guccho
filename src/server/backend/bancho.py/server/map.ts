@@ -14,7 +14,7 @@ import { getPrismaClient } from './source/prisma'
 import type { Tag } from '~/types/search'
 
 import type { MapProvider as Base } from '$base/server'
-import type { BeatmapSource, Beatmapset } from '~/types/beatmap'
+import { BeatmapSource, Beatmapset, RankingStatus } from '~/types/beatmap'
 
 export class MapProvider implements Base<Id> {
   static idToString = idToString
@@ -62,7 +62,7 @@ export class MapProvider implements Base<Id> {
     return Object.assign(beatmapset, {
       beatmaps: beatmaps.map(bm => ({
         ...toBeatmapEssential(bm),
-        status: toRankingStatus(bm.status) || 'notFound',
+        status: toRankingStatus(bm.status) || RankingStatus.NotFound,
       })),
     })
   }
@@ -76,7 +76,7 @@ export class MapProvider implements Base<Id> {
         AND: [
           {
             OR: [
-              isNaN(idKw)
+              Number.isNaN(idKw)
                 ? undefined
                 : {
                     setId: idKw,
@@ -117,7 +117,7 @@ export class MapProvider implements Base<Id> {
       take: limit,
       where: {
         AND: [
-          isNaN(idKw)
+          Number.isNaN(idKw)
             ? undefined
             : {
                 id: idKw,
@@ -126,7 +126,7 @@ export class MapProvider implements Base<Id> {
             beatmaps: {
               some: {
                 AND: [
-                  isNaN(idKw)
+                  Number.isNaN(idKw)
                     ? {
                         OR: [
                           {

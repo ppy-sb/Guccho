@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useSession } from '~/store/session'
 import type { UserRelationship } from '~/types/user-relationship'
-import type { Relationship } from '~/types/common'
+import { Relationship } from '~/types/defs'
 
 const app$ = useNuxtApp()
 const session = useSession()
@@ -51,8 +51,8 @@ async function toggleRelation(type: Relationship, user: UserRelationship<string>
   }
 }
 
-const toggleFriend = toggleRelation.bind(null, 'friend')
-const isFriend = haveRelation.bind(null, 'friend')
+const toggleFriend = toggleRelation.bind(null, Relationship.Friend)
+const isFriend = haveRelation.bind(null, Relationship.Friend)
 // const toggleBlock = toggleRelation.bind(null, 'block')
 // const isBlocked = haveRelation.bind(null, 'block')
 </script>

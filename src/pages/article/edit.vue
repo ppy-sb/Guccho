@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { parse, stringify } from 'devalue'
+import { UserPrivilege } from '~/types/user'
 import { ContentEditor } from '#components'
 import type { ArticleProvider } from '$base/server'
+import { Scope } from '~/types/defs'
 
 definePageMeta({
   middleware: ['auth', 'admin'],
@@ -18,8 +20,8 @@ const article = ref<{
   slug: string
 }>({
   privilege: {
-    read: ['public'],
-    write: ['staff'],
+    read: [Scope.Public],
+    write: [UserPrivilege.Staff],
   },
 
   json: undefined,
@@ -36,14 +38,14 @@ const { data: content, refresh } = await useAsyncData(async () => {
   return undefined
 })
 
-const privileges: Record<ArticleProvider.WriteAccess, string> = {
+const privileges: Record<ArticleProvider.TWriteAccess, string> = {
   staff: 'Admin',
   moderator: 'Moderator',
   beatmapNominator: 'BN',
 }
-const readPrivileges: Record<ArticleProvider.ReadAccess, string> = {
+const readPrivileges: Record<ArticleProvider.TReadAccess, string> = {
   ...privileges,
-  public: 'public',
+  [Scope.Public]: 'public',
 }
 
 // Helper function to convert privilege object to select options

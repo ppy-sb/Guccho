@@ -1,5 +1,6 @@
 import type { inferRouterError, inferRouterOutputs } from '@trpc/server'
 import { defineStore } from 'pinia'
+import { Mode, Ruleset } from '~/types/defs'
 import type { AppRouter } from '~/server/trpc/routers'
 
 type RouterOutput = inferRouterOutputs<AppRouter>
@@ -18,7 +19,7 @@ export default defineStore('userpage', () => {
 
   const _computeStatistic = () => hasRuleset(switcher.mode, switcher.ruleset)
     ? user.value?.statistics?.[switcher.mode][switcher.ruleset]
-    : user.value?.statistics?.osu.standard
+    : user.value?.statistics?.[Mode.Osu][Ruleset.Standard]
 
   const currentStatistic = shallowRef<ReturnType<typeof _computeStatistic> | null>(null)
 

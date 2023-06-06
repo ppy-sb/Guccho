@@ -1,16 +1,14 @@
 import fs from 'node:fs/promises'
-
 import { isAbsolute, join, relative, resolve } from 'node:path'
 import { PathLike } from 'node:fs'
-import { BSON } from 'bson'
+import * as BSON from 'bson'
 import type { JSONContent as TipTapJSONContent } from '@tiptap/core'
 import { generateHTML } from '@tiptap/html'
-import { z } from 'zod'
 
 import { DeepPartial } from '@trpc/server'
 import { compileGraph, createPipeline, hops } from 'schema-evolution'
 import { latest, paths, v0, versions } from './v'
-import type { UserEssential, UserPrivilegeString } from '~/types/user'
+import { UserEssential, UserPrivilege } from '~/types/user'
 import useEditorExtensions from '~/composables/useEditorExtensionsServer'
 import { UserRelationProvider } from '~/server/backend/bancho.py/server'
 import { Logger } from '~/server/backend/$base/log'
@@ -25,6 +23,8 @@ export abstract class ArticleProvider {
   relation = new UserRelationProvider()
   articles = resolve('articles')
   fallbacks = new Map<string, ArticleProvider.Content & ArticleProvider.Meta & ArticleProvider.Version>()
+  static ReadAccess = latest.ReadAccess
+  static WriteAccess = latest.WriteAccess
   constructor() {
     this.initFallbacks()
   }
@@ -223,12 +223,12 @@ export abstract class ArticleProvider {
   async checkPrivilege(
     access: keyof ArticleProvider.Meta['privilege'],
     content: ArticleProvider.Meta,
-    user?: { id: unknown; roles: UserPrivilegeString[] }
+    user?: { id: unknown; roles: UserPrivilege[] }
   ) {
     const privRequired = content.privilege[access]
 
     return (
-      (access === 'read' && content.privilege?.read.includes('public'))
+      (access === 'read' && content.privilege?.read.includes(ArticleProvider.ReadAccess.Public))
       || (user && ((user.id === content.owner) || (privRequired).some(priv => user.roles.includes(priv as any))))
     ) || false
   }
@@ -237,9 +237,11 @@ export abstract class ArticleProvider {
 export namespace ArticleProvider {
   export const builtInAuthor = 'built-in'
 
-  export type WriteAccess = z.infer<typeof latest['writeAccess']>
-  export type ReadAccess = z.infer<typeof latest['readAccess']>
   export type JSONContent = TipTapJSONContent & { __brand: 'JSONContent' }
+  export type TReadAccess = latest.TReadAccess
+  export type TWriteAccess = latest.TWriteAccess
+  export const readAccess = latest.readAccess
+  export const writeAccess = latest.writeAccess
 
   export interface BaseContent {
     json: ArticleProvider.JSONContent
@@ -261,8 +263,8 @@ export namespace ArticleProvider {
   export type Signature = [unknown, Date]
   export interface Meta<Id extends OwnerId = OwnerId> {
     privilege: {
-      read: ReadAccess[]
-      write: WriteAccess[]
+      read: TReadAccess[]
+      write: TWriteAccess[]
     }
     owner: Id
     created: Signature

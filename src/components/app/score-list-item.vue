@@ -1,23 +1,24 @@
 <script setup lang="ts">
 import type { RankingSystemScore } from '~/types/score'
-import type { LeaderboardPPRankingSystem, LeaderboardRankingSystem, LeaderboardScoreRankingSystem, Mode, Ruleset } from '~/types/common'
+import type { ActiveMode, ActiveRuleset, LeaderboardPPRankingSystem, LeaderboardRankingSystem, LeaderboardScoreRankingSystem } from '~/types/common'
 import {
+  Rank,
   leaderboardScoreRankingSystems,
   ppRankingSystems,
 } from '~/types/defs'
 
-import type { RankingStatus } from '~/types/beatmap'
+import { BeatmapSource, RankingStatus } from '~/types/beatmap'
 
 const props = withDefaults(
   defineProps<{
     score?: RankingSystemScore<
       unknown,
       unknown,
-      Mode,
+      ActiveMode,
       LeaderboardRankingSystem
     >
-    mode: Mode
-    ruleset: Ruleset
+    mode: ActiveMode
+    ruleset: ActiveRuleset
     rankingSystem: LeaderboardRankingSystem
     useIntl?: boolean
   }>(),
@@ -27,11 +28,11 @@ const props = withDefaults(
 )
 
 const rankingStatusIconMapping: Partial<Record<RankingStatus, string>> = {
-  approved: 'line-md:circle-to-confirm-circle-transition',
-  ranked: 'line-md:chevron-small-triple-up',
-  pending: 'line-md:alert',
-  loved: 'line-md:heart-filled',
-  qualified: 'line-md:confirm',
+  [RankingStatus.Approved]: 'line-md:circle-to-confirm-circle-transition',
+  [RankingStatus.Ranked]: 'line-md:chevron-small-triple-up',
+  [RankingStatus.Pending]: 'line-md:alert',
+  [RankingStatus.Loved]: 'line-md:heart-filled',
+  [RankingStatus.Qualified]: 'line-md:confirm',
 }
 
 const numberFmt = createAddCommasFormatter()
@@ -81,7 +82,7 @@ const meta = computed(
           <img
             v-if=" beatmap
               && beatmapIsVisible(beatmap)
-              && beatmap.beatmapset.source === 'bancho'"
+              && beatmap.beatmapset.source === BeatmapSource.Bancho"
             :src="beatmap.beatmapset.assets['list@2x']"
             :alt="beatmap.beatmapset.meta.title"
             :onerror="placeholder"
@@ -103,7 +104,7 @@ const meta = computed(
                   beatmap: beatmap.id as string,
                   mode: props.mode,
                   ruleset: props.ruleset,
-                  rank: ['totalScore', 'rankedScore'].includes(
+                  rank: [Rank.TotalScore, Rank.RankedScore].includes(
                     props.rankingSystem,
                   )
                     ? 'score'

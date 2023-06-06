@@ -4,24 +4,24 @@ import { createHitCount } from './create-hit-count'
 import { toMods } from '.'
 
 import type { AbleToTransformToScores } from './index'
-import type { RankingStatus } from '~/types/beatmap'
+import { BeatmapSource, RankingStatus } from '~/types/beatmap'
 import type {
-  Grade,
+  ActiveMode,
+  ActiveRuleset,
   LeaderboardRankingSystem,
-  Mode,
   PPRankingSystem,
-  Ruleset,
 } from '~/types/common'
 import type { RankingSystemScore, RulesetScore } from '~/types/score'
+import { Grade, Rank } from '~/types/defs'
 
-export function toScore<_RankingSystem extends PPRankingSystem>({
+export function toScore<_RS extends PPRankingSystem>({
   score,
   mode,
   ruleset,
 }: {
   score: AbleToTransformToScores
-  mode: Mode
-  ruleset: Ruleset
+  mode: ActiveMode
+  ruleset: ActiveRuleset
 }) {
   const rtn1 = {
     id: score.id,
@@ -29,30 +29,30 @@ export function toScore<_RankingSystem extends PPRankingSystem>({
     maxCombo: score.maxCombo,
     // mods: score.mods,
     score: BigInt(score.score),
-    grade: score.grade,
+    grade: (score.grade === 'N' ? 'F' : score.grade) as Grade,
     accuracy: score.acc,
     hit: createHitCount(mode, score),
     beatmap: (score.beatmap !== null
       && toBeatmapWithBeatmapset(score.beatmap)) || {
-      status: 'notFound',
+      status: RankingStatus.NotFound,
     },
     mods: toMods(score.mods),
     ruleset,
     mode,
-    ppv2: {
+    [Rank.PPv2]: {
       rank: 0,
       pp: score.pp,
     },
   } as RulesetScore<
     bigint,
     Id,
-    Mode,
-    Ruleset,
-    _RankingSystem,
+    ActiveMode,
+    ActiveRuleset,
+    _RS,
     (typeof score)['beatmap'] extends null
-      ? 'unknown'
-      : Exclude<(typeof score)['beatmap'], null>['server'],
-    (typeof score)['beatmap'] extends null ? 'notFound' : RankingStatus
+      ? RankingStatus.Unknown
+      : BeatmapSource.Bancho | BeatmapSource.PrivateServer | BeatmapSource.Unknown,
+    (typeof score)['beatmap'] extends null ? RankingStatus.NotFound : RankingStatus
   >
   return rtn1
 }
@@ -67,7 +67,7 @@ export function toRankingSystemScore<
 }: {
   score: AbleToTransformToScores
   rankingSystem: _RankingSystem
-  mode: Mode
+  mode: ActiveMode
   rank: number
 }) {
   type HasBeatmap = (typeof score)['beatmap'] extends null
@@ -81,26 +81,27 @@ export function toRankingSystemScore<
     accuracy: score.acc,
     grade: score.grade as Grade,
     hit: createHitCount(mode, score),
-    beatmap: (score.beatmap !== null
-      && toBeatmapWithBeatmapset(score.beatmap)) || {
-      status: 'notFound',
-    },
+    beatmap: score.beatmap !== null
+      ? toBeatmapWithBeatmapset(score.beatmap)
+      : {
+          status: RankingStatus.NotFound,
+        },
     mods: toMods(score.mods),
     playedAt: score.playTime,
     maxCombo: score.maxCombo,
     rank,
     pp: (
-      (rankingSystem === 'ppv1' || rankingSystem === 'ppv2')
+      (rankingSystem === Rank.PPv1 || rankingSystem === Rank.PPv2)
         ? score.pp
         : undefined
     ) as _RankingSystem extends PPRankingSystem ? number : never,
-  } satisfies RankingSystemScore<
+  } as RankingSystemScore<
     bigint,
     Id,
-    Mode,
+    ActiveMode,
     _RankingSystem,
-    HasBeatmap extends null ? 'unknown' : HasBeatmap['server'],
-    HasBeatmap extends null ? 'notFound' : RankingStatus
+    HasBeatmap extends null ? BeatmapSource.Unknown : BeatmapSource.Bancho | BeatmapSource.PrivateServer,
+    HasBeatmap extends null ? RankingStatus.NotFound : Exclude<RankingStatus, RankingStatus.NotFound>
   >
   return result
 }
@@ -111,8 +112,8 @@ export function toScores({
   ruleset,
 }: {
   scores: AbleToTransformToScores[]
-  mode: Mode
-  ruleset: Ruleset
+  mode: ActiveMode
+  ruleset: ActiveRuleset
 }) {
   return scores.map(score => toScore({ score, mode, ruleset }))
 }
@@ -124,7 +125,7 @@ export function toRankingSystemScores<RS extends LeaderboardRankingSystem>({
 }: {
   scores: AbleToTransformToScores[]
   rankingSystem: RS
-  mode: Mode
+  mode: ActiveMode
 }) {
   return scores.map((score, index) =>
     toRankingSystemScore({ score, rankingSystem, mode, rank: index + 1 })

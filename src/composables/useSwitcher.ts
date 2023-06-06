@@ -1,15 +1,16 @@
 import useAdapterConfig from './useAdapterConfig'
+import { Rank } from '~/types/defs'
 
 import type {
+  ActiveMode,
+  ActiveRuleset,
   LeaderboardRankingSystem,
-  Mode,
   RankingSystem,
-  Ruleset,
 } from '~/types/common'
 
 export interface SwitcherPropType<TRS> {
-  mode?: Mode
-  ruleset?: Ruleset
+  mode?: ActiveMode
+  ruleset?: ActiveRuleset
   rankingSystem?: TRS
 }
 
@@ -26,7 +27,7 @@ export function useLeaderboardSwitcher(
   const data = shallowReactive({
     mode: mode || supportedModes[0],
     ruleset: ruleset || supportedRulesets[0],
-    rankingSystem: rankingSystem || 'ppv2',
+    rankingSystem: rankingSystem || Rank.PPv2,
   })
   return [
     data,
@@ -59,7 +60,7 @@ export function useLeaderboardSwitcher(
         data.rankingSystem = rankingSystem
       }
       else {
-        data.rankingSystem = 'ppv2'
+        data.rankingSystem = Rank.PPv2
       }
     },
   ] as const
@@ -79,7 +80,7 @@ export function useSwitcher(initial?: SwitcherPropType<RankingSystem>) {
   const data = shallowReactive({
     mode: mode || supportedModes[0],
     ruleset: ruleset || supportedRulesets[0],
-    rankingSystem: rankingSystem || 'ppv2',
+    rankingSystem: rankingSystem || Rank.PPv2,
   })
   return [
     data,

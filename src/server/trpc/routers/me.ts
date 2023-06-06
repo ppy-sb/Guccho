@@ -136,12 +136,12 @@ export const router = _router({
         self: [fromRelationship],
         counterpart: [targetRelationship],
         mutual:
-          fromRelationship
-          && targetRelationship
-          && calculateMutualRelationships(
-            [fromRelationship],
-            [targetRelationship]
-          ),
+          (fromRelationship !== undefined && targetRelationship !== undefined)
+            ? calculateMutualRelationships(
+              [fromRelationship],
+              [targetRelationship]
+            )
+            : undefined,
       }
     }),
 

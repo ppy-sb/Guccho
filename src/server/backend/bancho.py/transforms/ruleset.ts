@@ -2,6 +2,7 @@ import type { Stat } from '.prisma/bancho.py'
 
 import type { LeaderboardRankingSystem } from '~/types/common'
 import type { UserModeRulesetStatistics } from '~/types/statistics'
+import { Rank } from '~/types/defs'
 
 export function createRulesetData<
   _RankingSystem extends LeaderboardRankingSystem,
@@ -23,15 +24,15 @@ export function createRulesetData<
 }) {
   if (dbResult == null) {
     return {
-      ppv2: {
+      [Rank.PPv2]: {
         rank: 0,
         performance: 0,
       },
-      rankedScore: {
+      [Rank.RankedScore]: {
         rank: 0,
         score: BigInt(0),
       },
-      totalScore: {
+      [Rank.TotalScore]: {
         rank: 0,
         score: BigInt(0),
       },
@@ -55,17 +56,18 @@ export function createRulesetData<
       },
     } as UserModeRulesetStatistics<_RankingSystem>
   }
+
   return {
-    ppv2: {
+    [Rank.PPv2]: {
       rank: livePPRank?.rank || Number(ranks?.ppv2Rank) || undefined,
       countryRank: livePPRank?.countryRank || undefined,
       performance: dbResult.pp,
     },
-    rankedScore: {
+    [Rank.RankedScore]: {
       rank: Number(ranks?.rankedScoreRank) || undefined,
       score: dbResult.rankedScore,
     },
-    totalScore: {
+    [Rank.TotalScore]: {
       rank: Number(ranks?.totalScoreRank) || undefined,
       score: dbResult.totalScore,
     },

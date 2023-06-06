@@ -1,36 +1,24 @@
 import { existsSync } from 'node:fs'
-import z, { ZodIssueCode, ZodSchema, literal, number, string, tuple, union } from 'zod'
+import z, { ZodIssueCode, ZodSchema, literal, nativeEnum, number, string, tuple, union } from 'zod'
 
 import validator from 'validator'
 import { hasRuleset } from '../config'
+import { LeaderboardScoreRank, Mode, PPRank, Relationship, Ruleset, ScoreRank } from '~/types/defs'
 import type { ArticleProvider } from '$base/server/article'
 
-import type { Mode, Ruleset } from '~/types/common'
+import type { ActiveMode, ActiveRuleset } from '~/types/common'
+import { RankingStatus } from '~/types/beatmap'
 
 export const zodHandle = string().trim()
-export const zodRelationType = union([literal('friend'), literal('block')])
+export const zodRelationType = nativeEnum(Relationship)
 
-export const zodMode = union([
-  literal('osu'),
-  literal('taiko'),
-  literal('fruits'),
-  literal('mania'),
-])
-export const zodRuleset = union([
-  literal('standard'),
-  literal('relax'),
-  literal('autopilot'),
-])
-export const zodPPRankingSystem = union([literal('ppv2'), literal('ppv1')])
-export const zodScoreRankingSystem = union([
-  literal('rankedScore'),
-  literal('totalScore'),
-])
-export const zodLeaderboardRankingSystem = union([
-  zodPPRankingSystem,
-  zodScoreRankingSystem,
-])
-export const zodRankingSystem = union([zodPPRankingSystem, literal('score')])
+export const zodMode = nativeEnum(Mode)
+export const zodRuleset = nativeEnum(Ruleset)
+
+export const zodPPRankingSystem = nativeEnum(PPRank)
+export const zodScoreRankingSystem = nativeEnum(LeaderboardScoreRank)
+export const zodLeaderboardRankingSystem = zodPPRankingSystem.or(zodScoreRankingSystem)
+export const zodRankingSystem = zodPPRankingSystem.or(nativeEnum(ScoreRank))
 
 export const zodSafeModeRulesetBase = z.object({
   mode: zodMode,
@@ -41,8 +29,8 @@ export function validateModeRuleset({
   mode,
   ruleset,
 }: {
-  mode: Mode
-  ruleset: Ruleset
+  mode: ActiveMode
+  ruleset: ActiveRuleset
 }) {
   return hasRuleset(mode, ruleset)
 }
@@ -59,17 +47,7 @@ export const zodTipTapJSONContent = z
     return z.NEVER
   }) as unknown as ZodSchema<ArticleProvider.JSONContent>
 
-export const zodRankingStatus = union([
-  literal('graveyard'),
-  literal('WIP'),
-  literal('pending'),
-  literal('ranked'),
-  literal('approved'),
-  literal('qualified'),
-  literal('loved'),
-  // literal('deleted'),
-  // literal('notFound'),
-])
+export const zodRankingStatus = nativeEnum(RankingStatus)
 
 export const zodSearchBeatmap = union([
   tuple([

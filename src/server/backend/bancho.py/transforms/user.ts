@@ -1,66 +1,67 @@
 import type {
-  User as DatabaseUser, RelationshipType,
+  User as DatabaseUser,
 } from '.prisma/bancho.py'
 import { BanchoPyPrivilege } from '../enums'
 
 import type { Id } from '..'
-import type {
+import { Relationship, Scope } from '~/types/defs'
+import {
   UserEssential,
   UserExtra,
   UserOptional,
-  UserPrivilegeString,
+  UserPrivilege,
   UserSecrets,
 } from '~/types/user'
 import type { UserRelationship } from '~/types/user-relationship'
 
-export function toRoles(priv: number): UserPrivilegeString[] {
-  const roles: UserPrivilegeString[] = []
+export function toRoles(priv: number): UserPrivilege[] {
+  const roles: UserPrivilege[] = []
   if (priv & BanchoPyPrivilege.Normal) {
-    roles.push('registered')
+    roles.push(UserPrivilege.Registered)
   }
 
   if (priv & BanchoPyPrivilege.Verified) {
-    roles.push('normal')
+    roles.push(UserPrivilege.Normal)
   }
 
   if (priv & BanchoPyPrivilege.Whitelisted) {
-    roles.push('bypassAntiCheat')
+    roles.push(UserPrivilege.Whitelisted)
   }
 
   if (priv & BanchoPyPrivilege.Donator) {
-    roles.push('supporter')
+    roles.push(UserPrivilege.Supporter)
   }
 
   if (priv & BanchoPyPrivilege.Alumni) {
-    roles.push('alumni')
+    roles.push(UserPrivilege.Alumni)
   }
 
   if (priv & BanchoPyPrivilege.Tournament) {
-    roles.push('tournamentStuff')
+    roles.push(UserPrivilege.TournamentStuff)
   }
 
   if (priv & BanchoPyPrivilege.Nominator) {
-    roles.push('beatmapNominator')
+    roles.push(UserPrivilege.BeatmapNominator)
   }
 
   if (priv & BanchoPyPrivilege.Mod) {
-    roles.push('moderator')
+    roles.push(UserPrivilege.Moderator)
   }
 
   if (priv & BanchoPyPrivilege.Staff) {
-    roles.push('staff')
+    roles.push(UserPrivilege.Staff)
   }
 
   if (priv & BanchoPyPrivilege.Admin) {
-    roles.push('admin')
+    roles.push(UserPrivilege.Admin)
   }
 
   if (priv & BanchoPyPrivilege.Dangerous) {
-    roles.push('owner')
+    roles.push(UserPrivilege.Owner)
   }
 
   if (priv & BanchoPyPrivilege.Bot) {
-    roles.push('bot')
+    roles.push(UserPrivilege.Bot)
   }
 
   return roles
@@ -105,7 +106,7 @@ export function toUserEssential<
 
 export function dedupeUserRelationship(
   relations: Array<{
-    type: RelationshipType
+    type: Relationship
     toUserId: Id
     toUser: UserEssential<Id>
   }>
@@ -151,11 +152,11 @@ export function toFullUser(
     roles: toRoles(user.priv),
     settings: {
       accessControl: {
-        reachable: { public: true },
-        status: { public: true },
-        privateMessage: { public: true },
+        reachable: { [Scope.Public]: true },
+        status: { [Scope.Public]: true },
+        privateMessage: { [Scope.Public]: true },
         email: {},
-        oldNames: { public: true },
+        oldNames: { [Scope.Public]: true },
       } as const,
     },
     oldNames: [],

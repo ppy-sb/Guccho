@@ -57,6 +57,7 @@ const guweb = [
   },
 ]
 /** @type {import('tailwindcss').Config} */
+// eslint-disable-next-line antfu/no-cjs-exports
 module.exports = {
   content: [
     './src/components/**/*.{vue,js}',

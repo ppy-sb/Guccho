@@ -10,8 +10,8 @@ import {
 
 import type { Id } from '..'
 import type { AbleToTransformToScores } from '../transforms'
-import { getPrismaClient } from './source/prisma'
 import { env } from '../../../env'
+import { getPrismaClient } from './source/prisma'
 
 import type {
   ScoreProvider as Base,

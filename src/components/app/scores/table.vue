@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { RankingSystem } from '~/types/common'
-
+import { Rank } from '~/types/defs'
 import type { BeatmapLeaderboard } from '~/types/leaderboard'
 
 const props = withDefaults(
@@ -9,7 +9,7 @@ const props = withDefaults(
     rankingSystem: RankingSystem
   }>(),
   {
-    rankingSystem: 'ppv2',
+    rankingSystem: Rank.PPv2,
   }
 )
 const comma = createAddCommasFormatter()
@@ -30,10 +30,10 @@ const pp = createPPFormatter()
         <th class="text-right">
           Score
         </th>
-        <th v-if="rankingSystem === 'ppv2'" class="text-right">
+        <th v-if="rankingSystem === Rank.PPv2" class="text-right">
           Performance ( v2 )
         </th>
-        <th v-else-if="rankingSystem === 'ppv1'" class="text-right">
+        <th v-else-if="rankingSystem === Rank.PPv1" class="text-right">
           Performance ( v2 )
         </th>
         <th>Played At</th>
@@ -75,11 +75,11 @@ const pp = createPPFormatter()
           <td class="text-right font-mono">
             {{ comma(item.score.score) }}
           </td>
-          <td v-if="rankingSystem === 'ppv2'" class="text-right font-mono">
-            {{ pp(item.score.ppv2 || 0) }}
+          <td v-if="rankingSystem === Rank.PPv2" class="text-right font-mono">
+            {{ pp(item.score[Rank.PPv2] || 0) }}
           </td>
-          <td v-else-if="rankingSystem === 'ppv1'" class="text-right font-mono">
-            {{ pp(item.score.ppv2 || 0) }}
+          <td v-else-if="rankingSystem === Rank.PPv1" class="text-right font-mono">
+            {{ pp(item.score[Rank.PPv2] || 0) }}
           </td>
           <td class="font-mono">
             {{ item.score.playedAt.toLocaleDateString() }}

@@ -1,5 +1,5 @@
 import type { Prisma } from '.prisma/bancho.py'
-import { BanchoMode, BanchoPyPrivilege } from './enums'
+import { BanchoPyPrivilege, toBanchoMode } from './enums'
 import type { DatabaseUserEssentialFields } from './transforms/user'
 import { stringToId } from './transforms'
 import type { OP, Tag } from '~/types/search'
@@ -41,7 +41,7 @@ export function createUserLikeQuery(keyword: string) {
             contains: keyword,
           },
         },
-        isNaN(idKw)
+        Number.isNaN(idKw)
           ? undefined
           : {
               id: idKw,
@@ -68,7 +68,7 @@ export function createUserQuery(
   }
 ) {
   let handleNum = +handle
-  if (isNaN(handleNum)) {
+  if (Number.isNaN(handleNum)) {
     handleNum = -1
   }
 
@@ -128,7 +128,7 @@ export function createFilter(tags: Tag[]) {
 
     switch (key) {
       case 'mode': {
-        filter.push({ mode: { [operator]: BanchoMode[value] } })
+        filter.push({ mode: { [operator]: toBanchoMode(value) } })
         break
       }
       case 'starRating': {

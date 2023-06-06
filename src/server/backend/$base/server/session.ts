@@ -68,7 +68,7 @@ export class SessionProvider<TSessionId, TSession extends Session> {
 
   async create(data?: { id: string }) {
     const sessionId = v4() as TSessionId
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+
     const _session = {
       userId: data?.id,
       lastActivity: new Date(),

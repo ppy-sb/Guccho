@@ -2,9 +2,9 @@ import type { JSONContent } from '@tiptap/core'
 import type { idTransformable } from './@extends'
 import type { BeatmapSource, RankingStatus } from '~/types/beatmap'
 import type {
+  ActiveMode,
+  ActiveRuleset,
   LeaderboardRankingSystem,
-  Mode,
-  Ruleset,
 } from '~/types/common'
 import type { RankingSystemScore } from '~/types/score'
 import type {
@@ -12,6 +12,7 @@ import type {
   UserExtra,
   UserOptional,
   UserStatistic,
+  UserStatus,
 } from '~/types/user'
 
 export namespace UserProvider {
@@ -28,7 +29,7 @@ export namespace UserProvider {
     keys?: Array<['id', 'name', 'safeName', 'email'][number]>
   }
 
-  export interface BaseQuery<Id, _Mode extends Mode, _Ruleset extends Ruleset, TRankingSystem extends LeaderboardRankingSystem> {
+  export interface BaseQuery<Id, _Mode extends ActiveMode, _Ruleset extends ActiveRuleset, TRankingSystem extends LeaderboardRankingSystem> {
     id: Id
     mode: _Mode
     ruleset: _Ruleset
@@ -55,14 +56,14 @@ export interface UserProvider<Id> extends idTransformable {
   }): PromiseLike<UserEssential<Id>>
 
   getBests<
-    _Mode extends Mode,
-    _Ruleset extends Ruleset,
+    _Mode extends ActiveMode,
+    _Ruleset extends ActiveRuleset,
     _RankingSystem extends LeaderboardRankingSystem,
   >(query: UserProvider.BaseQuery<Id, _Mode, _Ruleset, _RankingSystem>): PromiseLike<RankingSystemScore<string, Id, _Mode, _RankingSystem>[]>
 
   getTops<
-    _Mode extends Mode,
-    _Ruleset extends Ruleset,
+    _Mode extends ActiveMode,
+    _Ruleset extends ActiveRuleset,
     _RankingSystem extends LeaderboardRankingSystem,
   >(query: UserProvider.BaseQuery<Id, _Mode, _Ruleset, _RankingSystem>): PromiseLike<{
     count: number
@@ -139,13 +140,13 @@ export interface UserProvider<Id> extends idTransformable {
   }): PromiseLike<number>
 
   status({ id }: { id: Id }): PromiseLike<{
-    status: 'offline'
+    status: UserStatus.Offline
     lastSeen: Date
   } | {
-    status: 'idle' | 'afk' | 'playing' | 'editing' | 'modding' | 'multiplayer' | 'watching' | 'unknown' | 'testing' | 'submitting' | 'paused' | 'lobby' | 'multiplaying' | 'osuDirect'
+    status: Exclude<UserStatus, UserStatus.Offline>
     description: string
-    mode: Mode
-    ruleset: Ruleset
+    mode: ActiveMode
+    ruleset: ActiveRuleset
     beatmap?: {
       id: number
       foreignId: number

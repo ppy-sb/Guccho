@@ -4,6 +4,7 @@ import type { inferRouterOutputs } from '@trpc/server'
 
 import type { AppRouter } from '~/server/trpc/routers'
 import type { RankingSystem } from '~/types/common'
+import { Rank } from '~/types/defs'
 
 type RouterOutput = inferRouterOutputs<AppRouter>
 
@@ -73,8 +74,8 @@ const scoreFmt = createScoreFormatter({ notation: undefined })
           <template v-if="rankingSystem === 'score'">
             <span class="text-5xl">{{ scoreFmt(score.score) }}</span>
           </template>
-          <template v-else-if="rankingSystem === 'ppv2' && hasRuleset(score.mode, score.ruleset) && hasRankingSystem(score.mode, score.ruleset, 'ppv2')">
-            <span class="text-5xl">{{ scoreFmt(score.ppv2.pp) }}</span>
+          <template v-else-if="rankingSystem === Rank.PPv2 && hasRuleset(score.mode, score.ruleset) && hasRankingSystem(score.mode, score.ruleset, Rank.PPv2)">
+            <span class="text-5xl">{{ scoreFmt(score[Rank.PPv2].pp) }}</span>
             <span class="text-3xl">pp</span>
           </template>
         </div>

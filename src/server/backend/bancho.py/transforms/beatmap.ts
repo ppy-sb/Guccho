@@ -3,23 +3,25 @@ import type {
   Score as DBScore,
   Source,
 } from '.prisma/bancho.py'
-import { BanchoMode, BanchoPyMode, BanchoPyRankedStatus } from '../enums'
+import { match } from 'switch-pattern'
+import { BanchoMode, BanchoPyMode, BanchoPyRankedStatus, fromBanchoMode } from '../enums'
 import type { Id } from '..'
-import { RankingStatusEnum } from '~/types/beatmap'
+import { Mode, Ruleset } from '~/types/defs'
+import { BeatmapSource, RankingStatus } from '~/types/beatmap'
 import { stableMod } from '~/types/score'
 
-import type { BeatmapEssential, Beatmapset, RankingStatus } from '~/types/beatmap'
+import type { BeatmapEssential, Beatmapset } from '~/types/beatmap'
 
-import type { Mode, Ruleset } from '~/types/common'
+import type { ActiveMode, ActiveRuleset } from '~/types/common'
 import type { StableMod } from '~/types/score'
 
 // this does not deserves exporting
 export function toBeatmapset(beatmapset: Source, beatmap: DBMap) {
   const isBancho = beatmapset.server === 'bancho'
-  const rest = {
+  const rest: Beatmapset<BeatmapSource.Bancho | BeatmapSource.PrivateServer | BeatmapSource.Unknown, typeof beatmapset['id'], typeof beatmapset['id']> = {
     id: beatmap.setId,
     foreignId: beatmapset.id || beatmap.setId,
-    source: beatmapset.server || 'unknown',
+    source: beatmapset.server === 'bancho' ? BeatmapSource.Bancho : beatmapset.server === 'privateServer' ? BeatmapSource.PrivateServer : BeatmapSource.Unknown,
     meta: {
       intl: {
         artist: beatmap.artist,
@@ -27,7 +29,7 @@ export function toBeatmapset(beatmapset: Source, beatmap: DBMap) {
       },
     },
     assets: {},
-  } as Beatmapset<typeof beatmapset['server'], typeof beatmapset['id'], typeof beatmapset['id']>
+  }
   if (isBancho) {
     const v = Math.floor(new Date().getTime() / 1000)
     rest.assets.cover = `https://assets.ppy.sh/beatmaps/${beatmapset.id}/covers/cover.jpg?${v}`
@@ -69,7 +71,7 @@ export function toBeatmapEssential(beatmap: {
     md5: beatmap.md5,
     creator: beatmap.creator,
     lastUpdate: beatmap.lastUpdate,
-    mode: BanchoMode[beatmap.mode] as Mode,
+    mode: fromBanchoMode(beatmap.mode),
     properties: {
       bpm: beatmap.bpm,
       circleSize: beatmap.cs,
@@ -94,7 +96,7 @@ export function toBeatmapWithBeatmapset(
     source: Source
   }
 ) {
-  const status = toRankingStatus(beatmap.status) || 'WIP'
+  const status = toRankingStatus(beatmap.status) || RankingStatus.WIP
   const beatmapset = toBeatmapset(beatmap.source, beatmap)
   return Object.assign(toBeatmapEssential(beatmap), {
     status,
@@ -111,35 +113,34 @@ export type AbleToTransformToScores = DBScore & {
 }
 
 export function toBanchoPyMode(
-  mode: Mode,
-  ruleset: Ruleset
+  mode: ActiveMode,
+  ruleset: ActiveRuleset
 ): BanchoPyMode | undefined {
-  const joined: `${Mode}${Capitalize<Ruleset>}` = `${mode}${capitalizeFirstLetter(
-    ruleset
-  )}`
-  switch (joined) {
-    case 'maniaRelax':
-    case 'taikoAutopilot':
-    case 'fruitsAutopilot':
-    case 'maniaAutopilot':
-      return
-    default:
-      return BanchoPyMode[joined]
+  const { patterns, exact } = match([mode, ruleset])
+
+  switch (patterns) {
+    case exact([Mode.Osu, Ruleset.Standard]): return BanchoPyMode.OsuStandard
+    case exact([Mode.Taiko, Ruleset.Standard]): return BanchoPyMode.TaikoStandard
+    case exact([Mode.Fruits, Ruleset.Standard]): return BanchoPyMode.FruitsStandard
+    case exact([Mode.Mania, Ruleset.Standard]): return BanchoPyMode.ManiaStandard
+    case exact([Mode.Osu, Ruleset.Relax]): return BanchoPyMode.OsuRelax
+    case exact([Mode.Taiko, Ruleset.Relax]): return BanchoPyMode.TaikoRelax
+    case exact([Mode.Fruits, Ruleset.Relax]): return BanchoPyMode.FruitsRelax
+    case exact([Mode.Osu, Ruleset.Autopilot]): return BanchoPyMode.OsuAutopilot
   }
 }
 
 const reverseBPyMode = {
-  [BanchoPyMode.osuStandard]: ['osu', 'standard'],
-  [BanchoPyMode.taikoStandard]: ['taiko', 'standard'],
-  [BanchoPyMode.fruitsStandard]: ['fruits', 'standard'],
-  [BanchoPyMode.maniaStandard]: ['mania', 'standard'],
-  [BanchoPyMode.osuRelax]: ['osu', 'relax'],
-  [BanchoPyMode.taikoRelax]: ['taiko', 'relax'],
-  [BanchoPyMode.fruitsRelax]: ['fruits', 'relax'],
-  [BanchoPyMode.osuAutopilot]: ['osu', 'autopilot'],
+  [BanchoPyMode.OsuStandard]: [Mode.Osu, Ruleset.Standard],
+  [BanchoPyMode.TaikoStandard]: [Mode.Taiko, Ruleset.Standard],
+  [BanchoPyMode.FruitsStandard]: [Mode.Fruits, Ruleset.Standard],
+  [BanchoPyMode.ManiaStandard]: [Mode.Mania, Ruleset.Standard],
+  [BanchoPyMode.OsuRelax]: [Mode.Osu, Ruleset.Relax],
+  [BanchoPyMode.TaikoRelax]: [Mode.Taiko, Ruleset.Relax],
+  [BanchoPyMode.FruitsRelax]: [Mode.Fruits, Ruleset.Relax],
+  [BanchoPyMode.OsuAutopilot]: [Mode.Osu, Ruleset.Autopilot],
 } as const
-
-export function fromBanchoPyMode<BMode extends BanchoPyMode>(input: BMode) {
+export function fromBanchoPyMode<BMode extends BanchoPyMode>(input: BMode): readonly [Mode, Ruleset] {
   return reverseBPyMode[input]
 }
 
@@ -151,22 +152,22 @@ export function assertIsBanchoPyMode(val: number): asserts val is BanchoPyMode {
 
 export function toBanchoRankingStatus(
   input: BanchoPyRankedStatus
-): RankingStatusEnum {
+): RankingStatus {
   switch (input) {
     case BanchoPyRankedStatus.NotSubmitted:
-      return RankingStatusEnum.deleted
+      return RankingStatus.Deleted
     case BanchoPyRankedStatus.Pending:
-      return RankingStatusEnum.pending
+      return RankingStatus.Pending
     case BanchoPyRankedStatus.UpdateAvailable:
-      return RankingStatusEnum.notFound
+      return RankingStatus.NotFound
     case BanchoPyRankedStatus.Ranked:
-      return RankingStatusEnum.ranked
+      return RankingStatus.Ranked
     case BanchoPyRankedStatus.Approved:
-      return RankingStatusEnum.approved
+      return RankingStatus.Approved
     case BanchoPyRankedStatus.Qualified:
-      return RankingStatusEnum.qualified
+      return RankingStatus.Qualified
     case BanchoPyRankedStatus.Loved:
-      return RankingStatusEnum.loved
+      return RankingStatus.Loved
   }
 }
 
@@ -185,28 +186,26 @@ export function toMods(e: number): Array<StableMod> {
 }
 
 export function toRankingStatus(status: BanchoPyRankedStatus) {
-  return RankingStatusEnum[toBanchoRankingStatus(status)] as
-    | RankingStatus
-    | undefined
+  return toBanchoRankingStatus(status)
 }
-export function fromRankingStatus(status: RankingStatusEnum) {
+export function fromRankingStatus(status: RankingStatus) {
   switch (status) {
-    case RankingStatusEnum.deleted:
-    case RankingStatusEnum.notFound:
+    case RankingStatus.Deleted:
+    case RankingStatus.NotFound:
       return BanchoPyRankedStatus.NotSubmitted
-    case RankingStatusEnum.pending:
+    case RankingStatus.Pending:
       return BanchoPyRankedStatus.Pending
-    case RankingStatusEnum.ranked:
+    case RankingStatus.Ranked:
       return BanchoPyRankedStatus.Ranked
-    case RankingStatusEnum.approved:
+    case RankingStatus.Approved:
       return BanchoPyRankedStatus.Approved
-    case RankingStatusEnum.qualified:
+    case RankingStatus.Qualified:
       return BanchoPyRankedStatus.Qualified
-    case RankingStatusEnum.loved:
+    case RankingStatus.Loved:
       return BanchoPyRankedStatus.Loved
-    case RankingStatusEnum.WIP:
+    case RankingStatus.WIP:
       return BanchoPyRankedStatus.Pending
-    case RankingStatusEnum.graveyard:
+    case RankingStatus.Graveyard:
       return BanchoPyRankedStatus.Pending
     default:
       throw new Error(`unknown ranking status: ${status}`)

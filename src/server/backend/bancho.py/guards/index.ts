@@ -1,10 +1,10 @@
 import type {
+  ActiveMode,
+  ActiveRuleset,
   AvailableRuleset,
   LeaderboardRankingSystem,
-  Mode,
   PPRankingSystem,
   RankingSystem,
-  Ruleset,
 } from '~/types/common'
 import type {
   HasLeaderboardRankingSystem,
@@ -12,9 +12,10 @@ import type {
   HasRuleset,
   ServerRankingSystemDef,
 } from '~/types/server'
+import { Mode, Rank, Ruleset } from '~/types/defs'
 
-const ppRankingSystems = ['ppv2', 'score'] as const
-const leaderboardRankingSystems = ['ppv2', 'rankedScore', 'totalScore'] as const
+const ppRankingSystems = [Rank.PPv2, Rank.Score] as const
+const leaderboardRankingSystems = [Rank.PPv2, Rank.RankedScore, Rank.TotalScore] as const
 
 const defaultConf = {
   leaderboardRankingSystem: leaderboardRankingSystems,
@@ -22,28 +23,28 @@ const defaultConf = {
 }
 
 const havingRankingSystem: ServerRankingSystemDef = {
-  osu: {
-    standard: defaultConf,
-    relax: defaultConf,
-    autopilot: defaultConf,
+  [Mode.Osu]: {
+    [Ruleset.Standard]: defaultConf,
+    [Ruleset.Relax]: defaultConf,
+    [Ruleset.Autopilot]: defaultConf,
   },
-  taiko: {
-    standard: defaultConf,
-    relax: defaultConf,
+  [Mode.Taiko]: {
+    [Ruleset.Standard]: defaultConf,
+    [Ruleset.Relax]: defaultConf,
   },
-  fruits: {
-    standard: defaultConf,
-    relax: defaultConf,
+  [Mode.Fruits]: {
+    [Ruleset.Standard]: defaultConf,
+    [Ruleset.Relax]: defaultConf,
   },
-  mania: {
-    standard: defaultConf,
+  [Mode.Mania]: {
+    [Ruleset.Standard]: defaultConf,
   },
 }
 
-export const hasRuleset: HasRuleset = <M extends Mode>(
+export const hasRuleset: HasRuleset = <M extends ActiveMode>(
   mode: M,
-  ruleset: Ruleset
-): ruleset is Ruleset & AvailableRuleset<M> => {
+  ruleset: ActiveRuleset
+): ruleset is ActiveRuleset & AvailableRuleset<M> => {
   const mDef = havingRankingSystem[mode]
   return ruleset in mDef
 }

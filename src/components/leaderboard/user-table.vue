@@ -4,6 +4,7 @@ import type { inferRouterOutputs } from '@trpc/server'
 import type { LeaderboardRankingSystem } from '~/types/common'
 import type { ComponentLeaderboard } from '~/types/leaderboard'
 import type { AppRouter } from '~/server/trpc/routers'
+import { Rank } from '~/types/defs'
 
 type RouterOutput = inferRouterOutputs<AppRouter>
 
@@ -56,11 +57,11 @@ const formatter = new Intl.NumberFormat(undefined, option)
       </div>
     </th>
     <td class="font-bold text-right">
-      <template v-if="sort === 'ppv2'">
-        {{ addCommas(props.inThisLeaderboard.ppv2 || 0) }}pp
+      <template v-if="sort === Rank.PPv2">
+        {{ addCommas(props.inThisLeaderboard[Rank.PPv2] || 0) }}pp
       </template>
-      <template v-else-if="sort === 'ppv1'">
-        {{ addCommas(props.inThisLeaderboard.ppv1 || 0) }}pp
+      <template v-else-if="sort === Rank.PPv1">
+        {{ addCommas(props.inThisLeaderboard[Rank.PPv1] || 0) }}pp
       </template>
       <template v-else-if="sort in props.inThisLeaderboard">
         {{ scoreFormat(props.inThisLeaderboard[sort] || 0) }}

@@ -3,6 +3,7 @@
 import { JsonViewer } from 'vue3-json-viewer'
 import 'vue3-json-viewer/dist/index.css'
 import { useSession } from '~/store/session'
+import { UserPrivilege } from '~/types/user'
 
 const fmtPercent = new Intl.NumberFormat(undefined, {
   style: 'percent',
@@ -18,7 +19,7 @@ const config = useAppConfig()
 const session = useSession()
 const app = useNuxtApp()
 
-const serverConfig = session.user?.roles.includes('staff')
+const serverConfig = session.user?.roles.includes(UserPrivilege.Staff)
   ? await app.$client.status.config.query()
   : undefined
 
@@ -120,7 +121,7 @@ function percentWidth(count: number) {
       </div>
     </div>
 
-    <template v-if="session.user?.roles.includes('staff')">
+    <template v-if="session.user?.roles.includes(UserPrivilege.Staff)">
       <h1 class="text-xl drop-shadow-lg my-1">
         Web App Config
       </h1>

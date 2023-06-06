@@ -7,6 +7,8 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { useElementHover } from '@vueuse/core'
 
+import { MutualRelationship, Relationship } from '~/types/defs'
+import { UserStatus } from '~/types/user'
 import { useSession } from '~/store/session'
 
 import userpageStore from '~/store/userpage'
@@ -16,7 +18,7 @@ const page = userpageStore()
 const { addToLibrary } = useFAIcon()
 addToLibrary(faUserGroup, faHeartCrack, faHeart, faEnvelope)
 
-const hasBeatmap = ['playing', 'modding', 'multiplaying', 'editing', 'watching', 'testing', 'submitting']
+const hasBeatmap = [UserStatus.Playing, UserStatus.Modding, UserStatus.Multiplaying, UserStatus.Editing, UserStatus.Editing, UserStatus.Editing, UserStatus.Submitting]
 const app$ = useNuxtApp()
 const session = useSession()
 const changeFriendStateButton = shallowRef(null)
@@ -33,7 +35,7 @@ const { data, refresh } = await useAsyncData(async () => {
       : undefined
   const friendCount = app$.$client.user.countRelations.query({
     handle: page.user.id,
-    type: 'friend',
+    type: Relationship.Friend,
   })
   return {
     relationWithMe: await relationWithMe,
@@ -47,10 +49,10 @@ onMounted(() => {
   onBeforeUnmount(() => clearInterval(setInterval(() => reloadLiveData(), 5000)))
 })
 const isMutualFriend = computed(
-  () => data.value?.relationWithMe?.mutual?.includes('mutual-friend') || false
+  () => data.value?.relationWithMe?.mutual?.includes(MutualRelationship.MutualFriend) || false
 )
 const isFriend = computed(() =>
-  data.value?.relationWithMe?.self.includes('friend')
+  data.value?.relationWithMe?.self.includes(Relationship.Friend)
 )
 let isFriendButtonHovered = shallowRef(false)
 onBeforeMount(() => {
@@ -66,7 +68,7 @@ async function toggleFriend() {
   if (!page.user) {
     return
   }
-  const input = { type: 'friend', target: page.user.id } as const
+  const input = { type: Relationship.Friend, target: page.user.id } as const
   if (isFriend.value) {
     await app$.$client.me.removeOneRelation.mutate(input)
   }
@@ -176,16 +178,16 @@ async function toggleFriend() {
         </div>
       </div>
       <template v-if="live">
-        <div v-if="live.status === 'offline'" class="order-3 user-status">
+        <div v-if="live.status === UserStatus.Offline" class="order-3 user-status">
           Offline, last seen at {{ live.lastSeen.toLocaleString() }}
         </div>
         <div v-else-if="live && hasBeatmap.includes(live.status)" class="order-3 user-status">
-          {{ capitalizeFirstLetter(live.status) }} {{ live.beatmap?.beatmapset.meta.intl.artist }} - {{ live.beatmap?.beatmapset.meta.intl.title }} [{{ live.beatmap?.version }}]
+          {{ UserStatus[live.status] }} {{ live.beatmap?.beatmapset.meta.intl.artist }} - {{ live.beatmap?.beatmapset.meta.intl.title }} [{{ live.beatmap?.version }}]
         </div>
-        <div v-else-if="live.status === 'idle'" class="order-3 user-status">
+        <div v-else-if="live.status === UserStatus.Idle" class="order-3 user-status">
           Online.
         </div>
-        <div v-else-if="live.status === 'afk'" class="order-3 user-status">
+        <div v-else-if="live.status === UserStatus.Afk" class="order-3 user-status">
           afk
         </div>
       </template>

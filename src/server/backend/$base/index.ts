@@ -1,4 +1,4 @@
-import type { AvailableRuleset, Feature, LeaderboardRankingSystem, Mode, RankingSystem, Ruleset } from '~/types/common'
+import type { ActiveMode, ActiveRuleset, AvailableRuleset, Feature, LeaderboardRankingSystem, RankingSystem } from '~/types/common'
 import type {
   HasLeaderboardRankingSystem,
   HasRankingSystem,
@@ -33,9 +33,9 @@ export const hasLeaderboardRankingSystem: HasLeaderboardRankingSystem = (
   rankingSystem
 ): rankingSystem is LeaderboardRankingSystem => false
 
-export const hasRuleset: HasRuleset = <M extends Mode>(
+export const hasRuleset: HasRuleset = <M extends ActiveMode>(
   mode: M,
-  ruleset: Ruleset
+  ruleset: ActiveRuleset
 ): ruleset is AvailableRuleset<M> => false
 
 export const features: Set<Feature> = new Set([])

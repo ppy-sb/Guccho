@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // TODO check max pages
-import type { LeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
+import type { ActiveMode, ActiveRuleset, LeaderboardRankingSystem } from '~/types/common'
 import type { SwitcherPropType } from '~/composables/useSwitcher'
 
 const config = useAppConfig()
@@ -19,18 +19,18 @@ const mode = (
   (isString(pMode) && availableModes.includes(pMode))
     ? pMode
     : availableModes[0]
-) as Mode
+) as ActiveMode
 const ruleset = (
   (isString(pRuleset) && availableRulesets.includes(pRuleset))
     ? pRuleset
     : availableRulesets[0]
-) as Ruleset
+) as ActiveRuleset
 const rankingSystem = (
   (isString(pRankingSystem) && availableRankingSystems.includes(pRankingSystem))
     ? pRankingSystem
     : availableRankingSystems[0]
 ) as LeaderboardRankingSystem
-const page = shallowRef((isString(pPage) && parseInt(pPage)) || 1)
+const page = shallowRef((isString(pPage) && Number.parseInt(pPage)) || 1)
 
 const perPage = 20
 

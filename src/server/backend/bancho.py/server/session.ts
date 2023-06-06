@@ -1,10 +1,10 @@
 import { Buffer } from 'node:buffer'
 import type { Document } from 'bson'
-import { BSON } from 'bson'
+import * as BSON from 'bson'
 import { commandOptions } from 'redis'
 import { Logger } from '../log'
-import { client as getRedis } from './source/redis'
 import { env } from '../../../env'
+import { client as getRedis } from './source/redis'
 import type { Session, SessionStore } from '$base/server/session'
 import { SessionProvider as Base } from '$base/server/session'
 

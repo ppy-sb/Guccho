@@ -2,6 +2,7 @@
 // @ts-expect-error we don't have to know
 import { JsonViewer } from 'vue3-json-viewer'
 import 'vue3-json-viewer/dist/index.css'
+import { Rank } from '~/types/defs'
 
 const route = useRoute()
 
@@ -20,7 +21,7 @@ const data = await app$.$client.score.id.query({ id })
       </t-modal>
     </t-modal> -->
     <template v-if="data">
-      <app-score-heading :score="data" ranking-system="ppv2" />
+      <app-score-heading :score="data" :ranking-system="Rank.PPv2" />
       <!-- <div>
         {{ data.score }}
       </div> -->

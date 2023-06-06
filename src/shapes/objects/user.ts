@@ -1,12 +1,12 @@
-import type { LeaderboardRankingSystem, Mode } from '~/types/common'
+import { Mode, Rank, Ruleset, Scope } from '~/types/defs'
+import type { ActiveMode, LeaderboardRankingSystem } from '~/types/common'
 import type { HitCount } from '~/types/score'
 import type {
   PPRank,
   ScoreRank,
   UserModeRulesetStatistics,
 } from '~/types/statistics'
-import type { UserFull } from '~/types/user'
-import { ArticleProvider } from '$base/server'
+import { UserFull, UserPrivilege, UserStatus } from '~/types/user'
 
 export function createISODate(date: Date = new Date()) {
   return date.toUTCString()
@@ -66,8 +66,8 @@ export function createBeatmap(initial = {
   return JSON.parse(JSON.stringify(initial))
 }
 
-export function createHitObject<_Mode extends Mode>(mode: _Mode) {
-  return mode === 'mania'
+export function createHitObject<_Mode extends ActiveMode>(mode: _Mode) {
+  return mode === Mode.Mania
     ? ({
         max: 0,
         300: 0,
@@ -75,7 +75,7 @@ export function createHitObject<_Mode extends Mode>(mode: _Mode) {
         100: 0,
         50: 0,
         miss: 0,
-      } satisfies HitCount<'mania'>)
+      } satisfies HitCount<Mode.Mania>)
     : ({
         300: 0,
         geki: 0,
@@ -83,7 +83,7 @@ export function createHitObject<_Mode extends Mode>(mode: _Mode) {
         katu: 0,
         50: 0,
         miss: 0,
-      } satisfies HitCount<Exclude<Mode, 'mania'>>)
+      } satisfies HitCount<Exclude<ActiveMode, Mode.Mania>>)
 }
 
 export function createPPRank(initial: PPRank = {
@@ -103,14 +103,14 @@ export function createPPRank(initial: PPRank = {
   return copy
 }
 
-export function createRulesetData(mode: Mode,
+export function createRulesetData(mode: ActiveMode,
   ppRankData: PPRank | undefined = undefined,
   scoreRankData: ScoreRank | undefined = undefined): UserModeRulesetStatistics<LeaderboardRankingSystem> {
   return {
-    ppv2: createPPRank(ppRankData),
-    ppv1: createPPRank(ppRankData),
-    rankedScore: createScoreRank(scoreRankData),
-    totalScore: createScoreRank(scoreRankData),
+    [Rank.PPv2]: createPPRank(ppRankData),
+    [Rank.PPv1]: createPPRank(ppRankData),
+    [Rank.RankedScore]: createScoreRank(scoreRankData),
+    [Rank.TotalScore]: createScoreRank(scoreRankData),
     playCount: 1,
     playTime: 10000,
     totalHits: 1,
@@ -140,16 +140,16 @@ export const sampleUserWithSecrets: Required<UserFull<unknown>> = {
   flag: 'us',
   email: 'user@example.com',
   reachable: true,
-  status: 'idle',
-  roles: ['normal', 'supported', 'supporter'],
+  status: UserStatus.Idle,
+  roles: [UserPrivilege.Normal, UserPrivilege.Supported, UserPrivilege.Supporter],
   relationships: [],
   settings: {
     accessControl: {
-      reachable: { public: true },
-      status: { public: true },
-      privateMessage: { friends: true },
-      email: { public: true },
-      oldNames: { public: true },
+      reachable: { [Scope.Public]: true },
+      status: { [Scope.Public]: true },
+      privateMessage: { [Scope.Friends]: true },
+      email: { [Scope.Public]: true },
+      oldNames: { [Scope.Public]: true },
     },
   },
   secrets: {
@@ -157,26 +157,25 @@ export const sampleUserWithSecrets: Required<UserFull<unknown>> = {
     apiKey: 'aaaaa-bbbbb',
   },
   statistics: {
-    osu: {
-      standard: createRulesetData('osu'),
-      autopilot: createRulesetData('osu'),
-      relax: createRulesetData('osu'),
+    [Mode.Osu]: {
+      [Ruleset.Standard]: createRulesetData(Mode.Osu),
+      [Ruleset.Autopilot]: createRulesetData(Mode.Osu),
+      [Ruleset.Relax]: createRulesetData(Mode.Osu),
     },
-    taiko: {
-      standard: createRulesetData('taiko'),
-      relax: createRulesetData('taiko'),
+    [Mode.Taiko]: {
+      [Ruleset.Standard]: createRulesetData(Mode.Taiko),
+      [Ruleset.Relax]: createRulesetData(Mode.Taiko),
     },
-    fruits: {
-      standard: createRulesetData('fruits'),
-      relax: createRulesetData('fruits'),
+    [Mode.Fruits]: {
+      [Ruleset.Standard]: createRulesetData(Mode.Fruits),
+      [Ruleset.Relax]: createRulesetData(Mode.Fruits),
     },
-    mania: {
-      standard: createRulesetData('mania'),
+    [Mode.Mania]: {
+      [Ruleset.Standard]: createRulesetData(Mode.Mania),
     },
   },
   profile: {
     html: '<h1>what</h1>',
-    raw: {} as ArticleProvider.JSONContent,
   },
 }
 

@@ -15,11 +15,14 @@ import { router as _router, publicProcedure as p } from '../trpc'
 import { sessionProcedure } from '../middleware/session'
 import { optionalUserProcedure } from '../middleware/optional-user'
 import { userNotFound } from '../messages'
+import { UserPrivilege } from '~/types/user'
+import { RankingStatus } from '~/types/beatmap'
 import { mapId } from '~/server/transforms/mapId'
 import { followUserSettings } from '~/server/transforms'
 import { SessionProvider, UserProvider, UserRelationProvider } from '~/server/backend/bancho.py/server'
 
 import type { NumberRange } from '~/types/common'
+import { Scope } from '~/types/defs'
 
 const userProvider = new UserProvider()
 const userRelationshipProvider = new UserRelationProvider()
@@ -48,10 +51,10 @@ export const router = _router({
         includeHidden: true,
       })
       const isSelf = user.id === ctx.user?.id
-      if (!user.roles.includes('normal') && !isSelf) {
+      if (!user.roles.includes(UserPrivilege.Normal) && !isSelf) {
         throw new TRPCError({ code: 'NOT_FOUND', message: userNotFound })
       }
-      return mapId(followUserSettings({ user, scope: 'public' }), UserProvider.idToString)
+      return mapId(followUserSettings({ user, scope: Scope.Public }), UserProvider.idToString)
     }),
   full: p
     .input(
@@ -64,7 +67,7 @@ export const router = _router({
         handle,
         excludes: { email: true },
       })
-      return mapId(followUserSettings({ user, scope: 'public' }), UserProvider.idToString)
+      return mapId(followUserSettings({ user, scope: Scope.Public }), UserProvider.idToString)
     }),
   best: p
     .input(
@@ -74,7 +77,7 @@ export const router = _router({
         ruleset: zodRuleset,
         rankingSystem: zodLeaderboardRankingSystem,
         page: number().gte(0).lt(10),
-        includes: array(zodRankingStatus).default(['ranked', 'loved', 'approved']),
+        includes: array(zodRankingStatus).default([RankingStatus.Ranked, RankingStatus.Loved, RankingStatus.Approved]),
       })
     )
     .query(async ({ input }) => {
@@ -113,7 +116,7 @@ export const router = _router({
         ruleset: zodRuleset,
         rankingSystem: zodLeaderboardRankingSystem,
         page: number().gte(0).lt(10),
-        includes: array(zodRankingStatus).default(['ranked', 'loved', 'approved']),
+        includes: array(zodRankingStatus).default([RankingStatus.Ranked, RankingStatus.Loved, RankingStatus.Approved]),
       })
     )
     .query(async ({ input }) => {

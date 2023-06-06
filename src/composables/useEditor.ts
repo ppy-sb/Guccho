@@ -29,7 +29,7 @@ export async function parseAndImportHighlightLibFromHtml(html: string) {
 
 export function getLanguagesFromHTML(html: string) {
   const matchedLanguages = html.matchAll(/language-(\w+)/gm)
-  const languages = <LanguageKey[]>[]
+  const languages = [] as LanguageKey[]
   for (const _language of matchedLanguages) {
     const language = _language[1] as LanguageKey
     if (!hljs[language]) {

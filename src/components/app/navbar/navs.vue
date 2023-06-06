@@ -3,6 +3,7 @@ import {
   faRankingStar, faSignal,
 } from '@fortawesome/free-solid-svg-icons'
 import { useSession } from '~/store/session'
+import { UserPrivilege } from '~/types/user'
 
 const { addToLibrary } = useFAIcon()
 addToLibrary(
@@ -24,7 +25,7 @@ const session = useSession()
       Leaderboard
     </nuxt-link>
   </li>
-  <li v-if="session.user?.roles.includes('staff')">
+  <li v-if="session.user?.roles.includes(UserPrivilege.Staff)">
     <nuxt-link :to="{ name: 'status' }" @click="clearFocus">
       <icon name="material-symbols:signal-cellular-alt-rounded" class="w-5 h-5" size="100%" />
       Status

@@ -1,13 +1,13 @@
-import { dedupeUserRelationship, idToString, stringToId, toUserEssential } from '../transforms'
+import { dedupeUserRelationship, fromBanchoPyRelationType, idToString, stringToId, toBanchoPyRelationType, toUserEssential } from '../transforms'
 
 // import { idToString, stringToId } from '../transforms'
 import type { Id } from '..'
+import { env } from '../../../env'
 import { getPrismaClient } from './source/prisma'
 
-import { env } from '../../../env'
 import { calculateMutualRelationships } from '~/server/transforms'
 import type { UserRelationProvider as Base } from '$base/server'
-import type { Relationship } from '~/types/common'
+import { Relationship } from '~/types/defs'
 import type { UserEssential } from '~/types/user'
 
 export class UserRelationProvider implements Base<Id> {
@@ -31,7 +31,10 @@ export class UserRelationProvider implements Base<Id> {
         type: true,
       },
     })
-    return relationships?.type
+    if (!relationships) {
+      return undefined
+    }
+    return relationships?.type === 'block' ? Relationship.Blocked : Relationship.Friend
   }
 
   async get({ user }: { user: { id: Id } }) {
@@ -56,8 +59,8 @@ export class UserRelationProvider implements Base<Id> {
     })
 
     const [relationships, gotRelationships] = await Promise.all([
-      pRelationResult,
-      pGotRelationResult,
+      pRelationResult.then(r => r.map(_r => ({ ..._r, type: fromBanchoPyRelationType(_r.type) }))),
+      pGotRelationResult.then(r => r.map(_r => ({ ..._r, type: fromBanchoPyRelationType(_r.type) }))),
     ])
 
     const transformed = relationships.map(r => ({
@@ -132,7 +135,7 @@ export class UserRelationProvider implements Base<Id> {
       data: {
         fromUserId: fromUser.id,
         toUserId: targetUser.id,
-        type,
+        type: toBanchoPyRelationType(type),
       },
     })
   }
@@ -141,7 +144,7 @@ export class UserRelationProvider implements Base<Id> {
     return await this.db.relationship.count({
       where: {
         toUserId: user.id,
-        type,
+        type: toBanchoPyRelationType(type),
       },
     })
   }

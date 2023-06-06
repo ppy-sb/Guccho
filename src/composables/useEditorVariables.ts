@@ -1,4 +1,4 @@
-import { LeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
+import { LeaderboardRankingSystem } from '~/types/common'
 
 const variables = new Map<string, Template>()
 
@@ -42,19 +42,19 @@ function addAppConfigVariables() {
     value: config.title,
   })
 
-  for (const mode in config.mode) {
+  for (const [mode, item] of Object.entries(config.mode)) {
     setVariable(`mode:${mode}`, {
       description: `name of mode ${mode}`,
       fallback: mode,
-      value: config.mode[mode as Mode].name,
+      value: item.name,
     })
   }
 
-  for (const ruleset in config.ruleset) {
-    setVariable(`ruleset:${ruleset}`, {
-      description: `name of ruleset ${ruleset}`,
+  for (const [ruleset, item] of Object.entries(config.ruleset)) {
+    setVariable(`ruleset:${item}`, {
+      description: `name of ruleset ${item}`,
       fallback: ruleset,
-      value: config.ruleset[ruleset as Ruleset].name,
+      value: item.name,
     })
   }
 

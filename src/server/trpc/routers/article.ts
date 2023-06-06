@@ -1,4 +1,4 @@
-import { any, array, boolean, literal, object, record, string, union } from 'zod'
+import { any, array, boolean, object, record, string, union } from 'zod'
 import { router as _router } from '../trpc'
 import { adminProcedure } from '../middleware/admin'
 import { optionalUserProcedure } from '../middleware/optional-user'
@@ -39,8 +39,8 @@ export const router = _router({
       return !!arg
     }),
     privilege: object({
-      read: array(union([literal('staff'), literal('moderator'), literal('beatmapNominator'), literal('public')])),
-      write: array(union([literal('staff'), literal('moderator'), literal('beatmapNominator')])),
+      read: array(ArticleProvider.readAccess),
+      write: array(ArticleProvider.writeAccess),
     }),
     dynamic: boolean(),
   })).mutation(({ input, ctx }) => sp.save(Object.assign(input, { user: ctx.user }))),

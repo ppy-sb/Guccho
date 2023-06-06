@@ -9,7 +9,7 @@ import { toFullUser } from '~/server/backend/bancho.py/transforms'
 import { createUserQuery } from '~/server/backend/bancho.py/db-query'
 import useEditorExtensions from '~/composables/useEditorExtensionsServer'
 
-import type { UserEssential } from '~/types/user'
+import { UserEssential, UserStatus } from '~/types/user'
 
 import type { UserProvider as Base } from '$base/server'
 
@@ -87,7 +87,7 @@ export class UserProvider extends BanchoPyUser implements Base<Id> {
     >,
   >({ handle, excludes, includeHidden }: { handle: string; excludes?: Excludes; includeHidden?: boolean }) {
     if (!excludes) {
-      excludes = <Excludes>{ secrets: true }
+      excludes = { secrets: true } as Excludes
     }
     const user = await this.sbDb.user.findFirstOrThrow(createUserQuery({
       handle,
@@ -104,7 +104,7 @@ export class UserProvider extends BanchoPyUser implements Base<Id> {
     return {
       ...fullUser,
       reachable: false,
-      status: 'offline' as const,
+      status: UserStatus.Offline as const,
       statistics:
         excludes.statistics === true
           ? (undefined as never)

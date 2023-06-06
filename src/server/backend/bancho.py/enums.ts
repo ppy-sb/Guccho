@@ -1,4 +1,6 @@
 import type { ArticleProvider } from '../$base/server'
+import { UserPrivilege } from '~/types/user'
+import { Mode, Scope } from '~/types/defs'
 
 //  privileges intended for all normal players.
 export enum BanchoPyPrivilege {
@@ -31,17 +33,17 @@ export enum BanchoPyPrivilege {
 }
 
 export enum BanchoPyMode {
-  osuStandard = 0,
-  taikoStandard = 1,
-  fruitsStandard = 2,
-  maniaStandard = 3,
+  OsuStandard = 0,
+  TaikoStandard = 1,
+  FruitsStandard = 2,
+  ManiaStandard = 3,
 
-  osuRelax = 4,
-  taikoRelax = 5,
-  fruitsRelax = 6,
+  OsuRelax = 4,
+  TaikoRelax = 5,
+  FruitsRelax = 6,
   // maniaRelax = 7,
 
-  osuAutopilot = 8,
+  OsuAutopilot = 8,
   // taikoAutopilot = 9,
   // fruitsAutopilot = 10,
   // maniaAutopilot = 11,
@@ -62,32 +64,49 @@ export enum BanchoPyRankedStatus {
 }
 
 export enum BanchoMode {
-  osu,
-  taiko,
-  fruits,
-  mania,
+  Osu,
+  Taiko,
+  Fruits,
+  Mania,
 }
 
 export enum Access {
-  public = 1 << 1,
-  moderator = 1 << 2,
-  beatmapNominator = 1 << 3,
-  staff = 1 << 4,
+  Public = 1 << 1,
+  Moderator = 1 << 2,
+  BeatmapNominator = 1 << 3,
+  Staff = 1 << 4,
 }
 
-export function toBanchoPyAccess(priv: (ArticleProvider.ReadAccess | ArticleProvider.WriteAccess)[]): Access {
+export function toBanchoPyAccess(priv: (ArticleProvider.TReadAccess | ArticleProvider.TWriteAccess)[]): Access {
   let carry = 0
-  if (priv.includes('public')) {
-    carry &= Access.public
+  if (priv.includes(Scope.Public)) {
+    carry &= Access.Public
   }
-  if (priv.includes('moderator')) {
-    carry &= Access.moderator
+  if (priv.includes(UserPrivilege.Moderator)) {
+    carry &= Access.Moderator
   }
-  if (priv.includes('beatmapNominator')) {
-    carry &= Access.beatmapNominator
+  if (priv.includes(UserPrivilege.BeatmapNominator)) {
+    carry &= Access.BeatmapNominator
   }
-  if (priv.includes('staff')) {
-    carry &= Access.staff
+  if (priv.includes(UserPrivilege.Staff)) {
+    carry &= Access.Staff
   }
   return carry
+}
+
+export function toBanchoMode(mode: Mode) {
+  switch (mode) {
+    case Mode.Osu: return BanchoMode.Osu
+    case Mode.Taiko: return BanchoMode.Taiko
+    case Mode.Fruits: return BanchoMode.Fruits
+    case Mode.Mania: return BanchoMode.Mania
+  }
+}
+export function fromBanchoMode(mode: BanchoMode) {
+  switch (mode) {
+    case BanchoMode.Osu: return Mode.Osu
+    case BanchoMode.Taiko: return Mode.Taiko
+    case BanchoMode.Fruits: return Mode.Fruits
+    case BanchoMode.Mania: return Mode.Mania
+  }
 }

@@ -1,15 +1,15 @@
 import type { Brand } from './internal-utils'
 import type {
+  ActiveMode,
+  ActiveRuleset,
   AvailableRuleset,
   LeaderboardRankingSystem,
-  Mode,
   RankingSystem,
-  Ruleset,
 
 } from './common'
 
 export type ServerRankingSystemDef = {
-  [M in Mode]: {
+  [M in ActiveMode]: {
     [R in AvailableRuleset<M>]: {
       leaderboardRankingSystem: readonly LeaderboardRankingSystem[]
       rankingSystem: readonly RankingSystem[]
@@ -17,13 +17,13 @@ export type ServerRankingSystemDef = {
   }
 }
 
-export type HasRuleset = <M extends Mode>(
+export type HasRuleset = <M extends ActiveMode>(
   mode: M,
-  ruleset: Ruleset
+  ruleset: ActiveRuleset
 ) => ruleset is AvailableRuleset<M>
 
 export type HasRankingSystem = <
-  M extends Mode,
+  M extends ActiveMode,
   R extends AvailableRuleset<M>,
 >(
   mode: M,
@@ -33,7 +33,7 @@ export type HasRankingSystem = <
 ) => rankingSystem is RankingSystem
 
 export type HasLeaderboardRankingSystem = <
-  M extends Mode,
+  M extends ActiveMode,
   R extends AvailableRuleset<M>,
 >(
   mode: M,

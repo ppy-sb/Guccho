@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { faEllipsisH } from '@fortawesome/free-solid-svg-icons'
+import { Mode } from '~/types/defs'
 import type { AppScoresRankingSystemSwitcher } from '#components'
 import type { Label } from '~/composables/useLinks'
 
@@ -31,10 +32,10 @@ const selectedMap = computed(() =>
   beatmapset.value?.beatmaps.find(bm => bm.md5 === selectedMapMd5.value)
 )
 const allowedModes = computed(() => {
-  if (!selectedMap.value?.mode) {
+  if (selectedMap.value?.mode === undefined) {
     return supportedModes
   }
-  return selectedMap.value.mode !== 'osu'
+  return selectedMap.value.mode !== Mode.Osu
     ? [selectedMap.value.mode]
     : supportedModes
 })
@@ -74,7 +75,7 @@ function updateSwitcher() {
   if (!selectedMap.value) {
     return
   }
-  if (selectedMap.value.mode !== 'osu') {
+  if (selectedMap.value.mode !== Mode.Osu) {
     switcher.mode = selectedMap.value.mode
   }
 }

@@ -1,5 +1,5 @@
 import type { idTransformable } from './@extends'
-import type { Relationship } from '~/types/common'
+import type { Relationship } from '~/types/defs'
 import type { UserEssential } from '~/types/user'
 import type { UserRelationship } from '~/types/user-relationship'
 

@@ -35,12 +35,11 @@ import { ArticleProvider } from './article'
 import { env } from '~/server/env'
 import { userNotFound } from '~/server/trpc/messages'
 
-import { RankingStatusEnum } from '~/types/beatmap'
-
 import type { UserProvider as Base } from '$base/server'
-import type { LeaderboardRankingSystem, Mode, Ruleset } from '~/types/common'
+import type { ActiveMode, ActiveRuleset, LeaderboardRankingSystem } from '~/types/common'
 
-import type { UserEssential, UserOptional, UserStatistic } from '~/types/user'
+import { UserEssential, UserOptional, UserStatistic, UserStatus } from '~/types/user'
+import { Mode, Rank, Ruleset } from '~/types/defs'
 
 const article = new ArticleProvider()
 function ensureDirectorySync(targetDir: string, { isRelativeToScript = false } = {}) {
@@ -72,7 +71,7 @@ function ensureDirectorySync(targetDir: string, { isRelativeToScript = false } =
   }, initDir)
 }
 
-const bpyNumModes = Object.values(BanchoPyMode).filter(v => !isNaN(Number(v))) as BanchoPyMode[]
+const bpyNumModes = Object.values(BanchoPyMode).filter(v => !Number.isNaN(Number(v))) as BanchoPyMode[]
 
 class DBUserProvider implements Base<Id> {
   static stringToId = stringToId
@@ -155,7 +154,7 @@ class DBUserProvider implements Base<Id> {
     page,
     perPage,
     rankingStatus,
-  }: Base.BaseQuery<Id, Mode, Ruleset, _RS>) {
+  }: Base.BaseQuery<Id, ActiveMode, ActiveRuleset, _RS>) {
     const start = page * perPage
     const _mode = toBanchoPyMode(mode, ruleset)
     if (_mode === undefined) {
@@ -164,16 +163,16 @@ class DBUserProvider implements Base<Id> {
         message: 'unsupported mode',
       })
     }
-    const banchoPyRankingStatus = rankingStatus.map(i => fromRankingStatus(RankingStatusEnum[i]))
+    const banchoPyRankingStatus = rankingStatus.map(i => fromRankingStatus(i))
 
     const orderBy: Prisma.ScoreFindManyArgs['orderBy'] = {}
-    if (rankingSystem === 'ppv2') {
+    if (rankingSystem === Rank.PPv2) {
       orderBy.pp = 'desc'
     }
-    else if (rankingSystem === 'rankedScore') {
+    else if (rankingSystem === Rank.RankedScore) {
       orderBy.score = 'desc'
     }
-    else if (rankingSystem === 'totalScore') {
+    else if (rankingSystem === Rank.TotalScore) {
       orderBy.score = 'desc'
     }
     else {
@@ -206,15 +205,15 @@ class DBUserProvider implements Base<Id> {
   }
 
   // https://github.com/prisma/prisma/issues/6570 need two separate query to get count for now
-  async getTops<_RS extends LeaderboardRankingSystem>(opt: Base.BaseQuery<Id, Mode, Ruleset, _RS>) {
+  async getTops<_RS extends LeaderboardRankingSystem>(opt: Base.BaseQuery<Id, ActiveMode, ActiveRuleset, _RS>) {
     const { id, mode, ruleset, rankingSystem, page, perPage, rankingStatus } = opt
 
     const start = page * perPage
 
-    const banchoPyRankingStatus = rankingStatus.map(i => fromRankingStatus(RankingStatusEnum[i]))
+    const banchoPyRankingStatus = rankingStatus.map(i => fromRankingStatus(i))
 
     let scoreIds: number[]
-    if (rankingSystem === 'rankedScore' || rankingSystem === 'totalScore') {
+    if (rankingSystem === Rank.RankedScore || rankingSystem === Rank.TotalScore) {
       scoreIds = await this.db.$queryRaw<{ id: string }[]>`
 SELECT s.id
 FROM scores AS s
@@ -228,7 +227,7 @@ INNER JOIN (
 WHERE s.userid = ${id}
 `.then(res => res.map(res => Number.parseInt(res.id)))
     }
-    else if (rankingSystem === 'ppv2') {
+    else if (rankingSystem === Rank.PPv2) {
       scoreIds = await this.db.$queryRaw<{ id: string }[]>`
 SELECT s.id
 FROM scores s
@@ -240,7 +239,7 @@ INNER JOIN (
     GROUP BY s.map_md5
 ) tmp ON tmp.maxScore = s.score AND tmp.map_md5 = s.map_md5
 WHERE s.userid = ${id}
-`.then(res => res.map(res => parseInt(res.id)))
+`.then(res => res.map(res => Number.parseInt(res.id)))
     }
     else {
       return {
@@ -308,8 +307,8 @@ WHERE s.userid = ${id}
           where: {
             ...baseQuery,
             mode: stat.mode,
-            rankedScore: {
-              gt: stat.rankedScore,
+            [Rank.RankedScore]: {
+              gt: stat[Rank.RankedScore],
             },
           },
         }),
@@ -317,8 +316,8 @@ WHERE s.userid = ${id}
           where: {
             ...baseQuery,
             mode: stat.mode,
-            totalScore: {
-              gt: stat.totalScore,
+            [Rank.TotalScore]: {
+              gt: stat[Rank.TotalScore],
             },
           },
         }),
@@ -346,7 +345,6 @@ WHERE s.userid = ${id}
     >,
   >({ handle, excludes, includeHidden }: { handle: string; excludes?: Excludes; includeHidden?: boolean }) {
     if (!excludes) {
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       excludes = { secrets: true } as Excludes
     }
     const user = await this.db.user.findFirstOrThrow(createUserQuery({
@@ -359,7 +357,7 @@ WHERE s.userid = ${id}
     const parallels: PromiseLike<any>[] = []
 
     returnValue.reachable = false
-    returnValue.status = 'offline'
+    returnValue.status = UserStatus.Offline
 
     if (excludes.statistics !== true) {
       parallels.push(
@@ -568,70 +566,70 @@ WHERE s.userid = ${id}
     livePPRank?: Awaited<ReturnType<RedisUserProvider['getRedisRanks']>>
   ) {
     const statistics: UserStatistic<
-      Mode,
-      Ruleset,
+      ActiveMode,
+      ActiveRuleset,
       LeaderboardRankingSystem
     > = {
-      osu: {
-        standard: createRulesetData({
+      [Mode.Osu]: {
+        [Ruleset.Standard]: createRulesetData({
           databaseResult: results.find(
-            i => i.mode === BanchoPyMode.osuStandard
+            i => i.mode === BanchoPyMode.OsuStandard
           ),
-          ranks: ranks.find(i => i.mode === BanchoPyMode.osuStandard),
-          livePPRank: livePPRank?.osu.standard,
+          ranks: ranks.find(i => i.mode === BanchoPyMode.OsuStandard),
+          livePPRank: livePPRank?.[Mode.Osu][Ruleset.Standard],
         }),
-        relax: createRulesetData({
-          databaseResult: results.find(i => i.mode === BanchoPyMode.osuRelax),
-          ranks: ranks.find(i => i.mode === BanchoPyMode.osuRelax),
-          livePPRank: livePPRank?.osu.relax,
+        [Ruleset.Relax]: createRulesetData({
+          databaseResult: results.find(i => i.mode === BanchoPyMode.OsuRelax),
+          ranks: ranks.find(i => i.mode === BanchoPyMode.OsuRelax),
+          livePPRank: livePPRank?.[Mode.Osu][Ruleset.Relax],
         }),
-        autopilot: createRulesetData({
+        [Ruleset.Autopilot]: createRulesetData({
           databaseResult: results.find(
-            i => i.mode === BanchoPyMode.osuAutopilot
+            i => i.mode === BanchoPyMode.OsuAutopilot
           ),
-          ranks: ranks.find(i => i.mode === BanchoPyMode.osuAutopilot),
-          livePPRank: livePPRank?.osu.autopilot,
-        }),
-      },
-      taiko: {
-        standard: createRulesetData({
-          databaseResult: results.find(
-            i => i.mode === BanchoPyMode.taikoStandard
-          ),
-          ranks: ranks.find(i => i.mode === BanchoPyMode.taikoStandard),
-          livePPRank: livePPRank?.taiko.standard,
-        }),
-        relax: createRulesetData({
-          databaseResult: results.find(
-            i => i.mode === BanchoPyMode.taikoRelax
-          ),
-          ranks: ranks.find(i => i.mode === BanchoPyMode.taikoRelax),
-          livePPRank: livePPRank?.taiko.relax,
+          ranks: ranks.find(i => i.mode === BanchoPyMode.OsuAutopilot),
+          livePPRank: livePPRank?.[Mode.Osu][Ruleset.Autopilot],
         }),
       },
-      fruits: {
-        standard: createRulesetData({
+      [Mode.Taiko]: {
+        [Ruleset.Standard]: createRulesetData({
           databaseResult: results.find(
-            i => i.mode === BanchoPyMode.fruitsStandard
+            i => i.mode === BanchoPyMode.TaikoStandard
           ),
-          ranks: ranks.find(i => i.mode === BanchoPyMode.fruitsStandard),
-          livePPRank: livePPRank?.fruits.standard,
+          ranks: ranks.find(i => i.mode === BanchoPyMode.TaikoStandard),
+          livePPRank: livePPRank?.[Mode.Taiko][Ruleset.Standard],
         }),
-        relax: createRulesetData({
+        [Ruleset.Relax]: createRulesetData({
           databaseResult: results.find(
-            i => i.mode === BanchoPyMode.fruitsRelax
+            i => i.mode === BanchoPyMode.TaikoRelax
           ),
-          ranks: ranks.find(i => i.mode === BanchoPyMode.fruitsRelax),
-          livePPRank: livePPRank?.fruits.relax,
+          ranks: ranks.find(i => i.mode === BanchoPyMode.TaikoRelax),
+          livePPRank: livePPRank?.[Mode.Taiko][Ruleset.Relax],
         }),
       },
-      mania: {
-        standard: createRulesetData({
+      [Mode.Fruits]: {
+        [Ruleset.Standard]: createRulesetData({
           databaseResult: results.find(
-            i => i.mode === BanchoPyMode.maniaStandard
+            i => i.mode === BanchoPyMode.FruitsStandard
           ),
-          ranks: ranks.find(i => i.mode === BanchoPyMode.maniaStandard),
-          livePPRank: livePPRank?.mania.standard,
+          ranks: ranks.find(i => i.mode === BanchoPyMode.FruitsStandard),
+          livePPRank: livePPRank?.[Mode.Fruits][Ruleset.Standard],
+        }),
+        [Ruleset.Relax]: createRulesetData({
+          databaseResult: results.find(
+            i => i.mode === BanchoPyMode.FruitsRelax
+          ),
+          ranks: ranks.find(i => i.mode === BanchoPyMode.FruitsRelax),
+          livePPRank: livePPRank?.[Mode.Fruits][Ruleset.Relax],
+        }),
+      },
+      [Mode.Mania]: {
+        [Ruleset.Standard]: createRulesetData({
+          databaseResult: results.find(
+            i => i.mode === BanchoPyMode.ManiaStandard
+          ),
+          ranks: ranks.find(i => i.mode === BanchoPyMode.ManiaStandard),
+          livePPRank: livePPRank?.[Mode.Mania][Ruleset.Standard],
         }),
       },
     }
@@ -666,39 +664,39 @@ export class RedisUserProvider extends DBUserProvider {
       return undefined
     }
     return {
-      osu: {
-        standard: await this.getLiveRank(
+      [Mode.Osu]: {
+        [Ruleset.Standard]: await this.getLiveRank(
           id,
-          BanchoPyMode.osuStandard,
+          BanchoPyMode.OsuStandard,
           country
         ),
-        relax: await this.getLiveRank(id, BanchoPyMode.osuRelax, country),
-        autopilot: await this.getLiveRank(
+        [Ruleset.Relax]: await this.getLiveRank(id, BanchoPyMode.OsuRelax, country),
+        [Ruleset.Autopilot]: await this.getLiveRank(
           id,
-          BanchoPyMode.osuAutopilot,
+          BanchoPyMode.OsuAutopilot,
           country
         ),
       },
-      taiko: {
-        standard: await this.getLiveRank(
+      [Mode.Taiko]: {
+        [Ruleset.Standard]: await this.getLiveRank(
           id,
-          BanchoPyMode.osuStandard,
+          BanchoPyMode.OsuStandard,
           country
         ),
-        relax: await this.getLiveRank(id, BanchoPyMode.osuRelax, country),
+        [Ruleset.Relax]: await this.getLiveRank(id, BanchoPyMode.OsuRelax, country),
       },
-      fruits: {
-        standard: await this.getLiveRank(
+      [Mode.Fruits]: {
+        [Ruleset.Standard]: await this.getLiveRank(
           id,
-          BanchoPyMode.osuStandard,
+          BanchoPyMode.OsuStandard,
           country
         ),
-        relax: await this.getLiveRank(id, BanchoPyMode.osuRelax, country),
+        [Ruleset.Relax]: await this.getLiveRank(id, BanchoPyMode.OsuRelax, country),
       },
-      mania: {
-        standard: await this.getLiveRank(
+      [Mode.Mania]: {
+        [Ruleset.Standard]: await this.getLiveRank(
           id,
-          BanchoPyMode.osuStandard,
+          BanchoPyMode.OsuStandard,
           country
         ),
       },

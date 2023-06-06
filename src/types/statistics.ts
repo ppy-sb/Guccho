@@ -1,9 +1,9 @@
 import type {
-  Grade,
   LeaderboardRankingSystem,
   LeaderboardScoreRankingSystem,
   PPRankingSystem,
 } from './common'
+import { Grade } from './defs'
 
 export interface BaseRank {
   rank?: number
