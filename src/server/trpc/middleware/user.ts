@@ -6,7 +6,7 @@ import {
   youNeedToLogin,
 } from '../messages'
 import { sessionProcedure } from './session'
-import { UserProvider } from '~/server/backend/bancho.py/server'
+import { UserProvider } from '$active/server'
 
 const userProvider = new UserProvider()
 export const userProcedure = sessionProcedure.use(async ({ ctx, next }) => {

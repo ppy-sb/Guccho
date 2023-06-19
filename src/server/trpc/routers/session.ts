@@ -12,7 +12,7 @@ import { sessionProcedure as pSession } from '../middleware/session'
 import { zodHandle } from '../shapes'
 import { router as _router } from '../trpc'
 import { mapId } from '~/server/transforms/mapId'
-import { SessionProvider, UserProvider } from '~/server/backend/bancho.py/server'
+import { SessionProvider, UserProvider } from '$active/server'
 
 const { compare } = bcrypt
 

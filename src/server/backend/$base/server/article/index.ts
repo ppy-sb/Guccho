@@ -11,7 +11,7 @@ import dirTree from 'directory-tree'
 import { latest, paths, v0, versions } from './v'
 import { UserEssential, UserPrivilege } from '~/types/user'
 import useEditorExtensions from '~/composables/useEditorExtensionsServer'
-import { UserRelationProvider } from '~/server/backend/bancho.py/server'
+import { UserRelationProvider } from '$active/server'
 import { Logger } from '~/server/backend/$base/log'
 
 const logger = Logger.child({ label: 'article' })

@@ -3,7 +3,7 @@ import { router as _router } from '../trpc'
 import { adminProcedure } from '../middleware/admin'
 import { optionalUserProcedure } from '../middleware/optional-user'
 import { userProcedure } from '../middleware/user'
-import { ArticleProvider } from '~/server/backend/bancho.py/server'
+import { ArticleProvider } from '$active/server'
 
 const sp = new ArticleProvider()
 export const router = _router({

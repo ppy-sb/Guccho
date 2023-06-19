@@ -1,7 +1,7 @@
 import { string, z } from 'zod'
 import { router as _router, publicProcedure as p } from '../trpc'
 import { mapId } from '~/server/transforms/mapId'
-import { ScoreProvider } from '~/server/backend/bancho.py/server'
+import { ScoreProvider } from '$active/server'
 
 const s = new ScoreProvider()
 export const router = _router({

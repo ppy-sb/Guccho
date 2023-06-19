@@ -1,6 +1,6 @@
 import { sessionProcedure } from './session'
 import type { UserEssential } from '~/types/user'
-import { UserProvider } from '~/server/backend/bancho.py/server'
+import { UserProvider } from '$active/server'
 
 const userProvider = new UserProvider()
 export const optionalUserProcedure = sessionProcedure.use(async ({ ctx, next }) => {

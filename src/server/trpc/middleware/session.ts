@@ -3,7 +3,7 @@ import { setCookie } from 'h3'
 import { publicProcedure } from '../trpc'
 
 import { unableToRefreshToken } from '../messages'
-import { SessionProvider } from '~/server/backend/bancho.py/server'
+import { SessionProvider } from '$active/server'
 
 // import { create, get, refresh } from '~/server/session'
 

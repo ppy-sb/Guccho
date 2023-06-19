@@ -44,6 +44,14 @@ const newAvatarURL = shallowRef<string>()
 const cropper = shallowRef<InstanceType<typeof Cropper> | null>(null)
 const croppedAvatar = shallowRef<ArrayBuffer>()
 const avatarError = shallowRef<string>()
+
+if (user.value?.profile) {
+  const pf = user.value.profile
+  if (pf.raw) {
+    profile.value = pf.raw
+  }
+}
+
 async function selectAvatarFile(e: Event) {
   avatarError.value = undefined
   const file = (e?.target as HTMLInputElement)?.files?.[0]
@@ -168,15 +176,6 @@ async function updatePassword(closeModal: () => void) {
     changePasswordError.value = error.message
   }
 }
-onMounted(() => {
-  if (!user.value?.profile) {
-    return
-  }
-  const pf = user.value.profile
-  if (pf.raw) {
-    profile.value = pf.raw
-  }
-})
 
 function resetAvatar() {
   newAvatar.value = undefined

@@ -19,7 +19,7 @@ import { UserPrivilege } from '~/types/user'
 import { RankingStatus } from '~/types/beatmap'
 import { mapId } from '~/server/transforms/mapId'
 import { followUserSettings } from '~/server/transforms'
-import { SessionProvider, UserProvider, UserRelationProvider } from '~/server/backend/bancho.py/server'
+import { SessionProvider, UserProvider, UserRelationProvider } from '$active/server'
 
 import type { NumberRange } from '~/types/common'
 import { Scope } from '~/types/defs'
