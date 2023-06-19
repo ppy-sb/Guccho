@@ -11,21 +11,16 @@ import { useSession } from '~/store/session'
 import { ArticleProvider } from '$base/server/article'
 import { UserPrivilege } from '~/types/user'
 
-definePageMeta({
-  middleware: ['auth'],
-})
-
 const app$ = useNuxtApp()
 const config = useAppConfig()
 const route = useRoute()
 
 const session = useSession()
-
-useHead({
-  titleTemplate: `Settings - ${config.title}`,
-})
 definePageMeta({
   middleware: ['auth'],
+})
+useHead({
+  titleTemplate: `Settings - ${config.title}`,
 })
 
 const { data: user, refresh } = await useAsyncData(() => app$.$client.me.settings.query())
