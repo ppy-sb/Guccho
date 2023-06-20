@@ -1,8 +1,6 @@
 import { type H3Event } from 'h3'
 import type { inferAsyncReturnType } from '@trpc/server'
 
-// import type { getSession } from '../session'
-
 // type _ReturnType = Awaited<ReturnType<typeof getSession>> & Record<string, unknown>
 export function createContext(e: H3Event) {
   const session = getCookie(e, 'session')

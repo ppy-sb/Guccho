@@ -26,6 +26,7 @@ export const router = _router({
   settings: pUser.query(async ({ ctx }) => {
     return await users.getFull({
       handle: UserProvider.idToString(ctx.user.id),
+      includeHidden: true,
       excludes: { statistics: true, relationships: true, secrets: false },
     })
   }),

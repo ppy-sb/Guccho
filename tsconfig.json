@@ -1,10 +1,6 @@
 {
   "extends": "./.nuxt/tsconfig.json",
-  "ts-node": {
-    "compilerOptions": {
-      "module": "commonjs" // you can also override compilerOptions.  Only ts-node will use these overrides
-    }
-  },
+
   "compilerOptions": {
     "esModuleInterop": false,
     "skipLibCheck": true,
@@ -20,6 +16,5 @@
     "strictNullChecks": true,
     "strictFunctionTypes": true,
     "jsx": "preserve"
-  },
-  "exclude": ["node_modules", "dist", ".prisma"]
+  }
 }

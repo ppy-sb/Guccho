@@ -63,15 +63,15 @@ const scoreFmt = createScoreFormatter({ notation: undefined })
             <span class="text-xl font-semibold">{{ score.playedAt.toLocaleString() }}</span>
           </div>
         </div>
-        <div class="ml-auto">
+        <!-- <div class="ml-auto">
           <t-button variant="ghost" size="sm">
-            <!-- <font-awesome-icon icon="fas fa-ellipsis-h" size="2xl" /> -->
+            <font-awesome-icon icon="fas fa-ellipsis-h" size="2xl" />
           </t-button>
-        </div>
+        </div> -->
       </div>
       <div class="flex flex-col md:flex-row w-full justify-between">
         <div class="p-8 flex gap-2 items-baseline">
-          <template v-if="rankingSystem === 'score'">
+          <template v-if="rankingSystem === Rank.Score">
             <span class="text-5xl">{{ scoreFmt(score.score) }}</span>
           </template>
           <template v-else-if="rankingSystem === Rank.PPv2 && hasRuleset(score.mode, score.ruleset) && hasRankingSystem(score.mode, score.ruleset, Rank.PPv2)">

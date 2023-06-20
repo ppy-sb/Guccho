@@ -64,9 +64,6 @@ export default defineNuxtConfig({
   typescript: {
     strict: true,
   },
-  imports: {
-  },
 
-  // @ts-expect-error typedef is wrong
-  devtools: true,
+  devtools: { enabled: true },
 })

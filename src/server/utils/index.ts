@@ -1,9 +1,2 @@
-export {
-  noop,
-  includes,
-  TSFilter,
-  pick,
-  getLevelWithProgress,
-  capitalizeFirstLetter,
-  calcUserPrivilege,
-} from '~/universal/utils'
+// keep relative imports
+export * from '../../universal/utils'
