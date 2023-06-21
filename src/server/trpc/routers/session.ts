@@ -15,7 +15,7 @@ import { Logger } from '../../backend/$base/log'
 import { mapId } from '~/server/transforms/mapId'
 import { SessionProvider, UserProvider } from '$active/server'
 
-const logger = Logger.child({ label: 'trpc-session' })
+const logger = Logger.child({ label: 'session', backend: 'transport', transport: 'trpc' })
 
 const userProvider = new UserProvider()
 const sessionProvider = new SessionProvider()

@@ -36,7 +36,7 @@ const logs = ref(serverLogs.reverse())
           </div>
           <div class="italic md:mb-4 capitalize text-sm">
             <template v-if="log.backend">
-              {{ log.backend }} Backend
+              {{ log.backend }}
             </template>
           </div>
           <div class="mb-4 mt-2 md:hidden">
