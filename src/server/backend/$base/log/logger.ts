@@ -1,9 +1,9 @@
-import winston, { format } from 'winston'
+import { createLogger, format, transports } from 'winston'
 import Transport from 'winston-transport'
 
 const { combine, timestamp, json, printf } = format
 
-export const Logger = winston.createLogger({
+export const Logger = createLogger({
   defaultMeta: {
     backend: 'base',
   },
@@ -33,7 +33,7 @@ if (process.env.NODE_ENV !== 'production') {
   const myFormat = printf(({ level, message, label, timestamp }) => {
     return `${timestamp} [${label}] ${level}: ${message}`
   })
-  Logger.add(new winston.transports.Console({
+  Logger.add(new transports.Console({
     format: myFormat,
   }))
 }

@@ -1,7 +1,7 @@
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 
-import * as bcrypt from 'bcryptjs'
+import bcrypt from 'bcryptjs'
 import {
   atLeastOneUserNotExists,
   oldPasswordMismatch,

@@ -1,5 +1,5 @@
 import { TRPCError } from '@trpc/server'
-import * as bcrypt from 'bcryptjs'
+import bcrypt from 'bcryptjs'
 import { z } from 'zod'
 
 import {
@@ -11,10 +11,11 @@ import {
 import { sessionProcedure as pSession } from '../middleware/session'
 import { zodHandle } from '../shapes'
 import { router as _router } from '../trpc'
+import { Logger } from '../../backend/$base/log'
 import { mapId } from '~/server/transforms/mapId'
 import { SessionProvider, UserProvider } from '$active/server'
 
-const { compare } = bcrypt
+const logger = Logger.child({ label: 'trpc-session' })
 
 const userProvider = new UserProvider()
 const sessionProvider = new SessionProvider()
@@ -32,7 +33,7 @@ export const router = _router({
           handle,
           includes: { secrets: true },
         })
-        const result = await compare(md5HashedPassword, user.secrets.password)
+        const result = await bcrypt.compare(md5HashedPassword, user.secrets.password)
         if (!result) {
           throw new TRPCError({
             code: 'UNAUTHORIZED',
@@ -58,6 +59,8 @@ export const router = _router({
         if (err instanceof TRPCError) {
           throw err
         }
+
+        logger.error(err)
 
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',

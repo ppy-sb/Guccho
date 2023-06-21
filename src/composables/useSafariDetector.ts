@@ -1,8 +1,10 @@
 function detectClient() {
-  return navigator.userAgent.search('Safari') >= 0 && navigator.userAgent.search('Chrome') < 0
+  const UA = navigator.userAgent.toLowerCase()
+  return UA.search('safari') >= 0 && UA.search('Chrome') < 0
 }
 function detectServer() {
-  return useRequestHeaders(['user-agent'])['user-agent']?.includes('Safari')
+  const UA = useRequestHeaders(['user-agent'])['user-agent']?.toLowerCase()
+  return UA?.includes('safari')
 }
 
 export default (def = false) =>

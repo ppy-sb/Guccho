@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "esModuleInterop": false,
+    "esModuleInterop": true,
     "skipLibCheck": true,
     "target": "ESNext",
     "module": "ESNext",

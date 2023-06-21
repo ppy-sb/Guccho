@@ -8,8 +8,6 @@ const { status } = useZoomModal()
 
 onMounted(() => {
   safari.value = useSafariDetector()
-  // setScroll(document)
-  // scroll.value && setScroll(scroll.value)
 })
 </script>
 
