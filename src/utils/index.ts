@@ -1,3 +1,4 @@
+// keep relative imports
 export * from '../common/utils'
 
 export function loadImage(src: string) {
