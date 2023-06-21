@@ -41,7 +41,7 @@ jobs:
         run: yarn build:gen
 
       - name: type check ⚙️
-        run: yarn lint:type-check
+        run: yarn nuxi typecheck
 
       - name: Run linter 👀
         run: yarn lint

@@ -8,11 +8,12 @@ import { generateHTML } from '@tiptap/html'
 import { DeepPartial } from '@trpc/server'
 import { compileGraph, createPipeline, hops } from 'schema-evolution'
 import dirTree from 'directory-tree'
+
 import { latest, paths, v0, versions } from './v'
 import { UserEssential, UserPrivilege } from '~/types/user'
 import useEditorExtensions from '~/composables/useEditorExtensionsServer'
 import { UserRelationProvider } from '$active/server'
-import { Logger } from '~/server/backend/$base/log'
+import { Logger } from '$base/log'
 
 const logger = Logger.child({ label: 'article' })
 
@@ -124,9 +125,9 @@ export abstract class ArticleProvider {
     const route = hops(pipeline.path)
     if (route?.length) {
       // flagDiff = true
-      const fileOrId = 'id' in opt ? `unknown = ${opt.id}` : `File = ${opt.file}`
+      const fileOrId = 'id' in opt ? `unknown = ${opt.id}` : `File = ${relative(this.articles, opt.file.toString())}`
       logger.info({
-        message: `Migrate Article<${fileOrId}> to latest version: ${route.map(String).join(' -> ')}.`,
+        message: `Updated Article<${fileOrId}> to latest version: ${route.map(String).join(' -> ')}.`,
         fix: 'To get rid of logs like this please open then save this article in the article editor.',
       })
     }

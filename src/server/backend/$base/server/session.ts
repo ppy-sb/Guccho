@@ -1,5 +1,5 @@
 import { v4 } from 'uuid'
-import { Logger } from '~/server/backend/$base/log'
+import { Logger } from '$base/log'
 
 const logger = Logger.child({ label: 'session' })
 
