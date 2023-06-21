@@ -18,7 +18,6 @@ import type {
 export namespace UserProvider {
   export type ComposableProperties<Id> = UserExtra<Id> & UserOptional
   export interface OptType<
-    Id,
     Includes extends Partial<Record<keyof UserOptional, boolean>> = Record<
       never,
       never
@@ -40,12 +39,12 @@ export namespace UserProvider {
   }
 }
 export interface UserProvider<Id> extends idTransformable {
-  exists({ handle, keys }: UserProvider.OptType<Id>): PromiseLike<boolean>
+  exists({ handle, keys }: UserProvider.OptType): PromiseLike<boolean>
 
   getEssential<
     Includes extends Partial<Record<keyof UserOptional, boolean>>,
   >(
-    opt: UserProvider.OptType<Id, Includes>
+    opt: UserProvider.OptType<Includes>
   ): PromiseLike<UserEssential<Id>>
 
   getEssentialById<

@@ -102,7 +102,7 @@ class DBUserProvider implements Base<Id> {
   async exists({
     handle,
     keys,
-  }: Base.OptType<number, Record<never, never>>) {
+  }: Base.OptType<Record<never, never>>) {
     return (
       (await this.db.user.count(createUserQuery({
         handle,
@@ -128,7 +128,7 @@ class DBUserProvider implements Base<Id> {
 
   async getEssential<
     Includes extends Partial<Record<keyof UserOptional, boolean>>,
-  >(opt: Base.OptType<Id, Includes>) {
+  >(opt: Base.OptType<Includes>) {
     const { handle, includes, keys } = opt
     /* optimized */
     const user = await this.db.user.findFirstOrThrow({
