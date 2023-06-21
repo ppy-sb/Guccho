@@ -1,4 +1,4 @@
-import bcrypt from 'bcryptjs'
+import * as bcrypt from 'bcryptjs'
 
 export async function encrypt(md5HashedPassword: string, rounds = 11) {
   const salt = await bcrypt.genSalt(rounds)

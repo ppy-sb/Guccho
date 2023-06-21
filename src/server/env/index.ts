@@ -1,5 +1,4 @@
-import type { ZodType } from 'zod'
-import type z from 'zod'
+import type { ZodType, z } from 'zod'
 import { ZodError, literal, object, string, union } from 'zod'
 import { fromZodError } from 'zod-validation-error'
 import { zodFQDN, zodPath } from '~/server/trpc/shapes'

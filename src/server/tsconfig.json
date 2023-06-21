@@ -1,0 +1,22 @@
+{
+  "extends": ["../../.nuxt/tsconfig.server.json", "../../tsconfig.base.json"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "~": [".."],
+      "~/*": ["../*"],
+      "@": [".."],
+      "@/*": ["../*"],
+      "~~": ["../.."],
+      "~~/*": ["../../*"],
+      "@@": ["../.."],
+      "@@/*": ["../../*"],
+      "$active": ["backend/ppy.sb@bancho.py"],
+      "$active/*": ["backend/ppy.sb@bancho.py/*"],
+      "$base": ["backend/$base"],
+      "$base/*": ["backend/$base/*"],
+      "$articles": ["../../articles"],
+      "$articles/*": ["../../articles/*"]
+    }
+  }
+}

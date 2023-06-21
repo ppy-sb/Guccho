@@ -1,5 +1,5 @@
 import { TRPCError } from '@trpc/server'
-import bcrypt from 'bcryptjs'
+import * as bcrypt from 'bcryptjs'
 import { z } from 'zod'
 
 import {
