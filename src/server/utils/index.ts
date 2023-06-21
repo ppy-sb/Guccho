@@ -1,2 +1,2 @@
 // keep relative imports
-export * from '../../universal/utils'
+export * from '../../common/utils'

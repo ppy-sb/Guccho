@@ -1,4 +1,4 @@
-export * from '../universal/utils'
+export * from '../common/utils'
 
 export function loadImage(src: string) {
   return new Promise((resolve, reject) => {
