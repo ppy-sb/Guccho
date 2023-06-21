@@ -2,7 +2,6 @@ export {
   hasLeaderboardRankingSystem,
   hasRankingSystem,
   hasRuleset,
-  features,
   modes,
   rulesets,
 } from '../bancho.py'

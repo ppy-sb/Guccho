@@ -14,7 +14,7 @@ import type {
 import type { RankingSystemScore, RulesetScore } from '~/types/score'
 import { Grade, Rank } from '~/types/defs'
 
-export function toScore<_RS extends PPRankingSystem>({
+export function toScore<RS extends PPRankingSystem>({
   score,
   mode,
   ruleset,
@@ -48,7 +48,7 @@ export function toScore<_RS extends PPRankingSystem>({
     Id,
     ActiveMode,
     ActiveRuleset,
-    _RS,
+    RS,
     (typeof score)['beatmap'] extends null
       ? RankingStatus.Unknown
       : BeatmapSource.Bancho | BeatmapSource.PrivateServer | BeatmapSource.Unknown,
@@ -131,4 +131,3 @@ export function toRankingSystemScores<RS extends LeaderboardRankingSystem>({
     toRankingSystemScore({ score, rankingSystem, mode, rank: index + 1 })
   )
 }
-// : Flavor extends 'ranking-system' ? :

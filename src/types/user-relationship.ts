@@ -1,7 +1,6 @@
 import type { MutualRelationship, Relationship } from './defs'
-import type { UserEssential } from './user'
 
-export interface UserRelationship<Id> extends UserEssential<Id> {
+export interface UserRelationship {
   relationship: Relationship[]
   relationshipFromTarget: Relationship[]
   mutualRelationship: MutualRelationship[]

@@ -4,9 +4,7 @@ import type { LeaderboardRankingSystem } from '~/types/common'
 import type { UserModeRulesetStatistics } from '~/types/statistics'
 import { Rank } from '~/types/defs'
 
-export function createRulesetData<
-  _RankingSystem extends LeaderboardRankingSystem,
->({
+export function createRulesetData<RankingSystem extends LeaderboardRankingSystem>({
   databaseResult: dbResult,
   ranks,
   livePPRank,
@@ -54,7 +52,7 @@ export function createRulesetData<
         d: 0,
         f: 0,
       },
-    } as UserModeRulesetStatistics<_RankingSystem>
+    } as UserModeRulesetStatistics<RankingSystem>
   }
 
   return {
@@ -88,5 +86,5 @@ export function createRulesetData<
       d: 0,
       f: 0,
     },
-  } as UserModeRulesetStatistics<_RankingSystem>
+  } as UserModeRulesetStatistics<RankingSystem>
 }

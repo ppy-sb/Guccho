@@ -26,10 +26,7 @@ function parseSession<TSession>(_session: Buffer): TSession | undefined {
   return session as TSession
 }
 
-function createStore<
-TSessionKey extends string,
-TSession extends Session & Document,
->(): SessionStore<TSessionKey, TSession> {
+function createStore<TSessionKey extends string, TSession extends Session & Document>() {
   const r = getRedis()
   if (!r) {
     throw new Error('redis session store requires redis connection')
@@ -64,7 +61,7 @@ TSession extends Session & Document,
         cb(session, sessionId as TSessionKey)
       }
     },
-  }
+  } as SessionStore<TSessionKey, TSession>
 }
 
 export class SessionProvider extends Base<string, Session> {

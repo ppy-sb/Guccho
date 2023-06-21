@@ -28,7 +28,6 @@ export type HasRankingSystem = <
 >(
   mode: M,
   ruleset: R,
-  // rankingSystem: RankingSystem
   rankingSystem: Brand<string> | RankingSystem
 ) => rankingSystem is RankingSystem
 
@@ -38,6 +37,5 @@ export type HasLeaderboardRankingSystem = <
 >(
   mode: M,
   ruleset: R,
-  // rankingSystem: LeaderboardRankingSystem
   rankingSystem: Brand<string> | LeaderboardRankingSystem
 ) => rankingSystem is LeaderboardRankingSystem

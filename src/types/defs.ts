@@ -57,7 +57,7 @@ export const LeaderboardScoreRank = {
 } as const
 
 const ppRankingSystem = [Rank.PPv1, Rank.PPv2] as const
-const scoreRankingSystem = [ScoreRank.Score] as const
+const scoreRankingSystem = [Rank.Score] as const
 
 const leaderboardPPRankingSystem = ppRankingSystem
 const leaderboardScoreRankingSystem = [
@@ -108,6 +108,8 @@ export const rankingSystemDef = {
   },
 } as const
 
+export type ModeRulesetRankingSystemDef = typeof rankingSystemDef
+
 const _mode = new Set<ActiveMode>()
 const _ruleset = new Set<ActiveRuleset>()
 
@@ -155,5 +157,3 @@ export const leaderboardRankingSystems = [
   ...leaderboardPPRankingSystems,
   ...leaderboardScoreRankingSystems,
 ] as const
-
-export const features = ['userpage', 'visibility-scope'] as const

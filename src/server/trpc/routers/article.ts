@@ -50,5 +50,5 @@ export const router = _router({
     slug: string().trim(),
   })).mutation(({ input, ctx }) => sp.delete(Object.assign(input, { user: ctx.user }))),
 
-  localSlugs: adminProcedure.input(string().trim().optional()).query(({ input, ctx }) => sp.getLocalSlugs(input)),
+  localSlugs: adminProcedure.input(string().trim().optional()).query(({ input }) => sp.getLocalSlugs(input)),
 })

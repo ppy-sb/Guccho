@@ -4,16 +4,16 @@ import type {
   Source,
 } from '.prisma/bancho.py'
 import { match } from 'switch-pattern'
+import { $enum } from 'ts-enum-util'
 import { BanchoMode, BanchoPyMode, BanchoPyRankedStatus, fromBanchoMode } from '../enums'
 import type { Id } from '..'
 import { Mode, Ruleset } from '~/types/defs'
 import { BeatmapSource, RankingStatus } from '~/types/beatmap'
-import { stableMod } from '~/types/score'
+import { StableMod } from '~/types/score'
 
 import type { BeatmapEssential, Beatmapset } from '~/types/beatmap'
 
 import type { ActiveMode, ActiveRuleset } from '~/types/common'
-import type { StableMod } from '~/types/score'
 
 // this does not deserves exporting
 export function toBeatmapset(beatmapset: Source, beatmap: DBMap) {
@@ -176,10 +176,10 @@ export function toMods(e: number): Array<StableMod> {
   if (e === 0) {
     return returnValue
   }
-
-  for (const [mod, bit] of Object.entries(stableMod)) {
+  const w = $enum(StableMod)
+  for (const bit of w.getValues()) {
     if (bit & e) {
-      returnValue.push(mod as StableMod)
+      returnValue.push(bit)
     }
   }
   return returnValue

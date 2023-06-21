@@ -90,6 +90,7 @@
     "systeminformation": "^5.17.16",
     "tailwind-highlightjs": "^2.0.1",
     "trpc-nuxt": "^0.10.5",
+    "ts-enum-util": "^4.0.2",
     "ua-parser-js": "^1.0.35",
     "uuid": "^9.0.0",
     "v-lazy-image": "^2.1.1",

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { RankingSystemScore } from '~/types/score'
+import { RankingSystemScore, StableMod } from '~/types/score'
 import type { ActiveMode, ActiveRuleset, LeaderboardPPRankingSystem, LeaderboardRankingSystem, LeaderboardScoreRankingSystem } from '~/types/common'
 import {
   Rank,
@@ -80,7 +80,7 @@ const meta = computed(
       <div class="flex min-w-0 gap-4">
         <div class="hidden md:block">
           <img
-            v-if=" beatmap
+            v-if="beatmap
               && beatmapIsVisible(beatmap)
               && beatmap.beatmapset.source === BeatmapSource.Bancho"
             :src="beatmap.beatmapset.assets['list@2x']"
@@ -129,7 +129,7 @@ const meta = computed(
                 {{ beatmap.version }}
               </span>
               <span class="font-light">
-                {{ score.mods.join(", ") || "NoMod" }}
+                {{ score.mods.map(i => StableMod[i]).join(", ") || "NoMod" }}
               </span>
             </div>
             <div class="flex">

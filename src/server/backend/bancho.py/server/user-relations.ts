@@ -5,7 +5,6 @@ import type { Id } from '..'
 import { env } from '../../../env'
 import { getPrismaClient } from './source/prisma'
 
-import { calculateMutualRelationships } from '~/server/transforms'
 import type { UserRelationProvider as Base } from '$base/server'
 import { Relationship } from '~/types/defs'
 import type { UserEssential } from '~/types/user'

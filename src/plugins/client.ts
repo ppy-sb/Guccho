@@ -1,6 +1,6 @@
 import { createTRPCNuxtClient, httpBatchLink, httpLink } from 'trpc-nuxt/client'
-import { transformer } from '../server/trpc/transformer'
-import type { AppRouter } from '@/server/trpc/routers'
+import { transformer } from '~/server/trpc/transformer'
+import type { AppRouter } from '~/server/trpc/routers'
 
 export default defineNuxtPlugin(() => {
   const client = createTRPCNuxtClient<AppRouter>({

@@ -44,8 +44,8 @@ export abstract class ArticleProvider {
   }
 
   inside(path: string) {
-    const _r = relative(this.articles, path)
-    return _r && !_r.startsWith('..') && !isAbsolute(_r)
+    const r = relative(this.articles, path)
+    return r && !r.startsWith('..') && !isAbsolute(r)
   }
 
   abstract get(opt: {

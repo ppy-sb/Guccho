@@ -2,6 +2,7 @@
 import type { RankingSystem } from '~/types/common'
 import { Rank } from '~/types/defs'
 import type { BeatmapLeaderboard } from '~/types/leaderboard'
+import { StableMod } from '~/types/score'
 
 const props = withDefaults(
   defineProps<{
@@ -70,7 +71,7 @@ const pp = createPPFormatter()
             #{{ index + 1 }}
           </td>
           <td class="text-right font-mono">
-            {{ item.score.mods.join(" ") }}
+            {{ item.score.mods.map(m => StableMod[m]).join(", ") }}
           </td>
           <td class="text-right font-mono">
             {{ comma(item.score.score) }}

@@ -84,7 +84,7 @@ export function toUserEssential<
     name: user.name,
     safeName: user.safeName,
     flag: user.country,
-    avatarSrc: (avatar.domain && `https://${avatar.domain}/${user.id}`) || undefined,
+    avatarSrc: avatar.domain && `https://${avatar.domain}/${user.id}`,
     roles: toRoles(user.priv),
   }
 
@@ -124,7 +124,7 @@ export function dedupeUserRelationship(
       acc.get(cur.toUserId)?.relationship.push(cur.type)
     }
     return acc
-  }, new Map<Id, UserRelationship<Id>>())
+  }, new Map<Id, UserEssential<Id> & UserRelationship>())
 
   return [...reduceUserRelationships.values()]
 }
@@ -145,10 +145,7 @@ export function toFullUser(
     name: user.name,
     safeName: user.safeName,
     flag: user.country,
-    avatarSrc:
-      (config.avatar.domain
-        && `https://${config.avatar.domain}/${user.id}`)
-      || undefined,
+    avatarSrc: config.avatar.domain && `https://${config.avatar.domain}/${user.id}`,
     roles: toRoles(user.priv),
     settings: {
       accessControl: {

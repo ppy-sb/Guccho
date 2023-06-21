@@ -27,7 +27,7 @@ import {
 } from '../db-query'
 import type { Id } from '..'
 import { getLiveUserStatus } from '../api-client'
-import { encrypt } from '../crypto'
+import { encryptBanchoPassword } from '../crypto'
 import { client as redisClient } from './source/redis'
 import { getPrismaClient } from './source/prisma'
 import { UserRelationProvider } from './user-relations'
@@ -447,7 +447,7 @@ WHERE s.userid = ${id}
   }
 
   async changePassword(user: UserEssential<Id>, newPasswordMD5: string) {
-    const pwBcrypt = await encrypt(newPasswordMD5)
+    const pwBcrypt = await encryptBanchoPassword(newPasswordMD5)
     const result = await this.db.user.update({
       where: {
         id: user.id,
@@ -539,7 +539,7 @@ WHERE s.userid = ${id}
           name,
           safeName,
           email,
-          pwBcrypt: await encrypt(passwordMd5),
+          pwBcrypt: await encryptBanchoPassword(passwordMd5),
         },
       })
 

@@ -8,7 +8,7 @@ import type { Mod } from './score'
 
 export interface Leaderboard<
   IdType,
-  _RankingSystem extends LeaderboardRankingSystem = LeaderboardRankingSystem,
+  RankingSystem extends LeaderboardRankingSystem = LeaderboardRankingSystem,
 > {
   user: UserEssential<IdType>
   inThisLeaderboard: {
@@ -16,8 +16,8 @@ export interface Leaderboard<
     playCount: number
     rank: number | bigint
   }
-  & Record<_RankingSystem & PPRankingSystem, number>
-  & Record<_RankingSystem & LeaderboardScoreRankingSystem, bigint>
+  & Record<RankingSystem & PPRankingSystem, number>
+  & Record<RankingSystem & LeaderboardScoreRankingSystem, bigint>
 }
 export interface BeatmapLeaderboard<Id> {
   user: UserEssential<Id>
@@ -31,7 +31,7 @@ export interface BeatmapLeaderboard<Id> {
   rank: number
 }
 
-export type ComponentLeaderboard<IdType> = Omit<Leaderboard<IdType>, 'inThisLeaderboard'> & {
-  inThisLeaderboard: Partial<Leaderboard<IdType>['inThisLeaderboard']>
-  & Pick<Leaderboard<IdType>['inThisLeaderboard'], 'accuracy' | 'playCount'>
+export type ComponentLeaderboard<Id> = Omit<Leaderboard<Id>, 'inThisLeaderboard'> & {
+  inThisLeaderboard: Partial<Leaderboard<Id>['inThisLeaderboard']>
+  & Pick<Leaderboard<Id>['inThisLeaderboard'], 'accuracy' | 'playCount'>
 }

@@ -33,5 +33,4 @@ export type UserModeRulesetStatistics<RS extends LeaderboardRankingSystem> = {
   maxCombo: number
   replayWatchedByOthers: number
   scoreRankComposition: Record<Grade, number>
-} & Record<RS & PPRankingSystem, PPRank> &
-Record<RS & LeaderboardScoreRankingSystem, ScoreRank>
+} & Record<RS & PPRankingSystem, PPRank> & Record<RS & LeaderboardScoreRankingSystem, ScoreRank>

@@ -4,7 +4,7 @@ import type { UserEssential } from '~/types/user'
 import type { UserRelationship } from '~/types/user-relationship'
 
 export interface UserRelationProvider<Id> extends idTransformable {
-  get(query: { user: { id: Id } }): PromiseLike<UserRelationship<Id>[]>
+  get(query: { user: { id: Id } }): PromiseLike<Array<UserEssential<Id> & UserRelationship>>
   getOne(
     fromUser: { id: Id },
     toUser: { id: Id }

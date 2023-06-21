@@ -11,8 +11,7 @@ import {
 import { sessionProcedure as pSession } from '../middleware/session'
 import { zodHandle } from '../shapes'
 import { router as _router } from '../trpc'
-import { Logger } from '../../backend/$base/log'
-import { mapId } from '~/server/transforms/mapId'
+import { Logger } from '$base/log'
 import { SessionProvider, UserProvider } from '$active/server'
 
 const logger = Logger.child({ label: 'session', backend: 'transport', transport: 'trpc' })

@@ -17,8 +17,7 @@ import { optionalUserProcedure } from '../middleware/optional-user'
 import { userNotFound } from '../messages'
 import { UserPrivilege } from '~/types/user'
 import { RankingStatus } from '~/types/beatmap'
-import { mapId } from '~/server/transforms/mapId'
-import { followUserSettings } from '~/server/transforms'
+
 import { SessionProvider, UserProvider, UserRelationProvider } from '$active/server'
 
 import type { NumberRange } from '~/types/common'

@@ -6,9 +6,9 @@ export enum BeatmapSource {
   Bancho = 1,
   PrivateServer = 2,
 }
-export type UnknownSource = BeatmapSource.Unknown
-export type LocalSource = BeatmapSource.Local
-export type ForeignSource = BeatmapSource.Bancho | BeatmapSource.PrivateServer
+export type Unknown = BeatmapSource.Unknown
+export type Local = BeatmapSource.Local
+export type Foreign = BeatmapSource.Bancho | BeatmapSource.PrivateServer
 
 // https://osu.ppy.sh/docs/index.html#beatmapsetcompact-rank-status
 export enum RankingStatus {
@@ -43,7 +43,7 @@ export interface Beatmapset<Source extends BeatmapSource, LocalId, ForeignId> {
   }
   id: LocalId
   source: Source
-  foreignId: Source extends ForeignSource ? ForeignId : never
+  foreignId: Source extends Foreign ? ForeignId : never
   assets: {
     cover?: string
     'cover@2x'?: string
@@ -98,7 +98,7 @@ export type NormalBeatmapWithMeta<
   ForeignId,
 > = BeatmapEssential<
   LocalId,
-  Source extends UnknownSource ? never : ForeignId
+  Source extends Unknown ? never : ForeignId
 > & {
   status: Exclude<Status, AbnormalStatus>
   source?: Source

@@ -25,14 +25,14 @@ export namespace UserProvider {
   > {
     handle: string
     includes?: Includes
-    keys?: Array<['id', 'name', 'safeName', 'email'][number]>
+    keys?: Array<'id' | 'name' | 'safeName' | 'email'>
   }
 
-  export interface BaseQuery<Id, _Mode extends ActiveMode, _Ruleset extends ActiveRuleset, TRankingSystem extends LeaderboardRankingSystem> {
+  export interface BaseQuery<Id, Mode extends ActiveMode, Ruleset extends ActiveRuleset, RankingSystem extends LeaderboardRankingSystem> {
     id: Id
-    mode: _Mode
-    ruleset: _Ruleset
-    rankingSystem: TRankingSystem
+    mode: Mode
+    ruleset: Ruleset
+    rankingSystem: RankingSystem
     page: number
     perPage: number
     rankingStatus: RankingStatus[]
@@ -55,18 +55,18 @@ export interface UserProvider<Id> extends idTransformable {
   }): PromiseLike<UserEssential<Id>>
 
   getBests<
-    _Mode extends ActiveMode,
-    _Ruleset extends ActiveRuleset,
-    _RankingSystem extends LeaderboardRankingSystem,
-  >(query: UserProvider.BaseQuery<Id, _Mode, _Ruleset, _RankingSystem>): PromiseLike<RankingSystemScore<string, Id, _Mode, _RankingSystem>[]>
+    Mode extends ActiveMode,
+    Ruleset extends ActiveRuleset,
+    RankingSystem extends LeaderboardRankingSystem,
+  >(query: UserProvider.BaseQuery<Id, Mode, Ruleset, RankingSystem>): PromiseLike<RankingSystemScore<string, Id, Mode, RankingSystem>[]>
 
   getTops<
-    _Mode extends ActiveMode,
-    _Ruleset extends ActiveRuleset,
-    _RankingSystem extends LeaderboardRankingSystem,
-  >(query: UserProvider.BaseQuery<Id, _Mode, _Ruleset, _RankingSystem>): PromiseLike<{
+    Mode extends ActiveMode,
+    Ruleset extends ActiveRuleset,
+    RankingSystem extends LeaderboardRankingSystem,
+  >(query: UserProvider.BaseQuery<Id, Mode, Ruleset, RankingSystem>): PromiseLike<{
     count: number
-    scores: RankingSystemScore<string, Id, _Mode, _RankingSystem>[]
+    scores: RankingSystemScore<string, Id, Mode, RankingSystem>[]
   }>
 
   getStatistics(query: {

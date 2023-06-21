@@ -1,29 +1,3 @@
-// keep relative imports
-export * from '../common/utils'
-
-export function loadImage(src: string) {
-  return new Promise((resolve, reject) => {
-    const image = new Image()
-    image.addEventListener('load', resolve)
-    image.addEventListener('error', reject)
-    image.src = src
-  })
-}
-
-export function placeholder(e: Event & { target: HTMLImageElement }) {
-  e.target.src = '/images/image-placeholder.svg'
-}
-
-export function getFlagURL(flag: string) {
-  let url = 'https://cdn.jsdelivr.net/npm/@twemoji/svg@latest/'
-  flag = flag.toUpperCase()
-  for (let i = 0; i < flag.length; i++) {
-    url += (flag.charCodeAt(i) + 127397).toString(16)
-    url += i !== flag.length - 1 ? '-' : '.svg'
-  }
-  return url
-}
-
 export function createScoreFormatter(
   opt: Intl.NumberFormatOptions = {
     notation: 'compact',
