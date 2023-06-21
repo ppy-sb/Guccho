@@ -3,12 +3,14 @@ name: ci
 on:
   push:
     branches:
-      - "main"
-      - "prod"
+      - develop
+      - rc
+      - stable
   pull_request:
     branches:
-      - "main"
-      - "prod"
+      - develop
+      - rc
+      - stable
 
 jobs:
   ci:
