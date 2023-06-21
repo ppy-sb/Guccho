@@ -10,8 +10,8 @@ export function isBanchoBeatmapset(
   return test.source === BeatmapSource.Bancho
 }
 
-export function includes<T>(input: any, array: readonly T[]): input is T {
-  return array.includes(input)
+export function includes<T>(input: unknown, array: readonly T[]): input is T {
+  return array.includes(input as T)
 }
 
 export function checkAvatar(file: ArrayBuffer) {

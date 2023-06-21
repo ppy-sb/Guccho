@@ -2,12 +2,9 @@
 /* eslint-env node */
 import * as convert from 'color-convert'
 
-// @ts-expect-error got nothing
 import themes from 'daisyui/src/colors/themes'
 import type { HSL } from 'color-convert/conversions'
 import { convertSingle, palette } from './src/palette'
-
-// const themes = require('daisyui/src/colors/themes')
 
 const cupcake = convertSingle(
   themes['[data-theme=cupcake]'],
