@@ -1,4 +1,4 @@
-import type { User } from '.prisma/bancho.py'
+import type { User } from 'prisma-client-bancho-py'
 import {
   assertIsBanchoPyMode,
   fromBanchoPyMode,
@@ -10,8 +10,8 @@ import {
 
 import type { Id } from '..'
 import type { AbleToTransformToScores } from '../transforms'
-import { env } from '../../../env'
 import { getPrismaClient } from './source/prisma'
+import { env } from '~/server/env'
 
 import type {
   ScoreProvider as Base,

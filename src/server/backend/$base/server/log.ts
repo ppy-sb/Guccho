@@ -8,7 +8,6 @@ export class LogProvider {
   static error = '.logs/error.log'
 
   async get(last: number) {
-    // const read = await this.#readAccess('.logs/combined.log', fs.constants.R_OK)
     await access(LogProvider.combined, fs.constants.R_OK)
     return readLastNLinesFromFile(LogProvider.combined, last)
       .then(lines => lines.map((line) => {

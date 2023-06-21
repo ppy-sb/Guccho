@@ -1,4 +1,4 @@
-import type { Score as DBScore } from '.prisma/bancho.py'
+import type { Score as DBScore } from 'prisma-client-bancho-py'
 import { Mode } from '~/types/defs'
 import type { ActiveMode } from '~/types/common'
 import type { HitCount } from '~/types/score'

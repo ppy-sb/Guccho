@@ -1,4 +1,4 @@
-import type { Prisma } from '.prisma/bancho.py'
+import type { Prisma } from 'prisma-client-bancho-py'
 import { BanchoPyPrivilege, toBanchoMode } from './enums'
 import type { DatabaseUserEssentialFields } from './transforms/user'
 import { stringToId } from './transforms'

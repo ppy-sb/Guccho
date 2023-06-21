@@ -5,7 +5,7 @@ import { TRPCError } from '@trpc/server'
 
 import { glob } from 'glob'
 import imageType from 'image-type'
-import type { Prisma, Stat } from '.prisma/bancho.py'
+import type { Prisma, Stat } from 'prisma-client-bancho-py'
 import { BanchoPyMode, BanchoPyPrivilege } from '../enums'
 import {
   createRulesetData,

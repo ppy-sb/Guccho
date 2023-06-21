@@ -244,15 +244,13 @@ cython_debug/
 .DS_Store
 
 fix-permission.sh
-# generated prisma client
-.prisma
 
 .mock
 dump.rdb
 
 .dump
 
-configs/hljs*
+configs/hljs.*
 
 articles/*
 !articles/fallbacks

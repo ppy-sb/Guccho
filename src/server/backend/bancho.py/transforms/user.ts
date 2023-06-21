@@ -1,6 +1,6 @@
 import type {
   User as DatabaseUser,
-} from '.prisma/bancho.py'
+} from 'prisma-client-bancho-py'
 import { BanchoPyPrivilege } from '../enums'
 
 import type { Id } from '..'

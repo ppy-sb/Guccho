@@ -2,7 +2,7 @@ import { dedupeUserRelationship, fromBanchoPyRelationType, idToString, stringToI
 
 // import { idToString, stringToId } from '../transforms'
 import type { Id } from '..'
-import { env } from '../../../env'
+import { env } from '~/server/env'
 import { getPrismaClient } from './source/prisma'
 
 import type { UserRelationProvider as Base } from '$base/server'

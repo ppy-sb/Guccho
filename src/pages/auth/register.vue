@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import md5 from 'md5'
 import { TRPCClientError } from '@trpc/client'
-import { AppRouter } from '../../server/trpc/routers'
+import { AppRouter } from '~/server/trpc/routers'
 import { useSession } from '~/store/session'
 
 const loginButton = shallowRef('Have account?')

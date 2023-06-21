@@ -1,6 +1,6 @@
 import { number } from 'zod'
-import { adminProcedure as pAdmin } from '../../middleware/admin'
-import { router as _router } from '../../trpc'
+import { adminProcedure as pAdmin } from '~/server/trpc/middleware/admin'
+import { router as _router } from '~/server/trpc/trpc'
 import { LogProvider } from '$active/server'
 
 const log = new LogProvider()

@@ -1,4 +1,4 @@
-import type { Stat } from '.prisma/bancho.py'
+import type { Stat } from 'prisma-client-bancho-py'
 
 import type { LeaderboardRankingSystem } from '~/types/common'
 import type { UserModeRulesetStatistics } from '~/types/statistics'

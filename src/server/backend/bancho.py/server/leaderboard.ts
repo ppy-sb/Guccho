@@ -12,9 +12,9 @@ import {
 } from '../db-query'
 import type { Id } from '..'
 import { hasRuleset } from '..'
-import { env } from '../../../env'
 import { client as redisClient } from './source/redis'
 import { getPrismaClient } from './source/prisma'
+import { env } from '~/server/env'
 
 import { Mode, Rank, modes as _modes } from '~/types/defs'
 import type {

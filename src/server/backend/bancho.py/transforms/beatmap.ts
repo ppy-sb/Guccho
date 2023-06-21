@@ -2,7 +2,7 @@ import type {
   Map as DBMap,
   Score as DBScore,
   Source,
-} from '.prisma/bancho.py'
+} from 'prisma-client-bancho-py'
 import { match } from 'switch-pattern'
 import { $enum } from 'ts-enum-util'
 import { BanchoMode, BanchoPyMode, BanchoPyRankedStatus, fromBanchoMode } from '../enums'
