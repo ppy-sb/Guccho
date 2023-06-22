@@ -248,9 +248,9 @@ model Score {
   n300           Int
   n100           Int
   n50            Int
-  nmiss          Int
-  ngeki          Int
-  nkatu          Int
+  nMiss          Int      @map("nmiss")
+  nGeki          Int      @map("ngeki")
+  nKatu          Int      @map("nkatu")
   grade          String   @default("N") @db.VarChar(2)
   status         Int      @db.TinyInt
   mode           Int      @db.TinyInt

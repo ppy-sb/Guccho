@@ -15,22 +15,22 @@ export function createHitCount<M extends ActiveMode>(
 
 function hitCountMania(score: DBScore) {
   return {
-    max: score.ngeki,
+    max: score.nGeki,
     300: score.n300,
-    200: score.nkatu,
+    200: score.nKatu,
     100: score.n100,
     50: score.n50,
-    miss: score.nmiss,
+    miss: score.nMiss,
   }
 }
 
 function hitCount(score: DBScore) {
   return {
     300: score.n300,
-    geki: score.ngeki,
+    geki: score.nGeki,
     100: score.n100,
-    katu: score.nkatu,
+    katu: score.nKatu,
     50: score.n50,
-    miss: score.nmiss,
+    miss: score.nMiss,
   }
 }

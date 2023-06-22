@@ -66,12 +66,10 @@ export function toRoles(priv: number): UserPrivilege[] {
 
   return roles
 }
+
 export type DatabaseUserEssentialFields = 'id' | 'name' | 'safeName' | 'country' | 'priv' | 'pwBcrypt' | 'apiKey' | 'email'
 export function toUserEssential<
-  Includes extends Partial<Record<keyof UserOptional, boolean>> = Record<
-    never,
-    never
-  >,
+  Includes extends Partial<Record<keyof UserOptional, boolean>> = Record<never, never>,
 >(user: Pick<DatabaseUser, DatabaseUserEssentialFields>, { includes, avatar }: {
   includes?: Includes
   avatar: {

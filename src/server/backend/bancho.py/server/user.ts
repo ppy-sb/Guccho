@@ -146,7 +146,7 @@ class DBUserProvider implements Base<Id> {
   }
 
   // https://github.com/prisma/prisma/issues/6570 need two separate query to get count for now
-  async getBests<_RS extends LeaderboardRankingSystem>({
+  async getBests<RS extends LeaderboardRankingSystem>({
     id,
     mode,
     ruleset,
@@ -154,7 +154,7 @@ class DBUserProvider implements Base<Id> {
     page,
     perPage,
     rankingStatus,
-  }: Base.BaseQuery<Id, ActiveMode, ActiveRuleset, _RS>) {
+  }: Base.BaseQuery<Id, ActiveMode, ActiveRuleset, RS>) {
     const start = page * perPage
     const _mode = toBanchoPyMode(mode, ruleset)
     if (_mode === undefined) {
@@ -209,7 +209,7 @@ class DBUserProvider implements Base<Id> {
   }
 
   // https://github.com/prisma/prisma/issues/6570 need two separate query to get count for now
-  async getTops<_RS extends LeaderboardRankingSystem>(opt: Base.BaseQuery<Id, ActiveMode, ActiveRuleset, _RS>) {
+  async getTops<RS extends LeaderboardRankingSystem>(opt: Base.BaseQuery<Id, ActiveMode, ActiveRuleset, RS>) {
     const { id, mode, ruleset, rankingSystem, page, perPage, rankingStatus } = opt
 
     const start = page * perPage
