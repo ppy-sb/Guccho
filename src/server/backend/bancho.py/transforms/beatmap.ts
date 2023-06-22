@@ -5,7 +5,7 @@ import type {
 } from 'prisma-client-bancho-py'
 import { match } from 'switch-pattern'
 import { $enum } from 'ts-enum-util'
-import { BanchoMode, BanchoPyMode, BanchoPyRankedStatus, fromBanchoMode } from '../enums'
+import { BanchoPyMode, BanchoPyRankedStatus, fromBanchoMode } from '../enums'
 import type { Id } from '..'
 import { Mode, Ruleset } from '~/types/defs'
 import { BeatmapSource, RankingStatus } from '~/types/beatmap'
@@ -120,13 +120,13 @@ export function toBanchoPyMode(
 
   switch (patterns) {
     case exact([Mode.Osu, Ruleset.Standard]): return BanchoPyMode.OsuStandard
-    case exact([Mode.Taiko, Ruleset.Standard]): return BanchoPyMode.TaikoStandard
-    case exact([Mode.Fruits, Ruleset.Standard]): return BanchoPyMode.FruitsStandard
-    case exact([Mode.Mania, Ruleset.Standard]): return BanchoPyMode.ManiaStandard
     case exact([Mode.Osu, Ruleset.Relax]): return BanchoPyMode.OsuRelax
-    case exact([Mode.Taiko, Ruleset.Relax]): return BanchoPyMode.TaikoRelax
-    case exact([Mode.Fruits, Ruleset.Relax]): return BanchoPyMode.FruitsRelax
     case exact([Mode.Osu, Ruleset.Autopilot]): return BanchoPyMode.OsuAutopilot
+    case exact([Mode.Taiko, Ruleset.Standard]): return BanchoPyMode.TaikoStandard
+    case exact([Mode.Taiko, Ruleset.Relax]): return BanchoPyMode.TaikoRelax
+    case exact([Mode.Fruits, Ruleset.Standard]): return BanchoPyMode.FruitsStandard
+    case exact([Mode.Fruits, Ruleset.Relax]): return BanchoPyMode.FruitsRelax
+    case exact([Mode.Mania, Ruleset.Standard]): return BanchoPyMode.ManiaStandard
   }
 }
 
@@ -145,7 +145,7 @@ export function fromBanchoPyMode<BMode extends BanchoPyMode>(input: BMode): read
 }
 
 export function assertIsBanchoPyMode(val: number): asserts val is BanchoPyMode {
-  if (!(val in BanchoMode)) {
+  if (!(val in reverseBPyMode)) {
     throw new Error('unknown bancho.py mode')
   }
 }

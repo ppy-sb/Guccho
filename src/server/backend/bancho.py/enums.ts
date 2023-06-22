@@ -50,22 +50,22 @@ export enum BanchoPyMode {
 }
 
 export const enum BanchoPyScoreStatus {
-  DNF,
-  Normal,
-  Pick, // "Bests in banco.py"
+  DNF, // Failed in bancho.py
+  Normal, // Submitted in bancho.py
+  Pick, // Bests in banco.py
 }
 
 export const enum BanchoPyRankedStatus {
   NotSubmitted = -1,
-  Pending = 0,
-  UpdateAvailable = 1,
-  Ranked = 2,
-  Approved = 3,
-  Qualified = 4,
-  Loved = 5,
+  Pending,
+  UpdateAvailable,
+  Ranked,
+  Approved,
+  Qualified,
+  Loved,
 }
 
-export enum BanchoMode {
+export const enum BanchoMode {
   Osu,
   Taiko,
   Fruits,
