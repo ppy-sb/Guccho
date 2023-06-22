@@ -21,3 +21,5 @@ export function pick<T extends Record<any, any>, K extends keyof T>(record: T, k
 export function capitalizeFirstLetter<T extends string>(string: T) {
   return (string.charAt(0).toUpperCase() + string.slice(1)) as Capitalize<T>
 }
+
+export const strictEntries: <T extends Record<string, any>>(object: T) => [keyof T, T[keyof T]][] = Object.entries

@@ -112,24 +112,6 @@ export type AbleToTransformToScores = DBScore & {
   | null
 }
 
-export function toBanchoPyMode(
-  mode: ActiveMode,
-  ruleset: ActiveRuleset
-): BanchoPyMode | undefined {
-  const { patterns, exact } = match([mode, ruleset])
-
-  switch (patterns) {
-    case exact([Mode.Osu, Ruleset.Standard]): return BanchoPyMode.OsuStandard
-    case exact([Mode.Osu, Ruleset.Relax]): return BanchoPyMode.OsuRelax
-    case exact([Mode.Osu, Ruleset.Autopilot]): return BanchoPyMode.OsuAutopilot
-    case exact([Mode.Taiko, Ruleset.Standard]): return BanchoPyMode.TaikoStandard
-    case exact([Mode.Taiko, Ruleset.Relax]): return BanchoPyMode.TaikoRelax
-    case exact([Mode.Fruits, Ruleset.Standard]): return BanchoPyMode.FruitsStandard
-    case exact([Mode.Fruits, Ruleset.Relax]): return BanchoPyMode.FruitsRelax
-    case exact([Mode.Mania, Ruleset.Standard]): return BanchoPyMode.ManiaStandard
-  }
-}
-
 const reverseBPyMode = {
   [BanchoPyMode.OsuStandard]: [Mode.Osu, Ruleset.Standard],
   [BanchoPyMode.TaikoStandard]: [Mode.Taiko, Ruleset.Standard],
@@ -140,6 +122,16 @@ const reverseBPyMode = {
   [BanchoPyMode.FruitsRelax]: [Mode.Fruits, Ruleset.Relax],
   [BanchoPyMode.OsuAutopilot]: [Mode.Osu, Ruleset.Autopilot],
 } as const
+
+const reverseBPyModeEntries = strictEntries(reverseBPyMode)
+export function toBanchoPyMode(
+  mode: ActiveMode,
+  ruleset: ActiveRuleset
+): BanchoPyMode | undefined {
+  const patterns = match([mode, ruleset] as const)
+
+  return reverseBPyModeEntries.find(([_, mr]) => patterns.exact(mr))?.[0]
+}
 export function fromBanchoPyMode<BMode extends BanchoPyMode>(input: BMode): readonly [Mode, Ruleset] {
   return reverseBPyMode[input]
 }
@@ -150,9 +142,7 @@ export function assertIsBanchoPyMode(val: number): asserts val is BanchoPyMode {
   }
 }
 
-export function toBanchoRankingStatus(
-  input: BanchoPyRankedStatus
-): RankingStatus {
+export function toRankingStatus(input: BanchoPyRankedStatus): RankingStatus {
   switch (input) {
     case BanchoPyRankedStatus.NotSubmitted:
       return RankingStatus.Deleted
@@ -185,9 +175,6 @@ export function toMods(e: number): Array<StableMod> {
   return returnValue
 }
 
-export function toRankingStatus(status: BanchoPyRankedStatus) {
-  return toBanchoRankingStatus(status)
-}
 export function fromRankingStatus(status: RankingStatus) {
   switch (status) {
     case RankingStatus.Deleted:
