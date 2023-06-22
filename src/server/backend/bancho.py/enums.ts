@@ -3,7 +3,7 @@ import { UserPrivilege } from '~/types/user'
 import { Mode, Scope } from '~/types/defs'
 
 //  privileges intended for all normal players.
-export enum BanchoPyPrivilege {
+export const enum BanchoPyPrivilege {
   Any = 0,
   Normal = 1 << 0, //  is an unbanned player.
   Verified = 1 << 1, //  has logged in to the server in-game.
@@ -49,11 +49,13 @@ export enum BanchoPyMode {
   // maniaAutopilot = 11,
 }
 
-export enum BanchoPyScoreStatus {
-  Best = 2,
+export const enum BanchoPyScoreStatus {
+  DNF,
+  Normal,
+  Pick, // "Bests in banco.py"
 }
 
-export enum BanchoPyRankedStatus {
+export const enum BanchoPyRankedStatus {
   NotSubmitted = -1,
   Pending = 0,
   UpdateAvailable = 1,
@@ -70,7 +72,7 @@ export enum BanchoMode {
   Mania,
 }
 
-export enum Access {
+export const enum Access {
   Public = 1 << 1,
   Moderator = 1 << 2,
   BeatmapNominator = 1 << 3,

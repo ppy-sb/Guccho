@@ -4,12 +4,18 @@ import 'vue-advanced-cropper/dist/style.css'
 
 import md5 from 'md5'
 
-// import type { JSONContent } from '@tiptap/core'
 import type { ContentEditor, TModal, TResponsiveModal } from '#components'
 import { useSession } from '~/store/session'
 
 import { ArticleProvider } from '$base/server/article'
 import { UserPrivilege } from '~/types/user'
+
+const enum UploadingAvatarStatus {
+  Idle,
+  Uploading,
+  Succeed,
+  Errored,
+}
 
 const app$ = useNuxtApp()
 const config = useAppConfig()
@@ -52,50 +58,40 @@ if (user.value?.profile) {
   }
 }
 
-async function selectAvatarFile(e: Event) {
-  avatarError.value = undefined
-  const file = (e?.target as HTMLInputElement)?.files?.[0]
-  if (!file) {
-    return
-  }
-
-  if (!checkAvatar(await file.arrayBuffer())) {
-    avatarError.value = 'size too big'
-    return
-  }
-
-  newAvatar.value = file
-  newAvatarURL.value = URL.createObjectURL(file)
-}
-
-function crop({ canvas }: { canvas: HTMLCanvasElement }) {
-  canvas.toBlob(async (blob) => {
-    croppedAvatar.value = await blob?.arrayBuffer()
-  }, 'image/png', 1)
-}
-
-const uploadingAvatarStat = shallowRef<'idle' | 'uploading' | 'succeed' | 'errored'>('idle')
+const uploadingAvatarStat = shallowRef<UploadingAvatarStatus>(UploadingAvatarStatus.Idle)
 const changeAvatar = shallowRef<InstanceType<typeof TModal>>()
 const changePassword = shallowRef<InstanceType<typeof TModal>>()
+
+const errorMessage = shallowRef<string[]>([])
+const updateResult = shallowRef(false)
+const posting = shallowRef(false)
+
+const changePasswordForm = shallowReactive<{
+  oldPassword?: string
+  newPassword?: string
+  repeatNewPassword?: string
+}>({
+  oldPassword: undefined,
+  newPassword: undefined,
+  repeatNewPassword: undefined,
+})
+const changePasswordError = shallowRef('')
+
 async function saveAvatar() {
   if (!croppedAvatar.value) {
     return
   }
 
-  uploadingAvatarStat.value = 'uploading'
+  uploadingAvatarStat.value = UploadingAvatarStatus.Uploading
 
   const url = await app$.$client.me.changeAvatar.mutate({ avatar: new Uint8Array(croppedAvatar.value) })
 
-  uploadingAvatarStat.value = 'succeed'
+  uploadingAvatarStat.value = UploadingAvatarStatus.Succeed
   newAvatarURL.value = url
   session.setAvatarTimestamp()
   await refresh()
   editor.value?.reload()
 }
-// update settings
-const errorMessage = shallowRef<string[]>([])
-const updateResult = shallowRef(false)
-const posting = shallowRef(false)
 async function updateUserSettings() {
   if (!user.value) {
     return
@@ -133,19 +129,27 @@ async function updateUserSettings() {
     profile.value = profileResult.raw
   }
 }
+async function selectAvatarFile(e: Event) {
+  avatarError.value = undefined
+  const file = (e?.target as HTMLInputElement)?.files?.[0]
+  if (!file) {
+    return
+  }
 
-const changePasswordForm = shallowReactive<{
-  oldPassword?: string
-  newPassword?: string
-  repeatNewPassword?: string
-}>({
-  oldPassword: undefined,
-  newPassword: undefined,
-  repeatNewPassword: undefined,
-})
+  if (!checkAvatar(await file.arrayBuffer())) {
+    avatarError.value = 'size too big'
+    return
+  }
 
-const changePasswordError = shallowRef('')
+  newAvatar.value = file
+  newAvatarURL.value = URL.createObjectURL(file)
+}
 
+function crop({ canvas }: { canvas: HTMLCanvasElement }) {
+  canvas.toBlob(async (blob) => {
+    croppedAvatar.value = await blob?.arrayBuffer()
+  }, 'image/png', 1)
+}
 async function updatePassword(closeModal: () => void) {
   if (!changePasswordForm.newPassword) {
     return
@@ -180,7 +184,7 @@ async function updatePassword(closeModal: () => void) {
 function resetAvatar() {
   newAvatar.value = undefined
   newAvatarURL.value = undefined
-  uploadingAvatarStat.value = 'idle'
+  uploadingAvatarStat.value = UploadingAvatarStatus.Idle
 }
 </script>
 
@@ -223,7 +227,7 @@ function resetAvatar() {
             </div>
             <input id="dropzone-file" accept="image/*" type="file" class="hidden" @change="selectAvatarFile">
           </label>
-          <output v-else-if="uploadingAvatarStat !== 'succeed'" class="drop-shadow m-2 w-96">
+          <output v-else-if="uploadingAvatarStat !== UploadingAvatarStatus.Succeed" class="drop-shadow m-2 w-96">
             <Cropper
               ref="cropper"
               class="cropper"
@@ -243,23 +247,23 @@ function resetAvatar() {
           <img v-else :src="newAvatarURL" class="mask mask-squircle overflow-hidden _avatar w-56 h-56">
         </div>
         <t-button
-          v-if="uploadingAvatarStat !== 'succeed' && newAvatar"
+          v-if="uploadingAvatarStat !== UploadingAvatarStatus.Succeed && newAvatar"
           class="grow"
-          :loading="uploadingAvatarStat === 'uploading'"
+          :loading="uploadingAvatarStat === UploadingAvatarStatus.Uploading"
           @click="saveAvatar"
         >
           {{
-            uploadingAvatarStat === 'idle'
+            uploadingAvatarStat === UploadingAvatarStatus.Idle
               ? "Save"
               : "Uploading"
           }}
         </t-button>
         <t-button
-          :variant="uploadingAvatarStat === 'succeed' ? 'success' : 'gbase'"
+          :variant="uploadingAvatarStat === UploadingAvatarStatus.Succeed ? 'success' : 'gbase'"
           class="grow"
           @click="closeModal(resetAvatar)"
         >
-          {{ uploadingAvatarStat === 'succeed' ? "Done" : "Cancel" }}
+          {{ uploadingAvatarStat === UploadingAvatarStatus.Succeed ? "Done" : "Cancel" }}
         </t-button>
       </div>
     </t-responsive-modal>

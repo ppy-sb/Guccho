@@ -45,6 +45,11 @@ export default defineNuxtConfig({
       sourcemap: 'inline',
     },
   },
+  nitro: {
+    externals: {
+      external: ['prisma-client-ppy-sb', 'prisma-client-bancho-py'],
+    },
+  },
 
   modules: [
     // '@nuxtjs/color-mode',

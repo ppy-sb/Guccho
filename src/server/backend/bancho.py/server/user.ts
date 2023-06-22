@@ -6,7 +6,7 @@ import { TRPCError } from '@trpc/server'
 import { glob } from 'glob'
 import imageType from 'image-type'
 import type { Prisma, Stat } from 'prisma-client-bancho-py'
-import { BanchoPyMode, BanchoPyPrivilege } from '../enums'
+import { BanchoPyMode, BanchoPyPrivilege, BanchoPyScoreStatus } from '../enums'
 import {
   createRulesetData,
   fromRankingStatus,
@@ -182,12 +182,16 @@ class DBUserProvider implements Base<Id> {
       where: {
         userId: id,
         mode: _mode,
-        status: {
-          in: banchoPyRankingStatus,
+        status: BanchoPyScoreStatus.Pick,
+        beatmap: {
+          status: {
+            in: banchoPyRankingStatus,
+          },
         },
       },
       include: {
         beatmap: {
+
           include: {
             source: true,
           },
@@ -221,7 +225,10 @@ INNER JOIN (
     SELECT s.map_md5, MAX(s.pp) AS maxPP
     FROM users AS u
     INNER JOIN scores AS s ON s.userid = u.id
-    WHERE u.priv > 2 AND s.mode = ${toBanchoPyMode(mode, ruleset)} AND s.pp > 0 AND s.status in (${banchoPyRankingStatus.join(',')})
+    WHERE u.priv > 2
+      AND s.mode = ${toBanchoPyMode(mode, ruleset)}
+      AND s.pp > 0
+      AND s.status = ${BanchoPyScoreStatus.Pick}
     GROUP BY s.map_md5
 ) AS tmp ON tmp.maxPP = s.pp AND tmp.map_md5 = s.map_md5
 WHERE s.userid = ${id}
@@ -235,7 +242,10 @@ INNER JOIN (
     SELECT s.map_md5, MAX(s.score) AS maxScore
     FROM users u
     INNER JOIN scores s ON s.userid = u.id
-    WHERE u.priv > 2 AND s.mode = ${toBanchoPyMode(mode, ruleset)} AND s.score > 0 AND s.status in (${banchoPyRankingStatus.join(',')})
+    WHERE u.priv > 2
+      AND s.mode = ${toBanchoPyMode(mode, ruleset)} 
+      AND s.score > 0 
+      AND s.status = ${BanchoPyScoreStatus.Pick}
     GROUP BY s.map_md5
 ) tmp ON tmp.maxScore = s.score AND tmp.map_md5 = s.map_md5
 WHERE s.userid = ${id}
@@ -251,6 +261,11 @@ WHERE s.userid = ${id}
       where: {
         id: {
           in: scoreIds,
+        },
+        beatmap: {
+          status: {
+            in: banchoPyRankingStatus,
+          },
         },
       },
       include: {
