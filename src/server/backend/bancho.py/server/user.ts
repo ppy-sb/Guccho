@@ -8,6 +8,7 @@ import imageType from 'image-type'
 import type { Prisma, Stat } from 'prisma-client-bancho-py'
 import { BanchoPyMode, BanchoPyPrivilege, BanchoPyScoreStatus } from '../enums'
 import {
+  BPyMode,
   createRulesetData,
   fromRankingStatus,
   idToString,
@@ -71,7 +72,7 @@ function ensureDirectorySync(targetDir: string, { isRelativeToScript = false } =
   }, initDir)
 }
 
-const bpyNumModes = Object.values(BanchoPyMode).filter(v => !Number.isNaN(Number(v))) as BanchoPyMode[]
+const bpyNumModes = strictKeys(BPyMode)
 
 class DBUserProvider implements Base<Id> {
   static stringToId = stringToId
@@ -426,7 +427,7 @@ WHERE s.userid = ${id}
       data: {
         email: input.email,
         name: input.name,
-        safeName: (env.CHANGE_SAFE_NAME && input.name) ? toSafeName(input.name) : undefined,
+        safeName: input.name && toSafeName(input.name),
       },
     })
     return toUserEssential(result, this.config)

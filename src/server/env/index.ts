@@ -46,10 +46,6 @@ const validateApi = object({
   BANCHO_PY_API_V1_ENDPOINT: string().url().optional(),
 })
 
-const validateBehavior = object({
-  CHANGE_SAFE_NAME: literalBoolean,
-})
-
 export const env = ensureAndGetEnv(
   validateBase
     .merge(validateDB)
@@ -57,7 +53,6 @@ export const env = ensureAndGetEnv(
     .merge(validateApi)
     .and(validateLeaderboard)
     .and(validateSessionStore)
-    .and(validateBehavior)
 )
 
 export function ensureEnv<Z extends ZodType>(zod: Z) {

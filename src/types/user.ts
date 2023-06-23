@@ -16,20 +16,18 @@ export enum UserStatus {
   Playing,
   Editing,
   Modding,
-  Multiplayer,
+  MatchLobby,
   Watching,
   Unknown,
   Testing,
   Submitting,
   Paused,
   Lobby,
-  Multiplaying,
+  MatchOngoing,
   OsuDirect,
 }
 
-export type StatusWithBeatmap = UserStatus.Playing | UserStatus.Editing | UserStatus.Editing | UserStatus.Modding | UserStatus.Modding | UserStatus.Watching | UserStatus.Testing | UserStatus.Multiplaying | UserStatus.OsuDirect
-
-export type UserActivityStatus = UserStatus
+export type StatusWithBeatmap = UserStatus.Playing | UserStatus.Editing | UserStatus.Editing | UserStatus.Modding | UserStatus.Modding | UserStatus.Watching | UserStatus.Testing | UserStatus.MatchOngoing | UserStatus.OsuDirect
 
 export enum UserPrivilege {
   // restricted type
@@ -90,7 +88,7 @@ export interface UserOptional {
   oldNames: UserOldName[]
   email: string
   secrets: UserSecrets
-  status: UserActivityStatus
+  status: UserStatus
 }
 
 export interface UserSettings {

@@ -22,4 +22,5 @@ export function capitalizeFirstLetter<T extends string>(string: T) {
   return (string.charAt(0).toUpperCase() + string.slice(1)) as Capitalize<T>
 }
 
-export const strictEntries: <T extends Record<string, any>>(object: T) => [keyof T, T[keyof T]][] = Object.entries
+export const strictEntries: <const T extends {}>(object: T) => [keyof T, T[keyof T]][] = Object.entries
+export const strictKeys = Object.keys as unknown as <const T extends {}>(object: T) => Array<keyof T>

@@ -1,17 +1,19 @@
 import type {
   User as DatabaseUser,
 } from 'prisma-client-bancho-py'
-import { BanchoPyPrivilege } from '../enums'
-
+import { Access, BanchoPyUserStatus as B, BanchoPyPrivilege } from '../enums'
 import type { Id } from '..'
-import { Relationship, Scope } from '~/types/defs'
+import type { ArticleProvider } from '$base/server'
 import {
+  UserStatus as G,
   UserEssential,
   UserExtra,
   UserOptional,
   UserPrivilege,
   UserSecrets,
 } from '~/types/user'
+import { Relationship, Scope } from '~/types/defs'
+
 import type { UserRelationship } from '~/types/user-relationship'
 
 export function toRoles(priv: number): UserPrivilege[] {
@@ -160,4 +162,41 @@ export function toFullUser(
 
 export function toSafeName(name: string) {
   return name.toLocaleLowerCase().replaceAll(' ', '_')
+}
+
+export function toBanchoPyAccess(priv: (ArticleProvider.TReadAccess | ArticleProvider.TWriteAccess)[]): Access {
+  let carry = 0
+  if (priv.includes(Scope.Public)) {
+    carry &= Access.Public
+  }
+  if (priv.includes(UserPrivilege.Moderator)) {
+    carry &= Access.Moderator
+  }
+  if (priv.includes(UserPrivilege.BeatmapNominator)) {
+    carry &= Access.BeatmapNominator
+  }
+  if (priv.includes(UserPrivilege.Staff)) {
+    carry &= Access.Staff
+  }
+  return carry
+}
+export const BPyStatus = {
+  [B.Idle]: G.Idle,
+  [B.Afk]: G.Afk,
+  [B.Playing]: G.Playing,
+  [B.Editing]: G.Editing,
+  [B.Modding]: G.Modding,
+  [B.Multiplayer]: G.MatchLobby,
+  [B.Watching]: G.Watching,
+  [B.Unknown]: G.Unknown,
+  [B.Testing]: G.Testing,
+  [B.Submitting]: G.Submitting,
+  [B.Paused]: G.Paused,
+  [B.Lobby]: G.Lobby,
+  [B.Multiplaying]: G.MatchOngoing,
+  [B.OsuDirect]: G.OsuDirect,
+} as const
+
+export function fromBanchoPyUserStatus<T extends B>(input: T) {
+  return BPyStatus[input] ?? G.Unknown
 }

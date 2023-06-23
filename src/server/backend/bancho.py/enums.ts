@@ -1,7 +1,3 @@
-import type { ArticleProvider } from '../$base/server'
-import { UserPrivilege } from '~/types/user'
-import { Mode, Scope } from '~/types/defs'
-
 //  privileges intended for all normal players.
 export const enum BanchoPyPrivilege {
   Any = 0,
@@ -32,7 +28,7 @@ export const enum BanchoPyPrivilege {
   Staff = Mod | Admin | Dangerous,
 }
 
-export enum BanchoPyMode {
+export const enum BanchoPyMode {
   OsuStandard = 0,
   TaikoStandard = 1,
   FruitsStandard = 2,
@@ -72,43 +68,28 @@ export const enum BanchoMode {
   Mania,
 }
 
+export const enum BanchoPyUserStatus {
+  Idle = 0,
+  Afk = 1,
+  Playing = 2,
+  Editing = 3,
+  Modding = 4,
+  Multiplayer = 5,
+  Watching = 6,
+  Unknown = 7,
+  Testing = 8,
+  Submitting = 9,
+  Paused = 10,
+  Lobby = 11,
+  Multiplaying = 12,
+  OsuDirect = 13,
+}
+
+export type BanchoPyStatusWithBeatmap = BanchoPyUserStatus.Playing | BanchoPyUserStatus.Editing | BanchoPyUserStatus.Editing | BanchoPyUserStatus.Modding | BanchoPyUserStatus.Modding | BanchoPyUserStatus.Watching | BanchoPyUserStatus.Testing | BanchoPyUserStatus.Multiplaying | BanchoPyUserStatus.OsuDirect
+
 export const enum Access {
   Public = 1 << 1,
   Moderator = 1 << 2,
   BeatmapNominator = 1 << 3,
   Staff = 1 << 4,
-}
-
-export function toBanchoPyAccess(priv: (ArticleProvider.TReadAccess | ArticleProvider.TWriteAccess)[]): Access {
-  let carry = 0
-  if (priv.includes(Scope.Public)) {
-    carry &= Access.Public
-  }
-  if (priv.includes(UserPrivilege.Moderator)) {
-    carry &= Access.Moderator
-  }
-  if (priv.includes(UserPrivilege.BeatmapNominator)) {
-    carry &= Access.BeatmapNominator
-  }
-  if (priv.includes(UserPrivilege.Staff)) {
-    carry &= Access.Staff
-  }
-  return carry
-}
-
-export function toBanchoMode(mode: Mode) {
-  switch (mode) {
-    case Mode.Osu: return BanchoMode.Osu
-    case Mode.Taiko: return BanchoMode.Taiko
-    case Mode.Fruits: return BanchoMode.Fruits
-    case Mode.Mania: return BanchoMode.Mania
-  }
-}
-export function fromBanchoMode(mode: BanchoMode) {
-  switch (mode) {
-    case BanchoMode.Osu: return Mode.Osu
-    case BanchoMode.Taiko: return Mode.Taiko
-    case BanchoMode.Fruits: return Mode.Fruits
-    case BanchoMode.Mania: return Mode.Mania
-  }
 }

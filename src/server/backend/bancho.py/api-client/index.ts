@@ -1,7 +1,7 @@
-import type { BanchoPyMode, BanchoPyRankedStatus } from '../enums'
-import { assertIsBanchoPyMode, fromBanchoPyMode, toRankingStatus } from '../transforms'
+import type { BanchoPyMode, BanchoPyRankedStatus, BanchoPyStatusWithBeatmap, BanchoPyUserStatus } from '../enums'
+import { fromBanchoPyMode, fromBanchoPyUserStatus, toRankingStatus } from '../transforms'
 import { BeatmapSource } from '~/types/beatmap'
-import { StatusWithBeatmap, UserStatus } from '~/types/user'
+import { UserStatus } from '~/types/user'
 
 interface GulagStatusBeatmap {
   md5: string
@@ -38,9 +38,9 @@ type LiveUserStatus =
           online: true
           login_time: number
           status: {
-            action: Exclude<UserStatus, UserStatus.Offline | StatusWithBeatmap> // int(player.status.UserStatus),
+            action: Exclude<BanchoPyUserStatus, BanchoPyStatusWithBeatmap> // int(player.status.UserStatus),
             info_text: string // player.status.info_text,
-            mode: number // int(player.status.mode),
+            mode: BanchoPyMode // int(player.status.mode),
             mods: number // int(player.status.mods),
           }
         }
@@ -51,9 +51,9 @@ type LiveUserStatus =
           online: true
           login_time: number
           status: {
-            action: StatusWithBeatmap // int(player.status.UserStatus),
+            action: BanchoPyStatusWithBeatmap // int(player.status.UserStatus),
             info_text: string // player.status.info_text,
-            mode: number // int(player.status.mode),
+            mode: BanchoPyMode // int(player.status.mode),
             mods: number // int(player.status.mods),
             beatmap: GulagStatusBeatmap
           }
@@ -63,7 +63,6 @@ type LiveUserStatus =
         status: 'success'
         player_status: {
           online: false
-          status: UserStatus.Offline
           last_seen: number
         }
       }>
@@ -107,8 +106,8 @@ export async function getLiveUserStatus({ id }: { id: number }, config: { api: {
   if (!result.ok) {
     throw new Error(result.statusText)
   }
-  const status = await result.json()
-  const s = status.player_status
+  const value = await result.json()
+  const s = value.player_status
 
   if (!s.online) {
     return {
@@ -116,25 +115,23 @@ export async function getLiveUserStatus({ id }: { id: number }, config: { api: {
       lastSeen: new Date(s.last_seen * 1000),
     } as const
   }
-  assertIsBanchoPyMode(s.status.mode)
   const [mode, ruleset] = fromBanchoPyMode(s.status.mode)
   const base = {
-    status: s.status.action,
     description: s.status.info_text,
     mode,
     ruleset,
     beatmap: undefined,
   } as const
   if (!('beatmap' in s.status)) {
-    return base
+    return Object.assign(base, { status: fromBanchoPyUserStatus(s.status.action) })
   }
   const bm = s.status.beatmap
   const rankingStatus = toRankingStatus(bm.status)
   if (!rankingStatus) {
     throw new Error('unknown ranking status')
   }
-  return {
-    ...base,
+  return Object.assign(base, {
+    status: fromBanchoPyUserStatus(s.status.action),
     beatmap: {
       id: bm.id,
       foreignId: bm.id,
@@ -170,5 +167,5 @@ export async function getLiveUserStatus({ id }: { id: number }, config: { api: {
         source: BeatmapSource.Bancho,
       },
     },
-  } as const
+  } as const)
 }

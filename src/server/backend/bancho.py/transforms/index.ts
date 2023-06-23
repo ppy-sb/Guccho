@@ -1,4 +1,5 @@
 export * from './beatmap'
+export * from './mode'
 export * from './create-hit-count'
 export * from './id-conversion'
 export * from './ruleset'

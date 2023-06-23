@@ -33,7 +33,11 @@ export class UserRelationProvider implements Base<Id> {
     if (!relationships) {
       return undefined
     }
-    return relationships?.type === 'block' ? Relationship.Blocked : Relationship.Friend
+    switch (relationships.type) {
+      case 'friend': return Relationship.Friend
+      case 'block': return Relationship.Blocked
+      default: assertNotReachable(relationships.type)
+    }
   }
 
   async get({ user }: { user: { id: Id } }) {

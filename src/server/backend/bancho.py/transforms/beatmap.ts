@@ -3,29 +3,26 @@ import type {
   Score as DBScore,
   Source,
 } from 'prisma-client-bancho-py'
-import { match } from 'switch-pattern'
 import { $enum } from 'ts-enum-util'
-import { BanchoPyMode, BanchoPyRankedStatus, fromBanchoMode } from '../enums'
 import type { Id } from '..'
-import { Mode, Ruleset } from '~/types/defs'
+import { BanchoPyRankedStatus } from '../enums'
+
+import { fromBanchoMode } from '.'
 import { BeatmapSource, RankingStatus } from '~/types/beatmap'
 import { StableMod } from '~/types/score'
 
 import type { BeatmapEssential, Beatmapset } from '~/types/beatmap'
 
-import type { ActiveMode, ActiveRuleset } from '~/types/common'
-
-// this does not deserves exporting
-export function toBeatmapset(beatmapset: Source, beatmap: DBMap) {
+export function toBeatmapset(beatmapset: Source, luckyOneBeatmapInBeatmapset: DBMap) {
   const isBancho = beatmapset.server === 'bancho'
   const rest: Beatmapset<BeatmapSource.Bancho | BeatmapSource.PrivateServer | BeatmapSource.Unknown, typeof beatmapset['id'], typeof beatmapset['id']> = {
-    id: beatmap.setId,
-    foreignId: beatmapset.id || beatmap.setId,
-    source: beatmapset.server === 'bancho' ? BeatmapSource.Bancho : beatmapset.server === 'privateServer' ? BeatmapSource.PrivateServer : BeatmapSource.Unknown,
+    id: luckyOneBeatmapInBeatmapset.setId,
+    foreignId: beatmapset.id || luckyOneBeatmapInBeatmapset.setId,
+    source: isBancho ? BeatmapSource.Bancho : beatmapset.server === 'privateServer' ? BeatmapSource.PrivateServer : BeatmapSource.Unknown,
     meta: {
       intl: {
-        artist: beatmap.artist,
-        title: beatmap.title,
+        artist: luckyOneBeatmapInBeatmapset.artist,
+        title: luckyOneBeatmapInBeatmapset.title,
       },
     },
     assets: {},
@@ -112,53 +109,17 @@ export type AbleToTransformToScores = DBScore & {
   | null
 }
 
-const reverseBPyMode = {
-  [BanchoPyMode.OsuStandard]: [Mode.Osu, Ruleset.Standard],
-  [BanchoPyMode.TaikoStandard]: [Mode.Taiko, Ruleset.Standard],
-  [BanchoPyMode.FruitsStandard]: [Mode.Fruits, Ruleset.Standard],
-  [BanchoPyMode.ManiaStandard]: [Mode.Mania, Ruleset.Standard],
-  [BanchoPyMode.OsuRelax]: [Mode.Osu, Ruleset.Relax],
-  [BanchoPyMode.TaikoRelax]: [Mode.Taiko, Ruleset.Relax],
-  [BanchoPyMode.FruitsRelax]: [Mode.Fruits, Ruleset.Relax],
-  [BanchoPyMode.OsuAutopilot]: [Mode.Osu, Ruleset.Autopilot],
+const rankingStatusMap = {
+  [BanchoPyRankedStatus.NotSubmitted]: RankingStatus.Deleted,
+  [BanchoPyRankedStatus.Pending]: RankingStatus.Pending,
+  [BanchoPyRankedStatus.UpdateAvailable]: RankingStatus.NotFound,
+  [BanchoPyRankedStatus.Ranked]: RankingStatus.Ranked,
+  [BanchoPyRankedStatus.Approved]: RankingStatus.Approved,
+  [BanchoPyRankedStatus.Qualified]: RankingStatus.Qualified,
+  [BanchoPyRankedStatus.Loved]: RankingStatus.Loved,
 } as const
-
-const reverseBPyModeEntries = strictEntries(reverseBPyMode)
-export function toBanchoPyMode(
-  mode: ActiveMode,
-  ruleset: ActiveRuleset
-): BanchoPyMode | undefined {
-  const patterns = match([mode, ruleset] as const)
-
-  return reverseBPyModeEntries.find(([_, mr]) => patterns.exact(mr))?.[0]
-}
-export function fromBanchoPyMode<BMode extends BanchoPyMode>(input: BMode): readonly [Mode, Ruleset] {
-  return reverseBPyMode[input]
-}
-
-export function assertIsBanchoPyMode(val: number): asserts val is BanchoPyMode {
-  if (!(val in reverseBPyMode)) {
-    throw new Error('unknown bancho.py mode')
-  }
-}
-
 export function toRankingStatus(input: BanchoPyRankedStatus): RankingStatus {
-  switch (input) {
-    case BanchoPyRankedStatus.NotSubmitted:
-      return RankingStatus.Deleted
-    case BanchoPyRankedStatus.Pending:
-      return RankingStatus.Pending
-    case BanchoPyRankedStatus.UpdateAvailable:
-      return RankingStatus.NotFound
-    case BanchoPyRankedStatus.Ranked:
-      return RankingStatus.Ranked
-    case BanchoPyRankedStatus.Approved:
-      return RankingStatus.Approved
-    case BanchoPyRankedStatus.Qualified:
-      return RankingStatus.Qualified
-    case BanchoPyRankedStatus.Loved:
-      return RankingStatus.Loved
-  }
+  return rankingStatusMap[input] ?? RankingStatus.Unknown
 }
 
 export function toMods(e: number): Array<StableMod> {
