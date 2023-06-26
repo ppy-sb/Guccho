@@ -2,13 +2,13 @@ import {
   MutualRelationship,
   Relationship,
 
-} from '~/types/defs'
+} from '~/def'
 import type {
   ActiveMode,
   ActiveRuleset,
   AvailableRuleset,
   LeaderboardRankingSystem,
-} from '~/types/common'
+} from '~/def/common'
 
 import {
   Scope,
@@ -16,7 +16,7 @@ import {
   UserExtra,
   UserOptional,
   UserSettings,
-} from '~/types/user'
+} from '~/def/user'
 
 export function compareScope(scope: Scope, requiredScope: Partial<Record<Scope, boolean>>) {
   if (scope === Scope.Public) {

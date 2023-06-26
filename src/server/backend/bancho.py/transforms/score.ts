@@ -4,15 +4,15 @@ import { createHitCount } from './create-hit-count'
 import { toMods } from '.'
 
 import type { AbleToTransformToScores } from './index'
-import { BeatmapSource, RankingStatus } from '~/types/beatmap'
+import { BeatmapSource, RankingStatus } from '~/def/beatmap'
 import type {
   ActiveMode,
   ActiveRuleset,
   LeaderboardRankingSystem,
   PPRankingSystem,
-} from '~/types/common'
-import { Grade, RankingSystemScore, RulesetScore } from '~/types/score'
-import { Rank } from '~/types/defs'
+} from '~/def/common'
+import { Grade, RankingSystemScore, RulesetScore } from '~/def/score'
+import { Rank } from '~/def'
 
 export function toScore<RS extends PPRankingSystem>({
   score,

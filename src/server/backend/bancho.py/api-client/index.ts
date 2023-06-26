@@ -1,7 +1,7 @@
 import type { BanchoPyMode, BanchoPyRankedStatus, BanchoPyStatusWithBeatmap, BanchoPyUserStatus } from '../enums'
 import { fromBanchoPyMode, fromBanchoPyUserStatus } from '../transforms'
-import { BeatmapSource } from '~/types/beatmap'
-import { UserStatus } from '~/types/user'
+import { BeatmapSource } from '~/def/beatmap'
+import { UserStatus } from '~/def/user'
 
 interface GulagStatusBeatmap {
   md5: string

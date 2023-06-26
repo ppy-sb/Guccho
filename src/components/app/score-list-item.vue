@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { RankingSystemScore, StableMod } from '~/types/score'
-import type { ActiveMode, ActiveRuleset, LeaderboardPPRankingSystem, LeaderboardRankingSystem, LeaderboardScoreRankingSystem } from '~/types/common'
+import { RankingSystemScore, StableMod } from '~/def/score'
+import type { ActiveMode, ActiveRuleset, LeaderboardPPRankingSystem, LeaderboardRankingSystem, LeaderboardScoreRankingSystem } from '~/def/common'
 import {
   Rank,
   leaderboardScoreRankingSystems,
   ppRankingSystems,
-} from '~/types/defs'
+} from '~/def'
 
-import { BeatmapSource, RankingStatus } from '~/types/beatmap'
+import { BeatmapSource, RankingStatus } from '~/def/beatmap'
 
 const props = withDefaults(
   defineProps<{
@@ -192,3 +192,4 @@ const meta = computed(
   @apply border-t-2 border-gbase-300/50;
 }
 </style>
+~/def/score~/def/common~/def~/def/beatmap

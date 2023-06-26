@@ -7,8 +7,8 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { useElementHover } from '@vueuse/core'
 
-import { MutualRelationship, Relationship } from '~/types/defs'
-import { UserStatus } from '~/types/user'
+import { MutualRelationship, Relationship } from '~/def'
+import { UserStatus } from '~/def/user'
 import { useSession } from '~/store/session'
 
 import userpageStore from '~/store/userpage'
@@ -201,3 +201,4 @@ async function toggleFriend() {
   @apply md:[margin-left:-7em] md:[padding-left:7em];
 }
 </style>
+~/def~/def/user

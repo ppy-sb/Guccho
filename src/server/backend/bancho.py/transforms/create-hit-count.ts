@@ -1,7 +1,7 @@
 import type { Score as DBScore } from 'prisma-client-bancho-py'
-import { Mode } from '~/types/defs'
-import type { ActiveMode } from '~/types/common'
-import type { HitCount } from '~/types/score'
+import { Mode } from '~/def'
+import type { ActiveMode } from '~/def/common'
+import type { HitCount } from '~/def/score'
 
 export function createHitCount<M extends ActiveMode>(
   mode: M,

@@ -2,7 +2,7 @@
 // @ts-expect-error we don't have to know
 import { JsonViewer } from 'vue3-json-viewer'
 import 'vue3-json-viewer/dist/index.css'
-import { Rank } from '~/types/defs'
+import { Rank } from '~/def'
 
 const route = useRoute()
 

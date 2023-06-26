@@ -8,13 +8,13 @@ import type {
   NumberRange,
   PPRankingSystem,
   ScoreRankingSystem,
-} from '~/types/common'
+} from '~/def/common'
 import {
   leaderboardRankingSystems,
   leaderboardScoreRankingSystems,
   modes,
   rulesets,
-} from '~/types/defs'
+} from '~/def'
 
 import userpageStore from '~/store/userpage'
 
@@ -242,3 +242,4 @@ const nextBp = nextPage.bind(null, bpPage)
     </div>
   </template>
 </template>
+~/def/common~/def

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { ActiveMode, ActiveRuleset, RankingSystem } from '~/types/common'
-import { rankingSystems } from '~/types/defs'
+import type { ActiveMode, ActiveRuleset, RankingSystem } from '~/def/common'
+import { rankingSystems } from '~/def'
 
 const props = defineProps<{
   modelValue: RankingSystem
@@ -45,3 +45,4 @@ watch([() => props.mode, () => props.ruleset], () => {
     </t-tab>
   </t-tabs>
 </template>
+~/def/common~/def

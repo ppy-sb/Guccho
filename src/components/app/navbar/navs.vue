@@ -3,7 +3,7 @@ import {
   faRankingStar, faSignal,
 } from '@fortawesome/free-solid-svg-icons'
 import { useSession } from '~/store/session'
-import { UserPrivilege } from '~/types/user'
+import { UserPrivilege } from '~/def/user'
 
 const { addToLibrary } = useFAIcon()
 addToLibrary(
@@ -44,3 +44,4 @@ const session = useSession()
   </li>
   <li><a>Item 3</a></li> -->
 </template>
+~/def/user

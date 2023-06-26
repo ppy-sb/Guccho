@@ -1,8 +1,8 @@
 import type { idTransformable } from './@extends'
-import type { Tag } from '~/types/search'
+import type { Tag } from '~/def/search'
 import type {
   BeatmapEssential, BeatmapSource, BeatmapWithMeta, Beatmapset, RankingStatus,
-} from '~/types/beatmap'
+} from '~/def/beatmap'
 
 export namespace MapProvider {
   export interface IdQuery<Id> {

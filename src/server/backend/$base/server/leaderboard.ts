@@ -5,11 +5,11 @@ import type {
   AvailableRuleset,
   LeaderboardRankingSystem,
   RankingSystem,
-} from '~/types/common'
+} from '~/def/common'
 import type {
   BeatmapLeaderboard,
   ComponentLeaderboard,
-} from '~/types/leaderboard'
+} from '~/def/leaderboard'
 
 export namespace LeaderboardProvider {
   export interface BaseQueryOptionalMode<M extends ActiveMode = ActiveMode> {

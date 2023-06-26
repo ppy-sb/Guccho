@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { RankingSystem } from '~/types/common'
-import { Rank } from '~/types/defs'
-import type { BeatmapLeaderboard } from '~/types/leaderboard'
-import { StableMod } from '~/types/score'
+import type { RankingSystem } from '~/def/common'
+import { Rank } from '~/def'
+import type { BeatmapLeaderboard } from '~/def/leaderboard'
+import { StableMod } from '~/def/score'
 
 const props = withDefaults(
   defineProps<{
@@ -112,3 +112,4 @@ const pp = createPPFormatter()
 </template>
 
 <style scoped></style>
+~/def/common~/def~/def/leaderboard~/def/score

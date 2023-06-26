@@ -1,7 +1,7 @@
 import type { idTransformable, scoreIdTransformable } from './@extends'
-import type { ActiveMode, ActiveRuleset, PPRankingSystem } from '~/types/common'
-import type { RulesetScore } from '~/types/score'
-import type { UserEssential } from '~/types/user'
+import type { ActiveMode, ActiveRuleset, PPRankingSystem } from '~/def/common'
+import type { RulesetScore } from '~/def/score'
+import type { UserEssential } from '~/def/user'
 
 export namespace ScoreProvider {
 

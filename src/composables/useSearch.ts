@@ -1,8 +1,8 @@
 import { useDebounceFn } from '@vueuse/core'
 import useSearchablePages from './useSearchablePages'
-import { modes } from '~/types/defs'
-import type { ActiveMode } from '~/types/common'
-import type { OP, Tag } from '~/types/search'
+import { modes } from '~/def'
+import type { ActiveMode } from '~/def/common'
+import type { OP, Tag } from '~/def/search'
 
 const taggable = {
   mode: modes,

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // TODO check max pages
-import type { ActiveMode, ActiveRuleset, LeaderboardRankingSystem } from '~/types/common'
+import type { ActiveMode, ActiveRuleset, LeaderboardRankingSystem } from '~/def/common'
 import type { SwitcherPropType } from '~/composables/useSwitcher'
 
 const config = useAppConfig()

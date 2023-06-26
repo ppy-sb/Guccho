@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { UserEssential } from '~/types/user'
-import type { UserRelationship } from '~/types/user-relationship'
-import { Relationship } from '~/types/defs'
+import { UserEssential } from '~/def/user'
+import type { UserRelationship } from '~/def/user-relationship'
+import { Relationship } from '~/def'
 import { useSession } from '~/store/session'
 
 const app$ = useNuxtApp()

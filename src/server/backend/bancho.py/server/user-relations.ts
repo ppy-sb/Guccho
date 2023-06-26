@@ -6,8 +6,8 @@ import { getPrismaClient } from './source/prisma'
 import { env } from '~/server/env'
 
 import type { UserRelationProvider as Base } from '$base/server'
-import { Relationship } from '~/types/defs'
-import type { UserEssential } from '~/types/user'
+import { Relationship } from '~/def'
+import type { UserEssential } from '~/def/user'
 
 export class UserRelationProvider implements Base<Id> {
   static stringToId = stringToId

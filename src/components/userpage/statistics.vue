@@ -2,9 +2,9 @@
 import { storeToRefs } from 'pinia'
 import type {
   LeaderboardRankingSystem, PPRankingSystem,
-} from '~/types/common'
-import { ppRankingSystems } from '~/types/defs'
-import type { PPRank, ScoreRank } from '~/types/statistics'
+} from '~/def/common'
+import { ppRankingSystems } from '~/def'
+import type { PPRank, ScoreRank } from '~/def/statistics'
 
 import userpageStore from '~/store/userpage'
 
@@ -210,3 +210,4 @@ const ScoreToNextLevel = computed(
   }
 }
 </style>
+~/def/common~/def~/def/statistics

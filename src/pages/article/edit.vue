@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { parse, stringify } from 'devalue'
-import { Scope, UserPrivilege } from '~/types/user'
+import { Scope, UserPrivilege } from '~/def/user'
 import { ContentEditor } from '#components'
 import type { ArticleProvider } from '$base/server'
 

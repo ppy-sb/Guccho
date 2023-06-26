@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { LeaderboardRankingSystem } from '~/types/common'
+import type { LeaderboardRankingSystem } from '~/def/common'
 import userpageStore from '~/store/userpage'
 
 const { hasRuleset, hasLeaderboardRankingSystem } = await useAdapterConfig()
@@ -95,3 +95,4 @@ const dropdown = computed(() => filter('dropdown'))
   @apply tab-sm sm:tab-sm md:tab-lg;
 }
 </style>
+~/def/common

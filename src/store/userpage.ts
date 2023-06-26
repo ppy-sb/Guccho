@@ -1,6 +1,6 @@
 import type { inferRouterError, inferRouterOutputs } from '@trpc/server'
 import { defineStore } from 'pinia'
-import { Mode, Ruleset } from '~/types/defs'
+import { Mode, Ruleset } from '~/def'
 import type { AppRouter } from '~/server/trpc/routers'
 
 type RouterOutput = inferRouterOutputs<AppRouter>

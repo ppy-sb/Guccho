@@ -8,10 +8,10 @@ import type { Id } from '..'
 import { BanchoPyRankedStatus } from '../enums'
 
 import { fromBanchoMode } from '.'
-import { BeatmapSource, RankingStatus } from '~/types/beatmap'
-import { StableMod } from '~/types/score'
+import { BeatmapSource, RankingStatus } from '~/def/beatmap'
+import { StableMod } from '~/def/score'
 
-import type { BeatmapEssential, Beatmapset } from '~/types/beatmap'
+import type { BeatmapEssential, Beatmapset } from '~/def/beatmap'
 
 export function toBeatmapset(beatmapset: Source, luckyOneBeatmapInBeatmapset: DBMap) {
   const isBancho = beatmapset.server === 'bancho'

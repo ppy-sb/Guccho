@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { faEllipsisH } from '@fortawesome/free-solid-svg-icons'
-import { Mode } from '~/types/defs'
+import { Mode } from '~/def'
 import type { AppScoresRankingSystemSwitcher } from '#components'
 import type { Label } from '~/composables/useLinks'
 

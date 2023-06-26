@@ -1,7 +1,7 @@
 import { match } from 'switch-pattern'
 import { BanchoMode, BanchoPyMode } from '../enums'
-import { Mode, Ruleset } from '~/types/defs'
-import type { ActiveMode, ActiveRuleset } from '~/types/common'
+import { Mode, Ruleset } from '~/def'
+import type { ActiveMode, ActiveRuleset } from '~/def/common'
 
 export const BPyMode = {
   [BanchoPyMode.OsuStandard]: [Mode.Osu, Ruleset.Standard],
@@ -14,7 +14,8 @@ export const BPyMode = {
   [BanchoPyMode.OsuAutopilot]: [Mode.Osu, Ruleset.Autopilot],
 } as const
 
-const BPyModeEntries = strictEntries(BPyMode)
+// const BPyModeEntries = strictEntries(BPyMode)
+const BPyModeEntries = Object.entries(BPyMode)
 
 export function toBanchoPyMode(
   mode: ActiveMode,
@@ -22,7 +23,11 @@ export function toBanchoPyMode(
 ): BanchoPyMode | undefined {
   const patterns = match([mode, ruleset] as const)
 
-  return BPyModeEntries.find(([_, mr]) => patterns.exact(mr))?.[0]
+  const str = BPyModeEntries.find(([_, mr]) => patterns.exact(mr))?.[0]
+  if (!str) {
+    return undefined
+  }
+  return Number.parseInt(str)
 }
 export function fromBanchoPyMode<BMode extends BanchoPyMode>(input: BMode): readonly [Mode, Ruleset] {
   return BPyMode[input]

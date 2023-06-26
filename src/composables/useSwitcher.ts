@@ -1,12 +1,12 @@
 import useAdapterConfig from './useAdapterConfig'
-import { Rank } from '~/types/defs'
+import { Rank } from '~/def'
 
 import type {
   ActiveMode,
   ActiveRuleset,
   LeaderboardRankingSystem,
   RankingSystem,
-} from '~/types/common'
+} from '~/def/common'
 
 export interface SwitcherPropType<TRS> {
   mode?: ActiveMode

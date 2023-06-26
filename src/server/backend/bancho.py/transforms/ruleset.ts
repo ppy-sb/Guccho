@@ -1,8 +1,8 @@
 import type { Stat } from 'prisma-client-bancho-py'
 
-import type { LeaderboardRankingSystem } from '~/types/common'
-import type { UserModeRulesetStatistics } from '~/types/statistics'
-import { Rank } from '~/types/defs'
+import type { LeaderboardRankingSystem } from '~/def/common'
+import type { UserModeRulesetStatistics } from '~/def/statistics'
+import { Rank } from '~/def'
 
 export function createRulesetData<RankingSystem extends LeaderboardRankingSystem>({
   databaseResult: dbResult,

@@ -1,7 +1,7 @@
 import type { TRPCError } from '@trpc/server'
 import md5 from 'md5'
 import { defineStore } from 'pinia'
-import type { UserFull } from '~/types/user'
+import type { UserFull } from '~/def/user'
 
 export const useSession = defineStore('session', {
   state: (): {

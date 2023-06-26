@@ -3,7 +3,7 @@
 import { JsonViewer } from 'vue3-json-viewer'
 import 'vue3-json-viewer/dist/index.css'
 import { useSession } from '~/store/session'
-import { UserPrivilege } from '~/types/user'
+import { UserPrivilege } from '~/def/user'
 
 const fmtPercent = new Intl.NumberFormat(undefined, {
   style: 'percent',

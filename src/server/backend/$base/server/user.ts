@@ -1,19 +1,19 @@
 import type { JSONContent } from '@tiptap/core'
 import type { idTransformable } from './@extends'
-import type { BeatmapSource, RankingStatus } from '~/types/beatmap'
+import type { BeatmapSource, RankingStatus } from '~/def/beatmap'
 import type {
   ActiveMode,
   ActiveRuleset,
   LeaderboardRankingSystem,
-} from '~/types/common'
-import type { RankingSystemScore } from '~/types/score'
+} from '~/def/common'
+import type { RankingSystemScore } from '~/def/score'
 import type {
   UserEssential,
   UserExtra,
   UserOptional,
   UserStatistic,
   UserStatus,
-} from '~/types/user'
+} from '~/def/user'
 
 export namespace UserProvider {
   export type ComposableProperties<Id> = UserExtra<Id> & UserOptional

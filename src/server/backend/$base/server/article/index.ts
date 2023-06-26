@@ -10,7 +10,7 @@ import { compileGraph, createPipeline, hops } from 'schema-evolution'
 import dirTree from 'directory-tree'
 
 import { latest, paths, v0, versions } from './v'
-import { UserEssential, UserPrivilege } from '~/types/user'
+import { UserEssential, UserPrivilege } from '~/def/user'
 import useEditorExtensions from '~/composables/useEditorExtensionsServer'
 import { UserRelationProvider } from '$active/server'
 import { Logger } from '$base/log'

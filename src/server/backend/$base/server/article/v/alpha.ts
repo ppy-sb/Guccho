@@ -1,7 +1,7 @@
 import { any, array, nativeEnum, number, object, string, union } from 'zod'
 
 import { zodTipTapJSONContent } from '~/server/trpc/shapes'
-import { UserPrivilege } from '~/types/user'
+import { UserPrivilege } from '~/def/user'
 
 export const v = Symbol('dev-unstable')
 

@@ -4,8 +4,8 @@ import type {
   ActiveRuleset,
   LeaderboardRankingSystem,
   RankingSystem,
-} from '~/types/common'
-import { Mode, Rank, Ruleset } from '~/types/defs'
+} from '~/def/common'
+import { Mode, Rank, Ruleset } from '~/def'
 
 interface AppConfigItemBase {
   name: string

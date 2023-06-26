@@ -37,10 +37,10 @@ import { env } from '~/server/env'
 import { userNotFound } from '~/server/trpc/messages'
 
 import type { UserProvider as Base } from '$base/server'
-import type { ActiveMode, ActiveRuleset, LeaderboardRankingSystem } from '~/types/common'
+import type { ActiveMode, ActiveRuleset, LeaderboardRankingSystem } from '~/def/common'
 
-import { UserEssential, UserOptional, UserStatistic, UserStatus } from '~/types/user'
-import { Mode, Rank, Ruleset } from '~/types/defs'
+import { UserEssential, UserOptional, UserStatistic, UserStatus } from '~/def/user'
+import { Mode, Rank, Ruleset } from '~/def'
 
 const article = new ArticleProvider()
 function ensureDirectorySync(targetDir: string, { isRelativeToScript = false } = {}) {
@@ -72,7 +72,7 @@ function ensureDirectorySync(targetDir: string, { isRelativeToScript = false } =
   }, initDir)
 }
 
-const bpyNumModes = strictKeys(BPyMode)
+const bpyNumModes = Object.keys(BPyMode)
 
 class DBUserProvider implements Base<Id> {
   static stringToId = stringToId
@@ -546,14 +546,14 @@ WHERE s.userid = ${id}
     return getLiveUserStatus(opt, this.config as { api: { v1: string } })
   }
 
-  async register(opt: { name: string; safeName: string; email: string; passwordMd5: string }) {
-    const { name, safeName, email, passwordMd5 } = opt
+  async register(opt: { name: string; email: string; passwordMd5: string }) {
+    const { name, email, passwordMd5 } = opt
 
     const user = await this.db.$transaction(async (tx) => {
       const user = await tx.user.create({
         data: {
           name,
-          safeName,
+          safeName: toSafeName(name),
           email,
           pwBcrypt: await encryptBanchoPassword(passwordMd5),
         },
@@ -562,7 +562,7 @@ WHERE s.userid = ${id}
       await this.db.stat.createMany({
         data: bpyNumModes.map(mode => ({
           id: user.id,
-          mode,
+          mode: Number.parseInt(mode),
         })),
       })
       return user

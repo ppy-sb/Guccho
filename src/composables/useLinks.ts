@@ -1,4 +1,4 @@
-import type { BeatmapSource, Beatmapset } from '~/types/beatmap'
+import type { BeatmapSource, Beatmapset } from '~/def/beatmap'
 
 type AnyBeatmapset = Beatmapset<BeatmapSource, any, any>
 // type BanchoBeatmapset = Beatmapset<'bancho', any, any>

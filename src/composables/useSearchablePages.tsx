@@ -1,5 +1,5 @@
 import type { RouteLocationRaw } from 'vue-router'
-import { UserPrivilege } from '~/types/user'
+import { UserPrivilege } from '~/def/user'
 import { useSession } from '~/store/session'
 
 function loggedIn() {

@@ -8,7 +8,7 @@ import type { ContentEditor, TModal, TResponsiveModal } from '#components'
 import { useSession } from '~/store/session'
 
 import { ArticleProvider } from '$base/server/article'
-import { UserPrivilege } from '~/types/user'
+import { UserPrivilege } from '~/def/user'
 
 const enum UploadingAvatarStatus {
   Idle,

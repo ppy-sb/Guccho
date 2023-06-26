@@ -12,10 +12,10 @@ import {
   UserOptional,
   UserPrivilege,
   UserSecrets,
-} from '~/types/user'
-import { Relationship } from '~/types/defs'
+} from '~/def/user'
+import { Relationship } from '~/def'
 
-import type { UserRelationship } from '~/types/user-relationship'
+import type { UserRelationship } from '~/def/user-relationship'
 
 export function toRoles(priv: number): UserPrivilege[] {
   const roles: UserPrivilege[] = []

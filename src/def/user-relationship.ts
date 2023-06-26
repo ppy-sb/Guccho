@@ -1,4 +1,4 @@
-import type { MutualRelationship, Relationship } from './defs'
+import type { MutualRelationship, Relationship } from '.'
 
 export interface UserRelationship {
   relationship: Relationship[]

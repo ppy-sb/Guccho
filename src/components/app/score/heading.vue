@@ -3,8 +3,8 @@ import { faEllipsisH } from '@fortawesome/free-solid-svg-icons'
 import type { inferRouterOutputs } from '@trpc/server'
 
 import type { AppRouter } from '~/server/trpc/routers'
-import type { RankingSystem } from '~/types/common'
-import { Rank } from '~/types/defs'
+import type { RankingSystem } from '~/def/common'
+import { Rank } from '~/def'
 
 type RouterOutput = inferRouterOutputs<AppRouter>
 
@@ -90,3 +90,4 @@ const scoreFmt = createScoreFormatter({ notation: undefined })
 <style scoped>
 
 </style>
+~/def/common~/def

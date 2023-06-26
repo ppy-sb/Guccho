@@ -1,13 +1,20 @@
 <script setup lang="ts">
 import md5 from 'md5'
 import { TRPCClientError } from '@trpc/client'
+import { Feature } from '~/def/features'
 import { AppRouter } from '~/server/trpc/routers'
 import { useSession } from '~/store/session'
+import { features } from '$active'
 
 const loginButton = shallowRef('Have account?')
-const shape = {
+interface Shape {
+  name: string
+  safeName?: string
+  email: string
+  password: string
+}
+const shape: Shape = {
   name: '',
-  safeName: '',
   email: '',
   password: '',
 }
@@ -17,13 +24,13 @@ const fetching = shallowRef(false)
 const config = useAppConfig()
 const app$ = useNuxtApp()
 
-function unique(key: keyof typeof shape) {
+function unique(key: keyof Shape) {
   return async () => {
     if (!reg[key]) {
       error[key] = `${key} must not be empty`
       return false
     }
-    const exists = await app$.$client.user.exists.query({ handle: reg[key] })
+    const exists = await app$.$client.user.exists.query({ handle: reg[key] as string })
     if (!exists) {
       return true
     }
@@ -36,13 +43,13 @@ const pwPattern = new RegExp(pwPatternStr)
 const safeNamePatternStr = '[a-z0-9][a-z0-9_]+[a-z0-9]'
 const safeNamePattern = new RegExp(safeNamePatternStr)
 const validate: {
-  [Key in keyof typeof shape]: () => boolean | Promise<boolean>
+  [Key in keyof Shape]: () => boolean | Promise<boolean>
 } = {
   name: unique('name'),
-  safeName: async () => Boolean(reg.safeName.match(safeNamePattern)) && await unique('safeName')(),
+  safeName: async () => features.has(Feature.StableUsername) ? !!reg.safeName?.match(safeNamePattern) && await unique('safeName')() : true,
   email: unique('email'),
   password() {
-    return Boolean(reg.password.match(pwPattern))
+    return !!reg.password.match(pwPattern)
   },
 }
 

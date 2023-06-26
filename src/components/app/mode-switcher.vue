@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ActiveMode, ActiveRuleset, LeaderboardRankingSystem } from '~/types/common'
+import type { ActiveMode, ActiveRuleset, LeaderboardRankingSystem } from '~/def/common'
 
 interface modelValue {
   mode?: ActiveMode
@@ -110,3 +110,4 @@ watch(switcher, () => emitData())
   @apply dark:[filter:invert(0)];
 }
 </style>
+~/def/common

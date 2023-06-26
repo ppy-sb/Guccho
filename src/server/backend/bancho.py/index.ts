@@ -1,4 +1,6 @@
-export { modes, rulesets } from '~/types/defs'
+import { Feature } from '~/def/features'
+
+export { modes, rulesets } from '~/def'
 
 export {
   hasLeaderboardRankingSystem,
@@ -8,3 +10,5 @@ export {
 
 export type Id = number
 export type ScoreId = bigint
+
+export const features = new Set<Feature>([])

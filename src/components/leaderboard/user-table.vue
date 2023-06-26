@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import type { inferRouterOutputs } from '@trpc/server'
 
-import type { LeaderboardRankingSystem } from '~/types/common'
-import type { ComponentLeaderboard } from '~/types/leaderboard'
+import type { LeaderboardRankingSystem } from '~/def/common'
+import type { ComponentLeaderboard } from '~/def/leaderboard'
 import type { AppRouter } from '~/server/trpc/routers'
-import { Rank } from '~/types/defs'
+import { Rank } from '~/def'
 
 type RouterOutput = inferRouterOutputs<AppRouter>
 
@@ -94,3 +94,4 @@ tr [data-rank="3"] {
   @extend .text-shadow-sm;
 }
 </style>
+~/def/common~/def/leaderboard~/def

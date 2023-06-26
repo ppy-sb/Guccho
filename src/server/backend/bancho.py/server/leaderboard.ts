@@ -16,13 +16,13 @@ import { client as redisClient } from './source/redis'
 import { getPrismaClient } from './source/prisma'
 import { env } from '~/server/env'
 
-import { Mode, Rank, modes as _modes } from '~/types/defs'
+import { Mode, Rank, modes as _modes } from '~/def'
 import type {
   ActiveMode,
   AvailableRuleset,
   LeaderboardRankingSystem,
   RankingSystem,
-} from '~/types/common'
+} from '~/def/common'
 import type { LeaderboardProvider as Base } from '$base/server'
 
 const logger = Logger.child({ label: 'leaderboard', backend: 'bancho.py' })

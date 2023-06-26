@@ -1,4 +1,4 @@
-import { BeatmapSource, Beatmapset } from '~/types/beatmap'
+import { BeatmapSource, Beatmapset } from '~/def/beatmap'
 
 export function isString(input: unknown): input is string {
   return typeof input === 'string'

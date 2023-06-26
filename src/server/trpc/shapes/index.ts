@@ -3,11 +3,11 @@ import { ZodIssueCode, ZodSchema, literal, nativeEnum, number, string, tuple, un
 
 import validator from 'validator'
 import { hasRuleset } from '../config'
-import { LeaderboardScoreRank, Mode, PPRank, Relationship, Ruleset, ScoreRank } from '~/types/defs'
+import { LeaderboardScoreRank, Mode, PPRank, Relationship, Ruleset, ScoreRank } from '~/def'
 import type { ArticleProvider } from '$base/server/article'
 
-import type { ActiveMode, ActiveRuleset } from '~/types/common'
-import { RankingStatus } from '~/types/beatmap'
+import type { ActiveMode, ActiveRuleset } from '~/def/common'
+import { RankingStatus } from '~/def/beatmap'
 
 export const zodHandle = string().trim()
 export const zodRelationType = nativeEnum(Relationship)

@@ -1,5 +1,5 @@
 import { sessionProcedure } from './session'
-import type { UserEssential } from '~/types/user'
+import type { UserEssential } from '~/def/user'
 import { UserProvider } from '$active/server'
 
 const userProvider = new UserProvider()

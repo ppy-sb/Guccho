@@ -5,14 +5,14 @@ import type {
   LeaderboardRankingSystem,
   PPRankingSystem,
   RankingSystem,
-} from '~/types/common'
+} from '~/def/common'
 import type {
   HasLeaderboardRankingSystem,
   HasRankingSystem,
   HasRuleset,
   ServerRankingSystemDef,
-} from '~/types/server'
-import { Mode, Rank, Ruleset } from '~/types/defs'
+} from '~/def/server'
+import { Mode, Rank, Ruleset } from '~/def'
 
 const ppRankingSystems = [Rank.PPv2, Rank.Score] as const
 const leaderboardRankingSystems = [Rank.PPv2, Rank.RankedScore, Rank.TotalScore] as const

@@ -15,12 +15,12 @@ import { router as _router, publicProcedure as p } from '../trpc'
 import { sessionProcedure } from '../middleware/session'
 import { optionalUserProcedure } from '../middleware/optional-user'
 import { userNotFound } from '../messages'
-import { Scope, UserPrivilege } from '~/types/user'
-import { RankingStatus } from '~/types/beatmap'
+import { Scope, UserPrivilege } from '~/def/user'
+import { RankingStatus } from '~/def/beatmap'
 
 import { SessionProvider, UserProvider, UserRelationProvider } from '$active/server'
 
-import type { NumberRange } from '~/types/common'
+import type { NumberRange } from '~/def/common'
 
 const userProvider = new UserProvider()
 const userRelationshipProvider = new UserRelationProvider()
@@ -178,7 +178,7 @@ export const router = _router({
   register: sessionProcedure
     .input(object({
       name: string().trim(),
-      safeName: string().trim(),
+      safeName: string().trim().optional(),
       email: string().trim().email(),
       passwordMd5: string().trim(),
     })).mutation(async ({ input, ctx }) => {
