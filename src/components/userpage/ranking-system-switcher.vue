@@ -95,4 +95,3 @@ const dropdown = computed(() => filter('dropdown'))
   @apply tab-sm sm:tab-sm md:tab-lg;
 }
 </style>
-~/def/common

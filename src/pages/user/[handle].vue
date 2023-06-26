@@ -104,7 +104,7 @@ onMounted(() => {
     <div id="topScores" ref="topScores" class="container custom-container mx-auto py-4">
       <userpage-top-scores v-if="page.currentRankingSystem" />
     </div>
-    <!-- placeholder for bottom nav -->·
+    <!-- placeholder for bottom nav -->
     <!-- <div class="my-8 -z-50" /> -->
     <client-only>
       <teleport to="body">

@@ -110,4 +110,3 @@ watch(switcher, () => emitData())
   @apply dark:[filter:invert(0)];
 }
 </style>
-~/def/common

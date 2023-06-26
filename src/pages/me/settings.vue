@@ -332,12 +332,12 @@ function resetAvatar() {
     <!-- used as padding placeholders -->
     <header-simple-title-with-sub />
     <div class="container mx-auto">
-      <div class="flex justify-between p-2 items-baseline">
+      <div class="flex justify-between p-2 items-end">
         <div class="text-3xl font-bold">
           preferences
         </div>
         <button
-          class="self-end btn btn-sm"
+          class="btn btn-sm"
           :class="[
             updateResult ? 'btn-success' : 'btn-accent',
             posting ? 'loading' : '',
@@ -345,7 +345,8 @@ function resetAvatar() {
           type="button"
           @click="updateUserSettings"
         >
-          {{ updateResult ? "done!" : "update" }}
+          <icon v-if="!posting" :name="updateResult ? 'line-md:confirm' : 'ic:round-save'" class="w-5 h-5 me-1" size="100%" />
+          {{ updateResult ? "Done!" : "Save" }}
         </button>
       </div>
     </div>
@@ -423,7 +424,7 @@ function resetAvatar() {
         </div>
         <div>
           <label class="label">
-            <span class="pl-3 label-text">Link (safe name)</span>
+            <span class="pl-3 label-text">Link</span>
           </label>
           <div class="flex gap-4">
             <input
@@ -481,29 +482,14 @@ function resetAvatar() {
         <div>
           <label class="label">
             <span class="pl-3 label-text">Password</span>
-          </label>
-          <div class="flex gap-4">
-            <input
-              v-model="user.secrets.password"
-              type="password"
-              placeholder="Your Password"
-              class="input input-sm grow"
-              disabled
-              :class="{
-                'input-bordered input-primary':
-                  unchanged.secrets.apiKey !== user.secrets.apiKey,
-                '!input-ghost border-none':
-                  unchanged.secrets.apiKey === user.secrets.apiKey,
-              }"
-            >
             <button
               class="btn btn-sm btn-secondary"
               type="button"
-              @click="() => changePassword?.showModal()"
+              @click.prevent="() => changePassword?.showModal()"
             >
               Change
             </button>
-          </div>
+          </label>
         </div>
         <div>
           <label class="label">

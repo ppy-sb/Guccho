@@ -112,4 +112,3 @@ const pp = createPPFormatter()
 </template>
 
 <style scoped></style>
-~/def/common~/def~/def/leaderboard~/def/score

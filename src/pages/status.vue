@@ -46,8 +46,8 @@ function percentWidth(count: number) {
       <h1 class="text-xl">
         System Load
       </h1>
-      <span class="badge">user: {{ fmtPercent.format(data.load.system.user / 100) }}</span>
-      <span class="badge">system: {{ fmtPercent.format(data.load.system.system / 100) }}</span>
+      <span class="badge text-blue-50 bg-blue-500 border-blue-500">user: {{ fmtPercent.format(data.load.system.user / 100) }}</span>
+      <span class="badge text-teal-50 bg-teal-500 border-teal-500">system: {{ fmtPercent.format(data.load.system.system / 100) }}</span>
     </div>
     <div class="multi-progress-bar-container bg-gbase-500/10 shadow-lg">
       <div
@@ -95,9 +95,9 @@ function percentWidth(count: number) {
       <h1 class="text-xl">
         Memory
       </h1>
+      <span class="badge text-blue-50 bg-blue-500 border-blue-500">Active: {{ fmtCompact.format(data.memory.system.active / 1_000_000) }}</span>
+      <span class="badge text-teal-50 bg-teal-500 border-teal-500">Cache: {{ fmtCompact.format(data.memory.system.buffcache / 1_000_000) }}</span>
       <span class="badge">Total: {{ fmtCompact.format(data.memory.system.total / 1_000_000) }}</span>
-      <span class="badge">Active: {{ fmtCompact.format(data.memory.system.active / 1_000_000) }}</span>
-      <span class="badge">Cache: {{ fmtCompact.format(data.memory.system.buffcache / 1_000_000) }}</span>
       <span class="badge">Free: {{ fmtCompact.format(data.memory.system.free / 1_000_000) }}</span>
     </div>
     <div class="multi-progress-bar-container bg-gbase-500/10 shadow-lg">
@@ -130,7 +130,8 @@ function percentWidth(count: number) {
         :expand-depth="999"
         theme="light"
         copyable
-        class="rounded-xl shadow"
+        boxed
+        class="rounded-xl"
       />
       <h1 class="text-xl drop-shadow-lg my-1">
         npm env
@@ -140,7 +141,8 @@ function percentWidth(count: number) {
         :expand-depth="999"
         theme="light"
         copyable
-        class="rounded-xl shadow"
+        boxed
+        class="rounded-xl"
       />
       <h1 class="text-xl drop-shadow-lg my-1">
         env
@@ -153,7 +155,8 @@ function percentWidth(count: number) {
         :expand-depth="999"
         theme="light"
         copyable
-        class="rounded-xl shadow"
+        boxed
+        class="rounded-xl"
       />
     </template>
   </div>

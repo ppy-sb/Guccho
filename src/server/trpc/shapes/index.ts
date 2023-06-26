@@ -38,12 +38,12 @@ export function validateModeRuleset({
 export const zodTipTapJSONContent = z
   .record(string(), z.any())
   .superRefine((input, ctx): input is ArticleProvider.JSONContent => {
-    if (!('content' in input) || !Array.isArray(input.content)) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'has on content',
-      })
-    }
+    // if (!('content' in input) || !Array.isArray(input.content)) {
+    //   ctx.addIssue({
+    //     code: z.ZodIssueCode.custom,
+    //     message: 'has no content',
+    //   })
+    // }
     return z.NEVER
   }) as unknown as ZodSchema<ArticleProvider.JSONContent>
 

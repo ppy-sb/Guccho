@@ -192,4 +192,3 @@ const meta = computed(
   @apply border-t-2 border-gbase-300/50;
 }
 </style>
-~/def/score~/def/common~/def~/def/beatmap

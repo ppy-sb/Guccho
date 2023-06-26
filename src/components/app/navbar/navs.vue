@@ -44,4 +44,3 @@ const session = useSession()
   </li>
   <li><a>Item 3</a></li> -->
 </template>
-~/def/user

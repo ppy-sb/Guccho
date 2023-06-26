@@ -1,7 +1,7 @@
+import type { Enumerate, U2I } from './internal-utils'
 import type {
   ModeRulesetRankingSystemDef,
 } from '.'
-import type { Enumerate, U2I } from './internal-utils'
 
 export type ActiveMode = keyof ModeRulesetRankingSystemDef
 export type ActiveRuleset = keyof U2I<ModeRulesetRankingSystemDef[ActiveMode]>

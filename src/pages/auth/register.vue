@@ -143,26 +143,28 @@ async function userRegisterAction() {
               {{ error.name }}
             </div>
           </div>
-          <div>
-            <label for="name" class="sr-only">username</label>
-            <input
-              id="name"
-              v-model="reg.safeName"
-              name="name"
-              type="name"
-              autocomplete="off"
-              required
-              :pattern="safeNamePatternStr"
-              title="Must not includes uppercase letter, nor starts or ends with _, contains only number, a-z and _"
-              class="w-full input input-ghost shadow-sm"
-              :class="{ 'input-error': error.safeName }"
-              placeholder="Username (semi-permanent)"
-              @input="error.safeName = ''"
-            >
-            <div class="text-error text-sm pl-4">
-              {{ error.safeName }}
+          <template v-if="features.has(Feature.StableUsername)">
+            <div>
+              <label for="name" class="sr-only">username</label>
+              <input
+                id="name"
+                v-model="reg.safeName"
+                name="name"
+                type="name"
+                autocomplete="off"
+                required
+                :pattern="safeNamePatternStr"
+                title="Must not includes uppercase letter, nor starts or ends with _, contains only number, a-z and _"
+                class="w-full input input-ghost shadow-sm"
+                :class="{ 'input-error': error.safeName }"
+                placeholder="Username (semi-permanent)"
+                @input="error.safeName = ''"
+              >
+              <div class="text-error text-sm pl-4">
+                {{ error.safeName }}
+              </div>
             </div>
-          </div>
+          </template>
           <div>
             <label for="name" class="sr-only">email</label>
             <input

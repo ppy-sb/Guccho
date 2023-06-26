@@ -94,4 +94,3 @@ tr [data-rank="3"] {
   @extend .text-shadow-sm;
 }
 </style>
-~/def/common~/def/leaderboard~/def
