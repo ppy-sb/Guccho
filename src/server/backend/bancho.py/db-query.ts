@@ -1,7 +1,7 @@
 import type { Prisma } from 'prisma-client-bancho-py'
-import { BanchoPyPrivilege, toBanchoMode } from './enums'
+import { BanchoPyPrivilege } from './enums'
 import type { DatabaseUserEssentialFields } from './transforms/user'
-import { stringToId } from './transforms'
+import { stringToId, toBanchoMode } from './transforms'
 import type { OP, Tag } from '~/types/search'
 
 export const userEssentials: Prisma.UserFindManyArgs = {

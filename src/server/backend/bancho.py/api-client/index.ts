@@ -1,5 +1,5 @@
 import type { BanchoPyMode, BanchoPyRankedStatus, BanchoPyStatusWithBeatmap, BanchoPyUserStatus } from '../enums'
-import { fromBanchoPyMode, fromBanchoPyUserStatus, toRankingStatus } from '../transforms'
+import { fromBanchoPyMode, fromBanchoPyUserStatus } from '../transforms'
 import { BeatmapSource } from '~/types/beatmap'
 import { UserStatus } from '~/types/user'
 
@@ -118,43 +118,23 @@ export async function getLiveUserStatus({ id }: { id: number }, config: { api: {
   const [mode, ruleset] = fromBanchoPyMode(s.status.mode)
   const base = {
     description: s.status.info_text,
+    status: fromBanchoPyUserStatus(s.status.action) as Exclude<UserStatus, UserStatus.Offline>,
     mode,
     ruleset,
     beatmap: undefined,
   } as const
   if (!('beatmap' in s.status)) {
-    return Object.assign(base, { status: fromBanchoPyUserStatus(s.status.action) })
+    return base
   }
   const bm = s.status.beatmap
-  const rankingStatus = toRankingStatus(bm.status)
-  if (!rankingStatus) {
-    throw new Error('unknown ranking status')
-  }
-  return Object.assign(base, {
-    status: fromBanchoPyUserStatus(s.status.action),
+  return {
+    ...base,
     beatmap: {
       id: bm.id,
       foreignId: bm.id,
       md5: bm.md5,
       version: bm.version,
       creator: bm.creator,
-      // lastUpdate: new Date(bm.last_update * 1000),
-      // status: rankingStatus,
-      // properties: {
-      //   bpm: bm.bpm,
-      //   circleSize: bm.cs,
-      //   approachRate: bm.ar,
-      //   accuracy: bm.od,
-      //   hpDrain: bm.hp,
-      //   totalLength: bm.total_length,
-      //   maxCombo: bm.max_combo,
-      //   starRate: bm.diff,
-      //   count: {
-      //     circles: 0,
-      //     sliders: 0,
-      //     spinners: 0,
-      //   },
-      // },
       beatmapset: {
         id: bm.set_id,
         foreignId: bm.set_id,
@@ -167,5 +147,5 @@ export async function getLiveUserStatus({ id }: { id: number }, config: { api: {
         source: BeatmapSource.Bancho,
       },
     },
-  } as const)
+  } as const
 }

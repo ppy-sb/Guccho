@@ -1,7 +1,7 @@
 import {
   MutualRelationship,
   Relationship,
-  Scope,
+
 } from '~/types/defs'
 import type {
   ActiveMode,
@@ -9,7 +9,9 @@ import type {
   AvailableRuleset,
   LeaderboardRankingSystem,
 } from '~/types/common'
-import type {
+
+import {
+  Scope,
   UserEssential,
   UserExtra,
   UserOptional,

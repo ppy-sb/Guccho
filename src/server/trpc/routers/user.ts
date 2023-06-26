@@ -15,13 +15,12 @@ import { router as _router, publicProcedure as p } from '../trpc'
 import { sessionProcedure } from '../middleware/session'
 import { optionalUserProcedure } from '../middleware/optional-user'
 import { userNotFound } from '../messages'
-import { UserPrivilege } from '~/types/user'
+import { Scope, UserPrivilege } from '~/types/user'
 import { RankingStatus } from '~/types/beatmap'
 
 import { SessionProvider, UserProvider, UserRelationProvider } from '$active/server'
 
 import type { NumberRange } from '~/types/common'
-import { Scope } from '~/types/defs'
 
 const userProvider = new UserProvider()
 const userRelationshipProvider = new UserRelationProvider()

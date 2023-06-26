@@ -152,7 +152,7 @@ export interface UserProvider<Id> extends idTransformable {
       md5: string
       version: string
       creator: string
-      beatmapset: {
+      beatmapset?: {
         id: number
         foreignId: number
         meta: {

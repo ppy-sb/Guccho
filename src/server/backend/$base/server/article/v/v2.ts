@@ -1,8 +1,7 @@
 import { array, date, literal, nativeEnum, number, object, string, tuple, union } from 'zod'
 
 import { zodTipTapJSONContent } from '~/server/trpc/shapes'
-import { Scope } from '~/types/defs'
-import { UserPrivilege } from '~/types/user'
+import { Scope, UserPrivilege } from '~/types/user'
 
 export const v = 2 as const
 

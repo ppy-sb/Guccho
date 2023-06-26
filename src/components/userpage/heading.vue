@@ -18,7 +18,6 @@ const page = userpageStore()
 const { addToLibrary } = useFAIcon()
 addToLibrary(faUserGroup, faHeartCrack, faHeart, faEnvelope)
 
-const hasBeatmap = [UserStatus.Playing, UserStatus.Modding, UserStatus.Multiplaying, UserStatus.Editing, UserStatus.Editing, UserStatus.Editing, UserStatus.Submitting]
 const app$ = useNuxtApp()
 const session = useSession()
 const changeFriendStateButton = shallowRef(null)
@@ -181,8 +180,8 @@ async function toggleFriend() {
         <div v-if="live.status === UserStatus.Offline" class="order-3 user-status">
           Offline, last seen at {{ live.lastSeen.toLocaleString() }}
         </div>
-        <div v-else-if="live && hasBeatmap.includes(live.status)" class="order-3 user-status">
-          {{ UserStatus[live.status] }} {{ live.beatmap?.beatmapset.meta.intl.artist }} - {{ live.beatmap?.beatmapset.meta.intl.title }} [{{ live.beatmap?.version }}]
+        <div v-else-if="live && live.beatmap" class="order-3 user-status">
+          {{ UserStatus[live.status] }} {{ live.beatmap.beatmapset.meta.intl.artist }} - {{ live.beatmap.beatmapset.meta.intl.title }} [{{ live.beatmap.version }}]
         </div>
         <div v-else-if="live.status === UserStatus.Idle" class="order-3 user-status">
           Online.

@@ -3,7 +3,7 @@ import type {
   LeaderboardScoreRankingSystem,
   PPRankingSystem,
 } from './common'
-import { Grade } from './defs'
+import { Grade } from './score'
 
 export interface BaseRank {
   rank?: number

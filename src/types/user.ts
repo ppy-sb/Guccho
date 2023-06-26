@@ -4,10 +4,15 @@ import type {
   AvailableRuleset,
   LeaderboardRankingSystem,
 } from './common'
-import { Scope } from './defs'
 import type { UserModeRulesetStatistics } from './statistics'
 import type { UserRelationship } from './user-relationship'
 import { ArticleProvider } from '$base/server'
+
+export enum Scope {
+  Self,
+  Friends,
+  Public,
+}
 
 export enum UserStatus {
   Offline = -1,
@@ -26,8 +31,6 @@ export enum UserStatus {
   MatchOngoing,
   OsuDirect,
 }
-
-export type StatusWithBeatmap = UserStatus.Playing | UserStatus.Editing | UserStatus.Editing | UserStatus.Modding | UserStatus.Modding | UserStatus.Watching | UserStatus.Testing | UserStatus.MatchOngoing | UserStatus.OsuDirect
 
 export enum UserPrivilege {
   // restricted type
@@ -104,9 +107,9 @@ export type UserStatistic<
   Ranking extends LeaderboardRankingSystem = LeaderboardRankingSystem,
 > = {
   [M in IncludeMode]: Record<
-    AvailableRuleset<M, IncludeRuleset>,
-    UserModeRulesetStatistics<Ranking>
-  >
+      AvailableRuleset<M, IncludeRuleset>,
+      UserModeRulesetStatistics<Ranking>
+    >
 }
 
 export interface UserExtra<

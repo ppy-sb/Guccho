@@ -11,8 +11,8 @@ import type {
   LeaderboardRankingSystem,
   PPRankingSystem,
 } from '~/types/common'
-import type { RankingSystemScore, RulesetScore } from '~/types/score'
-import { Grade, Rank } from '~/types/defs'
+import { Grade, RankingSystemScore, RulesetScore } from '~/types/score'
+import { Rank } from '~/types/defs'
 
 export function toScore<RS extends PPRankingSystem>({
   score,

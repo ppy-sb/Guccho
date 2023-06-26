@@ -16,24 +16,6 @@ export enum MutualRelationship {
   MutualBlocked,
 }
 
-export enum Scope {
-  Self,
-  Friends,
-  Public,
-}
-
-export enum Grade {
-  F = 'f',
-  D = 'd',
-  C = 'c',
-  B = 'b',
-  A = 'a',
-  S = 's',
-  SH = 'sh',
-  SS = 'ss',
-  SSH = 'ssh',
-}
-
 export enum Rank {
   PPv1 = 'ppv1',
   PPv2 = 'ppv2',

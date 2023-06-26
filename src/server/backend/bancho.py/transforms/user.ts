@@ -6,13 +6,14 @@ import type { Id } from '..'
 import type { ArticleProvider } from '$base/server'
 import {
   UserStatus as G,
+  Scope,
   UserEssential,
   UserExtra,
   UserOptional,
   UserPrivilege,
   UserSecrets,
 } from '~/types/user'
-import { Relationship, Scope } from '~/types/defs'
+import { Relationship } from '~/types/defs'
 
 import type { UserRelationship } from '~/types/user-relationship'
 

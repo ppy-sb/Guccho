@@ -5,7 +5,19 @@ import type {
   LeaderboardRankingSystem,
   PPRankingSystem,
 } from './common'
-import { Grade, Mode } from './defs'
+import { Mode } from './defs'
+
+export enum Grade {
+  F = 'f',
+  D = 'd',
+  C = 'c',
+  B = 'b',
+  A = 'a',
+  S = 's',
+  SH = 'sh',
+  SS = 'ss',
+  SSH = 'ssh',
+}
 
 export type HitCount<M extends ActiveMode> = Record<
   | 300
