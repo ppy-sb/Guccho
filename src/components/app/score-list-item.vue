@@ -12,8 +12,8 @@ import { BeatmapSource, RankingStatus } from '~/def/beatmap'
 const props = withDefaults(
   defineProps<{
     score?: RankingSystemScore<
-      unknown,
-      unknown,
+      string,
+      string,
       ActiveMode,
       LeaderboardRankingSystem
     >

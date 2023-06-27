@@ -1,4 +1,4 @@
-import type { Enumerate, U2I } from './internal-utils'
+import type { U2I } from './internal-utils'
 import type {
   ModeRulesetRankingSystemDef,
 } from '.'
@@ -32,10 +32,6 @@ export type LeaderboardRankingSystem =
   | LeaderboardPPRankingSystem
   | LeaderboardScoreRankingSystem
 
-export type NumberRange<F extends number, T extends number> = Exclude<
-  Enumerate<T>,
-  Enumerate<F>
->
 export type UserpageShowType = 'tab' | 'dropdown' | 'hidden'
 export type ServerConfig<
   AvailableRankingSystem extends LeaderboardRankingSystem,

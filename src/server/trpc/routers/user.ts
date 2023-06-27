@@ -18,9 +18,7 @@ import { userNotFound } from '../messages'
 import { Scope, UserPrivilege } from '~/def/user'
 import { RankingStatus } from '~/def/beatmap'
 
-import { SessionProvider, UserProvider, UserRelationProvider } from '$active/server'
-
-import type { NumberRange } from '~/def/common'
+import { MapProvider, SessionProvider, UserProvider, UserRelationProvider } from '$active/server'
 
 const userProvider = new UserProvider()
 const userRelationshipProvider = new UserRelationProvider()
@@ -97,14 +95,23 @@ export const router = _router({
         mode,
         ruleset,
         rankingSystem,
-        page: input.page as NumberRange<0, 10>,
+        page: input.page,
         perPage: 10,
         rankingStatus: input.includes,
       })
       if (!returnValue) {
         throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' })
       }
-      return returnValue
+      // return mapId(returnValue, ScoreProvider.scoreIdToString)
+      return returnValue.map(v => ({
+        ...v,
+        beatmap: beatmapIsVisible(v.beatmap)
+          ? {
+              ...mapId(v.beatmap, MapProvider.idToString),
+              beatmapset: mapId(v.beatmap.beatmapset, MapProvider.idToString),
+            }
+          : v.beatmap,
+      }))
     }),
   tops: p
     .input(
@@ -136,14 +143,25 @@ export const router = _router({
         mode: input.mode,
         ruleset: input.ruleset,
         rankingSystem: input.rankingSystem,
-        page: input.page as NumberRange<0, 10>,
+        page: input.page,
         perPage: 10,
         rankingStatus: input.includes,
       })
       if (!returnValue) {
         throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' })
       }
-      return returnValue
+      return {
+        ...returnValue,
+        scores: returnValue.scores.map(v => ({
+          ...v,
+          beatmap: beatmapIsVisible(v.beatmap)
+            ? {
+                ...mapId(v.beatmap, MapProvider.idToString),
+                beatmapset: mapId(v.beatmap.beatmapset, MapProvider.idToString),
+              }
+            : v.beatmap,
+        })),
+      }
     }),
   essential: p
     .input(

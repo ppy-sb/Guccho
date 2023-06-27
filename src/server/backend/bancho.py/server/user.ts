@@ -33,6 +33,7 @@ import { client as redisClient } from './source/redis'
 import { getPrismaClient } from './source/prisma'
 import { UserRelationProvider } from './user-relations'
 import { ArticleProvider } from './article'
+import { ScoreProvider } from './score'
 import { env } from '~/server/env'
 import { userNotFound } from '~/server/trpc/messages'
 
@@ -285,10 +286,7 @@ WHERE s.userid = ${id}
     return {
       count: scoreIds.length,
       scores: toRankingSystemScores({ scores, rankingSystem, mode }).map(
-        score =>
-          Object.assign(score, {
-            id: score.id.toString(),
-          })
+        score => mapId(score, ScoreProvider.scoreIdToString)
       ),
     }
   }

@@ -1,12 +1,9 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
-import {
-  faRankingStar,
-} from '@fortawesome/free-solid-svg-icons'
+
 import type {
   LeaderboardRankingSystem,
   LeaderboardScoreRankingSystem,
-  NumberRange,
   PPRankingSystem,
   ScoreRankingSystem,
 } from '~/def/common'
@@ -19,9 +16,6 @@ import {
 
 import userpageStore from '~/store/userpage'
 
-const { addToLibrary } = useFAIcon()
-
-addToLibrary(faRankingStar)
 const app$ = useNuxtApp()
 
 const page = userpageStore()
@@ -44,7 +38,7 @@ function switchBetweenScoreRanks() {
   && stabilizeScoreRank(prevSwitcherState.rankingSystem)
     === stabilizeScoreRank(page.switcher.rankingSystem)
 }
-const topPage = shallowRef<NumberRange<0, 10>>(0)
+const topPage = shallowRef(0)
 
 const {
   data: top,
@@ -182,7 +176,7 @@ const nextTop = nextPage.bind(null, topPage)
           <div
             class="p-1 two-tone flex items-center w-100"
           >
-            <font-awesome-icon icon="fa-solid fa-ranking-star" class="text-3xl w-1/6 opacity-70" />
+            <icon name="pajamas:first-contribution" class="w-1/6 text-3xl opacity-70" />
             <div class="w-2/3 flex">
               <div class="text-3xl font-semibold mx-auto">
                 Top Ranks

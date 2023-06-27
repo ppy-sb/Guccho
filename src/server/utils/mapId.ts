@@ -4,6 +4,7 @@ type Merge<T1 extends Record<any, any>, T2 extends Record<any, any>> = {
   [Key2 in keyof T2]: T2[Key2]
 }
 
+export function mapId<M extends Record<any, any>, F extends (id: never) => any>(obj: M & { id: never }, f: F): M
 export function mapId<M extends Record<any, any>, F extends (id: M['id']) => any>(obj: M & { id: M['id'] }, f: F): Merge<M, { id: ReturnType<F> }>
 export function mapId<M extends Record<any, any>, Key extends keyof M, F extends (id: M[Key]) => any>(obj: M & Record<Key, M[Key]>, f: F, keys: Key[]): Merge<M, Record<Key, ReturnType<F>>>
 export function mapId<M extends Record<any, any>, Key extends keyof M, F extends (id: M[Key]) => any>(obj: M & Record<Key, M[Key]>, f: F, keys?: Key[]) {
