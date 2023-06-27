@@ -45,4 +45,3 @@ watch([() => props.mode, () => props.ruleset], () => {
     </t-tab>
   </t-tabs>
 </template>
-~/def/common~/def

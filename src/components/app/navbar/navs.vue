@@ -1,15 +1,7 @@
 <script setup lang="ts">
-import {
-  faRankingStar, faSignal,
-} from '@fortawesome/free-solid-svg-icons'
 import { useSession } from '~/store/session'
 import { UserPrivilege } from '~/def/user'
 
-const { addToLibrary } = useFAIcon()
-addToLibrary(
-  faRankingStar,
-  faSignal
-)
 function clearFocus() {
   if (document.activeElement instanceof HTMLElement) {
     document.activeElement.blur()

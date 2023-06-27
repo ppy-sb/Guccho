@@ -1,12 +1,7 @@
 <script setup lang="ts">
-import { faEllipsisH } from '@fortawesome/free-solid-svg-icons'
 import { Mode } from '~/def'
 import type { AppScoresRankingSystemSwitcher } from '#components'
 import type { Label } from '~/composables/useLinks'
-
-const { addToLibrary } = useFAIcon()
-
-addToLibrary(faEllipsisH)
 
 const app$ = useNuxtApp()
 const route = useRoute()

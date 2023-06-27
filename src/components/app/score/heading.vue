@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { faEllipsisH } from '@fortawesome/free-solid-svg-icons'
 import type { inferRouterOutputs } from '@trpc/server'
 
 import type { AppRouter } from '~/server/trpc/routers'
@@ -13,10 +12,6 @@ defineProps<{
   score: Score
   rankingSystem: RankingSystem
 }>()
-
-const { addToLibrary } = useFAIcon()
-
-addToLibrary(faEllipsisH)
 
 const { hasRankingSystem, hasRuleset } = useAdapterConfig()
 
@@ -63,11 +58,6 @@ const scoreFmt = createScoreFormatter({ notation: undefined })
             <span class="text-xl font-semibold">{{ score.playedAt.toLocaleString() }}</span>
           </div>
         </div>
-        <!-- <div class="ml-auto">
-          <t-button variant="ghost" size="sm">
-            <font-awesome-icon icon="fas fa-ellipsis-h" size="2xl" />
-          </t-button>
-        </div> -->
       </div>
       <div class="flex flex-col md:flex-row w-full justify-between">
         <div class="p-8 flex gap-2 items-baseline">

@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
 
-import { faPiedPiperPp } from '@fortawesome/free-brands-svg-icons'
 import type {
   LeaderboardRankingSystem,
   LeaderboardScoreRankingSystem,
-  NumberRange,
   PPRankingSystem,
   ScoreRankingSystem,
 } from '~/def/common'
@@ -18,9 +16,6 @@ import {
 
 import userpageStore from '~/store/userpage'
 
-const { addToLibrary } = useFAIcon()
-
-addToLibrary(faPiedPiperPp)
 const app$ = useNuxtApp()
 
 const page = userpageStore()
@@ -41,7 +36,7 @@ function switchBetweenScoreRanks() {
   && stabilizeScoreRank(prevSwitcherState.rankingSystem)
     === stabilizeScoreRank(page.switcher.rankingSystem)
 }
-const bpPage = shallowRef<NumberRange<0, 10>>(0)
+const bpPage = shallowRef(0)
 
 const {
   data: bp,
@@ -242,4 +237,3 @@ const nextBp = nextPage.bind(null, bpPage)
     </div>
   </template>
 </template>
-~/def/common~/def

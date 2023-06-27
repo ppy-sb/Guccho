@@ -19,7 +19,6 @@ export default defineNuxtConfig({
     '~/assets/styles/transitions.scss',
     '~/assets/styles/daisyui.scss',
     '~/assets/styles/popper.scss',
-    '@fortawesome/fontawesome-svg-core/styles.css',
   ],
 
   app: {

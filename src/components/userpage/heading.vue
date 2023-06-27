@@ -1,10 +1,4 @@
 <script setup lang="ts">
-import {
-  faEnvelope,
-  faHeart,
-  faHeartCrack,
-  faUserGroup,
-} from '@fortawesome/free-solid-svg-icons'
 import { useElementHover } from '@vueuse/core'
 
 import { MutualRelationship, Relationship } from '~/def'
@@ -14,9 +8,6 @@ import { useSession } from '~/store/session'
 import userpageStore from '~/store/userpage'
 
 const page = userpageStore()
-
-const { addToLibrary } = useFAIcon()
-addToLibrary(faUserGroup, faHeartCrack, faHeart, faEnvelope)
 
 const app$ = useNuxtApp()
 const session = useSession()

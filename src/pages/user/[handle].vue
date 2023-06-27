@@ -1,16 +1,7 @@
 <script setup lang="ts">
 import { useIntersectionObserver } from '@vueuse/core'
-import {
-  faBarsStaggered,
-  faHouseUser,
-  faRankingStar,
-} from '@fortawesome/free-solid-svg-icons'
-import { faPiedPiperPp } from '@fortawesome/free-brands-svg-icons'
+
 import userpageStore from '~/store/userpage'
-
-const { addToLibrary } = useFAIcon()
-
-addToLibrary(faRankingStar, faPiedPiperPp, faBarsStaggered, faHouseUser)
 
 const appConf = useAppConfig()
 

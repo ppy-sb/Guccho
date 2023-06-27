@@ -2,9 +2,9 @@ import type { ActiveMode } from './common'
 
 export enum BeatmapSource {
   Unknown = -1,
-  Local = 0,
-  Bancho = 1,
-  PrivateServer = 2,
+  Local,
+  Bancho,
+  PrivateServer,
 }
 export type Unknown = BeatmapSource.Unknown
 export type Local = BeatmapSource.Local
