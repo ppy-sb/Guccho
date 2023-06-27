@@ -1,6 +1,6 @@
 function detectClient() {
   const UA = navigator.userAgent.toLowerCase()
-  return UA.search('safari') >= 0 && UA.search('Chrome') < 0
+  return UA.search('safari') >= 0 && UA.search('chrome') < 0
 }
 function detectServer() {
   const UA = useRequestHeaders(['user-agent'])['user-agent']?.toLowerCase()
