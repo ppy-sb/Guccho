@@ -1,23 +1,27 @@
+$scale: 1.003;
+$translate: 0.5vw;
+$element-translate: 0.13em;
+
 .slide-enter-active {
-  animation: moveFromRight 0.5s ease both;
+  animation: move-from-right 0.5s ease both;
 }
 .slide-leave-active {
-  animation: moveToLeft 0.2s ease-in-out both;
+  animation: move-to-left 0.2s ease-in-out both;
 }
 
-@keyframes moveToLeft {
+@keyframes move-to-left {
   from {
   }
   to {
-    transform: translateX(-0.6vw) scaleX(1.005);
+    transform: translateX(-$translate) scaleX($scale);
     transform-origin: 0%;
     opacity: 0;
   }
 }
 
-@keyframes moveFromRight {
+@keyframes move-from-right {
   from {
-    transform: translateX(0.6vw) scaleX(1.005);
+    transform: translateX($translate) scaleX($scale);
     transform-origin: 0%;
     opacity: 0;
   }
@@ -31,7 +35,7 @@
   /* & input, */
   & .btn,
   & .tab {
-    animation-name: elementsInitial;
+    animation-name: elements-initial;
     animation-timing-function: ease;
     animation-duration: 0.6s;
   }
@@ -47,26 +51,26 @@
   & th > *, */
   & .btn,
   & .tab {
-    animation-name: elementsDisappear;
+    animation-name: elements-disappear;
     animation-timing-function: ease;
     animation-duration: 0.6s;
   }
 }
 
-@keyframes elementsInitial {
+@keyframes elements-initial {
   from {
-    transform: translateX(0.2em);
+    transform: translateX($element-translate);
     transform-origin: 0%;
   }
   to {
   }
 }
 
-@keyframes elementsDisappear {
+@keyframes elements-disappear {
   from {
   }
   to {
-    transform: translateX(-0.1em);
+    transform: translateX(-$element-translate);
   }
 }
 
