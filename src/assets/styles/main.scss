@@ -179,3 +179,10 @@ dialog {
     @apply bg-transparent;
   }
 }
+
+.hover-floating {
+  @apply transition-transform;
+  &:hover {
+    transform: translateY(-3%);
+  }
+}

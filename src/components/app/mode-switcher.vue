@@ -34,7 +34,7 @@ watch(switcher, () => emitData())
       <a
         v-for="(m, mode) in config.mode"
         :key="mode"
-        class="h-mode"
+        class="h-mode hover-floating"
         :class="{
           '!opacity-80 pointer-events-none': switcher.mode === mode,
           '!opacity-10 pointer-events-none':
@@ -52,7 +52,7 @@ watch(switcher, () => emitData())
       <a
         v-for="(m, ruleset) in config.ruleset"
         :key="ruleset"
-        class="h-mode"
+        class="h-mode hover-floating"
         :class="{
           '!opacity-80 pointer-events-none': switcher.ruleset === ruleset,
           '!opacity-20 pointer-events-none':

@@ -186,7 +186,10 @@ onBeforeMount(() => {
         <div class="flex flex-col md:flex-row">
           <div class="w-full md:w-1/3 grow">
             <div class="flex flex-col p-4 md:p-3 h-full">
-              <img class="rounded-xl shadow-md max-w-content" :src="beatmapset.assets['list@2x']" :alt="selectedMap.version" :onerror="placeholder">
+              <picture>
+                <source v-if="beatmapset.assets['list@2x']" :srcset="`${beatmapset.assets.list} 1x, ${beatmapset.assets['list@2x']} 2x`">
+                <img class="rounded-xl shadow-md max-w-content" :src="beatmapset.assets.list" :alt="selectedMap.version" :onerror="placeholder">
+              </picture>
               <div v-if="links" class="pt-2">
                 <div class="w-min">
                   <t-menu>

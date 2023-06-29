@@ -11,12 +11,7 @@ import { BeatmapSource, RankingStatus } from '~/def/beatmap'
 
 const props = withDefaults(
   defineProps<{
-    score?: RankingSystemScore<
-      string,
-      string,
-      ActiveMode,
-      LeaderboardRankingSystem
-    >
+    score: RankingSystemScore<string, string, ActiveMode, LeaderboardRankingSystem>
     mode: ActiveMode
     ruleset: ActiveRuleset
     rankingSystem: LeaderboardRankingSystem
@@ -37,10 +32,7 @@ const rankingStatusIconMapping: Partial<Record<RankingStatus, string>> = {
 
 const numberFmt = createAddCommasFormatter()
 const beatmap = computed(() => {
-  if (!props.score) {
-    return
-  }
-  if (!beatmapIsVisible(props.score.beatmap)) {
+  if (!props.score || !beatmapIsVisible(props.score.beatmap)) {
     return
   }
   return props.score.beatmap
@@ -75,19 +67,23 @@ const meta = computed(
 </script>
 
 <template>
-  <div v-if="score" class="score">
-    <div class="flex justify-between">
+  <div class="score">
+    <div class="flex justify-between hover-floating">
       <div class="flex min-w-0 gap-4">
         <div class="hidden md:block">
-          <img
+          <picture
             v-if="beatmap
               && beatmapIsVisible(beatmap)
               && beatmap.beatmapset.source === BeatmapSource.Bancho"
-            :src="beatmap.beatmapset.assets['list@2x']"
-            :alt="beatmap.beatmapset.meta.title"
-            :onerror="placeholder"
-            class="object-cover w-20 h-16 rounded-xl shadow-md"
           >
+            <source v-if="beatmap.beatmapset.assets['list@2x']" :srcset="`${beatmap.beatmapset.assets.list} 1x, ${beatmap.beatmapset.assets['list@2x']} 2x`">
+            <img
+              :src="beatmap.beatmapset.assets.list"
+              :alt="beatmap.beatmapset.meta.title"
+              :onerror="placeholder"
+              class="object-cover w-20 h-16 rounded-xl shadow-md"
+            >
+          </picture>
           <div v-else class="w-20 h-16">
             <icon name="clarity:unknown-status-line" size="100%" />
           </div>

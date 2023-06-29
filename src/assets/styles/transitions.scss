@@ -42,13 +42,8 @@ $element-translate: 0.13em;
 }
 
 .slide-leave-active {
-  /* & span,
-  & p, */
   & a,
   & img,
-  /* & input, */
-  /* & td,
-  & th > *, */
   & .btn,
   & .tab {
     animation-name: elements-disappear;
