@@ -309,7 +309,7 @@ function resetAvatar() {
           </div>
           <div class="flex p-4 gap-2">
             <t-button size="sm" variant="accent" class="grow">
-              confirm
+              <icon name="ic:round-check" class="w-5 h-5" size="100%" />  confirm
             </t-button>
             <t-button
               size="sm"
@@ -323,6 +323,7 @@ function resetAvatar() {
                 })
               "
             >
+              <icon name="ic:round-clear" class="w-5 h-5" size="100%" />
               cancel
             </t-button>
           </div>
@@ -362,7 +363,7 @@ function resetAvatar() {
               type="button"
               @click="() => changeAvatar?.showModal()"
             >
-              change
+              <icon name="ic:round-edit-note" class="w-5 h-5" size="100%" />  change
             </button>
             <img
               :src="newAvatarURL || `${user.avatarSrc}`"
@@ -487,7 +488,7 @@ function resetAvatar() {
               type="button"
               @click.prevent="() => changePassword?.showModal()"
             >
-              Change
+              <icon name="ic:round-edit-note" class="w-5 h-5" size="100%" /> change
             </button>
           </label>
         </div>

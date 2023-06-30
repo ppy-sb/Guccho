@@ -135,7 +135,7 @@ const {
           v-if="Array.isArray(beatmapsets) && beatmapsets.length"
         >
           <div class="divider font-bold">
-            <span v-if="loading.beatmapsets" class="loading loading-spinner loading-sm" /> beatmapsets
+            <span v-if="loading.beatmapsets" class="loading loading-spinner loading-lg" /> Beatmapsets
           </div>
           <transition-group tag="ul" class="menu" name="left">
             <li
@@ -167,9 +167,9 @@ const {
         </template>
         <template v-if="Array.isArray(beatmaps) && beatmaps.length">
           <div class="divider font-bold">
-            <span v-if="loading.beatmaps" class="loading loading-spinner loading-sm" /> beatmaps
+            <span v-if="loading.beatmaps" class="loading loading-spinner loading-lg" /> Beatmaps
           </div>
-          <transition-group tag="ul" class="menu" name="left">
+          <transition-group tag="ul" class="menu truncate" name="left">
             <li
               v-for="bm in beatmaps"
               :key="`searchResult-bm-${bm.id}`"
@@ -183,14 +183,14 @@ const {
                 }"
                 @click="() => closeModal()"
               >
-                <div class="flex gap-2 items-center">
+                <div class="flex gap-2 items-center max-w-full">
                   <img
                     v-if="isBanchoBeatmapset(bm.beatmapset)"
                     class="h-[30px] mask mask-squircle overflow-hidden object-cover aspect-square"
                     :src="`https://b.ppy.sh/thumb/${bm.beatmapset.foreignId}.jpg`"
                     :onerror="placeholder"
                   >
-                  <span>{{ bm.beatmapset.meta.intl.artist }} - {{ bm.beatmapset.meta.intl.title }} [{{ bm.version }}]</span>
+                  <span class="text-ellipsis">{{ bm.beatmapset.meta.intl.artist }} - {{ bm.beatmapset.meta.intl.title }} [{{ bm.version }}]</span>
                 </div>
               </nuxt-link>
             </li>
@@ -198,7 +198,7 @@ const {
         </template>
         <template v-if="Array.isArray(users) && users.length">
           <div class="divider font-bold">
-            <span v-if="loading.users" class="loading loading-spinner loading-sm" /> users
+            <span v-if="loading.users" class="loading loading-spinner loading-lg" /> Users
           </div>
           <transition-group tag="ul" class="menu" name="left">
             <li

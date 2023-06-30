@@ -17,9 +17,9 @@ const current = inject<Ref<unknown>>('current')
 const clickTab = inject<(value: unknown) => void>('select')
 const disabledSymbol = inject('disabled')
 
-const disabled = computed(() => props.value === disabledSymbol || props.disabled)
-const active = computed(
-  () => !disabled.value && current?.value === props.value
+const isDisabled = computed(() => props.value === disabledSymbol || props.disabled)
+const isActive = computed(
+  () => isDisabled.value === false && current?.value === props.value
 )
 </script>
 
@@ -29,10 +29,10 @@ const active = computed(
     :class="[
       variant && `tab-${variant}`,
       size && `tab-${size}`,
-      active && 'tab-active',
-      disabled && 'cursor-default',
+      isActive && 'tab-active',
+      isDisabled && 'cursor-default',
     ]"
-    @click="!active && !disabled && clickTab?.(value)"
+    @click="!isActive && !isDisabled && clickTab?.(value)"
   >
     <slot />
   </div>

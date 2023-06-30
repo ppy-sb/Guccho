@@ -13,7 +13,7 @@ const emit = defineEmits<(event: 'select', data: Prop) => void>()
 const stack = ref<Prop[]>([props])
 const t = ref<InstanceType<typeof TSingleSelect>>()
 function levelUp(lv: number) {
-  if (!lv) {
+  if (lv <= 0) {
     lv = 1
   }
   stack.value.splice(lv)

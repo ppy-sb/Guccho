@@ -34,5 +34,6 @@ module.exports = {
     }],
     '@typescript-eslint/no-namespace': 'off',
     '@typescript-eslint/consistent-type-imports': 'off',
+    'antfu/no-const-enum': 'off',
   },
 }

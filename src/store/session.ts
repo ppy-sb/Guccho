@@ -23,8 +23,7 @@ export const useSession = defineStore('session', {
       if (!this.user) {
         return
       }
-      const privilege = calcUserPrivilege(this.user)
-      this.privilege = privilege
+      this.privilege = calcUserPrivilege(this.user)
     },
     async login(handle: string, passwordText: string) {
       const md5HashedPassword = md5(passwordText)
@@ -63,10 +62,7 @@ export const useSession = defineStore('session', {
       try {
         const app$ = useNuxtApp()
         const result = await app$.$client.session.retrieve.query()
-        if (!result) {
-          return
-        }
-        if (!result.user) {
+        if (!result?.user) {
           return
         }
         this.$patch({
@@ -74,7 +70,6 @@ export const useSession = defineStore('session', {
           userId: result.user.id,
           user: result.user,
         })
-        // this.setAvatarTimestamp()
         await this.gotSession()
         return true
       }

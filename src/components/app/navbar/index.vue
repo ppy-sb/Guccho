@@ -33,13 +33,11 @@ function clearFocus() {
 <template>
   <app-search-modal ref="searchModalWrapper" />
   <div
-    ref="root"
-    class="w-full transition-[padding] sticky top-0 navbar-container z-40 h-16"
+    ref="root" class="w-full transition-[padding] sticky p-0 top-0 navbar-container z-40 h-16"
     :class="[detached && 'detached']"
   >
     <div
-      class="navbar transition-[border-radius]"
-      :class="[
+      class="navbar transition-[border-radius]" :class="[
         shownMenu.left && 'navbar-tint',
         shownMenu.user && 'navbar-tint',
       ]"
@@ -47,35 +45,19 @@ function clearFocus() {
       <div class="navbar-start">
         <div class="dropdown">
           <label tabindex="0" class="btn btn-ghost lg:hidden">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="w-5 h-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M4 6h16M4 12h8m-8 6h16"
-              />
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16" />
             </svg>
           </label>
           <ul
-            tabindex="0"
-            class="menu menu-tint menu-compact dropdown-content mt-3 p-2 w-52"
-            :class="{
+            tabindex="0" class="menu menu-tint menu-md dropdown-content mt-3 p-2 w-52" :class="{
               'dropdown-open': shownMenu.left,
             }"
           >
             <app-navbar-navs />
           </ul>
         </div>
-        <nuxt-link
-          :to="{ name: 'index' }"
-          class="btn btn-ghost normal-case text-xl hidden lg:flex gap-1"
-        >
+        <nuxt-link :to="{ name: 'index' }" class="btn btn-ghost normal-case text-xl hidden lg:flex gap-1">
           <icon name="ion:paw" />
           {{ config.title }}
         </nuxt-link>
@@ -84,16 +66,11 @@ function clearFocus() {
           @click.prevent="() => searchModalWrapper?.searchModal?.showModal()"
         >
           <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="w-5 h-5" size="100%"
-            fill="none"
-            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" size="100%" fill="none" viewBox="0 0 24 24"
             stroke="currentColor"
           >
             <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
             />
           </svg>
@@ -110,32 +87,23 @@ function clearFocus() {
           @click.prevent="() => searchModalWrapper?.searchModal?.showModal()"
         >
           <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="w-5 h-5" size="100%"
-            fill="none"
-            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" size="100%" fill="none" viewBox="0 0 24 24"
             stroke="currentColor"
           >
             <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
             />
           </svg>
         </button>
         <div v-if="session.loggedIn" class="dropdown dropdown-end">
           <label tabindex="0" class="btn btn-ghost btn-circle avatar">
-            <div
-              class="rounded-full ring ring-gbase-600/70 ring-offset-gbase-100 ring-offset-2 pointer-events-none"
-            >
+            <div class="rounded-full ring ring-gbase-600/70 ring-offset-gbase-100 ring-offset-2 pointer-events-none">
               <img :src="session.$state.user?.avatarSrc" class="avatar-img">
             </div>
           </label>
           <ul
-            tabindex="0"
-            class="menu menu-tint menu-compact dropdown-content mt-3 p-2 w-52"
-            :class="{
+            tabindex="0" class="menu menu-tint menu-md dropdown-content mt-3 p-2 w-52" :class="{
               'dropdown-open': shownMenu.user,
             }"
           >
@@ -144,8 +112,7 @@ function clearFocus() {
                 <nuxt-link
                   :to="{
                     name: 'me-settings',
-                  }"
-                  @click="clearFocus"
+                  }" @click="clearFocus"
                 >
                   <icon name="solar:settings-bold" class="w-5 h-5" size="100%" />
                   Settings
@@ -155,8 +122,7 @@ function clearFocus() {
                 <nuxt-link
                   :to="{
                     name: 'me-relations',
-                  }"
-                  @click="clearFocus"
+                  }" @click="clearFocus"
                 >
                   <icon name="tabler:circles-relation" class="w-5 h-5" size="100%" />
                   Friends & Blocks
@@ -169,14 +135,9 @@ function clearFocus() {
                     params: {
                       handle: session.$state.userId || 0,
                     },
-                  }"
-                  @click="clearFocus"
+                  }" @click="clearFocus"
                 >
-                  <icon
-                    name="mingcute:profile-fill"
-
-                    class="w-5 h-5" size="100%"
-                  />
+                  <icon name="mingcute:profile-fill" class="w-5 h-5" size="100%" />
                   My Profile
                 </nuxt-link>
               </li>
@@ -184,8 +145,7 @@ function clearFocus() {
                 <nuxt-link
                   :to="{
                     name: 'admin',
-                  }"
-                  @click="clearFocus"
+                  }" @click="clearFocus"
                 >
                   <icon name="material-symbols:admin-panel-settings-rounded" class="w-5 h-5" size="100%" />
                   Admin Panel
@@ -222,38 +182,42 @@ function clearFocus() {
 
 <style lang="postcss">
 .navbar-tint,
-.detached > .navbar {
+.detached>.navbar {
   @apply bg-gbase-100/80 dark:bg-gbase-700/80;
   @apply backdrop-blur-md shadow-xl;
   @apply backdrop-saturate-[0.9] backdrop-brightness-[0.95];
   @apply dark:backdrop-saturate-[1] dark:backdrop-brightness-[1];
 }
+
 .navbar {
   @apply border-[1px] border-gbase-50/0 dark:border-gbase-500/0;
-  transition: all 0.5s cubic-bezier(0.05, 1, 0.4, 0.95);
+  transition:all 0.5s cubic-bezier(0.05, 1, 0.4, 0.95);
 
   & .btn,
   & a,
   & label.dropdown {
+    @apply outline-transparent;
     @apply transition-all;
   }
 
-  & .nav-menu li a,
+  & ul.nav-menu {
+    @apply p-0;
+    @apply transition-[padding];
+  }
+
+  & .nav-menu li,
   &.btn {
-    min-height: 3em;
-    height: 3em;
+    min-height:3em;
+    height:3em;
+    @apply outline-transparent;
     @apply transition-all;
-  }
-
-  &.attach:text-lg {
-    @apply text-lg;
   }
 
   .avatar {
     & .avatar-img {
       @apply object-cover aspect-square;
       @apply transition-all;
-      @apply w-8;
+      @apply w-8 h-8;
     }
   }
 
@@ -262,8 +226,10 @@ function clearFocus() {
     @apply gap-0;
   }
 }
+
 .detached {
   @apply px-2 pt-1;
+
   & .navbar {
     @apply border-gbase-50/30 dark:border-gbase-500/30;
     @apply rounded-2xl;
@@ -275,19 +241,27 @@ function clearFocus() {
         @apply w-5 h-5;
       }
     }
+
+    & .nav-menu li {
+      @apply justify-center;
+    }
+
     & .btn,
-    & .nav-menu li a {
-      height: 2rem;
-      min-height: 2rem;
+    & .nav-menu li {
+      height:2rem;
+      min-height:2rem;
+      @apply outline-transparent;
       @apply transition-all;
 
       &.btn-circle {
-        width: 2rem;
-        min-width: 2rem;
+        width:2rem;
+        min-width:2rem;
+        @apply outline-transparent;
+        @apply transition-all;
       }
 
-      &.attach:text-lg {
-        @apply text-base !important;
+      & a {
+        @apply m-0
       }
     }
 
@@ -300,14 +274,10 @@ function clearFocus() {
 </style>
 
 <style lang="postcss" scoped>
-/* .menus {
-  .menu:last-of-type {
-    @apply rounded-b-box;
-  }
-} */
 .menu-tint {
   @apply shadow rounded-box bg-base-100/80 backdrop-blur-lg;
 }
+
 .detached {
   .menu-tint {
     @apply bg-base-100;

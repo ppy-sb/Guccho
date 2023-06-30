@@ -1,5 +1,4 @@
 import { fileURLToPath } from 'node:url'
-import postcss from './postcss.config'
 
 import './scripts/ensure-env'
 
@@ -18,7 +17,6 @@ export default defineNuxtConfig({
     '~/assets/styles/main.scss',
     '~/assets/styles/transitions.scss',
     '~/assets/styles/daisyui.scss',
-    '~/assets/styles/popper.scss',
   ],
 
   app: {
@@ -62,8 +60,6 @@ export default defineNuxtConfig({
     $base: fileURLToPath(new URL('./src/server/backend/$base', import.meta.url)),
     $articles: fileURLToPath(new URL('./articles', import.meta.url)),
   },
-
-  postcss,
 
   typescript: {
     strict: true,
