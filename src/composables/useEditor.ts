@@ -3,11 +3,11 @@ import { Editor as EditorVue } from '@tiptap/vue-3'
 
 import { lowlight } from 'lowlight/lib/core.js'
 import useEditorExtensions from './useEditorExtensionsClient'
-import hljs from '~~/configs/hljs'
+import allLanguages from '~~/configs/hljs'
 
 type JSONCallback = (content: JSONContent) => void
-type LanguageKey = keyof typeof hljs
-type Language = typeof hljs[LanguageKey]
+type LanguageKey = keyof typeof allLanguages
+type Language = typeof allLanguages[LanguageKey]
 
 export async function importLowlightLanguage(language: Language) {
   return await import(`../../node_modules/highlight.js/es/languages/${language}.js`)
@@ -24,7 +24,7 @@ export async function useLowlightLanguage(language: Language) {
 }
 export async function parseAndImportHighlightLibFromHtml(html: string) {
   const languages = getLanguagesFromHTML(html)
-  return Promise.all(languages.map(lKey => useLowlightLanguage(hljs[lKey])))
+  return Promise.all(languages.map(lKey => useLowlightLanguage(allLanguages[lKey])))
 }
 
 export function getLanguagesFromHTML(html: string) {
@@ -32,7 +32,7 @@ export function getLanguagesFromHTML(html: string) {
   const languages = [] as LanguageKey[]
   for (const _language of matchedLanguages) {
     const language = _language[1] as LanguageKey
-    if (!hljs[language]) {
+    if (!allLanguages[language]) {
       continue
     }
     languages.push(_language[1] as LanguageKey)
@@ -55,11 +55,11 @@ export function loadAllLanguagesInJSONContent(json: JSONContent) {
         return undefined
       }
 
-      if (!hljs[language]) {
+      if (!allLanguages[language]) {
         return undefined
       }
 
-      return useLowlightLanguage(hljs[language])
+      return useLowlightLanguage(allLanguages[language])
     })).then(noop)
     : Promise.resolve()
 }

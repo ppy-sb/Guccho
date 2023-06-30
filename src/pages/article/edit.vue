@@ -144,65 +144,70 @@ async function postFetch() {
 
 <template>
   <section class="container pb-8 mx-auto custom-container lg:px-2">
-    <ul class="menu menu-xs bg-base-100 rounded-lg max-w-xs w-full">
-      <tree
-        v-bind="articles" @select="(entry) => {
-          article.slug = entry.path
-          update()
-          postFetch()
-        }"
-      />
-    </ul>
-    <div class="flex gap-2 items-baseline">
-      Editing: <input
-        v-model="article.slug" type="text" class="input input-sm shadow-lg" :class="{
-          'input-error': !article.slug,
-        }"
-      >
-      <button class="btn btn-sm btn-info" @click="() => { update(); postFetch() }">
-        Load
-      </button>
-      <button class="btn btn-sm btn-primary" @click="() => { create(); postFetch() }">
-        New
-      </button>
-      <button
-        class="btn btn-sm btn-success" :class="{
-          'btn-disabled': !(article.slug && article.json),
-        }" @click="() => { save(); postFetch() }"
-      >
-        Save
-      </button>
-      <div class="divider divider-horizontal" />
-      <button
-        class="btn btn-sm btn-error" :class="{
-          'btn-disabled': !(article.slug && access?.write),
-        }" @click="() => { del().then(postFetch) }"
-      >
-        Delete
-      </button>
-      <div class="divider divider-horizontal" />
-      <input ref="importArticleFile" type="file" hidden @change="importArticle">
-      <button class="btn btn-sm btn-primary" @click="importArticleFile?.click">
-        Import
-      </button>
-      <button class="btn btn-sm btn-secondary" @click="exportArticle">
-        Export
-      </button>
-    </div>
-    <div class="divider" />
-    <div class="flex flex-col md:flex-row gap-3 flex-wrap">
-      <div class="form-control flex-row items-center gap-2">
-        <input v-model="article.dynamic" class="checkbox" type="checkbox">
-        <label class="label">Dynamic Content</label>
-      </div>
-      <div class="divider divider-horizontal" />
-      <div class="form-control flex-row items-center gap-2">
-        <label class="label pl-0">Read Access</label>
-        <t-multi-select v-model="article.privilege.read" size="sm" :options="options(readPrivileges)" />
-      </div>
-      <div class="form-control  flex-row items-center gap-2">
-        <label class="label">Write Access</label>
-        <t-multi-select v-model="article.privilege.write" size="sm" :options="options(privileges)" />
+    <div class="flex">
+      <ul class="menu menu-xs bg-base-100 rounded-lg max-w-xs w-full">
+        <tree
+          v-bind="articles" @select="(entry) => {
+            article.slug = entry.path
+            update()
+            postFetch()
+          }"
+        />
+      </ul>
+      <div class="divider-horizontal divider" />
+      <div>
+        <div class="flex gap-2 items-baseline">
+          Editing: <input
+            v-model="article.slug" type="text" class="input input-sm shadow-lg" :class="{
+              'input-error': !article.slug,
+            }"
+          >
+          <button class="btn btn-sm btn-info" @click="() => { update(); postFetch() }">
+            Load
+          </button>
+          <button class="btn btn-sm btn-primary" @click="() => { create(); postFetch() }">
+            New
+          </button>
+          <button
+            class="btn btn-sm btn-success" :class="{
+              'btn-disabled': !(article.slug && article.json),
+            }" @click="() => { save(); postFetch() }"
+          >
+            Save
+          </button>
+          <div class="divider divider-horizontal" />
+          <button
+            class="btn btn-sm btn-error" :class="{
+              'btn-disabled': !(article.slug && access?.write),
+            }" @click="() => { del().then(postFetch) }"
+          >
+            Delete
+          </button>
+          <div class="divider divider-horizontal" />
+          <input ref="importArticleFile" type="file" hidden @change="importArticle">
+          <button class="btn btn-sm btn-primary" @click="importArticleFile?.click">
+            Import
+          </button>
+          <button class="btn btn-sm btn-secondary" @click="exportArticle">
+            Export
+          </button>
+        </div>
+        <div class="divider" />
+        <div class="flex flex-col md:flex-row gap-3 flex-wrap">
+          <div class="form-control flex-row items-center gap-2">
+            <input v-model="article.dynamic" class="checkbox" type="checkbox">
+            <label class="label">Dynamic Content</label>
+          </div>
+          <div class="divider divider-horizontal" />
+          <div class="form-control flex-row items-center gap-2">
+            <label class="label pl-0">Read Access</label>
+            <t-multi-select v-model="article.privilege.read" size="sm" :options="options(readPrivileges)" />
+          </div>
+          <div class="form-control  flex-row items-center gap-2">
+            <label class="label">Write Access</label>
+            <t-multi-select v-model="article.privilege.write" size="sm" :options="options(privileges)" />
+          </div>
+        </div>
       </div>
     </div>
     <lazy-content-editor v-if="article.json" ref="editor" v-model="article.json" class="safari-performance-boost mt-2" />
