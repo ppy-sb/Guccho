@@ -108,37 +108,24 @@ const meta = computed(
                 },
               }" class="truncate"
             >
-              <template v-if="meta">
-                <span class="text-sm truncate md:text-md lg:text-lg font-bold flex gap-2 items-center">
-                  <!-- eslint-disable-next-line vue/no-extra-parens -->
-                  <icon v-if="beatmap.status in rankingStatusIconMapping" :name="(rankingStatusIconMapping[beatmap.status] as string)" :aria-label="beatmap.status" />
-                  {{ meta.artist }} - {{ meta.title }}</span>
-              </template>
+              <div v-if="meta" class="flex gap-2 items-center">
+                <icon v-if="beatmap.status in rankingStatusIconMapping" :name="rankingStatusIconMapping[beatmap.status]" class="w-5 h-5 md:w-6 md:h-6 lg:w-6 lg:h-6" :aria-label="beatmap.status" />
+                <span class=" text-sm truncate md:text-md lg:text-lg font-bold">
+                  {{ meta.artist }} - {{ meta.title }}
+                </span>
+              </div>
             </router-link>
           </template>
           <div v-else>
             Unknown Beatmap
           </div>
           <div class="flex text-xs gap-2 md:text-sm lg:text-md flex-wrap">
-            <div class="flex gap-2">
-              <span v-if="beatmap" class="font-semibold">
-                {{ beatmap.version }}
-              </span>
-              <span class="font-light">
-                {{ score.mods.map(i => StableMod[i]).join(", ") || "NoMod" }}
-              </span>
-            </div>
-            <div class="flex">
-              <div v-if="beatmap" class="font-semibold">
-                {{ score.maxCombo }} / {{ beatmap.properties.maxCombo }}
-              </div>
-              <div v-else class="font-semibold">
-                {{ score.maxCombo }}
-              </div>
-              <div class="font-light">
-                x
-              </div>
-            </div>
+            <span v-if="beatmap" class="font-semibold">
+              {{ beatmap.version }}
+            </span>
+            <span v-if="score.mods.length" class="flex justify-end gap-1 tooltip tooltip-primary lg:tooltip-right" :data-tip="score.mods.map(m => StableMod[m]).join(', ')">
+              <app-mod v-for="mod in score.mods" :key="mod" :mod="mod" class="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6" />
+            </span>
           </div>
           <div class="mt-auto map-date">
             <time class="text-xs italic lg:text-sm font-extralight">
@@ -162,11 +149,33 @@ const meta = computed(
               </div>
             </template>
           </div>
-          <div class="flex mt-auto text-xs md:text-md lg:text-md whitespace-nowrap justify-end">
-            <b class="font-mono">{{ score.accuracy.toFixed(2) }}</b>
-            <div class="text-light">
-              % Acc
-            </div>
+          <div class="flex gap-2 mt-auto text-sm md:text-md lg:text-md whitespace-nowrap justify-end">
+            <span class="flex items-center">
+              <template v-if="beatmap">
+                <div class="font-semibold">
+                  {{ score.maxCombo }}
+                </div>
+                <div class="font-light text-xs px-1">
+                  /
+                </div>
+                <div>
+                  {{ beatmap.properties.maxCombo }}
+                </div>
+              </template>
+              <div v-else>
+                {{ score.maxCombo }}
+              </div>
+              <div class="font-light">
+                x
+              </div>
+            </span>
+
+            <span class="flex">
+              <b class="font-mono">{{ score.accuracy.toFixed(2) }}</b>
+              <div class="text-light">
+                % Acc
+              </div>
+            </span>
           </div>
         </div>
         <div class="flex items-center justify-center">

@@ -144,13 +144,15 @@ async function postFetch() {
 
 <template>
   <section class="container pb-8 mx-auto custom-container lg:px-2">
-    <tree
-      v-bind="articles" @select="(entry) => {
-        article.slug = entry.path
-        update()
-        postFetch()
-      }"
-    />
+    <ul class="menu menu-xs bg-base-100 rounded-lg max-w-xs w-full">
+      <tree
+        v-bind="articles" @select="(entry) => {
+          article.slug = entry.path
+          update()
+          postFetch()
+        }"
+      />
+    </ul>
     <div class="flex gap-2 items-baseline">
       Editing: <input
         v-model="article.slug" type="text" class="input input-sm shadow-lg" :class="{
