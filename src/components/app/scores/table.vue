@@ -1,8 +1,8 @@
 <script setup lang="ts">
+import { StableMod } from '~/def/score'
 import type { RankingSystem } from '~/def/common'
 import { Rank } from '~/def'
 import type { BeatmapLeaderboard } from '~/def/leaderboard'
-import { StableMod } from '~/def/score'
 
 const props = withDefaults(
   defineProps<{
@@ -70,8 +70,8 @@ const pp = createPPFormatter()
           <td class="text-right">
             #{{ index + 1 }}
           </td>
-          <td class="text-right font-mono">
-            {{ item.score.mods.map(m => StableMod[m]).join(", ") }}
+          <td class="flex justify-end gap-1 tooltip tooltip-primary lg:tooltip-right" :data-tip="item.score.mods.map(m => StableMod[m]).join(', ')">
+            <app-mod v-for="mod in item.score.mods" :key="mod" :mod="mod" class="w-6 h-6" />
           </td>
           <td class="text-right font-mono">
             {{ comma(item.score.score) }}
