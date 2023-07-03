@@ -216,7 +216,7 @@ export const router = _router({
         if (err.message === 'has-relationship') {
           throw new TRPCError({
             code: 'CONFLICT',
-            message: 'need to delete old relation before create new',
+            message: 'you have existing relations, delete old one first.',
           })
         }
       }

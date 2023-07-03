@@ -2,6 +2,9 @@ import type { ZodType, z } from 'zod'
 import { ZodError, literal, object, string, union } from 'zod'
 import { fromZodError } from 'zod-validation-error'
 import { zodFQDN, zodPath } from '~/server/trpc/shapes'
+import { Logger } from '$base/log'
+
+const logger = Logger.child({ label: 'env' })
 
 export const database = literal('database')
 export const memory = literal('memory')
@@ -65,18 +68,21 @@ export function ensureAndGetEnv<Z extends ZodType>(zod: Z): z.infer<Z> {
   }
   catch (e) {
     if (!(e instanceof ZodError)) {
+      logger.error(e)
       throw e
     }
+    const formattedZodError = fromZodError(
+      e,
+      {
+        prefix: 'env validation error:\n',
+        prefixSeparator: '',
+        issueSeparator: ';\n',
+        unionSeparator: ',\n',
+      }
+    )
+    logger.error(formattedZodError)
     throw new Error(
-      fromZodError(
-        e,
-        {
-          prefix: 'env validation error:\n',
-          prefixSeparator: '',
-          issueSeparator: ';\n',
-          unionSeparator: ',\n',
-        }
-      ).message
+      formattedZodError.message
     )
   }
 }
