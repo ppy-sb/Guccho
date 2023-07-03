@@ -4,7 +4,6 @@ const props = defineProps<{
   size?: string
   loading?: boolean
 }>()
-const emit = defineEmits<(e: 'click') => void>()
 </script>
 
 <template>
@@ -15,7 +14,6 @@ const emit = defineEmits<(e: 'click') => void>()
       props.size && `btn-${props.size}`,
       props.loading && 'loading',
     ]"
-    @click="emit('click')"
   >
     <slot />
   </button>

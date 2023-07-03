@@ -1,18 +1,13 @@
+/** @type {import('eslint').Linter.Config} */
 module.exports = {
   root: true,
   env: {
     browser: true,
     node: true,
   },
-  parserOptions: {
-    ecmaVersion: 13,
-    parser: '@typescript-eslint/parser',
-    sourceType: 'module',
-  },
   plugins: ['vue'],
   extends: [
     'eslint:recommended',
-    '@nuxt/eslint-config',
     'plugin:vue/vue3-recommended',
     '@antfu',
   ],
@@ -34,6 +29,5 @@ module.exports = {
     }],
     '@typescript-eslint/no-namespace': 'off',
     '@typescript-eslint/consistent-type-imports': 'off',
-    'antfu/no-const-enum': 'off',
   },
 }

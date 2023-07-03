@@ -109,7 +109,7 @@ const meta = computed(
               }" class="truncate"
             >
               <div v-if="meta" class="flex gap-2 items-center">
-                <icon v-if="beatmap.status in rankingStatusIconMapping" :name="rankingStatusIconMapping[beatmap.status]" class="w-5 h-5 md:w-6 md:h-6 lg:w-6 lg:h-6" :aria-label="beatmap.status" />
+                <icon v-if="beatmap.status in rankingStatusIconMapping" :name="rankingStatusIconMapping[beatmap.status] as string" class="w-5 h-5 md:w-6 md:h-6 lg:w-6 lg:h-6" :aria-label="beatmap.status" />
                 <span class=" text-sm truncate md:text-md lg:text-lg font-bold">
                   {{ meta.artist }} - {{ meta.title }}
                 </span>

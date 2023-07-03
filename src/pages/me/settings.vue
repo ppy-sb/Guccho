@@ -10,6 +10,7 @@ import { useSession } from '~/store/session'
 import { ArticleProvider } from '$base/server/article'
 import { UserPrivilege } from '~/def/user'
 
+// eslint-disable-next-line antfu/no-const-enum
 const enum UploadingAvatarStatus {
   Idle,
   Uploading,
