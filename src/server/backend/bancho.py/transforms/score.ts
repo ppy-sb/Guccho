@@ -50,7 +50,7 @@ export function toScore<RS extends PPRankingSystem>({
     ActiveRuleset,
     RS,
     (typeof score)['beatmap'] extends null
-      ? RankingStatus.Unknown
+      ? BeatmapSource.Unknown
       : BeatmapSource.Bancho | BeatmapSource.PrivateServer | BeatmapSource.Unknown,
     (typeof score)['beatmap'] extends null ? RankingStatus.NotFound : RankingStatus
   >
