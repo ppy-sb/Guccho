@@ -64,15 +64,63 @@ yarn start:prod
 
 Checkout the [deployment documentation](https://v3.nuxtjs.org/guide/deploy/presets) for more information.
 
-## The team (Guccho)
-
-- [ppy.sb](https://github.com/ppy-sb)
-- [Varkaria](https://github.com/Varkaria)
-
 ### todo(s)
 
 TODO Give first registered user owner privilege
 
-## AppConfig and ServerConfig
+## AppConfig
 
-see `src/app.config.ts` and `src/server/backend/bancho.py/exports.ts`, more detailed readme will be provided later.
+see `src/app.config.ts`
+
+```mermaid
+flowchart TB
+    A[Gamer] --> |Browser| web[/Guccho Web/]
+    web --> |superjson| trpc(TRPC)
+    trpc --> |devalue| web
+    subgraph backend [Abstraction]
+        session(Session) --- user(User)
+        user --- relation(Relationship)
+        user --- score(Score)
+        score --- beatmap
+        leaderboard(Leaderboard) --- beatmap(Beatmap)
+        status(Status)
+        log(Log)
+    end
+    subgraph impl [Implementations]
+        ppy.sb(ppy.sb) === |extends| bancho.py
+        bancho.py(Bancho.py) === |implements, extends| $base
+        $base([Base])
+    end
+    subgraph resource [Resources]
+        mysql[(MySQL)]
+        gulag[/Bancho.py Server/]
+        redis[(Redis)]
+        file[(File)]
+        memory[/Memory/]
+    end
+
+    trpc --- auth(Auth)
+    auth --- session
+    session ----- $base
+    log ----- $base
+    status ----- $base
+
+    trpc ==== backend
+    backend ====== impl
+
+    $base --- memory
+    $base --- redis
+    $base --- file
+    
+    ppy.sb --- |customize| mysql
+    
+    bancho.py --- gulag
+    bancho.py --- redis
+    bancho.py --- mysql
+
+```
+
+## The team (Guccho)
+
+- [ppy.sb](https://github.com/ppy-sb)
+- [Varkaria](https://github.com/Varkaria)
