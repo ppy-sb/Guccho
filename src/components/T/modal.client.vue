@@ -5,12 +5,12 @@ const emits = defineEmits<{
   (e: 'cancel', v: Event): void
   (e: 'closed'): void
   (e: 'shown'): void
+  (e: 'ready'): void
 }>()
 
 const { status, close, show, onNativeCancel: onNativeClose } = useZoomModal()
 
 const wrapper = shallowRef<HTMLDialogElement>()
-// const status = shallowRef(0)
 
 function showModal(cb?: Callback) {
   if (!wrapper.value) {
@@ -32,6 +32,12 @@ defineExpose({
   showModal,
   closeModal,
   wrapper,
+})
+
+onMounted(() => {
+  nextTick(() => {
+    emits('ready')
+  })
 })
 </script>
 

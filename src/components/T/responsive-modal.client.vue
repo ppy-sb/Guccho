@@ -14,9 +14,9 @@ defineExpose({
 </script>
 
 <template>
-  <t-modal ref="e" v-slot="{ closeModal }" v-bind="$props">
+  <t-modal ref="e" v-slot="props">
     <div response-modal class="h-[100dvh] md:h-auto flex items-end pb-8">
-      <slot v-bind="{ closeModal }" />
+      <slot v-bind="props" />
     </div>
   </t-modal>
 </template>

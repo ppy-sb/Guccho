@@ -16,6 +16,12 @@ useHead({
       `${page.user?.name} | ${page.switcher.mode} | ${page.switcher.ruleset} | ${page.switcher.rankingSystem}`
   ),
 })
+definePageMeta({
+  alias: [
+    // compatible with osu stable client
+    '/u/:handle',
+  ],
+})
 
 // directive is not working: yield error when navigate to other page
 const visible = reactive({

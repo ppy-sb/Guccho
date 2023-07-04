@@ -23,9 +23,12 @@ const config = useAppConfig()
 const route = useRoute()
 
 const session = useSession()
+
 definePageMeta({
   middleware: ['auth'],
+  alias: ['/home/account/edit'],
 })
+
 useHead({
   titleTemplate: `Settings - ${config.title}`,
 })
@@ -77,6 +80,9 @@ const changePasswordForm = shallowReactive<{
   repeatNewPassword: undefined,
 })
 const changePasswordError = shallowRef('')
+
+// compatible with stable client: change avatar
+const showChangeAvatar = route.hash === '#avatar'
 
 async function saveAvatar() {
   if (!croppedAvatar.value) {
@@ -191,7 +197,12 @@ function resetAvatar() {
 
 <template>
   <section v-if="user" class="container mx-auto custom-container">
-    <t-responsive-modal ref="changeAvatar" v-slot="{ closeModal }" class="my-auto">
+    <t-responsive-modal
+      ref="changeAvatar"
+      v-slot="{ closeModal }"
+      class="my-auto"
+      @ready="() => /* compatible with stable client */ showChangeAvatar && changeAvatar?.showModal()"
+    >
       <div class="p-4 rounded-xl flex flex-col gap-2 shadow-xl bg-gbase-50">
         <div class="flex items-center justify-center w-full">
           <label v-if="!newAvatar" for="dropzone-file" class="dropzone">
@@ -358,9 +369,9 @@ function resetAvatar() {
         <div
           class="flex items-end justify-center p-3 overflow-hidden shadow-md gap-4 md:justify-start bg-gbase-200/30 dark:bg-gbase-700/40 sm:rounded-3xl lg:mr-4"
         >
-          <div class="relative z-10 mask mask-squircle hoverable w-100 self-center">
+          <div class="relative z-10 mask mask-squircle hoverable w-100 self-center [&>img]:hover:blur-lg [&>img]:hover:opacity-50 no-animation">
             <button
-              class="absolute top-0 z-20 w-full h-full btn btn-primary hover:bg-wewak-500/30 hover:active:border-wewak-500/30 no-animation"
+              class="absolute top-0 z-20 w-full h-full btn btn-primary hover:bg-primary/50 focus:active:bg-primary/50"
               type="button"
               @click="() => changeAvatar?.showModal()"
             >
