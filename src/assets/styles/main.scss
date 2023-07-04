@@ -181,3 +181,11 @@ dialog {
     transform: translateY(-3%);
   }
 }
+
+.safari .safari-performance-boost {
+  @apply max-h-screen;
+
+  .editor__content {
+    @apply overflow-y-auto;
+  }
+}

@@ -579,13 +579,3 @@ function resetAvatar() {
   @apply object-cover aspect-square;
 }
 </style>
-
-<style lang="scss">
-.safari .safari-performance-boost {
-  @apply max-h-80;
-
-  .editor__content {
-    @apply overflow-y-auto;
-  }
-}
-</style>
