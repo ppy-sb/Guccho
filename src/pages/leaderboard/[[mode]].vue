@@ -126,14 +126,12 @@ function reloadPage(i?: number) {
       <!-- <fetch-overlay :fetching="pending" /> -->
 
       <div v-if="table.length" class="relative mx-auto xl:rounded-lg w-full max-w-max">
-        <table
-          class="table mx-2 table-compact border-separate whitespace-nowrap"
-        >
-          <thead class="rounded-lg">
-            <tr>
-              <th>rank</th>
-              <th>flag</th>
-              <th>player</th>
+        <table class="table table-sm px-2 whitespace-nowrap">
+          <thead>
+            <tr class="bg-base-100">
+              <th>Rank</th>
+              <th>Flag</th>
+              <th>Player</th>
               <th class="px-4 font-semibold text-center">
                 {{
                   config.leaderboardRankingSystem[selected.rankingSystem].name
@@ -147,17 +145,15 @@ function reloadPage(i?: number) {
               </th>
             </tr>
           </thead>
-          <transition name="slide">
-            <tbody>
-              <leaderboard-user-table
-                v-for="(item, index) in table"
-                :key="index"
-                :user="item.user"
-                :in-this-leaderboard="item.inThisLeaderboard"
-                :sort="selected.rankingSystem"
-              />
-            </tbody>
-          </transition>
+          <tbody>
+            <leaderboard-user-table
+              v-for="(item, index) in table"
+              :key="index"
+              :user="item.user"
+              :in-this-leaderboard="item.inThisLeaderboard"
+              :sort="selected.rankingSystem"
+            />
+          </tbody>
         </table>
       </div>
       <div
@@ -171,8 +167,11 @@ function reloadPage(i?: number) {
           Wanna be the first one? Go for it.
         </h2>
       </div>
+      <div class="join mx-auto outline outline-2">
+        <input v-for="i in 5" :key="`pagination-${i}`" class="join-item btn btn-ghost checked:outline outline-2" type="radio" name="options" :aria-label="i.toString()" @click="reloadPage(i)">
+      </div>
       <div class="flex py-4">
-        <t-tabs
+        <!-- <t-tabs
           :model-value="page"
           class="mx-auto items-baseline"
           size="lg"
@@ -186,14 +185,14 @@ function reloadPage(i?: number) {
           >
             {{ i }}
           </t-tab>
-        </t-tabs>
+        </t-tabs> -->
       </div>
     </div>
   </div>
 </template>
 
 <style lang="postcss">
-.bigger-when-active.tab-active {
+.bigger-when-active:active {
   @apply font-semibold drop-shadow-md border-2 rounded-lg
 }
 </style>

@@ -11,12 +11,13 @@ html {
   animation: none;
 
   @each $variant in $variants {
-    &.btn-#{$variant} {
+    &.btn-#{$variant}:not(.no-shadow) {
       @apply shadow-#{$variant}/40 hover:shadow-#{$variant}/60 dark:shadow-#{$variant}/20 hover:dark:shadow-#{$variant}/30;
     }
   }
 
-  &.btn-ghost {
+  &.btn-ghost,
+  &.no-shadow {
     @apply shadow-none;
   }
 }

@@ -79,8 +79,8 @@ const formatter = new Intl.NumberFormat(undefined, option)
 <style scoped lang="scss">
 @import '~/assets/styles/text-shadow';
 tr [data-rank="1"] {
-  @apply text-yellow-100 dark:text-yellow-400;
-  @apply shadow-yellow-600/80 dark:shadow-yellow-200/30;
+  @apply text-yellow-100 dark:text-yellow-600;
+  @apply shadow-yellow-800/80 dark:shadow-yellow-200/30;
   @extend .text-shadow-sm;
 }
 tr [data-rank="2"] {
