@@ -5,7 +5,7 @@ import type { AppScoresRankingSystemSwitcher } from '#components'
 import type { Label } from '~/composables/useLinks'
 
 definePageMeta({
-  alias: ['/s/:id'],
+  alias: ['/s/:id', '/beatmapsets/:id'],
 })
 
 const app$ = useNuxtApp()

@@ -17,6 +17,7 @@ navigateTo({
 })
 
 definePageMeta({
+  alias: ['/b/:id', '/beatmaps/:id'],
   render() {},
 })
 </script>
