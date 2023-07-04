@@ -3,6 +3,10 @@ import { Mode } from '~/def'
 import type { AppScoresRankingSystemSwitcher } from '#components'
 import type { Label } from '~/composables/useLinks'
 
+definePageMeta({
+  alias: ['/s/:id'],
+})
+
 const app$ = useNuxtApp()
 const route = useRoute()
 const config = useAppConfig()
@@ -54,27 +58,6 @@ if (
   })
 }
 
-function rewriteAnchor() {
-  const url = new URL(window.location.toString())
-  if (selectedMap.value) {
-    url.searchParams.set('beatmap', selectedMap.value.md5)
-  }
-
-  url.searchParams.set('rank', switcher.rankingSystem)
-  url.searchParams.set('mode', switcher.mode)
-  url.searchParams.set('ruleset', switcher.ruleset)
-  history.replaceState({}, '', url)
-}
-
-function updateSwitcher() {
-  if (!selectedMap.value) {
-    return
-  }
-  if (selectedMap.value.mode !== Mode.Osu) {
-    switcher.mode = selectedMap.value.mode
-  }
-}
-
 watch(selectedMapMd5, updateSwitcher)
 
 const { data: leaderboard, refresh } = await useAsyncData(async () => {
@@ -100,12 +83,6 @@ useHead({
   ),
 })
 
-async function update() {
-  await refresh()
-  updateSwitcher()
-  rewriteAnchor()
-}
-
 const scoreRS = shallowRef<InstanceType<
   typeof AppScoresRankingSystemSwitcher
 > | null>(null)
@@ -129,6 +106,33 @@ onBeforeMount(() => {
     ? useExternalBeatmapsetLinks(beatmapset.value)
     : undefined
 })
+
+function rewriteAnchor() {
+  const url = new URL(window.location.toString())
+  if (selectedMap.value) {
+    url.searchParams.set('beatmap', selectedMap.value.md5)
+  }
+
+  url.searchParams.set('rank', switcher.rankingSystem)
+  url.searchParams.set('mode', switcher.mode)
+  url.searchParams.set('ruleset', switcher.ruleset)
+  history.replaceState({}, '', url)
+}
+
+function updateSwitcher() {
+  if (!selectedMap.value) {
+    return
+  }
+  if (selectedMap.value.mode !== Mode.Osu) {
+    switcher.mode = selectedMap.value.mode
+  }
+}
+
+async function update() {
+  await refresh()
+  updateSwitcher()
+  rewriteAnchor()
+}
 </script>
 
 <template>

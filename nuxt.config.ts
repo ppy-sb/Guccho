@@ -17,6 +17,7 @@ export default defineNuxtConfig({
     '~/assets/styles/main.scss',
     '~/assets/styles/transitions.scss',
     '~/assets/styles/daisyui.scss',
+    '~/assets/styles/popper.scss',
   ],
 
   app: {
