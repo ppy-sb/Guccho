@@ -2,7 +2,7 @@
 
 ## What is Guccho?
 
-Guccho is a web interface to interact with osu private servers with compatibility in mind.
+Guccho is a client interface to interact with osu private servers with compatibility in mind.
 
 ## Requirements
 
@@ -72,13 +72,13 @@ TODO Give first registered user owner privilege
 
 see `src/app.config.ts`
 
+## Diagram
+
 ```mermaid
 flowchart TB
-    A[Gamer] --> |Browser| web[/Guccho Web/]
-    web --> |superjson| trpc(TRPC)
-    trpc --> |devalue| web
-    subgraph backend [Abstraction]
+    subgraph backend [Abstracted Providers]
         session(Session) --- user(User)
+        user --- avatar(Avatar)
         user --- relation(Relationship)
         user --- score(Score)
         score --- beatmap
@@ -98,25 +98,37 @@ flowchart TB
         file[(File)]
         memory[/Memory/]
     end
+    subgraph client [Client]
+      client-session(Client Session)
+      trpc-client(TRPC Client)
+    end
+    subgraph server [Server]
+      backend
+      impl
+    end
+    A[Gamer] ---> |Browser| client[/Guccho client/]
+    
+    trpc-client ===> |superjson| backend
+    backend ===> |devalue| trpc-client
 
-    trpc --- auth(Auth)
-    auth --- session
+    
+
     session ----- $base
     log ----- $base
     status ----- $base
 
-    trpc ==== backend
-    backend ====== impl
 
-    $base --- memory
-    $base --- redis
-    $base --- file
+    backend ====== |$active| impl
+
+    ppy.sb --- |additional tables| mysql
     
-    ppy.sb --- |customize| mysql
-    
-    bancho.py --- gulag
-    bancho.py --- redis
+    bancho.py --- |api v1| gulag
+    bancho.py --- |leaderboard| redis
     bancho.py --- mysql
+
+    $base --- |session| redis
+    $base --- |runtime, session| memory
+    $base --- |log| file
 
 ```
 
