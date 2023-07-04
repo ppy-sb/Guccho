@@ -20,33 +20,22 @@ const mode = (
     ? pMode
     : availableModes[0]
 ) as ActiveMode
+
 const ruleset = (
   (isString(pRuleset) && availableRulesets.includes(pRuleset))
     ? pRuleset
     : availableRulesets[0]
 ) as ActiveRuleset
+
 const rankingSystem = (
   (isString(pRankingSystem) && availableRankingSystems.includes(pRankingSystem))
     ? pRankingSystem
     : availableRankingSystems[0]
 ) as LeaderboardRankingSystem
+
 const page = shallowRef((isString(pPage) && Number.parseInt(pPage)) || 1)
 
 const perPage = 20
-
-if (!pMode || !pRuleset || !pRankingSystem) {
-  // rewrite url to show stat of the page
-  await navigateTo({
-    name: 'leaderboard-mode',
-    params: {
-      mode,
-    },
-    query: {
-      ruleset,
-      ranking: rankingSystem,
-    },
-  })
-}
 
 const total = await app$.$client.leaderboard.overallRange.query()
 
@@ -101,7 +90,6 @@ function reloadPage(i?: number) {
   if (i) {
     page.value = i
   }
-  table.value && (table.value.length = 0)
   rewriteHistory()
   refresh()
 }
@@ -137,7 +125,7 @@ function reloadPage(i?: number) {
     >
       <!-- <fetch-overlay :fetching="pending" /> -->
 
-      <div v-if="table.length" class="relative mx-auto xl:rounded-lg w-full max-w-max overflow-x-auto">
+      <div v-if="table.length" class="relative mx-auto xl:rounded-lg w-full max-w-max">
         <table
           class="table mx-2 table-compact border-separate whitespace-nowrap"
         >
@@ -160,7 +148,7 @@ function reloadPage(i?: number) {
             </tr>
           </thead>
           <transition name="slide">
-            <tbody v-if="!pending">
+            <tbody>
               <leaderboard-user-table
                 v-for="(item, index) in table"
                 :key="index"
@@ -168,10 +156,6 @@ function reloadPage(i?: number) {
                 :in-this-leaderboard="item.inThisLeaderboard"
                 :sort="selected.rankingSystem"
               />
-
-              <!-- <template v-else>
-                    Loading...
-                  </template> -->
             </tbody>
           </transition>
         </table>
