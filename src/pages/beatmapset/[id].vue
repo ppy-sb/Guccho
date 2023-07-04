@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { BeatmapSource } from '~/def/beatmap'
 import { Mode } from '~/def'
 import type { AppScoresRankingSystemSwitcher } from '#components'
 import type { Label } from '~/composables/useLinks'
@@ -254,7 +255,7 @@ async function update() {
                   Source | ID
                 </dt>
                 <dd class="stripe-even  flex gap-1 items-center">
-                  {{ beatmapset.source }} | {{ selectedMap.foreignId }}
+                  {{ BeatmapSource[beatmapset.source] }} | {{ selectedMap.foreignId }}
                 </dd>
               </div>
               <div class="stripe-odd">

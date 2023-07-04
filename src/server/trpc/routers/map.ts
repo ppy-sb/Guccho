@@ -19,4 +19,10 @@ export const router = _router({
       }
       return returnValue
     }),
+  beatmap: p.input(z.object({
+    id: string().trim(),
+  })).query(async ({ input }) => {
+    const bm = await map.getBeatmap({ id: MapProvider.stringToId(input.id) })
+    return mapId(bm, MapProvider.idToString, ['id', 'foreignId'])
+  }),
 })
