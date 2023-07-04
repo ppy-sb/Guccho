@@ -76,20 +76,24 @@ see `src/app.config.ts`
 
 ```mermaid
 flowchart TB
-    subgraph backend [Abstracted Providers]
-        session(Session) --- user(User)
-        user --- avatar(Avatar)
-        user --- relation(Relationship)
+    subgraph abstracted [Abstract]
+        user(User) --- relation(Relationship)
         user --- score(Score)
         score --- beatmap
         leaderboard(Leaderboard) --- beatmap(Beatmap)
+    end
+    subgraph extendable [Extendable]
         status(Status)
+        article(Article)
         log(Log)
+        session(Session)
+    end
+    subgraph providers [Providers]
+      extendable
+      abstracted
     end
     subgraph impl [Implementations]
         ppy.sb(ppy.sb) === |extends| bancho.py
-        bancho.py(Bancho.py) === |implements, extends| $base
-        $base([Base])
     end
     subgraph resource [Resources]
         mysql[(MySQL)]
@@ -97,39 +101,47 @@ flowchart TB
         redis[(Redis)]
         file[(File)]
         memory[/Memory/]
-    end
-    subgraph client [Client]
-      client-session(Client Session)
-      trpc-client(TRPC Client)
+        env
     end
     subgraph server [Server]
-      backend
+      trpc-server(TRPC Server)
+      providers
       impl
+      bancho.py(Bancho.py) === |implements, extends| $base([Base])
     end
-    A[Gamer] ---> |Browser| client[/Guccho client/]
+    subgraph pages [Pages]
+      page-user(/user/:id)
+      pages-other(/...)
+    end
+    subgraph client [Client]
+      search(Search)
+      trpc-client(TRPC Client)
+      pages --- trpc-client
+      pages --- client-session
+      search --- trpc-client
+      client-session(Client Session) --- trpc-client
+    end
+    A[Gamer] --> |Browser| pages
     
-    trpc-client ===> |superjson| backend
-    backend ===> |devalue| trpc-client
+    trpc-client --> |superjson| trpc-server --> |devalue| trpc-client 
 
+    trpc-server === providers
     
-
-    session ----- $base
-    log ----- $base
-    status ----- $base
-
-
-    backend ====== |$active| impl
+    session --- user
+    
+    extendable ===== |$def| $base
+    abstracted ===== |$active| impl
 
     ppy.sb --- |additional tables| mysql
     
-    bancho.py --- |api v1| gulag
+    bancho.py --- |"gulag api(v1)"| gulag
     bancho.py --- |leaderboard| redis
     bancho.py --- mysql
 
     $base --- |session| redis
     $base --- |runtime, session| memory
     $base --- |log| file
-
+    $base --- |reads| env
 ```
 
 ## The team (Guccho)
