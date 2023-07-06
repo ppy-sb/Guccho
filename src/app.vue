@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 const safari = shallowRef(false)
 
-const [top] = useScrollYObserver()
+const scrollY = useScrollYObserver()
 
 const scroll = shallowRef<HTMLElement>()
 const { status } = useZoomModal()
@@ -26,7 +26,7 @@ onMounted(() => {
       :data-l1-status="status"
       data-l2-status="hidden"
       :style="status !== 'closed' && {
-        'transform-origin': `center calc(${top} * 1px + 50dvh)`,
+        'transform-origin': `center calc(${scrollY} * 1px + 50dvh)`,
       }"
     >
       <NuxtPage />

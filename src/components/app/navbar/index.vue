@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useSession } from '~/store/session'
 
-const [scrollY] = useScrollYObserver()
+const scrollY = useScrollYObserver()
 
 const session = useSession()
 // const $route = useRoute()
