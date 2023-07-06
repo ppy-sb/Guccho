@@ -19,10 +19,8 @@ export const router = _router({
       }
       return returnValue
     }),
-  beatmap: p.input(z.object({
-    id: string().trim(),
-  })).query(async ({ input }) => {
-    const bm = await map.getBeatmap({ id: MapProvider.stringToId(input.id) })
+  beatmap: p.input(string().trim()).query(async ({ input }) => {
+    const bm = await map.getBeatmap(input)
     return mapId(bm, MapProvider.idToString, ['id', 'foreignId'])
   }),
 })

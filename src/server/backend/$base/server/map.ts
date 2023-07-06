@@ -16,7 +16,7 @@ export interface MapProvider<Id> extends idTransformable {
     }
   >
   getBeatmap(
-    query: MapProvider.IdQuery<Id>
+    query: string
   ): PromiseLike<BeatmapWithMeta<
     BeatmapSource,
     RankingStatus,

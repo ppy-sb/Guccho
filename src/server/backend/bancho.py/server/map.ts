@@ -21,12 +21,16 @@ export class MapProvider implements Base<Id> {
   static stringToId = stringToId
   db = getPrismaClient()
 
-  async getBeatmap(query: { id: Id }) {
-    const { id } = query
+  async getBeatmap(query: string) {
+    const queryAsId = stringToId(query)
     const beatmap = await this.db.map.findFirstOrThrow({
-      where: {
-        id,
-      },
+      where: Number.isNaN(queryAsId)
+        ? {
+            id: queryAsId,
+          }
+        : {
+            md5: query,
+          },
       include: {
         source: true,
       },
