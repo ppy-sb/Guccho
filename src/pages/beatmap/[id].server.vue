@@ -1,10 +1,10 @@
 <script setup lang="ts" async>
 const { id } = useRoute().params
 if (!id || Array.isArray(id)) {
-  createError('please provide id')
+  createError('please provide valid id.')
 }
 const client = useNuxtApp()
-const bm = await client.$client.map.beatmap.query({ id: id as string })
+const bm = await client.$client.map.beatmap.query({ id: id as string, md5: id as string })
 navigateTo({
   name: 'beatmapset-id',
   params: {
@@ -18,6 +18,11 @@ navigateTo({
 
 definePageMeta({
   alias: ['/b/:id', '/beatmaps/:id'],
-  render() {},
 })
+</script>
+
+<script lang="ts">
+export default {
+  template: '',
+}
 </script>
