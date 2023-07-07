@@ -4,9 +4,6 @@ import { generateJSON } from '@tiptap/html'
 
 import useEditor from '~/composables/useEditor'
 
-import '@/components/content/styles/typography.scss'
-import '@/components/content/styles/editor.scss'
-
 const props = withDefaults(
   defineProps<{
     modelValue?: JSONContent
@@ -66,3 +63,7 @@ defineExpose({
     <EditorContent class="editor__content custom-typography" :editor="editor" />
   </div>
 </template>
+
+<style src="@/components/content/styles/typography.scss" lang="scss"></style>
+
+<style src="@/components/content/styles/editor.scss" lang="scss"></style>

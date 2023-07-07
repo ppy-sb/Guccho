@@ -1,18 +1,12 @@
-import { CodeBlockLowlight } from '@tiptap/extension-code-block-lowlight'
 import { Highlight } from '@tiptap/extension-highlight'
 import { TaskItem } from '@tiptap/extension-task-item'
 import { TaskList } from '@tiptap/extension-task-list'
 import { Link } from '@tiptap/extension-link'
 import { TextAlign } from '@tiptap/extension-text-align'
 import { Typography } from '@tiptap/extension-typography'
-import { StarterKit } from '@tiptap/starter-kit'
 import { Image } from '@tiptap/extension-image'
-import { lowlight } from 'lowlight/lib/core.js'
 
-export default <TEdit extends boolean>(config?: { indent?: string; edit?: TEdit }) => [
-  StarterKit.configure({
-    codeBlock: false,
-  }),
+export default <TEdit extends boolean>(_?: { indent?: string; edit?: TEdit }) => [
   TextAlign.configure({
     types: ['heading', 'paragraph'],
   }),
@@ -25,29 +19,6 @@ export default <TEdit extends boolean>(config?: { indent?: string; edit?: TEdit 
   }),
   TaskItem,
   Typography,
-  // CharacterCount.configure({
-  //   limit: 10000
-  // }),
-  CodeBlockLowlight.extend({
-    addKeyboardShortcuts() {
-      return {
-        ...this.parent?.(),
-        Tab: ({ editor }) => {
-          if (!this.editor.isActive('codeBlock')) {
-            return false
-          }
-          editor.commands.insertContent(config?.indent || '  ')
-          return true
-        },
-      }
-    },
-  }).configure({
-    lowlight,
-    exitOnArrowDown: true,
-    HTMLAttributes: {
-      class: 'border border-gbase-500/20',
-    },
-  }),
   Image.configure({
     allowBase64: true,
   }),
