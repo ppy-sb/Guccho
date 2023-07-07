@@ -41,9 +41,11 @@ const includes = shallowReactive({
   users: true,
 })
 const searchMode = computed(() => ((includes.beatmaps || includes.beatmapsets) && !includes.users) ? 'beatmap' : 'all')
-const autoResultSize = computed(() => searchMode.value === 'all' ? 5 : 10)
 
 export async function useSearchResult() {
+  if (process.server) {
+    throw new Error('only useable in client.')
+  }
   const app = useNuxtApp()
 
   const {
@@ -56,7 +58,7 @@ export async function useSearchResult() {
     }
     return await app.$client.search.searchUser.query({
       keyword: keyword.value,
-      limit: autoResultSize.value,
+      limit: autoResultSize(),
     })
   })
 
@@ -71,7 +73,7 @@ export async function useSearchResult() {
     return await app.$client.search.searchBeatmap.query({
       keyword: keyword.value,
       filters: tags.value,
-      limit: autoResultSize.value,
+      limit: autoResultSize(),
     })
   })
 
@@ -86,7 +88,7 @@ export async function useSearchResult() {
     return await app.$client.search.searchBeatmapset.query({
       keyword: keyword.value,
       filters: tags.value,
-      limit: autoResultSize.value,
+      limit: autoResultSize(),
     })
   })
 
@@ -111,7 +113,7 @@ export async function useSearchResult() {
 
   const search = useDebounceFn(raw, 500)
 
-  watch(tags, () => raw(), { deep: true })
+  watch(tags, raw.bind(null, undefined), { deep: true })
 
   const searchablePages = useSearchablePages()
 
@@ -239,4 +241,7 @@ function extract(force = false) {
     extractTags(force)
     extractQueries(force)
   }
+}
+function autoResultSize() {
+  return searchMode.value === 'all' ? 5 : 10
 }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Callback } from '~/composables/useZoomModal'
+import type { Callback } from '~/composables/useZoomModal'
 
 const emits = defineEmits<{
   (e: 'cancel', v: Event): void

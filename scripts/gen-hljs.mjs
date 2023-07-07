@@ -14,7 +14,7 @@ const files = readdirSync('./node_modules/highlight.js/es/languages').filter(fil
 ;(async () => {
   await Promise.all (files.map(async (file) => {
     const mod = await import(`highlight.js/lib/languages/${file}`)
-    const { aliases } = mod.default(highlight)
+    const { aliases } = mod.default(highlight.newInstance())
     const language = file
     hljs[language] = language
     if (!aliases) {
