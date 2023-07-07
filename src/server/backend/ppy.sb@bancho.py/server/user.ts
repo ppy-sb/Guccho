@@ -1,18 +1,20 @@
-import { generateHTML } from '@tiptap/html'
 import { TRPCError } from '@trpc/server'
-import type { JSONContent } from '@tiptap/core'
 import type { Id } from '..'
+import { Logger } from '../log'
 import { getPrismaClient } from './prisma'
+
 import { BanchoPyPrivilege } from '~/server/backend/bancho.py/enums'
-import { UserProvider as BanchoPyUser } from '~/server/backend/bancho.py/server'
+import { ArticleProvider, UserProvider as BanchoPyUser } from '~/server/backend/bancho.py/server'
 import { toFullUser } from '~/server/backend/bancho.py/transforms'
 import { createUserQuery } from '~/server/backend/bancho.py/db-query'
-import useEditorExtensions from '~/composables/useEditorExtensionsServer'
 
 import { UserEssential, UserStatus } from '~/def/user'
 
-import type { UserProvider as Base } from '$base/server'
+import { type UserProvider as Base } from '$base/server'
 
+const logger = Logger.child({ label: 'user' })
+
+const article = new ArticleProvider()
 export class UserProvider extends BanchoPyUser implements Base<Id> {
   sbDb = getPrismaClient()
 
@@ -22,11 +24,10 @@ export class UserProvider extends BanchoPyUser implements Base<Id> {
 
   async changeUserpage(
     user: UserEssential<number>,
-    input: { profile: JSONContent }
+    input: { profile: ArticleProvider.JSONContent }
   ) {
-    const renderExtensions = useEditorExtensions()
     try {
-      const html = generateHTML(input.profile, renderExtensions)
+      const html = await article.render(input.profile)
 
       const userpage = await this.sbDb.userpage.findFirst({
         where: {
@@ -74,9 +75,10 @@ export class UserProvider extends BanchoPyUser implements Base<Id> {
       }
     }
     catch (err) {
+      logger.error(err)
       throw new TRPCError({
         code: 'PARSE_ERROR',
-        message: 'unable to parse json content',
+        message: 'unable to process your request at this moment.',
       })
     }
   }

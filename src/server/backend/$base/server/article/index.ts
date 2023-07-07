@@ -18,7 +18,14 @@ import { Logger } from '$base/log'
 const logger = Logger.child({ label: 'article' })
 
 async function access(file: PathLike, constant?: typeof fs['constants'][keyof typeof fs['constants']]) {
-  return fs.access(file, constant).then(() => true).catch(() => false)
+  return fs.access(file, constant).then(() => true).catch(() => {
+    logger.info({
+      message: `Trying to access ${file} (mode: ${constant}) failed.`,
+      file,
+      constant,
+    })
+    return false
+  })
 }
 
 export abstract class ArticleProvider {
@@ -148,7 +155,7 @@ export abstract class ArticleProvider {
     let meta: ArticleProvider.Meta
 
     const loc = join(this.articles, opt.slug)
-    const exists = await fs.access(loc).then(() => true).catch(() => false)
+    const exists = await access(loc)
 
     const oldContent = exists && await this.getLocal({ slug: opt.slug, fallback: false, user: opt.user })
     if (oldContent) {
@@ -192,11 +199,9 @@ export abstract class ArticleProvider {
     return await fs.rm(loc)
   }
 
-  async render(content: ArticleProvider.JSONContent) {
-    // const { load } = useEditorLazyLoadHighlight()
-    // await load(content)
+  async render(doc: ArticleProvider.JSONContent) {
     const renderExtensions = useEditorExtensions()
-    return generateHTML(content, renderExtensions)
+    return generateHTML(doc, renderExtensions)
   }
 
   async createContent(opt: Omit<ArticleProvider.Content, 'html'>) {

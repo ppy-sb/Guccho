@@ -29,6 +29,7 @@ import {
 import type { Id } from '..'
 import { getLiveUserStatus } from '../api-client'
 import { encryptBanchoPassword } from '../crypto'
+import { Logger } from '../log'
 import { client as redisClient } from './source/redis'
 import { getPrismaClient } from './source/prisma'
 import { UserRelationProvider } from './user-relations'
@@ -42,6 +43,8 @@ import type { ActiveMode, ActiveRuleset, LeaderboardRankingSystem } from '~/def/
 
 import { UserEssential, UserOptional, UserStatistic, UserStatus } from '~/def/user'
 import { Mode, Rank, Ruleset } from '~/def'
+
+const logger = Logger.child({ label: 'user' })
 
 const article = new ArticleProvider()
 function ensureDirectorySync(targetDir: string, { isRelativeToScript = false } = {}) {
@@ -406,6 +409,7 @@ WHERE s.userid = ${id}
 
     await Promise.all(parallels)
       .catch((e) => {
+        logger.error(e)
         throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: e.message })
       })
     return returnValue
@@ -453,9 +457,10 @@ WHERE s.userid = ${id}
       }
     }
     catch (err) {
+      logger.error(err)
       throw new TRPCError({
         code: 'PARSE_ERROR',
-        message: 'unable to parse json content',
+        message: 'unable to process your request at this moment.',
       })
     }
   }
