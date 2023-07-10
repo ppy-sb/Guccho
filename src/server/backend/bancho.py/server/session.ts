@@ -2,6 +2,7 @@ import { Buffer } from 'node:buffer'
 import type { Document } from 'bson'
 import * as BSON from 'bson'
 import { commandOptions } from 'redis'
+import { match } from 'switch-pattern'
 import { Logger } from '../log'
 import { client as getRedis } from './source/redis'
 import { env } from '~/server/env'
@@ -60,6 +61,16 @@ function createStore<TSessionKey extends string, TSession extends Session & Docu
         }
         cb(session, sessionId as TSessionKey)
       }
+    },
+    async findAll(query) {
+      const returnValue = {} as Record<TSessionKey, TSession>
+
+      await this.forEach((val, key) => {
+        if (match(val).deepSome(query)) {
+          returnValue[key] = val
+        }
+      })
+      return returnValue
     },
   } as SessionStore<TSessionKey, TSession>
 }

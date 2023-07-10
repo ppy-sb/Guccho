@@ -85,6 +85,7 @@
     "trpc-nuxt": "^0.10.5",
     "ts-enum-util": "^4.0.2",
     "ua-parser-js": "^1.0.35",
+    "useragent": "^2.3.0",
     "uuid": "^9.0.0",
     "v-lazy-image": "^2.1.1",
     "validator": "^13.9.0",

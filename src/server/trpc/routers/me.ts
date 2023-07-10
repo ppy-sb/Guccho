@@ -12,7 +12,7 @@ import {
 import { zodHandle, zodRelationType, zodTipTapJSONContent } from '../shapes'
 import { router as _router } from '../trpc'
 import { userProcedure as pUser } from '~/server/trpc/middleware/user'
-import { UserProvider, UserRelationProvider } from '$active/server'
+import { SessionProvider, UserProvider, UserRelationProvider } from '$active/server'
 
 const { compare } = bcrypt
 
@@ -20,7 +20,7 @@ const users = new UserProvider()
 const relations = new UserRelationProvider()
 
 // const verifiedEmail = new Map<string, Set<string>>()
-
+const session = new SessionProvider()
 export const router = _router({
   settings: pUser.query(async ({ ctx }) => {
     return await users.getFull({
@@ -221,4 +221,20 @@ export const router = _router({
         }
       }
     }),
+
+  sessions: pUser.query(async ({ ctx }) => {
+    const search = { userId: UserProvider.idToString(ctx.user.id) }
+    const results = await session.store.findAll(search)
+
+    type TRes = typeof results
+    type TV = TRes[keyof TRes] & { current?: true }
+
+    Object.entries(results as Record<keyof TRes, TV>).forEach(([sId, session]) => {
+      if (sId === ctx.session.id) {
+        session.current = true
+      }
+      delete session.userId
+    })
+    return results as Record<keyof TRes, TV>
+  }),
 })

@@ -1,18 +1,39 @@
 import { v4 } from 'uuid'
+import { match } from 'switch-pattern'
 import { Logger } from '$base/log'
+import { Client, OS } from '~/def/device'
 
 const logger = Logger.child({ label: 'session' })
 
-export interface Session<Id = string> {
-  userId?: Id
+export interface SessionBase<UserIdType = string> {
+  userId?: UserIdType
   lastActivity: Date
+  OS: OS
 }
 
-export interface SessionStore<TSessionId, TSession> {
+export interface SessionBrowser {
+  client: Client.Browser
+  browser: string
+}
+export interface SessionOsuClient {
+
+  client: Client.OsuStableClient
+  version: string
+}
+export interface SessionUnknown {
+  client: Client.Unknown
+}
+
+export type SessionClient = SessionBrowser | SessionOsuClient | SessionUnknown
+
+export type Session<T = string> = SessionBase<T> & SessionClient
+
+export interface SessionStore<TSessionId extends string | symbol, TSession extends Session<any>> {
   get(key: TSessionId): PromiseLike<TSession | undefined>
   set(key: TSessionId, value: TSession): PromiseLike<TSessionId>
   destroy(key: TSessionId): PromiseLike<boolean>
-  forEach(cb: (arg0: TSession, arg1: TSessionId) => PromiseLike<void>): PromiseLike<void>
+  forEach(cb: (session: TSession, id: TSessionId) => void | PromiseLike<void>): PromiseLike<void>
+  findAll(query: Pick<TSession, 'OS' | 'userId'>): PromiseLike<Record<TSessionId, TSession>>
 }
 export const config = {
   expire: 1000 * 60 * 60,
@@ -20,11 +41,11 @@ export const config = {
 
 // const store = new Map<any, any>()
 let store: Map<any, any>
-function createStoreSingleton<TSessionId, TSession>() {
+function createStoreSingleton<TSessionId extends string | symbol, TSession extends Session<string>>() {
   logger.warn('Warn: You are using memory session store.')
   store = new Map<TSessionId, TSession>()
 }
-export function createSessionStore<TSessionId, TSession>(): SessionStore<TSessionId, TSession> {
+export function createSessionStore<TSessionId extends string | symbol, TSession extends Session<string>>(): SessionStore<TSessionId, TSession> {
   if (!store) {
     createStoreSingleton<TSessionId, TSession>()
   }
@@ -44,10 +65,13 @@ export function createSessionStore<TSessionId, TSession>(): SessionStore<TSessio
     async forEach(cb) {
       return typedStore.forEach(cb)
     },
+    async findAll(query) {
+      return Object.fromEntries([...typedStore.entries()].filter(([_, s]) => match(s).deepSome(query))) as Record<TSessionId, TSession>
+    },
   } satisfies SessionStore<TSessionId, TSession>
 }
 
-export class SessionProvider<TSessionId, TSession extends Session> {
+export class SessionProvider<TSessionId extends string | symbol, TSession extends Session<any>> {
   houseKeeping: Partial<Record<'minutely' | 'hourly' | 'daily', (store: SessionStore<TSessionId, TSession>, _config: typeof config) => PromiseLike<void>>> = {
     minutely: async (sessionStore) => {
       sessionStore.forEach((session, sessionId) => this.removeIfExpired(session, sessionId))
@@ -66,11 +90,11 @@ export class SessionProvider<TSessionId, TSession extends Session> {
     return createSessionStore<TSessionId, TSession>()
   }
 
-  async create(data?: { id: string }) {
+  async create(data: Omit<Session, 'lastActivity'>) {
     const sessionId = v4() as TSessionId
 
     const _session = {
-      userId: data?.id,
+      ...data,
       lastActivity: new Date(),
     } as TSession
     await this.store.set(sessionId, _session)
@@ -100,11 +124,11 @@ export class SessionProvider<TSessionId, TSession extends Session> {
     return sessionId
   }
 
-  expired(session: TSession) {
+  expired(session: Session) {
     return Date.now() - session.lastActivity.getTime() > config.expire
   }
 
-  async update(sessionId: TSessionId, data: Partial<TSession>) {
+  async update(sessionId: TSessionId, data: Partial<Session>) {
     const _session = await this.store.get(sessionId)
     if (!_session) {
       return undefined
@@ -118,7 +142,7 @@ export class SessionProvider<TSessionId, TSession extends Session> {
     return maybeNewSessionId
   }
 
-  async removeIfExpired(session: TSession, sessionId: TSessionId) {
+  async removeIfExpired(session: Session, sessionId: TSessionId) {
     if (this.expired(session)) {
       this.destroy(sessionId)
     }

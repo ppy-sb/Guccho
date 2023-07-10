@@ -18,14 +18,7 @@ import { Logger } from '$base/log'
 const logger = Logger.child({ label: 'article' })
 
 async function access(file: PathLike, constant?: typeof fs['constants'][keyof typeof fs['constants']]) {
-  return fs.access(file, constant).then(() => true).catch(() => {
-    logger.info({
-      message: `Trying to access ${file} (mode: ${constant}) failed.`,
-      file,
-      constant,
-    })
-    return false
-  })
+  return fs.access(file, constant).then(() => true).catch(() => false)
 }
 
 export abstract class ArticleProvider {

@@ -3,6 +3,7 @@ import { Cropper } from 'vue-advanced-cropper'
 import 'vue-advanced-cropper/dist/style.css'
 
 import md5 from 'md5'
+import { Client, OS } from '~/def/device'
 
 import type { ContentEditor, TModal, TResponsiveModal } from '#components'
 import { useSession } from '~/store/session'
@@ -34,6 +35,7 @@ useHead({
 })
 
 const { data: user, refresh } = await useAsyncData(() => app$.$client.me.settings.query())
+const { data: sessions } = await useAsyncData(() => app$.$client.me.sessions.query())
 
 if (!user.value) {
   await navigateTo({
@@ -342,8 +344,6 @@ function resetAvatar() {
         </form>
       </div>
     </t-modal>
-    <!-- used as padding placeholders -->
-    <header-simple-title-with-sub />
     <div class="container mx-auto">
       <div class="flex justify-between p-2 items-end">
         <div class="text-3xl font-bold">
@@ -367,20 +367,23 @@ function resetAvatar() {
     <div class="flex flex-col flex-wrap justify-between md:flex-row">
       <div class="grow w-full lg:[max-width:50%]">
         <div
-          class="flex items-end justify-center p-3 overflow-hidden shadow-md gap-4 md:justify-start bg-gbase-200/30 dark:bg-gbase-700/40 sm:rounded-3xl lg:mr-4"
+          class="flex items-end p-3 overflow-hidden gap-4 lg:mr-4"
         >
-          <div class="relative z-10 mask mask-squircle hoverable w-100 self-center [&>img]:hover:blur-lg [&>img]:hover:opacity-50 no-animation">
-            <button
-              class="absolute top-0 z-20 w-full h-full btn btn-primary hover:bg-primary/50 focus:active:bg-primary/50"
-              type="button"
-              @click="() => changeAvatar?.showModal()"
-            >
-              <icon name="ic:round-edit-note" class="w-5 h-5" size="100%" />  change
-            </button>
-            <img
-              :src="newAvatarURL || `${user.avatarSrc}`"
-              class="pointer-events-none _avatar"
-            >
+          <div class="drop-shadow-md">
+            <div class="relative z-10 mask mask-squircle hoverable w-100 self-center [&>img]:hover:blur-lg [&>img]:hover:opacity-50 no-animation">
+              <button
+                class="absolute top-0 z-20 w-full h-full btn btn-primary hover:bg-primary/50 focus:active:bg-primary/50"
+                type="button"
+                @click="() => changeAvatar?.showModal()"
+              >
+                <icon name="ic:round-edit-note" class="w-5 h-5" size="100%" />
+                change
+              </button>
+              <img
+                :src="newAvatarURL || `${user.avatarSrc}`"
+                class="pointer-events-none _avatar w-40 h-40"
+              >
+            </div>
           </div>
           <div>
             <h1 class="text-5xl text-left">
@@ -394,13 +397,76 @@ function resetAvatar() {
             <div class="pb-4" />
           </div>
         </div>
+        <div class="p-3 lg:mr-4">
+          <label class="label" for="session">
+            <span class="pl-3 label-text">Session</span>
+          </label>
+          <div id="session">
+            <div class="overflow-x-auto">
+              <table class="table">
+                <!-- head -->
+                <thead>
+                  <tr>
+                    <!-- <th>
+                      <label>
+                        <input type="checkbox" class="checkbox">
+                      </label>
+                    </th> -->
+                    <th>Name</th>
+                    <th>Last seen at</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- eslint-disable-next-line vue/no-template-shadow -->
+                  <tr v-for="session, id of sessions" :key="id">
+                    <!-- <th>
+                      <label>
+                        <input type="checkbox" class="checkbox">
+                      </label>
+                    </th> -->
+                    <td>
+                      <div class="flex items-center space-x-3">
+                        <div class="avatar">
+                          <div class="mask mask-squircle">
+                            <!-- <img src="/tailwind-css-component-profile-2@56w.png" alt="Windows"> -->
+                            <icon v-if="session.OS === OS.Windows" name="basil:windows-solid" class="w-9 h-9" />
+                            <icon v-if="session.OS === OS.macOS" name="ic:baseline-apple" class="w-9 h-9" />
+                          </div>
+                        </div>
+                        <div>
+                          <div class="font-bold">
+                            {{ OS[session.OS] }}
+                          </div>
+                          <div class="text-sm opacity-50">
+                            {{ Client[session.client] }}
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      {{ session.lastActivity.toLocaleString() }}
+                      <br>
+                      <span v-if="session.current" class="badge badge-ghost badge-sm">Current Session</span>
+                    </td>
+                    <th>
+                      <button class="btn btn-ghost btn-xs">
+                        Kick
+                      </button>
+                    </th>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="grow lg:[max-width:50%] mt-4 lg:mt-0 lg:pl-4 pr-2 lg:mr-0">
         <div class="text-red-500">
           {{ errorMessage.join(",") }}
         </div>
         <div class="form-control">
-          <label class="label">
+          <label class="label" for="username">
             <span class="pl-3 label-text">Username</span>
           </label>
           <div
@@ -409,6 +475,7 @@ function resetAvatar() {
             "
           >
             <input
+              id="username"
               v-model="user.name"
               type="text"
               placeholder="Username"
@@ -436,11 +503,12 @@ function resetAvatar() {
           </div>
         </div>
         <div>
-          <label class="label">
+          <label class="label" for="userlink">
             <span class="pl-3 label-text">Link</span>
           </label>
           <div class="flex gap-4">
             <input
+              id="userlink"
               v-model="user.safeName"
               type="text"
               class="input input-sm grow"
@@ -458,7 +526,7 @@ function resetAvatar() {
           </div>
         </div>
         <div class="form-control">
-          <label class="label">
+          <label class="label" for="email">
             <span class="pl-3 label-text">Email</span>
           </label>
           <div
@@ -467,6 +535,7 @@ function resetAvatar() {
             "
           >
             <input
+              id="email"
               v-model="user.email"
               type="email"
               placeholder="abc@123.com"
@@ -493,9 +562,10 @@ function resetAvatar() {
           </div>
         </div>
         <div>
-          <label class="label">
+          <label class="label" for="password">
             <span class="pl-3 label-text">Password</span>
             <button
+              id="#password"
               class="btn btn-sm btn-secondary"
               type="button"
               @click.prevent="() => changePassword?.showModal()"
@@ -505,11 +575,12 @@ function resetAvatar() {
           </label>
         </div>
         <div>
-          <label class="label">
+          <label class="label" for="api">
             <span class="pl-3 label-text">API Key</span>
           </label>
           <div class="flex gap-4">
             <input
+              id="api"
               v-model="user.secrets.apiKey"
               type="text"
               placeholder="Your API Key"
@@ -543,10 +614,11 @@ function resetAvatar() {
       </div>
     </div>
 
-    <label class="label">
+    <label class="label" for="profile">
       <span class="pl-3 label-text">profile</span>
     </label>
     <lazy-content-editor
+      id="profile"
       ref="editor"
       v-model.lazy="profile"
       :html="user.profile?.html"
