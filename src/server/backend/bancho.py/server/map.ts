@@ -14,7 +14,8 @@ import { getPrismaClient } from './source/prisma'
 import type { Tag } from '~/def/search'
 
 import type { MapProvider as Base } from '$base/server'
-import { BeatmapSource, Beatmapset, RankingStatus } from '~/def/beatmap'
+import type { BeatmapSource, Beatmapset } from '~/def/beatmap'
+import { RankingStatus } from '~/def/beatmap'
 
 export class MapProvider implements Base<Id> {
   static idToString = idToString

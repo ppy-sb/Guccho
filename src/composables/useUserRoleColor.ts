@@ -1,4 +1,5 @@
-import { UserEssential, UserPrivilege } from '~/def/user'
+import type { UserEssential } from '~/def/user'
+import { UserPrivilege } from '~/def/user'
 
 // https://hypercolor.dev/
 export default function (user: UserEssential<unknown>) {

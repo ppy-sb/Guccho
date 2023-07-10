@@ -1,7 +1,9 @@
-import {
+import type {
   BeatmapSource,
   BeatmapWithMeta,
   NormalBeatmapWithMeta,
+} from '~/def/beatmap'
+import {
   RankingStatus,
 } from '~/def/beatmap'
 

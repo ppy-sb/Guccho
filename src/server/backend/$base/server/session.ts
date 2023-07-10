@@ -1,7 +1,7 @@
 import { v4 } from 'uuid'
 import { match } from 'switch-pattern'
 import { Logger } from '$base/log'
-import { Client, OS } from '~/def/device'
+import type { Client, OS } from '~/def/device'
 
 const logger = Logger.child({ label: 'session' })
 
@@ -33,7 +33,7 @@ export interface SessionStore<TSessionId extends string | symbol, TSession exten
   set(key: TSessionId, value: TSession): PromiseLike<TSessionId>
   destroy(key: TSessionId): PromiseLike<boolean>
   forEach(cb: (session: TSession, id: TSessionId) => void | PromiseLike<void>): PromiseLike<void>
-  findAll(query: Pick<TSession, 'OS' | 'userId'>): PromiseLike<Record<TSessionId, TSession>>
+  findAll(query: Partial<Pick<TSession, 'OS' | 'userId'>>): PromiseLike<Record<TSessionId, TSession>>
 }
 export const config = {
   expire: 1000 * 60 * 60,

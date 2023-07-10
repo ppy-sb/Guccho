@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { TModal } from '#components'
+import { TModal } from '#components'
 
 type I = InstanceType<typeof TModal>
 const e = shallowRef<I>()
@@ -14,9 +14,9 @@ defineExpose({
 </script>
 
 <template>
-  <t-modal ref="e" v-slot="props">
+  <TModal ref="e" v-slot="props">
     <div response-modal class="h-[100dvh] md:h-auto flex items-end pb-8">
       <slot v-bind="props" />
     </div>
-  </t-modal>
+  </TModal>
 </template>

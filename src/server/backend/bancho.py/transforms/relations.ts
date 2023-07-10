@@ -1,4 +1,4 @@
-import { RelationshipType } from 'prisma-client-bancho-py'
+import type { RelationshipType } from 'prisma-client-bancho-py'
 import { Relationship } from '~/def'
 
 export function toBanchoPyRelationType(relation: Relationship): RelationshipType {

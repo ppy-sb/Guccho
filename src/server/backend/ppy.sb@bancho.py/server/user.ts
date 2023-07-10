@@ -8,7 +8,8 @@ import { ArticleProvider, UserProvider as BanchoPyUser } from '~/server/backend/
 import { toFullUser } from '~/server/backend/bancho.py/transforms'
 import { createUserQuery } from '~/server/backend/bancho.py/db-query'
 
-import { UserEssential, UserStatus } from '~/def/user'
+import type { UserEssential } from '~/def/user'
+import { UserStatus } from '~/def/user'
 
 import { type UserProvider as Base } from '$base/server'
 

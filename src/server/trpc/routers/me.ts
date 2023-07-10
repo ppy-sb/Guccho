@@ -237,4 +237,18 @@ export const router = _router({
     })
     return results as Record<keyof TRes, TV>
   }),
+
+  kickSession: pUser.input(z.object({
+    session: z.string(),
+  })).mutation(async ({ input, ctx }) => {
+    const target = await session.get(input.session)
+    if (!target) {
+      throw new Error('not your session')
+    }
+    const self = await ctx.session.getBinding()
+    if (self?.userId !== target.userId) {
+      throw new Error('not your session')
+    }
+    return await session.destroy(input.session)
+  }),
 })

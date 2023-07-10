@@ -41,7 +41,8 @@ import { userNotFound } from '~/server/trpc/messages'
 import type { UserProvider as Base } from '$base/server'
 import type { ActiveMode, ActiveRuleset, LeaderboardRankingSystem } from '~/def/common'
 
-import { UserEssential, UserOptional, UserStatistic, UserStatus } from '~/def/user'
+import type { UserEssential, UserOptional, UserStatistic } from '~/def/user'
+import { UserStatus } from '~/def/user'
 import { Mode, Rank, Ruleset } from '~/def'
 
 const logger = Logger.child({ label: 'user' })

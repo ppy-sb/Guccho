@@ -1,5 +1,5 @@
 import { features as bF } from '../bancho.py'
-import { Feature } from '~/def/features'
+import type { Feature } from '~/def/features'
 
 export {
   hasLeaderboardRankingSystem,

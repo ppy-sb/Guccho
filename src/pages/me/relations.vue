@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { UserEssential } from '~/def/user'
+import type { UserEssential } from '~/def/user'
 import type { UserRelationship } from '~/def/user-relationship'
 import { Relationship } from '~/def'
 import { useSession } from '~/store/session'

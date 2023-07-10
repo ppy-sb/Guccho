@@ -1,4 +1,4 @@
-import { LeaderboardRankingSystem } from '~/def/common'
+import type { LeaderboardRankingSystem } from '~/def/common'
 
 const variables = new Map<string, Template>()
 

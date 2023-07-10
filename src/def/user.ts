@@ -6,7 +6,7 @@ import type {
 } from './common'
 import type { UserModeRulesetStatistics } from './statistics'
 import type { UserRelationship } from './user-relationship'
-import { ArticleProvider } from '$base/server'
+import type { ArticleProvider } from '$base/server'
 
 export enum Scope {
   Self,

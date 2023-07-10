@@ -5,10 +5,11 @@ import 'vue-advanced-cropper/dist/style.css'
 import md5 from 'md5'
 import { Client, OS } from '~/def/device'
 
-import type { ContentEditor, TModal, TResponsiveModal } from '#components'
+import { TModal, TResponsiveModal } from '#components'
+import type { ContentEditor } from '#components'
 import { useSession } from '~/store/session'
 
-import { ArticleProvider } from '$base/server/article'
+import type { ArticleProvider } from '$base/server/article'
 import { UserPrivilege } from '~/def/user'
 
 // eslint-disable-next-line antfu/no-const-enum
@@ -34,8 +35,8 @@ useHead({
   titleTemplate: `Settings - ${config.title}`,
 })
 
-const { data: user, refresh } = await useAsyncData(() => app$.$client.me.settings.query())
-const { data: sessions } = await useAsyncData(() => app$.$client.me.sessions.query())
+const { data: user, refresh: refreshSettings } = await useAsyncData(() => app$.$client.me.settings.query())
+const { data: sessions, refresh: refreshSession, pending: pendingSession } = await useAsyncData(() => app$.$client.me.sessions.query())
 
 if (!user.value) {
   await navigateTo({
@@ -98,7 +99,7 @@ async function saveAvatar() {
   uploadingAvatarStat.value = UploadingAvatarStatus.Succeed
   newAvatarURL.value = url
   session.setAvatarTimestamp()
-  await refresh()
+  await refreshSettings()
   editor.value?.reload()
 }
 async function updateUserSettings() {
@@ -195,11 +196,16 @@ function resetAvatar() {
   newAvatarURL.value = undefined
   uploadingAvatarStat.value = UploadingAvatarStatus.Idle
 }
+
+async function kickSession(session: string) {
+  await app$.$client.me.kickSession.mutate({ session })
+  refreshSession()
+}
 </script>
 
 <template>
   <section v-if="user" class="container mx-auto custom-container">
-    <t-responsive-modal
+    <TResponsiveModal
       ref="changeAvatar"
       v-slot="{ closeModal }"
       class="my-auto"
@@ -280,9 +286,9 @@ function resetAvatar() {
           {{ uploadingAvatarStat === UploadingAvatarStatus.Succeed ? "Done" : "Cancel" }}
         </t-button>
       </div>
-    </t-responsive-modal>
+    </TResponsiveModal>
 
-    <t-modal ref="changePassword" v-slot="{ closeModal }" class="my-auto">
+    <TModal ref="changePassword" v-slot="{ closeModal }" class="my-auto">
       <div class="card bg-base-100 shadow-lg">
         <form action="#" @submit.prevent="updatePassword(closeModal)">
           <div class="card-body w-96">
@@ -343,7 +349,7 @@ function resetAvatar() {
           </div>
         </form>
       </div>
-    </t-modal>
+    </TModal>
     <div class="container mx-auto">
       <div class="flex justify-between p-2 items-end">
         <div class="text-3xl font-bold">
@@ -436,7 +442,7 @@ function resetAvatar() {
                         </div>
                         <div>
                           <div class="font-bold">
-                            {{ OS[session.OS] }}
+                            {{ OS[session.OS] }} <span v-if="session.current" class="badge badge-ghost badge-sm">Current Session</span>
                           </div>
                           <div class="text-sm opacity-50">
                             {{ Client[session.client] }}
@@ -446,11 +452,9 @@ function resetAvatar() {
                     </td>
                     <td>
                       {{ session.lastActivity.toLocaleString() }}
-                      <br>
-                      <span v-if="session.current" class="badge badge-ghost badge-sm">Current Session</span>
                     </td>
                     <th>
-                      <button class="btn btn-ghost btn-xs">
+                      <button class="btn btn-ghost btn-xs" :disabled="pendingSession || session.current" :class="{ loading: pendingSession }" @click.prevent="kickSession(id)">
                         Kick
                       </button>
                     </th>

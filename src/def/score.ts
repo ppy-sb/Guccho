@@ -5,7 +5,7 @@ import type {
   LeaderboardRankingSystem,
   PPRankingSystem,
 } from './common'
-import { Mode } from '.'
+import type { Mode } from '.'
 
 export enum Grade {
   F = 'f',

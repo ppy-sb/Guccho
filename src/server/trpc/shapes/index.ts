@@ -1,5 +1,6 @@
 import { existsSync } from 'node:fs'
-import { ZodIssueCode, ZodSchema, literal, nativeEnum, number, string, tuple, union, z } from 'zod'
+import type { ZodSchema } from 'zod'
+import { ZodIssueCode, literal, nativeEnum, number, string, tuple, union, z } from 'zod'
 
 import validator from 'validator'
 import { hasRuleset } from '../config'

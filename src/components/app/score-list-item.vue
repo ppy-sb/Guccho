@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { RankingSystemScore, StableMod } from '~/def/score'
+import type { RankingSystemScore } from '~/def/score'
+import { StableMod } from '~/def/score'
 import type { ActiveMode, ActiveRuleset, LeaderboardPPRankingSystem, LeaderboardRankingSystem, LeaderboardScoreRankingSystem } from '~/def/common'
 import {
   Rank,

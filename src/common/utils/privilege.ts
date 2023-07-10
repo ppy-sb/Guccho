@@ -1,4 +1,5 @@
-import { UserEssential, UserPrivilege } from '~/def/user'
+import type { UserEssential } from '~/def/user'
+import { UserPrivilege } from '~/def/user'
 
 export function calcUserPrivilege(user: UserEssential<unknown>) {
   const admin = user.roles.includes(UserPrivilege.Admin)

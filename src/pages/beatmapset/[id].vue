@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { BeatmapSource } from '~/def/beatmap'
 import { Mode } from '~/def'
-import type { AppScoresRankingSystemSwitcher } from '#components'
+import { AppScoresRankingSystemSwitcher } from '#components'
 import type { Label } from '~/composables/useLinks'
 
 definePageMeta({
@@ -344,7 +344,7 @@ async function update() {
       </div>
     </div>
     <div class="container custom-container mx-auto mt-4">
-      <app-scores-ranking-system-switcher
+      <AppScoresRankingSystemSwitcher
         ref="scoreRS" v-model="switcher.rankingSystem" :mode="switcher.mode"
         :ruleset="switcher.ruleset" class="mx-auto" @update:model-value="update"
       />

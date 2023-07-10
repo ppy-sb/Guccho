@@ -1,5 +1,5 @@
-import { Editor, InputRule, PasteRule } from '@tiptap/core'
-import { NodeType } from 'prosemirror-model'
+import type { Editor, InputRule, PasteRule } from '@tiptap/core'
+import type { NodeType } from 'prosemirror-model'
 
 import useEditorVariables from '~/composables/useEditorVariables'
 

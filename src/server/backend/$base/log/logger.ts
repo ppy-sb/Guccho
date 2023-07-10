@@ -1,5 +1,5 @@
 import { createLogger, format, transports } from 'winston'
-import Transport from 'winston-transport'
+import type Transport from 'winston-transport'
 
 const { combine, timestamp, json, printf } = format
 

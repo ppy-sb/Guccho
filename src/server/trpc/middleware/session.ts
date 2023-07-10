@@ -1,11 +1,12 @@
 import { TRPCError } from '@trpc/server'
-import { H3Event, setCookie } from 'h3'
+import type { H3Event } from 'h3'
+import { setCookie } from 'h3'
 import { UAParser } from 'ua-parser-js'
 import { publicProcedure } from '../trpc'
 
 import { unableToRefreshToken } from '../messages'
 import { SessionProvider } from '$active/server'
-import { Session } from '$base/server/session'
+import type { Session } from '$base/server/session'
 import { Client, OS } from '~/def/device'
 
 // import { create, get, refresh } from '~/server/session'

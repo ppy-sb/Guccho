@@ -1,4 +1,4 @@
-import { Feature } from '~/def/features'
+import type { Feature } from '~/def/features'
 
 export { modes, rulesets } from '~/def'
 

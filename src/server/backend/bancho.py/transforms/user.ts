@@ -4,16 +4,18 @@ import type {
 import { Access, BanchoPyUserStatus as B, BanchoPyPrivilege } from '../enums'
 import type { Id } from '..'
 import type { ArticleProvider } from '$base/server'
-import {
-  UserStatus as G,
-  Scope,
+import type {
   UserEssential,
   UserExtra,
   UserOptional,
-  UserPrivilege,
   UserSecrets,
 } from '~/def/user'
-import { Relationship } from '~/def'
+import {
+  UserStatus as G,
+  Scope,
+  UserPrivilege,
+} from '~/def/user'
+import type { Relationship } from '~/def'
 
 import type { UserRelationship } from '~/def/user-relationship'
 

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import md5 from 'md5'
-import { TRPCClientError } from '@trpc/client'
+import type { TRPCClientError } from '@trpc/client'
 import { Feature } from '~/def/features'
-import { AppRouter } from '~/server/trpc/routers'
+import type { AppRouter } from '~/server/trpc/routers'
 import { useSession } from '~/store/session'
 import { features } from '$active'
 

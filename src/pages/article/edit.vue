@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { parse, stringify } from 'devalue'
 import { Scope, UserPrivilege } from '~/def/user'
-import { ContentEditor } from '#components'
+import type { ContentEditor } from '#components'
 import type { ArticleProvider } from '$base/server'
 
 definePageMeta({

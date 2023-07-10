@@ -10,12 +10,15 @@ import type {
   LeaderboardRankingSystem,
 } from '~/def/common'
 
-import {
-  Scope,
+import type {
   UserEssential,
   UserExtra,
   UserOptional,
   UserSettings,
+} from '~/def/user'
+
+import {
+  Scope,
 } from '~/def/user'
 
 export function compareScope(scope: Scope, requiredScope: Partial<Record<Scope, boolean>>) {
