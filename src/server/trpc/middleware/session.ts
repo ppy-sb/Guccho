@@ -71,11 +71,15 @@ function createSession(e: H3Event) {
   return r
 }
 
+const config = {
+  httpOnly: true,
+}
+
 export const sessionProcedure = publicProcedure
   .use(async ({ ctx, next }) => {
     if (!ctx.session.id) {
       const sessionId = await sessionProvider.create(createSession(ctx.h3Event))
-      setCookie(ctx.h3Event, 'session', sessionId)
+      setCookie(ctx.h3Event, 'session', sessionId, config)
       return await next({
         ctx: Object.assign(ctx, {
           session: {
@@ -87,7 +91,7 @@ export const sessionProcedure = publicProcedure
     const session = await sessionProvider.get(ctx.session.id)
     if (session == null) {
       const sessionId = await sessionProvider.create(createSession(ctx.h3Event))
-      setCookie(ctx.h3Event, 'session', sessionId)
+      setCookie(ctx.h3Event, 'session', sessionId, config)
       return await next({
         ctx: Object.assign(ctx, {
           session: {
@@ -105,7 +109,7 @@ export const sessionProcedure = publicProcedure
         })
       }
       if (refreshed !== ctx.session.id) {
-        setCookie(ctx.h3Event, 'session', refreshed)
+        setCookie(ctx.h3Event, 'session', refreshed, config)
       }
 
       return await next({

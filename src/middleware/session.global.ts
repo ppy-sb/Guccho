@@ -1,11 +1,7 @@
 import { useSession } from '~/store/session'
 
 export default defineNuxtRouteMiddleware(async () => {
-  const sessionId = useCookie('session')
   const session = useSession()
-  if (!sessionId.value) {
-    return
-  }
   if (session.loggedIn) {
     return
   }

@@ -48,7 +48,7 @@ export const router = _router({
         }
         const newSessionId = await sessionProvider.update(ctx.session.id, { userId: UserProvider.idToString(user.id) })
         if (newSessionId && newSessionId !== ctx.session.id) {
-          setCookie(ctx.h3Event, 'session', newSessionId)
+          setCookie(ctx.h3Event, 'session', newSessionId, { httpOnly: true })
         }
         return {
           user: mapId(user, UserProvider.idToString),
@@ -68,21 +68,8 @@ export const router = _router({
       }
     }),
   retrieve: pSession
-    .input(
-      z
-        .object({
-          sessionId: z.string().optional(),
-        })
-        .optional()
-    )
-    .query(async ({ ctx, input }) => {
-      let session
-      if (input?.sessionId) {
-        session = await sessionProvider.get(input.sessionId)
-      }
-      else {
-        session = await ctx.session.getBinding()
-      }
+    .query(async ({ ctx }) => {
+      const session = await ctx.session.getBinding()
 
       if (!session) {
         throw new TRPCError({
@@ -110,6 +97,7 @@ export const router = _router({
       }
     }),
   destroy: pSession.mutation(({ ctx }) => {
+    deleteCookie(ctx.h3Event, 'session')
     return sessionProvider.destroy(ctx.session.id)
   }),
 })

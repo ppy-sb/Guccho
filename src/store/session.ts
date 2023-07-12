@@ -52,11 +52,6 @@ export const useSession = defineStore('session', {
     async destroy() {
       const app$ = useNuxtApp()
       app$.$client.session.destroy.mutate()
-        .then(() => {
-          this.$reset()
-          const cookie = useCookie('session')
-          cookie.value = ''
-        })
     },
     async retrieve() {
       try {
