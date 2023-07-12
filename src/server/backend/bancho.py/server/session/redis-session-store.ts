@@ -6,17 +6,18 @@ import * as BSON from 'bson'
 import { match } from 'switch-pattern'
 import { client as getRedis } from '../source/redis'
 import type { Session } from '$base/server/session'
-import { HouseKeeperSession } from '$base/server/session/session-store'
+import { SessionStore, sessionConfig } from '$base/server/session/session-store'
 
-const REDIS_SESSION_PREFIX = 'session.guccho'
-export class RedisSessionStore<TDoc extends Document & Session<any>> extends HouseKeeperSession<string, TDoc> implements HouseKeeperSession<string, TDoc> {
-  #r: ReturnType<typeof createClient>
+type Key = string & { __brand: 'key' }
+export class RedisSessionStore<TDoc extends Document & Session<any>> extends SessionStore<string, TDoc> implements SessionStore<string, TDoc> {
+  static REDIS_SESSION_PREFIX = 'session:guccho:'
+  #redis: ReturnType<typeof createClient>
 
   #askForBuffer = commandOptions({ returnBuffers: true })
 
   constructor() {
     super()
-    this.#r = getRedis()
+    this.#redis = getRedis()
   }
 
   #parseSession<TDoc>(_session: Buffer): TDoc | undefined {
@@ -24,35 +25,59 @@ export class RedisSessionStore<TDoc extends Document & Session<any>> extends Hou
     return session as TDoc
   }
 
-  async get(key: string): Promise<TDoc | undefined> {
-    const result = await this.#r.hGet(this.#askForBuffer, REDIS_SESSION_PREFIX, key)
+  #key(key: string): Key {
+    return (RedisSessionStore.REDIS_SESSION_PREFIX + key) as Key
+  }
+
+  #removePrefix(key: Key): string {
+    return key.slice(RedisSessionStore.REDIS_SESSION_PREFIX.length)
+  }
+
+  async #get(key: Key): Promise<TDoc | undefined> {
+    const result = await this.#redis.get(this.#askForBuffer, key)
     if (!result) {
       return
     }
     return this.#parseSession<TDoc>(result) as TDoc
   }
 
-  async set(key: string, value: TDoc): Promise<string> {
+  async get(key: string): Promise<TDoc | undefined> {
+    return this.#get(this.#key(key))
+  }
+
+  async #set(key: Key, value: TDoc) {
     const stream = BSON.serialize(value)
-    await this.#r.hSet(REDIS_SESSION_PREFIX, key, Buffer.from(stream.buffer))
+    await this.#redis.set(key, Buffer.from(stream.buffer), { EX: sessionConfig.expire / 1000 })
     return key
   }
 
+  async set(key: string, value: TDoc): Promise<string> {
+    return this.#removePrefix(await this.#set(this.#key(key), value))
+  }
+
+  async #destroy(key: string): Promise<boolean> {
+    return !!this.#redis.del(key)
+  }
+
   async destroy(key: string): Promise<boolean> {
-    return !!this.#r.hDel(REDIS_SESSION_PREFIX, key)
+    return this.#destroy(this.#key(key))
   }
 
   async forEach(cb: (val: TDoc, key: string) => any): Promise<void> {
-    const results = await this.#r.hGetAll(this.#askForBuffer, REDIS_SESSION_PREFIX)
+    let cursor = 0
+    do {
+      const result = await this.#redis.scan(cursor, { MATCH: this.#key('*') })
+      cursor = result.cursor
 
-    for (const sessionId in results) {
-      const session = this.#parseSession<TDoc>(results[sessionId])
-      if (!session) {
-        await this.destroy(sessionId as string)
-        return
+      for (const key of result.keys) {
+        const session = await this.#get(key as Key)
+        if (!session) {
+          await this.#destroy(key as Key)
+          return
+        }
+        await cb(session, this.#removePrefix(key as Key))
       }
-      cb(session, sessionId as string)
-    }
+    } while (cursor)
   }
 
   async findAll(query: any): Promise<Record<string, TDoc>> {

@@ -2,8 +2,8 @@ import { match } from 'switch-pattern'
 import type { Session } from '.'
 import { logger } from '.'
 
-export const config = {
-  expire: 1000 * 60 * 60,
+export const sessionConfig = {
+  expire: 1000 * 60 * 60 * 24, // 1D
 }
 
 export abstract class SessionStore<TSessionId extends string, TSession extends Session<string>> {
@@ -15,7 +15,7 @@ export abstract class SessionStore<TSessionId extends string, TSession extends S
 }
 
 export abstract class HouseKeeperSession<TSessionId extends string, TSession extends Session<string>> extends SessionStore<TSessionId, TSession> implements SessionStore<TSessionId, TSession> {
-  #houseKeeping: Partial<Record<'minutely' | 'hourly' | 'daily', (store: SessionStore<TSessionId, TSession>, _config: typeof config) => PromiseLike<void>>> = {
+  #houseKeeping: Partial<Record<'minutely' | 'hourly' | 'daily', (store: SessionStore<TSessionId, TSession>, _config: typeof sessionConfig) => PromiseLike<void>>> = {
     async minutely(this: MemorySessionStore<TSessionId, TSession>, sessionStore) {
       sessionStore.forEach((session, sessionId) => this.#removeIfExpired(session, sessionId))
     },
@@ -23,9 +23,9 @@ export abstract class HouseKeeperSession<TSessionId extends string, TSession ext
 
   constructor() {
     super()
-    setInterval(() => this.#houseKeeping.minutely?.call(this, this, config), 1000 * 60)
-    setInterval(() => this.#houseKeeping.hourly?.call(this, this, config), 1000 * 60 * 60)
-    setInterval(() => this.#houseKeeping.daily?.call(this, this, config), 1000 * 60 * 60 * 24)
+    setInterval(() => this.#houseKeeping.minutely?.call(this, this, sessionConfig), 1000 * 60)
+    setInterval(() => this.#houseKeeping.hourly?.call(this, this, sessionConfig), 1000 * 60 * 60)
+    setInterval(() => this.#houseKeeping.daily?.call(this, this, sessionConfig), 1000 * 60 * 60 * 24)
   }
 
   async #removeIfExpired(session: Session, sessionId: TSessionId) {
@@ -35,7 +35,7 @@ export abstract class HouseKeeperSession<TSessionId extends string, TSession ext
   }
 
   #expired(session: Session) {
-    return Date.now() - session.lastSeen.getTime() > config.expire
+    return Date.now() - session.lastSeen.getTime() > sessionConfig.expire
   }
 }
 
