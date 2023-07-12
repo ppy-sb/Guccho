@@ -451,7 +451,7 @@ async function kickSession(session: string) {
                       </div>
                     </td>
                     <td>
-                      {{ session.lastActivity.toLocaleString() }}
+                      {{ session.lastSeen.toLocaleString() }}
                     </td>
                     <th>
                       <button class="btn btn-ghost btn-xs" :disabled="pendingSession || session.current" :class="{ loading: pendingSession }" @click.prevent="kickSession(id)">

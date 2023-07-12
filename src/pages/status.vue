@@ -23,9 +23,9 @@ const serverConfig = session.user?.roles.includes(UserPrivilege.Staff)
   ? await app.$client.status.config.query()
   : undefined
 
-let interval: ReturnType<typeof setInterval>
 const { data, refresh } = await useAsyncData(async () => app.$client.status.public.query())
 
+let interval: ReturnType<typeof setInterval>
 onBeforeMount(async () => {
   clearInterval(interval)
   interval = setInterval(async () => {

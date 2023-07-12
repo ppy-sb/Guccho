@@ -22,5 +22,15 @@ export function capitalizeFirstLetter<T extends string>(string: T) {
   return (string.charAt(0).toUpperCase() + string.slice(1)) as Capitalize<T>
 }
 
-export const strictEntries: <const T extends {}>(object: T) => [keyof T, T[keyof T]][] = Object.entries
-export const strictKeys = Object.keys as unknown as <const T extends {}>(object: T) => Array<keyof T>
+export function lazySingleton<TArg, TRet, TFac extends (...args: readonly TArg[]) => TRet>(factory: TFac) {
+  let singleton: TRet
+  let ready = false
+  return ((...args: readonly TArg[]) => {
+    if (ready) {
+      return singleton
+    }
+    singleton = factory(...args)
+    ready = true
+    return singleton
+  }) as TFac
+}

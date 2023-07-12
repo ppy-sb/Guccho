@@ -109,7 +109,7 @@ export const router = _router({
         user: null,
       }
     }),
-  destroy: pSession.mutation(() => {
-
+  destroy: pSession.mutation(({ ctx }) => {
+    return sessionProvider.destroy(ctx.session.id)
   }),
 })

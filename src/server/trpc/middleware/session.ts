@@ -9,14 +9,12 @@ import { SessionProvider } from '$active/server'
 import type { Session } from '$base/server/session'
 import { Client, OS } from '~/def/device'
 
-// import { create, get, refresh } from '~/server/session'
-
 const sessionProvider = new SessionProvider()
 
 // TODO finish me
 function createSession(e: H3Event) {
   const ua = getRequestHeader(e, 'User-Agent')
-  const r: Omit<Session<string>, 'lastActivity'> = {
+  const r: Omit<Session<string>, 'lastSeen'> = {
     OS: OS.Unknown,
     client: Client.Unknown,
   }
@@ -127,7 +125,7 @@ export const sessionProcedure = publicProcedure
             if (!ctx.session.id) {
               return undefined
             }
-            return (await sessionProvider.get(ctx.session.id)) as Awaited<ReturnType<SessionProvider['get']>> & Partial<Additional>
+            return (await sessionProvider.get(ctx.session.id)) as Awaited<ReturnType<typeof sessionProvider['get']>> & Partial<Additional>
           },
         }),
       }),

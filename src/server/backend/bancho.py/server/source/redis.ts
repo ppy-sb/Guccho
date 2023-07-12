@@ -1,24 +1,21 @@
-import type { RedisClientType } from 'redis'
 import { createClient } from 'redis'
 import { Logger } from '../../log'
 import { env } from '~/server/env'
 
 const logger = Logger.child({ label: 'redis' })
 
-let _client: RedisClientType | undefined
-export function client() {
+export const client = lazySingleton(() => {
   if (!('REDIS_URL' in env)) {
-    throw new Error('required redis client without set env')
-  }
-  if (_client) {
-    return _client
+    const err = new Error('required redis client without set env "REDIS_URL"')
+    logger.error(err)
+    throw err
   }
 
-  _client = createClient({
+  const client = createClient({
     url: env.REDIS_URL,
   })
-  _client.on('error', err => logger.error('Redis Client', err))
-  _client.connect()
+  client.on('error', err => logger.error('Redis Client', err))
+  client.connect()
 
-  return _client
-}
+  return client
+})
