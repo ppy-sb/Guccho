@@ -46,19 +46,20 @@ export const useSession = defineStore('session', {
         userId: result.user.id,
         user: result.user,
       })
-      // this.setAvatarTimestamp()
       return true
     },
     async destroy() {
       const app$ = useNuxtApp()
-      app$.$client.session.destroy.mutate()
+      await app$.$client.session.destroy.mutate()
+      await this.retrieve()
     },
     async retrieve() {
       try {
         const app$ = useNuxtApp()
         const result = await app$.$client.session.retrieve.query()
         if (!result?.user) {
-          return
+          this.$reset()
+          return false
         }
         this.$patch({
           loggedIn: true,
@@ -75,14 +76,6 @@ export const useSession = defineStore('session', {
 
         return false
       }
-    },
-
-    setAvatarTimestamp() {
-      if (!this.user) {
-        return
-      }
-
-      this.user.avatarSrc = `${this.user.avatarSrc}?${Date.now()}`
     },
   },
 })
