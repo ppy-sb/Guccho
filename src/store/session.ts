@@ -77,5 +77,13 @@ export const useSession = defineStore('session', {
         return false
       }
     },
+    setAvatarTimestamp() {
+      if (!this.user) {
+        return
+      }
+
+      this.user.avatarSrc = `${this.user.avatarSrc}?${Date.now()}`
+    },
   },
+
 })
