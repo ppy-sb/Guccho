@@ -1198,22 +1198,22 @@
   resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.11.8.tgz#6b79032e760a0899cd4204710beede972a3a185f"
   integrity sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==
 
-"@prisma/client@4.15.0-integration-feat-client-esm.27":
-  version "4.15.0-integration-feat-client-esm.27"
-  resolved "https://registry.yarnpkg.com/@prisma/client/-/client-4.15.0-integration-feat-client-esm.27.tgz#055ccc56fd3953e66879aed5ec358442c4118f65"
-  integrity sha512-d1+EXkJpNaLOFH4x2FIRj66rkdW8g8wAwDcw7ayPNzix+1MKW4IBWncZLZDf5by9gSwHJlCb5N2BTRJmUnE3qQ==
+"@prisma/client@5":
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/@prisma/client/-/client-5.0.0.tgz#9f0cd4164f4ffddb28bb1811c27eb7fa1e01a087"
+  integrity sha512-XlO5ELNAQ7rV4cXIDJUNBEgdLwX3pjtt9Q/RHqDpGf43szpNJx2hJnggfFs7TKNx0cOFsl6KJCSfqr5duEU/bQ==
   dependencies:
-    "@prisma/engines-version" "4.15.0-28.8fbc245156db7124f997f4cecdd8d1219e360944"
+    "@prisma/engines-version" "4.17.0-26.6b0aef69b7cdfc787f822ecd7cdc76d5f1991584"
 
-"@prisma/engines-version@4.15.0-28.8fbc245156db7124f997f4cecdd8d1219e360944":
-  version "4.15.0-28.8fbc245156db7124f997f4cecdd8d1219e360944"
-  resolved "https://registry.yarnpkg.com/@prisma/engines-version/-/engines-version-4.15.0-28.8fbc245156db7124f997f4cecdd8d1219e360944.tgz#8d880becf996cffe08c78ad5afab6bc06090c990"
-  integrity sha512-sVOig4tjGxxlYaFcXgE71f/rtFhzyYrfyfNFUsxCIEJyVKU9rdOWIlIwQ2NQ7PntvGnn+x0XuFo4OC1jvPJKzg==
+"@prisma/engines-version@4.17.0-26.6b0aef69b7cdfc787f822ecd7cdc76d5f1991584":
+  version "4.17.0-26.6b0aef69b7cdfc787f822ecd7cdc76d5f1991584"
+  resolved "https://registry.yarnpkg.com/@prisma/engines-version/-/engines-version-4.17.0-26.6b0aef69b7cdfc787f822ecd7cdc76d5f1991584.tgz#b36eda5620872d3fac810c302a7e46cf41daa033"
+  integrity sha512-HHiUF6NixsldsP3JROq07TYBLEjXFKr6PdH8H4gK/XAoTmIplOJBCgrIUMrsRAnEuGyRoRLXKXWUb943+PFoKQ==
 
-"@prisma/engines@4.15.0-integration-feat-client-esm.27":
-  version "4.15.0-integration-feat-client-esm.27"
-  resolved "https://registry.yarnpkg.com/@prisma/engines/-/engines-4.15.0-integration-feat-client-esm.27.tgz#6ea56a5a516a60d6fb1090261c85d16dc04dcac1"
-  integrity sha512-xzD1472StQ6GA3gaZpPVwj6qlkbs92mPMTSESWiDCtDvkyPvN/g1qgrdPxRt1uFuPM2NSj5Ngc2InyfwRUAQFA==
+"@prisma/engines@5.0.0":
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/@prisma/engines/-/engines-5.0.0.tgz#5249650eabe77c458c90f2be97d8210353c2e22e"
+  integrity sha512-kyT/8fd0OpWmhAU5YnY7eP31brW1q1YrTGoblWrhQJDiN/1K+Z8S1kylcmtjqx5wsUGcP1HBWutayA/jtyt+sg==
 
 "@redis/bloom@1.2.0":
   version "1.2.0"
@@ -7731,12 +7731,12 @@ pretty-bytes@^6.1.0:
   resolved "https://registry.yarnpkg.com/pretty-bytes/-/pretty-bytes-6.1.0.tgz#1d1cc9aae1939012c74180b679da6684616bf804"
   integrity sha512-Rk753HI8f4uivXi4ZCIYdhmG1V+WKzvRMg/X+M42a6t7D07RcmopXJMDNk6N++7Bl75URRGsb40ruvg7Hcp2wQ==
 
-prisma@4.15.0-integration-feat-client-esm.27:
-  version "4.15.0-integration-feat-client-esm.27"
-  resolved "https://registry.yarnpkg.com/prisma/-/prisma-4.15.0-integration-feat-client-esm.27.tgz#a92604359b42a368100da9051e333d8a2706a713"
-  integrity sha512-hVuVm+KPUhPRbTE0Z86wnaD2P6wBu2byP6w7fQ8z5kM2/STrkGLz4xja8AlQQQ43bZObvmTy1GMP0eHTbi7G2Q==
+prisma@5:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/prisma/-/prisma-5.0.0.tgz#f6571c46dc2478172cb7bc1bb62d74026a2c2630"
+  integrity sha512-KYWk83Fhi1FH59jSpavAYTt2eoMVW9YKgu8ci0kuUnt6Dup5Qy47pcB4/TLmiPAbhGrxxSz7gsSnJcCmkyPANA==
   dependencies:
-    "@prisma/engines" "4.15.0-integration-feat-client-esm.27"
+    "@prisma/engines" "5.0.0"
 
 proc-log@^3.0.0:
   version "3.0.0"

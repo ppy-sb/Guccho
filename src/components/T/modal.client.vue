@@ -87,9 +87,10 @@ $in: blur(0.5em) opacity(0) saturate(0.5);
     @apply transition-all;
 
     &[status="show"] {
-      @apply backdrop-blur-md;
-      @apply backdrop-saturate-[0.8] backdrop-contrast-[1.02] backdrop-brightness-[1.02];
-      @apply dark:backdrop-contrast-[1.05] dark:backdrop-brightness-[0.9];
+      @apply bg-gbase-200/25 dark:bg-gbase-800/30;
+      @apply backdrop-blur-lg;
+      // @apply backdrop-saturate-[0.6] backdrop-contrast-[1.02] backdrop-brightness-[1.02];
+      // @apply dark:backdrop-contrast-[1.05] dark:backdrop-brightness-[0.9];
     }
   }
   // &[status="hidden"] {
@@ -97,8 +98,7 @@ $in: blur(0.5em) opacity(0) saturate(0.5);
   &[status="show"] {
     animation: zoomIn $duration $animate-function forwards;
     > [response-modal] {
-      animation: slideFromBottom calc($duration / 1.4) $animate-function
-        forwards;
+      animation: slideFromBottom calc($duration / 1.4) $animate-function forwards;
       @screen md {
         animation: zoomIn $duration $animate-function forwards;
       }

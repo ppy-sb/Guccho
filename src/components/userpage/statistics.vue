@@ -110,7 +110,7 @@ const ScoreToNextLevel = computed(
             /> -->
             {{ ppRankingSystems.includes(selectedRankingSystem as PPRankingSystem) ? `${scoreFmt((currentRankingSystem as PPRank)?.performance)}` : scoreFmtCompact((deferredRender[selectedRankingSystem as LeaderboardRankingSystem] as ScoreRank).score as bigint) }}
           </div>
-          <div class="stat-desc flex gap-1 items-center">
+          <div class="stat-desc flex gap-1 items-center font-mono">
             <!-- <Roller
               :char-set="chars"
               class="font-mono"
@@ -124,21 +124,20 @@ const ScoreToNextLevel = computed(
           <div class="stat-title">
             Level
           </div>
-          <div class="stat-value">
+          <div class="stat-value font-mono">
             <!-- <Roller
               class="font-mono"
               :char-set="chars"
               :value="userLevelInt.toString()"
             /> -->
-            {{ userLevelInt.toString() }}
+            {{ userLevelInt.toString() }}{{ userLevelPercent.slice(1) }}
             <!-- <Roller
               class="font-mono text-lg self-end pb-1"
               :char-set="percent"
               :value="`${userLevelPercent.slice(1)}`"
             /> -->
-            {{ userLevelPercent.slice(1) }}
           </div>
-          <div class="stat-desc flex gap-1 items-center">
+          <div class="stat-desc flex gap-1 items-center font-mono">
             <!-- <Roller
               class="font-mono"
               :char-set="chars"

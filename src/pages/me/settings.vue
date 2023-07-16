@@ -442,7 +442,7 @@ async function kickSession(session: string) {
                         </div>
                         <div>
                           <div class="font-bold">
-                            {{ OS[session.OS] }} <span v-if="session.current" class="badge badge-ghost badge-sm">Current Session</span>
+                            {{ OS[session.OS] }} <span v-if="session.current" class="badge badge-ghost badge-sm whitespace-nowrap">Current Session</span>
                           </div>
                           <div class="text-sm opacity-50">
                             {{ Client[session.client] }}
