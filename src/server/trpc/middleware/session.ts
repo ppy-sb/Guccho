@@ -29,15 +29,24 @@ function createSession(e: H3Event) {
       break
     }
     case 'Mac OS': {
-      r.OS = OS.macOS
+      if (res.device.type === 'tablet') {
+        r.OS = OS.iPadOS
+      }
+      else {
+        r.OS = OS.macOS
+      }
       break
     }
     case 'iOS': {
       r.OS = OS.iOS
       break
     }
-    case 'iPadOS': {
-      r.OS = OS.iPadOS
+    // case 'iPadOS': {
+    //   r.OS = OS.iPadOS
+    //   break
+    // }
+    case 'Android': {
+      r.OS = OS.Android
       break
     }
     case 'Chromium OS': {
