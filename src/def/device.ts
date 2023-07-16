@@ -6,7 +6,7 @@ export enum OS {
   macOS,
   iOS,
   iPadOS,
-  ChromiumOS,
+  ChromeOS,
 }
 
 export enum Client {

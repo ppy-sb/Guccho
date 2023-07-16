@@ -41,7 +41,7 @@ function createSession(e: H3Event) {
       break
     }
     case 'Chromium OS': {
-      r.OS = OS.ChromiumOS
+      r.OS = OS.ChromeOS
       break
     }
     case 'Linux':

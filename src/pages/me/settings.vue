@@ -435,9 +435,14 @@ async function kickSession(session: string) {
                       <div class="flex items-center space-x-3">
                         <div class="avatar">
                           <div class="mask mask-squircle">
-                            <!-- <img src="/tailwind-css-component-profile-2@56w.png" alt="Windows"> -->
+                            <icon v-if="session.OS === OS.Unknown" name="carbon:unknown" class="w-9 h-9" />
                             <icon v-if="session.OS === OS.Windows" name="basil:windows-solid" class="w-9 h-9" />
                             <icon v-if="session.OS === OS.macOS" name="ic:baseline-apple" class="w-9 h-9" />
+                            <icon v-if="session.OS === OS.iPadOS" name="ic:baseline-apple" class="w-9 h-9" />
+                            <icon v-if="session.OS === OS.iOS" name="wpf:iphone" class="w-9 h-9" />
+                            <icon v-if="session.OS === OS.Android" name="mingcute:android-2-fill" class="w-9 h-9" />
+                            <icon v-if="session.OS === OS.ChromeOS" name="ri:chrome-fill" class="w-9 h-9" />
+                            <icon v-if="session.OS === OS.Linux" name="fluent-mdl2:linux-logo-32" class="w-9 h-9" />
                           </div>
                         </div>
                         <div>
