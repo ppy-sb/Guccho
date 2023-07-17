@@ -27,10 +27,10 @@ export class MapProvider implements Base<Id> {
     const beatmap = await this.db.map.findFirstOrThrow({
       where: Number.isNaN(queryAsId)
         ? {
-            id: queryAsId,
+            md5: query,
           }
         : {
-            md5: query,
+            id: queryAsId,
           },
       include: {
         source: true,
