@@ -36,7 +36,7 @@ onMounted(() => {
 
 <style lang="scss">
 @import "~/assets/styles/modal.scss";
-$zoom-content-stage1: saturate(0.4);
+$zoom-content-stage1: saturate(0.4) opacity(0.8);
 $zoom-content-stage2: saturate(0.4) opacity(0.2);
 
 $scale: scale(0.98);

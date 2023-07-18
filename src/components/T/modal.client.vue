@@ -146,13 +146,13 @@ $in: blur(0.5em) opacity(0) saturate(0.5);
     background-color: transparent;
   }
   to{
-    @apply bg-gbase-200/30;
+    @apply bg-gbase-100/60;
     @apply backdrop-blur-lg;
   }
 }
 @keyframes backdrop-fade-out {
   from {
-    @apply bg-gbase-200/30;
+    @apply bg-gbase-100/60;
     @apply backdrop-blur-lg;
   }
   to {
