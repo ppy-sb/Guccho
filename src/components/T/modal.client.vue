@@ -82,20 +82,14 @@ onMounted(() => {
 
 $in: blur(0.5em) opacity(0) saturate(0.5);
 .t-modal {
-  // @apply max-h-[100dvh] overflow-scroll;
-  &::backdrop {
-    @apply transition-all;
 
-    &[status="show"] {
-      @apply bg-gbase-200/25 dark:bg-gbase-800/30;
-      @apply backdrop-blur-lg;
-      // @apply backdrop-saturate-[0.6] backdrop-contrast-[1.02] backdrop-brightness-[1.02];
-      // @apply dark:backdrop-contrast-[1.05] dark:backdrop-brightness-[0.9];
-    }
-  }
-  // &[status="hidden"] {
-  // }
   &[status="show"] {
+
+    &::backdrop {
+
+      animation: backdrop-fade-in calc($duration / 1.4) $animate-function forwards;
+    }
+
     animation: zoomIn $duration $animate-function forwards;
     > [response-modal] {
       animation: slideFromBottom calc($duration / 1.4) $animate-function forwards;
@@ -106,6 +100,11 @@ $in: blur(0.5em) opacity(0) saturate(0.5);
   }
 
   &[status="closing"] {
+
+     &::backdrop {
+      animation: backdrop-fade-out calc($duration / 1.2) $animate-function forwards;
+    }
+
     animation: zoomOut $duration $animate-function forwards;
     > [response-modal] {
       animation: slideToBottom calc($duration / 1.2) $animate-function forwards;
@@ -139,6 +138,46 @@ $in: blur(0.5em) opacity(0) saturate(0.5);
   100% {
     filter: $in;
     transform: translateY(5%) scale(0.98);
+  }
+}
+
+@keyframes backdrop-fade-in {
+  from {
+    background-color: transparent;
+  }
+  to{
+    @apply bg-gbase-200/30;
+    @apply backdrop-blur-lg;
+  }
+}
+@keyframes backdrop-fade-out {
+  from {
+    @apply bg-gbase-200/30;
+    @apply backdrop-blur-lg;
+  }
+  to {
+     background-color: transparent;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  @keyframes backdrop-fade-in {
+    from {
+      background-color: transparent;
+    }
+    to{
+      @apply bg-gbase-900/80;
+      @apply backdrop-blur-lg;
+    }
+  }
+  @keyframes backdrop-fade-out {
+    from {
+      @apply bg-gbase-900/80;
+      @apply backdrop-blur-lg;
+    }
+    to {
+      background-color: transparent;
+    }
   }
 }
 </style>
