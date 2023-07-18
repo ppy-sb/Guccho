@@ -28,9 +28,13 @@ export class LogProvider {
       }[]>
   }
 }
-
-observe(new winston.transports.File({ filename: LogProvider.error, level: 'error' }))
-observe(new winston.transports.File({ filename: LogProvider.combined }))
+const sharedBaseCfg = {
+  tailable: true,
+  maxFiles: 100,
+  maxsize: 1_000_000,
+}
+observe(new winston.transports.File({ ...sharedBaseCfg, filename: LogProvider.error, level: 'error' }))
+observe(new winston.transports.File({ ...sharedBaseCfg, filename: LogProvider.combined }))
 
 function readLastNLinesFromFile(filePath: string, n: number): Promise<string[]> {
   return new Promise<string[]>((resolve, reject) => {

@@ -29,17 +29,17 @@ export type SessionClient = SessionBrowser | SessionOsuClient | SessionUnknown
 
 export type Session<T = string> = SessionBase<T> & SessionClient
 
-export abstract class SessionProvider<TSessionId extends string, TSession extends Session<any>> {
-  store: SessionStore<TSessionId, TSession>
+export abstract class SessionProvider<TSession extends Session<any>> {
+  store: SessionStore<string, TSession>
 
-  abstract prepare(): SessionStore<TSessionId, TSession>
+  abstract prepare(): SessionStore<string, TSession>
 
   constructor() {
     this.store = this.prepare()
   }
 
   async create(data: Omit<Session, 'lastSeen'>) {
-    const sessionId = v4() as TSessionId
+    const sessionId = v4() as string
 
     const _session = {
       ...data,
@@ -49,7 +49,7 @@ export abstract class SessionProvider<TSessionId extends string, TSession extend
     return sessionId
   }
 
-  async get(sessionId: TSessionId) {
+  async get(sessionId: string) {
     const _session = await this.store.get(sessionId)
     if (!_session) {
       return undefined
@@ -58,11 +58,11 @@ export abstract class SessionProvider<TSessionId extends string, TSession extend
     return _session
   }
 
-  async destroy(sessionId: TSessionId) {
+  async destroy(sessionId: string) {
     await this.store.destroy(sessionId)
   }
 
-  async refresh(sessionId: TSessionId) {
+  async refresh(sessionId: string) {
     const _session = await this.store.get(sessionId)
     if (!_session) {
       return
@@ -72,7 +72,7 @@ export abstract class SessionProvider<TSessionId extends string, TSession extend
     return sessionId
   }
 
-  async update(sessionId: TSessionId, data: Partial<Session>) {
+  async update(sessionId: string, data: Partial<Session>) {
     const _session = await this.store.get(sessionId)
     if (!_session) {
       return undefined
@@ -88,7 +88,7 @@ export abstract class SessionProvider<TSessionId extends string, TSession extend
 }
 
 const s = lazySingleton(<TSessionId extends string, TSession extends Session>() => new MemorySessionStore<TSessionId, TSession>())
-export class MemorySessionProvider<TSessionId extends string, TSession extends Session<any>> extends SessionProvider<TSessionId, TSession> implements SessionProvider<TSessionId, TSession> {
+export class MemorySessionProvider<TSessionId extends string, TSession extends Session<any>> extends SessionProvider<TSession> implements SessionProvider<TSession> {
   prepare() {
     return s<TSessionId, TSession>()
   }

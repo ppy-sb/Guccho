@@ -4,7 +4,7 @@ import { SessionProvider as Base, MemorySessionProvider } from '$base/server/ses
 import { env } from '~/server/env'
 
 const s = lazySingleton(<TSession extends Session>() => new RedisSessionStore<TSession>())
-export class RedisSessionProvider extends Base<string, Session> implements Base<string, Session> {
+export class RedisSessionProvider extends Base<Session> implements Base<Session> {
   prepare() {
     return s<Session>()
   }

@@ -1,3 +1,4 @@
+import { ECONNREFUSED, ENOENT } from 'node:constants'
 import { createClient } from 'redis'
 import { Logger } from '../../log'
 import { env } from '~/server/env'
@@ -12,9 +13,31 @@ export const client = lazySingleton(() => {
   }
 
   const client = createClient({
-    url: env.REDIS_URL,
+    url: env.REDIS_URL.startsWith('redis') ? env.REDIS_URL : undefined,
+    socket: {
+      path: env.REDIS_URL.startsWith('unix') ? env.REDIS_URL : undefined,
+    },
   })
-  client.on('error', err => logger.error('Redis Client', err))
+
+  let lastErr: Error | undefined
+  client.on('error', (err: Error) => {
+    const _lastErr = lastErr
+    lastErr = err
+    if (_lastErr?.stack === err.stack) {
+      return
+    }
+    switch (true) {
+      case ((err as any)?.errno === -ECONNREFUSED):
+      case ((err as any)?.errno === -ENOENT): {
+        logger.error(err)
+        break
+      }
+      default: logger.error(err)
+    }
+  })
+  client.on('connect', () => {
+    lastErr = undefined
+  })
   client.connect()
 
   return client
