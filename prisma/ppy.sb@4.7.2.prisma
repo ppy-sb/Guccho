@@ -1,7 +1,7 @@
 generator client {
   provider      = "prisma-client-js"
-  binaryTargets = ["native"]
   output        = "../node_modules/prisma-client-ppy-sb"
+  binaryTargets = ["native"]
 }
 
 datasource db {
@@ -30,7 +30,7 @@ model User {
   clanPriv        Int     @default(0) @map("clan_priv") @db.TinyInt
   apiKey          String? @unique(map: "users_api_key_uindex") @map("api_key") @db.Char(36)
 
-  clan             Clan              @relation(name: "clan", fields: [clanId], references: [id])
+  clan             Clan              @relation("clan", fields: [clanId], references: [id])
   favourites       Favourite[]
   ingameLogins     IngameLogin[]
   receivedMessages Mail[]            @relation("receivedMessages")
@@ -45,6 +45,7 @@ model User {
   scores           Score[]
   userAchievement  UserAchievement[]
 
+  @@index([clanId], map: "users_clan_id_fkey")
   @@map("users")
 }
 
@@ -74,6 +75,7 @@ model Comment {
 
   user User @relation(fields: [userId], references: [id])
 
+  @@index([userId], map: "comments_userid_fkey")
   @@map("comments")
 }
 
@@ -84,8 +86,8 @@ model Clan {
   ownerId   Int      @unique(map: "clans_owner_uindex") @map("owner")
   createdAt DateTime @map("created_at") @db.DateTime(0)
 
+  owner       User   @relation("owner", fields: [ownerId], references: [id])
   joinedUsers User[] @relation("clan")
-  owner       User   @relation(name: "owner", fields: [ownerId], references: [id])
 
   @@map("clans")
 }
@@ -151,8 +153,8 @@ model Channel {
 }
 
 model Map {
-  server      SourceEnum @default(bancho)
   id          Int        @unique(map: "maps_id_uindex")
+  server      SourceEnum @default(bancho)
   setId       Int        @map("set_id")
   status      Int
   md5         String     @unique(map: "maps_md5_uindex") @db.Char(32)
@@ -176,7 +178,7 @@ model Map {
   diff        Float      @default(0.000) @db.Float
 
   source Source  @relation(fields: [setId, server], references: [id, server])
-  Score  Score[]
+  scores Score[]
 
   @@id([server, id])
   @@index([filename], map: "filename")
@@ -188,8 +190,8 @@ model Source {
   id              Int        @unique(map: "nmapsets_id_uindex")
   lastOsuApiCheck DateTime   @default(now()) @map("last_osuapi_check") @db.DateTime(0)
 
-  favouredBy Favourite[]
-  beatmaps   Map[]
+  favs     Favourite[]
+  beatmaps Map[]
 
   @@id([server, id])
   @@map("mapsets")
@@ -261,8 +263,8 @@ model Score {
   perfect        Boolean
   onlineChecksum String   @map("online_checksum") @db.Char(32)
 
-  beatmap Map? @relation(fields: [mapMd5], references: [md5])
   user    User @relation(fields: [userId], references: [id])
+  beatmap Map? @relation(fields: [mapMd5], references: [md5])
 
   @@index([mapMd5], map: "map_md5")
   @@index([userId], map: "userid")
@@ -280,7 +282,7 @@ model Startup {
 }
 
 model Stat {
-  id          Int    @default(autoincrement())
+  id          Int
   mode        Int    @db.TinyInt
   totalScore  BigInt @default(0) @map("tscore") @db.UnsignedBigInt
   rankedScore BigInt @default(0) @map("rscore") @db.UnsignedBigInt
@@ -297,7 +299,7 @@ model Stat {
   sCount      Int    @default(0) @map("s_count") @db.UnsignedInt
   aCount      Int    @default(0) @map("a_count") @db.UnsignedInt
 
-  user User @relation(fields: [id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "stats_ibfk_1")
+  user User @relation(fields: [id], references: [id])
 
   @@id([id, mode])
   @@map("stats")
@@ -331,7 +333,7 @@ model Achievement {
   desc String @unique(map: "achievements_desc_uindex") @db.VarChar(256)
   cond String @db.VarChar(64)
 
-  UserAchievement UserAchievement[]
+  achievedUsers UserAchievement[]
 
   @@map("achievements")
 }
@@ -370,7 +372,8 @@ model Userpage {
   html    String?          @db.Text
   raw     String?          @db.Text
   rawType UserpageRawType? @map("raw_type")
-  user    User             @relation(fields: [userId], references: [id], onUpdate: Restrict, map: "fk_user")
+
+  user User @relation(fields: [userId], references: [id])
 
   @@index([userId], map: "user_id")
   @@map("userpages")
