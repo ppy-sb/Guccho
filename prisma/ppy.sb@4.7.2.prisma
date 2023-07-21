@@ -5,8 +5,9 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DB_DSN")
+  provider     = "mysql"
+  url          = env("DB_DSN")
+  relationMode = "prisma"
 }
 
 model User {
@@ -30,7 +31,7 @@ model User {
   clanPriv        Int     @default(0) @map("clan_priv") @db.TinyInt
   apiKey          String? @unique(map: "users_api_key_uindex") @map("api_key") @db.Char(36)
 
-  clan             Clan              @relation("clan", fields: [clanId], references: [id])
+  clan             Clan              @relation("clan", fields: [clanId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   favourites       Favourite[]
   ingameLogins     IngameLogin[]
   receivedMessages Mail[]            @relation("receivedMessages")
@@ -41,11 +42,11 @@ model User {
   relations        Relationship[]    @relation("from")
   gotRelations     Relationship[]    @relation("to")
   stat             Stat[]
-  userpages        Userpage[]
+  userpage         Userpage?
   scores           Score[]
   userAchievement  UserAchievement[]
 
-  @@index([clanId], map: "users_clan_id_fkey")
+  @@index([clanId], map: "users_clan_id_uindex")
   @@map("users")
 }
 
@@ -61,6 +62,7 @@ model ClientHash {
   user User @relation(fields: [userId], references: [id])
 
   @@id([userId, osuPath, iFaces, uninstallId, diskSerial])
+  @@index([userId])
   @@map("client_hashes")
 }
 
@@ -75,7 +77,7 @@ model Comment {
 
   user User @relation(fields: [userId], references: [id])
 
-  @@index([userId], map: "comments_userid_fkey")
+  @@index([userId], map: "comments_userid_uindex")
   @@map("comments")
 }
 
@@ -97,10 +99,11 @@ model Favourite {
   setId     Int @map("setid")
   createdAt Int @default(0) @map("created_at")
 
-  user   User   @relation(fields: [userId], references: [id])
-  source Source @relation(fields: [setId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+  // source Source @relation(fields: [setId], references: [id])
 
   @@id([userId, setId])
+  @@index([userId])
   @@map("favourites")
 }
 
@@ -114,6 +117,7 @@ model IngameLogin {
 
   user User @relation(fields: [userId], references: [id])
 
+  @@index([userId])
   @@map("ingame_logins")
 }
 
@@ -138,6 +142,8 @@ model Mail {
   fromUser   User @relation(name: "sentMessages", fields: [fromId], references: [id])
   targetUser User @relation(name: "receivedMessages", fields: [targetId], references: [id])
 
+  @@index([fromId])
+  @@index([targetId])
   @@map("mail")
 }
 
@@ -182,6 +188,7 @@ model Map {
 
   @@id([server, id])
   @@index([filename], map: "filename")
+  @@index([setId, server])
   @@map("maps")
 }
 
@@ -190,10 +197,11 @@ model Source {
   id              Int        @unique(map: "nmapsets_id_uindex")
   lastOsuApiCheck DateTime   @default(now()) @map("last_osuapi_check") @db.DateTime(0)
 
-  favs     Favourite[]
+  // favs     Favourite[]
   beatmaps Map[]
 
   @@id([server, id])
+  @@unique([id, server])
   @@map("mapsets")
 }
 
@@ -236,6 +244,8 @@ model Relationship {
   toUser   User @relation(name: "to", fields: [toUserId], references: [id])
 
   @@id([fromUserId, toUserId])
+  @@index([fromUserId])
+  @@index([toUserId])
   @@map("relationships")
 }
 
@@ -302,6 +312,7 @@ model Stat {
   user User @relation(fields: [id], references: [id])
 
   @@id([id, mode])
+  @@index([id])
   @@map("stats")
 }
 
@@ -311,7 +322,7 @@ model TourneyPool {
   createdAt DateTime @map("created_at") @db.DateTime(0)
   createdBy Int      @map("created_by")
 
-  @@index([createdBy], map: "tourney_pools_users_id_fk")
+  @@index([createdBy], map: "tourney_pools_users_id_uindex")
   @@map("tourney_pools")
 }
 
@@ -323,6 +334,8 @@ model UserAchievement {
   achievement Achievement @relation(fields: [achievementId], references: [id])
 
   @@id([userId, achievementId])
+  @@index([userId])
+  @@index([achievementId])
   @@map("user_achievements")
 }
 
@@ -362,18 +375,18 @@ model TourneyPoolMap {
   slot    Int @db.TinyInt
 
   @@id([map_id, pool_id])
-  @@index([pool_id], map: "tourney_pool_maps_tourney_pools_id_fk")
+  @@index([pool_id], map: "tourney_pool_maps_tourney_pools_id_uindex")
   @@map("tourney_pool_maps")
 }
 
 model Userpage {
   id      Int              @id @default(autoincrement())
-  userId  Int              @map("user_id")
+  userId  Int              @unique @map("user_id")
   html    String?          @db.Text
   raw     String?          @db.Text
   rawType UserpageRawType? @map("raw_type")
 
-  user User @relation(fields: [userId], references: [id])
+  User User @relation(fields: [userId], references: [id])
 
   @@index([userId], map: "user_id")
   @@map("userpages")
