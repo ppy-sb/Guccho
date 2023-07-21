@@ -1,4 +1,3 @@
-import { ECONNREFUSED, ENOENT } from 'node:constants'
 import { createClient } from 'redis'
 import { Logger } from '../../log'
 import { env } from '~/server/env'
@@ -19,25 +18,45 @@ export const client = lazySingleton(() => {
     },
   })
 
-  let lastErr: Error | undefined
+  const lastErr = new Map<string, { err: Error; lastReportedAt: number; count: number; debounce: number; adaptiveRatio: number }>()
   client.on('error', (err: Error) => {
-    const _lastErr = lastErr
-    lastErr = err
-    if (_lastErr?.stack === err.stack) {
-      return
-    }
-    switch (true) {
-      case ((err as any)?.errno === -ECONNREFUSED):
-      case ((err as any)?.errno === -ENOENT): {
-        logger.error(err)
-        break
+    const same = lastErr.get(err.stack || err.message)
+    if (same) {
+      if (same.err.stack === err?.stack) {
+        const now = Date.now()
+
+        const gap = now - same.lastReportedAt
+
+        if (gap <= same.debounce) {
+          same.count++
+          same.err = err
+        }
+
+        if ((same.count > 2) && (gap >= same.debounce * same.adaptiveRatio ** 2)) {
+          same.debounce = same.debounce / same.adaptiveRatio
+        }
+
+        if (gap > same.debounce) {
+          if (same.count > 1) {
+            logger.error({ ...same.err, message: `(${same.count}x) ${same.err.message}` })
+            same.debounce *= same.adaptiveRatio
+          }
+          else {
+            logger.error(err)
+          }
+
+          same.count = 0
+          same.err = err
+          same.lastReportedAt = now
+        }
       }
-      default: logger.error(err)
+    }
+    else {
+      logger.error(err)
+      lastErr.set(err.stack || err.message, { err, lastReportedAt: Date.now(), debounce: 1000, count: 0, adaptiveRatio: 1.3 })
     }
   })
-  client.on('connect', () => {
-    lastErr = undefined
-  })
+
   client.connect()
 
   return client
