@@ -9,7 +9,7 @@ definePageMeta({
 })
 
 const app$ = useNuxtApp()
-const route = useRoute()
+const route = useRoute('beatmapset-id')
 const config = useAppConfig()
 const { supportedModes, supportedRulesets, hasRankingSystem, hasRuleset }
   = useAdapterConfig()

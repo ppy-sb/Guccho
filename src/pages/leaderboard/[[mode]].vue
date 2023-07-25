@@ -5,7 +5,7 @@ import type { SwitcherPropType } from '~/composables/useSwitcher'
 
 const config = useAppConfig()
 
-const route = useRoute()
+const route = useRoute('leaderboard-mode')
 const router = useRouter()
 const app$ = useNuxtApp()
 

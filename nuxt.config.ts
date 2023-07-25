@@ -54,6 +54,7 @@ export default defineNuxtConfig({
     '@nuxtjs/tailwindcss',
     '@pinia/nuxt',
     'nuxt-icon',
+    'nuxt-typed-router',
   ],
 
   alias: {

@@ -4,7 +4,7 @@ import { JsonViewer } from 'vue3-json-viewer'
 import 'vue3-json-viewer/dist/index.css'
 import { Rank } from '~/def'
 
-const route = useRoute()
+const route = useRoute('score-id')
 
 const id = route.params.id.toString()
 

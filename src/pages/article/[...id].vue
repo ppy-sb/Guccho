@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const route = useRoute()
+const route = useRoute('article-id')
 
 const id = route.params.id
 if (!id) {

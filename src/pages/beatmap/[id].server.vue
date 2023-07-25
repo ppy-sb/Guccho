@@ -1,5 +1,5 @@
 <script setup lang="ts" async>
-const { id } = useRoute().params
+const { id } = useRoute('beatmap-id.server').params
 if (!id || Array.isArray(id)) {
   createError('please provide valid id.')
 }
