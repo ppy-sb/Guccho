@@ -45,13 +45,33 @@ function percentWidth(count: number) {
 <i18n lang="yaml">
 en-GB:
   system-load: System Load
-  user: user
-  system: system
+  user: User
+  system: System
+  app-load: App Load
+  total: Total
+  other: Other
+  memory: Memory
+  active: Active
+  cache: Cache
+  free: Free
+  web-app-config: Web App Config
+  npm-env: npm env
+  env: env
 
 zh-CN:
   system-load: 系统负载
   user: 用户
   system: 系统
+  app-load: 应用负载
+  total: 总计
+  other: 其他
+  memory: 内存
+  active: 活跃
+  cache: 缓存
+  free: 可用
+  web-app-config: 网络应用配置
+  npm-env: npm环境变量
+  env: 环境变量
 </i18n>
 
 <template>
@@ -80,9 +100,9 @@ zh-CN:
 
     <h1 class="flex flex-wrap items-baseline gap-1 drop-shadow-lg my-1">
       <div class="text-xl">
-        App Load
+        {{ t('app-load') }}
       </div>
-      <span class="badge">total: {{ fmtPercent.format(data.load.system.current / 100) }}</span>
+      <span class="badge">{{ t('total') }}: {{ fmtPercent.format(data.load.system.current / 100) }}</span>
       <span
         v-for="(_data, key) of data.load.app" :key="key"
         class="badge"
@@ -101,43 +121,43 @@ zh-CN:
         :style="percentWidth((data.load.system.current - data.load.app.web.current) / data.load.system.current * 100)"
         class="multi-progress-bar bg-gbase-300/10"
       >
-        Other
+        {{ t('other') }}
       </div>
     </div>
 
     <div class="flex flex-wrap gap-1 my-1 drop-shadow-lg items-baseline">
       <h1 class="text-xl">
-        Memory
+        {{ t('memory') }}
       </h1>
-      <span class="badge text-blue-50 bg-blue-500 border-blue-500">Active: {{ fmtCompact.format(data.memory.system.active / 1_000_000) }}</span>
-      <span class="badge text-teal-50 bg-teal-500 border-teal-500">Cache: {{ fmtCompact.format(data.memory.system.buffcache / 1_000_000) }}</span>
-      <span class="badge">Total: {{ fmtCompact.format(data.memory.system.total / 1_000_000) }}</span>
-      <span class="badge">Free: {{ fmtCompact.format(data.memory.system.free / 1_000_000) }}</span>
+      <span class="badge text-blue-50 bg-blue-500 border-blue-500">{{ t('active') }}: {{ fmtCompact.format(data.memory.system.active / 1_000_000) }}</span>
+      <span class="badge text-teal-50 bg-teal-500 border-teal-500">{{ t('cache') }}: {{ fmtCompact.format(data.memory.system.buffcache / 1_000_000) }}</span>
+      <span class="badge">{{ t('total') }}: {{ fmtCompact.format(data.memory.system.total / 1_000_000) }}</span>
+      <span class="badge">{{ t('free') }}: {{ fmtCompact.format(data.memory.system.free / 1_000_000) }}</span>
     </div>
     <div class="multi-progress-bar-container bg-gbase-500/10 shadow-lg">
       <div
         :style="percentWidth(data.memory.system.active / data.memory.system.total * 100)"
         class="multi-progress-bar bg-blue-500 text-white"
       >
-        active
+        {{ t('active') }}
       </div>
       <div
         :style="percentWidth(data.memory.system.buffcache / data.memory.system.total * 100)"
         class="multi-progress-bar bg-teal-500 text-white"
       >
-        cache
+        {{ t('cache') }}
       </div>
       <div
         :style="percentWidth((data.memory.system.free) / data.memory.system.total * 100)"
         class="multi-progress-bar bg-gbase-300/10"
       >
-        free
+        {{ t('free') }}
       </div>
     </div>
 
     <template v-if="session.user?.roles.includes(UserPrivilege.Staff)">
       <h1 class="text-xl drop-shadow-lg my-1">
-        Web App Config
+        {{ t('web-app-config') }}
       </h1>
       <JsonViewer
         :value="config"
@@ -148,7 +168,7 @@ zh-CN:
         class="rounded-xl"
       />
       <h1 class="text-xl drop-shadow-lg my-1">
-        npm env
+        {{ t('npm-env') }}
       </h1>
       <JsonViewer
         :value="serverConfig?.npm"
@@ -159,7 +179,7 @@ zh-CN:
         class="rounded-xl"
       />
       <h1 class="text-xl drop-shadow-lg my-1">
-        env
+        {{ t('env') }}
       </h1>
       <JsonViewer
         :value="{
