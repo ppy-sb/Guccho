@@ -9,20 +9,20 @@ import {
 
 interface Option {
   label: string | number
-  value: any
+  value: unknown
   disabled?: boolean
 }
 const props = defineProps<{
   size?: 'xs' | 'sm' | 'lg'
   options: Option[]
-  modelValue?: Option
+  modelValue?: Option['value']
 }>()
 const e = defineEmits<{
-  (e: 'update:modelValue', value: Option): void
+  (e: 'update:modelValue', value: Option['value']): void
 }>()
 
 const selected = computed(() => props.options.find((value) => {
-  return value.label === props.modelValue?.label
+  return value.value === props.modelValue
 }))
 const root = ref<InstanceType<typeof Listbox>>()
 defineExpose({

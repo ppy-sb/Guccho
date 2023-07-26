@@ -14,6 +14,7 @@ import type {
   UserStatistic,
   UserStatus,
 } from '~/def/user'
+import type { CountryCode } from '~/def/country-code'
 
 export namespace UserProvider {
   export type ComposableProperties<Id> = UserExtra<Id> & UserOptional
@@ -71,7 +72,7 @@ export interface UserProvider<Id> extends idTransformable {
 
   getStatistics(query: {
     id: Id
-    country: string
+    flag: CountryCode
   }): PromiseLike<UserStatistic>
 
   getFull<
@@ -100,6 +101,7 @@ export interface UserProvider<Id> extends idTransformable {
     input: {
       email?: string
       name?: string
+      flag?: CountryCode
     }
   ): PromiseLike<UserEssential<Id>>
 

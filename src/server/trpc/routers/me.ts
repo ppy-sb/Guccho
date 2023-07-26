@@ -13,6 +13,7 @@ import { zodHandle, zodRelationType, zodTipTapJSONContent } from '../shapes'
 import { router as _router } from '../trpc'
 import { userProcedure as pUser } from '~/server/trpc/middleware/user'
 import { SessionProvider, UserProvider, UserRelationProvider } from '$active/server'
+import { CountryCode } from '~/def/country-code'
 
 const { compare } = bcrypt
 
@@ -48,17 +49,18 @@ export const router = _router({
       z.object({
         email: z.string().email().optional(),
         name: z.string().trim().optional(),
+        flag: z.nativeEnum(CountryCode).optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const update: Partial<typeof input & { userpageContent: string }> = {}
+      const update: typeof input = { flag: input.flag }
       // TODO: check email(should verified by frontend with another request (not impl'd yet ))
       if (input.name) {
-        const existedUser = await users.getEssential({
+        const existingUser = await users.getEssential({
           handle: input.name,
           keys: ['id', 'name', 'safeName'],
         }).catch(noop<undefined>)
-        if (existedUser?.name === input.name) {
+        if (existingUser?.name === input.name) {
           throw new TRPCError({
             code: 'PRECONDITION_FAILED',
             message: userExists,

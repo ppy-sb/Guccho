@@ -3,6 +3,7 @@ import { Cropper } from 'vue-advanced-cropper'
 import 'vue-advanced-cropper/dist/style.css'
 
 import md5 from 'md5'
+import { CountryCode } from '../../def/country-code'
 import { Client, OS } from '~/def/device'
 
 import { TModal, TResponsiveModal } from '#components'
@@ -112,6 +113,8 @@ async function updateUserSettings() {
       user.value.name !== unchanged.value.name ? user.value.name : undefined,
     email:
       user.value.email !== unchanged.value.email ? user.value.email : undefined,
+    flag:
+      user.value.flag !== unchanged.value.flag ? user.value.flag : undefined,
   }
   posting.value = true
 
@@ -329,7 +332,7 @@ async function kickSession(session: string) {
           </div>
           <div class="flex p-4 gap-2">
             <t-button size="sm" variant="accent" class="grow">
-              <icon name="ic:round-check" class="w-5 h-5" size="100%" />  confirm
+              <icon name="ic:round-check" class="w-5 h-5" size="100%" /> confirm
             </t-button>
             <t-button
               size="sm"
@@ -403,7 +406,7 @@ async function kickSession(session: string) {
             <div class="pb-4" />
           </div>
         </div>
-        <div class="p-3 lg:mr-4">
+        <div class="lg:mr-4">
           <label class="label" for="session">
             <span class="pl-3 label-text">Session</span>
           </label>
@@ -459,8 +462,13 @@ async function kickSession(session: string) {
                       {{ session.lastSeen.toLocaleString() }}
                     </td>
                     <th>
-                      <button class="btn btn-ghost btn-xs" :disabled="pendingSession || session.current" :class="{ loading: pendingSession }" @click.prevent="kickSession(id)">
-                        Kick
+                      <button
+                        class="btn btn-ghost btn-xs"
+                        :class="{ loading: pendingSession }"
+                        :disabled="pendingSession || session.current"
+                        @click="kickSession(id)"
+                      >
+                        <icon name="majesticons:logout-half-circle-line" class="w-5 h-5 me-1" size="100%" /> Kick
                       </button>
                     </th>
                   </tr>
@@ -569,6 +577,17 @@ async function kickSession(session: string) {
               revert
             </button>
           </div>
+        </div>
+        <div class="form-control">
+          <label class="label" for="flag">
+            <span class="pl-3 label-text">Flag</span>
+          </label>
+          <!-- <t-combo-box v-model="user.flag" size="sm" class="&[button]:w-full" :options="Object.entries(CountryCode).map(([k, v]) => ({ value: v, label: k }))" /> -->
+          <select v-model="user.flag" class="select select-ghost w-full select-sm">
+            <option v-for="countryCode in CountryCode" :key="countryCode" :disabled="countryCode === user.flag" :selected="countryCode === user.flag" :value="countryCode">
+              {{ toCountryName(countryCode) }}
+            </option>
+          </select>
         </div>
         <div>
           <label class="label" for="password">

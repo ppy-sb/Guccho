@@ -12,6 +12,7 @@ import {
 } from '../db-query'
 import type { Id } from '..'
 import { hasRuleset } from '..'
+
 import { client as redisClient } from './source/redis'
 import { getPrismaClient } from './source/prisma'
 import { env } from '~/server/env'
@@ -24,6 +25,7 @@ import type {
   RankingSystem,
 } from '~/def/common'
 import type { LeaderboardProvider as Base } from '$base/server'
+import type { CountryCode } from '~/def/country-code'
 
 const logger = Logger.child({ label: 'leaderboard', backend: 'bancho.py' })
 
@@ -218,7 +220,7 @@ export class RedisLeaderboardProvider extends LeaderboardDatabaseProvider {
           id: number
           name: string
           safeName: string
-          flag: string
+          flag: CountryCode
           priv: number
           _rank: bigint
           accuracy: number
@@ -275,7 +277,7 @@ export class RedisLeaderboardProvider extends LeaderboardDatabaseProvider {
             id: user.id,
             name: user.name,
             safeName: user.safeName,
-            flag: user.country,
+            flag: toCountryCode(user.country),
             [Rank.PPv2]: stat.pp,
             [Rank.TotalScore]: stat[Rank.TotalScore],
             [Rank.RankedScore]: stat[Rank.RankedScore],

@@ -1,6 +1,7 @@
+import type { CountryCode } from '../def/country-code'
+
 const baseUrl = 'https://cdn.jsdelivr.net/npm/@twemoji/svg@latest/'
-export function getFlagURL(flag: string) {
-  flag = flag.toUpperCase()
+export function getFlagURL(flag: CountryCode) {
   let url = baseUrl
 
   for (let i = 0; i < flag.length; i++) {
@@ -9,4 +10,17 @@ export function getFlagURL(flag: string) {
   }
 
   return `${url}.svg`
+}
+
+// offset between uppercase ASCII and regional indicator symbols
+const OFFSET = 127397
+export function countryCodeToEmoji(code: CountryCode) {
+  let emojiStr = ''
+  // loop all characters
+  for (let i = 0; i < code.length; i++) {
+    emojiStr += (code.charAt(i) + OFFSET)
+  }
+
+  // return emoji
+  return emojiStr
 }

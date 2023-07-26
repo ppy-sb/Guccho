@@ -6,6 +6,7 @@ import type {
 } from './common'
 import type { UserModeRulesetStatistics } from './statistics'
 import type { UserRelationship } from './user-relationship'
+import type { CountryCode } from './country-code'
 import type { ArticleProvider } from '$base/server'
 
 export enum Scope {
@@ -80,7 +81,7 @@ export interface UserEssential<Id> {
   ingameId: number
   name: string
   safeName: string
-  flag: string
+  flag: CountryCode
   avatarSrc?: string
 
   roles: UserPrivilege[]

@@ -10,6 +10,7 @@ import { BanchoPyMode, BanchoPyPrivilege, BanchoPyScoreStatus } from '../enums'
 import {
   BPyMode,
   createRulesetData,
+  fromCountryCode,
   fromRankingStatus,
   idToString,
   stringToId,
@@ -44,6 +45,7 @@ import type { ActiveMode, ActiveRuleset, LeaderboardRankingSystem } from '~/def/
 import type { UserEssential, UserOptional, UserStatistic } from '~/def/user'
 import { UserStatus } from '~/def/user'
 import { Mode, Rank, Ruleset } from '~/def'
+import type { CountryCode } from '~/def/country-code'
 
 const logger = Logger.child({ label: 'user' })
 
@@ -249,8 +251,8 @@ INNER JOIN (
     FROM users u
     INNER JOIN scores s ON s.userid = u.id
     WHERE u.priv > 2
-      AND s.mode = ${toBanchoPyMode(mode, ruleset)} 
-      AND s.score > 0 
+      AND s.mode = ${toBanchoPyMode(mode, ruleset)}
+      AND s.score > 0
       AND s.status = ${BanchoPyScoreStatus.Pick}
     GROUP BY s.map_md5
 ) tmp ON tmp.maxScore = s.score AND tmp.map_md5 = s.map_md5
@@ -295,7 +297,7 @@ WHERE s.userid = ${id}
     }
   }
 
-  async _getStatistics(opt: { id: Id; country: string }) {
+  async _getStatistics(opt: { id: Id; flag: CountryCode }) {
     const { id } = opt
     const results = await this.db.stat.findMany({
       where: {
@@ -351,7 +353,7 @@ WHERE s.userid = ${id}
     return { results, ranks }
   }
 
-  async getStatistics(opt: { id: Id; country: string }) {
+  async getStatistics(opt: { id: Id; flag: CountryCode }) {
     const { results, ranks } = await this._getStatistics(opt)
 
     return this._toStatistics(results, ranks)
@@ -379,7 +381,7 @@ WHERE s.userid = ${id}
 
     if (excludes.statistics !== true) {
       parallels.push(
-        this.getStatistics(user).then((res) => {
+        this.getStatistics(returnValue).then((res) => {
           returnValue.statistics = res
         })
       )
@@ -421,6 +423,7 @@ WHERE s.userid = ${id}
     input: {
       email?: string
       name?: string
+      flag?: CountryCode
     }
   ) {
     const result = await this.db.user.update({
@@ -431,6 +434,7 @@ WHERE s.userid = ${id}
         email: input.email,
         name: input.name,
         safeName: input.name && toSafeName(input.name),
+        country: input.flag && fromCountryCode(input.flag),
       },
     })
     return toUserEssential(result, this.config)
@@ -679,7 +683,8 @@ export class RedisUserProvider extends DBUserProvider {
     }
   }
 
-  async getRedisRanks({ id, country }: { id: Id; country: string }) {
+  async getRedisRanks({ id, flag }: { id: Id; flag: CountryCode }) {
+    const country = fromCountryCode(flag)
     if (!this.redisClient) {
       return undefined
     }
@@ -723,7 +728,7 @@ export class RedisUserProvider extends DBUserProvider {
     }
   }
 
-  async getStatistics(opt: { id: Id; country: string }) {
+  async getStatistics(opt: { id: Id; flag: CountryCode }) {
     const { results, ranks } = await this._getStatistics(opt)
     const livePPRank = await this.getRedisRanks(opt)
 

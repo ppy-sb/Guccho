@@ -18,6 +18,7 @@ import {
 import type { Relationship } from '~/def'
 
 import type { UserRelationship } from '~/def/user-relationship'
+import type { CountryCode } from '~/def/country-code'
 
 export function toRoles(priv: number): UserPrivilege[] {
   const roles: UserPrivilege[] = []
@@ -86,7 +87,7 @@ export function toUserEssential<
     ingameId: user.id,
     name: user.name,
     safeName: user.safeName,
-    flag: user.country,
+    flag: toCountryCode(user.country),
     avatarSrc: avatar.domain && `https://${avatar.domain}/${user.id}`,
     roles: toRoles(user.priv),
   }
@@ -147,7 +148,7 @@ export function toFullUser(
     ingameId: user.id,
     name: user.name,
     safeName: user.safeName,
-    flag: user.country,
+    flag: toCountryCode(user.country),
     avatarSrc: config.avatar.domain && `https://${config.avatar.domain}/${user.id}`,
     roles: toRoles(user.priv),
     settings: {
@@ -202,4 +203,8 @@ export const BPyStatus = {
 
 export function fromBanchoPyUserStatus<T extends B>(input: T) {
   return BPyStatus[input] ?? G.Unknown
+}
+
+export function fromCountryCode(code: CountryCode): string {
+  return code.toLowerCase()
 }
