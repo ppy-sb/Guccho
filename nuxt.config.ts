@@ -53,6 +53,7 @@ export default defineNuxtConfig({
     // '@nuxtjs/color-mode',
     '@nuxtjs/tailwindcss',
     '@pinia/nuxt',
+    '@nuxtjs/i18n',
     'nuxt-icon',
     'nuxt-typed-router',
   ],
@@ -68,4 +69,24 @@ export default defineNuxtConfig({
   },
 
   devtools: { enabled: true },
+
+  i18n: {
+    strategy: 'prefix_and_default',
+    defaultLocale: 'en-GB',
+    locales: [
+      {
+        code: 'en-GB',
+        name: 'English (International)',
+      },
+      {
+        code: 'zh-CN',
+        name: '简体中文 (中国)',
+      },
+    ],
+    detectBrowserLanguage: {
+      useCookie: true,
+      cookieKey: 'n-lang',
+      redirectOn: 'root', // recommended
+    },
+  },
 })

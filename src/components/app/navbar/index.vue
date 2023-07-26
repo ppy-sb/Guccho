@@ -2,7 +2,7 @@
 import { useSession } from '~/store/session'
 
 const scrollY = useScrollYObserver()
-
+const { t } = useI18n()
 const session = useSession()
 
 const searchModalWrapper = shallowRef<{
@@ -124,7 +124,7 @@ function clearFocus() {
                   }" @click="clearFocus"
                 >
                   <icon name="tabler:circles-relation" class="w-5 h-5" size="100%" />
-                  Friends & Blocks
+                  {{ t('titles.relations') }}
                 </nuxt-link>
               </li>
               <li>
@@ -137,7 +137,7 @@ function clearFocus() {
                   }" @click="clearFocus"
                 >
                   <icon name="mingcute:profile-fill" class="w-5 h-5" size="100%" />
-                  My Profile
+                  {{ t('titles.userpage') }}
                 </nuxt-link>
               </li>
               <li v-if="session.$state.privilege.staff">
@@ -147,14 +147,14 @@ function clearFocus() {
                   }" @click="clearFocus"
                 >
                   <icon name="material-symbols:admin-panel-settings-rounded" class="w-5 h-5" size="100%" />
-                  Admin Panel
+                  {{ t('titles.admin-panel') }}
                 </nuxt-link>
               </li>
               <div class="divider my-0" />
               <li>
                 <nuxt-link :to="{ name: 'auth-logout' }" @click="clearFocus">
                   <icon name="majesticons:logout-half-circle-line" class="w-5 h-5" size="100%" />
-                  Sign out
+                  {{ t('logout') }}
                 </nuxt-link>
               </li>
             </template>
@@ -162,13 +162,13 @@ function clearFocus() {
               <li>
                 <nuxt-link :to="{ name: 'auth-login' }" @click="clearFocus">
                   <icon name="majesticons:login-half-circle-line" class="w-5 h-5" size="100%" />
-                  Sign in
+                  {{ t('login') }}
                 </nuxt-link>
               </li>
               <li>
                 <nuxt-link :to="{ name: 'auth-register' }" @click="clearFocus">
                   <icon name="mingcute:signature-fill" class="w-5 h-5" size="100%" />
-                  Sign up
+                  {{ t('register') }}
                 </nuxt-link>
               </li>
             </template>

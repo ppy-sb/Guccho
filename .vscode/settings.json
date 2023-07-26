@@ -103,5 +103,6 @@
     "merged": false,
     "closed": false
   },
-  "css.format.enable": false
+  "css.format.enable": false,
+  "i18n-ally.localesPaths": ["src/i18n", "src/server/trpc/messages"]
 }

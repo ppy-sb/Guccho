@@ -5,6 +5,8 @@ import 'vue3-json-viewer/dist/index.css'
 import { useSession } from '~/store/session'
 import { UserPrivilege } from '~/def/user'
 
+const { t } = useI18n()
+
 const fmtPercent = new Intl.NumberFormat(undefined, {
   style: 'percent',
   minimumFractionDigits: 2,
@@ -40,27 +42,39 @@ function percentWidth(count: number) {
 }
 </script>
 
+<i18n lang="yaml">
+en-GB:
+  system-load: System Load
+  user: user
+  system: system
+
+zh-CN:
+  system-load: 系统负载
+  user: 用户
+  system: 系统
+</i18n>
+
 <template>
   <div v-if="data" class="container mx-auto custom-container font-mono">
     <div class="flex flex-wrap gap-1 my-1 items-baseline drop-shadow-lg">
       <h1 class="text-xl">
-        System Load
+        {{ t('system-load') }}
       </h1>
-      <span class="badge text-blue-50 bg-blue-500 border-blue-500">user: {{ fmtPercent.format(data.load.system.user / 100) }}</span>
-      <span class="badge text-teal-50 bg-teal-500 border-teal-500">system: {{ fmtPercent.format(data.load.system.system / 100) }}</span>
+      <span class="badge text-blue-50 bg-blue-500 border-blue-500">{{ t('user') }}: {{ fmtPercent.format(data.load.system.user / 100) }}</span>
+      <span class="badge text-teal-50 bg-teal-500 border-teal-500">{{ t('system') }}: {{ fmtPercent.format(data.load.system.system / 100) }}</span>
     </div>
     <div class="multi-progress-bar-container bg-gbase-500/10 shadow-lg">
       <div
         :style="percentWidth(data.load.system.user)"
         class="multi-progress-bar bg-blue-500 text-white"
       >
-        user
+        {{ t('user') }}
       </div>
       <div
         :style="percentWidth(data.load.system.system)"
         class="multi-progress-bar bg-teal-500 text-white"
       >
-        system
+        {{ t('system') }}
       </div>
     </div>
 

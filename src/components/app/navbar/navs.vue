@@ -1,28 +1,41 @@
 <script setup lang="ts">
+import type { LocaleObject } from 'vue-i18n-routing'
 import { useSession } from '~/store/session'
 import { UserPrivilege } from '~/def/user'
 
+const { t } = useI18n()
 function clearFocus() {
   if (document.activeElement instanceof HTMLElement) {
     document.activeElement.blur()
   }
 }
 const session = useSession()
+const { locale, locales } = useI18n()
 </script>
 
 <template>
   <li>
     <nuxt-link :to="{ name: 'leaderboard-mode' }" @click="clearFocus">
       <icon name="material-symbols:leaderboard-rounded" class="w-5 h-5" size="100%" />
-      Leaderboard
+      {{ t('titles.leaderboard') }}
     </nuxt-link>
   </li>
   <li v-if="session.user?.roles.includes(UserPrivilege.Staff)">
     <nuxt-link :to="{ name: 'status' }" @click="clearFocus">
       <icon name="material-symbols:signal-cellular-alt-rounded" class="w-5 h-5" size="100%" />
-      Status
+      {{ t('titles.status') }}
     </nuxt-link>
   </li>
+  <select v-model="locale" class="select select-ghost w-min-content select-sm">
+    <option
+      v-for="l in (locales as LocaleObject[])"
+      :key="l.code"
+      :value="l.code"
+      :disabled="l.code === locale"
+    >
+      {{ l.name }}
+    </option>
+  </select>
   <!-- <li tabindex="0">
     <a class="justify-between lg:justify-start">
       Parent
