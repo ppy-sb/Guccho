@@ -95,7 +95,6 @@
   ],
   "eslint.format.enable": true,
   "eslint.lintTask.enable": true,
-  "eslint.packageManager": "yarn",
   "eslint.useESLintClass": true,
   "eslint.codeActionsOnSave.rules": null,
   "vue3snippets.enable-compile-vue-file-on-did-save-code": false,
@@ -104,5 +103,5 @@
     "closed": false
   },
   "css.format.enable": false,
-  "i18n-ally.localesPaths": ["src/i18n", "src/server/trpc/messages"]
+  "i18n-ally.localesPaths": ["src/locales", "src/server/trpc/messages"]
 }

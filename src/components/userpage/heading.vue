@@ -8,7 +8,7 @@ import { useSession } from '~/store/session'
 import userpageStore from '~/store/userpage'
 
 const page = userpageStore()
-
+const { t, locale } = useI18n()
 const app$ = useNuxtApp()
 const session = useSession()
 const changeFriendStateButton = shallowRef(null)
@@ -69,6 +69,14 @@ async function toggleFriend() {
   refresh()
 }
 </script>
+
+<i18n lang="yaml">
+en-GB:
+  status:
+    offline: Offline, last seen at {lastSeen}
+    idle: Online.
+    afk: AFK
+</i18n>
 
 <template>
   <section
@@ -169,16 +177,16 @@ async function toggleFriend() {
       </div>
       <template v-if="live">
         <div v-if="live.status === UserStatus.Offline" class="order-3 user-status">
-          Offline, last seen at {{ live.lastSeen.toLocaleString() }}
+          {{ t('status.offline', { lastSeen: live.lastSeen.toLocaleDateString(locale, { dateStyle: 'long' }) }) }}
         </div>
         <div v-else-if="live && live.beatmap" class="order-3 user-status">
           {{ UserStatus[live.status] }} {{ live.beatmap.beatmapset.meta.intl.artist }} - {{ live.beatmap.beatmapset.meta.intl.title }} [{{ live.beatmap.version }}]
         </div>
         <div v-else-if="live.status === UserStatus.Idle" class="order-3 user-status">
-          Online.
+          {{ t('status.idle') }}
         </div>
         <div v-else-if="live.status === UserStatus.Afk" class="order-3 user-status">
-          afk
+          {{ t('status.afk') }}
         </div>
       </template>
     </div>

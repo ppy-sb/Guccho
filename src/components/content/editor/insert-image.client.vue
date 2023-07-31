@@ -35,6 +35,14 @@ defineExpose({
 })
 </script>
 
+<i18n lang="yaml">
+en-GB:
+  title: Title
+  description: Description
+  ok: confirm
+  cancel: cancel
+</i18n>
+
 <template>
   <TResponsiveModal ref="modal" v-slot="{ closeModal }" class="my-auto max-w-full" @closed="reset">
     <div class="card bg-base-100/50 shadow-lg w-full">
@@ -54,7 +62,7 @@ defineExpose({
           </div>
           <div class="form-control">
             <label class="label" for="title">
-              <span class="pl-2 label-text">Title</span>
+              <span class="pl-2 label-text">{{ $t('title') }}</span>
             </label>
             <input
               id="title"
@@ -65,7 +73,7 @@ defineExpose({
           </div>
           <div class="form-control">
             <label class="label" for="description">
-              <span class="pl-2 label-text">Description</span>
+              <span class="pl-2 label-text">{{ $t('description') }}</span>
             </label>
             <textarea
               id="description"
@@ -76,7 +84,7 @@ defineExpose({
         </div>
         <div class="flex p-4 gap-2">
           <t-button size="sm" variant="accent" class="grow">
-            confirm
+            {{ $t('ok') }}
           </t-button>
           <t-button
             size="sm"
@@ -85,7 +93,7 @@ defineExpose({
             type="button"
             @click="closeModal"
           >
-            cancel
+            {{ $t('cancel') }}
           </t-button>
         </div>
       </form>

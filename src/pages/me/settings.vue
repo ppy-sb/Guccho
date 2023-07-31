@@ -24,7 +24,7 @@ const enum UploadingAvatarStatus {
 const app$ = useNuxtApp()
 const config = useAppConfig()
 const route = useRoute()
-
+const { t, locale } = useI18n()
 const session = useSession()
 
 definePageMeta({
@@ -459,7 +459,7 @@ async function kickSession(session: string) {
                       </div>
                     </td>
                     <td>
-                      {{ session.lastSeen.toLocaleString() }}
+                      {{ session.lastSeen.toLocaleString(locale) }}
                     </td>
                     <th>
                       <button

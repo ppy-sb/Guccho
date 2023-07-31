@@ -16,7 +16,7 @@ defineProps<{
 const { hasRankingSystem, hasRuleset } = useAdapterConfig()
 
 const scoreFmt = createScoreFormatter({ notation: undefined })
-const { t } = useI18n()
+const { t, locale } = useI18n()
 </script>
 
 <i18n lang="yaml">
@@ -81,7 +81,7 @@ zh-CN:
 
       <template #time>
         <span class="font-semibold underline decoration-dashed">
-          {{ score.playedAt.toLocaleString() }}
+          {{ score.playedAt.toLocaleString(locale, { dateStyle: 'long', timeStyle: 'full' }) }}
         </span>
       </template>
     </i18n-t>

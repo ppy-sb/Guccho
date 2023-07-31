@@ -3,7 +3,7 @@ import 'vue3-json-viewer/dist/index.css'
 
 const app = useNuxtApp()
 const serverLogs = await app.$client.admin.log.last.query(50)
-
+const { locale } = useI18n()
 const logs = ref(serverLogs.reverse())
 </script>
 
@@ -24,7 +24,7 @@ const logs = ref(serverLogs.reverse())
             {{ log.level }}
           </div>
           <div class="md:flex space-x-1 text-xs font-mono">
-            {{ log.timestamp.toLocaleString() }}
+            {{ log.timestamp.toLocaleString(locale) }}
           </div>
         </div>
         <div class="border-r-2 border-black dark:border-white absolute h-full left-1 md:left-20 top-2 z-10">
@@ -41,10 +41,10 @@ const logs = ref(serverLogs.reverse())
           </div>
           <div class="mb-4 mt-2 md:hidden">
             <div class="font-bold">
-              {{ log.timestamp.toLocaleDateString() }}
+              {{ log.timestamp.toLocaleDateString(locale) }}
             </div>
             <div class="text-xs">
-              {{ log.timestamp.toLocaleTimeString() }}
+              {{ log.timestamp.toLocaleTimeString(locale) }}
             </div>
           </div>
           <div v-if="log.message" class="mb-2 font-mono text-sm`">

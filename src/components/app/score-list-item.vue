@@ -65,7 +65,14 @@ const meta = computed(
     }
   }
 )
+
+const { t, locale } = useI18n()
 </script>
+
+<i18n lang="yaml">
+en-GB:
+  unknown-beatmap: Unknown Beatmap
+</i18n>
 
 <template>
   <div class="score">
@@ -118,7 +125,7 @@ const meta = computed(
             </router-link>
           </template>
           <div v-else>
-            Unknown Beatmap
+            {{ t('unknown-beatmap') }}
           </div>
           <div class="flex text-xs gap-2 md:text-sm lg:text-md flex-wrap">
             <span v-if="beatmap" class="font-semibold">
@@ -130,7 +137,7 @@ const meta = computed(
           </div>
           <div class="mt-auto map-date">
             <time class="text-xs italic lg:text-sm font-extralight">
-              {{ score.playedAt.toLocaleString() }}
+              {{ score.playedAt.toLocaleString(locale, { dateStyle: 'long', timeStyle: 'full' }) }}
             </time>
           </div>
         </div>
@@ -142,7 +149,7 @@ const meta = computed(
               <div class="font-bold font-mono">
                 {{ score.pp.toFixed(2) }}
               </div>
-              <span class="font-light">{{ $t('global.pp') }}</span>
+              <span class="font-light">{{ t('global.pp') }}</span>
             </template>
             <template v-else-if="(leaderboardScoreRankingSystems).includes(props.rankingSystem as LeaderboardScoreRankingSystem)">
               <div class="font-bold font-mono">
@@ -174,7 +181,7 @@ const meta = computed(
             <span class="flex">
               <b class="font-mono">{{ score.accuracy.toFixed(2) }}</b>
               <div class="text-light">
-                % {{ $t('global.acc') }}
+                % {{ t('global.acc') }}
               </div>
             </span>
           </div>

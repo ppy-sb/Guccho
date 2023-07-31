@@ -16,8 +16,8 @@ import {
 
 import userpageStore from '~/store/userpage'
 
-const app$ = useNuxtApp()
-
+const app = useNuxtApp()
+const { t } = useI18n()
 const page = userpageStore()
 
 let prevSwitcherState = {
@@ -63,7 +63,7 @@ const {
     }
   }
   return {
-    ...(await app$.$client.user.tops.query({
+    ...(await app.$client.user.tops.query({
       handle: page.user.id,
       mode: page.switcher.mode,
       ruleset: page.switcher.ruleset,
@@ -160,6 +160,14 @@ const prevTop = prevPage.bind(null, topPage)
 const nextTop = nextPage.bind(null, topPage)
 </script>
 
+<i18n src="./scores.base.yaml" lang="yaml" />
+
+<i18n lang="yaml">
+en-GB:
+  top: Top Ranks
+  loading: Loading Top Scores...
+</i18n>
+
 <template>
   <div v-if="errorTop">
     {{ errorTop }}
@@ -179,7 +187,7 @@ const nextTop = nextPage.bind(null, topPage)
             <icon name="pajamas:first-contribution" class="w-1/6 text-3xl opacity-70" />
             <div class="w-2/3 flex">
               <div class="text-3xl font-semibold mx-auto">
-                Top Ranks
+                {{ t('top') }}
               </div>
             </div>
             <div class="w-1/6 flex">
@@ -233,7 +241,7 @@ const nextTop = nextPage.bind(null, topPage)
               «
             </button>
             <button class="btn btn-ghost grow" @click="() => refreshTop()">
-              Page {{ topPage + 1 }}
+              {{ t('page') }} {{ topPage + 1 }}
             </button>
             <button
               class="btn btn-ghost"
@@ -249,7 +257,7 @@ const nextTop = nextPage.bind(null, topPage)
         v-else-if="!top?.scores.length && pendingTop"
         class="custom-container"
       >
-        Loading Top Scores...
+        {{ t('loading') }}
       </div>
     </div>
   </template>

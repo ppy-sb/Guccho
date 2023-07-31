@@ -1,4 +1,4 @@
-import { enGB, zhCN } from './src/i18n'
+import { enGB, zhCN } from './src/locales'
 
 export default defineI18nConfig(() => ({
   legacy: false,

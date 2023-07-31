@@ -16,8 +16,8 @@ import {
 
 import userpageStore from '~/store/userpage'
 
-const app$ = useNuxtApp()
-
+const app = useNuxtApp()
+const { t } = useI18n()
 const page = userpageStore()
 
 let prevSwitcherState: UnwrapShallowReactive<typeof page['switcher']> = {
@@ -60,7 +60,7 @@ const {
     }
   }
   return {
-    scores: await app$.$client.user.best.query({
+    scores: await app.$client.user.best.query({
       handle: page.user.id,
       mode: page.switcher.mode,
       ruleset: page.switcher.ruleset,
@@ -156,6 +156,13 @@ const prevBp = prevPage.bind(null, bpPage)
 const nextBp = nextPage.bind(null, bpPage)
 </script>
 
+<i18n src="./scores.base.yaml" lang="yaml" />
+
+<i18n lang="yaml">
+en-GB:
+  bp: Best Scores
+</i18n>
+
 <template>
   <div v-if="bpError">
     {{ bpError }}
@@ -170,7 +177,7 @@ const nextBp = nextPage.bind(null, bpPage)
             <icon name="carbon:letter-pp" class="w-1/6" size="2em" />
             <div class="w-2/3 flex">
               <div class="text-3xl font-semibold mx-auto">
-                Best Scores
+                {{ t('bp') }}
               </div>
             </div>
           </div>
@@ -219,7 +226,7 @@ const nextBp = nextPage.bind(null, bpPage)
               «
             </button>
             <button class="btn btn-ghost grow" @click="() => refreshBP()">
-              Page {{ bpPage + 1 }}
+              {{ t('page') }} {{ bpPage + 1 }}
             </button>
             <button
               class="btn btn-ghost"
@@ -232,7 +239,7 @@ const nextBp = nextPage.bind(null, bpPage)
         </div>
       </section>
       <div v-else-if="!bp?.scores.length && pendingBP" class="custom-container">
-        Loading Best Scores...
+        {{ t('loading') }}
       </div>
     </div>
   </template>
