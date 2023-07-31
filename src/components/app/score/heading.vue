@@ -16,67 +16,88 @@ defineProps<{
 const { hasRankingSystem, hasRuleset } = useAdapterConfig()
 
 const scoreFmt = createScoreFormatter({ notation: undefined })
+const { t } = useI18n()
 </script>
+
+<i18n lang="yaml">
+en-GB:
+  title: '{title} by {artist}'
+  map: '{version} created by {creator}'
+  play: '{player} played at {time}'
+
+zh-CN:
+  title: "曲名\t{title}\n艺术家\t{artist}"
+  map: "难度\t{version}\n谱师\t{creator}"
+  play: '{player} 于 {time} 留下了此成绩'
+</i18n>
 
 <template>
   <!-- TODO score design -->
-  <div>
-    <template v-if="beatmapIsVisible(score.beatmap)">
-      <div class="flex">
-        <div class="flex flex-col gap-2">
-          <div class="flex gap-2 items-baseline flex-wrap">
-            <div class="text-3xl font-bold">
-              {{ score.beatmap.beatmapset.meta.intl.title }}
-            </div>
-            <div class="flex gap-1 items-baseline">
-              <span class="font-light">by</span>
-              <span class="text-2xl font-semibold">
-                {{ score.beatmap.beatmapset.meta.intl.artist }}
-              </span>
-            </div>
-            <div class="divider divider-horizontal" />
-            <span class="text-2xl font-bold">{{ score.beatmap.version }}</span>
-            <span class="font-light">mapped by</span>
-            <span class="text-xl font-semibold">{{ score.beatmap.creator }}</span>
-          </div>
+  <div v-if="beatmapIsVisible(score.beatmap)" class="whitespace-pre">
+    <i18n-t keypath="title" tag="p" class="font-light">
+      <template #title>
+        <span class="text-3xl font-semibold">
+          {{ score.beatmap.beatmapset.meta.intl.title }}
+        </span>
+      </template>
 
-          <div class="flex gap-1 items-baseline">
-            <div class="flex items-center gap-1">
-              <img class="mask mask-squircle" width="30" :src="score.user.avatarSrc" alt="">
-              <nuxt-link
-                :to="{
-                  name: 'user-handle',
-                  params: {
-                    handle: `@${score.user.safeName}`,
-                  },
-                }" class="text-4xl font-bold underline decoration-sky-500"
-              >
-                {{ score.user.name }}
-              </nuxt-link>
-            </div>
-            <span class="font-light">played at</span>
-            <span class="text-xl font-semibold">{{ score.playedAt.toLocaleString() }}</span>
-          </div>
-        </div>
-      </div>
-      <div class="flex flex-col md:flex-row w-full justify-between">
-        <div class="p-8 flex gap-2 items-baseline">
-          <template v-if="rankingSystem === Rank.Score">
-            <span class="text-5xl">{{ scoreFmt(score.score) }}</span>
-          </template>
-          <template v-else-if="rankingSystem === Rank.PPv2 && hasRuleset(score.mode, score.ruleset) && hasRankingSystem(score.mode, score.ruleset, Rank.PPv2)">
-            <span class="text-5xl">{{ scoreFmt(score[Rank.PPv2].pp) }}</span>
-            <span class="text-3xl">pp</span>
-          </template>
-        </div>
-        <div class="p-8 text-8xl">
-          {{ score.grade }}
-        </div>
-      </div>
-    </template>
+      <template #artist>
+        <span class="text-2xl font-normal">
+          {{ score.beatmap.beatmapset.meta.intl.artist }}
+        </span>
+      </template>
+
+      <!-- <template #separator>
+        <div class="divider divider-horizontal" />
+      </template> -->
+    </i18n-t>
+    <i18n-t keypath="map" tag="p" class="font-light">
+      <template #version>
+        <span class="text-2xl font-semibold">{{ score.beatmap.version }}</span>
+      </template>
+
+      <template #creator>
+        <span class="text-xl font-semibold">{{ score.beatmap.creator }}</span>
+      </template>
+    </i18n-t>
+
+    <i18n-t keypath="play" tag="p" class="font-light">
+      <template #player>
+        <span class="align-bottom">
+          <img class="mask mask-squircle inline align-bottom" width="30" :src="score.user.avatarSrc" alt="">
+          <nuxt-link
+            :to="{
+              name: 'user-handle',
+              params: {
+                handle: `@${score.user.safeName}`,
+              },
+            }"
+            class="text-3xl font-normal underline decoration-sky-500"
+          >
+            {{ score.user.name }}
+          </nuxt-link>
+        </span>
+      </template>
+
+      <template #time>
+        <span class="font-semibold underline decoration-dashed">
+          {{ score.playedAt.toLocaleString() }}
+        </span>
+      </template>
+    </i18n-t>
+  </div>
+  <div class="flex flex-col md:flex-row w-full justify-between">
+    <div class="p-8 flex gap-2 items-baseline">
+      <template v-if="rankingSystem === Rank.Score">
+        <span class="text-5xl">{{ scoreFmt(score.score) }}</span>
+      </template>
+      <template v-else-if="rankingSystem === Rank.PPv2 && hasRuleset(score.mode, score.ruleset) && hasRankingSystem(score.mode, score.ruleset, Rank.PPv2)">
+        <span class="text-5xl">{{ scoreFmt(score[Rank.PPv2].pp) }}</span>
+        <span class="text-3xl">{{ t('global.pp') }}</span>
+      </template>
+    </div>
+    <div class="p-8 text-8xl">
+      {{ score.grade }}
+    </div>
   </div>
 </template>
-
-<style scoped>
-
-</style>
