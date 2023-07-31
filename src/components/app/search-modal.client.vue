@@ -1,3 +1,13 @@
+<i18n lang="yaml">
+en-GB:
+  include:
+    beatmapsets: Include beatmapsets
+    beatmaps: Include beatmaps
+    users: Include users
+    search: Search...
+    noting: Found nothing.
+</i18n>
+
 <script setup lang="ts">
 const searchModal = shallowRef<{
   showModal: () => void
@@ -36,7 +46,7 @@ const {
                 raw(true)
               }"
             >
-            <span class="label-text">Include beatmapsets</span>
+            <span class="label-text">{{ $t('include.beatmapsets') }}</span>
           </label>
         </div>
 
@@ -48,7 +58,7 @@ const {
                 raw(true)
               }"
             >
-            <span class="label-text">Include beatmaps</span>
+            <span class="label-text">{{ $t('include.beatmaps') }}</span>
           </label>
         </div>
         <div class="form-control">
@@ -60,7 +70,7 @@ const {
                 raw(false)
               }"
             >
-            <span class="label-text">Include users</span>
+            <span class="label-text">{{ $t('include.users') }}</span>
           </label>
         </div>
       </div>
@@ -95,7 +105,7 @@ const {
           <input
             v-model="keyword"
             type="text"
-            placeholder="Search..."
+            :placeholder="$t('search')"
             class="input grow border-label-0 focus:input-primary bg-transparent !outline-0"
             @input="onInput"
             @keyup.enter="raw(true)"
@@ -105,7 +115,7 @@ const {
           v-else
           v-model="keyword"
           type="text"
-          placeholder="Search..."
+          :placeholder="$t('search')"
           class="input grow border-label-0 focus:input-primary bg-transparent !outline-0"
           @input="onInput"
           @keyup.enter="raw(true)"
@@ -135,7 +145,7 @@ const {
           v-if="Array.isArray(beatmapsets) && beatmapsets.length"
         >
           <div class="divider font-bold">
-            <span v-if="loading.beatmapsets" class="loading loading-spinner loading-lg" /> Beatmapsets
+            <span v-if="loading.beatmapsets" class="loading loading-spinner loading-lg" /> {{ $t('global.beatmapsets') }}
           </div>
           <transition-group tag="ul" class="menu" name="left">
             <li
@@ -167,7 +177,7 @@ const {
         </template>
         <template v-if="Array.isArray(beatmaps) && beatmaps.length">
           <div class="divider font-bold">
-            <span v-if="loading.beatmaps" class="loading loading-spinner loading-lg" /> Beatmaps
+            <span v-if="loading.beatmaps" class="loading loading-spinner loading-lg" /> {{ $t('globals.beatmaps') }}
           </div>
           <transition-group tag="ul" class="menu truncate" name="left">
             <li
@@ -198,7 +208,7 @@ const {
         </template>
         <template v-if="Array.isArray(users) && users.length">
           <div class="divider font-bold">
-            <span v-if="loading.users" class="loading loading-spinner loading-lg" /> Users
+            <span v-if="loading.users" class="loading loading-spinner loading-lg" /> {{ $t('global.users') }}
           </div>
           <transition-group tag="ul" class="menu" name="left">
             <li
@@ -229,7 +239,7 @@ const {
         <template v-if="nothing">
           <div class="divider" />
           <div class="p-5 pt-0">
-            Found nothing.
+            {{ $t('nothing') }}
           </div>
         </template>
       </div>

@@ -23,8 +23,6 @@ export default {
   titles: {
     'leaderboard': 'Leaderboard',
     'status': 'Status',
-    'beatmap': 'Beatmaps',
-    'beatmapset': 'Beatmapet',
     'settings': 'Settings',
     'relations': 'Friends & Blocks',
     'userpage': 'My Profile',
@@ -33,4 +31,15 @@ export default {
   logout: 'Sign out',
   login: 'Sign in',
   register: 'Sign up',
+  global: {
+    pp: 'pp',
+    player: 'Player',
+    rank: 'Rank',
+    mods: 'Mods',
+    playedAt: 'Played at',
+    acc: 'Acc',
+    beatmapsets: 'Beatmapsets',
+    beatmaps: 'Beatmaps',
+    users: 'Users',
+  },
 } as GlobalI18n

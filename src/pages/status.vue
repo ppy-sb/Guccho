@@ -5,8 +5,6 @@ import 'vue3-json-viewer/dist/index.css'
 import { useSession } from '~/store/session'
 import { UserPrivilege } from '~/def/user'
 
-const { t } = useI18n()
-
 const fmtPercent = new Intl.NumberFormat(undefined, {
   style: 'percent',
   minimumFractionDigits: 2,
@@ -78,31 +76,31 @@ zh-CN:
   <div v-if="data" class="container mx-auto custom-container font-mono">
     <div class="flex flex-wrap gap-1 my-1 items-baseline drop-shadow-lg">
       <h1 class="text-xl">
-        {{ t('system-load') }}
+        {{ $t('system-load') }}
       </h1>
-      <span class="badge text-blue-50 bg-blue-500 border-blue-500">{{ t('user') }}: {{ fmtPercent.format(data.load.system.user / 100) }}</span>
-      <span class="badge text-teal-50 bg-teal-500 border-teal-500">{{ t('system') }}: {{ fmtPercent.format(data.load.system.system / 100) }}</span>
+      <span class="badge text-blue-50 bg-blue-500 border-blue-500">{{ $t('user') }}: {{ fmtPercent.format(data.load.system.user / 100) }}</span>
+      <span class="badge text-teal-50 bg-teal-500 border-teal-500">{{ $t('system') }}: {{ fmtPercent.format(data.load.system.system / 100) }}</span>
     </div>
     <div class="multi-progress-bar-container bg-gbase-500/10 shadow-lg">
       <div
         :style="percentWidth(data.load.system.user)"
         class="multi-progress-bar bg-blue-500 text-white"
       >
-        {{ t('user') }}
+        {{ $t('user') }}
       </div>
       <div
         :style="percentWidth(data.load.system.system)"
         class="multi-progress-bar bg-teal-500 text-white"
       >
-        {{ t('system') }}
+        {{ $t('system') }}
       </div>
     </div>
 
     <h1 class="flex flex-wrap items-baseline gap-1 drop-shadow-lg my-1">
       <div class="text-xl">
-        {{ t('app-load') }}
+        {{ $t('app-load') }}
       </div>
-      <span class="badge">{{ t('total') }}: {{ fmtPercent.format(data.load.system.current / 100) }}</span>
+      <span class="badge">{{ $t('total') }}: {{ fmtPercent.format(data.load.system.current / 100) }}</span>
       <span
         v-for="(_data, key) of data.load.app" :key="key"
         class="badge"
@@ -121,43 +119,43 @@ zh-CN:
         :style="percentWidth((data.load.system.current - data.load.app.web.current) / data.load.system.current * 100)"
         class="multi-progress-bar bg-gbase-300/10"
       >
-        {{ t('other') }}
+        {{ $t('other') }}
       </div>
     </div>
 
     <div class="flex flex-wrap gap-1 my-1 drop-shadow-lg items-baseline">
       <h1 class="text-xl">
-        {{ t('memory') }}
+        {{ $t('memory') }}
       </h1>
-      <span class="badge text-blue-50 bg-blue-500 border-blue-500">{{ t('active') }}: {{ fmtCompact.format(data.memory.system.active / 1_000_000) }}</span>
-      <span class="badge text-teal-50 bg-teal-500 border-teal-500">{{ t('cache') }}: {{ fmtCompact.format(data.memory.system.buffcache / 1_000_000) }}</span>
-      <span class="badge">{{ t('total') }}: {{ fmtCompact.format(data.memory.system.total / 1_000_000) }}</span>
-      <span class="badge">{{ t('free') }}: {{ fmtCompact.format(data.memory.system.free / 1_000_000) }}</span>
+      <span class="badge text-blue-50 bg-blue-500 border-blue-500">{{ $t('active') }}: {{ fmtCompact.format(data.memory.system.active / 1_000_000) }}</span>
+      <span class="badge text-teal-50 bg-teal-500 border-teal-500">{{ $t('cache') }}: {{ fmtCompact.format(data.memory.system.buffcache / 1_000_000) }}</span>
+      <span class="badge">{{ $t('total') }}: {{ fmtCompact.format(data.memory.system.total / 1_000_000) }}</span>
+      <span class="badge">{{ $t('free') }}: {{ fmtCompact.format(data.memory.system.free / 1_000_000) }}</span>
     </div>
     <div class="multi-progress-bar-container bg-gbase-500/10 shadow-lg">
       <div
         :style="percentWidth(data.memory.system.active / data.memory.system.total * 100)"
         class="multi-progress-bar bg-blue-500 text-white"
       >
-        {{ t('active') }}
+        {{ $t('active') }}
       </div>
       <div
         :style="percentWidth(data.memory.system.buffcache / data.memory.system.total * 100)"
         class="multi-progress-bar bg-teal-500 text-white"
       >
-        {{ t('cache') }}
+        {{ $t('cache') }}
       </div>
       <div
         :style="percentWidth((data.memory.system.free) / data.memory.system.total * 100)"
         class="multi-progress-bar bg-gbase-300/10"
       >
-        {{ t('free') }}
+        {{ $t('free') }}
       </div>
     </div>
 
     <template v-if="session.user?.roles.includes(UserPrivilege.Staff)">
       <h1 class="text-xl drop-shadow-lg my-1">
-        {{ t('web-app-config') }}
+        {{ $t('web-app-config') }}
       </h1>
       <JsonViewer
         :value="config"
@@ -168,7 +166,7 @@ zh-CN:
         class="rounded-xl"
       />
       <h1 class="text-xl drop-shadow-lg my-1">
-        {{ t('npm-env') }}
+        {{ $t('npm-env') }}
       </h1>
       <JsonViewer
         :value="serverConfig?.npm"
@@ -179,7 +177,7 @@ zh-CN:
         class="rounded-xl"
       />
       <h1 class="text-xl drop-shadow-lg my-1">
-        {{ t('env') }}
+        {{ $t('env') }}
       </h1>
       <JsonViewer
         :value="{

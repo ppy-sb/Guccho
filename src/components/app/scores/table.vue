@@ -15,29 +15,36 @@ const props = withDefaults(
 )
 const comma = createNumberFormatter()
 const pp = createPPFormatter()
+
+const config = useAppConfig()
 </script>
+
+<i18n lang="yaml">
+en-GB:
+  no-score: No Score has been set so far.
+</i18n>
 
 <template>
   <table class="table table-compact table-zebra">
     <thead>
       <tr>
-        <th>Player</th>
+        <th>{{ $t('global.player') }}</th>
         <th class="text-right">
-          Rank
+          {{ $t('global.rank') }}
         </th>
         <th class="text-right">
-          Mods
+          {{ $t('global.mods') }}
         </th>
         <th class="text-right">
-          Score
+          {{ config.rankingSystem.score }}
         </th>
         <th v-if="rankingSystem === Rank.PPv2" class="text-right">
-          Performance ( v2 )
+          {{ config.rankingSystem.ppv2 }}
         </th>
         <th v-else-if="rankingSystem === Rank.PPv1" class="text-right">
-          Performance ( v2 )
+          {{ config.rankingSystem.ppv1 }}
         </th>
-        <th>Played At</th>
+        <th>{{ $t('global.playedAt') }}</th>
         <!-- <th class="text-center">
           Actions
         </th> -->
@@ -102,7 +109,7 @@ const pp = createPPFormatter()
         <tr>
           <th colspan="6">
             <div class="text-center">
-              No Score has been set so far
+              {{ $t('no-score') }}
             </div>
           </th>
         </tr>

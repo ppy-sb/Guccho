@@ -3,7 +3,6 @@ import type { LocaleObject } from 'vue-i18n-routing'
 import { useSession } from '~/store/session'
 import { UserPrivilege } from '~/def/user'
 
-const { t } = useI18n()
 function clearFocus() {
   if (document.activeElement instanceof HTMLElement) {
     document.activeElement.blur()
@@ -17,13 +16,13 @@ const { locale, locales } = useI18n()
   <li>
     <nuxt-link :to="{ name: 'leaderboard-mode' }" @click="clearFocus">
       <icon name="material-symbols:leaderboard-rounded" class="w-5 h-5" size="100%" />
-      {{ t('titles.leaderboard') }}
+      {{ $t('titles.leaderboard') }}
     </nuxt-link>
   </li>
   <li v-if="session.user?.roles.includes(UserPrivilege.Staff)">
     <nuxt-link :to="{ name: 'status' }" @click="clearFocus">
       <icon name="material-symbols:signal-cellular-alt-rounded" class="w-5 h-5" size="100%" />
-      {{ t('titles.status') }}
+      {{ $t('titles.status') }}
     </nuxt-link>
   </li>
   <select v-model="locale" class="select select-ghost w-min-content select-sm">

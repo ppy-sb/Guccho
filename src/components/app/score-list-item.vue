@@ -142,7 +142,7 @@ const meta = computed(
               <div class="font-bold font-mono">
                 {{ score.pp.toFixed(2) }}
               </div>
-              <span class="font-light">pp</span>
+              <span class="font-light">{{ $t('global.pp') }}</span>
             </template>
             <template v-else-if="(leaderboardScoreRankingSystems).includes(props.rankingSystem as LeaderboardScoreRankingSystem)">
               <div class="font-bold font-mono">
@@ -174,7 +174,7 @@ const meta = computed(
             <span class="flex">
               <b class="font-mono">{{ score.accuracy.toFixed(2) }}</b>
               <div class="text-light">
-                % Acc
+                % {{ $t('global.acc') }}
               </div>
             </span>
           </div>
