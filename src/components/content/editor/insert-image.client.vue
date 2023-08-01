@@ -6,6 +6,8 @@ const props = defineProps<{
   editor: Editor
 }>()
 
+const { t } = useI18n()
+
 const img = shallowReactive<{
   src?: string
   alt?: string
@@ -62,7 +64,7 @@ en-GB:
           </div>
           <div class="form-control">
             <label class="label" for="title">
-              <span class="pl-2 label-text">{{ $t('title') }}</span>
+              <span class="pl-2 label-text">{{ t('title') }}</span>
             </label>
             <input
               id="title"
@@ -73,7 +75,7 @@ en-GB:
           </div>
           <div class="form-control">
             <label class="label" for="description">
-              <span class="pl-2 label-text">{{ $t('description') }}</span>
+              <span class="pl-2 label-text">{{ t('description') }}</span>
             </label>
             <textarea
               id="description"
@@ -84,7 +86,7 @@ en-GB:
         </div>
         <div class="flex p-4 gap-2">
           <t-button size="sm" variant="accent" class="grow">
-            {{ $t('ok') }}
+            {{ t('ok') }}
           </t-button>
           <t-button
             size="sm"
@@ -93,7 +95,7 @@ en-GB:
             type="button"
             @click="closeModal"
           >
-            {{ $t('cancel') }}
+            {{ t('cancel') }}
           </t-button>
         </div>
       </form>

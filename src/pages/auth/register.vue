@@ -206,14 +206,14 @@ async function userRegisterAction() {
         </div>
 
         <div class="grid grid-cols-2 gap-2">
-          <t-nuxt-link-button
+          <t-nuxt-link-locale-button
             :to="{ name: 'auth-login' }"
             variant="secondary"
             @mouseenter="loginButton = 'Login'"
             @mouseleave="loginButton = 'Have account?'"
           >
             {{ loginButton }}
-          </t-nuxt-link-button>
+          </t-nuxt-link-locale-button>
           <button type="submit" class="btn btn-primary">
             Sign Up
           </button>

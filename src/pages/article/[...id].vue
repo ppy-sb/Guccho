@@ -8,13 +8,20 @@ if (!id) {
 
 const app$ = useNuxtApp()
 const content = await app$.$client.article.getRendered.query(id)
+
+const { t } = useI18n()
 </script>
+
+<i18n lang="yaml">
+en-GB:
+  edit: Edit
+</i18n>
 
 <template>
   <section class="container mx-auto with-editor relative">
     <content-render v-bind="content" />
     <button v-if="content.access.write" class="btn btn-neutral d-flex gap-1 absolute top-0 right-0">
-      Edit <icon name="ic:round-edit-note" class="w-5 h-5" />
+      {{ t('edit') }} <icon name="ic:round-edit-note" class="w-5 h-5" />
     </button>
   </section>
 </template>

@@ -8,7 +8,7 @@ definePageMeta({
   middleware: ['auth', 'admin'],
 })
 const app$ = useNuxtApp()
-
+const { t } = useI18n()
 const importArticleFile = shallowRef<HTMLInputElement | null>(null)
 const editor = shallowRef<InstanceType<typeof ContentEditor> | null>(null)
 const article = ref<{
@@ -40,13 +40,13 @@ const { data: content, refresh: refreshContent } = await useAsyncData(async () =
 const { data: articles, refresh: refreshTree } = app$.$client.article.localSlugs.useQuery()
 
 const privileges: Record<ArticleProvider.TWriteAccess, string> = {
-  staff: 'Admin',
-  moderator: 'Moderator',
-  beatmapNominator: 'BN',
+  staff: t(localeKey.priv(UserPrivilege.Staff)),
+  moderator: t(localeKey.priv(UserPrivilege.Moderator)),
+  beatmapNominator: t(localeKey.priv(UserPrivilege.BeatmapNominator)),
 }
 const readPrivileges: Record<ArticleProvider.TReadAccess, string> = {
   ...privileges,
-  [Scope.Public]: 'public',
+  [Scope.Public]: t(localeKey.scope(Scope.Public)),
 }
 
 // Helper function to convert privilege object to select options

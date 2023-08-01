@@ -8,7 +8,7 @@ definePageMeta({
   alias: ['/s/:id', '/beatmapsets/:id'],
 })
 
-const app$ = useNuxtApp()
+const app = useNuxtApp()
 const route = useRoute('beatmapset-id')
 const config = useAppConfig()
 const { supportedModes, supportedRulesets, hasRankingSystem, hasRuleset }
@@ -17,7 +17,7 @@ const [switcher, setSwitcher] = useSwitcher()
 const lazyBgCover = shallowRef('')
 
 const { data: beatmapset, error } = await useAsyncData(() =>
-  app$.$client.map.beatmapset.query({ id: route.params.id.toString() })
+  app.$client.map.beatmapset.query({ id: route.params.id.toString() })
 )
 
 const queryBeatmap = route.query.beatmap?.toString()
@@ -66,7 +66,7 @@ const { data: leaderboard, refresh } = await useAsyncData(async () => {
     return null
   }
 
-  return await app$.$client.leaderboard.beatmap.query({
+  return await app.$client.leaderboard.beatmap.query({
     ...switcher,
     page: 0,
     pageSize: 20,

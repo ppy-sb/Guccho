@@ -7,6 +7,8 @@ export {
   hasRuleset,
   modes,
   rulesets,
+  rankingSystems,
+  leaderboardRankingSystems,
 } from '../bancho.py'
 export type { Id, ScoreId } from '../bancho.py'
 

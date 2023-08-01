@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { ActiveMode, ActiveRuleset, RankingSystem } from '~/def/common'
-import { rankingSystems } from '~/def'
 
 const props = defineProps<{
   modelValue: RankingSystem
@@ -11,8 +10,9 @@ const emit = defineEmits<{
   (e: 'update:modelValue', v: RankingSystem): void
   (e: 'update:rankingSystemList', v: RankingSystem[]): void
 }>()
-const app = useAppConfig()
-const { hasRankingSystem, hasRuleset } = useAdapterConfig()
+
+const { hasRankingSystem, hasRuleset, supportedRankingSystems: rankingSystems } = useAdapterConfig()
+const { t } = useI18n()
 
 const show = computed(() =>
   rankingSystems.filter(
@@ -41,7 +41,7 @@ watch([() => props.mode, () => props.ruleset], () => {
       :value="rs"
       class="[--tab-border-color:transparent]"
     >
-      {{ app.rankingSystem[rs].name }}
+      {{ t(localeKey.rankingSystem(rs)) }}
     </t-tab>
   </t-tabs>
 </template>

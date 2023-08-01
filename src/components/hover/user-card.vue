@@ -18,9 +18,9 @@ const config = useAppConfig()
 
 <template>
   <VTooltip delay="{ show: 500, hide: 100 }" placement="right">
-    <nuxt-link :to="to">
+    <nuxt-link-locale :to="to">
       {{ props.user.name }}
-    </nuxt-link>
+    </nuxt-link-locale>
 
     <template #popper>
       <div

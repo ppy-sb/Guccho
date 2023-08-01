@@ -1,4 +1,4 @@
-import type { LeaderboardRankingSystem } from '~/def/common'
+import { modes, rankingSystems, rulesets } from '../def'
 
 const variables = new Map<string, Template>()
 
@@ -23,6 +23,7 @@ export default function useEditorVariables() {
 
 function addAppConfigVariables() {
   const config = useAppConfig()
+  const { t } = useI18n({ locale: 'en-GB' })
 
   setVariable('domain', {
     description: 'domain',
@@ -42,27 +43,27 @@ function addAppConfigVariables() {
     value: config.title,
   })
 
-  for (const [mode, item] of Object.entries(config.mode)) {
+  for (const mode of modes) {
     setVariable(`mode:${mode}`, {
       description: `name of mode ${mode}`,
       fallback: mode,
-      value: item.name,
+      value: t(localeKey.mode(mode)),
     })
   }
 
-  for (const [ruleset, item] of Object.entries(config.ruleset)) {
+  for (const ruleset of rulesets) {
     setVariable(`ruleset:${ruleset}`, {
       description: `name of ruleset ${ruleset}`,
       fallback: ruleset,
-      value: item.name,
+      value: t(localeKey.ruleset(ruleset)),
     })
   }
 
-  for (const rs in config.leaderboardRankingSystem) {
+  for (const rs of rankingSystems) {
     setVariable(`rank:${rs}`, {
       description: `name of ruleset ${rs}`,
       fallback: rs,
-      value: config.leaderboardRankingSystem[rs as LeaderboardRankingSystem].name,
+      value: t(localeKey.rankingSystem(rs)),
     })
   }
 }

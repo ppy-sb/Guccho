@@ -33,7 +33,7 @@ definePageMeta({
 })
 
 useHead({
-  titleTemplate: `Settings - ${config.title}`,
+  titleTemplate: `${t('titles.settings')} - ${config.title}`,
 })
 
 const { data: user, refresh: refreshSettings } = await useAsyncData(() => app$.$client.me.settings.query())
@@ -150,7 +150,7 @@ async function selectAvatarFile(e: Event) {
   }
 
   if (!checkAvatar(await file.arrayBuffer())) {
-    avatarError.value = 'size too big'
+    avatarError.value = t('avatar.size-too-big')
     return
   }
 
@@ -168,11 +168,11 @@ async function updatePassword(closeModal: () => void) {
     return
   } // checked by browser
   if (changePasswordForm.newPassword !== changePasswordForm.repeatNewPassword) {
-    changePasswordError.value = 'new password mismatch'
+    changePasswordError.value = t('password.new-password-mismatch')
     return
   }
   if (changePasswordForm.oldPassword === changePasswordForm.newPassword) {
-    changePasswordError.value = 'old and new, those are the same...?'
+    changePasswordError.value = t('password.same-password-as-old')
     return
   }
 
@@ -206,6 +206,57 @@ async function kickSession(session: string) {
 }
 </script>
 
+<i18n lang='yaml'>
+en-GB:
+  reset: revert
+
+  preferences: Preferences
+  username: Username
+  safe-name: Link
+  email: Email
+  flag: Flag
+  profile: Profile
+
+  status:
+    done: Done!
+    ready: Save
+
+  avatar:
+    size-too-big: size too big
+    upload:
+      placement: '{bold} or drag and drop'
+      bold: Click to upload
+    status:
+      ready: Save
+      uploading: Uploading
+      done: Done
+      abort: Cancel
+
+  password:
+    change: change
+    literal: Password
+    new-password-mismatch: new password not match.
+    same-password-as-old: same password.
+    old-password: Old Password
+    new-password: New Password
+    repeat-password: Repeat Password
+    ok: confirm
+    abort: cancel
+
+  api-key:
+    literal: API Key
+    placeholder: Your API Key
+    request: Request one
+    refresh: Request a new one
+
+  session:
+    name: Name
+    last-activity: Last seen at
+    actions: Action
+    current: Current Session
+    kick: Kick
+</i18n>
+
 <template>
   <section v-if="user" class="container mx-auto custom-container">
     <TResponsiveModal
@@ -235,12 +286,17 @@ async function kickSession(session: string) {
                   d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
                 />
               </svg>
-              <p
+
+              <i18n-t
+                keypath="avatar.upload.placement"
+                tag="p"
                 class="mb-2 text-sm text-gbase-500 dark:text-gbase-300"
               >
-                <span class="font-semibold">Click to upload</span> or drag
-                and drop
-              </p>
+                <template #bold>
+                  <span class="font-semibold">{{ t('click-to-upload') }}</span>
+                </template>
+              </i18n-t>
+
               <!-- <p class="text-xs text-gbase-500 dark:text-gbase-300">
                 SVG, PNG, JPG or GIF (MAX. 800x400px)
               </p> -->
@@ -277,8 +333,8 @@ async function kickSession(session: string) {
         >
           {{
             uploadingAvatarStat === UploadingAvatarStatus.Idle
-              ? "Save"
-              : "Uploading"
+              ? t('avatar.status.ready')
+              : t('avatar.status.uploading')
           }}
         </t-button>
         <t-button
@@ -286,7 +342,11 @@ async function kickSession(session: string) {
           class="grow"
           @click="closeModal(resetAvatar)"
         >
-          {{ uploadingAvatarStat === UploadingAvatarStatus.Succeed ? "Done" : "Cancel" }}
+          {{
+            uploadingAvatarStat === UploadingAvatarStatus.Succeed
+              ? t('avatar.status.done')
+              : t('avatar.status.abort')
+          }}
         </t-button>
       </div>
     </TResponsiveModal>
@@ -297,7 +357,7 @@ async function kickSession(session: string) {
           <div class="card-body w-96">
             <div class="form-control">
               <label class="label" for="old-password">
-                <span class="pl-2 label-text">Old Password</span>
+                <span class="pl-2 label-text">{{ t('password.old-password') }}</span>
               </label>
               <input
                 v-model="changePasswordForm.oldPassword"
@@ -307,8 +367,8 @@ async function kickSession(session: string) {
               >
             </div>
             <div class="form-control">
-              <label class="label" for="old-password">
-                <span class="pl-2 label-text">New Password</span>
+              <label class="label" for="new-password">
+                <span class="pl-2 label-text">{{ t('password.new-password') }}</span>
               </label>
               <input
                 v-model="changePasswordForm.newPassword"
@@ -318,8 +378,8 @@ async function kickSession(session: string) {
               >
             </div>
             <div class="form-control">
-              <label class="label" for="old-password">
-                <span class="pl-2 label-text">Repeat Password</span>
+              <label class="label" for="repeat-password">
+                <span class="pl-2 label-text">{{ t('password.repeat-password') }}</span>
               </label>
               <input
                 v-model="changePasswordForm.repeatNewPassword"
@@ -332,7 +392,7 @@ async function kickSession(session: string) {
           </div>
           <div class="flex p-4 gap-2">
             <t-button size="sm" variant="accent" class="grow">
-              <icon name="ic:round-check" class="w-5 h-5" size="100%" /> confirm
+              <icon name="ic:round-check" class="w-5 h-5" size="100%" /> {{ t('password.ok') }}
             </t-button>
             <t-button
               size="sm"
@@ -347,7 +407,7 @@ async function kickSession(session: string) {
               "
             >
               <icon name="ic:round-clear" class="w-5 h-5" size="100%" />
-              cancel
+              {{ t('password.abort') }}
             </t-button>
           </div>
         </form>
@@ -356,7 +416,7 @@ async function kickSession(session: string) {
     <div class="container mx-auto">
       <div class="flex justify-between p-2 items-end">
         <div class="text-3xl font-bold">
-          preferences
+          {{ t('preferences') }}
         </div>
         <button
           class="btn btn-sm"
@@ -368,7 +428,7 @@ async function kickSession(session: string) {
           @click="updateUserSettings"
         >
           <icon v-if="!posting" :name="updateResult ? 'line-md:confirm' : 'ic:round-save'" class="w-5 h-5 me-1" size="100%" />
-          {{ updateResult ? "Done!" : "Save" }}
+          {{ updateResult ? t('status.done') : t('status.ready') }}
         </button>
       </div>
     </div>
@@ -408,12 +468,11 @@ async function kickSession(session: string) {
         </div>
         <div class="lg:mr-4">
           <label class="label" for="session">
-            <span class="pl-3 label-text">Session</span>
+            <span class="pl-3 label-text">{{ t('global.session') }}</span>
           </label>
           <div id="session">
             <div class="overflow-x-auto">
               <table class="table">
-                <!-- head -->
                 <thead>
                   <tr>
                     <!-- <th>
@@ -421,9 +480,9 @@ async function kickSession(session: string) {
                         <input type="checkbox" class="checkbox">
                       </label>
                     </th> -->
-                    <th>Name</th>
-                    <th>Last seen at</th>
-                    <th>Action</th>
+                    <th>{{ t('session.name') }}</th>
+                    <th>{{ t('session.last-activity') }}</th>
+                    <th>{{ t('session.actions') }}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -450,7 +509,7 @@ async function kickSession(session: string) {
                         </div>
                         <div>
                           <div class="font-bold">
-                            {{ OS[session.OS] }} <span v-if="session.current" class="badge badge-ghost badge-sm whitespace-nowrap">Current Session</span>
+                            {{ OS[session.OS] }} <span v-if="session.current" class="badge badge-ghost badge-sm whitespace-nowrap">{{ t('session.current') }}</span>
                           </div>
                           <div class="text-sm opacity-50">
                             {{ Client[session.client] }}
@@ -468,7 +527,7 @@ async function kickSession(session: string) {
                         :disabled="pendingSession || session.current"
                         @click="kickSession(id)"
                       >
-                        <icon name="majesticons:logout-half-circle-line" class="w-5 h-5 me-1" size="100%" /> Kick
+                        <icon name="majesticons:logout-half-circle-line" class="w-5 h-5 me-1" size="100%" />{{ t('session.kick') }}
                       </button>
                     </th>
                   </tr>
@@ -484,7 +543,7 @@ async function kickSession(session: string) {
         </div>
         <div class="form-control">
           <label class="label" for="username">
-            <span class="pl-3 label-text">Username</span>
+            <span class="pl-3 label-text">{{ t('username') }}</span>
           </label>
           <div
             :class="
@@ -495,9 +554,9 @@ async function kickSession(session: string) {
               id="username"
               v-model="user.name"
               type="text"
-              placeholder="Username"
+              :placeholder="t('username')"
               class="w-full input input-sm"
-              :disabled="user.roles.includes(UserPrivilege.Supporter)"
+              :disabled="!user.roles.includes(UserPrivilege.Supporter)"
               :class="{
                 'input-bordered input-primary': unchanged.name !== user.name,
                 'input-ghost': unchanged.name === user.name,
@@ -515,13 +574,13 @@ async function kickSession(session: string) {
                 }
               "
             >
-              revert
+              {{ t('reset') }}
             </button>
           </div>
         </div>
         <div>
           <label class="label" for="userlink">
-            <span class="pl-3 label-text">Link</span>
+            <span class="pl-3 label-text">{{ t('safe-name') }}</span>
           </label>
           <div class="flex gap-4">
             <input
@@ -544,7 +603,7 @@ async function kickSession(session: string) {
         </div>
         <div class="form-control">
           <label class="label" for="email">
-            <span class="pl-3 label-text">Email</span>
+            <span class="pl-3 label-text">{{ t('email') }}</span>
           </label>
           <div
             :class="
@@ -574,13 +633,13 @@ async function kickSession(session: string) {
                 }
               "
             >
-              revert
+              {{ t('reset') }}
             </button>
           </div>
         </div>
         <div class="form-control">
           <label class="label" for="flag">
-            <span class="pl-3 label-text">Flag</span>
+            <span class="pl-3 label-text">{{ t('flag') }}</span>
           </label>
           <!-- <t-combo-box v-model="user.flag" size="sm" class="&[button]:w-full" :options="Object.entries(CountryCode).map(([k, v]) => ({ value: v, label: k }))" /> -->
           <select v-model="user.flag" class="select select-ghost w-full select-sm">
@@ -591,27 +650,27 @@ async function kickSession(session: string) {
         </div>
         <div>
           <label class="label" for="password">
-            <span class="pl-3 label-text">Password</span>
+            <span class="pl-3 label-text">{{ t('password.literal') }}</span>
             <button
               id="#password"
               class="btn btn-sm btn-secondary"
               type="button"
               @click.prevent="() => changePassword?.showModal()"
             >
-              <icon name="ic:round-edit-note" class="w-5 h-5" size="100%" /> change
+              <icon name="ic:round-edit-note" class="w-5 h-5" size="100%" /> {{ t('password.change') }}
             </button>
           </label>
         </div>
         <div>
           <label class="label" for="api">
-            <span class="pl-3 label-text">API Key</span>
+            <span class="pl-3 label-text">{{ t('api-key.literal') }}</span>
           </label>
           <div class="flex gap-4">
             <input
               id="api"
               v-model="user.secrets.apiKey"
               type="text"
-              placeholder="Your API Key"
+              :placeholder="t('api-key.placeholder')"
               class="input input-sm grow blur-sm hover:blur-none"
               disabled
               :class="{
@@ -627,7 +686,7 @@ async function kickSession(session: string) {
               type="button"
               disabled
             >
-              Request one
+              {{ t('api-key.request') }}
             </button>
             <button
               v-else
@@ -635,7 +694,7 @@ async function kickSession(session: string) {
               type="button"
               disabled
             >
-              request a new one
+              {{ t('api-key.refresh') }}
             </button>
           </div>
         </div>
@@ -643,7 +702,7 @@ async function kickSession(session: string) {
     </div>
 
     <label class="label" for="profile">
-      <span class="pl-3 label-text">profile</span>
+      <span class="pl-3 label-text">{{ t('profile') }}</span>
     </label>
     <lazy-content-editor
       id="profile"

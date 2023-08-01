@@ -48,12 +48,12 @@ const formatter = new Intl.NumberFormat(undefined, option)
             width="30"
           >
         </div>
-        <nuxt-link
+        <nuxt-link-locale
           :to="{ name: 'user-handle', params: { handle: `@${user.safeName}` } }"
           :class="useUserRoleColor(user)"
         >
           {{ user.name }}
-        </nuxt-link>
+        </nuxt-link-locale>
       </div>
     </th>
     <td class="font-bold text-right">

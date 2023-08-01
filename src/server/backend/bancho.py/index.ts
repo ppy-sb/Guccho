@@ -1,6 +1,6 @@
 import type { Feature } from '~/def/features'
 
-export { modes, rulesets } from '~/def'
+export { modes, rulesets, rankingSystems, leaderboardRankingSystems } from '~/def'
 
 export {
   hasLeaderboardRankingSystem,

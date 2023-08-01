@@ -2,7 +2,7 @@
 import { useSession } from '~/store/session'
 
 const scrollY = useScrollYObserver()
-
+const { t } = useI18n()
 const session = useSession()
 
 const searchModalWrapper = shallowRef<{
@@ -56,10 +56,10 @@ function clearFocus() {
             <app-navbar-navs />
           </ul>
         </div>
-        <nuxt-link :to="{ name: 'index' }" class="btn btn-ghost normal-case text-xl hidden lg:flex gap-1">
+        <nuxt-link-locale :to="{ name: 'index' }" class="btn btn-ghost normal-case text-xl hidden lg:flex gap-1">
           <icon name="ion:paw" />
           {{ config.title }}
-        </nuxt-link>
+        </nuxt-link-locale>
         <button
           class="btn btn-ghost btn-circle lg:hidden"
           @click.prevent="() => searchModalWrapper?.searchModal?.showModal()"
@@ -108,27 +108,27 @@ function clearFocus() {
           >
             <template v-if="session.loggedIn">
               <li>
-                <nuxt-link
+                <nuxt-link-locale
                   :to="{
                     name: 'me-settings',
                   }" @click="clearFocus"
                 >
                   <icon name="solar:settings-bold" class="w-5 h-5" size="100%" />
-                  {{ $t('titles.settings') }}
-                </nuxt-link>
+                  {{ t('titles.settings') }}
+                </nuxt-link-locale>
               </li>
               <li>
-                <nuxt-link
+                <nuxt-link-locale
                   :to="{
                     name: 'me-relations',
                   }" @click="clearFocus"
                 >
                   <icon name="tabler:circles-relation" class="w-5 h-5" size="100%" />
-                  {{ $t('titles.relations') }}
-                </nuxt-link>
+                  {{ t('titles.relations') }}
+                </nuxt-link-locale>
               </li>
               <li>
-                <nuxt-link
+                <nuxt-link-locale
                   :to="{
                     name: 'user-handle',
                     params: {
@@ -137,39 +137,39 @@ function clearFocus() {
                   }" @click="clearFocus"
                 >
                   <icon name="mingcute:profile-fill" class="w-5 h-5" size="100%" />
-                  {{ $t('titles.userpage') }}
-                </nuxt-link>
+                  {{ t('titles.userpage') }}
+                </nuxt-link-locale>
               </li>
               <li v-if="session.$state.privilege.staff">
-                <nuxt-link
+                <nuxt-link-locale
                   :to="{
                     name: 'admin',
                   }" @click="clearFocus"
                 >
                   <icon name="material-symbols:admin-panel-settings-rounded" class="w-5 h-5" size="100%" />
-                  {{ $t('titles.admin-panel') }}
-                </nuxt-link>
+                  {{ t('titles.admin-panel') }}
+                </nuxt-link-locale>
               </li>
               <div class="divider my-0" />
               <li>
-                <nuxt-link :to="{ name: 'auth-logout' }" @click="clearFocus">
+                <nuxt-link-locale :to="{ name: 'auth-logout' }" @click="clearFocus">
                   <icon name="majesticons:logout-half-circle-line" class="w-5 h-5" size="100%" />
-                  {{ $t('logout') }}
-                </nuxt-link>
+                  {{ t('global.logout') }}
+                </nuxt-link-locale>
               </li>
             </template>
             <template v-else>
               <li>
-                <nuxt-link :to="{ name: 'auth-login' }" @click="clearFocus">
+                <nuxt-link-locale :to="{ name: 'auth-login' }" @click="clearFocus">
                   <icon name="majesticons:login-half-circle-line" class="w-5 h-5" size="100%" />
-                  {{ $t('login') }}
-                </nuxt-link>
+                  {{ t('global.login') }}
+                </nuxt-link-locale>
               </li>
               <li>
-                <nuxt-link :to="{ name: 'auth-register' }" @click="clearFocus">
+                <nuxt-link-locale :to="{ name: 'auth-register' }" @click="clearFocus">
                   <icon name="mingcute:signature-fill" class="w-5 h-5" size="100%" />
-                  {{ $t('register') }}
-                </nuxt-link>
+                  {{ t('global.register') }}
+                </nuxt-link-locale>
               </li>
             </template>
           </ul>

@@ -103,5 +103,8 @@
     "closed": false
   },
   "css.format.enable": false,
-  "i18n-ally.localesPaths": ["src/locales", "src/server/trpc/messages"]
+  "i18n-ally.localesPaths": ["src/locales", "src/server/trpc/messages"],
+  "i18n-ally.extract.ignoredByFiles": {
+    "src/pages/status.vue": ["${count}%"]
+  }
 }

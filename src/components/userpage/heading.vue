@@ -139,7 +139,7 @@ en-GB:
         >
           add as friend
         </t-button> -->
-        <t-nuxt-link-button
+        <t-nuxt-link-locale-button
           size="sm"
           variant="accent"
           :to="{
@@ -147,7 +147,7 @@ en-GB:
           }"
         >
           Edit
-        </t-nuxt-link-button>
+        </t-nuxt-link-locale-button>
       </div>
       <div
         class="container flex flex-col flex-wrap gap-4 mx-auto lg:flex-row lg:gap-0 sm:order-2 md:items-end md:justify-between md:pb-2"
@@ -166,12 +166,12 @@ en-GB:
           >
             {{ page.user.name }}
           </h1>
-          <nuxt-link
+          <nuxt-link-locale
             :to="{ name: 'user-handle', params: { handle: `@${page.user.safeName}` } }"
             class="text-3xl text-center underline md:text-left decoration-sky-500 text-gbase-600 dark:text-gbase-300"
           >
             @{{ page.user.safeName }}
-          </nuxt-link>
+          </nuxt-link-locale>
           <div class="lg:pb-2" />
         </div>
       </div>

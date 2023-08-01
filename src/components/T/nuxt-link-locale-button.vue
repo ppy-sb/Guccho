@@ -9,7 +9,7 @@ const props = defineProps<{
 </script>
 
 <template>
-  <nuxt-link
+  <nuxt-link-locale
     :to="props.to"
     class="btn"
     :class="[
@@ -18,7 +18,7 @@ const props = defineProps<{
     ]"
   >
     <slot />
-  </nuxt-link>
+  </nuxt-link-locale>
 </template>
 
 <style lang="scss" scoped></style>

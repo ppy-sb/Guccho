@@ -1,6 +1,7 @@
 import enGB from './en-GB'
-import type { GlobalI18n } from '.'
+import type { GlobalI18n } from './@types'
 import { Rank } from '~/def'
+import { Scope, UserPrivilege } from '~/def/user'
 
 export default {
   mode: enGB.mode,
@@ -13,10 +14,54 @@ export default {
     [Rank.Score]: '分数',
   },
   titles: {
-    leaderboard: '排行榜',
-    status: '状态',
-    beatmap: '图',
-    beatmapset: '图组',
-    Settings: '设置',
+    'leaderboard': '排行榜',
+    'status': '状态',
+    'settings': '设置',
+    'relations': '好友 & 黑名单',
+    'userpage': '用户页面',
+    'admin-panel': '管理面板',
+    'logs': '',
+    'articles': '文章',
   },
-} as GlobalI18n
+  global: {
+    'logout': '登出',
+    'login': '登录',
+    'register': '注册',
+    'pp': 'pp',
+    'player': '玩家',
+    'rank': '排名',
+    'mods': 'mods',
+    'played-at': '游玩时间',
+    'acc': '准确度',
+    'beatmapsets': '图组',
+    'beatmaps': '图',
+    'users': '用户',
+    'session': '会话',
+    'accuracy': '准确度',
+    'play-count': '游玩次数',
+  },
+  priv: {
+    [UserPrivilege.Disabled]: '',
+    [UserPrivilege.Restricted]: '',
+    [UserPrivilege.Registered]: '',
+    [UserPrivilege.Inactive]: '',
+    [UserPrivilege.Normal]: '',
+    [UserPrivilege.Supported]: '',
+    [UserPrivilege.Supporter]: '',
+    [UserPrivilege.Whitelisted]: '',
+    [UserPrivilege.Alumni]: '',
+    [UserPrivilege.TournamentStuff]: '',
+    [UserPrivilege.ChannelModerator]: '',
+    [UserPrivilege.Moderator]: '',
+    [UserPrivilege.BeatmapNominator]: '',
+    [UserPrivilege.Staff]: '',
+    [UserPrivilege.Admin]: '',
+    [UserPrivilege.Owner]: '',
+    [UserPrivilege.Bot]: '',
+  },
+  scope: {
+    [Scope.Self]: '',
+    [Scope.Friends]: '',
+    [Scope.Public]: '',
+  },
+} satisfies GlobalI18n as GlobalI18n

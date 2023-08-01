@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { ActiveMode, ActiveRuleset, LeaderboardRankingSystem } from '~/def/common'
+import * as icon from '~/common/icon'
 
 interface modelValue {
   mode?: ActiveMode
@@ -15,8 +16,9 @@ const emit = defineEmits<{
   (event: 'input', res: modelValue): void
   (event: 'update:modelValue', res: modelValue): void
 }>()
-const config = useAppConfig()
-const { hasLeaderboardRankingSystem, hasRuleset } = useAdapterConfig()
+
+const { hasLeaderboardRankingSystem, hasRuleset, supportedModes, supportedRulesets, supportedLeaderboardRankingSystems } = useAdapterConfig()
+const { t } = useI18n()
 
 const [switcher, setSwitcher] = useLeaderboardSwitcher(
   toRaw(props.modelValue) || {}
@@ -32,7 +34,7 @@ watch(switcher, () => emitData())
   <div class="mt-4 grid sm:mt-0 md:gap-1">
     <div class="flex justify-around gap-4 md:gap-2 lg:gap-4">
       <a
-        v-for="(m, mode) in config.mode"
+        v-for="mode in supportedModes"
         :key="mode"
         class="h-mode hover-floating"
         :class="{
@@ -43,14 +45,14 @@ watch(switcher, () => emitData())
         @click="setSwitcher({ mode })"
       >
         <img
-          :src="`/icons/mode/${m.icon}.svg`"
+          :src="`/icons/mode/${icon.mode[mode].icon}.svg`"
           class="color-theme-light-invert"
         >
       </a>
     </div>
     <div class="flex justify-around gap-4 md:gap-2 lg:gap-4">
       <a
-        v-for="(m, ruleset) in config.ruleset"
+        v-for="ruleset in supportedRulesets"
         :key="ruleset"
         class="h-mode hover-floating"
         :class="{
@@ -60,7 +62,7 @@ watch(switcher, () => emitData())
         }"
         @click="setSwitcher({ ruleset })"
       >
-        {{ m.name }}
+        {{ t(localeKey.ruleset(ruleset)) }}
       </a>
     </div>
     <div
@@ -68,7 +70,7 @@ watch(switcher, () => emitData())
       class="flex justify-center gap-3 md:gap-3 lg:gap-3"
     >
       <template
-        v-for="(s, rankingSystem) in config.leaderboardRankingSystem"
+        v-for="rankingSystem in supportedLeaderboardRankingSystems"
         :key="rankingSystem"
       >
         <a
@@ -87,7 +89,7 @@ watch(switcher, () => emitData())
           }"
           @click="setSwitcher({ rankingSystem })"
         >
-          {{ s.name }}
+          {{ t(localeKey.rankingSystem(rankingSystem)) }}
         </a>
       </template>
     </div>

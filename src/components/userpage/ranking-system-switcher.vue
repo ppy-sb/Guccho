@@ -4,6 +4,7 @@ import userpageStore from '~/store/userpage'
 
 const { hasRuleset, hasLeaderboardRankingSystem } = await useAdapterConfig()
 const config = useAppConfig()
+const { t } = useI18n()
 const rankingSystem = config.leaderboardRankingSystem
 
 const page = userpageStore()
@@ -39,6 +40,11 @@ const tabs = computed(() => filter('tab'))
 const dropdown = computed(() => filter('dropdown'))
 </script>
 
+<i18n lang="yaml">
+en-GB:
+  folded-ranking-system: Other Ranks
+</i18n>
+
 <template>
   <section class="w-full pt-4 mx-auto">
     <t-tabs
@@ -58,7 +64,7 @@ const dropdown = computed(() => filter('dropdown'))
         class="f-tab"
         :value="key"
       >
-        {{ rankingSystem[key].name }}
+        {{ t(localeKey.rankingSystem(key)) }}
       </t-tab>
 
       <div
@@ -71,7 +77,7 @@ const dropdown = computed(() => filter('dropdown'))
       >
         <div class="dropdown dropdown-end dropdown-hover">
           <div tabindex="0">
-            Other Ranks
+            {{ t('folded-ranking-system') }}
           </div>
           <ul
             tabindex="0"
@@ -79,7 +85,7 @@ const dropdown = computed(() => filter('dropdown'))
           >
             <li v-for="(_stats, key) of dropdown" :key="`user-tab-${key}`">
               <a class="z-50" @click="select(key)">{{
-                rankingSystem[key].name
+                t(localeKey.rankingSystem(key))
               }}</a>
             </li>
           </ul>

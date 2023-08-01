@@ -1,11 +1,14 @@
-import { enGB, zhCN } from './src/locales'
+import { merge } from 'lodash-es'
+import { Lang } from './src/def'
+
+import clientMessages from './src/locales'
+import { locales as serverMessages } from '$active/locales'
+
+const messages = merge(clientMessages, serverMessages)
 
 export default defineI18nConfig(() => ({
   legacy: false,
-  locale: 'en-GB',
-  fallbackLocale: 'en-GB',
-  messages: {
-    'en-GB': enGB,
-    'zh-CN': zhCN,
-  },
+  locale: Lang.enGB,
+  fallbackLocale: Lang.enGB,
+  messages,
 }))

@@ -4,7 +4,7 @@ import { useIntersectionObserver } from '@vueuse/core'
 import userpageStore from '~/store/userpage'
 
 const appConf = useAppConfig()
-
+const { t } = useI18n()
 const page = userpageStore()
 
 await page.refresh()
@@ -64,24 +64,32 @@ onMounted(() => {
 })
 </script>
 
+<i18n lang="yaml">
+en-GB:
+  error-occured: Oops...
+  unknown-error: something went wrong.
+  back: bring me back
+  retry: try again
+</i18n>
+
 <template>
   <section v-if="page.error" class="grow flex">
     <div class="m-auto flex flex-col items-center justify-center gap-3">
       <h1 class="text-3xl">
-        Oops...
+        {{ t('error-occured') }}
       </h1>
       <h2 v-if="page.error.message !== ''" class="text-2xl">
         {{ page.error.message }}
       </h2>
       <h2 v-else class="text-2xl">
-        something went wrong.
+        {{ t('unknown-error') }}
       </h2>
       <div class="grid grid-cols-2 gap-2">
         <t-button variant="primary" @click="$router.back()">
-          bring me back
+          {{ t('back') }}
         </t-button>
         <t-button variant="secondary" @click="page.refresh">
-          try again
+          {{ t('retry') }}
         </t-button>
       </div>
     </div>

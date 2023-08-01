@@ -113,14 +113,14 @@ async function userLogin() {
           </h1>
         </div>
         <div class="grid grid-cols-2 gap-2">
-          <t-nuxt-link-button
+          <t-nuxt-link-locale-button
             to="/auth/register"
             variant="accent"
             @mouseenter="registerButton = 'Sign up'"
             @mouseleave="registerButton = 'Don\'t have an account?'"
           >
             {{ registerButton }}
-          </t-nuxt-link-button>
+          </t-nuxt-link-locale-button>
           <button type="submit" class="btn btn-primary">
             Sign in
           </button>

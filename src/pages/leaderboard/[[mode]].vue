@@ -8,23 +8,23 @@ const config = useAppConfig()
 const route = useRoute('leaderboard-mode')
 const router = useRouter()
 const app$ = useNuxtApp()
+const { supportedModes, supportedRulesets } = useAdapterConfig()
+const { t } = useI18n()
 
 const { mode: pMode } = route.params
 const { ruleset: pRuleset, ranking: pRankingSystem, page: pPage } = route.query
 
-const availableModes = Object.keys(config.mode)
-const availableRulesets = Object.keys(config.ruleset)
 const availableRankingSystems = Object.keys(config.leaderboardRankingSystem)
 const mode = (
-  (isString(pMode) && availableModes.includes(pMode))
+  (isString(pMode) && includes(pMode, supportedModes))
     ? pMode
-    : availableModes[0]
+    : supportedModes[0]
 ) as ActiveMode
 
 const ruleset = (
-  (isString(pRuleset) && availableRulesets.includes(pRuleset))
+  (isString(pRuleset) && includes(pRuleset, supportedRulesets))
     ? pRuleset
-    : availableRulesets[0]
+    : supportedRulesets[0]
 ) as ActiveRuleset
 
 const rankingSystem = (
@@ -95,6 +95,12 @@ function reloadPage(i?: number) {
 }
 </script>
 
+<i18n lang="yaml">
+en-GB:
+  no-score: No one played this mode yet.
+  no-score-alt: Wanna be the first one? Go for it.
+</i18n>
+
 <template>
   <div class="flex flex-col h-full leaderboard custom-container">
     <header-simple-title-with-sub
@@ -104,9 +110,9 @@ function reloadPage(i?: number) {
         (selected.mode
           && selected.ruleset
           && selected.rankingSystem
-          && `${config.mode[selected.mode].name} - ${
-            config.ruleset[selected.ruleset].name
-          } | ${config.leaderboardRankingSystem[selected.rankingSystem].name}`)
+          && `${t(localeKey.mode(selected.mode))} - ${
+            t(localeKey.ruleset(selected.ruleset))
+          } | ${t(localeKey.rankingSystem(selected.rankingSystem))}`)
           || ''
       "
     >
@@ -134,14 +140,14 @@ function reloadPage(i?: number) {
               <th>Player</th>
               <th class="px-4 font-semibold text-center">
                 {{
-                  config.leaderboardRankingSystem[selected.rankingSystem].name
+                  t(localeKey.rankingSystem(selected.rankingSystem))
                 }}
               </th>
               <th class="px-4 font-medium text-center">
-                Accuracy
+                {{ t('global.accuracy') }}
               </th>
               <th class="px-4 font-medium text-center">
-                Play Count
+                {{ t('global.play-count') }}
               </th>
             </tr>
           </thead>
@@ -161,10 +167,10 @@ function reloadPage(i?: number) {
         class="pb-10 my-auto text-gbase-900 dark:text-gbase-100 grow"
       >
         <h1 class="text-xl font-semibold text-center">
-          No one played this mode yet.
+          {{ t('no-score') }}
         </h1>
         <h2 class="text-sm font-semibold text-center opacity-60">
-          Wanna be the first one? Go for it.
+          {{ t('no-score-alt') }}
         </h2>
       </div>
       <div class="join mx-auto outline outline-2">

@@ -1,11 +1,7 @@
-import type { Rank } from '~/def'
-import type { ActiveMode, ActiveRuleset } from '~/def/common'
+import enGB from './en-GB'
+import zhCN from './zh-CN'
 
-export interface GlobalI18n extends Record<string, any> {
-  mode: Record<ActiveMode, string>
-  ruleset: Record<ActiveRuleset, string>
-  rank: Record<Rank, string>
-}
-
-export { default as enGB } from './en-GB'
-export { default as zhCN } from './zh-CN'
+export default {
+  'en-GB': enGB,
+  'zh-CN': zhCN,
+} as const

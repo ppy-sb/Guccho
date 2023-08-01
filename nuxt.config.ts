@@ -1,6 +1,7 @@
 import { fileURLToPath } from 'node:url'
 
 import './scripts/ensure-env'
+import { Lang } from './src/def'
 
 export default defineNuxtConfig({
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
@@ -72,21 +73,16 @@ export default defineNuxtConfig({
 
   i18n: {
     strategy: 'prefix_and_default',
-    defaultLocale: 'en-GB',
+    defaultLocale: Lang.enGB,
     locales: [
       {
-        code: 'en-GB',
+        code: Lang.enGB,
         name: 'English (International)',
       },
       {
-        code: 'zh-CN',
+        code: Lang.zhCN,
         name: '简体中文 (中国)',
       },
     ],
-    detectBrowserLanguage: {
-      useCookie: true,
-      cookieKey: 'n-lang',
-      redirectOn: 'root', // recommended
-    },
   },
 })

@@ -15,6 +15,7 @@ const searchModal = shallowRef<{
 defineExpose({
   searchModal,
 })
+const { t } = useI18n()
 
 const {
   includes,
@@ -46,7 +47,7 @@ const {
                 raw(true)
               }"
             >
-            <span class="label-text">{{ $t('include.beatmapsets') }}</span>
+            <span class="label-text">{{ t('include.beatmapsets') }}</span>
           </label>
         </div>
 
@@ -58,7 +59,7 @@ const {
                 raw(true)
               }"
             >
-            <span class="label-text">{{ $t('include.beatmaps') }}</span>
+            <span class="label-text">{{ t('include.beatmaps') }}</span>
           </label>
         </div>
         <div class="form-control">
@@ -70,7 +71,7 @@ const {
                 raw(false)
               }"
             >
-            <span class="label-text">{{ $t('include.users') }}</span>
+            <span class="label-text">{{ t('include.users') }}</span>
           </label>
         </div>
       </div>
@@ -105,7 +106,7 @@ const {
           <input
             v-model="keyword"
             type="text"
-            :placeholder="$t('search')"
+            :placeholder="t('search')"
             class="input grow border-label-0 focus:input-primary bg-transparent !outline-0"
             @input="onInput"
             @keyup.enter="raw(true)"
@@ -115,7 +116,7 @@ const {
           v-else
           v-model="keyword"
           type="text"
-          :placeholder="$t('search')"
+          :placeholder="t('search')"
           class="input grow border-label-0 focus:input-primary bg-transparent !outline-0"
           @input="onInput"
           @keyup.enter="raw(true)"
@@ -130,14 +131,14 @@ const {
               v-for="page, index in pages"
               :key="`searchResult-page-${index}`"
             >
-              <nuxt-link
+              <nuxt-link-locale
                 :to="page.route"
                 @click="() => closeModal()"
               >
                 <div class="flex gap-2 items-center">
                   <component :is="page.render" />
                 </div>
-              </nuxt-link>
+              </nuxt-link-locale>
             </li>
           </transition-group>
         </template>
@@ -145,14 +146,14 @@ const {
           v-if="Array.isArray(beatmapsets) && beatmapsets.length"
         >
           <div class="divider font-bold">
-            <span v-if="loading.beatmapsets" class="loading loading-spinner loading-lg" /> {{ $t('global.beatmapsets') }}
+            <span v-if="loading.beatmapsets" class="loading loading-spinner loading-lg" /> {{ t('global.beatmapsets') }}
           </div>
           <transition-group tag="ul" class="menu" name="left">
             <li
               v-for="bs in beatmapsets"
               :key="`searchResult-bs-${bs.id}`"
             >
-              <nuxt-link
+              <nuxt-link-locale
                 :to="{
                   name: 'beatmapset-id',
                   params: {
@@ -171,20 +172,20 @@ const {
                   <span>{{ bs.meta.intl.artist }} -
                     {{ bs.meta.intl.title }}</span>
                 </div>
-              </nuxt-link>
+              </nuxt-link-locale>
             </li>
           </transition-group>
         </template>
         <template v-if="Array.isArray(beatmaps) && beatmaps.length">
           <div class="divider font-bold">
-            <span v-if="loading.beatmaps" class="loading loading-spinner loading-lg" /> {{ $t('globals.beatmaps') }}
+            <span v-if="loading.beatmaps" class="loading loading-spinner loading-lg" /> {{ t('globals.beatmaps') }}
           </div>
           <transition-group tag="ul" class="menu truncate" name="left">
             <li
               v-for="bm in beatmaps"
               :key="`searchResult-bm-${bm.id}`"
             >
-              <nuxt-link
+              <nuxt-link-locale
                 :to="{
                   name: 'beatmapset-id',
                   params: {
@@ -202,20 +203,20 @@ const {
                   >
                   <span class="text-ellipsis">{{ bm.beatmapset.meta.intl.artist }} - {{ bm.beatmapset.meta.intl.title }} [{{ bm.version }}]</span>
                 </div>
-              </nuxt-link>
+              </nuxt-link-locale>
             </li>
           </transition-group>
         </template>
         <template v-if="Array.isArray(users) && users.length">
           <div class="divider font-bold">
-            <span v-if="loading.users" class="loading loading-spinner loading-lg" /> {{ $t('global.users') }}
+            <span v-if="loading.users" class="loading loading-spinner loading-lg" /> {{ t('global.users') }}
           </div>
           <transition-group tag="ul" class="menu" name="left">
             <li
               v-for="user in users"
               :key="`searchResult-user-${user.safeName}`"
             >
-              <nuxt-link
+              <nuxt-link-locale
                 :to="{
                   name: 'user-handle',
                   params: {
@@ -232,14 +233,14 @@ const {
                   >
                   <span>{{ user.name }}</span>
                 </div>
-              </nuxt-link>
+              </nuxt-link-locale>
             </li>
           </transition-group>
         </template>
         <template v-if="nothing">
           <div class="divider" />
           <div class="p-5 pt-0">
-            {{ $t('nothing') }}
+            {{ t('nothing') }}
           </div>
         </template>
       </div>

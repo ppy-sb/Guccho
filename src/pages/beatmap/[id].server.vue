@@ -1,5 +1,6 @@
 <script setup lang="ts" async>
-const { id } = useRoute('beatmap-id.server').params
+// TODO https://github.com/victorgarciaesgi/nuxt-typed-router/issues/110
+const { id } = useRoute().params as { id: string | string[] }
 if (!id || Array.isArray(id)) {
   createError('please provide valid id.')
 }

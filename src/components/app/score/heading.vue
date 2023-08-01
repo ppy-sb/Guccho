@@ -65,7 +65,7 @@ zh-CN:
       <template #player>
         <span class="align-bottom">
           <img class="mask mask-squircle inline align-bottom" width="30" :src="score.user.avatarSrc" alt="">
-          <nuxt-link
+          <nuxt-link-locale
             :to="{
               name: 'user-handle',
               params: {
@@ -75,7 +75,7 @@ zh-CN:
             class="text-3xl font-normal underline decoration-sky-500"
           >
             {{ score.user.name }}
-          </nuxt-link>
+          </nuxt-link-locale>
         </span>
       </template>
 

@@ -4,6 +4,7 @@ export * from './asserts'
 export * from './guards'
 export * from './map'
 export * from './level'
+export * as localeKey from './locales'
 export * from './privilege'
 
 export function noop<T extends undefined | void = void>(): T

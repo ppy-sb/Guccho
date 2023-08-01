@@ -1,4 +1,5 @@
-import type { GlobalI18n } from '.'
+import type { GlobalI18n } from './@types'
+import { Scope, UserPrivilege } from '~/def/user'
 import { Mode, Rank, Ruleset } from '~/def'
 
 export default {
@@ -27,19 +28,48 @@ export default {
     'relations': 'Friends & Blocks',
     'userpage': 'My Profile',
     'admin-panel': 'Admin Panel',
+    'logs': 'Logs',
+    'articles': 'Articles',
   },
-  logout: 'Sign out',
-  login: 'Sign in',
-  register: 'Sign up',
   global: {
-    pp: 'pp',
-    player: 'Player',
-    rank: 'Rank',
-    mods: 'Mods',
-    playedAt: 'Played at',
-    acc: 'Acc',
-    beatmapsets: 'Beatmapsets',
-    beatmaps: 'Beatmaps',
-    users: 'Users',
+    'logout': 'Sign out',
+    'login': 'Sign in',
+    'register': 'Sign up',
+    'pp': 'pp',
+    'player': 'Player',
+    'rank': 'Rank',
+    'mods': 'Mods',
+    'played-at': 'Played at',
+    'acc': 'Acc',
+    'accuracy': 'Accuracy',
+    'play-count': 'Play Count',
+    'beatmapsets': 'Beatmapsets',
+    'beatmaps': 'Beatmaps',
+    'users': 'Users',
+    'session': 'Session',
   },
-} as GlobalI18n
+  priv: {
+    [UserPrivilege.Disabled]: 'Disabled',
+    [UserPrivilege.Restricted]: 'Restricted',
+    [UserPrivilege.Registered]: 'Registered',
+    [UserPrivilege.Inactive]: 'Inactive',
+    [UserPrivilege.Normal]: 'Normal',
+    [UserPrivilege.Supported]: 'Supported',
+    [UserPrivilege.Supporter]: 'Supporter',
+    [UserPrivilege.Whitelisted]: 'Whitelisted',
+    [UserPrivilege.Alumni]: 'Alumni',
+    [UserPrivilege.TournamentStuff]: 'Tournament Staff',
+    [UserPrivilege.ChannelModerator]: 'Channel Moderator',
+    [UserPrivilege.Moderator]: 'Moderator',
+    [UserPrivilege.BeatmapNominator]: 'Beatmap Nominator',
+    [UserPrivilege.Staff]: 'Staff',
+    [UserPrivilege.Admin]: 'Admin',
+    [UserPrivilege.Owner]: 'Owner',
+    [UserPrivilege.Bot]: 'Bot',
+  },
+  scope: {
+    [Scope.Self]: 'Self',
+    [Scope.Friends]: 'Friends',
+    [Scope.Public]: 'Everyone',
+  },
+} satisfies GlobalI18n as GlobalI18n

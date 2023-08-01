@@ -7,6 +7,11 @@ import type {
   ScoreRankingSystem,
 } from './common'
 
+export enum Lang {
+  enGB = 'en-GB',
+  zhCN = 'zh-CN',
+}
+
 export enum Relationship {
   Friend,
   Blocked,

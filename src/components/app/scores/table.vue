@@ -13,10 +13,11 @@ const props = withDefaults(
     rankingSystem: Rank.PPv2,
   }
 )
+
+const { t } = useI18n()
+
 const comma = createNumberFormatter()
 const pp = createPPFormatter()
-
-const config = useAppConfig()
 </script>
 
 <i18n lang="yaml">
@@ -28,23 +29,17 @@ en-GB:
   <table class="table table-compact table-zebra">
     <thead>
       <tr>
-        <th>{{ $t('global.player') }}</th>
+        <th>{{ t('global.player') }}</th>
         <th class="text-right">
-          {{ $t('global.rank') }}
-        </th>
-        <th class="text-right">
-          {{ $t('global.mods') }}
+          {{ t('global.rank') }}
         </th>
         <th class="text-right">
-          {{ config.rankingSystem.score }}
+          {{ t('global.mods') }}
         </th>
-        <th v-if="rankingSystem === Rank.PPv2" class="text-right">
-          {{ config.rankingSystem.ppv2 }}
+        <th class="text-right">
+          {{ t(localeKey.rankingSystem(rankingSystem)) }}
         </th>
-        <th v-else-if="rankingSystem === Rank.PPv1" class="text-right">
-          {{ config.rankingSystem.ppv1 }}
-        </th>
-        <th>{{ $t('global.playedAt') }}</th>
+        <th>{{ t('global.playedAt') }}</th>
         <!-- <th class="text-center">
           Actions
         </th> -->
@@ -63,7 +58,7 @@ en-GB:
                   width="30"
                 >
               </div>
-              <nuxt-link
+              <nuxt-link-locale
                 :to="{
                   name: 'user-handle',
                   params: { handle: item.user.safeName },
@@ -71,7 +66,7 @@ en-GB:
                 :class="useUserRoleColor(item.user)"
               >
                 {{ item.user.name }}
-              </nuxt-link>
+              </nuxt-link-locale>
             </div>
           </th>
           <td class="text-right">
@@ -109,7 +104,7 @@ en-GB:
         <tr>
           <th colspan="6">
             <div class="text-center">
-              {{ $t('no-score') }}
+              {{ t('no-score') }}
             </div>
           </th>
         </tr>

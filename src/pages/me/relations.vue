@@ -17,6 +17,7 @@ if (!session.$state.loggedIn) {
 }
 const relations = shallowRef(await app$.$client.me.relations.query())
 const config = useAppConfig()
+const { t } = useI18n()
 
 useHead({
   titleTemplate: `Friends - ${config.title}`,
@@ -58,12 +59,17 @@ const isFriend = haveRelation.bind(null, Relationship.Friend)
 // const isBlocked = haveRelation.bind(null, 'block')
 </script>
 
+<i18n lang="yaml">
+en-GB:
+  loading: Loading...
+</i18n>
+
 <template>
   <div class="container pt-24 mx-auto custom-container">
     <suspense>
       <template #fallback>
         <div>
-          {{ errorMessage || "Loading..." }}
+          {{ errorMessage || t('loading') }}
         </div>
       </template>
       <div class="mx-auto user-list">
@@ -86,7 +92,7 @@ const isFriend = haveRelation.bind(null, Relationship.Friend)
                 {{ user.name }}
               </h1>
               <div class="flex justify-between w-full items-top">
-                <nuxt-link
+                <nuxt-link-locale
                   :key="`${user.id}:${user.relationship.join('-')}`"
                   class="text-lg text-left underline md:text-2xl decoration-sky-500 text-gbase-600 dark:text-gbase-300 hover:text-gbase-500"
                   :to="{
@@ -97,7 +103,7 @@ const isFriend = haveRelation.bind(null, Relationship.Friend)
                   }"
                 >
                   @{{ user.safeName }}
-                </nuxt-link>
+                </nuxt-link-locale>
                 <div class="flex gap-2 actions">
                   <!-- <t-button variant="info" size="xs" class="md:btn-sm">
                     chat

@@ -3,14 +3,14 @@ import 'vue3-json-viewer/dist/index.css'
 
 const app = useNuxtApp()
 const serverLogs = await app.$client.admin.log.last.query(50)
-const { locale } = useI18n()
+const { t, locale } = useI18n()
 const logs = ref(serverLogs.reverse())
 </script>
 
 <template>
   <div>
     <h1 class="font-bold italic mb-10">
-      Logs
+      {{ t('titles.logs') }}
     </h1>
     <!-- <JsonViewer v-for="(log, index) in logs" :key="`log-${index}`" :value="log" /> -->
     <div v-for="log in logs" :key="`log-${log.timestamp}`" class="relative mt-5 text-left">

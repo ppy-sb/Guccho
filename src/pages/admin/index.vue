@@ -1,25 +1,25 @@
 <script setup lang="ts">
-
+const { t } = useI18n()
 </script>
 
 <template>
   <div class="join">
-    <t-nuxt-link-button
+    <t-nuxt-link-locale-button
       :to="{
         name: 'article-edit',
       }"
       class="join-item"
     >
-      Edit Articles (outside from admin)
-    </t-nuxt-link-button>
-    <t-nuxt-link-button
+      {{ t('titles.articles') }}
+    </t-nuxt-link-locale-button>
+    <t-nuxt-link-locale-button
       :to="{
         name: 'admin-logs',
       }"
       class="join-item"
     >
-      Logs
-    </t-nuxt-link-button>
+      {{ t('titles.logs') }}
+    </t-nuxt-link-locale-button>
   </div>
 </template>
 

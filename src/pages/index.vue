@@ -1,15 +1,21 @@
 <script setup lang="ts">
 import { useSession } from '~/store/session'
 
+definePageMeta({
+  layout: 'hero',
+})
 const session = useSession()
 const config = useAppConfig()
 useHead({
   titleTemplate: `${config.title}`,
 })
-definePageMeta({
-  layout: 'hero',
-})
+const { t } = useI18n()
 </script>
+
+<i18n lang="yaml">
+en-GB:
+  to-userpage: to my profile
+</i18n>
 
 <template>
   <div class="custom-container heading">
@@ -19,38 +25,34 @@ definePageMeta({
           {{ config.title }}
         </h1>
         <h2 class="font-semibold px-2 sm:px-0 h-sub text-md sm:text-left">
-          We are an osu! private server built from the ground up with many
-          unique features not seen elsewhere!<br>
-          - for more information, check out gulag and Guccho on GitHub
-          <br>
-          - we're fully open source!
+          {{ t('landing.content') }}
         </h2>
       </div>
       <div class="grid grid-cols-2 gap-2 justify-center">
         <template v-if="session.$state.loggedIn">
-          <t-nuxt-link-button
+          <t-nuxt-link-locale-button
             :to="{
               name: 'user-handle',
               params: { handle: session.$state.userId },
             }"
             variant="primary"
           >
-            to my profile
-          </t-nuxt-link-button>
-          <t-nuxt-link-button :to="{ name: 'me-settings' }" variant="secondary">
-            settings
-          </t-nuxt-link-button>
+            {{ t('to-userpage') }}
+          </t-nuxt-link-locale-button>
+          <t-nuxt-link-locale-button :to="{ name: 'me-settings' }" variant="secondary">
+            {{ t('titles.settings').toLocaleLowerCase() }}
+          </t-nuxt-link-locale-button>
         </template>
         <template v-else>
-          <t-nuxt-link-button :to="{ name: 'auth-login' }" variant="primary">
-            Sign in
-          </t-nuxt-link-button>
-          <t-nuxt-link-button
+          <t-nuxt-link-locale-button :to="{ name: 'auth-login' }" variant="primary">
+            {{ t('global.login') }}
+          </t-nuxt-link-locale-button>
+          <t-nuxt-link-locale-button
             :to="{ name: 'auth-register' }"
             variant="secondary"
           >
-            Sign up
-          </t-nuxt-link-button>
+            {{ t('global.register') }}
+          </t-nuxt-link-locale-button>
         </template>
       </div>
     </div>
