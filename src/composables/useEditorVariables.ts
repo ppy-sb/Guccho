@@ -1,4 +1,4 @@
-import { modes, rankingSystems, rulesets } from '../def'
+import { Lang, modes, rankingSystems, rulesets } from '../def'
 
 const variables = new Map<string, Template>()
 
@@ -23,7 +23,7 @@ export default function useEditorVariables() {
 
 function addAppConfigVariables() {
   const config = useAppConfig()
-  const { t } = useI18n({ locale: 'en-GB' })
+  const { t } = useI18n({ locale: Lang.enGB })
 
   setVariable('domain', {
     description: 'domain',

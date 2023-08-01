@@ -1,5 +1,6 @@
 import enGB from './en-GB'
+import { Lang } from '~/def'
 
 export const locales = {
-  'en-GB': enGB,
+  [Lang.enGB]: enGB,
 } as const
