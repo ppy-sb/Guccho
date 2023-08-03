@@ -14,7 +14,7 @@ const props = defineProps<{
   inThisLeaderboard: ComponentLeaderboard<string>['inThisLeaderboard']
   sort: LeaderboardRankingSystem
 }>()
-const addCommas = createAddCommasFormatter()
+const addCommas = createNumberFormatter()
 const scoreFormat = createScoreFormatter()
 const option = {
   style: 'percent',

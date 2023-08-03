@@ -31,7 +31,7 @@ const rankingStatusIconMapping: Partial<Record<RankingStatus, string>> = {
   [RankingStatus.Qualified]: 'line-md:confirm',
 }
 
-const numberFmt = createAddCommasFormatter()
+const numberFmt = createNumberFormatter()
 const beatmap = computed(() => {
   if (!props.score || !beatmapIsVisible(props.score.beatmap)) {
     return

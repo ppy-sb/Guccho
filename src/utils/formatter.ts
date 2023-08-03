@@ -5,7 +5,7 @@ export function createScoreFormatter(
   }
 ) {
   const fmt = Intl.NumberFormat('en-US', opt)
-  return function scoreFormat(score: bigint | number) {
+  return function formatScore(score: bigint | number) {
     return fmt.format(score)
   }
 }
@@ -17,12 +17,12 @@ export function createPPFormatter(
   }
 ) {
   const fmt = Intl.NumberFormat('en-US', opt)
-  return function scoreFormat(score: bigint | number) {
+  return function formatPP(score: bigint | number) {
     return fmt.format(score)
   }
 }
 
-export function createAddCommasFormatter() {
+export function createNumberFormatter() {
   const fmt = Intl.NumberFormat()
   return function addCommas(nStr: number | bigint) {
     return fmt.format(nStr)

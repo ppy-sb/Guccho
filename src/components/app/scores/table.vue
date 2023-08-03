@@ -13,7 +13,7 @@ const props = withDefaults(
     rankingSystem: Rank.PPv2,
   }
 )
-const comma = createAddCommasFormatter()
+const comma = createNumberFormatter()
 const pp = createPPFormatter()
 </script>
 
