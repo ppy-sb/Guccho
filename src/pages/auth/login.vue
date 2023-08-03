@@ -4,24 +4,26 @@ import type { TRPCError } from '@trpc/server'
 import { useSession } from '~/store/session'
 
 const session = useSession()
-const route = useRoute()
 const router = useRouter()
-const config = useAppConfig()
-
 if (session.loggedIn) {
   router.back()
 }
 
+const route = useRoute()
+const config = useAppConfig()
+
+const { t } = useI18n()
 useHead({
-  titleTemplate: `Login - ${config.title}`,
+  titleTemplate: `${t('global.login')} - ${config.title}`,
 })
 
 definePageMeta({
   layout: 'hero',
 })
+
 const error = shallowRef('')
 
-const registerButton = shallowRef<string>('Do not have an account?')
+const registerButton = shallowRef<string>(t('have-no-account'))
 
 const login = shallowReactive<{
   user: string
@@ -59,6 +61,14 @@ async function userLogin() {
 }
 </script>
 
+<i18n lang="yaml">
+en-GB:
+  have-no-account: Don't have an account?
+  user-or-email: User / Email
+  user-id-email: User / ID / Email
+  password: Password
+</i18n>
+
 <template>
   <div
     class="w-full flex flex-col"
@@ -71,7 +81,7 @@ async function userLogin() {
         <h2
           class="text-3xl text-center text-gbase-800 dark:text-gbase-50"
         >
-          Login
+          {{ t('global.login') }}
         </h2>
       </div>
       <form
@@ -81,7 +91,7 @@ async function userLogin() {
       >
         <div class="flex flex-col gap-2">
           <div>
-            <label for="user" class="sr-only">User / Email</label>
+            <label for="user" class="sr-only">{{ t('user-or-email') }}</label>
             <input
               id="user"
               v-model="login.user"
@@ -91,11 +101,11 @@ async function userLogin() {
               required
               class="w-full input input-ghost shadow-sm"
               :class="{ 'input-error': error }"
-              placeholder="User / ID / Email"
+              :placeholder="t('user-id-email')"
             >
           </div>
           <div>
-            <label for="password" class="sr-only">Password</label>
+            <label for="password" class="sr-only">{{ t('password') }}</label>
             <input
               id="password"
               v-model="login.password"
@@ -105,7 +115,7 @@ async function userLogin() {
               required
               class="w-full input input-ghost shadow-sm"
               :class="{ 'input-error': error }"
-              placeholder="Password"
+              :placeholder="t('password')"
             >
           </div>
           <h1 v-if="error" class="auth-error-text">
@@ -116,13 +126,13 @@ async function userLogin() {
           <t-nuxt-link-locale-button
             to="/auth/register"
             variant="accent"
-            @mouseenter="registerButton = 'Sign up'"
-            @mouseleave="registerButton = 'Don\'t have an account?'"
+            @mouseenter="registerButton = t('global.register')"
+            @mouseleave="registerButton = t('have-no-account')"
           >
             {{ registerButton }}
           </t-nuxt-link-locale-button>
           <button type="submit" class="btn btn-primary">
-            Sign in
+            {{ t('global.login') }}
           </button>
         </div>
       </form>

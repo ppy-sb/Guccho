@@ -6,7 +6,6 @@ import type { AppRouter } from '~/server/trpc/routers'
 import { useSession } from '~/store/session'
 import { features } from '$active'
 
-const loginButton = shallowRef('Have account?')
 interface Shape {
   name: string
   safeName?: string
@@ -18,30 +17,36 @@ const shape: Shape = {
   email: '',
   password: '',
 }
+
+const config = useAppConfig()
+const app = useNuxtApp()
+const { t } = useI18n()
+const loginButton = shallowRef(t('have-account'))
+
 const reg = shallowReactive({ ...shape })
 const error = shallowReactive({ ...shape })
 const fetching = shallowRef(false)
-const config = useAppConfig()
-const app$ = useNuxtApp()
 
 function unique(key: keyof Shape) {
   return async () => {
     if (!reg[key]) {
-      error[key] = `${key} must not be empty`
+      error[key] = t('key-required', { key })
       return false
     }
-    const exists = await app$.$client.user.exists.query({ handle: reg[key] as string })
+    const exists = await app.$client.user.exists.query({ handle: reg[key] as string })
     if (!exists) {
       return true
     }
-    error[key] = `${key} is already taken.`
+    error[key] = t('key-taken', { key })
     return false
   }
 }
 const pwPatternStr = '(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}'
 const pwPattern = new RegExp(pwPatternStr)
+
 const safeNamePatternStr = '[a-z0-9][a-z0-9_]+[a-z0-9]'
 const safeNamePattern = new RegExp(safeNamePatternStr)
+
 const validate: {
   [Key in keyof Shape]: () => boolean | Promise<boolean>
 } = {
@@ -54,7 +59,7 @@ const validate: {
 }
 
 useHead({
-  titleTemplate: `Register - ${config.title}`,
+  titleTemplate: `${t('global.register')} - ${config.title}`,
 })
 definePageMeta({
   layout: 'hero',
@@ -70,7 +75,7 @@ async function userRegisterAction() {
 
   type E = TRPCClientError<AppRouter['user']['register']>
 
-  const result$ = await app$.$client.user.register.mutate({
+  const result$ = await app.$client.user.register.mutate({
     name: reg.name,
     safeName: reg.safeName,
     email: reg.email,
@@ -100,6 +105,19 @@ async function userRegisterAction() {
 }
 </script>
 
+<i18n lang="yaml">
+en-GB:
+  have-account: Have account?
+  key-required: '{key} must not be empty'
+  key-taken: '{key} is already taken.'
+  name: Nickname (you can change it later)
+  name-pattern: Must not includes uppercase letter, nor starts or ends with _, contains only number, a-z and _
+  link: Username (semi-permanent)
+  email: Email
+  password: Password
+  password-pattern: Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters
+</i18n>
+
 <template>
   <div
     class="w-full flex flex-col"
@@ -113,7 +131,7 @@ async function userRegisterAction() {
         <h2
           class="text-3xl text-center text-gbase-800 dark:text-gbase-50"
         >
-          Sign Up
+          {{ t('global.register') }}
         </h2>
       </div>
       <form
@@ -126,7 +144,7 @@ async function userRegisterAction() {
         </div> -->
         <div class="space-y-2">
           <div>
-            <label for="name" class="sr-only">name</label>
+            <label for="name" class="sr-only">{{ t('name') }}</label>
             <input
               id="nickname"
               v-model="reg.name"
@@ -136,7 +154,7 @@ async function userRegisterAction() {
               required
               class="w-full input input-ghost shadow-sm"
               :class="{ 'input-error': error.name }"
-              placeholder="Nickname (you can change it later)"
+              :placeholder="t('name')"
               @input="error.name = ''"
             >
             <div class="text-error text-sm pl-4">
@@ -145,7 +163,7 @@ async function userRegisterAction() {
           </div>
           <template v-if="features.has(Feature.StableUsername)">
             <div>
-              <label for="name" class="sr-only">username</label>
+              <label for="name" class="sr-only">{{ t('link') }}</label>
               <input
                 id="name"
                 v-model="reg.safeName"
@@ -154,10 +172,10 @@ async function userRegisterAction() {
                 autocomplete="off"
                 required
                 :pattern="safeNamePatternStr"
-                title="Must not includes uppercase letter, nor starts or ends with _, contains only number, a-z and _"
+                :title="t('name-pattern')"
                 class="w-full input input-ghost shadow-sm"
                 :class="{ 'input-error': error.safeName }"
-                placeholder="Username (semi-permanent)"
+                :placeholder="t('link')"
                 @input="error.safeName = ''"
               >
               <div class="text-error text-sm pl-4">
@@ -166,7 +184,7 @@ async function userRegisterAction() {
             </div>
           </template>
           <div>
-            <label for="name" class="sr-only">email</label>
+            <label for="name" class="sr-only">{{ t('email') }}</label>
             <input
               id="email"
               v-model="reg.email"
@@ -176,7 +194,7 @@ async function userRegisterAction() {
               required
               class="w-full input input-ghost shadow-sm"
               :class="{ 'input-error': error.email }"
-              placeholder="Email"
+              :placeholder="t('email')"
               @input="error.email = ''"
             >
             <div class="text-error text-sm pl-4">
@@ -184,7 +202,7 @@ async function userRegisterAction() {
             </div>
           </div>
           <div>
-            <label for="password" class="sr-only">Password</label>
+            <label for="password" class="sr-only">{{ t('password') }}</label>
             <input
               id="password"
               v-model="reg.password"
@@ -193,10 +211,10 @@ async function userRegisterAction() {
               autocomplete="off"
               required
               :pattern="pwPatternStr"
-              title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters"
+              :title="t('password-pattern')"
               class="w-full input input-ghost shadow-sm"
               :class="{ 'input-error': error.password }"
-              placeholder="Password"
+              :placeholder="t('password')"
               @input="error.password = ''"
             >
             <div class="text-error text-sm pl-4">
@@ -209,13 +227,13 @@ async function userRegisterAction() {
           <t-nuxt-link-locale-button
             :to="{ name: 'auth-login' }"
             variant="secondary"
-            @mouseenter="loginButton = 'Login'"
-            @mouseleave="loginButton = 'Have account?'"
+            @mouseenter="loginButton = t('global.login')"
+            @mouseleave="loginButton = t('have-account')"
           >
             {{ loginButton }}
           </t-nuxt-link-locale-button>
           <button type="submit" class="btn btn-primary">
-            Sign Up
+            {{ t('global.register') }}
           </button>
         </div>
       </form>
