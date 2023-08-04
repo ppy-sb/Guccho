@@ -1,7 +1,4 @@
-// import { createI18n } from 'vue-i18n'
 import { modes, rankingSystems, rulesets } from '../def'
-
-// import { config as i18n } from '../../i18n.config'
 
 const variables = new Map<string, Template>()
 
