@@ -27,8 +27,8 @@ zh-CN:
         <h1 class="mb-2 text-4xl font-bold text-center">
           {{ config.title }}
         </h1>
-        <h2 class="font-semibold px-2 sm:px-0 h-sub text-md sm:text-left">
-          {{ t('landing.content') }}
+        <h2 class="font-semibold px-2 sm:px-0 h-sub text-md sm:text-left whitespace-pre-line">
+          {{ t('landing.content', { title: config.title }) }}
         </h2>
       </div>
       <div class="grid grid-cols-2 gap-2 justify-center">
