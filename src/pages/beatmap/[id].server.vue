@@ -26,6 +26,8 @@ definePageMeta({
 <i18n lang="yaml">
 en-GB:
   err-id-invalid: please provide valid id.
+zh-CN:
+  err-id-invalid: 请提供一个有效的id。
 </i18n>
 
 <script lang="ts">

@@ -15,6 +15,9 @@ const { t } = useI18n()
 <i18n lang="yaml">
 en-GB:
   to-userpage: to my profile
+
+zh-CN:
+  to-userpage: 用户页面
 </i18n>
 
 <template>

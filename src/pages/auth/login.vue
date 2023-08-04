@@ -67,6 +67,12 @@ en-GB:
   user-or-email: User / Email
   user-id-email: User / ID / Email
   password: Password
+
+zh-CN:
+  have-no-account: 没有账号?
+  user-or-email: 用户名 或者 邮箱地址
+  user-id-email: 用户名 或者 用户ID 或者 邮箱地址
+  password: 密码
 </i18n>
 
 <template>

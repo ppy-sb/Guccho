@@ -23,6 +23,9 @@ const pp = createPPFormatter()
 <i18n lang="yaml">
 en-GB:
   no-score: No Score has been set so far.
+
+zh-CN:
+  no-score: 目前还没有任何成绩。
 </i18n>
 
 <template>

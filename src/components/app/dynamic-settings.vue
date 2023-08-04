@@ -19,6 +19,11 @@ en-GB:
   stored-at:
     0: Saved Locally
     1: Saved on server
+
+zh-CN:
+  stored-at:
+    0: 本地存储
+    1: 保存至服务器
 </i18n>
 
 <template>

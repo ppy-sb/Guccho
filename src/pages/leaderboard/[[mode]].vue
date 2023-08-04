@@ -99,13 +99,17 @@ function reloadPage(i?: number) {
 en-GB:
   no-score: No one played this mode yet.
   no-score-alt: Wanna be the first one? Go for it.
+
+zh-CN:
+  no-score: 该模式目前还没有人玩过。
+  no-score-alt: 想要成为第一名吗? 冲吧!
 </i18n>
 
 <template>
   <div class="flex flex-col h-full leaderboard custom-container mx-auto">
     <header-simple-title-with-sub
       class="container mx-auto custom-container lg:px-4"
-      title="Leaderboard"
+      :title="t('titles.leaderboard')"
       :subtitle="
         (selected.mode
           && selected.ruleset

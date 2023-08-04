@@ -12,6 +12,9 @@ async function handleError() {
 <i18n lang='yaml'>
 en-GB:
   clear: Clear errors and try again
+
+zh-CN:
+  clear: 处理以下错误之后再重新尝试。
 </i18n>
 
 <template>

@@ -72,6 +72,9 @@ const { t, locale } = useI18n()
 <i18n lang="yaml">
 en-GB:
   unknown-beatmap: Unknown Beatmap
+
+zh-CN:
+  unknown-beatmap: 未知铺面
 </i18n>
 
 <template>

@@ -116,6 +116,17 @@ en-GB:
   email: Email
   password: Password
   password-pattern: Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters
+
+zh-CN:
+  have-account: 已经有一个账号了?
+  key-required: '{key} 不能为空'
+  key-taken: '{key} 已经被占用了'
+  name: 用户昵称(可以随时修改)
+  name-pattern: 不包含大写字母,不能以 _ 作为开头和结尾,即只能包含 数字、小写字母a-z 以及 下划线 _
+  link: 用户名 (几乎不可修改)
+  email: 电子邮箱
+  password: 密码
+  password-pattern: 必须包含至少一个数字、一个大写字母和一个小写字母,并且密码长度至少为8。
 </i18n>
 
 <template>

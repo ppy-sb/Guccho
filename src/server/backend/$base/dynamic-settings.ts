@@ -24,6 +24,14 @@ export const settings = {
           empty: 'Select',
         },
       },
+      [Lang.zhCN]: {
+        'intl-name': {
+          literal: '歌曲名称显示方式',
+          intl: '国际名称',
+          localized: '原语言/本地化',
+          empty: '请选择',
+        },
+      },
     },
   }),
 } as const

@@ -43,6 +43,9 @@ const dropdown = computed(() => filter('dropdown'))
 <i18n lang="yaml">
 en-GB:
   folded-ranking-system: Other Ranks
+
+zh-CN:
+  folded-ranking-system: Other Ranks
 </i18n>
 
 <template>

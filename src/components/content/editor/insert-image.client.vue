@@ -43,6 +43,12 @@ en-GB:
   description: Description
   ok: confirm
   cancel: cancel
+
+zh-CN:
+  title: 标题
+  description: 详细描述
+  ok: 确认
+  cancel: 取消
 </i18n>
 
 <template>

@@ -62,6 +62,8 @@ const isFriend = haveRelation.bind(null, Relationship.Friend)
 <i18n lang="yaml">
 en-GB:
   loading: Loading...
+zh-CN:
+  loading: 加载中...
 </i18n>
 
 <template>

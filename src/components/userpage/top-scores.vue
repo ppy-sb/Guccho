@@ -166,6 +166,10 @@ const nextTop = nextPage.bind(null, topPage)
 en-GB:
   top: Top Ranks
   loading: Loading Top Scores...
+
+zh-CN:
+  top: 排行榜
+  loading: 正在加载排行榜
 </i18n>
 
 <template>

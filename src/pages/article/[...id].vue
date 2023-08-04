@@ -15,6 +15,9 @@ const { t } = useI18n()
 <i18n lang="yaml">
 en-GB:
   edit: Edit
+
+zh-CN:
+  edit: 编辑
 </i18n>
 
 <template>

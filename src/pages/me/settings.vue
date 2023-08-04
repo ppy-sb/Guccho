@@ -226,6 +226,7 @@ en-GB:
   avatar:
     size-too-big: size too big
     upload:
+      click-to-upload: click-to-upload
       placement: '{bold} or drag and drop'
       bold: Click to upload
     status:
@@ -257,6 +258,55 @@ en-GB:
     actions: Action
     current: Current Session
     kick: Kick
+zh-CN:
+  reset: 恢复
+
+  preferences: 设置
+  username: 用户名
+  safe-name: 引用连接
+  email: 电子邮箱
+  flag: 国家/地区
+  profile: 个人简介
+
+  status:
+    done: 完成
+    save: 保存
+
+  avatar:
+    size-too-big: 图片大小过大,请控制在2MB以内
+    upload:
+      click-to-upload: 点击此处上传
+      placement: '{bold} 或将图片拖入此处'
+      bold: 上传
+    status:
+      ready: 保存
+      uploading: 上传中
+      done: 完成
+      abort: 取消
+
+  password:
+    change: 修改
+    literal: 修改密码
+    new-password-mismatch: 新密码和确认密码不一致
+    same-password-as-old: 新密码和旧密码一致
+    old-password: 旧密码
+    new-password: 新密码
+    repeat-password: 确认密码
+    ok: 确认
+    abort: 取消
+
+  api-key:
+    literal: API 秘钥
+    placeholder: 你的API 秘钥
+    request: 请求一个
+    refresh: 重置你的API秘钥
+
+  session:
+    name: 设备名称
+    last-activity: 上次活跃时间
+    actions: 操作
+    current: 我
+    kick: 强制下线
 </i18n>
 
 <template>
@@ -295,7 +345,7 @@ en-GB:
                 class="mb-2 text-sm text-gbase-500 dark:text-gbase-300"
               >
                 <template #bold>
-                  <span class="font-semibold">{{ t('click-to-upload') }}</span>
+                  <span class="font-semibold">{{ t('avatar.upload.click-to-upload') }}</span>
                 </template>
               </i18n-t>
 

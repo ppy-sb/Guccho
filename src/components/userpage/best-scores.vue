@@ -161,6 +161,9 @@ const nextBp = nextPage.bind(null, bpPage)
 <i18n lang="yaml">
 en-GB:
   bp: Best Scores
+
+zh-CN:
+  bp: 最好成绩
 </i18n>
 
 <template>

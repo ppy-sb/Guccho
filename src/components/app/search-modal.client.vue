@@ -6,6 +6,14 @@ en-GB:
     users: Include users
     search: Search...
     noting: Found nothing.
+
+zh-CN:
+  include:
+    beatmapsets: 包括歌曲
+    beatmaps: 包含铺面
+    users: 包含用户
+    search: 搜索中
+    noting: 什么都没找到
 </i18n>
 
 <script setup lang="ts">

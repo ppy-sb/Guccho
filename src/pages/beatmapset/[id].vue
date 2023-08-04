@@ -136,10 +136,14 @@ async function update() {
 }
 </script>
 
-<i18n lang="en-GB">
+<i18n lang="yaml">
 en-GB:
   beatmapset:
     placement: '{title} by {artist}'
+
+zh-CN:
+  beatmapset:
+    placement: "曲名:{title} \n 艺术家:{artist}"
 </i18n>
 
 <template>

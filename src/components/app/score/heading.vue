@@ -101,4 +101,3 @@ zh-CN:
     </div>
   </div>
 </template>
-../../../composables/autoLocale

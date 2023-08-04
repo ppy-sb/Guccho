@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+// old is '~/store/session'
 import { useSession } from '~/store/session'
 
 definePageMeta ({
@@ -16,6 +17,9 @@ onMounted(async () => {
 <i18n lang="yaml">
 en-GB:
   logging-out: Logging out...
+
+zh-CN:
+  logging-out: 正在登出...
 </i18n>
 
 <template>

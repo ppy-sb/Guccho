@@ -9,7 +9,7 @@ export default {
   rank: {
     [Rank.PPv2]: 'Performance(v2)',
     [Rank.PPv1]: 'Performance(v1)',
-    [Rank.RankedScore]: '计入排行榜总分',
+    [Rank.RankedScore]: '计入排行榜的总分',
     [Rank.TotalScore]: '总分',
     [Rank.Score]: '分数',
   },
