@@ -174,7 +174,7 @@ en-GB:
   </div>
   <template v-else-if="page.user">
     <div class="flex flex-col gap-6">
-      <section v-if="top?.count" class="custom-container">
+      <section v-if="top?.count">
         <div class="card" :class="[pendingTop && 'pointer-events-none']">
           <!-- <div
             class="justify-center p-1 card-title rounded-2xl bg-gbase-300/30"
@@ -255,7 +255,6 @@ en-GB:
       </section>
       <div
         v-else-if="!top?.scores.length && pendingTop"
-        class="custom-container"
       >
         {{ t('loading') }}
       </div>

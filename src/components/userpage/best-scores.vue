@@ -169,7 +169,7 @@ en-GB:
   </div>
   <template v-else-if="page.user">
     <div class="flex flex-col gap-6">
-      <section v-if="bp?.scores?.length" class="custom-container">
+      <section v-if="bp?.scores?.length">
         <div class="card" :class="[pendingBP && 'pointer-events-none']">
           <div
             class="p-1 two-tone flex items-center w-100"
@@ -238,7 +238,7 @@ en-GB:
           </div>
         </div>
       </section>
-      <div v-else-if="!bp?.scores.length && pendingBP" class="custom-container">
+      <div v-else-if="!bp?.scores.length && pendingBP">
         {{ t('loading') }}
       </div>
     </div>

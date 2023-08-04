@@ -81,7 +81,7 @@ en-GB:
 <template>
   <section
     v-if="page.user"
-    class="flex flex-col items-center w-full gap-5 mx-auto mt-2 md:container custom-container md:flex-row md:items-end root"
+    class="flex flex-col items-center w-full gap-5 mx-auto mt-2 md:container custom-container md:flex-row md:items-end"
   >
     <!-- Logo -->
     <div>
