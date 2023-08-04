@@ -644,11 +644,14 @@ en-GB:
             <span class="pl-3 label-text">{{ t('flag') }}</span>
           </label>
           <!-- <t-combo-box v-model="user.flag" size="sm" class="&[button]:w-full" :options="Object.entries(CountryCode).map(([k, v]) => ({ value: v, label: k }))" /> -->
-          <select v-model="user.flag" class="select select-ghost w-full select-sm">
-            <option v-for="countryCode in CountryCode" :key="countryCode" :disabled="countryCode === user.flag" :selected="countryCode === user.flag" :value="countryCode">
-              {{ toCountryName(countryCode) }}
-            </option>
-          </select>
+          <div class="flex gap-2 pl-3">
+            <img :src="getFlagURL(user.flag)" class="w-6">
+            <select v-model="user.flag" class="select select-ghost w-full select-sm">
+              <option v-for="countryCode in CountryCode" :key="countryCode" :disabled="countryCode === user.flag || countryCode === CountryCode.Unknown" :selected="countryCode === user.flag" :value="countryCode">
+                {{ toCountryName(countryCode) }}
+              </option>
+            </select>
+          </div>
         </div>
         <div>
           <label class="label" for="password">

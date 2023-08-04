@@ -1,4 +1,5 @@
 export enum CountryCode {
+  Unknown = 'XX',
   Afghanistan = 'AF',
   AlandIslands = 'AX',
   Albania = 'AL',
