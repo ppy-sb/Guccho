@@ -124,7 +124,7 @@ async function updateUserSettings() {
     app$.$client.me.changeSettings.mutate(updateData).catch((error) => {
       errorMessage.value.push(error.message)
     }),
-    profile.value
+    profile.value && profileEdited.value
       && app$.$client.me.changeUserpage
         .mutate({ profile: profile.value })
         .catch((error) => {
