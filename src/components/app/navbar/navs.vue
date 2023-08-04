@@ -4,7 +4,14 @@ import { useSession } from '~/store/session'
 import { UserPrivilege } from '~/def/user'
 
 const session = useSession()
-const { t, locale, locales } = useI18n()
+const { t, locale, locales, setLocale } = useI18n()
+
+const _locale = computed({
+  get: () => locale.value,
+  set(locale) {
+    setLocale(locale)
+  },
+})
 
 function clearFocus() {
   if (document.activeElement instanceof HTMLElement) {
@@ -26,7 +33,7 @@ function clearFocus() {
       {{ t('titles.status') }}
     </nuxt-link-locale>
   </li>
-  <select v-model="locale" class="select select-ghost w-min-content select-sm">
+  <select v-model="_locale" class="select select-ghost w-min-content select-sm">
     <option value="" disabled>
       select
     </option>
@@ -34,7 +41,7 @@ function clearFocus() {
       v-for="l in (locales as LocaleObject[])"
       :key="l.code"
       :value="l.code"
-      :disabled="l.code === locale"
+      :disabled="l.code === _locale"
     >
       {{ l.name }}
     </option>

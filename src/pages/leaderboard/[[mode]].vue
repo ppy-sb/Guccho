@@ -102,7 +102,7 @@ en-GB:
 </i18n>
 
 <template>
-  <div class="flex flex-col h-full leaderboard custom-container">
+  <div class="flex flex-col h-full leaderboard custom-container mx-auto">
     <header-simple-title-with-sub
       class="container mx-auto custom-container lg:px-4"
       title="Leaderboard"
