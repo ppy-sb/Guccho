@@ -301,7 +301,7 @@ WHERE s.userid = ${id}
     }
   }
 
-  async _getStatistics(opt: { id: Id; flag: CountryCode }) {
+  async _getStatistics(opt: { id: Id; flag?: CountryCode }) {
     const { id } = opt
     const results = await this.db.stat.findMany({
       where: {
@@ -357,7 +357,7 @@ WHERE s.userid = ${id}
     return { results, ranks }
   }
 
-  async getStatistics(opt: { id: Id; flag: CountryCode }) {
+  async getStatistics(opt: { id: Id; flag?: CountryCode }) {
     const { results, ranks } = await this._getStatistics(opt)
 
     return this._toStatistics(results, ranks)

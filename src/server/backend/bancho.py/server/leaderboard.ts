@@ -220,7 +220,7 @@ export class RedisLeaderboardProvider extends LeaderboardDatabaseProvider {
           id: number
           name: string
           safeName: string
-          flag: CountryCode
+          flag?: CountryCode
           priv: number
           _rank: bigint
           accuracy: number

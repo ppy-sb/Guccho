@@ -39,12 +39,11 @@ export function lazySingleton<TArg, TRet, TFac extends (...args: readonly TArg[]
 }
 
 const reverseCountryCode = Object.fromEntries(Object.entries(CountryCode).map(([k, v]) => [v, k.replace(/([A-Z])/g, ' $1').trim()]))
-export function toCountryCode(country: string): CountryCode {
+export function toCountryCode(country: string): CountryCode | undefined {
   const uppercase = country.toUpperCase()
   if (uppercase in reverseCountryCode) {
     return uppercase as CountryCode
   }
-  throw new Error('unknown country code')
 }
 
 export function toCountryName(country: CountryCode): string {

@@ -87,7 +87,7 @@ export interface UserEssential<Id> {
   ingameId: number
   name: string
   safeName: string
-  flag: CountryCode
+  flag?: CountryCode
   avatarSrc?: string
 
   roles: UserPrivilege[]

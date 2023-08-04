@@ -1,7 +1,11 @@
-import type { CountryCode } from '../def/country-code'
+import type { CountryCode } from '~/def/country-code'
+import black from '~/assets/Twemoji-style_black.svg?url'
 
 const baseUrl = 'https://cdn.jsdelivr.net/npm/@twemoji/svg@latest/'
-export function getFlagURL(flag: CountryCode) {
+export function getFlagURL(flag?: CountryCode) {
+  if (!flag) {
+    return black
+  }
   let url = baseUrl
 
   for (let i = 0; i < flag.length; i++) {
