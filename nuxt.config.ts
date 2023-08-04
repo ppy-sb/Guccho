@@ -44,6 +44,9 @@ export default defineNuxtConfig({
       sourcemap: 'inline',
     },
   },
+  vue: {
+    defineModel: true,
+  },
   nitro: {
     externals: {
       external: ['prisma-client-ppy-sb', 'prisma-client-bancho-py'],
@@ -54,6 +57,7 @@ export default defineNuxtConfig({
     // '@nuxtjs/color-mode',
     '@nuxtjs/tailwindcss',
     '@pinia/nuxt',
+    '@pinia-plugin-persistedstate/nuxt',
     '@nuxtjs/i18n',
     'nuxt-icon',
     'nuxt-typed-router',

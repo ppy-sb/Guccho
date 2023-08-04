@@ -180,7 +180,7 @@ en-GB:
           {{ t('status.offline', { lastSeen: live.lastSeen.toLocaleDateString(locale, { dateStyle: 'long' }) }) }}
         </div>
         <div v-else-if="live && live.beatmap" class="order-3 user-status">
-          {{ UserStatus[live.status] }} {{ live.beatmap.beatmapset.meta.intl.artist }} - {{ live.beatmap.beatmapset.meta.intl.title }} [{{ live.beatmap.version }}]
+          {{ UserStatus[live.status] }} {{ autoLocale(live.beatmap.beatmapset.meta).artist }} - {{ autoLocale(live.beatmap.beatmapset.meta).title }} [{{ live.beatmap.version }}]
         </div>
         <div v-else-if="live.status === UserStatus.Idle" class="order-3 user-status">
           {{ t('status.idle') }}

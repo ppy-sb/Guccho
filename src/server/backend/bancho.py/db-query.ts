@@ -12,7 +12,6 @@ export const userEssentials: Prisma.UserFindManyArgs = {
     country: true,
     priv: true,
     pwBcrypt: true,
-    apiKey: true,
     email: true,
   },
 } as const satisfies {

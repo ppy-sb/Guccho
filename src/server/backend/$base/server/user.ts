@@ -1,4 +1,5 @@
 import type { JSONContent } from '@tiptap/core'
+import type { ExtractLocationSettings, ExtractSettingType } from '../define-setting'
 import type { idTransformable } from './@extends'
 import type { BeatmapSource, RankingStatus } from '~/def/beatmap'
 import type {
@@ -8,24 +9,22 @@ import type {
 } from '~/def/common'
 import type { RankingSystemScore } from '~/def/score'
 import type {
+  DynamicSettingStore,
+  Scope,
   UserEssential,
   UserExtra,
   UserOptional,
+  UserSecrets,
   UserStatistic,
   UserStatus,
 } from '~/def/user'
 import type { CountryCode } from '~/def/country-code'
+import type { settings } from '$active/dynamic-settings'
 
 export namespace UserProvider {
   export type ComposableProperties<Id> = UserExtra<Id> & UserOptional
-  export interface OptType<
-    Includes extends Partial<Record<keyof UserOptional, boolean>> = Record<
-      never,
-      never
-    >,
-  > {
+  export interface OptType {
     handle: string
-    includes?: Includes
     keys?: Array<'id' | 'name' | 'safeName' | 'email'>
   }
 
@@ -42,18 +41,14 @@ export namespace UserProvider {
 export interface UserProvider<Id> extends idTransformable {
   exists({ handle, keys }: UserProvider.OptType): PromiseLike<boolean>
 
-  getEssential<
-    Includes extends Partial<Record<keyof UserOptional, boolean>>,
-  >(
-    opt: UserProvider.OptType<Includes>
-  ): PromiseLike<UserEssential<Id>>
+  getEssential<_Scope extends Scope>(
+    opt: UserProvider.OptType & { scope: _Scope }
+  ): Promise<_Scope extends Scope.Self ? UserEssential<Id> & UserSecrets : UserEssential<Id>>
 
-  getEssentialById<
-    Includes extends Partial<Record<keyof UserOptional, boolean>>,
-  >(opt: {
+  getEssentialById<_Scope extends Scope>(opt: {
     id: Id
-    includes: Includes
-  }): PromiseLike<UserEssential<Id>>
+    scope: _Scope
+  }): Promise<_Scope extends Scope.Self ? UserEssential<Id> & UserSecrets : UserEssential<Id>>
 
   getBests<
     Mode extends ActiveMode,
@@ -79,21 +74,19 @@ export interface UserProvider<Id> extends idTransformable {
     Excludes extends Partial<
       Record<keyof UserProvider.ComposableProperties<Id>, boolean>
     >,
+   _Scope extends Scope = Scope.Public,
   >(query: {
     handle: string
     excludes?: Excludes
     includeHidden?: boolean
-  }): PromiseLike<
-    | (UserEssential<Id> & {
-      [K in keyof UserProvider.ComposableProperties<Id> as Exclude<
-          Excludes,
-          'secrets'
-        >[K] extends true
-        ? never
-        : K]: UserProvider.ComposableProperties<Id>[K];
-    } & (Excludes['secrets'] extends true
-      ? { secrets: UserProvider.ComposableProperties<Id>['secrets'] }
-      : {}))
+    scope: _Scope
+  }): Promise<
+  UserEssential<Id> & {
+    [K in keyof UserProvider.ComposableProperties<Id> as Excludes[K] extends true
+      ? never
+      : K
+    ]: UserProvider.ComposableProperties<Id>[K];
+  }
   >
 
   changeSettings(
@@ -169,4 +162,8 @@ export interface UserProvider<Id> extends idTransformable {
   } | null>
 
   register(opt: { name: string; safeName: string; email: string; passwordMd5: string }): PromiseLike<UserEssential<Id>>
+
+  getDynamicSettings (user: { id: Id }): Promise<ExtractSettingType<ExtractLocationSettings<DynamicSettingStore.Server, typeof settings>>>
+
+  setDynamicSettings(user: { id: Id }, args: ExtractSettingType<ExtractLocationSettings<DynamicSettingStore.Server, typeof settings>>): Promise<ExtractSettingType<ExtractLocationSettings<DynamicSettingStore.Server, typeof settings>>>
 }

@@ -87,7 +87,7 @@ en-GB:
             <source v-if="beatmap.beatmapset.assets['list@2x']" :srcset="`${beatmap.beatmapset.assets.list} 1x, ${beatmap.beatmapset.assets['list@2x']} 2x`">
             <img
               :src="beatmap.beatmapset.assets.list"
-              :alt="beatmap.beatmapset.meta.title"
+              :alt="autoLocale(beatmap.beatmapset.meta).title"
               :onerror="placeholder"
               class="object-cover w-20 h-16 rounded-xl shadow-md"
             >

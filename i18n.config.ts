@@ -6,9 +6,10 @@ import { locales as serverMessages } from '$active/locales'
 
 const messages = merge(clientMessages, serverMessages)
 
-export default defineI18nConfig(() => ({
+export const config = {
   legacy: false,
   locale: Lang.enGB,
   fallbackLocale: Lang.enGB,
   messages,
-}))
+}
+export default defineI18nConfig(() => config)

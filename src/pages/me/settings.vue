@@ -26,6 +26,7 @@ const config = useAppConfig()
 const route = useRoute()
 const { t, locale } = useI18n()
 const session = useSession()
+const dyn = await useDynamicSettings()
 
 definePageMeta({
   middleware: ['auth'],
@@ -104,6 +105,7 @@ async function saveAvatar() {
   editor.value?.reload()
 }
 async function updateUserSettings() {
+  dyn.save()
   if (!user.value) {
     return
   }
@@ -559,7 +561,7 @@ en-GB:
               :disabled="!user.roles.includes(UserPrivilege.Supporter)"
               :class="{
                 'input-bordered input-primary': unchanged.name !== user.name,
-                'input-ghost': unchanged.name === user.name,
+                '!input-ghost border-none': unchanged.name === user.name,
               }"
             >
             <button
@@ -661,43 +663,7 @@ en-GB:
             </button>
           </label>
         </div>
-        <div>
-          <label class="label" for="api">
-            <span class="pl-3 label-text">{{ t('api-key.literal') }}</span>
-          </label>
-          <div class="flex gap-4">
-            <input
-              id="api"
-              v-model="user.secrets.apiKey"
-              type="text"
-              :placeholder="t('api-key.placeholder')"
-              class="input input-sm grow blur-sm hover:blur-none"
-              disabled
-              :class="{
-                'input-bordered input-primary':
-                  unchanged.secrets.apiKey !== user.secrets.apiKey,
-                '!input-ghost border-none':
-                  unchanged.secrets.apiKey === user.secrets.apiKey,
-              }"
-            >
-            <button
-              v-if="!user.secrets.apiKey"
-              class="btn btn-sm btn-primary"
-              type="button"
-              disabled
-            >
-              {{ t('api-key.request') }}
-            </button>
-            <button
-              v-else
-              class="btn btn-sm btn-secondary"
-              type="button"
-              disabled
-            >
-              {{ t('api-key.refresh') }}
-            </button>
-          </div>
-        </div>
+        <app-dynamic-settings v-model="dyn.data.value" :unchanged="dyn.unchanged.value" />
       </div>
     </div>
 

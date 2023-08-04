@@ -1,4 +1,7 @@
-import { Lang, modes, rankingSystems, rulesets } from '../def'
+// import { createI18n } from 'vue-i18n'
+import { modes, rankingSystems, rulesets } from '../def'
+
+// import { config as i18n } from '../../i18n.config'
 
 const variables = new Map<string, Template>()
 
@@ -23,7 +26,7 @@ export default function useEditorVariables() {
 
 function addAppConfigVariables() {
   const config = useAppConfig()
-  const { t } = useI18n({ locale: Lang.enGB })
+  // const { global: { t } } = createI18n(i18n)
 
   setVariable('domain', {
     description: 'domain',
@@ -47,7 +50,7 @@ function addAppConfigVariables() {
     setVariable(`mode:${mode}`, {
       description: `name of mode ${mode}`,
       fallback: mode,
-      value: t(localeKey.mode(mode)),
+      value: mode,
     })
   }
 
@@ -55,7 +58,7 @@ function addAppConfigVariables() {
     setVariable(`ruleset:${ruleset}`, {
       description: `name of ruleset ${ruleset}`,
       fallback: ruleset,
-      value: t(localeKey.ruleset(ruleset)),
+      value: ruleset,
     })
   }
 
@@ -63,7 +66,7 @@ function addAppConfigVariables() {
     setVariable(`rank:${rs}`, {
       description: `name of ruleset ${rs}`,
       fallback: rs,
-      value: t(localeKey.rankingSystem(rs)),
+      value: rs,
     })
   }
 }

@@ -6,7 +6,6 @@ import type { Id } from '..'
 import type { ArticleProvider } from '$base/server'
 import type {
   UserEssential,
-  UserExtra,
   UserOptional,
   UserSecrets,
 } from '~/def/user'
@@ -73,16 +72,20 @@ export function toRoles(priv: number): UserPrivilege[] {
   return roles
 }
 
-export type DatabaseUserEssentialFields = 'id' | 'name' | 'safeName' | 'country' | 'priv' | 'pwBcrypt' | 'apiKey' | 'email'
+export type DatabaseUserEssentialFields = 'id' | 'name' | 'safeName' | 'country' | 'priv' | 'pwBcrypt' | 'email'
 export function toUserEssential<
+  _Scope extends Scope = Scope.Public,
   Includes extends Partial<Record<keyof UserOptional, boolean>> = Record<never, never>,
 >(user: Pick<DatabaseUser, DatabaseUserEssentialFields>, { includes, avatar }: {
   includes?: Includes
   avatar: {
     domain?: string
   }
-}) {
-  const returnValue: UserEssential<Id> & Partial<UserOptional> = {
+}, scope?: _Scope) {
+  if (scope === undefined) {
+    scope = Scope.Public as _Scope
+  }
+  const returnValue: UserEssential<Id> & Partial<UserOptional> & Partial<UserSecrets> = {
     id: user.id,
     ingameId: user.id,
     name: user.name,
@@ -92,19 +95,16 @@ export function toUserEssential<
     roles: toRoles(user.priv),
   }
 
-  if (includes?.secrets) {
-    returnValue.secrets = {
-      password: user.pwBcrypt,
-      apiKey: user.apiKey || undefined,
-    }
+  if (scope === Scope.Self) {
+    returnValue.password = user.pwBcrypt
   }
 
   if (includes?.email) {
     returnValue.email = user.email
   }
 
-  return returnValue as Includes['secrets'] extends true
-    ? UserEssential<Id> & { secrets: UserSecrets }
+  return returnValue as _Scope extends Scope.Self
+    ? UserEssential<Id> & UserSecrets
     : UserEssential<Id>
 }
 
@@ -140,9 +140,7 @@ export function toFullUser(
       domain?: string
     }
   }
-): UserEssential<Id> &
-  Pick<UserExtra<Id>, 'settings'> &
-  Pick<UserOptional, 'oldNames'> {
+): UserEssential<Id> {
   return {
     id: user.id,
     ingameId: user.id,
@@ -151,16 +149,6 @@ export function toFullUser(
     flag: toCountryCode(user.country),
     avatarSrc: config.avatar.domain && `https://${config.avatar.domain}/${user.id}`,
     roles: toRoles(user.priv),
-    settings: {
-      accessControl: {
-        reachable: { [Scope.Public]: true },
-        status: { [Scope.Public]: true },
-        privateMessage: { [Scope.Public]: true },
-        email: {},
-        oldNames: { [Scope.Public]: true },
-      } as const,
-    },
-    oldNames: [],
   }
 }
 

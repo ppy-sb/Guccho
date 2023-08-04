@@ -37,13 +37,13 @@ zh-CN:
     <i18n-t keypath="title" tag="p" class="font-light">
       <template #title>
         <span class="text-3xl font-semibold">
-          {{ score.beatmap.beatmapset.meta.intl.title }}
+          {{ autoLocale(score.beatmap.beatmapset.meta).title }}
         </span>
       </template>
 
       <template #artist>
         <span class="text-2xl font-normal">
-          {{ score.beatmap.beatmapset.meta.intl.artist }}
+          {{ autoLocale(score.beatmap.beatmapset.meta).artist }}
         </span>
       </template>
 
@@ -101,3 +101,4 @@ zh-CN:
     </div>
   </div>
 </template>
+../../../composables/autoLocale

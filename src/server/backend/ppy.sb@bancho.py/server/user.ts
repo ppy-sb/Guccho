@@ -8,7 +8,7 @@ import { ArticleProvider, UserProvider as BanchoPyUser } from '~/server/backend/
 import { toFullUser } from '~/server/backend/bancho.py/transforms'
 import { createUserQuery } from '~/server/backend/bancho.py/db-query'
 
-import type { UserEssential } from '~/def/user'
+import type { Scope, UserEssential, UserOldName } from '~/def/user'
 import { UserStatus } from '~/def/user'
 
 import { type UserProvider as Base } from '$base/server'
@@ -85,13 +85,9 @@ export class UserProvider extends BanchoPyUser implements Base<Id> {
   }
 
   async getFull<
-    Excludes extends Partial<
-      Record<keyof Base.ComposableProperties<Id>, boolean>
-    >,
-  >({ handle, excludes, includeHidden }: { handle: string; excludes?: Excludes; includeHidden?: boolean }) {
-    if (!excludes) {
-      excludes = { secrets: true } as Excludes
-    }
+  Excludes extends Partial<Record<keyof Base.ComposableProperties<Id>, boolean>>,
+  _Scope extends Scope = Scope.Public,
+  >({ handle, excludes, includeHidden, scope }: { handle: string; excludes?: Excludes; includeHidden?: boolean; scope?: _Scope }) {
     const user = await this.sbDb.user.findFirstOrThrow(createUserQuery({
       handle,
       privilege: includeHidden ? BanchoPyPrivilege.Any : undefined,
@@ -104,33 +100,35 @@ export class UserProvider extends BanchoPyUser implements Base<Id> {
       },
     })
 
-    return {
+    const returnValue = {
       ...fullUser,
       reachable: false,
       status: UserStatus.Offline as const,
-      statistics:
-        excludes.statistics === true
-          ? (undefined as never)
-          : await this.getStatistics(fullUser),
-      relationships:
-        excludes.relationships === true
-          ? (undefined as never)
-          : await this.relationships.get({ user }),
-      email: excludes.email === true ? (undefined as never) : user.email,
-      profile:
-        excludes.profile === true
-          ? (undefined as never)
-          : {
-              html: profile?.html || '',
-              raw: JSON.parse(profile?.raw || '{}'),
-            },
-      secrets:
-        excludes.secrets === false
-          ? {
-              password: user.pwBcrypt,
-              apiKey: user.apiKey ?? undefined,
-            }
-          : (undefined as never),
+
+      oldNames: excludes?.oldNames === true
+        ? (undefined as never)
+        : <UserOldName[]>[],
+
+      statistics: excludes?.statistics === true
+        ? (undefined as never)
+        : await this.getStatistics(fullUser),
+
+      relationships: excludes?.relationships === true
+        ? (undefined as never)
+        : await this.relationships.get({ user }),
+
+      email: excludes?.email === true
+        ? (undefined as never)
+        : user.email,
+
+      profile: excludes?.profile === true
+        ? (undefined as never)
+        : {
+            html: profile?.html || '',
+            raw: JSON.parse(profile?.raw || '{}'),
+          },
     }
+
+    return returnValue
   }
 }

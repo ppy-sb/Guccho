@@ -11,10 +11,10 @@ definePageMeta({
 const app = useNuxtApp()
 const route = useRoute('beatmapset-id')
 const config = useAppConfig()
-const { supportedModes, supportedRulesets, hasRankingSystem, hasRuleset }
-  = useAdapterConfig()
+const { supportedModes, supportedRulesets, hasRankingSystem, hasRuleset } = useAdapterConfig()
 const [switcher, setSwitcher] = useSwitcher()
 const lazyBgCover = shallowRef('')
+const { t: _t } = useI18n()
 
 const { data: beatmapset, error } = await useAsyncData(() =>
   app.$client.map.beatmapset.query({ id: route.params.id.toString() })
@@ -136,6 +136,12 @@ async function update() {
 }
 </script>
 
+<i18n lang="en-GB">
+en-GB:
+  beatmapset:
+    placement: '{title} by {artist}'
+</i18n>
+
 <template>
   <section v-if="error" class="section custom-container mx-auto">
     <div>
@@ -150,14 +156,18 @@ async function update() {
   >
     <div class="container custom-container mx-auto">
       <div class="header-with-maps flex-wrap">
-        <div class="text-center flex gap-2 items-baseline pb-2 pl-4">
-          <h1 class="text-3xl font-bold text-center sm:text-left lg:whitespace-nowrap z-10">
-            {{ beatmapset.meta.intl.title }}
-          </h1>
-          <h2 class="text-lg font-semibold text-center whitespace-pre opacity-40 sm:text-left z-10">
-            by {{ beatmapset.meta.intl.artist }}
-          </h2>
-        </div>
+        <i18n-t keypath="beatmapset.placement" tag="p" class="font-light text-lg">
+          <template #title>
+            <span class="text-2xl font-bold text-center sm:text-left lg:whitespace-nowrap z-10">
+              {{ beatmapset.meta.intl.title }}
+            </span>
+          </template>
+          <template #artist>
+            <span class="font-semibold text-xl">
+              {{ beatmapset.meta.intl.artist }}
+            </span>
+          </template>
+        </i18n-t>
         <t-tabs
           v-model="selectedMapMd5" variant="bordered" size="md" class="mx-4 self-end bg-transparent"
           @update:model-value="update"

@@ -45,12 +45,14 @@ export const router = _router({
         handle,
         excludes: { relationships: true, secrets: true },
         includeHidden: true,
+        scope: Scope.Public,
       })
+
       const isSelf = user.id === ctx.user?.id
       if (!user.roles.includes(UserPrivilege.Normal) && !isSelf) {
         throw new TRPCError({ code: 'NOT_FOUND', message: userNotFound })
       }
-      return mapId(followUserSettings({ user, scope: Scope.Public }), UserProvider.idToString)
+      return mapId(user, UserProvider.idToString)
     }),
   full: p
     .input(
@@ -62,8 +64,9 @@ export const router = _router({
       const user = await userProvider.getFull({
         handle,
         excludes: { email: true },
+        scope: Scope.Public,
       })
-      return mapId(followUserSettings({ user, scope: Scope.Public }), UserProvider.idToString)
+      return mapId(user, UserProvider.idToString)
     }),
   best: p
     .input(

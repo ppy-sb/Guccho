@@ -1,3 +1,4 @@
+import type { ZodType } from 'zod'
 import type {
   ActiveMode,
   ActiveRuleset,
@@ -7,6 +8,7 @@ import type {
 import type { UserModeRulesetStatistics } from './statistics'
 import type { UserRelationship } from './user-relationship'
 import type { CountryCode } from './country-code'
+import type { Lang } from '.'
 import type { ArticleProvider } from '$base/server'
 
 export enum Scope {
@@ -72,9 +74,13 @@ export interface UserOldName {
   name: string
 }
 
+export enum DynamicSettingStore {
+  Local,
+  Server,
+}
+
 export interface UserSecrets {
   password: string
-  apiKey?: string
 }
 export interface UserEssential<Id> {
   id: Id
@@ -91,16 +97,27 @@ export interface UserOptional {
   reachable: boolean
   oldNames: UserOldName[]
   email: string
-  secrets: UserSecrets
   status: UserStatus
 }
 
-export interface UserSettings {
-  accessControl: Record<
-    Exclude<keyof UserOptional, 'secrets'> | 'privateMessage',
-    Partial<Record<Exclude<Scope, 'self'>, boolean>>
-  >
+export interface Action<T> {
+  label: string
+  execute(value: T): any
 }
+
+export type DynamicUserSetting<T, TLoc extends DynamicSettingStore, TLang> = {
+  store: TLoc
+  validator: ZodType<T>
+  label: string
+  actions?: Action<T>[]
+  disabled?: boolean
+  locale?: Partial<Record<Lang, TLang>>
+} & ({
+  type: 'input'
+} | {
+  type: 'select'
+  options: { value: T; label: string; disabled?: boolean }[]
+})
 
 export type UserStatistic<
   IncludeMode extends ActiveMode = ActiveMode,
@@ -126,7 +143,6 @@ export interface UserExtra<
     raw?: ArticleProvider.JSONContent
   }
   relationships: Array<UserEssential<Id> & UserRelationship>
-  settings: UserSettings
 }
 
 export type UserFull<

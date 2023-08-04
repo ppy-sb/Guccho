@@ -13,6 +13,7 @@ import { zodHandle } from '../shapes'
 import { router as _router } from '../trpc'
 import { Logger } from '$base/log'
 import { SessionProvider, UserProvider } from '$active/server'
+import { Scope } from '~/def/user'
 
 const logger = Logger.child({ label: 'session', backend: 'transport', transport: 'trpc' })
 
@@ -30,9 +31,9 @@ export const router = _router({
       try {
         const user = await userProvider.getEssential({
           handle,
-          includes: { secrets: true },
+          scope: Scope.Self,
         })
-        const result = await bcrypt.compare(md5HashedPassword, user.secrets.password)
+        const result = await bcrypt.compare(md5HashedPassword, user.password)
         if (!result) {
           throw new TRPCError({
             code: 'UNAUTHORIZED',

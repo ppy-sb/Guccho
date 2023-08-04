@@ -3,19 +3,6 @@ import {
   Relationship,
 
 } from '~/def'
-import type {
-  ActiveMode,
-  ActiveRuleset,
-  AvailableRuleset,
-  LeaderboardRankingSystem,
-} from '~/def/common'
-
-import type {
-  UserEssential,
-  UserExtra,
-  UserOptional,
-  UserSettings,
-} from '~/def/user'
 
 import {
   Scope,
@@ -32,44 +19,6 @@ export function compareScope(scope: Scope, requiredScope: Partial<Record<Scope, 
 
   if (scope === Scope.Self) {
     return true
-  }
-}
-
-export function followUserSettings<
-  Id,
-  _Mode extends ActiveMode,
-  _Ruleset extends ActiveRuleset,
-  _RankingSystem extends LeaderboardRankingSystem,
->({
-  user,
-  scope = Scope.Public,
-}: {
-  user: UserEssential<Id> &
-  Partial<
-      UserExtra<Id, _Mode, AvailableRuleset<_Mode, _Ruleset>, _RankingSystem> & Partial<UserOptional>
-    > & {
-    settings: UserSettings
-  }
-  scope?: Scope
-}) {
-  if (scope === Scope.Self) {
-    return user
-  }
-
-  return {
-    ...user,
-    email: compareScope(scope, user.settings.accessControl.email)
-      ? user.email
-      : undefined,
-    oldNames: compareScope(scope, user.settings.accessControl.oldNames)
-      ? user.oldNames
-      : undefined,
-    reachable: compareScope(scope, user.settings.accessControl.reachable)
-      ? user.reachable
-      : undefined,
-    status: compareScope(scope, user.settings.accessControl.status)
-      ? user.status
-      : undefined,
   }
 }
 

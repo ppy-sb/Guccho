@@ -103,6 +103,7 @@
     "@antfu/eslint-config": "^0.39.6",
     "@nuxt/devtools": "^0.5.5",
     "@nuxtjs/tailwindcss": "^6.8.0",
+    "@pinia-plugin-persistedstate/nuxt": "^1.1.1",
     "@tiptap/extension-image": "^2.0.3",
     "@types/bcryptjs": "^2.4.2",
     "@types/chart.js": "^2.9.37",

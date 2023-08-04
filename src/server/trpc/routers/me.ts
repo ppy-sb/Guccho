@@ -11,9 +11,12 @@ import {
 } from '../messages'
 import { zodHandle, zodRelationType, zodTipTapJSONContent } from '../shapes'
 import { router as _router } from '../trpc'
+import { extractLocationSettings, extractSettingValidators } from '$base/define-setting'
+import { settings } from '$active/dynamic-settings'
 import { userProcedure as pUser } from '~/server/trpc/middleware/user'
 import { SessionProvider, UserProvider, UserRelationProvider } from '$active/server'
 import { CountryCode } from '~/def/country-code'
+import { DynamicSettingStore, Scope } from '~/def/user'
 
 const { compare } = bcrypt
 
@@ -28,7 +31,17 @@ export const router = _router({
       handle: UserProvider.idToString(ctx.user.id),
       includeHidden: true,
       excludes: { statistics: true, relationships: true, secrets: false },
+      scope: Scope.Self,
     })
+  }),
+
+  dynamicSettings: _router({
+    get: pUser.query(({ ctx }) => {
+      return users.getDynamicSettings(ctx.user)
+    }),
+    update: pUser.input(extractSettingValidators(extractLocationSettings(DynamicSettingStore.Server, settings))).mutation(({ ctx, input }) => {
+      return users.setDynamicSettings(ctx.user, input)
+    }),
   }),
 
   changeUserpage: pUser
@@ -95,12 +108,12 @@ export const router = _router({
     .mutation(async ({ ctx, input }) => {
       const userWithPassword = await users.getEssentialById({
         id: ctx.user.id,
-        includes: { secrets: true },
+        scope: Scope.Self,
       })
       if (
         !(await compare(
           input.oldPassword,
-          userWithPassword.secrets.password
+          userWithPassword.password
         ))
       ) {
         throw new TRPCError({

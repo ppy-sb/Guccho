@@ -28,6 +28,7 @@ import {
   userEssentials,
 } from '../db-query'
 import type { Id } from '..'
+import type { settings } from '../dynamic-settings'
 import { getLiveUserStatus } from '../api-client'
 import { encryptBanchoPassword } from '../crypto'
 import { Logger } from '../log'
@@ -36,16 +37,19 @@ import { getPrismaClient } from './source/prisma'
 import { UserRelationProvider } from './user-relations'
 import { ArticleProvider } from './article'
 import { ScoreProvider } from './score'
+import type { ExtractLocationSettings, ExtractSettingType } from '$base/define-setting'
 import { env } from '~/server/env'
 import { userNotFound } from '~/server/trpc/messages'
 
 import type { UserProvider as Base } from '$base/server'
 import type { ActiveMode, ActiveRuleset, LeaderboardRankingSystem } from '~/def/common'
 
-import type { UserEssential, UserOptional, UserStatistic } from '~/def/user'
+import type { DynamicSettingStore, Scope, UserEssential, UserStatistic } from '~/def/user'
 import { UserStatus } from '~/def/user'
 import { Mode, Rank, Ruleset } from '~/def'
 import type { CountryCode } from '~/def/country-code'
+
+type ServerSetting = ExtractSettingType<ExtractLocationSettings<DynamicSettingStore.Server, typeof settings>>
 
 const logger = Logger.child({ label: 'user' })
 
@@ -110,7 +114,7 @@ class DBUserProvider implements Base<Id> {
   async exists({
     handle,
     keys,
-  }: Base.OptType<Record<never, never>>) {
+  }: Base.OptType) {
     return (
       (await this.db.user.count(createUserQuery({
         handle,
@@ -121,8 +125,8 @@ class DBUserProvider implements Base<Id> {
   }
 
   async getEssentialById<
-    Includes extends Partial<Record<keyof UserOptional, boolean>>,
-  >({ id, includes }: { id: Id; includes?: Includes }) {
+    _Scope extends Scope = Scope.Public,
+  >({ id, scope }: { id: Id; scope?: _Scope }) {
     /* optimized */
     const user = await this.db.user.findFirstOrThrow({
       where: {
@@ -131,13 +135,13 @@ class DBUserProvider implements Base<Id> {
       ...userEssentials,
     })
 
-    return toUserEssential(user, { includes, ...this.config })
+    return toUserEssential(user, this.config, scope)
   }
 
   async getEssential<
-    Includes extends Partial<Record<keyof UserOptional, boolean>>,
-  >(opt: Base.OptType<Includes>) {
-    const { handle, includes, keys } = opt
+ _Scope extends Scope = Scope.Public,
+  >(opt: Base.OptType & { scope?: _Scope }) {
+    const { handle, scope, keys } = opt
     /* optimized */
     const user = await this.db.user.findFirstOrThrow({
       ...createUserQuery({
@@ -150,7 +154,7 @@ class DBUserProvider implements Base<Id> {
       .catch(() => {
         throw new TRPCError({ code: 'NOT_FOUND', message: userNotFound })
       })
-    return toUserEssential(user, { includes, ...this.config })
+    return toUserEssential(user, this.config, scope)
   }
 
   // https://github.com/prisma/prisma/issues/6570 need two separate query to get count for now
@@ -363,17 +367,17 @@ WHERE s.userid = ${id}
     Excludes extends Partial<
       Record<keyof Base.ComposableProperties<Id>, boolean>
     >,
-  >({ handle, excludes, includeHidden }: { handle: string; excludes?: Excludes; includeHidden?: boolean }) {
+   _Scope extends Scope = Scope.Public,
+  >({ handle, excludes, includeHidden, scope }: { handle: string; excludes?: Excludes; includeHidden?: boolean; scope: _Scope }) {
     if (!excludes) {
-      excludes = { secrets: true } as Excludes
+      excludes = {} as Excludes
     }
     const user = await this.db.user.findFirstOrThrow(createUserQuery({
       handle,
       privilege: includeHidden ? BanchoPyPrivilege.Any : undefined,
     }))
 
-    // type check will not find any missing params here.
-    const returnValue = await toFullUser(user, this.config) as Exclude<Awaited<ReturnType<Base<Id>['getFull']>>, null>
+    const returnValue = await toFullUser(user, this.config) as NonNullable<Awaited<ReturnType<Base<Id>['getFull']>>>
     const parallels: PromiseLike<any>[] = []
 
     returnValue.reachable = false
@@ -403,18 +407,12 @@ WHERE s.userid = ${id}
       }
     }
 
-    if (excludes.secrets === false) {
-      returnValue.secrets = {
-        password: user.pwBcrypt,
-        apiKey: user.apiKey ?? undefined,
-      }
-    }
-
     await Promise.all(parallels)
       .catch((e) => {
         logger.error(e)
         throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: e.message })
       })
+
     return returnValue
   }
 
@@ -658,6 +656,20 @@ WHERE s.userid = ${id}
       },
     }
     return statistics
+  }
+
+  async getDynamicSettings({ id }: { id: Id }) {
+    const user = await this.db.user.findFirstOrThrow({ where: { id } })
+    return {
+      apiKey: user.apiKey ?? '',
+    }
+  }
+
+  async setDynamicSettings(user: { id: number }, args: ServerSetting): Promise<ServerSetting> {
+    const result = await this.db.user.update({ where: { id: user.id }, data: { apiKey: args.apiKey } })
+    return {
+      apiKey: result.apiKey,
+    } as ServerSetting
   }
 }
 
