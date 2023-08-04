@@ -1,4 +1,4 @@
-export const enum IntlPicker {
+export enum IntlPicker {
   Empty = -1,
   Localized,
   Intl,

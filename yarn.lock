@@ -1058,7 +1058,7 @@
     unimport "^3.0.7"
     untyped "^1.3.2"
 
-"@nuxt/kit@^3.2.3", "@nuxt/kit@^3.4.1", "@nuxt/kit@^3.6.1":
+"@nuxt/kit@^3.2.3", "@nuxt/kit@^3.6.1", "@nuxt/kit@^3.6.5":
   version "3.6.5"
   resolved "https://registry.yarnpkg.com/@nuxt/kit/-/kit-3.6.5.tgz#208777acdc2a09109fbe4209aad736874eb9a3f5"
   integrity sha512-uBI5I2Zx6sk+vRHU+nBmifwxg/nyXCGZ1g5hUKrUfgv1ZfiKB8JkN5T9iRoduDOaqbwM6XSnEl1ja73iloDcrw==
@@ -1270,15 +1270,15 @@
     lodash.template "^4.5.0"
     pathe "^1.0.0"
 
-"@nuxtjs/i18n@^v8.0.0-rc.1":
-  version "8.0.0-rc.1"
-  resolved "https://registry.yarnpkg.com/@nuxtjs/i18n/-/i18n-8.0.0-rc.1.tgz#e02cec81e7e126eafaf59ec80f12e3de3a54cb13"
-  integrity sha512-cOw5BvTiytB+PfMFhrq6Xs/tjTQ7f2OxcbUIu2AewnsmW+V6XzIIAOf/6fHTP04NzrjXPevhQDAYfmWcivHqCQ==
+"@nuxtjs/i18n@^8.0.0-rc.2":
+  version "8.0.0-rc.2"
+  resolved "https://registry.npmmirror.com/@nuxtjs/i18n/-/i18n-8.0.0-rc.2.tgz#4b12b649eca882b83070fde1ef66b44e0c1e52af"
+  integrity sha512-UTPPljKGbIuS9+S6quvEzCSmEGqrS4V0ZxmBIIqNnYi96Qhj3i4tsiaHntbJEn9aTUcHBsF9ZrcfkPLTQcy+DA==
   dependencies:
     "@intlify/shared" "9.3.0-beta.24"
     "@intlify/unplugin-vue-i18n" "^0.12.2"
     "@mizchi/sucrase" "^4.1.0"
-    "@nuxt/kit" "^3.4.1"
+    "@nuxt/kit" "^3.6.5"
     "@vue/compiler-sfc" "^3.3.4"
     cookie-es "^1.0.0"
     debug "^4.3.4"
