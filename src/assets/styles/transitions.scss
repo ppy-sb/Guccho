@@ -1,5 +1,5 @@
-$scale: 1.003;
-$translate: 0.3vw;
+$scale: 1.0012;
+$translate: 0.28vw;
 $element-translate: 0.14em;
 
 .slide-enter-active {
@@ -69,7 +69,7 @@ $element-translate: 0.14em;
   }
 }
 
-/* 
+/*
 @keyframes moveFromBottom {
 	from { -webkit-transform: translateY(100%); transform: translateY(100%); }
 }
