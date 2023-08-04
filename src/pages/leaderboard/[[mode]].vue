@@ -108,7 +108,7 @@ zh-CN:
 <template>
   <div class="flex flex-col h-full leaderboard custom-container mx-auto">
     <header-simple-title-with-sub
-      class="container mx-auto custom-container lg:px-4"
+      class="container mx-auto custom-container !max-w-4xl"
       :title="t('titles.leaderboard')"
       :subtitle="
         (selected.mode

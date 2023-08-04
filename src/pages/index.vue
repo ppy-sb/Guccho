@@ -76,7 +76,7 @@ zh-CN:
 }
 .heading {
   @apply relative flex items-center justify-between px-4 lg:px-0 mx-auto my-auto text-left text-gbase-900 dark:text-gbase-100;
-  &::before,
+  /* &::before,
   &::after {
     content: "";
     @apply -z-10 opacity-50;
@@ -86,6 +86,6 @@ zh-CN:
   }
   &::before {
     @apply lg:blur
-  }
+  } */
 }
 </style>

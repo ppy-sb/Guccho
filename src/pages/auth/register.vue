@@ -140,7 +140,7 @@ zh-CN:
 
       <div>
         <h2
-          class="text-3xl text-center text-gbase-800 dark:text-gbase-50"
+          class="text-2xl pl-3 text-gbase-800 dark:text-gbase-50"
         >
           {{ t('global.register') }}
         </h2>
@@ -258,12 +258,12 @@ zh-CN:
 }
 
 .half-box {
-  @apply relative w-full max-w-md p-6 overflow-hidden space-y-8 rounded-3xl;
-  &::before {
+  @apply relative w-full max-w-md p-6;
+  /* &::before {
     content: "";
     @apply absolute left-0 top-0 right-0 bottom-0;
     @apply bg-gradient-to-t from-gbase-500/5 to-transparent rounded-3xl;
     @apply blur-sm -z-10;
-  }
+  } */
 }
 </style>

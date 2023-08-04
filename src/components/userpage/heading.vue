@@ -96,7 +96,7 @@ en-GB:
     >
       <div
         v-if="session.$state.userId !== page.user.id"
-        class="container flex justify-around order-3 gap-3 pb-2 mx-auto md:order-1 md:justify-end md:pb-0"
+        class="container custom-container flex justify-around order-3 gap-3 pb-2 mx-auto md:order-1 md:justify-end md:pb-0"
       >
         <t-button
           ref="changeFriendStateButton"
