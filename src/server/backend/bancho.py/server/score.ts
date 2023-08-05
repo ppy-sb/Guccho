@@ -48,7 +48,14 @@ export class ScoreProvider implements Base<bigint, Id> {
 
   async id(id: bigint) {
     const dbScore = await this.db.score.findFirstOrThrow({
-      where: { id },
+      where: {
+        id,
+        user: {
+          priv: {
+            gt: 2,
+          },
+        },
+      },
       include: {
         beatmap: {
           include: {

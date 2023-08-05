@@ -42,7 +42,7 @@ zh-CN:
         <th class="text-right">
           {{ t(localeKey.rankingSystem(rankingSystem)) }}
         </th>
-        <th>{{ t('global.playedAt') }}</th>
+        <th>{{ t('global.played-at') }}</th>
         <!-- <th class="text-center">
           Actions
         </th> -->

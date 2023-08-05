@@ -186,7 +186,7 @@ const {
         </template>
         <template v-if="Array.isArray(beatmaps) && beatmaps.length">
           <div class="divider font-bold">
-            <span v-if="loading.beatmaps" class="loading loading-spinner loading-lg" /> {{ t('globals.beatmaps') }}
+            <span v-if="loading.beatmaps" class="loading loading-spinner loading-lg" /> {{ t('global.beatmaps') }}
           </div>
           <transition-group tag="ul" class="menu truncate" name="left">
             <li

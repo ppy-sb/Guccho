@@ -6,6 +6,7 @@ import { TRPCError } from '@trpc/server'
 import { glob } from 'glob'
 import imageType from 'image-type'
 import type { Prisma, Stat } from 'prisma-client-bancho-py'
+import { merge } from 'lodash-es'
 import { BanchoPyMode, BanchoPyPrivilege, BanchoPyScoreStatus } from '../enums'
 import {
   BPyMode,
@@ -524,10 +525,11 @@ WHERE s.userid = ${id}
   }
 
   async search({ keyword, limit }: { keyword: string; limit: number }) {
+    const userLike = createUserLikeQuery(keyword)
     /* optimized */
     const result = await this.db.user.findMany({
       ...userEssentials,
-      ...createUserLikeQuery(keyword),
+      ...merge(userLike, { where: { priv: { gt: 2 } } }),
       take: limit,
     })
 
