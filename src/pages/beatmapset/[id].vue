@@ -290,7 +290,7 @@ zh-CN:
               </div>
               <div class="stripe-odd">
                 <dt class="text-sm font-medium text-gbase-500">
-                  Star Rate
+                  Star Rating
                 </dt>
                 <dd class="stripe-even  flex gap-1 items-center">
                   <img src="~/assets/icons/overall-difficulty.png" alt="" class="w-5 color-theme-light-invert">{{ selectedMap.properties.starRate }}
@@ -314,7 +314,7 @@ zh-CN:
               </div>
               <div class="stripe-odd">
                 <dt class="text-sm font-medium text-gbase-500">
-                  Accuracy
+                  OD
                 </dt>
                 <dd class="stripe-even flex gap-1 items-center">
                   <img src="~/assets/icons/accuracy.png" alt="" class="w-5 color-theme-light-invert">{{ selectedMap.properties.accuracy }}
@@ -338,7 +338,7 @@ zh-CN:
               </div>
               <div class="stripe-odd">
                 <dt class="text-sm font-medium text-gbase-500">
-                  Hit Object
+                  Hit Objects
                 </dt>
                 <dd class="stripe-even">
                   <div class="flex gap-1 items-center">
