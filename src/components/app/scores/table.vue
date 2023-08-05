@@ -40,6 +40,9 @@ zh-CN:
           {{ t('global.mods') }}
         </th>
         <th class="text-right">
+          {{ t(localeKey.rankingSystem(Rank.Score)) }}
+        </th>
+        <th v-if="rankingSystem !== Rank.Score" class="text-right">
           {{ t(localeKey.rankingSystem(rankingSystem)) }}
         </th>
         <th>{{ t('global.played-at') }}</th>
