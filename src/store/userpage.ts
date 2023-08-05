@@ -27,8 +27,8 @@ export default defineStore('userpage', () => {
 
   const currentRankingSystem = shallowRef<ReturnType<typeof _computeRankingSystem> | null>(null)
 
-  const route = useRoute('user-handle')
   async function refresh() {
+    const route = useRoute('user-handle')
     try {
       const u = await app.$client.user.userpage.query({
         handle: `${route.params.handle}`,
