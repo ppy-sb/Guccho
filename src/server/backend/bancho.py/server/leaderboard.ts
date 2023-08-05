@@ -150,6 +150,11 @@ export class LeaderboardDatabaseProvider implements Base<Id> {
         beatmap: {
           md5,
         },
+        user: {
+          priv: {
+            gt: 2
+          }
+        },
         mode: toBanchoPyMode(mode, ruleset),
         status: {
           in: [2, 3],
