@@ -76,7 +76,12 @@ export class ScoreProvider implements Base<bigint, Id> {
       const banchoPyMode = toBanchoPyMode(opt.mode, opt.ruleset)
       const score = await this.db.score.findFirstOrThrow({
         where: {
-          user: opt.user,
+          user: {
+            priv: {
+              gt: 2,
+            },
+            ...opt.user,
+          },
           beatmap: opt.beatmap,
           mode: banchoPyMode,
         },
@@ -97,7 +102,12 @@ export class ScoreProvider implements Base<bigint, Id> {
     const banchoPyMode = toBanchoPyMode(opt.mode, opt.ruleset)
     const scores = await this.db.score.findMany({
       where: {
-        user: opt.user,
+        user: {
+          priv: {
+            gt: 2,
+          },
+          ...opt.user,
+        },
         beatmap: opt.beatmap,
         mode: banchoPyMode,
       },
