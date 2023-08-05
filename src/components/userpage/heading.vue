@@ -49,7 +49,7 @@ onBeforeMount(() => {
   isFriendButtonHovered = useElementHover(changeFriendStateButton)
 })
 const friendButtonContent = computed(
-  () => data.value?.friendCount || 'Add as friend'
+  () => data.value?.friendCount || t('add-as-friend')
 )
 async function toggleFriend() {
   if (!session.loggedIn) {
@@ -76,6 +76,16 @@ en-GB:
     offline: Offline, last seen at {lastSeen}
     idle: Online.
     afk: AFK
+  edit: Edit
+  add-as-friend: Add as friend
+
+zh-CN:
+  status:
+    offline: 离线, 上次在线时间 {lastSeen}
+    idle: 在线.
+    afk: AFK
+  edit: 编辑
+  add-as-friend: 添加为好友
 </i18n>
 
 <template>
@@ -146,7 +156,7 @@ en-GB:
             name: 'me-settings',
           }"
         >
-          Edit
+          {{ t('edit') }}
         </t-nuxt-link-locale-button>
       </div>
       <div

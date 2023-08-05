@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-// old is '~/store/session'
 import { useSession } from '~/store/session'
 
 definePageMeta ({

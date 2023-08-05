@@ -71,7 +71,7 @@ export const pages: {
     show: loggedIn,
   },
   {
-    render: () => <><icon name="majesticons:logout-half-circle-line" class="w-5 h-5" size="100%" />{ useI18n().t('gloabl.logout') }</>,
+    render: () => <><icon name="majesticons:logout-half-circle-line" class="w-5 h-5" size="100%" />{ useI18n().t('global.logout') }</>,
     route: {
       name: 'auth-logout',
     },

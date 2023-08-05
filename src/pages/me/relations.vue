@@ -23,13 +23,13 @@ useHead({
   titleTemplate: `Friends - ${config.title}`,
 })
 if (!relations.value) {
-  throw new Error('user not exists')
+  throw new Error(t('user-not-found'))
 }
 
 const errorMessage = shallowRef('')
 
 onErrorCaptured((err) => {
-  errorMessage.value = err.message || 'something went wrong.'
+  errorMessage.value = err.message || t('err-message')
 })
 function haveRelation(relation: Relationship, user: UserEssential<string> & UserRelationship) {
   return user.relationship.includes(relation)
@@ -62,8 +62,16 @@ const isFriend = haveRelation.bind(null, Relationship.Friend)
 <i18n lang="yaml">
 en-GB:
   loading: Loading...
+  err-message: something went wrong.
+  user-not-found: user not exists
+  remove-friend: remove friend
+  regret: regret
 zh-CN:
   loading: 加载中...
+  err-message: 出现了些小问题。
+  user-not-found: 该用户不存在
+  remove-friend: 删除该好友
+  regret: 后悔了
 </i18n>
 
 <template>
@@ -111,7 +119,7 @@ zh-CN:
                     chat
                   </t-button> -->
                   <t-button :loading="pendingUser.has(user.id)" variant="warning" size="xs" class="md:btn-sm" @click="toggleFriend(user)">
-                    {{ pendingUser.has(user.id) ? '' : isFriend(user) ? 'remove friend' : 'regret' }}
+                    {{ pendingUser.has(user.id) ? '' : isFriend(user) ? t('remove-friend') : t('regret') }}
                   </t-button>
                   <!-- <t-button :loading="pendingUser.has(user.id)" variant="warning" size="xs" class="md:btn-sm" @click="toggleBlock(user)">
                     {{ pendingUser.has(user.id) ? '' : isBlocked(user) ? 'remove block' : 'regret' }}

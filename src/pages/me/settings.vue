@@ -224,6 +224,7 @@ en-GB:
     ready: Save
 
   avatar:
+    change: change
     size-too-big: size too big
     upload:
       click-to-upload: click-to-upload
@@ -270,9 +271,10 @@ zh-CN:
 
   status:
     done: 完成
-    save: 保存
+    ready: 保存
 
   avatar:
+    change: 更换头像
     size-too-big: 图片大小过大,请控制在2MB以内
     upload:
       click-to-upload: 点击此处上传
@@ -498,7 +500,7 @@ zh-CN:
                 @click="() => changeAvatar?.showModal()"
               >
                 <icon name="ic:round-edit-note" class="w-5 h-5" size="100%" />
-                change
+                {{ t('avatar.change') }}
               </button>
               <img
                 :src="newAvatarURL || `${user.avatarSrc}`"

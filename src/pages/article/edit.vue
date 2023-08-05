@@ -142,6 +142,34 @@ async function postFetch() {
 }
 </script>
 
+<i18n lang="yaml">
+en-GB:
+  editing: Editing
+  load: Load
+  new: New
+  save: Save
+  delete: Delete
+  import: Import
+  export: Export
+  dynamic-content: Dynamic Content
+  read-access: Read Access
+  write-access: Write Access
+  selecting: select
+
+zh-CN:
+  editing: 正在编辑
+  load: 载入
+  new: 新建
+  save: 保存
+  delete: 删除
+  import: 导入
+  export: 导出
+  dynamic-content: 允许动态内容
+  read-access: 访问权限
+  write-access: 写入权限
+  selecting: 请选择
+</i18n>
+
 <template>
   <section class="container pb-8 mx-auto custom-container lg:px-2">
     <div class="flex">
@@ -157,23 +185,23 @@ async function postFetch() {
       <div class="divider-horizontal divider" />
       <div>
         <div class="flex gap-2 items-baseline">
-          Editing: <input
+          {{ t('editing') }}: <input
             v-model="article.slug" type="text" class="input input-sm shadow-lg" :class="{
               'input-error': !article.slug,
             }"
           >
           <button class="btn btn-sm btn-info" @click="() => { update(); postFetch() }">
-            Load
+            {{ t('load') }}
           </button>
           <button class="btn btn-sm btn-primary" @click="() => { create(); postFetch() }">
-            New
+            {{ t('new') }}
           </button>
           <button
             class="btn btn-sm btn-success" :class="{
               'btn-disabled': !(article.slug && article.json),
             }" @click="() => { save(); postFetch() }"
           >
-            Save
+            {{ t('save') }}
           </button>
           <div class="divider divider-horizontal" />
           <button
@@ -181,30 +209,30 @@ async function postFetch() {
               'btn-disabled': !(article.slug && access?.write),
             }" @click="() => { del().then(postFetch) }"
           >
-            Delete
+            {{ t('delete') }}
           </button>
           <div class="divider divider-horizontal" />
           <input ref="importArticleFile" type="file" hidden @change="importArticle">
           <button class="btn btn-sm btn-primary" @click="importArticleFile?.click">
-            Import
+            {{ t('import') }}
           </button>
           <button class="btn btn-sm btn-secondary" @click="exportArticle">
-            Export
+            {{ t('export') }}
           </button>
         </div>
         <div class="divider" />
         <div class="flex flex-col md:flex-row gap-3 flex-wrap">
           <div class="form-control flex-row items-center gap-2">
             <input v-model="article.dynamic" class="checkbox" type="checkbox">
-            <label class="label">Dynamic Content</label>
+            <label class="label">{{ t('dynamic-content') }}</label>
           </div>
           <div class="divider divider-horizontal" />
           <div class="form-control flex-row items-center gap-2">
-            <label class="label pl-0">Read Access</label>
+            <label class="label pl-0">{{ t('read-access') }}</label>
             <t-multi-select v-model="article.privilege.read" size="sm" :options="options(readPrivileges)" />
           </div>
           <div class="form-control  flex-row items-center gap-2">
-            <label class="label">Write Access</label>
+            <label class="label">{{ t('write-access') }}</label>
             <t-multi-select v-model="article.privilege.write" size="sm" :options="options(privileges)" />
           </div>
         </div>
