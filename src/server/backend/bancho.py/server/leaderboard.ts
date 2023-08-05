@@ -152,8 +152,8 @@ export class LeaderboardDatabaseProvider implements Base<Id> {
         },
         user: {
           priv: {
-            gt: 2
-          }
+            gt: 2,
+          },
         },
         mode: toBanchoPyMode(mode, ruleset),
         status: {
