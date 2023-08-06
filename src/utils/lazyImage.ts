@@ -7,6 +7,7 @@ export function loadImage(src: string) {
   })
 }
 
-export function placeholder(e: Event & { target: HTMLImageElement }) {
+export function placeholder(e: ErrorEvent & { target: HTMLImageElement }) {
+  e.target.onerror = null
   e.target.src = '/images/image-placeholder.svg'
 }

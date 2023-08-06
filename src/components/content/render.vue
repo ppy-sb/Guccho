@@ -32,7 +32,8 @@ async function hl() {
     if (!language) {
       return
     }
-    cb.innerHTML = hljs.highlight(language, (cb as HTMLElement).innerText).value
+    const result = hljs.highlight((cb as HTMLElement).innerText, { language }).value
+    cb.innerHTML = result
   })
   html.value = el.value.innerHTML
 }
