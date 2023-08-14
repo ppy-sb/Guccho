@@ -19,7 +19,8 @@
     "lint:fix": "yarn lint --fix",
     "sync-from-lock": "yarn upgrade && npx syncyarnlock --save --keepPrefix && yarn install",
     "check-update": "npx npm-check-updates",
-    "update-dep": "npx npm-check-updates -u && yarn install"
+    "update-dep": "npx npm-check-updates -u && yarn install",
+    "check-backend-config": "tsc --noEmit env.ts"
   },
   "dependencies": {
     "@headlessui/vue": "^1.7.14",

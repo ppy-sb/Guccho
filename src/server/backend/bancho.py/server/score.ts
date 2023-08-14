@@ -10,12 +10,14 @@ import {
 
 import type { Id } from '..'
 import type { AbleToTransformToScores } from '../transforms'
+import { config as _config } from '../env'
 import { getPrismaClient } from './source/prisma'
-import { env } from '~/server/env'
 
 import type {
   ScoreProvider as Base,
 } from '$base/server'
+
+const config = _config()
 
 export class ScoreProvider implements Base<bigint, Id> {
   static idToString = idToString
@@ -26,11 +28,7 @@ export class ScoreProvider implements Base<bigint, Id> {
 
   db = getPrismaClient()
 
-  config = {
-    avatar: {
-      domain: env.AVATAR_DOMAIN,
-    },
-  }
+  config = config
 
   #transformScore(dbScore: (AbleToTransformToScores & { user: User })) {
     assertIsBanchoPyMode(dbScore.mode)

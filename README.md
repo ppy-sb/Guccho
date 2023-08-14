@@ -6,16 +6,22 @@ Guccho is a client interface to interact with osu private servers with compatibi
 
 ## Requirements
 
-- Nodejs >= 14
+- Nodejs >= 16
 - at least one supported platform (see supporting platforms down below)
 
 ## Setup
 
-- Config .env *important*
-create .env from .env.example.
+- configure environment *important*
+  - create env.ts from env.example.ts
+  - edit env.ts follow the comment
+  - optionally create .env from .env.example
 
 - Run `yarn`
 - Run `yarn build:hljs`
+
+## tooling
+
+`bancho.py` or `ppy.sb@bancho.py` requires DB_DSN to be set in order to use prisma tooling.
 
 ## upgrade
 

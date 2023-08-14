@@ -2,23 +2,21 @@ import { dedupeUserRelationship, fromBanchoPyRelationType, idToString, stringToI
 
 // import { idToString, stringToId } from '../transforms'
 import type { Id } from '..'
+import { config as _config } from '../env'
 import { getPrismaClient } from './source/prisma'
-import { env } from '~/server/env'
 
 import type { UserRelationProvider as Base } from '$base/server'
 import { Relationship } from '~/def'
 import type { UserEssential } from '~/def/user'
+
+const config = _config()
 
 export class UserRelationProvider implements Base<Id> {
   static stringToId = stringToId
   static idToString = idToString
   db = getPrismaClient()
 
-  config = {
-    avatar: {
-      domain: env.AVATAR_DOMAIN,
-    },
-  }
+  config = config
 
   async getOne(fromUser: { id: Id }, toUser: { id: Id }) {
     const relationships = await this.db.relationship.findFirst({

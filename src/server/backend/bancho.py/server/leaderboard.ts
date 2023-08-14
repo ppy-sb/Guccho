@@ -13,11 +13,12 @@ import {
 import type { Id } from '..'
 import { hasRuleset } from '..'
 
+import { config as _config } from '../env'
 import { client as redisClient } from './source/redis'
 import { getPrismaClient } from './source/prisma'
-import { env } from '~/server/env'
 
 import { Mode, Rank, modes as _modes } from '~/def'
+
 import type {
   ActiveMode,
   AvailableRuleset,
@@ -28,6 +29,8 @@ import type { LeaderboardProvider as Base } from '$base/server'
 import type { CountryCode } from '~/def/country-code'
 
 const logger = Logger.child({ label: 'leaderboard', backend: 'bancho.py' })
+
+const config = _config()
 
 const leaderboardFields = {
   id: true,
@@ -43,11 +46,7 @@ export class LeaderboardDatabaseProvider implements Base<Id> {
   static idToString = idToString
   db = getPrismaClient()
 
-  config = {
-    avatar: {
-      domain: env.AVATAR_DOMAIN,
-    },
-  }
+  config = config
 
   async getLeaderboard<M extends ActiveMode, RS extends LeaderboardRankingSystem>({
     mode,
@@ -326,8 +325,8 @@ export class RedisLeaderboardProvider extends LeaderboardDatabaseProvider {
   }
 }
 
-function create() {
-  switch (env.LEADERBOARD_SOURCE) {
+function reveal() {
+  switch (config.leaderboardSource) {
     case 'database': {
       return LeaderboardDatabaseProvider
     }
@@ -337,4 +336,4 @@ function create() {
   }
 }
 
-export const LeaderboardProvider = create()
+export const LeaderboardProvider = reveal()

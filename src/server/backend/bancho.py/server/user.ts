@@ -33,13 +33,13 @@ import type { settings } from '../dynamic-settings'
 import { getLiveUserStatus } from '../api-client'
 import { encryptBanchoPassword } from '../crypto'
 import { Logger } from '../log'
+import { config } from '../env'
 import { client as redisClient } from './source/redis'
 import { getPrismaClient } from './source/prisma'
 import { UserRelationProvider } from './user-relations'
 import { ArticleProvider } from './article'
 import { ScoreProvider } from './score'
 import type { ExtractLocationSettings, ExtractSettingType } from '$base/@define-setting'
-import { env } from '~/server/env'
 import { userNotFound } from '~/server/trpc/messages'
 
 import type { UserProvider as Base } from '$base/server'
@@ -93,15 +93,7 @@ class DBUserProvider implements Base<Id> {
 
   relationships: UserRelationProvider
 
-  config = {
-    avatar: {
-      domain: env.AVATAR_DOMAIN,
-      location: env.BANCHO_PY_AVATAR_LOCATION,
-    },
-    api: {
-      v1: env.BANCHO_PY_API_V1_ENDPOINT,
-    },
-  }
+  config = config()
 
   constructor() {
     this.db = getPrismaClient()
@@ -548,7 +540,7 @@ WHERE s.userid = ${id}
   }
 
   async status(opt: { id: Id }) {
-    if (!this.config.api.v1) {
+    if (!this.config.api?.v1) {
       return null
     }
     return getLiveUserStatus(opt, this.config as { api: { v1: string } })
@@ -750,4 +742,4 @@ export class RedisUserProvider extends DBUserProvider {
   }
 }
 
-export const UserProvider = env.LEADERBOARD_SOURCE === 'redis' ? RedisUserProvider : DBUserProvider
+export const UserProvider = config().leaderboardSource === 'redis' ? RedisUserProvider : DBUserProvider
