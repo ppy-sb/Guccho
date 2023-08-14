@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { defineDynamicUserSetting } from './define-setting'
+import { defineDynamicUserSetting } from './@define-setting'
 import { IntlPicker } from './intl-picker'
 import { DynamicSettingStore } from '~/def/user'
 import { Lang } from '~/def'

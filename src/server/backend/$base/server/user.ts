@@ -1,5 +1,5 @@
 import type { JSONContent } from '@tiptap/core'
-import type { ExtractLocationSettings, ExtractSettingType } from '../define-setting'
+import type { ExtractLocationSettings, ExtractSettingType } from '../@define-setting'
 import type { idTransformable } from './@extends'
 import type { BeatmapSource, RankingStatus } from '~/def/beatmap'
 import type {

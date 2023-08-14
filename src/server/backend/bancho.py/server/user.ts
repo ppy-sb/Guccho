@@ -38,7 +38,7 @@ import { getPrismaClient } from './source/prisma'
 import { UserRelationProvider } from './user-relations'
 import { ArticleProvider } from './article'
 import { ScoreProvider } from './score'
-import type { ExtractLocationSettings, ExtractSettingType } from '$base/define-setting'
+import type { ExtractLocationSettings, ExtractSettingType } from '$base/@define-setting'
 import { env } from '~/server/env'
 import { userNotFound } from '~/server/trpc/messages'
 

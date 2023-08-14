@@ -11,7 +11,7 @@ import {
 } from '../messages'
 import { zodHandle, zodRelationType, zodTipTapJSONContent } from '../shapes'
 import { router as _router } from '../trpc'
-import { extractLocationSettings, extractSettingValidators } from '$base/define-setting'
+import { extractLocationSettings, extractSettingValidators } from '$base/@define-setting'
 import { settings } from '$active/dynamic-settings'
 import { userProcedure as pUser } from '~/server/trpc/middleware/user'
 import { SessionProvider, UserProvider, UserRelationProvider } from '$active/server'

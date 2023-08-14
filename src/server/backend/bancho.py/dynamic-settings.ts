@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { defineDynamicUserSetting } from '$base/define-setting'
+import { defineDynamicUserSetting } from '$base/@define-setting'
 import * as base from '$base/dynamic-settings'
 import { DynamicSettingStore } from '~/def/user'
 import { Lang } from '~/def'

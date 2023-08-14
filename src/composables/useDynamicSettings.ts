@@ -1,5 +1,5 @@
 import { useClientDynamicSettings } from '~/store/dynamic-settings'
-import type { ExtractSettingType } from '$base/define-setting'
+import type { ExtractSettingType } from '$base/@define-setting'
 import type { settings } from '$active/dynamic-settings'
 
 export default async function () {

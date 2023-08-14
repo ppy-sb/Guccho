@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import type { z } from 'zod'
 import { DynamicSettingStore } from '../def/user'
-import { extractLocationSettings, extractSettingValidators } from '$base/define-setting'
+import { extractLocationSettings, extractSettingValidators } from '$base/@define-setting'
 
 import { IntlPicker } from '$base/intl-picker'
 import { settings } from '$active/dynamic-settings'
