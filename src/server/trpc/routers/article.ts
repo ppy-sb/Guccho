@@ -14,11 +14,11 @@ export const router = _router({
     }
     const r = await sp.get({ slug: input, fallback: true, user: ctx.user })
     if (!r) {
-      const notFound = sp.fallbacks.get('404')
+      const notFound = ArticleProvider.fallbacks.get('404')
       if (!notFound) {
         throw new Error('404 not found')
       }
-      const html = notFound.dynamic ? await sp.render(notFound.json) : notFound.html
+      const html = notFound.dynamic ? await ArticleProvider.render(notFound.json) : notFound.html
 
       return {
         html,
@@ -29,7 +29,7 @@ export const router = _router({
       }
     }
     return {
-      html: r.dynamic ? await sp.render(r.json) : r.html,
+      html: r.dynamic ? await ArticleProvider.render(r.json) : r.html,
       access: r.access,
     }
   }),
@@ -50,5 +50,5 @@ export const router = _router({
     slug: string().trim(),
   })).mutation(({ input, ctx }) => sp.delete(Object.assign(input, { user: ctx.user }))),
 
-  localSlugs: adminProcedure.input(string().trim().optional()).query(({ input }) => sp.getLocalSlugs(input)),
+  localSlugs: adminProcedure.input(string().trim().optional()).query(({ input }) => ArticleProvider.getLocalSlugs(input)),
 })

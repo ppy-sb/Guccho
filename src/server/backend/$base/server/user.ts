@@ -1,6 +1,6 @@
 import type { JSONContent } from '@tiptap/core'
 import type { ExtractLocationSettings, ExtractSettingType } from '../@define-setting'
-import type { idTransformable } from './@extends'
+import { idTransformable } from './@extends'
 import type { BeatmapSource, RankingStatus } from '~/def/beatmap'
 import type {
   ActiveMode,
@@ -38,25 +38,25 @@ export namespace UserProvider {
     rankingStatus: RankingStatus[]
   }
 }
-export interface UserProvider<Id> extends idTransformable {
-  exists({ handle, keys }: UserProvider.OptType): PromiseLike<boolean>
+export abstract class UserProvider<Id> extends idTransformable {
+  abstract exists({ handle, keys }: UserProvider.OptType): PromiseLike<boolean>
 
-  getEssential<_Scope extends Scope>(
+  abstract getEssential<_Scope extends Scope>(
     opt: UserProvider.OptType & { scope: _Scope }
   ): Promise<_Scope extends Scope.Self ? UserEssential<Id> & UserSecrets : UserEssential<Id>>
 
-  getEssentialById<_Scope extends Scope>(opt: {
+  abstract getEssentialById<_Scope extends Scope>(opt: {
     id: Id
     scope: _Scope
   }): Promise<_Scope extends Scope.Self ? UserEssential<Id> & UserSecrets : UserEssential<Id>>
 
-  getBests<
+  abstract getBests<
     Mode extends ActiveMode,
     Ruleset extends ActiveRuleset,
     RankingSystem extends LeaderboardRankingSystem,
   >(query: UserProvider.BaseQuery<Id, Mode, Ruleset, RankingSystem>): PromiseLike<RankingSystemScore<string, Id, Mode, RankingSystem>[]>
 
-  getTops<
+  abstract getTops<
     Mode extends ActiveMode,
     Ruleset extends ActiveRuleset,
     RankingSystem extends LeaderboardRankingSystem,
@@ -65,12 +65,12 @@ export interface UserProvider<Id> extends idTransformable {
     scores: RankingSystemScore<string, Id, Mode, RankingSystem>[]
   }>
 
-  getStatistics(query: {
+  abstract getStatistics(query: {
     id: Id
     flag: CountryCode
   }): PromiseLike<UserStatistic>
 
-  getFull<
+  abstract getFull<
     Excludes extends Partial<
       Record<keyof UserProvider.ComposableProperties<Id>, boolean>
     >,
@@ -89,7 +89,7 @@ export interface UserProvider<Id> extends idTransformable {
   }
   >
 
-  changeSettings(
+  abstract changeSettings(
     user: { id: Id },
     input: {
       email?: string
@@ -98,7 +98,7 @@ export interface UserProvider<Id> extends idTransformable {
     }
   ): PromiseLike<UserEssential<Id>>
 
-  changeUserpage(
+  abstract changeUserpage(
     user: { id: Id },
     input: {
       profile: JSONContent
@@ -108,7 +108,7 @@ export interface UserProvider<Id> extends idTransformable {
     raw: JSONContent
   }>
 
-  changeVisibility?(
+  abstract changeVisibility(
     user: { id: Id },
     input: {
       email?: string
@@ -117,23 +117,23 @@ export interface UserProvider<Id> extends idTransformable {
     }
   ): PromiseLike<UserEssential<Id>>
 
-  changePassword(
+  abstract changePassword(
     user: { id: Id },
     newPasswordMD5: string
   ): PromiseLike<UserEssential<Id>>
 
-  changeAvatar(user: { id: Id }, avatar: Uint8Array): PromiseLike<string>
+  abstract changeAvatar(user: { id: Id }, avatar: Uint8Array): PromiseLike<string>
 
-  search(opt: {
+  abstract search(opt: {
     keyword: string
     limit: number
   }): PromiseLike<UserEssential<Id>[]>
 
-  count(opt: {
+  abstract count(opt: {
     keyword?: string
   }): PromiseLike<number>
 
-  status({ id }: { id: Id }): PromiseLike<{
+  abstract status({ id }: { id: Id }): PromiseLike<{
     status: UserStatus.Offline
     lastSeen: Date
   } | {
@@ -161,9 +161,9 @@ export interface UserProvider<Id> extends idTransformable {
     }
   } | null>
 
-  register(opt: { name: string; safeName: string; email: string; passwordMd5: string }): PromiseLike<UserEssential<Id>>
+  abstract register(opt: { name: string; safeName: string; email: string; passwordMd5: string }): PromiseLike<UserEssential<Id>>
 
-  getDynamicSettings (user: { id: Id }): Promise<ExtractSettingType<ExtractLocationSettings<DynamicSettingStore.Server, typeof settings>>>
+  abstract getDynamicSettings(user: { id: Id }): Promise<ExtractSettingType<ExtractLocationSettings<DynamicSettingStore.Server, typeof settings>>>
 
-  setDynamicSettings(user: { id: Id }, args: ExtractSettingType<ExtractLocationSettings<DynamicSettingStore.Server, typeof settings>>): Promise<ExtractSettingType<ExtractLocationSettings<DynamicSettingStore.Server, typeof settings>>>
+  abstract setDynamicSettings(user: { id: Id }, args: ExtractSettingType<ExtractLocationSettings<DynamicSettingStore.Server, typeof settings>>): Promise<ExtractSettingType<ExtractLocationSettings<DynamicSettingStore.Server, typeof settings>>>
 }

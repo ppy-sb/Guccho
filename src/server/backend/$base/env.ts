@@ -8,6 +8,10 @@ export const redis = literal('redis')
 export const validator = discriminatedUnion('sessionStore', [
   object({ sessionStore: memory }),
   object({ redisURL, sessionStore: redis }),
-])
+]).and(object({
+  article: object({
+    location: string().default('articles'),
+  }),
+}))
 
 export const config = lazySingleton(() => validator.parse(env))

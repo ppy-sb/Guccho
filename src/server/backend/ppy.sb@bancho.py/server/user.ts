@@ -15,7 +15,6 @@ import { type UserProvider as Base } from '$base/server'
 
 const logger = Logger.child({ label: 'user' })
 
-const article = new ArticleProvider()
 export class UserProvider extends BanchoPyUser implements Base<Id> {
   sbDb = getPrismaClient()
 
@@ -28,7 +27,7 @@ export class UserProvider extends BanchoPyUser implements Base<Id> {
     input: { profile: ArticleProvider.JSONContent }
   ) {
     try {
-      const html = await article.render(input.profile)
+      const html = await ArticleProvider.render(input.profile)
 
       const userpage = await this.sbDb.userpage.findFirst({
         where: {

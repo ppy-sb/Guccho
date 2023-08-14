@@ -6,8 +6,8 @@ const logger = Logger.child({ label: 'redis' })
 
 export const client = lazySingleton(() => {
   const env = _env()
-  if (!env.redisURL) {
-    const err = new Error('required redis client without set env "REDIS_URL"')
+  if (!('redisURL' in env)) {
+    const err = new Error('required redis client without set redis url.')
     logger.error(err)
     throw err
   }

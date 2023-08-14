@@ -8,7 +8,7 @@ export class ArticleProvider extends Base {
       return undefined
     }
 
-    const [read, write] = await Promise.all([this.checkPrivilege('read', content, opt.user), this.checkPrivilege('write', content, opt.user)])
+    const [read, write] = await Promise.all([ArticleProvider.checkPrivilege('read', content, opt.user), ArticleProvider.checkPrivilege('write', content, opt.user)])
     return Object.assign(content, {
       access: {
         read,

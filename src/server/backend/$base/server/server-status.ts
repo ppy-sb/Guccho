@@ -1,16 +1,12 @@
 import { cpus } from 'node:os'
 import { currentLoad, mem } from 'systeminformation'
 
-function calcPercentageLoad(usage: number, time: ReturnType<typeof process['hrtime']>) {
-  return 100 * (usage / (time[0] * 1e9 + time[1]))
-}
 export class ServiceStatusProvider {
-  lastTime = process.hrtime()
-  lastUsage = process.cpuUsage()
-  interval = 2000
+  static lastTime = process.hrtime()
+  static lastUsage = process.cpuUsage()
+  static interval = 2000
 
-  coreCount = cpus().length
-  processUsage: {
+  static processUsage: {
     system: number
     user: number
     current: number
@@ -20,23 +16,23 @@ export class ServiceStatusProvider {
       current: 0,
     }
 
-  constructor() {
-    setInterval(this.collectLoad.bind(this), this.interval)
+  static #calcPercentageLoad(usage: number, time: ReturnType<typeof process['hrtime']>) {
+    return 100 * (usage / (time[0] * 1e9 + time[1]))
   }
 
-  async public() {
-    const [load, memory] = await Promise.all([this.load(), this.memory()])
+  static async public() {
+    const [load, memory] = await Promise.all([ServiceStatusProvider.load(), ServiceStatusProvider.memory()])
     return {
       load,
       memory,
     }
   }
 
-  async load() {
+  static async load() {
     const load = await currentLoad()
     return {
       app: {
-        web: this.processUsage,
+        web: ServiceStatusProvider.processUsage,
       },
       system: {
         avg: load.avgLoad,
@@ -57,16 +53,16 @@ export class ServiceStatusProvider {
     }
   }
 
-  collectLoad() {
-    const durationUsage = process.cpuUsage(this.lastUsage)
-    const duration = process.hrtime(this.lastTime)
+  static collectLoad() {
+    const durationUsage = process.cpuUsage(ServiceStatusProvider.lastUsage)
+    const duration = process.hrtime(ServiceStatusProvider.lastTime)
 
-    this.lastTime = process.hrtime()
-    this.lastUsage = process.cpuUsage()
+    ServiceStatusProvider.lastTime = process.hrtime()
+    ServiceStatusProvider.lastUsage = process.cpuUsage()
 
-    const calc = (a: number, b: [number, number]) => calcPercentageLoad(a, b) / this.coreCount
+    const calc = (a: number, b: [number, number]) => ServiceStatusProvider.#calcPercentageLoad(a, b) / cpus().length
 
-    this.processUsage = {
+    ServiceStatusProvider.processUsage = {
       user: calc(durationUsage.user, duration) * 10000,
       system: calc(durationUsage.system, duration) * 10000,
       get current() {
@@ -75,7 +71,7 @@ export class ServiceStatusProvider {
     }
   }
 
-  async memory() {
+  static async memory() {
     const m = await mem()
 
     return {
@@ -94,7 +90,7 @@ export class ServiceStatusProvider {
     return false
   }
 
-  async config() {
+  static async config() {
     const npm: Record<string, unknown> = {}
     const npmConfig: Record<string, unknown> = {}
     const returnValue: Record<string, unknown> = {}
@@ -134,3 +130,4 @@ export class ServiceStatusProvider {
     }
   }
 }
+setInterval(ServiceStatusProvider.collectLoad, ServiceStatusProvider.interval)

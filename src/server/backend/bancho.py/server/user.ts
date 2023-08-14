@@ -42,7 +42,7 @@ import { ScoreProvider } from './score'
 import type { ExtractLocationSettings, ExtractSettingType } from '$base/@define-setting'
 import { userNotFound } from '~/server/trpc/messages'
 
-import type { UserProvider as Base } from '$base/server'
+import { UserProvider as Base } from '$base/server'
 import type { ActiveMode, ActiveRuleset, LeaderboardRankingSystem } from '~/def/common'
 
 import type { DynamicSettingStore, Scope, UserEssential, UserStatistic } from '~/def/user'
@@ -54,7 +54,6 @@ type ServerSetting = ExtractSettingType<ExtractLocationSettings<DynamicSettingSt
 
 const logger = Logger.child({ label: 'user' })
 
-const article = new ArticleProvider()
 function ensureDirectorySync(targetDir: string, { isRelativeToScript = false } = {}) {
   const initDir = isAbsolute(targetDir) ? sep : ''
   const baseDir = isRelativeToScript ? __dirname : '.'
@@ -86,7 +85,7 @@ function ensureDirectorySync(targetDir: string, { isRelativeToScript = false } =
 
 const bpyNumModes = Object.keys(BPyMode)
 
-class DBUserProvider implements Base<Id> {
+class DBUserProvider extends Base<Id> implements Base<Id> {
   static stringToId = stringToId
   static idToString = idToString
   db = getPrismaClient()
@@ -96,6 +95,7 @@ class DBUserProvider implements Base<Id> {
   config = config()
 
   constructor() {
+    super()
     this.db = getPrismaClient()
     this.relationships = new UserRelationProvider()
 
@@ -437,7 +437,7 @@ WHERE s.userid = ${id}
       profile: ArticleProvider.JSONContent
     }
   ) {
-    const html = article.render(input.profile)
+    const html = ArticleProvider.render(input.profile)
     try {
       const result = await this.db.user.update({
         where: {
@@ -537,6 +537,11 @@ WHERE s.userid = ${id}
         },
       },
     })
+  }
+
+  async changeVisibility(user: UserEssential<Id>) {
+    throw new Error('bancho.py does not support user visibility scoping.')
+    return user
   }
 
   async status(opt: { id: Id }) {

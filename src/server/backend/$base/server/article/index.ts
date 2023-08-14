@@ -9,10 +9,10 @@ import type { DeepPartial } from '@trpc/server'
 import { compileGraph, createPipeline, hops } from 'schema-evolution'
 import dirTree from 'directory-tree'
 
+import { config as getConfig } from '../../env'
 import { latest, paths, v0, versions } from './v'
 import type { UserEssential, UserPrivilege } from '~/def/user'
 import useEditorExtensions from '~/composables/useEditorExtensionsServer'
-import { UserRelationProvider } from '$active/server'
 import { Logger } from '$base/log'
 
 const logger = Logger.child({ label: 'article' })
@@ -21,32 +21,13 @@ async function access(file: PathLike, constant?: typeof fs['constants'][keyof ty
   return fs.access(file, constant).then(() => true).catch(() => false)
 }
 
+const config = getConfig()
+
 export abstract class ArticleProvider {
-  relation = new UserRelationProvider()
-  relative = 'articles'
-  articles = resolve(this.relative)
-  fallbacks = new Map<string, ArticleProvider.Content & ArticleProvider.Meta & ArticleProvider.Version>()
+  static articles = resolve(config.article.location)
+  static fallbacks = new Map<string, ArticleProvider.Content & ArticleProvider.Meta & ArticleProvider.Version>()
   static ReadAccess = latest.ReadAccess
   static WriteAccess = latest.WriteAccess
-  constructor() {
-    this.initFallbacks()
-  }
-
-  initFallbacks() {
-    (['404', '403'] as const).forEach(async (code) => {
-      const fb = await this.getLocalArticleData({ slug: code, fallback: true })
-      if (!fb) {
-        return
-      }
-
-      this.fallbacks.set(code, fb)
-    })
-  }
-
-  inside(path: string) {
-    const r = relative(this.articles, path)
-    return r && !r.startsWith('..') && !isAbsolute(r)
-  }
 
   abstract get(opt: {
     slug: string
@@ -61,52 +42,47 @@ export abstract class ArticleProvider {
     user: UserEssential<any>
   }): PromiseLike<void>
 
+  async delete(opt: { slug: string; user: UserEssential<any> }) {
+    return ArticleProvider.deleteLocal(opt)
+  }
+
+  static initFallbacks() {
+    (['404', '403'] as const).forEach(async (code) => {
+      const fb = await ArticleProvider.getLocalArticleData({ slug: code, fallback: true })
+      if (!fb) {
+        return
+      }
+
+      this.fallbacks.set(code, fb)
+    })
+  }
+
+  static inside(path: string) {
+    const r = relative(ArticleProvider.articles, path)
+    return r && !r.startsWith('..') && !isAbsolute(r)
+  }
+
   async getLocal(opt: {
     slug: string
     fallback?: boolean
     user?: UserEssential<any>
   }): Promise<(ArticleProvider.Meta & ArticleProvider.Content & ArticleProvider.Version) | undefined> {
-    const content = await this.getLocalArticleData(opt)
+    const content = await ArticleProvider.getLocalArticleData(opt)
     if (!content) {
       return undefined
     }
     return content
   }
 
-  protected async getLocalArticleData(opt: {
-    slug: string
-    fallback?: boolean
-  }) {
-    const { slug, fallback } = opt
-    let file = join(this.articles, slug)
-    if (!this.inside(file)) {
-      return this.fallbacks.get('403')
-    }
-
-    const canAccessOriginalFile = await access(file, fs.constants.R_OK)
-    if (!canAccessOriginalFile) {
-      if (!fallback) {
-        return undefined
-      }
-      file = join(this.articles, './fallbacks', slug)
-      if (!await access(file, fs.constants.R_OK)) {
-        return undefined
-      }
-    }
-
-    const content = this.deserialize(await fs.readFile(file))
-    return this.validate(content, { file, tryUpdate: true, writeBack: true })
-  }
-
-  serialize(content: ArticleProvider.Content & ArticleProvider.Meta & ArticleProvider.Version) {
+  static serialize(content: ArticleProvider.Content & ArticleProvider.Meta & ArticleProvider.Version) {
     return BSON.serialize(content)
   }
 
-  deserialize(data: Uint8Array) {
+  static deserialize(data: Uint8Array) {
     return BSON.deserialize(data)
   }
 
-  validate(content: { v?: keyof typeof versions }, opt: ArticleProvider.ValidateOpt): (ArticleProvider.Meta & ArticleProvider.Content & ArticleProvider.Version) | undefined {
+  static validate(content: { v?: keyof typeof versions }, opt: ArticleProvider.ValidateOpt): (ArticleProvider.Meta & ArticleProvider.Content & ArticleProvider.Version) | undefined {
     // let flagDiff = false
 
     if (content.v === undefined) {
@@ -125,7 +101,7 @@ export abstract class ArticleProvider {
     const route = hops(pipeline.path)
     if (route?.length) {
       // flagDiff = true
-      const fileOrId = 'id' in opt ? `unknown = ${opt.id}` : `File = ${relative(this.articles, opt.file.toString())}`
+      const fileOrId = 'id' in opt ? `unknown = ${opt.id}` : `File = ${relative(ArticleProvider.articles, opt.file.toString())}`
       logger.info({
         message: `Updated Article<${fileOrId}> to latest version: ${route.map(String).join(' -> ')}.`,
         fix: 'To get rid of logs like this please open then save this article in the article editor.',
@@ -144,60 +120,56 @@ export abstract class ArticleProvider {
     if (!opt.user.roles.find(role => ['admin', 'owner'].includes(role))) {
       throw new Error('you have insufficient privilege to edit this article')
     }
-    const pContent = this.createContent(opt)
+    const pContent = ArticleProvider.createContent(opt)
     let meta: ArticleProvider.Meta
 
-    const loc = join(this.articles, opt.slug)
+    const loc = join(ArticleProvider.articles, opt.slug)
     const exists = await access(loc)
 
     const oldContent = exists && await this.getLocal({ slug: opt.slug, fallback: false, user: opt.user })
     if (oldContent) {
       const oldMeta: ArticleProvider.Meta = pick(oldContent, ['created', 'lastUpdated', 'owner', 'privilege'])
-      meta = this.createMeta({
+      meta = ArticleProvider.createMeta({
         ...oldMeta,
         privilege: oldMeta.privilege ?? opt.privilege,
       })
     }
     else {
-      meta = this.createMeta({
+      meta = ArticleProvider.createMeta({
         owner: opt.user.id,
         privilege: opt.privilege,
         created: [opt.user.id, new Date()],
         lastUpdated: [opt.user.id, new Date()],
       })
     }
-    await fs.writeFile(loc, this.serialize({
+    await fs.writeFile(loc, ArticleProvider.serialize({
       ...await pContent,
       ...meta,
       v: latest.v,
     }))
   }
 
-  async delete(opt: { slug: string; user: UserEssential<any> }) {
-    return this.deleteLocal(opt)
-  }
-
-  async deleteLocal(opt: { slug: string; user: UserEssential<any> }) {
+  static async deleteLocal(opt: { slug: string; user: UserEssential<any> }) {
     const { user, slug } = opt
     if (!user.roles.find(role => ['admin', 'owner'].includes(role))) {
       throw new Error('you have insufficient privilege to edit this article')
     }
-    const loc = join(this.articles, slug)
-    if (!this.inside(loc)) {
+    const loc = join(ArticleProvider.articles, slug)
+    if (!ArticleProvider.inside(loc)) {
       throw new Error('dangerous operation')
     }
-    if (!relative(join(this.articles, './fallbacks'), loc).startsWith('..')) {
+    if (!relative(join(ArticleProvider.articles, './fallbacks'), loc).startsWith('..')) {
       throw new Error('trying to delete fallback contents')
     }
     return await fs.rm(loc)
   }
 
-  async render(doc: ArticleProvider.JSONContent) {
+  static async render(doc: ArticleProvider.JSONContent) {
     const renderExtensions = useEditorExtensions()
     return generateHTML(doc, renderExtensions)
   }
 
-  async createContent(opt: Omit<ArticleProvider.Content, 'html'>) {
+  static async createContent(opt: Omit<ArticleProvider.Content, 'html'>) {
     const base = {
       ...opt,
     }
@@ -206,13 +178,13 @@ export abstract class ArticleProvider {
     }
     else {
       return Object.assign(base, {
-        html: await this.render(opt.json),
+        html: await ArticleProvider.render(opt.json),
         dynamic: false,
       }) as ArticleProvider.StaticContent
     }
   }
 
-  createMeta(opt: DeepPartial<ArticleProvider.Meta>): ArticleProvider.Meta {
+  static createMeta(opt: DeepPartial<ArticleProvider.Meta>): ArticleProvider.Meta {
     return latest.metaSchema.parse({
       privilege: opt.privilege,
       owner: opt.owner ?? ArticleProvider.builtInAuthor,
@@ -221,7 +193,7 @@ export abstract class ArticleProvider {
     })
   }
 
-  async checkPrivilege(
+  static async checkPrivilege(
     access: keyof ArticleProvider.Meta['privilege'],
     content: ArticleProvider.Meta,
     user?: { id: unknown; roles: UserPrivilege[] }
@@ -234,10 +206,35 @@ export abstract class ArticleProvider {
     ) || false
   }
 
-  async getLocalSlugs(query?: string) {
-    return dirTree(relative('.', this.articles), { normalizePath: true }, (item, PATH, stats) => {
-      item.path = relative(this.relative, item.path)
+  static async getLocalSlugs(query?: string) {
+    return dirTree(relative('.', ArticleProvider.articles), { normalizePath: true }, (item, PATH, stats) => {
+      item.path = relative(config.article.location, item.path)
     })
+  }
+
+  protected static async getLocalArticleData(opt: {
+    slug: string
+    fallback?: boolean
+  }) {
+    const { slug, fallback } = opt
+    let file = join(ArticleProvider.articles, slug)
+    if (!ArticleProvider.inside(file)) {
+      return ArticleProvider.fallbacks.get('403')
+    }
+
+    const canAccessOriginalFile = await access(file, fs.constants.R_OK)
+    if (!canAccessOriginalFile) {
+      if (!fallback) {
+        return undefined
+      }
+      file = join(ArticleProvider.articles, './fallbacks', slug)
+      if (!await access(file, fs.constants.R_OK)) {
+        return undefined
+      }
+    }
+
+    const content = ArticleProvider.deserialize(await fs.readFile(file))
+    return ArticleProvider.validate(content, { file, tryUpdate: true, writeBack: true })
   }
 }
 

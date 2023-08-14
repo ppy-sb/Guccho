@@ -13,6 +13,10 @@ import { defineBackendConfig, env, safeEnv } from './src/server/env'
  */
 export default defineBackendConfig({
 
+  article: {
+    location: 'article',
+  },
+
   sessionStore: 'redis',
   leaderboardSource: 'redis',
 
