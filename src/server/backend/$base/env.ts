@@ -1,4 +1,6 @@
+import { resolve } from 'node:path'
 import { discriminatedUnion, literal, object, string } from 'zod'
+import { zodPath } from '~/server/trpc/shapes'
 import env from '~~/env'
 
 export const redisURL = string().url()
@@ -10,7 +12,7 @@ export const validator = discriminatedUnion('sessionStore', [
   object({ redisURL, sessionStore: redis }),
 ]).and(object({
   article: object({
-    location: string().default('articles'),
+    location: zodPath.default(resolve('articles')),
   }),
 }))
 

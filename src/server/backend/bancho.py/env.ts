@@ -1,5 +1,5 @@
 import { discriminatedUnion, literal, object, string } from 'zod'
-import { zodFQDN, zodPath } from '~/server/trpc/shapes'
+import { zodFQDN as FQDN, zodPath as path } from '~/server/trpc/shapes'
 import { validator as base, redis, redisURL } from '$base/env'
 import env from '~~/env'
 
@@ -18,8 +18,8 @@ export const leaderboard = discriminatedUnion('leaderboardSource', [
 ])
 
 export const avatar = object({
-  location: zodPath,
-  domain: zodFQDN,
+  location: path,
+  domain: FQDN,
 })
 
 export const apiEndpoint = object({

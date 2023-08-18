@@ -1,10 +1,11 @@
+import { resolve } from 'node:path'
 import { defineBackendConfig, env, safeEnv } from './src/server/env'
 
 /**
  * recommend: edit this config with typescript supported editor, you will get immediate type check.
  * if you don't have the editor, you can run command `yarn check-backend-config` instead.
  *
- * you can use env('key') to read from environment variables. It will raise error if env not found.
+ * you can use env('key') to read from environment variables. It will raise an error if env not found.
  *
  * you can also use safeEnv('key'). it will not raise any error, but instead returns undefined.
  * for a required field this will raise an compiler error.
@@ -14,18 +15,19 @@ import { defineBackendConfig, env, safeEnv } from './src/server/env'
 export default defineBackendConfig({
 
   article: {
-    location: 'article',
+    location: resolve('articles'), // must be a resolved path. Put absolute path or use 'resolve()' here.
   },
 
   sessionStore: 'redis',
   leaderboardSource: 'redis',
 
-  redisURL: safeEnv('REDIS_URL') || 'redis://localhost',
+  redisURL: safeEnv('REDIS_URL') ?? 'redis://localhost',
   dsn: env('DB_DSN'),
 
   avatar: {
+    // must be a resolved path. Put absolute path or use 'resolve()' here.
     location: '/path/to/avatars/folder',
-    domain: '//a.dev.ppy.sb',
+    domain: 'a.dev.ppy.sb',
   },
 
   api: {

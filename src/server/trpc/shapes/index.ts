@@ -89,7 +89,7 @@ export const zodPath = string().trim().superRefine((val, ctx) => {
   if (!existsSync(val)) {
     ctx.addIssue({
       code: ZodIssueCode.custom,
-      message: 'invalid path: Guccho cannot access the path you provided',
+      message: `invalid path: Guccho cannot access the path you provided: ${val}`,
     })
   }
 })
