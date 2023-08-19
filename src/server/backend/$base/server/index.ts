@@ -1,4 +1,4 @@
-export * from './leaderboard'
+export * from './rank'
 export * from './map'
 export * from './score'
 export * from './server-status'

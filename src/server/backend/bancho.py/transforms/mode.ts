@@ -20,12 +20,12 @@ const BPyModeEntries = Object.entries(BPyMode)
 export function toBanchoPyMode(
   mode: ActiveMode,
   ruleset: ActiveRuleset
-): BanchoPyMode | undefined {
+): BanchoPyMode {
   const patterns = match([mode, ruleset] as const)
 
   const str = BPyModeEntries.find(([_, mr]) => patterns.exact(mr))?.[0]
   if (!str) {
-    return undefined
+    throw new Error('not supported')
   }
   return Number.parseInt(str)
 }

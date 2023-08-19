@@ -8,7 +8,7 @@ import { Rank } from '~/def'
 
 type RouterOutput = inferRouterOutputs<AppRouter>
 
-type Leaderboard = NonNullable<RouterOutput['leaderboard']['overall']>[number]
+type Leaderboard = NonNullable<RouterOutput['rank']['leaderboard']>[number]
 const props = defineProps<{
   user: Leaderboard['user']
   inThisLeaderboard: ComponentLeaderboard<string>['inThisLeaderboard']

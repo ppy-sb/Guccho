@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="ts" async>
 // TODO check max pages
 import type { ActiveMode, ActiveRuleset, LeaderboardRankingSystem } from '~/def/common'
 import type { SwitcherPropType } from '~/composables/useSwitcher'
@@ -37,36 +37,42 @@ const page = shallowRef((isString(pPage) && Number.parseInt(pPage)) || 1)
 
 const perPage = 20
 
-const total = await app$.$client.leaderboard.overallRange.query()
-
-const outOfRange = page.value * perPage - perPage > total
-if (outOfRange) {
-  page.value = Math.floor(total / perPage)
-}
-
 const selected = shallowRef<Required<SwitcherPropType<LeaderboardRankingSystem>>>({
   mode,
   ruleset,
   rankingSystem,
 })
+const { data: total, refresh: refreshCount } = await app$.$client.rank.countLeaderboard.useQuery(selected)
+
 const {
   data: table,
   pending,
   refresh,
-} = await useAsyncData(() =>
-  app$.$client.leaderboard.overall.query({
+} = await useAsyncData(async () => {
+  await refreshCount()
+
+  boundaryPage()
+
+  return app$.$client.rank.leaderboard.query({
     mode: selected.value.mode,
     ruleset: selected.value.ruleset,
     rankingSystem: selected.value.rankingSystem,
     page: page.value - 1,
     pageSize: perPage,
   })
-)
+})
 
 useHead({
   titleTemplate: `%s - Leaderboard - ${config.title}`,
   title: computed(() => ` ${selected.value.mode} | ${selected.value.ruleset} | ${selected.value.rankingSystem}`),
 })
+
+function boundaryPage() {
+  const outOfRange = page.value * perPage - perPage > total.value
+  if (outOfRange) {
+    page.value = Math.floor(total.value / perPage)
+  }
+}
 
 function rewriteHistory() {
   const l = window.location
@@ -99,6 +105,7 @@ function reloadPage(i?: number) {
 en-GB:
   no-score: No one played this mode yet.
   no-score-alt: Wanna be the first one? Go for it.
+  total: '{total} rows'
 
 zh-CN:
   no-score: 该模式目前还没有人玩过。
@@ -108,16 +115,16 @@ zh-CN:
 <template>
   <div class="flex flex-col h-full leaderboard custom-container mx-auto">
     <header-simple-title-with-sub
+      id="desc"
       class="container mx-auto custom-container !max-w-4xl"
       :title="t('titles.leaderboard')"
       :subtitle="
-        (selected.mode
+        selected.mode
           && selected.ruleset
           && selected.rankingSystem
           && `${t(localeKey.mode(selected.mode))} - ${
             t(localeKey.ruleset(selected.ruleset))
-          } | ${t(localeKey.rankingSystem(selected.rankingSystem))}`)
-          || ''
+          } | ${t(localeKey.rankingSystem(selected.rankingSystem))}`
       "
     >
       <app-mode-switcher
@@ -125,6 +132,13 @@ zh-CN:
         :show-sort="true"
         @update:model-value="reloadPage()"
       />
+      <template #after-title>
+        <i18n-t keypath="total" tag="p" class="opacity-40 text-xs">
+          <template #total>
+            <span class="font-mono">{{ total }}</span>
+          </template>
+        </i18n-t>
+      </template>
     </header-simple-title-with-sub>
     <div
       v-if="table"
@@ -133,10 +147,8 @@ zh-CN:
         content: table.length,
       }"
     >
-      <!-- <fetch-overlay :fetching="pending" /> -->
-
       <div v-if="table.length" class="relative mx-auto xl:rounded-lg w-full max-w-max">
-        <table class="table table-sm px-2 whitespace-nowrap">
+        <table class="table table-sm px-2 whitespace-nowrap" aria-describedby="desc">
           <thead>
             <tr class="bg-base-100">
               <th>Rank</th>
@@ -179,23 +191,6 @@ zh-CN:
       </div>
       <div class="join mx-auto outline outline-2">
         <input v-for="i in 5" :key="`pagination-${i}`" class="join-item btn btn-ghost checked:outline outline-2" type="radio" name="options" :aria-label="i.toString()" @click="reloadPage(i)">
-      </div>
-      <div class="flex py-4">
-        <!-- <t-tabs
-          :model-value="page"
-          class="mx-auto items-baseline"
-          size="lg"
-          @update:model-value="v => reloadPage(v)"
-        >
-          <t-tab
-            v-for="i in 5"
-            :key="`pagination-${i}`"
-            :value="i"
-            class="bigger-when-active"
-          >
-            {{ i }}
-          </t-tab>
-        </t-tabs> -->
       </div>
     </div>
   </div>

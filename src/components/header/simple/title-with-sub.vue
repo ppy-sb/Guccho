@@ -17,7 +17,7 @@ export default {
 <template>
   <div class="app-header">
     <div>
-      <h1 v-if="title" class="text-3xl font-bold">
+      <h1 v-if="title" :id="$attrs.id" class="text-3xl font-bold">
         {{ title }}
       </h1>
       <h2

@@ -7,7 +7,7 @@ export const database = literal('database')
 export const header = literal('header')
 export const api = literal('api')
 export const dsn = string().url()
-export const leaderboard = discriminatedUnion('leaderboardSource', [
+export const rank = discriminatedUnion('leaderboardSource', [
   object({
     leaderboardSource: database,
   }),
@@ -30,6 +30,6 @@ export const validator = base.and(object({
   dsn,
   avatar,
   api: apiEndpoint,
-}).and(leaderboard))
+}).and(rank))
 
 export const config = lazySingleton(() => validator.parse(env))

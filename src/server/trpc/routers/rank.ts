@@ -8,19 +8,26 @@ import {
 } from '../shapes'
 import { router as _router, publicProcedure } from '../trpc'
 
-import { LeaderboardProvider, UserProvider } from '$active/server'
+import type { RankProvider as Base } from '$base/server/rank'
+import { RankProvider } from '$active/server'
 import { hasRuleset } from '$active'
+import type { ActiveMode } from '~/def/common'
 
-const provider = new LeaderboardProvider()
-const u = new UserProvider()
-
-const getLeaderboard = provider.getLeaderboard.bind(provider)
-const getBeatmapLeaderboard = provider.getBeatmapLeaderboard.bind(provider)
+const rank = new RankProvider()
 
 export const router = _router({
-  overallRange: publicProcedure
-    .query(() => u.count()),
-  overall: publicProcedure
+  countLeaderboard: publicProcedure
+    .input(
+      z.object({
+        mode: zodMode,
+        ruleset: zodRuleset,
+        rankingSystem: zodLeaderboardRankingSystem,
+      })
+    )
+    .query(({ input }) => {
+      return rank.countLeaderboard(input as typeof input & Base.BaseQuery<ActiveMode>)
+    }),
+  leaderboard: publicProcedure
     .input(
       z.object({
         mode: zodMode,
@@ -36,7 +43,7 @@ export const router = _router({
         if (!hasRuleset(mode, ruleset)) {
           return []
         }
-        const result = await getLeaderboard({
+        const result = await rank.leaderboard({
           mode,
           ruleset,
           rankingSystem,
@@ -45,7 +52,7 @@ export const router = _router({
         })
         return result.map(item => ({
           ...item,
-          user: mapId(item.user, LeaderboardProvider.idToString),
+          user: mapId(item.user, RankProvider.idToString),
         }))
       }
     ),
@@ -64,7 +71,7 @@ export const router = _router({
       async ({
         input: { mode, ruleset, rankingSystem, page, pageSize, md5 },
       }) => {
-        const result = await getBeatmapLeaderboard({
+        const result = await rank.beatmap({
           mode,
           ruleset,
           rankingSystem,
@@ -74,7 +81,36 @@ export const router = _router({
         })
         return result.map(item => ({
           ...item,
-          user: mapId(item.user, LeaderboardProvider.idToString),
+          user: mapId(item.user, RankProvider.idToString),
+        }))
+      }
+    ),
+  countBeatmap: publicProcedure
+    .input(
+      z.object({
+        mode: zodMode.optional(),
+        ruleset: zodRuleset,
+        rankingSystem: zodRankingSystem,
+        page: z.number().gte(0).lt(10),
+        pageSize: z.number().gte(20).lt(51),
+        md5: z.string(),
+      })
+    )
+    .query(
+      async ({
+        input: { mode, ruleset, rankingSystem, page, pageSize, md5 },
+      }) => {
+        const result = await rank.beatmap({
+          mode,
+          ruleset,
+          rankingSystem,
+          page,
+          pageSize,
+          md5,
+        })
+        return result.map(item => ({
+          ...item,
+          user: mapId(item.user, RankProvider.idToString),
         }))
       }
     ),

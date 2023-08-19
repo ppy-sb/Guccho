@@ -1,6 +1,6 @@
 export {
   ArticleProvider,
-  LeaderboardProvider,
+  RankProvider,
   UserRelationProvider,
   ScoreProvider,
   MapProvider,

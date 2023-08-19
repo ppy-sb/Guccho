@@ -66,7 +66,7 @@ const { data: leaderboard, refresh } = await useAsyncData(async () => {
     return null
   }
 
-  return await app.$client.leaderboard.beatmap.query({
+  return await app.$client.rank.beatmap.query({
     ...switcher,
     page: 0,
     pageSize: 20,

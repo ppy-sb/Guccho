@@ -11,32 +11,47 @@ import type {
   ComponentLeaderboard,
 } from '~/def/leaderboard'
 
-export namespace LeaderboardProvider {
+export namespace RankProvider {
+
+  export interface Pagination {
+    page: number
+    pageSize: number
+  }
+
   export interface BaseQueryOptionalMode<M extends ActiveMode = ActiveMode> {
     mode?: M
     ruleset: ActiveRuleset
-    page: number
-    pageSize: number
   }
   export interface BaseQuery<M extends ActiveMode = ActiveMode> {
     mode: M
     ruleset: AvailableRuleset<M>
-    page: number
-    pageSize: number
   }
 }
 
-export interface LeaderboardProvider<Id> extends idTransformable {
-  getLeaderboard(
-    query: LeaderboardProvider.BaseQuery & {
+export interface RankProvider<Id> extends idTransformable {
+  leaderboard(
+    query: RankProvider.BaseQuery & RankProvider.Pagination & {
       rankingSystem: LeaderboardRankingSystem
     }
   ): PromiseLike<ComponentLeaderboard<Id>[]>
 
-  getBeatmapLeaderboard(
-    query: LeaderboardProvider.BaseQueryOptionalMode & {
+  countLeaderboard(
+    query: RankProvider.BaseQuery & {
+      rankingSystem: LeaderboardRankingSystem
+    }
+  ): PromiseLike<number>
+
+  beatmap(
+    query: RankProvider.BaseQueryOptionalMode & RankProvider.Pagination & {
       rankingSystem: RankingSystem
       md5: string
     }
   ): PromiseLike<BeatmapLeaderboard<Id>[]>
+
+  countBeatmap(
+    query: RankProvider.BaseQueryOptionalMode & {
+      rankingSystem: RankingSystem
+      md5: string
+    }
+  ): PromiseLike<number>
 }

@@ -1,5 +1,6 @@
 import { Logger } from '../log'
 import {
+  fromBanchoMode,
   idToString,
   stringToId,
   toBanchoPyMode,
@@ -17,7 +18,8 @@ import { config as _config } from '../env'
 import { client as redisClient } from './source/redis'
 import { getPrismaClient } from './source/prisma'
 
-import { Mode, Rank, modes as _modes } from '~/def'
+import type { Mode } from '~/def'
+import { Rank } from '~/def'
 
 import type {
   ActiveMode,
@@ -25,10 +27,14 @@ import type {
   LeaderboardRankingSystem,
   RankingSystem,
 } from '~/def/common'
-import type { LeaderboardProvider as Base } from '$base/server'
+import type { RankProvider as Base } from '$base/server'
 import type { CountryCode } from '~/def/country-code'
 
 const logger = Logger.child({ label: 'leaderboard', backend: 'bancho.py' })
+
+function raiseError(text: string): never {
+  throw new Error(text)
+}
 
 const config = _config()
 
@@ -41,14 +47,14 @@ const leaderboardFields = {
   plays: true,
 } as const
 
-export class LeaderboardDatabaseProvider implements Base<Id> {
+export class DatabaseRankProvider implements Base<Id> {
   static stringToId = stringToId
   static idToString = idToString
   db = getPrismaClient()
 
   config = config
 
-  async getLeaderboard<M extends ActiveMode, RS extends LeaderboardRankingSystem>({
+  async leaderboard<M extends ActiveMode, RS extends LeaderboardRankingSystem>({
     mode,
     ruleset,
     rankingSystem,
@@ -96,8 +102,8 @@ export class LeaderboardDatabaseProvider implements Base<Id> {
       user: toUserEssential(user, this.config),
       inThisLeaderboard: {
         [Rank.PPv2]: stat.pp,
-        [Rank.RankedScore]: stat[Rank.RankedScore],
-        [Rank.TotalScore]: stat[Rank.TotalScore],
+        [Rank.RankedScore]: stat.rankedScore,
+        [Rank.TotalScore]: stat.totalScore,
         accuracy: stat.accuracy,
         playCount: stat.plays,
         rank: BigInt(start + index + 1),
@@ -105,8 +111,33 @@ export class LeaderboardDatabaseProvider implements Base<Id> {
     }))
   }
 
-  async getBeatmapLeaderboard(
-    query: Base.BaseQueryOptionalMode & {
+  async countLeaderboard(query: Base.BaseQuery<Mode> & { rankingSystem: LeaderboardRankingSystem }) {
+    const { mode, ruleset, rankingSystem } = query
+    const result = await this.db.stat.count({
+      where: {
+        pp: rankingSystem === Rank.PPv2 ? { gt: 0 } : undefined,
+        rankedScore: rankingSystem === Rank.RankedScore ? { gt: 0 } : undefined,
+        totalScore: rankingSystem === Rank.TotalScore ? { gt: 0 } : undefined,
+        user: {
+          priv: {
+            gt: 2,
+          },
+        },
+        mode: toBanchoPyMode(mode, ruleset),
+      },
+
+    })
+
+    return result
+  }
+
+  async determineBeatmapMode(md5: string) {
+    const beatmap = await this.db.map.findFirst({ where: { md5 } })
+    return fromBanchoMode(beatmap?.mode ?? raiseError('beatmap not found'))
+  }
+
+  async beatmap(
+    query: Base.BaseQueryOptionalMode & Base.Pagination & {
       rankingSystem: RankingSystem
       md5: string
     }
@@ -114,13 +145,7 @@ export class LeaderboardDatabaseProvider implements Base<Id> {
     const { ruleset, rankingSystem, md5 } = query
     let { mode } = query
     if (!mode) {
-      const beatmap = await this.db.map.findFirst({ where: { md5 } })
-      if (!beatmap) {
-        mode = Mode.Osu
-      }
-      else {
-        mode = _modes[beatmap.mode]
-      }
+      mode = await this.determineBeatmapMode(md5)
     }
     if (!hasRuleset(mode, ruleset)) {
       return []
@@ -174,9 +199,40 @@ export class LeaderboardDatabaseProvider implements Base<Id> {
       rank: index,
     }))
   }
+
+  async countBeatmap(query: Base.BaseQueryOptionalMode<Mode> & { rankingSystem: RankingSystem; md5: string }): Promise<number> {
+    const { ruleset, rankingSystem, md5 } = query
+    let { mode } = query
+    if (!mode) {
+      mode = await this.determineBeatmapMode(md5)
+    }
+    if (!hasRuleset(mode, ruleset)) {
+      return 0
+    }
+
+    const scores = await this.db.score.count({
+      where: {
+        pp: rankingSystem === Rank.PPv2 ? { gt: 0 } : undefined,
+        score: rankingSystem === Rank.Score ? { gt: 0 } : undefined,
+        beatmap: {
+          md5,
+        },
+        user: {
+          priv: {
+            gt: 2,
+          },
+        },
+        mode: toBanchoPyMode(mode, ruleset),
+        status: {
+          in: [2, 3],
+        },
+      },
+    })
+    return scores
+  }
 }
 
-export class RedisLeaderboardProvider extends LeaderboardDatabaseProvider {
+export class RedisRankProvider extends DatabaseRankProvider {
   redisClient = redisClient()
 
   async getPPv2LiveLeaderboard(
@@ -205,7 +261,50 @@ export class RedisLeaderboardProvider extends LeaderboardDatabaseProvider {
     throw new Error('redis is not ready')
   }
 
-  async getLeaderboard<M extends ActiveMode, RS extends LeaderboardRankingSystem>(opt: {
+  async countLeaderboard(query: Base.BaseQuery<Mode> & { rankingSystem: LeaderboardRankingSystem }): Promise<number> {
+    const { mode, ruleset, rankingSystem } = query
+
+    if (
+      this.redisClient.isReady
+      && rankingSystem === Rank.PPv2
+    ) {
+      try {
+        const bPyMode = toBanchoPyMode(mode, ruleset)
+        if (bPyMode === undefined) {
+          throw new Error('no mode')
+        }
+        // TODO: banned players are included
+        const rank = await this.getPPv2LiveLeaderboard(
+          bPyMode,
+          0,
+          500
+        ).then(res => res.map(Number))
+
+        if (!rank.length) {
+          throw new Error('redis leaderboard is empty, trying db leaderborad')
+        }
+
+        return this.db.stat.count({
+          where: {
+            id: {
+              in: rank,
+            },
+            mode: bPyMode,
+            pp: { gt: 0 },
+          },
+        })
+      }
+      catch (e) {
+        logger.error(e)
+        return super.countLeaderboard(query)
+      }
+    }
+    else {
+      return super.countLeaderboard(query)
+    }
+  }
+
+  async leaderboard<M extends ActiveMode, RS extends LeaderboardRankingSystem>(opt: {
     mode: M
     ruleset: AvailableRuleset<M>
     rankingSystem: RS
@@ -265,6 +364,7 @@ export class RedisLeaderboardProvider extends LeaderboardDatabaseProvider {
             select: leaderboardFields,
           }),
         ])
+
         for (const index in rank) {
           if (result.length >= start + pageSize) {
             break
@@ -291,6 +391,10 @@ export class RedisLeaderboardProvider extends LeaderboardDatabaseProvider {
             playCount: stat.plays,
           })
         }
+
+        if (!result.length) {
+          return super.leaderboard(opt)
+        }
         return result.slice(start, start + pageSize).map((item, index) => ({
           user: {
             id: item.id,
@@ -316,11 +420,11 @@ export class RedisLeaderboardProvider extends LeaderboardDatabaseProvider {
       }
       catch (e) {
         logger.error(e)
-        return super.getLeaderboard(opt)
+        return super.leaderboard(opt)
       }
     }
     else {
-      return super.getLeaderboard(opt)
+      return super.leaderboard(opt)
     }
   }
 }
@@ -328,12 +432,12 @@ export class RedisLeaderboardProvider extends LeaderboardDatabaseProvider {
 function reveal() {
   switch (config.leaderboardSource) {
     case 'database': {
-      return LeaderboardDatabaseProvider
+      return DatabaseRankProvider
     }
     case 'redis': {
-      return RedisLeaderboardProvider
+      return RedisRankProvider
     }
   }
 }
 
-export const LeaderboardProvider = reveal()
+export const RankProvider = reveal()

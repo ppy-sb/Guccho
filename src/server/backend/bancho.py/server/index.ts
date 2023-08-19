@@ -1,5 +1,5 @@
 export { ArticleProvider } from './article'
-export { LeaderboardProvider } from './leaderboard'
+export { RankProvider } from './rank'
 export { MapProvider } from './map'
 export { ScoreProvider } from './score'
 export { ServiceStatusProvider } from './server-status'

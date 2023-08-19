@@ -1,7 +1,7 @@
 import { router } from '../trpc'
 
 // routers
-import { router as leaderboard } from './leaderboard'
+import { router as rank } from './rank'
 import { router as map } from './map'
 import { router as me } from './me'
 import { router as score } from './score'
@@ -19,7 +19,7 @@ export const appRouter = router({
   me,
 
   user,
-  leaderboard,
+  rank,
   map,
   search,
   score,
