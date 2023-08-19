@@ -2,11 +2,12 @@
 import { useElementHover } from '@vueuse/core'
 
 import { MutualRelationship, Relationship } from '~/def'
-import { UserStatus } from '~/def/user'
+import { UserPrivilege, UserStatus } from '~/def/user'
 import { useSession } from '~/store/session'
 
 import userpageStore from '~/store/userpage'
 
+const cfg = useAppConfig()
 const page = userpageStore()
 const { t, locale } = useI18n()
 const app$ = useNuxtApp()
@@ -36,7 +37,7 @@ const { data: live, refresh: reloadLiveData } = await useAsyncData(async () =>
   page.user?.id ? await app$.$client.user.status.query({ id: page.user.id }) : null
 )
 onMounted(() => {
-  onBeforeUnmount(() => clearInterval(setInterval(() => reloadLiveData(), 5000)))
+  onBeforeUnmount(() => clearInterval(setInterval(reloadLiveData, 5000)))
 })
 const isMutualFriend = computed(
   () => data.value?.relationWithMe?.mutual?.includes(MutualRelationship.MutualFriend) || false
@@ -78,14 +79,18 @@ en-GB:
     afk: AFK
   edit: Edit
   add-as-friend: Add as friend
+  supporter: Generously supported {server}!
+  staff: 'Keeping {server} online'
 
 zh-CN:
   status:
-    offline: 离线, 上次在线时间 {lastSeen}
+    offline: 离线, 上次在线时间
     idle: 在线.
     afk: AFK
   edit: 编辑
   add-as-friend: 添加为好友
+  supporter: 慷慨捐赠了{server}!
+  staff: '为{server}辛苦付出'
 </i18n>
 
 <template>
@@ -94,11 +99,14 @@ zh-CN:
     class="flex flex-col items-center w-full gap-5 mx-auto mt-2 md:container custom-container md:flex-row md:items-end"
   >
     <!-- Logo -->
-    <div>
+    <div class="relative">
       <div
         :style="`background-image: url(${page.user.avatarSrc}); background-position: center`"
         class="mask mask-squircle w-44 sm:w-56 md:w-72 lg:w-64 bg-cover aspect-square"
       />
+      <div class="absolute -top-10 -right-6 tooltip tooltip-primary tooltip-right" :data-tip="t('supporter', { server: cfg.title })">
+        <icon name="twemoji:crown" class="w-20 h-20 rotate-[40deg]" />
+      </div>
     </div>
     <!-- info -->
     <div
@@ -106,8 +114,18 @@ zh-CN:
     >
       <div
         v-if="session.$state.userId !== page.user.id"
-        class="container custom-container flex justify-around order-3 gap-3 pb-2 mx-auto md:order-1 md:justify-end md:pb-0"
+        class="container flex items-center justify-center lg:justify-between order-3 gap-3 pb-2 mx-auto md:order-1 md:justify-end md:pb-0"
       >
+        <p class="flex gap-1">
+          <span v-if="page.user.roles.includes(UserPrivilege.Verified)" class="flex items-center gap-1">
+            <icon name="ic:round-verified" class="w-5 h-5" />
+            {{ t(localeKey.priv(UserPrivilege.Verified)) }}
+          </span>
+          <span v-if="page.user.roles.includes(UserPrivilege.Staff)" class="flex items-center gap-1">
+            <icon name="healthicons:social-work" class="w-5 h-5" />
+            {{ t('staff', { server: cfg.title }) }}
+          </span>
+        </p>
         <t-button
           ref="changeFriendStateButton"
           size="sm"
@@ -171,14 +189,14 @@ zh-CN:
         </div>
         <div class="order-1 md:order-2 lg:order-1 self-center md:self-start">
           <h1
-            class="text-center pb-1 text-5xl xl:text-6xl"
+            class="pb-1 text-5xl xl:text-6xl"
             :class="useUserRoleColor(page.user)"
           >
             {{ page.user.name }}
           </h1>
           <nuxt-link-locale
             :to="{ name: 'user-handle', params: { handle: `@${page.user.safeName}` } }"
-            class="text-3xl text-center underline md:text-left decoration-sky-500 text-gbase-600 dark:text-gbase-300"
+            class="text-3xl underline md:text-left decoration-sky-500 text-gbase-600 dark:text-gbase-300"
           >
             @{{ page.user.safeName }}
           </nuxt-link-locale>

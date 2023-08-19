@@ -48,7 +48,7 @@ export enum UserPrivilege {
   Supporter = 'supporter',
 
   // bancho.py privileges
-  Whitelisted = 'whitelisted',
+  Verified = 'whitelisted',
 
   // bancho privileges
   Alumni = 'alumni',

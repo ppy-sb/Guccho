@@ -30,7 +30,7 @@ export function toRoles(priv: number): UserPrivilege[] {
   }
 
   if (priv & BanchoPyPrivilege.Whitelisted) {
-    roles.push(UserPrivilege.Whitelisted)
+    roles.push(UserPrivilege.Verified)
   }
 
   if (priv & BanchoPyPrivilege.Donator) {

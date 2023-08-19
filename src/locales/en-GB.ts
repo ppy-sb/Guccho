@@ -56,7 +56,7 @@ export default {
     [UserPrivilege.Normal]: 'Normal',
     [UserPrivilege.Supported]: 'Supported',
     [UserPrivilege.Supporter]: 'Supporter',
-    [UserPrivilege.Whitelisted]: 'Whitelisted',
+    [UserPrivilege.Verified]: 'Verified',
     [UserPrivilege.Alumni]: 'Alumni',
     [UserPrivilege.TournamentStuff]: 'Tournament Staff',
     [UserPrivilege.ChannelModerator]: 'Channel Moderator',
