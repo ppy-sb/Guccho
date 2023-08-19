@@ -27,7 +27,7 @@ const relations = new UserRelationProvider()
 const session = new SessionProvider()
 export const router = _router({
   settings: pUser.query(async ({ ctx }) => {
-    return await users.getFull({
+    return await users.getFullWithSettings({
       handle: UserProvider.idToString(ctx.user.id),
       includeHidden: true,
       excludes: { statistics: true, relationships: true, secrets: false },

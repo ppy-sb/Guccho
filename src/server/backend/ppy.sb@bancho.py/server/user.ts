@@ -9,7 +9,7 @@ import { toFullUser } from '~/server/backend/bancho.py/transforms'
 import { createUserQuery } from '~/server/backend/bancho.py/db-query'
 
 import type { Scope, UserEssential, UserOldName } from '~/def/user'
-import { UserStatus } from '~/def/user'
+import { UserPrivilege, UserStatus } from '~/def/user'
 
 import { type UserProvider as Base } from '$base/server'
 
@@ -17,10 +17,6 @@ const logger = Logger.child({ label: 'user' })
 
 export class UserProvider extends BanchoPyUser implements Base<Id> {
   sbDb = getPrismaClient()
-
-  constructor() {
-    super()
-  }
 
   async changeUserpage(
     user: UserEssential<number>,
@@ -92,7 +88,7 @@ export class UserProvider extends BanchoPyUser implements Base<Id> {
       privilege: includeHidden ? BanchoPyPrivilege.Any : undefined,
     }))
 
-    const fullUser = await toFullUser(user, this.config)
+    const fullUser = toFullUser(user, this.config)
     const profile = await this.sbDb.userpage.findFirst({
       where: {
         userId: user.id,
@@ -129,5 +125,16 @@ export class UserProvider extends BanchoPyUser implements Base<Id> {
     }
 
     return returnValue
+  }
+
+  async getFullWithSettings<
+  Excludes extends Partial<Record<keyof Base.ComposableProperties<Id>, boolean>>,
+  _Scope extends Scope = Scope.Public,
+  >(query: { handle: string; excludes?: Excludes; includeHidden?: boolean; scope: _Scope }) {
+    const fullUser = await this.getFull(query)
+    if (!fullUser.roles.includes(UserPrivilege.Supporter)) {
+      fullUser.roles.push(UserPrivilege.Supporter)
+    }
+    return fullUser
   }
 }

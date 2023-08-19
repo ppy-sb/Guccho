@@ -43,7 +43,7 @@ export const router = _router({
     .query(async ({ input: { handle }, ctx }) => {
       const user = await userProvider.getFull({
         handle,
-        excludes: { relationships: true, secrets: true },
+        excludes: { relationships: true, secrets: true, email: true },
         includeHidden: true,
         scope: Scope.Public,
       })
@@ -52,20 +52,6 @@ export const router = _router({
       if (!user.roles.includes(UserPrivilege.Normal) && !isSelf) {
         throw new TRPCError({ code: 'NOT_FOUND', message: userNotFound })
       }
-      return mapId(user, UserProvider.idToString)
-    }),
-  full: p
-    .input(
-      object({
-        handle: zodHandle,
-      })
-    )
-    .query(async ({ input: { handle } }) => {
-      const user = await userProvider.getFull({
-        handle,
-        excludes: { email: true },
-        scope: Scope.Public,
-      })
       return mapId(user, UserProvider.idToString)
     }),
   best: p

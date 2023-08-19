@@ -88,6 +88,19 @@ export abstract class UserProvider<Id> extends idTransformable {
     ]: UserProvider.ComposableProperties<Id>[K];
   }
   >
+  getFullWithSettings<
+    Excludes extends Partial<
+      Record<keyof UserProvider.ComposableProperties<Id>, boolean>
+    >,
+   _Scope extends Scope = Scope.Public,
+  >(query: {
+    handle: string
+    excludes?: Excludes
+    includeHidden?: boolean
+    scope: _Scope
+  }) {
+    return this.getFull(query)
+  }
 
   abstract changeSettings(
     user: { id: Id },
