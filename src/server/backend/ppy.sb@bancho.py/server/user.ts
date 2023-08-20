@@ -5,18 +5,45 @@ import { getPrismaClient } from './prisma'
 
 import { BanchoPyPrivilege } from '~/server/backend/bancho.py/enums'
 import { ArticleProvider, UserProvider as BanchoPyUser } from '~/server/backend/bancho.py/server'
-import { toFullUser } from '~/server/backend/bancho.py/transforms'
+import { fromCountryCode, toFullUser, toSafeName, toUserEssential } from '~/server/backend/bancho.py/transforms'
 import { createUserQuery } from '~/server/backend/bancho.py/db-query'
 
 import type { Scope, UserEssential, UserOldName } from '~/def/user'
 import { UserPrivilege, UserStatus } from '~/def/user'
 
 import { type UserProvider as Base } from '$base/server'
+import type { CountryCode } from '~/def/country-code'
 
 const logger = Logger.child({ label: 'user' })
 
 export class UserProvider extends BanchoPyUser implements Base<Id> {
   sbDb = getPrismaClient()
+
+  async changeSettings(
+    user: UserEssential<Id>,
+    input: {
+      email?: string
+      name?: string
+      flag?: CountryCode
+    }
+  ) {
+    const result = await this.db.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        email: input.email,
+        name: input.name,
+        safeName: input.name && toSafeName(input.name),
+        country: input.flag && fromCountryCode(input.flag),
+      },
+    })
+    const updatedUser = toUserEssential(result, this.config)
+    if (!updatedUser.roles.includes(UserPrivilege.Supporter)) {
+      updatedUser.roles.push(UserPrivilege.Supporter)
+    }
+    return updatedUser
+  }
 
   async changeUserpage(
     user: UserEssential<number>,

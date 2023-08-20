@@ -467,24 +467,22 @@ zh-CN:
         </form>
       </div>
     </TModal>
-    <div class="container mx-auto">
-      <div class="flex justify-between p-2 items-end">
-        <div class="text-3xl font-bold">
-          {{ t('preferences') }}
-        </div>
-        <button
-          class="btn btn-sm"
-          :class="[
-            updateResult ? 'btn-success' : 'btn-accent',
-            posting ? 'loading' : '',
-          ]"
-          type="button"
-          @click="updateUserSettings"
-        >
-          <icon v-if="!posting" :name="updateResult ? 'line-md:confirm' : 'ic:round-save'" class="w-5 h-5 me-1" size="100%" />
-          {{ updateResult ? t('status.done') : t('status.ready') }}
-        </button>
+    <div class="flex justify-between p-2 items-end">
+      <div class="text-3xl font-bold">
+        {{ t('preferences') }}
       </div>
+      <button
+        class="btn btn-sm"
+        :class="[
+          updateResult ? 'btn-success' : 'btn-accent',
+          posting ? 'loading' : '',
+        ]"
+        type="button"
+        @click="updateUserSettings"
+      >
+        <icon v-if="!posting" :name="updateResult ? 'line-md:confirm' : 'ic:round-save'" class="w-5 h-5 me-1" size="100%" />
+        {{ updateResult ? t('status.done') : t('status.ready') }}
+      </button>
     </div>
 
     <div class="flex flex-col flex-wrap justify-between md:flex-row">
