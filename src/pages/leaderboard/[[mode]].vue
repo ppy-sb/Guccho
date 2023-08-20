@@ -44,6 +44,8 @@ const selected = shallowRef<Required<SwitcherPropType<LeaderboardRankingSystem>>
 })
 const { data: total, refresh: refreshCount } = await app$.$client.rank.countLeaderboard.useQuery(selected)
 
+const totalPages = computed(() => Math.min(Math.ceil(total.value / perPage), 5))
+
 const {
   data: table,
   pending,
@@ -68,9 +70,9 @@ useHead({
 })
 
 function boundaryPage() {
-  const outOfRange = page.value * perPage - perPage > total.value
+  const outOfRange = page.value > totalPages.value
   if (outOfRange) {
-    page.value = Math.floor(total.value / perPage)
+    page.value = totalPages.value
   }
 }
 
@@ -190,7 +192,7 @@ zh-CN:
         </h2>
       </div>
       <div class="join mx-auto outline outline-2">
-        <input v-for="i in 5" :key="`pagination-${i}`" class="join-item btn btn-ghost checked:outline outline-2" type="radio" name="options" :aria-label="i.toString()" @click="reloadPage(i)">
+        <input v-for="i in totalPages" :key="`pagination-${i}`" class="join-item btn btn-ghost checked:outline outline-2" type="radio" :checked="page === i" name="options" :aria-label="i.toString()" @click="reloadPage(i)">
       </div>
     </div>
   </div>

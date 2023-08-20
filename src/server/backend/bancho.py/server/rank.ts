@@ -70,12 +70,15 @@ export class DatabaseRankProvider implements Base<Id> {
     const start = page * pageSize
     const result = await this.db.stat.findMany({
       where: {
+        pp: rankingSystem === Rank.PPv2 ? { gt: 0 } : undefined,
+        rankedScore: rankingSystem === Rank.RankedScore ? { gt: 0 } : undefined,
+        totalScore: rankingSystem === Rank.TotalScore ? { gt: 0 } : undefined,
+        mode: toBanchoPyMode(mode, ruleset),
         user: {
           priv: {
             gt: 2,
           },
         },
-        mode: toBanchoPyMode(mode, ruleset),
       },
       select: {
         user: true,
@@ -118,12 +121,12 @@ export class DatabaseRankProvider implements Base<Id> {
         pp: rankingSystem === Rank.PPv2 ? { gt: 0 } : undefined,
         rankedScore: rankingSystem === Rank.RankedScore ? { gt: 0 } : undefined,
         totalScore: rankingSystem === Rank.TotalScore ? { gt: 0 } : undefined,
+        mode: toBanchoPyMode(mode, ruleset),
         user: {
           priv: {
             gt: 2,
           },
         },
-        mode: toBanchoPyMode(mode, ruleset),
       },
 
     })
