@@ -15,7 +15,7 @@ import type { Id } from '..'
 import { hasRuleset } from '..'
 
 import { config as _config } from '../env'
-import { client as redisClient } from './source/redis'
+import { RedisNotReadyError, client as redisClient } from './source/redis'
 import { getPrismaClient } from './source/prisma'
 
 import type { Mode } from '~/def'
@@ -32,8 +32,8 @@ import type { CountryCode } from '~/def/country-code'
 
 const logger = Logger.child({ label: 'leaderboard', backend: 'bancho.py' })
 
-function raiseError(text: string): never {
-  throw new Error(text)
+function raise<Cause extends string, Opt extends {}, E extends new(msg?: Cause, opts?: Opt) => Error>(Constructor: E, text?: Cause, opts?: Opt): never {
+  throw new Constructor(text, opts)
 }
 
 const config = _config()
@@ -136,7 +136,7 @@ export class DatabaseRankProvider implements Base<Id> {
 
   async determineBeatmapMode(md5: string) {
     const beatmap = await this.db.map.findFirst({ where: { md5 } })
-    return fromBanchoMode(beatmap?.mode ?? raiseError('beatmap not found'))
+    return fromBanchoMode(beatmap?.mode ?? raise(Error, 'beatmap not found'))
   }
 
   async beatmap(
@@ -236,6 +236,8 @@ export class DatabaseRankProvider implements Base<Id> {
 }
 
 export class RedisRankProvider extends DatabaseRankProvider {
+  static RedisNoDataError = class RedisNoDataError extends Error { name = 'RedisNoDataError' }
+
   redisClient = redisClient()
 
   async getPPv2LiveLeaderboard(
@@ -261,48 +263,56 @@ export class RedisRankProvider extends DatabaseRankProvider {
         }
       )
     }
-    throw new Error('redis is not ready')
+    raise(RedisNotReadyError, 'redis is not ready')
   }
 
   async countLeaderboard(query: Base.BaseQuery<Mode> & { rankingSystem: LeaderboardRankingSystem }): Promise<number> {
     const { mode, ruleset, rankingSystem } = query
 
-    if (
-      this.redisClient.isReady
-      && rankingSystem === Rank.PPv2
-    ) {
-      try {
-        const bPyMode = toBanchoPyMode(mode, ruleset)
-        if (bPyMode === undefined) {
-          throw new Error('no mode')
-        }
-        // TODO: banned players are included
-        const rank = await this.getPPv2LiveLeaderboard(
-          bPyMode,
-          0,
-          500
-        ).then(res => res.map(Number))
-
-        if (!rank.length) {
-          throw new Error('redis leaderboard is empty, trying db leaderborad')
-        }
-
-        return this.db.stat.count({
-          where: {
-            id: {
-              in: rank,
-            },
-            mode: bPyMode,
-            pp: { gt: 0 },
-          },
-        })
-      }
-      catch (e) {
-        logger.error(e)
-        return super.countLeaderboard(query)
-      }
+    if (!this.redisClient.isReady || rankingSystem !== Rank.PPv2) {
+      return super.countLeaderboard(query)
     }
-    else {
+
+    try {
+      const bPyMode = toBanchoPyMode(mode, ruleset)
+      if (bPyMode === undefined) {
+        raise(Error, 'no mode')
+      }
+      // TODO: banned players are included
+      const rank = await this.getPPv2LiveLeaderboard(
+        bPyMode,
+        0,
+        500
+      ).then(res => res.map(Number))
+
+      if (!rank.length) {
+        raise(RedisRankProvider.RedisNoDataError, 'redis leaderboard is empty')
+      }
+
+      return this.db.stat.count({
+        where: {
+          id: {
+            in: rank,
+          },
+          mode: bPyMode,
+          pp: { gt: 0 },
+        },
+      })
+    }
+    catch (e) {
+      switch (true) {
+        case e instanceof RedisRankProvider.RedisNoDataError: {
+          logger.info(e)
+          break
+        }
+        case e instanceof RedisNotReadyError:{
+          logger.warn(e)
+          break
+        }
+        default:{
+          logger.error(e)
+        }
+      }
       return super.countLeaderboard(query)
     }
   }
@@ -337,7 +347,8 @@ export class RedisRankProvider extends DatabaseRankProvider {
         }[] = []
         const bPyMode = toBanchoPyMode(mode, ruleset)
         if (bPyMode === undefined) {
-          throw new Error('no mode')
+          // throw new Error('no mode')
+          raise(Error, 'no mode')
         }
         // TODO: banned players are included
         const rank = await this.getPPv2LiveLeaderboard(

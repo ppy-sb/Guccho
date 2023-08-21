@@ -4,6 +4,8 @@ import { config as _env } from '../../env'
 
 const logger = Logger.child({ label: 'redis' })
 
+export class RedisNotReadyError extends Error {}
+
 export const client = lazySingleton(() => {
   const env = _env()
   if (!('redisURL' in env)) {
