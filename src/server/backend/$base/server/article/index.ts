@@ -11,7 +11,7 @@ import dirTree from 'directory-tree'
 
 import { config as getConfig } from '../../env'
 import { latest, paths, v0, versions } from './v'
-import type { UserEssential, UserPrivilege } from '~/def/user'
+import type { UserCompact, UserPrivilege } from '~/def/user'
 import useEditorExtensions from '~/composables/useEditorExtensionsServer'
 import { Logger } from '$base/log'
 
@@ -32,17 +32,17 @@ export abstract class ArticleProvider {
   abstract get(opt: {
     slug: string
     fallback: boolean
-    user: UserEssential<any>
+    user: UserCompact<any>
   }): PromiseLike<(ArticleProvider.Content & ArticleProvider.Meta & ArticleProvider.Version & ArticleProvider.AccessControl) | undefined>
 
   abstract save(opt: {
     slug: string
     json: ArticleProvider.JSONContent
     privilege: ArticleProvider.Meta['privilege']
-    user: UserEssential<any>
+    user: UserCompact<any>
   }): PromiseLike<void>
 
-  async delete(opt: { slug: string; user: UserEssential<any> }) {
+  async delete(opt: { slug: string; user: UserCompact<any> }) {
     return ArticleProvider.deleteLocal(opt)
   }
 
@@ -65,7 +65,7 @@ export abstract class ArticleProvider {
   async getLocal(opt: {
     slug: string
     fallback?: boolean
-    user?: UserEssential<any>
+    user?: UserCompact<any>
   }): Promise<(ArticleProvider.Meta & ArticleProvider.Content & ArticleProvider.Version) | undefined> {
     const content = await ArticleProvider.getLocalArticleData(opt)
     if (!content) {
@@ -114,7 +114,7 @@ export abstract class ArticleProvider {
     slug: string
     json: ArticleProvider.JSONContent
     privilege: ArticleProvider.Meta['privilege']
-    user: UserEssential<any>
+    user: UserCompact<any>
     dynamic: boolean
   }): Promise<void> {
     if (!opt.user.roles.find(role => ['admin', 'owner'].includes(role))) {
@@ -149,7 +149,7 @@ export abstract class ArticleProvider {
     }))
   }
 
-  static async deleteLocal(opt: { slug: string; user: UserEssential<any> }) {
+  static async deleteLocal(opt: { slug: string; user: UserCompact<any> }) {
     const { user, slug } = opt
     if (!user.roles.find(role => ['admin', 'owner'].includes(role))) {
       throw new Error('you have insufficient privilege to edit this article')

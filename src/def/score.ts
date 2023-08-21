@@ -72,7 +72,7 @@ export enum StableMod {
 // future(lazer) proof
 export type Mod = StableMod
 
-export interface ScoreEssential<ScoreId, M extends ActiveMode> {
+export interface ScoreCompact<ScoreId, M extends ActiveMode> {
   id: ScoreId
   playedAt: Date
   mods: Mod[]
@@ -91,7 +91,7 @@ export type RulesetScore<
   PPRank extends PPRankingSystem = never,
   BMSrc extends BeatmapSource = BeatmapSource,
   Status extends RankingStatus = RankingStatus,
-> = ScoreEssential<ScoreId, M> & {
+> = ScoreCompact<ScoreId, M> & {
   mode: M
   ruleset: Ruleset
   beatmap: BeatmapWithMeta<BMSrc, Status, BeatmapId, unknown>
@@ -111,7 +111,7 @@ export interface RankingSystemScore<
   PPRank extends LeaderboardRankingSystem = never,
   BMSrc extends BeatmapSource = BeatmapSource,
   BMStatus extends RankingStatus = RankingStatus,
-> extends ScoreEssential<ScoreId, M> {
+> extends ScoreCompact<ScoreId, M> {
   pp: PPRank extends PPRankingSystem ? number : never
   rank?: number
   beatmap: BeatmapWithMeta<BMSrc, BMStatus, BeatmapId, unknown>

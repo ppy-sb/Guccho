@@ -5,7 +5,7 @@ import { Access, BanchoPyUserStatus as B, BanchoPyPrivilege } from '../enums'
 import type { Id } from '..'
 import type { ArticleProvider } from '$base/server'
 import type {
-  UserEssential,
+  UserCompact,
   UserOptional,
   UserSecrets,
 } from '~/def/user'
@@ -72,11 +72,11 @@ export function toRoles(priv: number): UserPrivilege[] {
   return roles
 }
 
-export type DatabaseUserEssentialFields = 'id' | 'name' | 'safeName' | 'country' | 'priv' | 'pwBcrypt' | 'email'
-export function toUserEssential<
+export type DatabaseUserCompactFields = 'id' | 'name' | 'safeName' | 'country' | 'priv' | 'pwBcrypt' | 'email'
+export function toUserCompact<
   _Scope extends Scope = Scope.Public,
   Includes extends Partial<Record<keyof UserOptional, boolean>> = Record<never, never>,
->(user: Pick<DatabaseUser, DatabaseUserEssentialFields>, { includes, avatar }: {
+>(user: Pick<DatabaseUser, DatabaseUserCompactFields>, { includes, avatar }: {
   includes?: Includes
   avatar: {
     domain?: string
@@ -85,7 +85,7 @@ export function toUserEssential<
   if (scope === undefined) {
     scope = Scope.Public as _Scope
   }
-  const returnValue: UserEssential<Id> & Partial<UserOptional> & Partial<UserSecrets> = {
+  const returnValue: UserCompact<Id> & Partial<UserOptional> & Partial<UserSecrets> = {
     id: user.id,
     ingameId: user.id,
     name: user.name,
@@ -104,15 +104,15 @@ export function toUserEssential<
   }
 
   return returnValue as _Scope extends Scope.Self
-    ? UserEssential<Id> & UserSecrets
-    : UserEssential<Id>
+    ? UserCompact<Id> & UserSecrets
+    : UserCompact<Id>
 }
 
 export function dedupeUserRelationship(
   relations: Array<{
     type: Relationship
     toUserId: Id
-    toUser: UserEssential<Id>
+    toUser: UserCompact<Id>
   }>
 ) {
   const reduceUserRelationships = relations.reduce((acc, cur) => {
@@ -128,7 +128,7 @@ export function dedupeUserRelationship(
       acc.get(cur.toUserId)?.relationship.push(cur.type)
     }
     return acc
-  }, new Map<Id, UserEssential<Id> & UserRelationship>())
+  }, new Map<Id, UserCompact<Id> & UserRelationship>())
 
   return [...reduceUserRelationships.values()]
 }
@@ -140,7 +140,7 @@ export function toFullUser(
       domain?: string
     }
   }
-): UserEssential<Id> {
+): UserCompact<Id> {
   return {
     id: user.id,
     ingameId: user.id,

@@ -1,7 +1,7 @@
 import type { idTransformable, scoreIdTransformable } from './@extends'
 import type { ActiveMode, ActiveRuleset, PPRankingSystem } from '~/def/common'
 import type { RulesetScore } from '~/def/score'
-import type { UserEssential } from '~/def/user'
+import type { UserCompact } from '~/def/user'
 
 export namespace ScoreProvider {
 
@@ -29,17 +29,17 @@ export namespace ScoreProvider {
 export interface ScoreProvider<TScoreId, TId> extends idTransformable, scoreIdTransformable {
   id(id: TScoreId): PromiseLike<
     | (RulesetScore<TScoreId, TId, ActiveMode, ActiveRuleset, PPRankingSystem> & {
-      user: UserEssential<TId>
+      user: UserCompact<TId>
     })
   >
   findOne(opt: ScoreProvider.SearchQueryMany<TId> | ScoreProvider.SearchId<TScoreId>): PromiseLike<
     | (RulesetScore<TScoreId, TId, ActiveMode, ActiveRuleset, PPRankingSystem> & {
-      user: UserEssential<TId>
+      user: UserCompact<TId>
     })
   >
   findMany(opt: ScoreProvider.SearchQueryMany<TId>): PromiseLike<
     (RulesetScore<TScoreId, TId, ActiveMode, ActiveRuleset, PPRankingSystem> & {
-      user: UserEssential<TId>
+      user: UserCompact<TId>
     })[]
   >
 

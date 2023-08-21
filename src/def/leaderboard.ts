@@ -1,4 +1,4 @@
-import type { UserEssential } from './user'
+import type { UserCompact } from './user'
 import type {
   LeaderboardRankingSystem,
   LeaderboardScoreRankingSystem,
@@ -10,7 +10,7 @@ export interface Leaderboard<
   IdType,
   RankingSystem extends LeaderboardRankingSystem = LeaderboardRankingSystem,
 > {
-  user: UserEssential<IdType>
+  user: UserCompact<IdType>
   inThisLeaderboard: {
     accuracy: number
     playCount: number
@@ -20,7 +20,7 @@ export interface Leaderboard<
   & Record<RankingSystem & LeaderboardScoreRankingSystem, bigint>
 }
 export interface BeatmapLeaderboard<Id> {
-  user: UserEssential<Id>
+  user: UserCompact<Id>
   score: {
     id: unknown
     score: number | bigint

@@ -23,7 +23,7 @@ export const userProcedure = sessionProcedure.use(async ({ ctx, next }) => {
       message: youNeedToLogin,
     })
   }
-  const user = await userProvider.getEssentialById({ id: UserProvider.stringToId(session.userId) })
+  const user = await userProvider.getCompactById({ id: UserProvider.stringToId(session.userId) })
   if (user == null) {
     throw new TRPCError({
       code: 'NOT_FOUND',

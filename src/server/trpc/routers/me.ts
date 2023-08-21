@@ -69,7 +69,7 @@ export const router = _router({
       const update: typeof input = { flag: input.flag }
       // TODO: check email(should verified by frontend with another request (not impl'd yet ))
       if (input.name) {
-        const existingUser = await users.getEssential({
+        const existingUser = await users.getCompact({
           handle: input.name,
           keys: ['id', 'name', 'safeName'],
         }).catch(noop<undefined>)
@@ -106,7 +106,7 @@ export const router = _router({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const userWithPassword = await users.getEssentialById({
+      const userWithPassword = await users.getCompactById({
         id: ctx.user.id,
         scope: Scope.Self,
       })
@@ -137,7 +137,7 @@ export const router = _router({
     .query(async ({ input: { target }, ctx }) => {
       const [fromUser, targetUser] = await Promise.all([
         ctx.user,
-        users.getEssential({ handle: target }),
+        users.getCompact({ handle: target }),
       ])
       if (!fromUser || targetUser == null) {
         return
@@ -161,7 +161,7 @@ export const router = _router({
     }),
 
   relations: pUser.query(async ({ ctx }) => {
-    return await (await relations.get({ user: ctx.user })).map(f => mapId(f, UserRelationProvider.idToString))
+    return (await relations.get({ user: ctx.user })).map(f => mapId(f, UserRelationProvider.idToString))
   }),
 
   removeOneRelation: pUser
@@ -174,7 +174,7 @@ export const router = _router({
     .mutation(async ({ input, ctx }) => {
       const [fromUser, targetUser] = await Promise.all([
         ctx.user,
-        users.getEssential({ handle: input.target }),
+        users.getCompact({ handle: input.target }),
       ])
       if (!fromUser || targetUser == null) {
         throw new TRPCError({
@@ -211,7 +211,7 @@ export const router = _router({
     .mutation(async ({ input, ctx }) => {
       const [fromUser, targetUser] = await Promise.all([
         ctx.user,
-        users.getEssential({ handle: input.target }),
+        users.getCompact({ handle: input.target }),
       ])
       if (!fromUser || targetUser == null) {
         throw new TRPCError({

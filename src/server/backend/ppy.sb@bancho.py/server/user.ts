@@ -5,10 +5,10 @@ import { getPrismaClient } from './prisma'
 
 import { BanchoPyPrivilege } from '~/server/backend/bancho.py/enums'
 import { ArticleProvider, UserProvider as BanchoPyUser } from '~/server/backend/bancho.py/server'
-import { fromCountryCode, toFullUser, toSafeName, toUserEssential } from '~/server/backend/bancho.py/transforms'
+import { fromCountryCode, toFullUser, toSafeName, toUserCompact } from '~/server/backend/bancho.py/transforms'
 import { createUserQuery } from '~/server/backend/bancho.py/db-query'
 
-import type { Scope, UserEssential, UserOldName } from '~/def/user'
+import type { Scope, UserCompact, UserOldName } from '~/def/user'
 import { UserPrivilege, UserStatus } from '~/def/user'
 
 import { type UserProvider as Base } from '$base/server'
@@ -20,7 +20,7 @@ export class UserProvider extends BanchoPyUser implements Base<Id> {
   sbDb = getPrismaClient()
 
   async changeSettings(
-    user: UserEssential<Id>,
+    user: { id: Id },
     input: {
       email?: string
       name?: string
@@ -38,7 +38,7 @@ export class UserProvider extends BanchoPyUser implements Base<Id> {
         country: input.flag && fromCountryCode(input.flag),
       },
     })
-    const updatedUser = toUserEssential(result, this.config)
+    const updatedUser = toUserCompact(result, this.config)
     if (!updatedUser.roles.includes(UserPrivilege.Supporter)) {
       updatedUser.roles.push(UserPrivilege.Supporter)
     }
@@ -46,7 +46,7 @@ export class UserProvider extends BanchoPyUser implements Base<Id> {
   }
 
   async changeUserpage(
-    user: UserEssential<number>,
+    user: UserCompact<number>,
     input: { profile: ArticleProvider.JSONContent }
   ) {
     try {

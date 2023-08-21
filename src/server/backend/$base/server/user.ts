@@ -11,7 +11,7 @@ import type { RankingSystemScore } from '~/def/score'
 import type {
   DynamicSettingStore,
   Scope,
-  UserEssential,
+  UserCompact,
   UserExtra,
   UserOptional,
   UserSecrets,
@@ -41,29 +41,14 @@ export namespace UserProvider {
 export abstract class UserProvider<Id> extends idTransformable {
   abstract exists({ handle, keys }: UserProvider.OptType): PromiseLike<boolean>
 
-  abstract getEssential<_Scope extends Scope>(
+  abstract getCompact<_Scope extends Scope>(
     opt: UserProvider.OptType & { scope: _Scope }
-  ): Promise<_Scope extends Scope.Self ? UserEssential<Id> & UserSecrets : UserEssential<Id>>
+  ): Promise<_Scope extends Scope.Self ? UserCompact<Id> & UserSecrets : UserCompact<Id>>
 
-  abstract getEssentialById<_Scope extends Scope>(opt: {
+  abstract getCompactById<_Scope extends Scope>(opt: {
     id: Id
     scope: _Scope
-  }): Promise<_Scope extends Scope.Self ? UserEssential<Id> & UserSecrets : UserEssential<Id>>
-
-  abstract getBests<
-    Mode extends ActiveMode,
-    Ruleset extends ActiveRuleset,
-    RankingSystem extends LeaderboardRankingSystem,
-  >(query: UserProvider.BaseQuery<Id, Mode, Ruleset, RankingSystem>): PromiseLike<RankingSystemScore<string, Id, Mode, RankingSystem>[]>
-
-  abstract getTops<
-    Mode extends ActiveMode,
-    Ruleset extends ActiveRuleset,
-    RankingSystem extends LeaderboardRankingSystem,
-  >(query: UserProvider.BaseQuery<Id, Mode, Ruleset, RankingSystem>): PromiseLike<{
-    count: number
-    scores: RankingSystemScore<string, Id, Mode, RankingSystem>[]
-  }>
+  }): Promise<_Scope extends Scope.Self ? UserCompact<Id> & UserSecrets : UserCompact<Id>>
 
   abstract getStatistics(query: {
     id: Id
@@ -81,7 +66,7 @@ export abstract class UserProvider<Id> extends idTransformable {
     includeHidden?: boolean
     scope: _Scope
   }): Promise<
-  UserEssential<Id> & {
+  UserCompact<Id> & {
     [K in keyof UserProvider.ComposableProperties<Id> as Excludes[K] extends true
       ? never
       : K
@@ -109,7 +94,7 @@ export abstract class UserProvider<Id> extends idTransformable {
       name?: string
       flag?: CountryCode
     }
-  ): PromiseLike<UserEssential<Id>>
+  ): PromiseLike<UserCompact<Id>>
 
   abstract changeUserpage(
     user: { id: Id },
@@ -128,19 +113,19 @@ export abstract class UserProvider<Id> extends idTransformable {
       name?: string
       userpageContent?: string
     }
-  ): PromiseLike<UserEssential<Id>>
+  ): PromiseLike<UserCompact<Id>>
 
   abstract changePassword(
     user: { id: Id },
     newPasswordMD5: string
-  ): PromiseLike<UserEssential<Id>>
+  ): PromiseLike<UserCompact<Id>>
 
   abstract changeAvatar(user: { id: Id }, avatar: Uint8Array): PromiseLike<string>
 
   abstract search(opt: {
     keyword: string
     limit: number
-  }): PromiseLike<UserEssential<Id>[]>
+  }): PromiseLike<UserCompact<Id>[]>
 
   abstract count(opt: {
     keyword?: string
@@ -174,9 +159,24 @@ export abstract class UserProvider<Id> extends idTransformable {
     }
   } | null>
 
-  abstract register(opt: { name: string; safeName: string; email: string; passwordMd5: string }): PromiseLike<UserEssential<Id>>
+  abstract register(opt: { name: string; safeName: string; email: string; passwordMd5: string }): PromiseLike<UserCompact<Id>>
 
   abstract getDynamicSettings(user: { id: Id }): Promise<ExtractSettingType<ExtractLocationSettings<DynamicSettingStore.Server, typeof settings>>>
 
   abstract setDynamicSettings(user: { id: Id }, args: ExtractSettingType<ExtractLocationSettings<DynamicSettingStore.Server, typeof settings>>): Promise<ExtractSettingType<ExtractLocationSettings<DynamicSettingStore.Server, typeof settings>>>
+
+  abstract getBests<
+    Mode extends ActiveMode,
+    Ruleset extends ActiveRuleset,
+    RankingSystem extends LeaderboardRankingSystem,
+  >(query: UserProvider.BaseQuery<Id, Mode, Ruleset, RankingSystem>): PromiseLike<RankingSystemScore<string, Id, Mode, RankingSystem>[]>
+
+  abstract getTops<
+    Mode extends ActiveMode,
+    Ruleset extends ActiveRuleset,
+    RankingSystem extends LeaderboardRankingSystem,
+  >(query: UserProvider.BaseQuery<Id, Mode, Ruleset, RankingSystem>): PromiseLike<{
+    count: number
+    scores: RankingSystemScore<string, Id, Mode, RankingSystem>[]
+  }>
 }

@@ -10,13 +10,5 @@ export function createContext(e: H3Event) {
     },
     h3Event: e,
   }
-  // as {
-  //   session: {
-  //     id?: string
-  //     getBinding?(): _ReturnType
-  //   }
-  //   user?: UserEssential<unknown>
-  //   h3Event: H3Event
-  // }
 }
 export type Context = inferAsyncReturnType<typeof createContext>

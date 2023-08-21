@@ -29,7 +29,7 @@ export const router = _router({
     )
     .query(async ({ input: { handle, md5HashedPassword }, ctx }) => {
       try {
-        const user = await userProvider.getEssential({
+        const user = await userProvider.getCompact({
           handle,
           scope: Scope.Self,
         })
@@ -80,7 +80,7 @@ export const router = _router({
       }
       if (session.userId) {
         try {
-          const user = await userProvider.getEssentialById({
+          const user = await userProvider.getCompactById({
             id: UserProvider.stringToId(session.userId),
           })
           return {

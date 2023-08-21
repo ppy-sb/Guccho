@@ -11,7 +11,7 @@ import { fromBanchoMode } from '.'
 import { BeatmapSource, RankingStatus } from '~/def/beatmap'
 import { StableMod } from '~/def/score'
 
-import type { BeatmapEssential, Beatmapset } from '~/def/beatmap'
+import type { BeatmapCompact, Beatmapset } from '~/def/beatmap'
 
 export function toBeatmapset(beatmapset: Source, luckyOneBeatmapInBeatmapset: DBMap) {
   const isBancho = beatmapset.server === 'bancho'
@@ -37,7 +37,7 @@ export function toBeatmapset(beatmapset: Source, luckyOneBeatmapInBeatmapset: DB
   return rest
 }
 
-export function toBeatmapEssential(beatmap: {
+export function toBeatmapCompact(beatmap: {
   id: number
   // setId: number
   // status: number
@@ -60,7 +60,7 @@ export function toBeatmapEssential(beatmap: {
   od: number
   hp: number
   diff: number
-}): BeatmapEssential<Id, Id> {
+}): BeatmapCompact<Id, Id> {
   return {
     id: beatmap.id,
     foreignId: beatmap.id,
@@ -95,7 +95,7 @@ export function toBeatmapWithBeatmapset(
 ) {
   const status = toRankingStatus(beatmap.status) || RankingStatus.WIP
   const beatmapset = toBeatmapset(beatmap.source, beatmap)
-  return Object.assign(toBeatmapEssential(beatmap), {
+  return Object.assign(toBeatmapCompact(beatmap), {
     status,
     beatmapset,
   })

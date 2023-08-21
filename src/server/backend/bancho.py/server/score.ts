@@ -5,7 +5,7 @@ import {
   idToString,
   scoreIdToString,
   stringToId,
-  stringToScoreId, toBanchoPyMode, toScore, toUserEssential,
+  stringToScoreId, toBanchoPyMode, toScore, toUserCompact,
 } from '../transforms'
 
 import type { Id } from '..'
@@ -40,7 +40,7 @@ export class ScoreProvider implements Base<bigint, Id> {
         mode,
         ruleset,
       }),
-      { user: toUserEssential(dbScore.user, this.config) }
+      { user: toUserCompact(dbScore.user, this.config) }
     )
   }
 

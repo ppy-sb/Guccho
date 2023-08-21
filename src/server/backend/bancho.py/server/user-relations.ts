@@ -1,4 +1,4 @@
-import { dedupeUserRelationship, fromBanchoPyRelationType, idToString, stringToId, toBanchoPyRelationType, toUserEssential } from '../transforms'
+import { dedupeUserRelationship, fromBanchoPyRelationType, idToString, stringToId, toBanchoPyRelationType, toUserCompact } from '../transforms'
 
 // import { idToString, stringToId } from '../transforms'
 import type { Id } from '..'
@@ -7,7 +7,7 @@ import { getPrismaClient } from './source/prisma'
 
 import type { UserRelationProvider as Base } from '$base/server'
 import { Relationship } from '~/def'
-import type { UserEssential } from '~/def/user'
+import type { UserCompact } from '~/def/user'
 
 const config = _config()
 
@@ -66,7 +66,7 @@ export class UserRelationProvider implements Base<Id> {
 
     const transformed = relationships.map(r => ({
       ...r,
-      toUser: toUserEssential(r.toUser, this.config),
+      toUser: toUserCompact(r.toUser, this.config),
     }))
     const deduped = dedupeUserRelationship(transformed)
 
@@ -89,8 +89,8 @@ export class UserRelationProvider implements Base<Id> {
     targetUser,
     type,
   }: {
-    fromUser: UserEssential<Id>
-    targetUser: UserEssential<Id>
+    fromUser: UserCompact<Id>
+    targetUser: UserCompact<Id>
     type: Relationship
   }) {
     // bancho.py only allows one relationshipType per direction per one user pair
@@ -118,8 +118,8 @@ export class UserRelationProvider implements Base<Id> {
     targetUser,
     type,
   }: {
-    fromUser: UserEssential<Id>
-    targetUser: UserEssential<Id>
+    fromUser: UserCompact<Id>
+    targetUser: UserCompact<Id>
     type: Relationship
   }) {
     // bancho.py only allows one relationshipType per direction per one user pair
@@ -141,7 +141,7 @@ export class UserRelationProvider implements Base<Id> {
     })
   }
 
-  async count({ user, type }: { user: UserEssential<Id>; type: Relationship }) {
+  async count({ user, type }: { user: UserCompact<Id>; type: Relationship }) {
     return await this.db.relationship.count({
       where: {
         toUserId: user.id,

@@ -1,7 +1,7 @@
 import {
   idToString,
   stringToId,
-  toBeatmapEssential,
+  toBeatmapCompact,
   toBeatmapWithBeatmapset, toBeatmapset, toRankingStatus,
 } from '../transforms'
 
@@ -66,7 +66,7 @@ export class MapProvider implements Base<Id> {
 
     return Object.assign(beatmapset, {
       beatmaps: beatmaps.map(bm => ({
-        ...toBeatmapEssential(bm),
+        ...toBeatmapCompact(bm),
         status: toRankingStatus(bm.status) || RankingStatus.NotFound,
       })),
     })

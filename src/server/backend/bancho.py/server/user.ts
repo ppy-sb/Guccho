@@ -20,13 +20,13 @@ import {
   toFullUser,
   toRankingSystemScores,
   toSafeName,
-  toUserEssential,
+  toUserCompact,
 } from '../transforms'
 
 import {
   createUserLikeQuery,
   createUserQuery,
-  userEssentials,
+  userCompacts,
 } from '../db-query'
 import type { Id } from '..'
 import type { settings } from '../dynamic-settings'
@@ -45,7 +45,7 @@ import { userNotFound } from '~/server/trpc/messages'
 import { UserProvider as Base } from '$base/server'
 import type { ActiveMode, ActiveRuleset, LeaderboardRankingSystem } from '~/def/common'
 
-import type { DynamicSettingStore, Scope, UserEssential, UserStatistic } from '~/def/user'
+import type { DynamicSettingStore, Scope, UserCompact, UserStatistic } from '~/def/user'
 import { UserStatus } from '~/def/user'
 import { Mode, Rank, Ruleset } from '~/def'
 import type { CountryCode } from '~/def/country-code'
@@ -117,7 +117,7 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
     )
   }
 
-  async getEssentialById<
+  async getCompactById<
     _Scope extends Scope = Scope.Public,
   >({ id, scope }: { id: Id; scope?: _Scope }) {
     /* optimized */
@@ -125,13 +125,13 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
       where: {
         id,
       },
-      ...userEssentials,
+      ...userCompacts,
     })
 
-    return toUserEssential(user, this.config, scope)
+    return toUserCompact(user, this.config, scope)
   }
 
-  async getEssential<
+  async getCompact<
  _Scope extends Scope = Scope.Public,
   >(opt: Base.OptType & { scope?: _Scope }) {
     const { handle, scope, keys } = opt
@@ -142,12 +142,12 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
         selectAgainst: keys || ['id', 'name', 'safeName', 'email'],
         privilege: BanchoPyPrivilege.Normal,
       }),
-      ...userEssentials,
+      ...userCompacts,
     })
       .catch(() => {
         throw new TRPCError({ code: 'NOT_FOUND', message: userNotFound })
       })
-    return toUserEssential(user, this.config, scope)
+    return toUserCompact(user, this.config, scope)
   }
 
   // https://github.com/prisma/prisma/issues/6570 need two separate query to get count for now
@@ -410,7 +410,7 @@ WHERE s.userid = ${id}
   }
 
   async changeSettings(
-    user: UserEssential<Id>,
+    user: UserCompact<Id>,
     input: {
       email?: string
       name?: string
@@ -428,11 +428,11 @@ WHERE s.userid = ${id}
         country: input.flag && fromCountryCode(input.flag),
       },
     })
-    return toUserEssential(result, this.config)
+    return toUserCompact(result, this.config)
   }
 
   async changeUserpage(
-    user: UserEssential<Id>,
+    user: UserCompact<Id>,
     input: {
       profile: ArticleProvider.JSONContent
     }
@@ -461,7 +461,7 @@ WHERE s.userid = ${id}
     }
   }
 
-  async changePassword(user: UserEssential<Id>, newPasswordMD5: string) {
+  async changePassword(user: UserCompact<Id>, newPasswordMD5: string) {
     const pwBcrypt = await encryptBanchoPassword(newPasswordMD5)
     const result = await this.db.user.update({
       where: {
@@ -471,7 +471,7 @@ WHERE s.userid = ${id}
         pwBcrypt,
       },
     })
-    return toUserEssential(result, this.config)
+    return toUserCompact(result, this.config)
   }
 
   async changeAvatar(user: { id: Id }, avatar: Uint8Array) {
@@ -520,12 +520,12 @@ WHERE s.userid = ${id}
     const userLike = createUserLikeQuery(keyword)
     /* optimized */
     const result = await this.db.user.findMany({
-      ...userEssentials,
+      ...userCompacts,
       ...merge(userLike, { where: { priv: { gt: 2 } } }),
       take: limit,
     })
 
-    return result.map(user => toUserEssential(user, this.config))
+    return result.map(user => toUserCompact(user, this.config))
   }
 
   async count() {
@@ -539,7 +539,7 @@ WHERE s.userid = ${id}
     })
   }
 
-  async changeVisibility(user: UserEssential<Id>) {
+  async changeVisibility(user: UserCompact<Id>) {
     throw new Error('bancho.py does not support user visibility scoping.')
     return user
   }
@@ -573,7 +573,7 @@ WHERE s.userid = ${id}
       return user
     })
 
-    return toUserEssential(user, this.config)
+    return toUserCompact(user, this.config)
   }
 
   async _toStatistics(

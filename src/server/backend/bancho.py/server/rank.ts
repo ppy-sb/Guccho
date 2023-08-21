@@ -6,10 +6,10 @@ import {
   toBanchoPyMode,
   toMods,
   toRoles,
-  toUserEssential,
+  toUserCompact,
 } from '../transforms'
 import {
-  userEssentials,
+  userCompacts,
 } from '../db-query'
 import type { Id } from '..'
 import { hasRuleset } from '..'
@@ -102,7 +102,7 @@ export class DatabaseRankProvider implements Base<Id> {
     })
 
     return result.map(({ user, ...stat }, index) => ({
-      user: toUserEssential(user, this.config),
+      user: toUserCompact(user, this.config),
       inThisLeaderboard: {
         [Rank.PPv2]: stat.pp,
         [Rank.RankedScore]: stat.rankedScore,
@@ -190,7 +190,7 @@ export class DatabaseRankProvider implements Base<Id> {
       orderBy: sort,
     })
     return scores.map((item, index) => ({
-      user: toUserEssential(item.user, this.config),
+      user: toUserCompact(item.user, this.config),
       score: {
         id: item.id.toString(),
         [Rank.PPv2]: item.pp,
@@ -354,7 +354,7 @@ export class RedisRankProvider extends DatabaseRankProvider {
                 in: rank,
               },
             },
-            ...userEssentials,
+            ...userCompacts,
           }),
           /* optimized */
           this.db.stat.findMany({

@@ -82,7 +82,7 @@ export enum DynamicSettingStore {
 export interface UserSecrets {
   password: string
 }
-export interface UserEssential<Id> {
+export interface UserCompact<Id> {
   id: Id
   ingameId: number
   name: string
@@ -142,7 +142,7 @@ export interface UserExtra<
     html: string
     raw?: ArticleProvider.JSONContent
   }
-  relationships: Array<UserEssential<Id> & UserRelationship>
+  relationships: Array<UserCompact<Id> & UserRelationship>
 }
 
 export type UserFull<
@@ -150,4 +150,4 @@ export type UserFull<
   IncludeMode extends ActiveMode = ActiveMode,
   IncludeRuleset extends ActiveRuleset = ActiveRuleset,
   Ranking extends LeaderboardRankingSystem = LeaderboardRankingSystem,
-> = UserEssential<Id> & Partial<UserOptional & UserExtra<Id, IncludeMode, IncludeRuleset, Ranking>>
+> = UserCompact<Id> & Partial<UserOptional & UserExtra<Id, IncludeMode, IncludeRuleset, Ranking>>

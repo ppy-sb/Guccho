@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { UserEssential } from '~/def/user'
+import type { UserCompact } from '~/def/user'
 import type { UserRelationship } from '~/def/user-relationship'
 import { Relationship } from '~/def'
 import { useSession } from '~/store/session'
@@ -31,11 +31,11 @@ const errorMessage = shallowRef('')
 onErrorCaptured((err) => {
   errorMessage.value = err.message || t('err-message')
 })
-function haveRelation(relation: Relationship, user: UserEssential<string> & UserRelationship) {
+function haveRelation(relation: Relationship, user: UserCompact<string> & UserRelationship) {
   return user.relationship.includes(relation)
 }
 const pendingUser = reactive(new Set<string>())
-async function toggleRelation(type: Relationship, user: UserEssential<string> & UserRelationship) {
+async function toggleRelation(type: Relationship, user: UserCompact<string> & UserRelationship) {
   pendingUser.add(user.id)
   try {
     if (haveRelation(type, user)) {

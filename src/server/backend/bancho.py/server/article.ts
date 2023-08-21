@@ -1,8 +1,8 @@
 import { ArticleProvider as Base } from '$base/server/article'
-import type { UserEssential } from '~/def/user'
+import type { UserCompact } from '~/def/user'
 
 export class ArticleProvider extends Base {
-  async get(opt: { slug: string; fallback?: boolean; user?: UserEssential<unknown> }) {
+  async get(opt: { slug: string; fallback?: boolean; user?: UserCompact<unknown> }) {
     const content = await this.getLocal(opt)
     if (!content) {
       return undefined
@@ -20,7 +20,7 @@ export class ArticleProvider extends Base {
   async save(opt: {
     slug: string
     json: Base.JSONContent
-    user: UserEssential<unknown>
+    user: UserCompact<unknown>
     privilege: Base.Meta['privilege']
     dynamic: boolean
   }) {

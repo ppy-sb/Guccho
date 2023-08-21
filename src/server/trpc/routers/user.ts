@@ -66,7 +66,7 @@ export const router = _router({
       })
     )
     .query(async ({ input }) => {
-      const user = await userProvider.getEssential({ handle: input.handle })
+      const user = await userProvider.getCompact({ handle: input.handle })
 
       const { mode, ruleset, rankingSystem } = input
       if (
@@ -114,7 +114,7 @@ export const router = _router({
       })
     )
     .query(async ({ input }) => {
-      const user = await userProvider.getEssential({ handle: input.handle })
+      const user = await userProvider.getCompact({ handle: input.handle })
 
       const { mode, ruleset, rankingSystem } = input
       if (
@@ -159,7 +159,7 @@ export const router = _router({
       })
     )
     .query(async ({ input }) => {
-      const user = await userProvider.getEssential({ handle: input.handle })
+      const user = await userProvider.getCompact({ handle: input.handle })
 
       return mapId(user, UserProvider.idToString)
     }),
@@ -171,7 +171,7 @@ export const router = _router({
       })
     )
     .query(async ({ input: { handle, type } }) => {
-      const user = await userProvider.getEssential({ handle })
+      const user = await userProvider.getCompact({ handle })
 
       const count = await userRelationshipProvider.count({ user, type })
       return count

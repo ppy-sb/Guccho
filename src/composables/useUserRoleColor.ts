@@ -1,8 +1,8 @@
-import type { UserEssential } from '~/def/user'
+import type { UserCompact } from '~/def/user'
 import { UserPrivilege } from '~/def/user'
 
 // https://hypercolor.dev/
-export default function (user: UserEssential<unknown>) {
+export default function (user: UserCompact<unknown>) {
   const roles = user.roles
   const classNames = ['text-transparent bg-clip-text animate-text']
 

@@ -51,7 +51,7 @@ export interface Beatmapset<Source extends BeatmapSource, LocalId, ForeignId> {
     'list@2x'?: string
   }
 }
-export interface BeatmapEssential<Id, ForeignId = never> {
+export interface BeatmapCompact<Id, ForeignId = never> {
   id: Id
   foreignId: ForeignId
   properties: {
@@ -96,7 +96,7 @@ export type NormalBeatmapWithMeta<
   Status extends RankingStatus,
   LocalId,
   ForeignId,
-> = BeatmapEssential<
+> = BeatmapCompact<
   LocalId,
   Source extends Unknown ? never : ForeignId
 > & {

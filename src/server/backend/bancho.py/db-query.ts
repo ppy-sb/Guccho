@@ -1,10 +1,10 @@
 import type { Prisma } from 'prisma-client-bancho-py'
 import { BanchoPyPrivilege } from './enums'
-import type { DatabaseUserEssentialFields } from './transforms/user'
+import type { DatabaseUserCompactFields } from './transforms/user'
 import { stringToId, toBanchoMode } from './transforms'
 import type { OP, Tag } from '~/def/search'
 
-export const userEssentials: Prisma.UserFindManyArgs = {
+export const userCompacts: Prisma.UserFindManyArgs = {
   select: {
     id: true,
     name: true,
@@ -15,7 +15,7 @@ export const userEssentials: Prisma.UserFindManyArgs = {
     email: true,
   },
 } as const satisfies {
-  select: Record<DatabaseUserEssentialFields, true>
+  select: Record<DatabaseUserCompactFields, true>
 }
 
 export function createUserLikeQuery(keyword: string) {
