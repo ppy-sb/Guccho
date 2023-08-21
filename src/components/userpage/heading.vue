@@ -104,7 +104,7 @@ zh-CN:
         :style="`background-image: url(${page.user.avatarSrc}); background-position: center`"
         class="mask mask-squircle w-44 sm:w-56 md:w-72 lg:w-64 bg-cover aspect-square"
       />
-      <div class="absolute -top-10 -right-6 tooltip tooltip-primary tooltip-right" :data-tip="t('supporter', { server: cfg.title })">
+      <div v-if="page.user.roles.includes(UserPrivilege.Supporter)" class="absolute -top-10 -right-6 tooltip tooltip-primary tooltip-right" :data-tip="t('supporter', { server: cfg.title })">
         <icon name="twemoji:crown" class="w-20 h-20 rotate-[40deg]" />
       </div>
     </div>
