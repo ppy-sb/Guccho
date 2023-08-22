@@ -59,7 +59,7 @@ const {
     mode: selected.value.mode,
     ruleset: selected.value.ruleset,
     rankingSystem: selected.value.rankingSystem,
-    page: page.value - 1,
+    page: Math.max(page.value - 1, 0),
     pageSize: perPage,
   })
 })
