@@ -2,10 +2,10 @@ import { cpus } from 'node:os'
 import { memoryUsage } from 'node:process'
 import { currentLoad, mem } from 'systeminformation'
 
-import { ServiceStatus, status } from './@extends'
+import { Monitored } from './@extends'
 import * as services from '~/server/singleton/service'
 
-export class ServiceStatusProvider {
+export class MonitorProvider {
   static lastTime = process.hrtime()
   static lastUsage = process.cpuUsage()
   static interval = 2000
@@ -25,7 +25,7 @@ export class ServiceStatusProvider {
   }
 
   static async metrics() {
-    const [load, memory] = await Promise.all([ServiceStatusProvider.load(), ServiceStatusProvider.memory()])
+    const [load, memory] = await Promise.all([MonitorProvider.load(), MonitorProvider.memory()])
     return {
       load,
       memory,
@@ -36,7 +36,7 @@ export class ServiceStatusProvider {
     const load = await currentLoad()
     return {
       app: {
-        web: ServiceStatusProvider.processUsage,
+        web: MonitorProvider.processUsage,
       },
       system: {
         avg: load.avgLoad,
@@ -51,15 +51,15 @@ export class ServiceStatusProvider {
   }
 
   static collectLoad() {
-    const durationUsage = process.cpuUsage(ServiceStatusProvider.lastUsage)
-    const duration = process.hrtime(ServiceStatusProvider.lastTime)
+    const durationUsage = process.cpuUsage(MonitorProvider.lastUsage)
+    const duration = process.hrtime(MonitorProvider.lastTime)
 
-    ServiceStatusProvider.lastTime = process.hrtime()
-    ServiceStatusProvider.lastUsage = process.cpuUsage()
+    MonitorProvider.lastTime = process.hrtime()
+    MonitorProvider.lastUsage = process.cpuUsage()
 
-    const calc = (a: number, b: [number, number]) => ServiceStatusProvider.#calcPercentageLoad(a, b) / cpus().length
+    const calc = (a: number, b: [number, number]) => MonitorProvider.#calcPercentageLoad(a, b) / cpus().length
 
-    ServiceStatusProvider.processUsage = {
+    MonitorProvider.processUsage = {
       user: calc(durationUsage.user, duration) * 10000,
       system: calc(durationUsage.system, duration) * 10000,
       get current() {
@@ -87,9 +87,9 @@ export class ServiceStatusProvider {
     return memoryUsage()
   }
 
-  static async reportStatus() {
-    const ret = Object.fromEntries(Object.keys(services).map((key) => {
-      return [key, (services[key as keyof typeof services] as any)[status] || [ServiceStatus.Unknown]]
+  async reportStatus() {
+    const ret = Object.fromEntries(Object.keys(services).filter(key => (services[key as keyof typeof services] as any)[Monitored.status]).map((key) => {
+      return [key, (services[key as keyof typeof services] as Monitored)[Monitored.status]]
     }))
     return ret
   }
@@ -134,4 +134,4 @@ export class ServiceStatusProvider {
     }
   }
 }
-setInterval(ServiceStatusProvider.collectLoad, ServiceStatusProvider.interval)
+setInterval(MonitorProvider.collectLoad, MonitorProvider.interval)

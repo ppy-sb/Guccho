@@ -1,4 +1,5 @@
 import { match } from 'switch-pattern'
+import { Monitored } from '../@extends'
 import type { Session } from '.'
 import { logger } from '.'
 
@@ -6,7 +7,8 @@ export const sessionConfig = {
   expire: 1000 * 60 * 60 * 24, // 1D
 }
 
-export abstract class SessionStore<TSessionId extends string, TSession extends Session<string>> {
+export abstract class SessionStore<TSessionId extends string, TSession extends Session<string>> implements Monitored {
+  abstract [Monitored.status]: Monitored[typeof Monitored.status]
   abstract get(key: TSessionId): PromiseLike<TSession | undefined>
   abstract set(key: TSessionId, value: TSession): PromiseLike<TSessionId>
   abstract destroy(key: TSessionId): PromiseLike<boolean>
@@ -41,6 +43,8 @@ export abstract class HouseKeeperSession<TSessionId extends string, TSession ext
 
 export class MemorySessionStore<TSessionId extends string, TSession extends Session<string>> extends HouseKeeperSession<TSessionId, TSession> implements HouseKeeperSession<TSessionId, TSession> {
   private store: Map<TSessionId, TSession>
+
+  [Monitored.status]: Monitored[typeof Monitored.status] = [Monitored.Status.Up, 'Memory Session driver']
 
   constructor() {
     super()

@@ -1,3 +1,4 @@
+
 import type { LocaleMessageValue, VueMessageType } from '@nuxtjs/i18n/dist/runtime/composables'
 import type { Scope, UserPrivilege } from '~/def/user'
 import type { Rank } from '~/def'
@@ -41,5 +42,7 @@ export interface GlobalI18n extends Record<string, LocaleMessageValue<VueMessage
     string
   >
   global: Record<KGlobal, string>
+
+  service: Record<string, string>
 }
 

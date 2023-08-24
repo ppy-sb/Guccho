@@ -2,9 +2,9 @@ import {
   ArticleProvider,
   LogProvider,
   MapProvider,
+  MonitorProvider,
   RankProvider,
   ScoreProvider,
-  ServiceStatusProvider,
   SessionProvider,
   UserProvider,
   UserRelationProvider,
@@ -18,4 +18,4 @@ export const logs = new LogProvider()
 export const maps = new MapProvider()
 export const ranks = new RankProvider()
 export const scores = new ScoreProvider()
-export const serviceStatuses = new ServiceStatusProvider()
+export const serviceStatuses = new MonitorProvider()

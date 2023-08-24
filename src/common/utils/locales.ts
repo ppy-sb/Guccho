@@ -19,3 +19,7 @@ export function ruleset(ruleset: Ruleset) {
 export function rankingSystem(rs: Rank) {
   return `rank.${rs}`
 }
+
+export function service(srv: string) {
+  return `service.${srv}`
+}

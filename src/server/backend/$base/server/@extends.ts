@@ -10,14 +10,17 @@ export abstract class ScoreIdTransformable {
   static stringToScoreId: typeof stringToScoreId
 }
 
-export enum ServiceStatus {
-  Unknown,
-  Down,
-  Degraded,
-  Up,
+export namespace Monitored {
+  export enum Status {
+    Unknown,
+    Down,
+    Degraded,
+    Up,
+  }
+  export const status = Symbol('status')
+  export type Report = [Monitored.Status] | [Monitored.Status, string]
 }
-export const status = Symbol('status')
 
-export abstract class Status {
-  [status]: [ServiceStatus] | [ServiceStatus, string] = [ServiceStatus.Unknown, 'No metrics']
+export interface Monitored {
+  [Monitored.status]: Monitored.Report
 }

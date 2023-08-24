@@ -29,6 +29,7 @@ import type {
 } from '~/def/common'
 import type { RankProvider as Base } from '$base/server'
 import type { CountryCode } from '~/def/country-code'
+import { Monitored } from '$base/server/@extends'
 
 const logger = Logger.child({ label: 'leaderboard', backend: 'bancho.py' })
 
@@ -50,6 +51,7 @@ const leaderboardFields = {
 export class DatabaseRankProvider implements Base<Id> {
   static stringToId = stringToId
   static idToString = idToString
+
   db = getPrismaClient()
 
   config = config
@@ -235,10 +237,14 @@ export class DatabaseRankProvider implements Base<Id> {
   }
 }
 
-export class RedisRankProvider extends DatabaseRankProvider {
+export class RedisRankProvider extends DatabaseRankProvider implements Monitored {
   static RedisNoDataError = class RedisNoDataError extends Error { name = 'RedisNoDataError' }
 
   redisClient = redisClient()
+
+  get [Monitored.status](): Monitored[typeof Monitored.status] {
+    return this.redisClient?.isReady ? [Monitored.Status.Up, 'Providing Realtime data 🔥'] : [Monitored.Status.Degraded, 'Leaderboards may differ from real results.']
+  }
 
   async getPPv2LiveLeaderboard(
     banchoPyMode: number,

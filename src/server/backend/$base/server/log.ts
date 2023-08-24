@@ -1,17 +1,14 @@
 import { access } from 'node:fs/promises'
 import fs from 'node:fs'
 import winston from 'winston'
-import { ServiceStatus, Status, status } from './@extends'
+import { Monitored } from './@extends'
 import { observe } from '$base/logger'
 
-export class LogProvider extends Status {
+export class LogProvider implements Monitored {
   static combined = '.logs/combined.log'
-  static error = '.logs/error.log'
+  static error = '.logs/error.log';
 
-  constructor() {
-    super()
-    this[status] = [ServiceStatus.Up]
-  }
+  [Monitored.status]: Monitored[typeof Monitored.status] = [Monitored.Status.Up]
 
   async get(last: number) {
     try {
@@ -35,7 +32,7 @@ export class LogProvider extends Status {
         }[]>
     }
     catch (e) {
-      this.status = [ServiceStatus.Degraded]
+      this[Monitored.status] = [Monitored.Status.Degraded]
       throw e
     }
   }

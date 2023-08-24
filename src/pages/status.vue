@@ -2,7 +2,7 @@
 // @ts-expect-error we don't have to know
 import { JsonViewer } from 'vue3-json-viewer'
 import 'vue3-json-viewer/dist/index.css'
-import { ServiceStatus } from '../server/backend/$base/server/@extends'
+import { Monitored } from '$base/server/@extends'
 import { useSession } from '~/store/session'
 import { UserPrivilege } from '~/def/user'
 
@@ -94,8 +94,23 @@ zh-CN:
     <div class="text-xl">
       Services
     </div>
-    <div v-for="(service, key) in publicData" :key="key">
-      {{ key }}: {{ ServiceStatus[service[0]] }}{{ service[1] ? `, ${service[1]}` : '' }}
+    <div class="grid gap-2 grid-flow-row md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div
+        v-for="(service, key) in publicData"
+        :key="key"
+        class="bg-gray-100 flex-grow text-black border-l-8 rounded-md px-3 py-2 w-full"
+        :class="{
+          'border-green-500': service[0] === Monitored.Status.Up,
+          'border-orange-500': service[0] === Monitored.Status.Degraded,
+          'border-red-500': service[0] === Monitored.Status.Down,
+          'border-gray-200': service[0] === Monitored.Status.Unknown,
+        }"
+      >
+        {{ t(localeKey.service(key as string)) }}
+        <div class="text-gray-500 font-thin text-sm pt-1">
+          <span>{{ service[1] }}</span>
+        </div>
+      </div>
     </div>
   </div>
   <div v-if="adminData?.metrics" class="container mx-auto custom-container font-mono">
@@ -225,3 +240,4 @@ zh-CN:
   }
 }
 </style>
+$base/server/@traits

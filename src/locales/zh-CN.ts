@@ -64,4 +64,9 @@ export default {
     [Scope.Friends]: '仅好友',
     [Scope.Public]: '公开',
   },
+  service: {
+    logs: '日志系统',
+    ranks: '排名系统',
+    sessions: '网站登录',
+  },
 } satisfies GlobalI18n as GlobalI18n

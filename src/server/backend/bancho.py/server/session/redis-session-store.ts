@@ -7,9 +7,14 @@ import { match } from 'switch-pattern'
 import { client as getRedis } from '../source/redis'
 import type { Session } from '$base/server/session'
 import { SessionStore, sessionConfig } from '$base/server/session/session-store'
+import { Monitored } from '$base/server/@extends'
 
 type Key = string & { __brand: 'key' }
 export class RedisSessionStore<TDoc extends Document & Session<any>> extends SessionStore<string, TDoc> implements SessionStore<string, TDoc> {
+  get [Monitored.status](): Monitored[typeof Monitored.status] {
+    return this.#redis?.isReady ? [Monitored.Status.Up] : [Monitored.Status.Down, 'failed to connect to session server']
+  }
+
   static REDIS_SESSION_PREFIX = 'session:guccho:'
   #redis: ReturnType<typeof createClient>
 

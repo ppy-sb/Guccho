@@ -72,4 +72,9 @@ export default {
     [Scope.Friends]: 'Friends',
     [Scope.Public]: 'Everyone',
   },
+  service: {
+    logs: 'Logs',
+    ranks: 'Leaderboard',
+    sessions: 'Web Login',
+  },
 } satisfies GlobalI18n as GlobalI18n

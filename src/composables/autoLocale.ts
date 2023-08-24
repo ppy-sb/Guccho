@@ -1,4 +1,4 @@
-import { IntlPicker } from '~/server/backend/$base/intl-picker'
+import { IntlPicker } from '$base/intl-picker'
 import { useClientDynamicSettings } from '~/store/dynamic-settings'
 
 export function autoLocale(meta: {
