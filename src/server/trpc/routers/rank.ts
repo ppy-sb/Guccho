@@ -8,12 +8,11 @@ import {
 } from '../shapes'
 import { router as _router, publicProcedure } from '../trpc'
 
+import { ranks } from '~/server/singleton/service'
 import type { RankProvider as Base } from '$base/server/rank'
 import { RankProvider } from '$active/server'
 import { hasRuleset } from '$active'
 import type { ActiveMode } from '~/def/common'
-
-const rank = new RankProvider()
 
 export const router = _router({
   countLeaderboard: publicProcedure
@@ -25,7 +24,7 @@ export const router = _router({
       })
     )
     .query(({ input }) => {
-      return rank.countLeaderboard(input as typeof input & Base.BaseQuery<ActiveMode>)
+      return ranks.countLeaderboard(input as typeof input & Base.BaseQuery<ActiveMode>)
     }),
   leaderboard: publicProcedure
     .input(
@@ -43,7 +42,7 @@ export const router = _router({
         if (!hasRuleset(mode, ruleset)) {
           return []
         }
-        const result = await rank.leaderboard({
+        const result = await ranks.leaderboard({
           mode,
           ruleset,
           rankingSystem,
@@ -71,7 +70,7 @@ export const router = _router({
       async ({
         input: { mode, ruleset, rankingSystem, page, pageSize, md5 },
       }) => {
-        const result = await rank.beatmap({
+        const result = await ranks.beatmap({
           mode,
           ruleset,
           rankingSystem,
@@ -100,7 +99,7 @@ export const router = _router({
       async ({
         input: { mode, ruleset, rankingSystem, page, pageSize, md5 },
       }) => {
-        const result = await rank.beatmap({
+        const result = await ranks.beatmap({
           mode,
           ruleset,
           rankingSystem,

@@ -11,14 +11,13 @@ import {
 import { sessionProcedure as pSession } from '../middleware/session'
 import { zodHandle } from '../shapes'
 import { router as _router } from '../trpc'
-import { Logger } from '$base/log'
-import { SessionProvider, UserProvider } from '$active/server'
+import { sessions, users } from '~/server/singleton/service'
+import { Logger } from '$base/logger'
+import { UserProvider } from '$active/server'
 import { Scope } from '~/def/user'
 
 const logger = Logger.child({ label: 'session', backend: 'transport', transport: 'trpc' })
 
-const userProvider = new UserProvider()
-const sessionProvider = new SessionProvider()
 export const router = _router({
   login: pSession
     .input(
@@ -29,7 +28,7 @@ export const router = _router({
     )
     .query(async ({ input: { handle, md5HashedPassword }, ctx }) => {
       try {
-        const user = await userProvider.getCompact({
+        const user = await users.getCompact({
           handle,
           scope: Scope.Self,
         })
@@ -47,7 +46,7 @@ export const router = _router({
             message: unableToRetrieveSession,
           })
         }
-        const newSessionId = await sessionProvider.update(ctx.session.id, { userId: UserProvider.idToString(user.id) })
+        const newSessionId = await sessions.update(ctx.session.id, { userId: UserProvider.idToString(user.id) })
         if (newSessionId && newSessionId !== ctx.session.id) {
           setCookie(ctx.h3Event, 'session', newSessionId, { httpOnly: true })
         }
@@ -80,7 +79,7 @@ export const router = _router({
       }
       if (session.userId) {
         try {
-          const user = await userProvider.getCompactById({
+          const user = await users.getCompactById({
             id: UserProvider.stringToId(session.userId),
           })
           return {
@@ -99,6 +98,6 @@ export const router = _router({
     }),
   destroy: pSession.mutation(({ ctx }) => {
     deleteCookie(ctx.h3Event, 'session')
-    return sessionProvider.destroy(ctx.session.id)
+    return sessions.destroy(ctx.session.id)
   }),
 })

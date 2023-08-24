@@ -1,31 +1,43 @@
 import { access } from 'node:fs/promises'
 import fs from 'node:fs'
 import winston from 'winston'
-import { observe } from '$base/log'
+import { ServiceStatus, Status, status } from './@extends'
+import { observe } from '$base/logger'
 
-export class LogProvider {
+export class LogProvider extends Status {
   static combined = '.logs/combined.log'
   static error = '.logs/error.log'
 
+  constructor() {
+    super()
+    this[status] = [ServiceStatus.Up]
+  }
+
   async get(last: number) {
-    await access(LogProvider.combined, fs.constants.R_OK)
-    return readLastNLinesFromFile(LogProvider.combined, last)
-      .then(lines => lines.map((line) => {
-        if (!line.trim()) {
-          return undefined
-        }
-        const v = JSON.parse(line)
-        v.timestamp = new Date(v.timestamp)
-        return v
-      }).filter(TSFilter)) as Promise<{
-        [x: string]: unknown
-        level: string
-        label: string
-        backend?: string
-        timestamp: Date
-        message?: string
-        fix?: string
-      }[]>
+    try {
+      await access(LogProvider.combined, fs.constants.R_OK)
+      return readLastNLinesFromFile(LogProvider.combined, last)
+        .then(lines => lines.map((line) => {
+          if (!line.trim()) {
+            return undefined
+          }
+          const v = JSON.parse(line)
+          v.timestamp = new Date(v.timestamp)
+          return v
+        }).filter(TSFilter)) as Promise<{
+          [x: string]: unknown
+          level: string
+          label: string
+          backend?: string
+          timestamp: Date
+          message?: string
+          fix?: string
+        }[]>
+    }
+    catch (e) {
+      this.status = [ServiceStatus.Degraded]
+      throw e
+    }
   }
 }
 const sharedBaseCfg = {

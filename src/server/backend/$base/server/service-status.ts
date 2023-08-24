@@ -1,5 +1,9 @@
 import { cpus } from 'node:os'
+import { memoryUsage } from 'node:process'
 import { currentLoad, mem } from 'systeminformation'
+
+import { ServiceStatus, status } from './@extends'
+import * as services from '~/server/singleton/service'
 
 export class ServiceStatusProvider {
   static lastTime = process.hrtime()
@@ -20,7 +24,7 @@ export class ServiceStatusProvider {
     return 100 * (usage / (time[0] * 1e9 + time[1]))
   }
 
-  static async public() {
+  static async metrics() {
     const [load, memory] = await Promise.all([ServiceStatusProvider.load(), ServiceStatusProvider.memory()])
     return {
       load,
@@ -42,13 +46,6 @@ export class ServiceStatusProvider {
         idle: load.currentLoadIdle,
         // Lower priority
         nice: load.currentLoadNice,
-        // cores: load.cpus.map(core => ({
-        //   current: core.load,
-        //   user: core.loadUser,
-        //   system: core.loadSystem,
-        //   // Lower priority
-        //   nice: core.loadNice,
-        // })),
       },
     }
   }
@@ -86,8 +83,15 @@ export class ServiceStatusProvider {
     }
   }
 
-  async ready() {
-    return false
+  static async server() {
+    return memoryUsage()
+  }
+
+  static async reportStatus() {
+    const ret = Object.fromEntries(Object.keys(services).map((key) => {
+      return [key, (services[key as keyof typeof services] as any)[status] || [ServiceStatus.Unknown]]
+    }))
+    return ret
   }
 
   static async config() {

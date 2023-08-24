@@ -1,4 +1,4 @@
-import type { idTransformable } from './@extends'
+import type { IdTransformable } from './@extends'
 import type {
   ActiveMode,
   ActiveRuleset,
@@ -28,7 +28,7 @@ export namespace RankProvider {
   }
 }
 
-export interface RankProvider<Id> extends idTransformable {
+export interface RankProvider<Id> extends IdTransformable {
   leaderboard(
     query: RankProvider.BaseQuery & RankProvider.Pagination & {
       rankingSystem: LeaderboardRankingSystem

@@ -1,7 +1,7 @@
 import { v4 } from 'uuid'
 import type { SessionStore } from './session-store'
 import { MemorySessionStore } from './session-store'
-import { Logger } from '$base/log'
+import { Logger } from '$base/logger'
 import type { Client, OS } from '~/def/device'
 
 export const logger = Logger.child({ label: 'session' })

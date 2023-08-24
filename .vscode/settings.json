@@ -11,6 +11,7 @@
     "beatmapset",
     "beatmapsets",
     "BSON",
+    "buffcache",
     "colour",
     "composables",
     "daisyui",

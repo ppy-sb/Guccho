@@ -3,16 +3,16 @@ import { router as _router } from '../trpc'
 import { adminProcedure } from '../middleware/admin'
 import { optionalUserProcedure } from '../middleware/optional-user'
 import { userProcedure } from '../middleware/user'
+import { articles } from '~/server/singleton/service'
 import { ArticleProvider } from '$active/server'
 
-const sp = new ArticleProvider()
 export const router = _router({
-  get: userProcedure.input(string().trim()).query(({ input, ctx }) => sp.get({ slug: input, user: ctx.user })),
+  get: userProcedure.input(string().trim()).query(({ input, ctx }) => articles.get({ slug: input, user: ctx.user })),
   getRendered: optionalUserProcedure.input(union([string().trim(), array(string().trim())])).query(async ({ input, ctx }) => {
     if (Array.isArray(input)) {
       input = input.join('/')
     }
-    const r = await sp.get({ slug: input, fallback: true, user: ctx.user })
+    const r = await articles.get({ slug: input, fallback: true, user: ctx.user })
     if (!r) {
       const notFound = ArticleProvider.fallbacks.get('404')
       if (!notFound) {
@@ -44,11 +44,11 @@ export const router = _router({
       write: array(ArticleProvider.writeAccess),
     }),
     dynamic: boolean(),
-  })).mutation(({ input, ctx }) => sp.save(Object.assign(input, { user: ctx.user }))),
+  })).mutation(({ input, ctx }) => articles.save(Object.assign(input, { user: ctx.user }))),
 
   delete: adminProcedure.input(object({
     slug: string().trim(),
-  })).mutation(({ input, ctx }) => sp.delete(Object.assign(input, { user: ctx.user }))),
+  })).mutation(({ input, ctx }) => articles.delete(Object.assign(input, { user: ctx.user }))),
 
   localSlugs: adminProcedure.input(string().trim().optional()).query(({ input }) => ArticleProvider.getLocalSlugs(input)),
 })

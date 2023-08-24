@@ -11,20 +11,17 @@ import {
 } from '../messages'
 import { zodHandle, zodRelationType, zodTipTapJSONContent } from '../shapes'
 import { router as _router } from '../trpc'
+import { sessions, userRelations, users } from '~/server/singleton/service'
 import { extractLocationSettings, extractSettingValidators } from '$base/@define-setting'
 import { settings } from '$active/dynamic-settings'
 import { userProcedure as pUser } from '~/server/trpc/middleware/user'
-import { SessionProvider, UserProvider, UserRelationProvider } from '$active/server'
+import { UserProvider, UserRelationProvider } from '$active/server'
 import { CountryCode } from '~/def/country-code'
 import { DynamicSettingStore, Scope } from '~/def/user'
 
 const { compare } = bcrypt
 
-const users = new UserProvider()
-const relations = new UserRelationProvider()
-
 // const verifiedEmail = new Map<string, Set<string>>()
-const session = new SessionProvider()
 export const router = _router({
   settings: pUser.query(async ({ ctx }) => {
     return await users.getFullWithSettings({
@@ -144,8 +141,8 @@ export const router = _router({
       }
 
       const [fromRelationship, targetRelationship] = await Promise.all([
-        relations.getOne(fromUser, targetUser),
-        relations.getOne(targetUser, fromUser),
+        userRelations.getOne(fromUser, targetUser),
+        userRelations.getOne(targetUser, fromUser),
       ])
       return {
         self: [fromRelationship],
@@ -161,7 +158,7 @@ export const router = _router({
     }),
 
   relations: pUser.query(async ({ ctx }) => {
-    return (await relations.get({ user: ctx.user })).map(f => mapId(f, UserRelationProvider.idToString))
+    return (await userRelations.get({ user: ctx.user })).map(f => mapId(f, UserRelationProvider.idToString))
   }),
 
   removeOneRelation: pUser
@@ -183,7 +180,7 @@ export const router = _router({
         })
       }
       try {
-        await relations.removeOne({
+        await userRelations.removeOne({
           fromUser,
           targetUser,
           type: input.type,
@@ -220,7 +217,7 @@ export const router = _router({
         })
       }
       try {
-        await relations.createOneRelationship({
+        await userRelations.createOneRelationship({
           fromUser,
           targetUser,
           type: input.type,
@@ -239,7 +236,7 @@ export const router = _router({
 
   sessions: pUser.query(async ({ ctx }) => {
     const search = { userId: UserProvider.idToString(ctx.user.id) }
-    const results = await session.store.findAll(search)
+    const results = await sessions.store.findAll(search)
 
     type TRes = typeof results
     type TV = TRes[keyof TRes] & { current?: true }
@@ -256,7 +253,7 @@ export const router = _router({
   kickSession: pUser.input(z.object({
     session: z.string(),
   })).mutation(async ({ input, ctx }) => {
-    const target = await session.get(input.session)
+    const target = await sessions.get(input.session)
     if (!target) {
       throw new Error('not your session')
     }
@@ -264,6 +261,6 @@ export const router = _router({
     if (self?.userId !== target.userId) {
       throw new Error('not your session')
     }
-    return await session.destroy(input.session)
+    return await sessions.destroy(input.session)
   }),
 })

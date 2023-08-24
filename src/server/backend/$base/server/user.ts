@@ -1,6 +1,6 @@
 import type { JSONContent } from '@tiptap/core'
 import type { ExtractLocationSettings, ExtractSettingType } from '../@define-setting'
-import { idTransformable } from './@extends'
+import { IdTransformable } from './@extends'
 import type { BeatmapSource, RankingStatus } from '~/def/beatmap'
 import type {
   ActiveMode,
@@ -38,7 +38,7 @@ export namespace UserProvider {
     rankingStatus: RankingStatus[]
   }
 }
-export abstract class UserProvider<Id> extends idTransformable {
+export abstract class UserProvider<Id> extends IdTransformable {
   abstract exists({ handle, keys }: UserProvider.OptType): PromiseLike<boolean>
 
   abstract getCompact<_Scope extends Scope>(

@@ -1,9 +1,9 @@
 import { string, z } from 'zod'
 
 import { router as _router, publicProcedure as p } from '../trpc'
+import { maps } from '~/server/singleton/service'
 import { MapProvider } from '$active/server'
 
-const map = new MapProvider()
 export const router = _router({
   beatmapset: p
     .input(
@@ -12,7 +12,7 @@ export const router = _router({
       })
     )
     .query(async ({ input }) => {
-      const bs = await map.getBeatmapset({ id: MapProvider.stringToId(input.id) })
+      const bs = await maps.getBeatmapset({ id: MapProvider.stringToId(input.id) })
       const returnValue = {
         ...mapId(bs, MapProvider.idToString, ['id', 'foreignId']),
         beatmaps: bs.beatmaps.map(bm => mapId(bm, MapProvider.idToString, ['id', 'foreignId'])),
@@ -20,7 +20,7 @@ export const router = _router({
       return returnValue
     }),
   beatmap: p.input(string().trim()).query(async ({ input }) => {
-    const bm = await map.getBeatmap(input)
+    const bm = await maps.getBeatmap(input)
     return mapId(bm, MapProvider.idToString, ['id', 'foreignId'])
   }),
 })

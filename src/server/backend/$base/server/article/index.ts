@@ -13,7 +13,7 @@ import { config as getConfig } from '../../env'
 import { latest, paths, v0, versions } from './v'
 import type { UserCompact, UserPrivilege } from '~/def/user'
 import useEditorExtensions from '~/composables/useEditorExtensionsServer'
-import { Logger } from '$base/log'
+import { Logger } from '$base/logger'
 
 const logger = Logger.child({ label: 'article' })
 

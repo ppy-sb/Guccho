@@ -1,11 +1,9 @@
 import { z } from 'zod'
 import { router as _router, publicProcedure as p } from '../trpc'
 import { zodSearchBeatmap } from '../shapes'
+import { maps, users } from '~/server/singleton/service'
 
 import { MapProvider, UserProvider } from '$active/server'
-
-const map = new MapProvider()
-const user = new UserProvider()
 
 export const router = _router({
   searchUser: p
@@ -16,12 +14,12 @@ export const router = _router({
       })
     )
     .query(async ({ input: { keyword, limit } }) => {
-      const users = await user.search({
+      const results = await users.search({
         keyword,
         limit,
       })
 
-      return users.map(u => mapId(u, UserProvider.idToString))
+      return results.map(u => mapId(u, UserProvider.idToString))
     }),
   searchBeatmap: p
     .input(
@@ -32,7 +30,7 @@ export const router = _router({
       })
     )
     .query(async ({ input: { keyword, limit, filters } }) => {
-      const beatmaps = await map.searchBeatmap({
+      const beatmaps = await maps.searchBeatmap({
         keyword,
         limit,
         filters,
@@ -49,7 +47,7 @@ export const router = _router({
       })
     )
     .query(async ({ input: { keyword, limit, filters } }) => {
-      const beatmapsets = await map.searchBeatmapset({
+      const beatmapsets = await maps.searchBeatmapset({
         keyword,
         limit,
         filters,

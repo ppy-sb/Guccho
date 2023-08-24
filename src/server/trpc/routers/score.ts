@@ -1,9 +1,9 @@
 import { string, z } from 'zod'
 import { router as _router, publicProcedure as p } from '../trpc'
 
+import { scores } from '~/server/singleton/service'
 import { ScoreProvider } from '$active/server'
 
-const s = new ScoreProvider()
 export const router = _router({
   id: p
     .input(
@@ -12,7 +12,7 @@ export const router = _router({
       })
     )
     .query(async ({ input }) => {
-      const score = await s.id(ScoreProvider.stringToScoreId(input.id))
+      const score = await scores.id(ScoreProvider.stringToScoreId(input.id))
 
       return {
         ...score,

@@ -1,4 +1,4 @@
-import type { idTransformable, scoreIdTransformable } from './@extends'
+import type { IdTransformable, ScoreIdTransformable } from './@extends'
 import type { ActiveMode, ActiveRuleset, PPRankingSystem } from '~/def/common'
 import type { RulesetScore } from '~/def/score'
 import type { UserCompact } from '~/def/user'
@@ -26,7 +26,7 @@ export namespace ScoreProvider {
 
 }
 
-export interface ScoreProvider<TScoreId, TId> extends idTransformable, scoreIdTransformable {
+export interface ScoreProvider<TScoreId, TId> extends IdTransformable, ScoreIdTransformable {
   id(id: TScoreId): PromiseLike<
     | (RulesetScore<TScoreId, TId, ActiveMode, ActiveRuleset, PPRankingSystem> & {
       user: UserCompact<TId>

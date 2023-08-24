@@ -15,14 +15,11 @@ import { router as _router, publicProcedure as p } from '../trpc'
 import { sessionProcedure } from '../middleware/session'
 import { optionalUserProcedure } from '../middleware/optional-user'
 import { userNotFound } from '../messages'
+import { sessions, userRelations, users } from '~/server/singleton/service'
 import { Scope, UserPrivilege } from '~/def/user'
 import { RankingStatus } from '~/def/beatmap'
 
-import { MapProvider, SessionProvider, UserProvider, UserRelationProvider } from '$active/server'
-
-const userProvider = new UserProvider()
-const userRelationshipProvider = new UserRelationProvider()
-const session = new SessionProvider()
+import { MapProvider, UserProvider } from '$active/server'
 
 export const router = _router({
   exists: p
@@ -32,7 +29,7 @@ export const router = _router({
       })
     )
     .query(async ({ input: { handle } }) => {
-      return userProvider.exists({ handle })
+      return users.exists({ handle })
     }),
   userpage: optionalUserProcedure
     .input(
@@ -41,7 +38,7 @@ export const router = _router({
       })
     )
     .query(async ({ input: { handle }, ctx }) => {
-      const user = await userProvider.getFull({
+      const user = await users.getFull({
         handle,
         excludes: { relationships: true, secrets: true, email: true },
         includeHidden: true,
@@ -66,7 +63,7 @@ export const router = _router({
       })
     )
     .query(async ({ input }) => {
-      const user = await userProvider.getCompact({ handle: input.handle })
+      const user = await users.getCompact({ handle: input.handle })
 
       const { mode, ruleset, rankingSystem } = input
       if (
@@ -79,7 +76,7 @@ export const router = _router({
         })
       }
 
-      const returnValue = await userProvider.getBests({
+      const returnValue = await users.getBests({
         id: user.id,
         mode,
         ruleset,
@@ -114,7 +111,7 @@ export const router = _router({
       })
     )
     .query(async ({ input }) => {
-      const user = await userProvider.getCompact({ handle: input.handle })
+      const user = await users.getCompact({ handle: input.handle })
 
       const { mode, ruleset, rankingSystem } = input
       if (
@@ -127,7 +124,7 @@ export const router = _router({
         })
       }
 
-      const returnValue = await userProvider.getTops({
+      const returnValue = await users.getTops({
         id: user.id,
         mode: input.mode,
         ruleset: input.ruleset,
@@ -159,7 +156,7 @@ export const router = _router({
       })
     )
     .query(async ({ input }) => {
-      const user = await userProvider.getCompact({ handle: input.handle })
+      const user = await users.getCompact({ handle: input.handle })
 
       return mapId(user, UserProvider.idToString)
     }),
@@ -171,16 +168,16 @@ export const router = _router({
       })
     )
     .query(async ({ input: { handle, type } }) => {
-      const user = await userProvider.getCompact({ handle })
+      const user = await users.getCompact({ handle })
 
-      const count = await userRelationshipProvider.count({ user, type })
+      const count = await userRelations.count({ user, type })
       return count
     }),
   status: p
     .input(object({
       id: string().trim(),
     })).query(async ({ input: { id } }) => {
-      return await userProvider.status({ id: UserProvider.stringToId(id) })
+      return await users.status({ id: UserProvider.stringToId(id) })
     }),
   register: sessionProcedure
     .input(object({
@@ -189,9 +186,9 @@ export const router = _router({
       email: string().trim().email(),
       passwordMd5: string().trim(),
     })).mutation(async ({ input, ctx }) => {
-      const user = await userProvider.register(input)
+      const user = await users.register(input)
       const sessionId = ctx.session.id
-      await session.update(sessionId, { userId: UserProvider.idToString(user.id) })
+      await sessions.update(sessionId, { userId: UserProvider.idToString(user.id) })
       return user
     }),
 })

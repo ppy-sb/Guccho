@@ -2,7 +2,7 @@ import { ok } from 'node:assert'
 import type { ZodType, z } from 'zod'
 import { ZodError } from 'zod'
 import { fromZodError } from 'zod-validation-error'
-import { Logger } from '$base/log'
+import { Logger } from '$base/logger'
 import type { validator } from '$active/env'
 
 const logger = Logger.child({ label: 'env' })

@@ -1,9 +1,9 @@
-import type { idTransformable } from './@extends'
+import type { IdTransformable } from './@extends'
 import type { Relationship } from '~/def'
 import type { UserCompact } from '~/def/user'
 import type { UserRelationship } from '~/def/user-relationship'
 
-export interface UserRelationProvider<Id> extends idTransformable {
+export interface UserRelationProvider<Id> extends IdTransformable {
   get(query: { user: { id: Id } }): PromiseLike<Array<UserCompact<Id> & UserRelationship>>
   getOne(
     fromUser: { id: Id },
