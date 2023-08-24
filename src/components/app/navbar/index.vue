@@ -154,7 +154,7 @@ function clearFocus() {
               <li>
                 <nuxt-link-locale :to="{ name: 'auth-logout' }" @click="clearFocus">
                   <icon name="majesticons:logout-half-circle-line" class="w-5 h-5" size="100%" />
-                  {{ t('global.logout') }}
+                  {{ $t('global.logout') }}
                 </nuxt-link-locale>
               </li>
             </template>
@@ -162,13 +162,13 @@ function clearFocus() {
               <li>
                 <nuxt-link-locale :to="{ name: 'auth-login' }" @click="clearFocus">
                   <icon name="majesticons:login-half-circle-line" class="w-5 h-5" size="100%" />
-                  {{ t('global.login') }}
+                  {{ $t('global.login') }}
                 </nuxt-link-locale>
               </li>
               <li>
                 <nuxt-link-locale :to="{ name: 'auth-register' }" @click="clearFocus">
                   <icon name="mingcute:signature-fill" class="w-5 h-5" size="100%" />
-                  {{ t('global.register') }}
+                  {{ $t('global.register') }}
                 </nuxt-link-locale>
               </li>
             </template>

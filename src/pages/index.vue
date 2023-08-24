@@ -48,13 +48,13 @@ zh-CN:
         </template>
         <template v-else>
           <t-nuxt-link-locale-button :to="{ name: 'auth-login' }" variant="primary">
-            {{ t('global.login') }}
+            {{ $t('global.login') }}
           </t-nuxt-link-locale-button>
           <t-nuxt-link-locale-button
             :to="{ name: 'auth-register' }"
             variant="secondary"
           >
-            {{ t('global.register') }}
+            {{ $t('global.register') }}
           </t-nuxt-link-locale-button>
         </template>
       </div>

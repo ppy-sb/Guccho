@@ -520,7 +520,7 @@ zh-CN:
         </div>
         <div class="lg:mr-4">
           <label class="label" for="session">
-            <span class="pl-3 label-text">{{ t('global.session') }}</span>
+            <span class="pl-3 label-text">{{ $t('global.session') }}</span>
           </label>
           <div id="session">
             <div class="overflow-x-auto">

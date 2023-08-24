@@ -119,7 +119,7 @@ zh-CN:
         <p class="flex gap-1">
           <span v-if="page.user.roles.includes(UserPrivilege.Verified)" class="flex items-center gap-1">
             <icon name="ic:round-verified" class="w-5 h-5" />
-            {{ t(localeKey.priv(UserPrivilege.Verified)) }}
+            {{ $t(localeKey.priv(UserPrivilege.Verified)) }}
           </span>
           <span v-if="page.user.roles.includes(UserPrivilege.Staff)" class="flex items-center gap-1">
             <icon name="healthicons:social-work" class="w-5 h-5" />

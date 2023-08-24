@@ -106,7 +106,7 @@ zh-CN:
           'border-gray-200': service[0] === Monitored.Status.Unknown,
         }"
       >
-        {{ t(localeKey.service(key as string)) }}
+        {{ $t(localeKey.service(key as string)) }}
         <div class="text-gray-500 font-thin text-sm pt-1">
           <span>{{ service[1] }}</span>
         </div>

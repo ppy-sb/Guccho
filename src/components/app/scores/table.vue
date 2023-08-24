@@ -32,20 +32,20 @@ zh-CN:
   <table class="table table-compact table-zebra">
     <thead>
       <tr>
-        <th>{{ t('global.player') }}</th>
+        <th>{{ $t('global.player') }}</th>
         <th class="text-right">
-          {{ t('global.rank') }}
+          {{ $t('global.rank') }}
         </th>
         <th class="text-right">
-          {{ t('global.mods') }}
+          {{ $t('global.mods') }}
         </th>
         <th class="text-right">
-          {{ t(localeKey.rankingSystem(Rank.Score)) }}
+          {{ $t(localeKey.rankingSystem(Rank.Score)) }}
         </th>
         <th v-if="rankingSystem !== Rank.Score" class="text-right">
-          {{ t(localeKey.rankingSystem(rankingSystem)) }}
+          {{ $t(localeKey.rankingSystem(rankingSystem)) }}
         </th>
-        <th>{{ t('global.played-at') }}</th>
+        <th>{{ $t('global.played-at') }}</th>
         <!-- <th class="text-center">
           Actions
         </th> -->

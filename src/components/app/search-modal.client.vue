@@ -154,7 +154,7 @@ const {
           v-if="Array.isArray(beatmapsets) && beatmapsets.length"
         >
           <div class="divider font-bold">
-            <span v-if="loading.beatmapsets" class="loading loading-spinner loading-lg" /> {{ t('global.beatmapsets') }}
+            <span v-if="loading.beatmapsets" class="loading loading-spinner loading-lg" /> {{ $t('global.beatmapsets') }}
           </div>
           <transition-group tag="ul" class="menu" name="left">
             <li
@@ -186,7 +186,7 @@ const {
         </template>
         <template v-if="Array.isArray(beatmaps) && beatmaps.length">
           <div class="divider font-bold">
-            <span v-if="loading.beatmaps" class="loading loading-spinner loading-lg" /> {{ t('global.beatmaps') }}
+            <span v-if="loading.beatmaps" class="loading loading-spinner loading-lg" /> {{ $t('global.beatmaps') }}
           </div>
           <transition-group tag="ul" class="menu truncate" name="left">
             <li
@@ -217,7 +217,7 @@ const {
         </template>
         <template v-if="Array.isArray(users) && users.length">
           <div class="divider font-bold">
-            <span v-if="loading.users" class="loading loading-spinner loading-lg" /> {{ t('global.users') }}
+            <span v-if="loading.users" class="loading loading-spinner loading-lg" /> {{ $t('global.users') }}
           </div>
           <transition-group tag="ul" class="menu" name="left">
             <li

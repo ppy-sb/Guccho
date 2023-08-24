@@ -11,10 +11,10 @@ if (session.loggedIn) {
 
 const route = useRoute()
 const config = useAppConfig()
-
+const app = useNuxtApp()
 const { t } = useI18n()
 useHead({
-  titleTemplate: `${t('global.login')} - ${config.title}`,
+  titleTemplate: `${app.$i18n.t('global.login')} - ${config.title}`,
 })
 
 definePageMeta({
@@ -87,7 +87,7 @@ zh-CN:
         <h2
           class="text-2xl pl-2 text-gbase-800 dark:text-gbase-50"
         >
-          {{ t('global.login') }}
+          {{ $t('global.login') }}
         </h2>
       </div>
       <form
@@ -132,13 +132,13 @@ zh-CN:
           <t-nuxt-link-locale-button
             to="/auth/register"
             variant="accent"
-            @mouseenter="registerButton = t('global.register')"
+            @mouseenter="registerButton = $t('global.register')"
             @mouseleave="registerButton = t('have-no-account')"
           >
             {{ registerButton }}
           </t-nuxt-link-locale-button>
           <button type="submit" class="btn btn-primary">
-            {{ t('global.login') }}
+            {{ $t('global.login') }}
           </button>
         </div>
       </form>

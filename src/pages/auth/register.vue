@@ -59,7 +59,7 @@ const validate: {
 }
 
 useHead({
-  titleTemplate: `${t('global.register')} - ${config.title}`,
+  titleTemplate: `${app.$i18n.t('global.register')} - ${config.title}`,
 })
 definePageMeta({
   layout: 'hero',
@@ -142,7 +142,7 @@ zh-CN:
         <h2
           class="text-2xl pl-3 text-gbase-800 dark:text-gbase-50"
         >
-          {{ t('global.register') }}
+          {{ $t('global.register') }}
         </h2>
       </div>
       <form
@@ -238,13 +238,13 @@ zh-CN:
           <t-nuxt-link-locale-button
             :to="{ name: 'auth-login' }"
             variant="secondary"
-            @mouseenter="loginButton = t('global.login')"
+            @mouseenter="loginButton = $t('global.login')"
             @mouseleave="loginButton = t('have-account')"
           >
             {{ loginButton }}
           </t-nuxt-link-locale-button>
           <button type="submit" class="btn btn-primary">
-            {{ t('global.register') }}
+            {{ $t('global.register') }}
           </button>
         </div>
       </form>

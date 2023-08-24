@@ -67,7 +67,7 @@ zh-CN:
         class="f-tab"
         :value="key"
       >
-        {{ t(localeKey.rankingSystem(key)) }}
+        {{ $t(localeKey.rankingSystem(key)) }}
       </t-tab>
 
       <div
@@ -88,7 +88,7 @@ zh-CN:
           >
             <li v-for="(_stats, key) of dropdown" :key="`user-tab-${key}`">
               <a class="z-50" @click="select(key)">{{
-                t(localeKey.rankingSystem(key))
+                $t(localeKey.rankingSystem(key))
               }}</a>
             </li>
           </ul>

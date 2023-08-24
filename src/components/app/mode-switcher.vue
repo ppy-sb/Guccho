@@ -18,7 +18,7 @@ const emit = defineEmits<{
 }>()
 
 const { hasLeaderboardRankingSystem, hasRuleset, supportedModes, supportedRulesets, supportedLeaderboardRankingSystems } = useAdapterConfig()
-const { t } = useI18n()
+useI18n()
 
 const [switcher, setSwitcher] = useLeaderboardSwitcher(
   toRaw(props.modelValue) || {}
@@ -62,7 +62,7 @@ watch(switcher, () => emitData())
         }"
         @click="setSwitcher({ ruleset })"
       >
-        {{ t(localeKey.ruleset(ruleset)) }}
+        {{ $t(localeKey.ruleset(ruleset)) }}
       </a>
     </div>
     <div
@@ -89,7 +89,7 @@ watch(switcher, () => emitData())
           }"
           @click="setSwitcher({ rankingSystem })"
         >
-          {{ t(localeKey.rankingSystem(rankingSystem)) }}
+          {{ $t(localeKey.rankingSystem(rankingSystem)) }}
         </a>
       </template>
     </div>

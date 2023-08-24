@@ -16,7 +16,7 @@ defineProps<{
 const { hasRankingSystem, hasRuleset } = useAdapterConfig()
 
 const scoreFmt = createScoreFormatter({ notation: undefined })
-const { t, locale } = useI18n()
+const { locale } = useI18n()
 </script>
 
 <i18n lang="yaml">
@@ -93,7 +93,7 @@ zh-CN:
       </template>
       <template v-else-if="rankingSystem === Rank.PPv2 && hasRuleset(score.mode, score.ruleset) && hasRankingSystem(score.mode, score.ruleset, Rank.PPv2)">
         <span class="text-5xl">{{ scoreFmt(score[Rank.PPv2].pp) }}</span>
-        <span class="text-3xl">{{ t('global.pp') }}</span>
+        <span class="text-3xl">{{ $t('global.pp') }}</span>
       </template>
     </div>
     <div class="p-8 text-8xl">

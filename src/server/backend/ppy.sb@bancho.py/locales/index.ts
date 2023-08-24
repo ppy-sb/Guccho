@@ -1,5 +1,5 @@
+import enGB from './en-GB'
 import zhCN from './zh-CN'
-import enGB from '$base/locales/en-GB'
 import { Lang } from '~/def'
 
 export const locales = {

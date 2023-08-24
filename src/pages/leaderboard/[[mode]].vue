@@ -7,7 +7,7 @@ const config = useAppConfig()
 
 const route = useRoute('leaderboard-mode')
 const router = useRouter()
-const app$ = useNuxtApp()
+const app = useNuxtApp()
 const { supportedModes, supportedRulesets } = useAdapterConfig()
 const { t } = useI18n()
 
@@ -42,7 +42,7 @@ const selected = shallowRef<Required<SwitcherPropType<LeaderboardRankingSystem>>
   ruleset,
   rankingSystem,
 })
-const { data: total, refresh: refreshCount } = await app$.$client.rank.countLeaderboard.useQuery(selected)
+const { data: total, refresh: refreshCount } = await app.$client.rank.countLeaderboard.useQuery(selected)
 
 const totalPages = computed(() => Math.min(Math.ceil(total.value / perPage), 5))
 
@@ -55,7 +55,7 @@ const {
 
   boundaryPage()
 
-  return app$.$client.rank.leaderboard.query({
+  return app.$client.rank.leaderboard.query({
     mode: selected.value.mode,
     ruleset: selected.value.ruleset,
     rankingSystem: selected.value.rankingSystem,
@@ -119,14 +119,14 @@ zh-CN:
     <header-simple-title-with-sub
       id="desc"
       class="container mx-auto custom-container !max-w-4xl"
-      :title="t('titles.leaderboard')"
+      :title="app.$i18n.t('titles.leaderboard')"
       :subtitle="
         selected.mode
           && selected.ruleset
           && selected.rankingSystem
-          && `${t(localeKey.mode(selected.mode))} - ${
-            t(localeKey.ruleset(selected.ruleset))
-          } | ${t(localeKey.rankingSystem(selected.rankingSystem))}`
+          && `${app.$i18n.t(localeKey.mode(selected.mode))} - ${
+            app.$i18n.t(localeKey.ruleset(selected.ruleset))
+          } | ${app.$i18n.t(localeKey.rankingSystem(selected.rankingSystem))}`
       "
     >
       <app-mode-switcher
@@ -158,14 +158,14 @@ zh-CN:
               <th>Player</th>
               <th class="px-4 font-semibold text-center">
                 {{
-                  t(localeKey.rankingSystem(selected.rankingSystem))
+                  $t(localeKey.rankingSystem(selected.rankingSystem))
                 }}
               </th>
               <th class="px-4 font-medium text-center">
-                {{ t('global.accuracy') }}
+                {{ $t('global.accuracy') }}
               </th>
               <th class="px-4 font-medium text-center">
-                {{ t('global.play-count') }}
+                {{ $t('global.play-count') }}
               </th>
             </tr>
           </thead>

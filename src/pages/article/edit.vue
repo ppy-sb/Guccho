@@ -7,7 +7,7 @@ import type { ArticleProvider } from '$base/server'
 definePageMeta({
   middleware: ['auth', 'admin'],
 })
-const app$ = useNuxtApp()
+const app = useNuxtApp()
 const { t } = useI18n()
 const importArticleFile = shallowRef<HTMLInputElement | null>(null)
 const editor = shallowRef<InstanceType<typeof ContentEditor> | null>(null)
@@ -32,21 +32,21 @@ const access = shallowRef<Record<'write' | 'read', boolean>>()
 
 const { data: content, refresh: refreshContent } = await useAsyncData(async () => {
   if (article.value.slug) {
-    return app$.$client.article.get.query(article.value.slug)
+    return app.$client.article.get.query(article.value.slug)
   }
   return undefined
 })
 
-const { data: articles, refresh: refreshTree } = app$.$client.article.localSlugs.useQuery()
+const { data: articles, refresh: refreshTree } = app.$client.article.localSlugs.useQuery()
 
 const privileges: Record<ArticleProvider.TWriteAccess, string> = {
-  staff: t(localeKey.priv(UserPrivilege.Staff)),
-  moderator: t(localeKey.priv(UserPrivilege.Moderator)),
-  beatmapNominator: t(localeKey.priv(UserPrivilege.BeatmapNominator)),
+  staff: app.$i18n.t(localeKey.priv(UserPrivilege.Staff)),
+  moderator: app.$i18n.t(localeKey.priv(UserPrivilege.Moderator)),
+  beatmapNominator: app.$i18n.t(localeKey.priv(UserPrivilege.BeatmapNominator)),
 }
 const readPrivileges: Record<ArticleProvider.TReadAccess, string> = {
   ...privileges,
-  [Scope.Public]: t(localeKey.scope(Scope.Public)),
+  [Scope.Public]: app.$i18n.t(localeKey.scope(Scope.Public)),
 }
 
 // Helper function to convert privilege object to select options
@@ -118,7 +118,7 @@ async function save() {
     return
   }
 
-  await app$.$client.article.save.mutate(article.value as Required<typeof article['value']>)
+  await app.$client.article.save.mutate(article.value as Required<typeof article['value']>)
 }
 
 // Delete article from server
@@ -133,7 +133,7 @@ async function del() {
     return
   }
 
-  await app$.$client.article.delete.mutate({
+  await app.$client.article.delete.mutate({
     slug: article.value.slug,
   })
 }

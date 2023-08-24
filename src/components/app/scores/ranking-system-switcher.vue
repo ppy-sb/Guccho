@@ -12,7 +12,7 @@ const emit = defineEmits<{
 }>()
 
 const { hasRankingSystem, hasRuleset, supportedRankingSystems: rankingSystems } = useAdapterConfig()
-const { t } = useI18n()
+useI18n()
 
 const show = computed(() =>
   rankingSystems.filter(
@@ -41,7 +41,7 @@ watch([() => props.mode, () => props.ruleset], () => {
       :value="rs"
       class="[--tab-border-color:transparent]"
     >
-      {{ t(localeKey.rankingSystem(rs)) }}
+      {{ $t(localeKey.rankingSystem(rs)) }}
     </t-tab>
   </t-tabs>
 </template>

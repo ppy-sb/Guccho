@@ -22,7 +22,7 @@ export const pages: {
   show?(keyword: string): boolean
 }[] = [
   {
-    render: () => <><icon name="majesticons:login-half-circle-line" class="w-5 h-5" size="100%" />{ useI18n().t('global.login') }</>,
+    render: () => <><icon name="majesticons:login-half-circle-line" class="w-5 h-5" size="100%" />{ useI18n({ useScope: 'global' }).t('global.login') }</>,
     route: {
       name: 'auth-login',
     },
@@ -30,7 +30,7 @@ export const pages: {
     show: notLoggedIn,
   },
   {
-    render: () => <><icon name="mingcute:signature-fill" class="w-5 h-5" size="100%" />{ useI18n().t('global.register') }</>,
+    render: () => <><icon name="mingcute:signature-fill" class="w-5 h-5" size="100%" />{ useI18n({ useScope: 'global' }).t('global.register') }</>,
     route: {
       name: 'auth-register',
     },
@@ -39,7 +39,7 @@ export const pages: {
   },
 
   {
-    render: () => <><icon name="material-symbols:admin-panel-settings-rounded" class="w-5 h-5" size="100%" />{ useI18n().t('titles.admin-panel') }</>,
+    render: () => <><icon name="material-symbols:admin-panel-settings-rounded" class="w-5 h-5" size="100%" />{ useI18n({ useScope: 'global' }).t('titles.admin-panel') }</>,
     route: {
       name: 'admin',
     },
@@ -55,7 +55,7 @@ export const pages: {
   //   show: admin,
   // },
   {
-    render: () => <><icon name="tabler:circles-relation" class="w-5 h-5" size="100%" />{ useI18n().t('titles.relations') }</>,
+    render: () => <><icon name="tabler:circles-relation" class="w-5 h-5" size="100%" />{ useI18n({ useScope: 'global' }).t('titles.relations') }</>,
     route: {
       name: 'me-relations',
     },
@@ -63,7 +63,7 @@ export const pages: {
     show: loggedIn,
   },
   {
-    render: () => <><icon name="solar:settings-bold" class="w-5 h-5" size="100%" />{ useI18n().t('titles.settings') }</>,
+    render: () => <><icon name="solar:settings-bold" class="w-5 h-5" size="100%" />{ useI18n({ useScope: 'global' }).t('titles.settings') }</>,
     route: {
       name: 'me-settings',
     },
@@ -71,7 +71,7 @@ export const pages: {
     show: loggedIn,
   },
   {
-    render: () => <><icon name="majesticons:logout-half-circle-line" class="w-5 h-5" size="100%" />{ useI18n().t('global.logout') }</>,
+    render: () => <><icon name="majesticons:logout-half-circle-line" class="w-5 h-5" size="100%" />{ useI18n({ useScope: 'global' }).t('global.logout') }</>,
     route: {
       name: 'auth-logout',
     },
