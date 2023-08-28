@@ -79,7 +79,7 @@ zh-CN:
 
 <template>
   <div class="score">
-    <div class="flex justify-between hover-floating">
+    <div class="flex justify-between hover-floating hover-download">
       <div class="flex min-w-0 gap-4">
         <div class="hidden md:block">
           <picture
@@ -120,7 +120,12 @@ zh-CN:
               }" class="truncate"
             >
               <div v-if="meta" class="flex gap-2 items-center">
-                <icon v-if="beatmap.status in rankingStatusIconMapping" :name="rankingStatusIconMapping[beatmap.status] as string" class="w-5 h-5 md:w-6 md:h-6 lg:w-6 lg:h-6" :aria-label="beatmap.status" />
+                <icon
+                  v-if="rankingStatusIconMapping[beatmap.status]"
+                  class="w-5 h-5 min-w-5 min-h-5 md:w-6 md:h-6"
+                  :name="rankingStatusIconMapping[beatmap.status]!"
+                  :aria-label="beatmap.status"
+                />
                 <span class=" text-sm truncate md:text-md lg:text-lg font-bold">
                   {{ meta.artist }} - {{ meta.title }}
                 </span>
@@ -145,7 +150,11 @@ zh-CN:
           </div>
         </div>
       </div>
-      <div class="flex gap-4">
+      <a class="flex gap-4 relative" :href="`/replay/${score.id}/download`">
+        <div data-download>
+          <span class="text-2xl text-primary-content">Replay</span>
+          <icon name="line-md:download-loop" class="w-8 h-8" />
+        </div>
         <div class="flex flex-col">
           <div class="flex items-center justify-end flex-grow text-lg md:text-xl lg:text-2xl">
             <template v-if="(ppRankingSystems).includes(props.rankingSystem as LeaderboardPPRankingSystem)">
@@ -194,10 +203,28 @@ zh-CN:
             {{ score.grade }}
           </div>
         </div>
-      </div>
+      </a>
     </div>
   </div>
 </template>
+
+<style scoped lang="postcss">
+.hover-download:hover,
+.hover-download:focus-within,
+.hover-download *:focus-within {
+  [data-download] {
+    @apply opacity-100;
+  }
+}
+[data-download] {
+  @apply transition-opacity opacity-0 bg-primary/60 backdrop-blur-lg rounded-2xl;
+  @apply absolute inset-0 p-2 -m-2;
+  @apply flex items-center justify-center
+}
+[data-download]:active {
+  @apply bg-primary-focus/60
+}
+</style>
 
 <style lang="scss">
 .score {
@@ -205,6 +232,6 @@ zh-CN:
 }
 
 .score + .score {
-  @apply border-t-2 border-gbase-300/50;
+  @apply border-t-2 border-gbase-500/20;
 }
 </style>

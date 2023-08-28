@@ -1,3 +1,4 @@
+import type { H3Event } from 'h3'
 import type { IdTransformable, ScoreIdTransformable } from './@extends'
 import type { ActiveMode, ActiveRuleset, PPRankingSystem } from '~/def/common'
 import type { RulesetScore } from '~/def/score'
@@ -42,5 +43,7 @@ export interface ScoreProvider<TScoreId, TId> extends IdTransformable, ScoreIdTr
       user: UserCompact<TId>
     })[]
   >
+
+  downloadReplay(id: bigint, ev: H3Event): Promise<void>
 
 }

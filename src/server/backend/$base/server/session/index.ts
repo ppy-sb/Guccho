@@ -6,7 +6,7 @@ import type { Client, OS } from '~/def/device'
 
 export const logger = Logger.child({ label: 'session' })
 
-export interface SessionBase<UserIdType = string> {
+export interface SessionBase<UserIdType = string> extends Record<string, unknown> {
   userId?: UserIdType
   lastSeen: Date
   OS: OS
