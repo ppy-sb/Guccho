@@ -8,24 +8,17 @@ export default defineEventHandler(async (event) => {
 })
 
 export async function sideEffect(event: H3Event) {
-  let cookie = getCookie(event, Constant.SessionLabel)
-
-  if (cookie) {
-    const refreshed = await sessions.refresh(cookie)
-    if (refreshed) {
-      setCookie(event, Constant.SessionLabel, refreshed, { httpOnly: true })
-    }
-    else {
-      cookie = undefined
-    }
-  }
+  const cookie = getCookie(event, Constant.SessionLabel)
 
   if (!cookie) {
-    cookie = await sessions.create(detectDevice(event))
-    setCookie(event, Constant.SessionLabel, cookie, { httpOnly: true })
+    return
   }
 
-  event.context.session = await sessions.get(cookie)
+  const refreshed = await sessions.refresh(cookie)
+  if (refreshed && refreshed !== cookie) {
+    setCookie(event, Constant.SessionLabel, refreshed, { httpOnly: true })
+    event.context.session = await sessions.get(cookie)
+  }
 }
 
 export function assertHaveSession(event: H3Event): asserts event is typeof event & { context: { session: Session } } {

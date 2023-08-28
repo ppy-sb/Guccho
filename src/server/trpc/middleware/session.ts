@@ -1,5 +1,4 @@
 import { TRPCError } from '@trpc/server'
-import { setCookie } from 'h3'
 import { publicProcedure } from '../trpc'
 
 import { unableToRefreshToken } from '../messages'

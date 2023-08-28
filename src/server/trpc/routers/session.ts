@@ -10,7 +10,7 @@ import {
 } from '../messages'
 import { sessionProcedure as pSession } from '../middleware/session'
 import { zodHandle } from '../shapes'
-import { router as _router } from '../trpc'
+import { router as _router, publicProcedure } from '../trpc'
 import { Constant } from '../../common/constants'
 import { sessions, users } from '~/server/singleton/service'
 import { Logger } from '$base/logger'
@@ -68,9 +68,15 @@ export const router = _router({
         })
       }
     }),
-  retrieve: pSession
+  retrieve: publicProcedure
     .query(async ({ ctx }) => {
-      const session = await ctx.session.getBinding()
+      if (!ctx.session.id) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: sessionNotFound,
+        })
+      }
+      const session = await sessions.get(ctx.session.id)
 
       if (!session) {
         throw new TRPCError({
