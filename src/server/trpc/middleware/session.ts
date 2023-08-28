@@ -4,9 +4,9 @@ import { publicProcedure } from '../trpc'
 
 import { unableToRefreshToken } from '../messages'
 
-import { SessionProvider } from '$active/server'
-
-const sessionProvider = new SessionProvider()
+import { haveSession } from '~/server/middleware/0.session'
+import { Constant } from '~/server/common/constants'
+import { sessions } from '~/server/singleton/service'
 
 const config = {
   httpOnly: true,
@@ -15,8 +15,8 @@ const config = {
 export const sessionProcedure = publicProcedure
   .use(async ({ ctx, next }) => {
     if (!ctx.session.id) {
-      const sessionId = await sessionProvider.create(detectDevice(ctx.h3Event))
-      setCookie(ctx.h3Event, 'session', sessionId, config)
+      const sessionId = await sessions.create(detectDevice(ctx.h3Event))
+      setCookie(ctx.h3Event, Constant.SessionLabel, sessionId, config)
       return await next({
         ctx: Object.assign(ctx, {
           session: {
@@ -25,37 +25,49 @@ export const sessionProcedure = publicProcedure
         }),
       })
     }
-    const session = await sessionProvider.get(ctx.session.id)
-    if (session == null) {
-      const sessionId = await sessionProvider.create(detectDevice(ctx.h3Event))
-      setCookie(ctx.h3Event, 'session', sessionId, config)
+
+    if (haveSession(ctx.h3Event)) {
       return await next({
         ctx: Object.assign(ctx, {
           session: {
-            id: sessionId,
+            id: ctx.session.id,
           },
         }),
       })
     }
     else {
-      const refreshed = await sessionProvider.refresh(ctx.session.id)
-      if (!refreshed) {
-        throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: unableToRefreshToken,
+      const session = await sessions.get(ctx.session.id)
+      if (session == null) {
+        const sessionId = await sessions.create(detectDevice(ctx.h3Event))
+        setCookie(ctx.h3Event, Constant.SessionLabel, sessionId, config)
+        return await next({
+          ctx: Object.assign(ctx, {
+            session: {
+              id: sessionId,
+            },
+          }),
         })
       }
-      if (refreshed !== ctx.session.id) {
-        setCookie(ctx.h3Event, 'session', refreshed, config)
-      }
+      else {
+        const refreshed = await sessions.refresh(ctx.session.id)
+        if (!refreshed) {
+          throw new TRPCError({
+            code: 'INTERNAL_SERVER_ERROR',
+            message: unableToRefreshToken,
+          })
+        }
+        if (refreshed !== ctx.session.id) {
+          setCookie(ctx.h3Event, Constant.SessionLabel, refreshed, config)
+        }
 
-      return await next({
-        ctx: Object.assign(ctx, {
-          session: {
-            id: refreshed,
-          },
-        }),
-      })
+        return await next({
+          ctx: Object.assign(ctx, {
+            session: {
+              id: refreshed,
+            },
+          }),
+        })
+      }
     }
   })
   .use(async ({ ctx, next }) => {
@@ -66,7 +78,7 @@ export const sessionProcedure = publicProcedure
             if (!ctx.session.id) {
               return undefined
             }
-            return (await sessionProvider.get(ctx.session.id)) as Awaited<ReturnType<typeof sessionProvider['get']>> & Partial<Additional>
+            return (await sessions.get(ctx.session.id)) as Awaited<ReturnType<typeof sessions['get']>> & Partial<Additional>
           },
         }),
       }),

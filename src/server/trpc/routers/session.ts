@@ -11,6 +11,7 @@ import {
 import { sessionProcedure as pSession } from '../middleware/session'
 import { zodHandle } from '../shapes'
 import { router as _router } from '../trpc'
+import { Constant } from '../../common/constants'
 import { sessions, users } from '~/server/singleton/service'
 import { Logger } from '$base/logger'
 import { UserProvider } from '$active/server'
@@ -48,7 +49,7 @@ export const router = _router({
         }
         const newSessionId = await sessions.update(ctx.session.id, { userId: UserProvider.idToString(user.id) })
         if (newSessionId && newSessionId !== ctx.session.id) {
-          setCookie(ctx.h3Event, 'session', newSessionId, { httpOnly: true })
+          setCookie(ctx.h3Event, Constant.SessionLabel, newSessionId, { httpOnly: true })
         }
         return {
           user: mapId(user, UserProvider.idToString),
@@ -97,7 +98,7 @@ export const router = _router({
       }
     }),
   destroy: pSession.mutation(({ ctx }) => {
-    deleteCookie(ctx.h3Event, 'session')
+    deleteCookie(ctx.h3Event, Constant.SessionLabel)
     return sessions.destroy(ctx.session.id)
   }),
 })
