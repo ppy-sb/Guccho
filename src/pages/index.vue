@@ -14,7 +14,7 @@ const { t } = useI18n()
 
 <i18n lang="yaml">
 en-GB:
-  to-userpage: to my profile
+  to-userpage: to profile
 
 zh-CN:
   to-userpage: 用户页面
@@ -28,7 +28,7 @@ zh-CN:
           {{ config.title }}
         </h1>
         <h2 class="font-semibold px-2 sm:px-0 h-sub text-md sm:text-left whitespace-pre-line">
-          {{ t('landing.content', { title: config.title }) }}
+          {{ $t('landing.content', { title: config.title }) }}
         </h2>
       </div>
       <div class="grid grid-cols-2 gap-2 justify-center">
@@ -43,7 +43,7 @@ zh-CN:
             {{ t('to-userpage') }}
           </t-nuxt-link-locale-button>
           <t-nuxt-link-locale-button :to="{ name: 'me-settings' }" variant="secondary">
-            {{ t('titles.settings').toLocaleLowerCase() }}
+            {{ $t('titles.settings').toLocaleLowerCase() }}
           </t-nuxt-link-locale-button>
         </template>
         <template v-else>
