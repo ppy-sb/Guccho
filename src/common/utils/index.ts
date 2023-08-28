@@ -6,6 +6,7 @@ export * from './map'
 export * from './level'
 export * as localeKey from './locales'
 export * from './privilege'
+export * from './enum'
 
 export function noop<T extends undefined | void = void>(): T
 export function noop(): void {}
@@ -48,4 +49,8 @@ export function toCountryCode(country: string): CountryCode | undefined {
 
 export function toCountryName(country: CountryCode): string {
   return reverseCountryCode[country]
+}
+
+export function raise<Cause extends string, Opt extends {}, E extends new(msg?: Cause, opts?: Opt) => Error>(Constructor: E, text?: Cause, opts?: Opt): never {
+  throw new Constructor(text, opts)
 }

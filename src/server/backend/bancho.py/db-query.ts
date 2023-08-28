@@ -1,5 +1,4 @@
 import type { Prisma } from 'prisma-client-bancho-py'
-import { BanchoPyPrivilege } from './enums'
 import type { DatabaseUserCompactFields } from './transforms/user'
 import { stringToId, toBanchoMode } from './transforms'
 import type { OP, Tag } from '~/def/search'
@@ -55,15 +54,13 @@ export function createUserLikeQuery(keyword: string) {
     },
   }
 }
-export function createUserQuery(
+export function createUserHandleWhereQuery(
   {
     handle,
     selectAgainst = ['id', 'name', 'safeName'],
-    privilege = BanchoPyPrivilege.Verified,
   }: {
     handle: string
     selectAgainst?: Array<'id' | 'name' | 'safeName' | 'email'>
-    privilege?: BanchoPyPrivilege
   }
 ) {
   let handleNum = +handle
@@ -72,39 +69,28 @@ export function createUserQuery(
   }
 
   return {
-    where: {
-      AND: [
-        {
-          OR: [
-            includes('safeName', selectAgainst)
-              ? {
-                  safeName: handle.startsWith('@') ? handle.slice(1) : handle,
-                }
-              : undefined,
-            includes('name', selectAgainst)
-              ? {
-                  name: handle,
-                }
-              : undefined,
-            includes('email', selectAgainst)
-              ? {
-                  email: handle,
-                }
-              : undefined,
-            includes('id', selectAgainst)
-              ? {
-                  id: handleNum,
-                }
-              : undefined,
-          ].filter(TSFilter),
-        },
-        {
-          priv: {
-            gte: privilege,
-          },
-        },
-      ],
-    },
+    OR: [
+      includes('safeName', selectAgainst)
+        ? {
+            safeName: handle.startsWith('@') ? handle.slice(1) : handle,
+          }
+        : undefined,
+      includes('name', selectAgainst)
+        ? {
+            name: handle,
+          }
+        : undefined,
+      includes('email', selectAgainst)
+        ? {
+            email: handle,
+          }
+        : undefined,
+      includes('id', selectAgainst)
+        ? {
+            id: handleNum,
+          }
+        : undefined,
+    ].filter(TSFilter),
   }
 }
 

@@ -15,6 +15,7 @@ import type { Id } from '..'
 import { hasRuleset } from '..'
 
 import { config as _config } from '../env'
+import { normal } from '../constants'
 import { RedisNotReadyError, client as redisClient } from './source/redis'
 import { getPrismaClient } from './source/prisma'
 
@@ -32,10 +33,6 @@ import type { CountryCode } from '~/def/country-code'
 import { Monitored } from '$base/server/@extends'
 
 const logger = Logger.child({ label: 'leaderboard', backend: 'bancho.py' })
-
-function raise<Cause extends string, Opt extends {}, E extends new(msg?: Cause, opts?: Opt) => Error>(Constructor: E, text?: Cause, opts?: Opt): never {
-  throw new Constructor(text, opts)
-}
 
 const config = _config()
 
@@ -78,7 +75,7 @@ export class DatabaseRankProvider implements Base<Id> {
         mode: toBanchoPyMode(mode, ruleset),
         user: {
           priv: {
-            gt: 2,
+            in: normal,
           },
         },
       },
@@ -126,7 +123,7 @@ export class DatabaseRankProvider implements Base<Id> {
         mode: toBanchoPyMode(mode, ruleset),
         user: {
           priv: {
-            gt: 2,
+            in: normal,
           },
         },
       },
@@ -181,7 +178,7 @@ export class DatabaseRankProvider implements Base<Id> {
         },
         user: {
           priv: {
-            gt: 2,
+            in: normal,
           },
         },
         mode: toBanchoPyMode(mode, ruleset),
@@ -224,7 +221,7 @@ export class DatabaseRankProvider implements Base<Id> {
         },
         user: {
           priv: {
-            gt: 2,
+            in: normal,
           },
         },
         mode: toBanchoPyMode(mode, ruleset),

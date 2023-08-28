@@ -7,7 +7,7 @@ import { glob } from 'glob'
 import imageType from 'image-type'
 import type { Prisma, Stat } from 'prisma-client-bancho-py'
 import { merge } from 'lodash-es'
-import { BanchoPyMode, BanchoPyPrivilege, BanchoPyScoreStatus } from '../enums'
+import { BanchoPyMode, BanchoPyScoreStatus } from '../enums'
 import {
   BPyMode,
   createRulesetData,
@@ -24,8 +24,8 @@ import {
 } from '../transforms'
 
 import {
+  createUserHandleWhereQuery,
   createUserLikeQuery,
-  createUserQuery,
   userCompacts,
 } from '../db-query'
 import type { Id } from '..'
@@ -34,6 +34,7 @@ import { getLiveUserStatus } from '../api-client'
 import { encryptBanchoPassword } from '../crypto'
 import { Logger } from '../log'
 import { config } from '../env'
+import { normal } from '../constants'
 import { client as redisClient } from './source/redis'
 import { getPrismaClient } from './source/prisma'
 import { UserRelationProvider } from './user-relations'
@@ -45,8 +46,8 @@ import { userNotFound } from '~/server/trpc/messages'
 import { UserProvider as Base } from '$base/server'
 import type { ActiveMode, ActiveRuleset, LeaderboardRankingSystem } from '~/def/common'
 
-import type { DynamicSettingStore, Scope, UserCompact, UserStatistic } from '~/def/user'
-import { UserStatus } from '~/def/user'
+import type { DynamicSettingStore, UserCompact, UserStatistic } from '~/def/user'
+import { Scope, UserStatus } from '~/def/user'
 import { Mode, Rank, Ruleset } from '~/def'
 import type { CountryCode } from '~/def/country-code'
 
@@ -109,12 +110,22 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
     keys,
   }: Base.OptType) {
     return (
-      (await this.db.user.count(createUserQuery({
-        handle,
-        selectAgainst: keys || ['id', 'name', 'safeName', 'email'],
-        privilege: BanchoPyPrivilege.Normal,
-      }))) > 0
-    )
+      await this.db.user.count({
+        where: {
+          AND: [
+            createUserHandleWhereQuery({
+              handle,
+              selectAgainst: keys || ['id', 'name', 'safeName', 'email'],
+            }),
+            {
+              priv: {
+                in: normal,
+              },
+            },
+          ],
+        },
+      })
+    ) > 0
   }
 
   async getCompactById<
@@ -137,11 +148,21 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
     const { handle, scope, keys } = opt
     /* optimized */
     const user = await this.db.user.findFirstOrThrow({
-      ...createUserQuery({
-        handle,
-        selectAgainst: keys || ['id', 'name', 'safeName', 'email'],
-        privilege: BanchoPyPrivilege.Normal,
-      }),
+
+      where: {
+        AND: [
+          createUserHandleWhereQuery({
+            handle,
+            selectAgainst: keys || ['id', 'name', 'safeName', 'email'],
+          }),
+          scope === Scope.Self
+            ? {}
+            : {
+                priv: {
+                  in: normal,
+                },
+              }],
+      },
       ...userCompacts,
     })
       .catch(() => {
@@ -305,7 +326,7 @@ WHERE s.userid = ${id}
     const baseQuery = {
       user: {
         priv: {
-          gt: 2,
+          in: normal,
         },
       },
     }
@@ -365,10 +386,16 @@ WHERE s.userid = ${id}
     if (!excludes) {
       excludes = {} as Excludes
     }
-    const user = await this.db.user.findFirstOrThrow(createUserQuery({
-      handle,
-      privilege: includeHidden ? BanchoPyPrivilege.Any : undefined,
-    }))
+    const user = await this.db.user.findFirstOrThrow({
+      where: {
+        AND: [
+          createUserHandleWhereQuery({
+            handle,
+          }),
+          includeHidden ? {} : { priv: { in: normal } },
+        ],
+      },
+    })
 
     const returnValue = await toFullUser(user, this.config) as NonNullable<Awaited<ReturnType<Base<Id>['getFull']>>>
     const parallels: PromiseLike<any>[] = []
@@ -521,7 +548,7 @@ WHERE s.userid = ${id}
     /* optimized */
     const result = await this.db.user.findMany({
       ...userCompacts,
-      ...merge(userLike, { where: { priv: { gt: 2 } } }),
+      ...merge(userLike, { where: { priv: { in: normal } } }),
       take: limit,
     })
 
@@ -533,7 +560,7 @@ WHERE s.userid = ${id}
     return await this.db.user.count({
       where: {
         priv: {
-          gte: 2,
+          in: normal,
         },
       },
     })

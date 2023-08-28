@@ -1,15 +1,15 @@
 import { TRPCError } from '@trpc/server'
 import type { Id } from '..'
 import { Logger } from '../log'
+import { normal } from '../../bancho.py/constants'
 import { getPrismaClient } from './prisma'
 
-import { BanchoPyPrivilege } from '~/server/backend/bancho.py/enums'
 import { ArticleProvider, UserProvider as BanchoPyUser } from '~/server/backend/bancho.py/server'
 import { fromCountryCode, toFullUser, toSafeName, toUserCompact } from '~/server/backend/bancho.py/transforms'
-import { createUserQuery } from '~/server/backend/bancho.py/db-query'
+import { createUserHandleWhereQuery } from '~/server/backend/bancho.py/db-query'
 
-import type { Scope, UserCompact, UserOldName } from '~/def/user'
-import { UserPrivilege, UserStatus } from '~/def/user'
+import type { UserCompact, UserOldName } from '~/def/user'
+import { Scope, UserPrivilege, UserStatus } from '~/def/user'
 
 import { type UserProvider as Base } from '$base/server'
 import type { CountryCode } from '~/def/country-code'
@@ -110,10 +110,16 @@ export class UserProvider extends BanchoPyUser implements Base<Id> {
   Excludes extends Partial<Record<keyof Base.ComposableProperties<Id>, boolean>>,
   _Scope extends Scope = Scope.Public,
   >({ handle, excludes, includeHidden, scope }: { handle: string; excludes?: Excludes; includeHidden?: boolean; scope?: _Scope }) {
-    const user = await this.sbDb.user.findFirstOrThrow(createUserQuery({
-      handle,
-      privilege: includeHidden ? BanchoPyPrivilege.Any : undefined,
-    }))
+    const user = await this.sbDb.user.findFirstOrThrow({
+      where: {
+        AND: [
+          createUserHandleWhereQuery({
+            handle,
+          }),
+          (includeHidden || scope === Scope.Self) ? {} : { priv: { in: normal } },
+        ],
+      },
+    })
 
     const fullUser = toFullUser(user, this.config)
     const profile = await this.sbDb.userpage.findFirst({

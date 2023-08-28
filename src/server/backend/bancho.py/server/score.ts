@@ -11,6 +11,7 @@ import {
 import type { Id } from '..'
 import type { AbleToTransformToScores } from '../transforms'
 import { config as _config } from '../env'
+import { normal } from '../constants'
 import { getPrismaClient } from './source/prisma'
 
 import type {
@@ -50,7 +51,7 @@ export class ScoreProvider implements Base<bigint, Id> {
         id,
         user: {
           priv: {
-            gt: 2,
+            in: normal,
           },
         },
       },
@@ -76,7 +77,7 @@ export class ScoreProvider implements Base<bigint, Id> {
         where: {
           user: {
             priv: {
-              gt: 2,
+              in: normal,
             },
             ...opt.user,
           },
@@ -102,7 +103,7 @@ export class ScoreProvider implements Base<bigint, Id> {
       where: {
         user: {
           priv: {
-            gt: 2,
+            in: normal,
           },
           ...opt.user,
         },
