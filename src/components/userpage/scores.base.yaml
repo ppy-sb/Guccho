@@ -1,2 +1,5 @@
 en-GB:
-  page: Page
+  page: Page {page}
+
+zh-CN:
+  page: 第 {page} 页

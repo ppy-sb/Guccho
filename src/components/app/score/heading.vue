@@ -26,14 +26,14 @@ en-GB:
   play: '{player} played at {time}'
 
 zh-CN:
-  title: "曲名\t{title}\n艺术家\t{artist}"
-  map: "难度\t{version}\n谱师\t{creator}"
+  title: "曲名\t\t\t{title}\n艺术家\t\t{artist}"
+  map: "难度\t\t\t{version}\n谱师\t\t\t{creator}"
   play: '{player} 于 {time} 留下了此成绩'
 </i18n>
 
 <template>
   <!-- TODO score design -->
-  <div v-if="beatmapIsVisible(score.beatmap)" class="whitespace-pre">
+  <div v-if="beatmapIsVisible(score.beatmap)" class="whitespace-pre-wrap">
     <i18n-t keypath="title" tag="p" class="font-light">
       <template #title>
         <span class="text-3xl font-semibold">
@@ -46,10 +46,6 @@ zh-CN:
           {{ autoLocale(score.beatmap.beatmapset.meta).artist }}
         </span>
       </template>
-
-      <!-- <template #separator>
-        <div class="divider divider-horizontal" />
-      </template> -->
     </i18n-t>
     <i18n-t keypath="map" tag="p" class="font-light">
       <template #version>
@@ -61,22 +57,22 @@ zh-CN:
       </template>
     </i18n-t>
 
-    <i18n-t keypath="play" tag="p" class="font-light">
+    <i18n-t keypath="play" tag="p" class="font-light pt-2">
       <template #player>
-        <span class="align-bottom">
-          <img class="mask mask-squircle inline align-bottom" width="30" :src="score.user.avatarSrc" alt="">
-          <nuxt-link-locale
-            :to="{
-              name: 'user-handle',
-              params: {
-                handle: `@${score.user.safeName}`,
-              },
-            }"
-            class="text-3xl font-normal underline decoration-sky-500"
-          >
+        <nuxt-link-locale
+          class="align-bottom inline-flex"
+          :to="{
+            name: 'user-handle',
+            params: {
+              handle: `@${score.user.safeName}`,
+            },
+          }"
+        >
+          <img class="mask mask-squircle inline align-bottom" width="30" :src="score.user.avatarSrc" alt="user avatar">
+          <div class="text-3xl font-normal underline decoration-sky-500">
             {{ score.user.name }}
-          </nuxt-link-locale>
-        </span>
+          </div>
+        </nuxt-link-locale>
       </template>
 
       <template #time>

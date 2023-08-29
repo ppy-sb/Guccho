@@ -229,7 +229,7 @@ zh-CN:
               «
             </button>
             <button class="btn btn-ghost grow" @click="() => refreshBP()">
-              {{ t('page') }} {{ bpPage + 1 }}
+              {{ t('page', { page: bpPage + 1 }) }}
             </button>
             <button
               class="btn btn-ghost"

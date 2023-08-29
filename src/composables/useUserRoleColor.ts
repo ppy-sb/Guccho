@@ -4,7 +4,7 @@ import { UserPrivilege } from '~/def/user'
 // https://hypercolor.dev/
 export default function (user: UserCompact<unknown>) {
   const roles = user.roles
-  const classNames = ['text-transparent bg-clip-text animate-text']
+  const classNames = ['text-transparent bg-clip-text animate-role-text']
 
   if (roles.includes(UserPrivilege.Owner)) {
     return [

@@ -6,7 +6,7 @@ import { Rank } from '~/def'
 
 const route = useRoute('score-id')
 
-const id = route.params.id.toString()
+const id = route.params.id
 
 const app$ = useNuxtApp()
 const data = await app$.$client.score.id.query({ id })
@@ -14,20 +14,7 @@ const data = await app$.$client.score.id.query({ id })
 
 <template>
   <div v-if="data" class="container custom-container mx-auto">
-    <!-- <t-modal>
-      <t-modal ref="changeAvatar" v-slot="{ closeModal }">
-        <t-modal v-if="data">
-        </t-modal>
-      </t-modal>
-    </t-modal> -->
-    <template v-if="data">
-      <app-score-heading :score="data" :ranking-system="Rank.PPv2" />
-      <!-- <div>
-        {{ data.score }}
-      </div> -->
-      <JsonViewer :value="data" class="rounded-lg" />
-    </template>
+    <app-score-heading :score="data" :ranking-system="Rank.PPv2" />
+    <JsonViewer :value="data" class="rounded-lg" />
   </div>
 </template>
-
-<style scoped></style>
