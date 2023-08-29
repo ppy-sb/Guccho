@@ -59,7 +59,10 @@ export const router = _router({
         ruleset: zodRuleset,
         rankingSystem: zodLeaderboardRankingSystem,
         page: number().gte(0).lt(10),
-        includes: array(zodRankingStatus).default([RankingStatus.Ranked, RankingStatus.Loved, RankingStatus.Approved]),
+        includes: array(zodRankingStatus).default([
+          RankingStatus.Ranked,
+          RankingStatus.Approved,
+        ]),
       })
     )
     .query(async ({ input }) => {
@@ -107,7 +110,10 @@ export const router = _router({
         ruleset: zodRuleset,
         rankingSystem: zodLeaderboardRankingSystem,
         page: number().gte(0).lt(10),
-        includes: array(zodRankingStatus).default([RankingStatus.Ranked, RankingStatus.Loved, RankingStatus.Approved]),
+        includes: array(zodRankingStatus).default([
+          RankingStatus.Ranked,
+          RankingStatus.Approved,
+        ]),
       })
     )
     .query(async ({ input }) => {
