@@ -112,6 +112,10 @@ en-GB:
 zh-CN:
   no-score: 该模式目前还没有人玩过。
   no-score-alt: 想要成为第一名吗? 冲吧!
+
+fr-FR:
+  no-score: Personne n'a joué ce mode encore.
+  no-score-alt: Vous voulez être le premier? Allez-y.
 </i18n>
 
 <template>
