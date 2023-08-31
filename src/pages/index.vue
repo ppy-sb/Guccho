@@ -18,6 +18,9 @@ en-GB:
 
 zh-CN:
   to-userpage: 用户页面
+
+fr-FR:
+  to-userpage: Vers le profil
 </i18n>
 
 <template>
