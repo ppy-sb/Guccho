@@ -15,6 +15,9 @@ en-GB:
 
 zh-CN:
   clear: 处理以下错误之后再重新尝试。
+
+fr-FR:
+  clear: Corrigez les erreurs et réessayez.
 </i18n>
 
 <template>
