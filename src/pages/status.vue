@@ -87,6 +87,21 @@ zh-CN:
   web-app-config: 网络应用配置
   npm-env: npm环境变量
   env: 环境变量
+
+fr-FR:
+  system-load: Charge Système
+  user: Utilisateur
+  system: Système
+  app-load: Charge Application
+  total: Total
+  other: Autre
+  memory: Mémoire
+  active: Actif
+  cache: Cache
+  free: Libre
+  web-app-config: Configuration Web App
+  npm-env: Environnement npm
+  env: Environnement
 </i18n>
 
 <template>
