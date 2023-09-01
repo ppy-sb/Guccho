@@ -1,20 +1,12 @@
+import enGB from './en-GB'
 import type { GlobalI18n } from './@types'
+import { Rank } from '~/def'
 import { Scope, UserPrivilege } from '~/def/user'
-import { Mode, Rank, Ruleset } from '~/def'
 
 export default {
-  mode: {
-    [Mode.Osu]: 'Osu',
-    [Mode.Taiko]: 'Taiko',
-    [Mode.Fruits]: 'CTB',
-    [Mode.Mania]: 'Mania',
-  },
-  ruleset: {
-    [Ruleset.Standard]: 'Standard',
-    [Ruleset.Relax]: 'Relax',
-    [Ruleset.Autopilot]: 'Autopilot',
-  },
-  rank: {
+  mode: enGB.mode,
+  ruleset: enGB.ruleset,
+ rank: {
     [Rank.PPv2]: 'Performance(v2)',
     [Rank.PPv1]: 'Performance(v1)',
     [Rank.RankedScore]: 'Score Classé',
@@ -25,9 +17,9 @@ export default {
     'leaderboard': 'Classement',
     'status': 'Statut',
     'settings': 'Paramètres',
-    'relations': 'Amis & bloqués',
+    'relations': 'Amis & Bloqués',
     'userpage': 'Mon Profil',
-    'admin-panel': 'Panneau Admin',
+    'admin-panel': 'Panneau Administrateur',
     'logs': 'Logs',
     'articles': 'Articles',
   },
