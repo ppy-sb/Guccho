@@ -10,6 +10,7 @@ import type {
 export enum Lang {
   enGB = 'en-GB',
   zhCN = 'zh-CN',
+  frFR = 'fr-FR',
 }
 
 export enum Relationship {
