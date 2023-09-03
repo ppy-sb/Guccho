@@ -89,6 +89,10 @@ export default defineNuxtConfig({
         name: 'English (International)',
       },
       {
+        code: Lang.frFR,
+        name: 'French (France)',
+      },
+      {
         code: Lang.zhCN,
         name: '简体中文 (中国)',
       },
