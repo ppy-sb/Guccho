@@ -4,7 +4,7 @@ export {
   UserRelationProvider,
   ScoreProvider,
   MapProvider,
-  MonitorProivider as MonitorProvider,
+  MonitorProvider as MonitorProvider,
   SessionProvider,
   LogProvider,
 } from '~/server/backend/bancho.py/server'
