@@ -17,8 +17,8 @@ export async function sideEffect(event: H3Event) {
   const refreshed = await sessions.refresh(cookie)
   if (refreshed && refreshed !== cookie) {
     setCookie(event, Constant.SessionLabel, refreshed, { httpOnly: true })
-    event.context.session = await sessions.get(cookie)
   }
+  event.context.session = await sessions.get(cookie)
 }
 
 export function assertHaveSession(event: H3Event): asserts event is typeof event & { context: { session: Session } } {

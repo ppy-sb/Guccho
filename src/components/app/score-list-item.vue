@@ -79,7 +79,7 @@ zh-CN:
 
 <template>
   <div class="score">
-    <div class="flex justify-between hover-floating hover-download">
+    <div class="flex justify-between hover-floating hover-button">
       <div class="flex min-w-0 gap-4">
         <div class="hidden md:block">
           <picture
@@ -150,10 +150,18 @@ zh-CN:
           </div>
         </div>
       </div>
-      <a class="flex gap-4 relative" :href="`/replay/${score.id}/download`">
-        <div data-download>
-          <span class="text-2xl text-primary-content">Replay</span>
-          <icon name="line-md:download-loop" class="w-8 h-8" />
+      <nuxt-link-locale
+        :to="{
+          name: 'score-id',
+          params: {
+            id: score.id,
+          },
+        }"
+        class="flex gap-4 relative"
+      >
+        <div hover-btn>
+          <span class="text-2xl text-primary-content">Detail</span>
+          <icon name="fa-solid:expand" class="pl-1 w-8 h-8" />
         </div>
         <div class="flex flex-col">
           <div class="flex items-center justify-end flex-grow text-lg md:text-xl lg:text-2xl">
@@ -203,25 +211,30 @@ zh-CN:
             {{ score.grade }}
           </div>
         </div>
-      </a>
+      </nuxt-link-locale>
     </div>
   </div>
 </template>
 
 <style scoped lang="postcss">
-.hover-download:hover,
-.hover-download:focus-within,
-.hover-download *:focus-within {
-  [data-download] {
+/* .hover-button:hover,
+.hover-button:focus-within, */
+.hover-button *:focus-within {
+  [hover-btn] {
     @apply opacity-100;
   }
 }
-[data-download] {
+
+[hover-btn] {
   @apply transition-opacity opacity-0 bg-primary/60 backdrop-blur-lg rounded-2xl;
   @apply absolute inset-0 p-2 -m-2;
-  @apply flex items-center justify-center
+  @apply flex items-center justify-center;
+
+  &:hover {
+    @apply opacity-100;
+  }
 }
-[data-download]:active {
+[hover-btn]:active {
   @apply bg-primary-focus/60
 }
 </style>

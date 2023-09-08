@@ -111,5 +111,6 @@
     "src/server/backend/$base/locales",
     "src/server/backend/bancho.py/locales",
     "src/server/backend/ppy.sb@bancho.py/locales"
-  ]
+  ],
+  "i18n-ally.sourceLanguage": "en-GB"
 }

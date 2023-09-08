@@ -105,6 +105,9 @@ zh-CN:
               <a :href="`/replay/${item.score.id}/download`" class="btn btn-ghost btn-sm align-middle">
                 Replay <icon name="line-md:download-loop" class="w-4 h-4" />
               </a>
+              <nuxt-link-locale :to="`/score/${item.score.id}`" class="btn btn-ghost btn-sm align-middle">
+                Detail <icon name="fa-solid:expand" class="w-4 h-4" />
+              </nuxt-link-locale>
             </div>
           </td>
         </tr>

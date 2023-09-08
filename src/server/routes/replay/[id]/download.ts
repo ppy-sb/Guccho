@@ -3,7 +3,7 @@ import { haveSession } from '~/server/middleware/0.session'
 import { scores } from '~/server/singleton/service'
 
 export default defineEventHandler(async (event) => {
-  const _ = haveSession(event) || throwError(createError({
+  haveSession(event) || throwError(createError({
     statusCode: 400,
     statusMessage: 'Require session.',
   }))

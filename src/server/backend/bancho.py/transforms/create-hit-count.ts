@@ -1,19 +1,16 @@
 import type { Score as DBScore } from 'prisma-client-bancho-py'
 import { Mode } from '~/def'
 import type { ActiveMode } from '~/def/common'
-import type { HitCount } from '~/def/score'
+import type { ManiaHitCount, StandardHitCount } from '~/def/score'
 
 export function createHitCount<M extends ActiveMode>(
   mode: M,
   score: DBScore
-): HitCount<M> {
-  switch (mode) {
-    case Mode.Mania: return hitCountMania(score) as HitCount<M & Mode.Mania>
-    default: return hitCount(score) as HitCount<M & Exclude<ActiveMode, Mode.Mania>>
-  }
+) {
+  return (mode === Mode.Mania ? hitCountMania(score) : hitCount(score)) as M extends Mode.Mania ? ManiaHitCount : StandardHitCount
 }
 
-function hitCountMania(score: DBScore) {
+function hitCountMania(score: DBScore): ManiaHitCount {
   return {
     max: score.nGeki,
     300: score.n300,
@@ -24,7 +21,7 @@ function hitCountMania(score: DBScore) {
   }
 }
 
-function hitCount(score: DBScore) {
+function hitCount(score: DBScore): StandardHitCount {
   return {
     300: score.n300,
     geki: score.nGeki,

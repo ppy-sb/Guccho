@@ -33,10 +33,10 @@ module.exports = {
     extend: {
       colors: palette,
       animation: {
-        text: 'text 7s ease infinite',
+        'role-text': 'text 7s ease infinite',
       },
       keyframes: {
-        text: {
+        'role-text': {
           '0%, 100%': {
             'background-size': '100% 120%',
             'background-position': 'top center',
@@ -56,6 +56,7 @@ module.exports = {
     require('daisyui'),
     require('@tailwindcss/typography'),
     require('tailwind-highlightjs'),
+    require('@tailwindcss/container-queries'),
   ],
   daisyui: {
     darkTheme: 'guweb-dark',

@@ -19,14 +19,8 @@ export enum Grade {
   SSH = 'ssh',
 }
 
-export type HitCount<M extends ActiveMode> = Record<
-  | 300
-  | 100
-  | 50
-  | 'miss'
-  | (M extends Mode.Mania ? 'max' | 200 : 'geki' | 'katu'),
-  number
->
+export type StandardHitCount = Record<'geki' | 300 | 'katu' | 100 | 50 | 'miss', number>
+export type ManiaHitCount = Record<'max' | 300 | 200 | 100 | 50 | 'miss', number>
 
 export enum StableMod {
   'NoMod' = 0,
@@ -80,7 +74,7 @@ export interface ScoreCompact<ScoreId, M extends ActiveMode> {
   accuracy: number
   maxCombo: number
   grade: Grade
-  hit: HitCount<M>
+  hit: M extends Mode.Mania ? ManiaHitCount : StandardHitCount
 }
 
 export type RulesetScore<
