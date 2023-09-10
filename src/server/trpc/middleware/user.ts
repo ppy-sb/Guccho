@@ -6,9 +6,9 @@ import {
   youNeedToLogin,
 } from '../messages'
 import { sessionProcedure } from './session'
+import { users } from '~/server/singleton/service'
 import { UserProvider } from '$active/server'
 
-const userProvider = new UserProvider()
 export const userProcedure = sessionProcedure.use(async ({ ctx, next }) => {
   const session = await ctx.session.getBinding()
   if (!session) {
@@ -23,7 +23,7 @@ export const userProcedure = sessionProcedure.use(async ({ ctx, next }) => {
       message: youNeedToLogin,
     })
   }
-  const user = await userProvider.getCompactById({ id: UserProvider.stringToId(session.userId) })
+  const user = await users.getCompactById({ id: UserProvider.stringToId(session.userId) })
   if (user == null) {
     throw new TRPCError({
       code: 'NOT_FOUND',

@@ -23,38 +23,44 @@ const pp = createPPFormatter()
 <i18n lang="yaml">
 en-GB:
   no-score: No Score has been set so far.
+  actions: Actions
 
 zh-CN:
   no-score: 目前还没有任何成绩。
+  actions: 操作
 </i18n>
 
 <template>
   <table class="table table-compact table-zebra">
     <thead>
       <tr>
-        <th>{{ $t('global.player') }}</th>
-        <th class="text-right">
+        <th scope="col">
+          {{ $t('global.player') }}
+        </th>
+        <th scope="col" class="text-right">
           {{ $t('global.rank') }}
         </th>
-        <th class="text-right">
+        <th scope="col" class="text-right">
           {{ $t('global.mods') }}
         </th>
-        <th class="text-right">
+        <th scope="col" class="text-right">
           {{ $t(localeKey.rankingSystem(Rank.Score)) }}
         </th>
-        <th v-if="rankingSystem !== Rank.Score" class="text-right">
+        <th v-if="rankingSystem !== Rank.Score" scope="col" class="text-right">
           {{ $t(localeKey.rankingSystem(rankingSystem)) }}
         </th>
-        <th>{{ $t('global.played-at') }}</th>
-        <!-- <th class="text-center">
-          Actions
-        </th> -->
+        <th scope="col">
+          {{ $t('global.played-at') }}
+        </th>
+        <th scope="col" class="text-center">
+          {{ t('actions') }}
+        </th>
       </tr>
     </thead>
     <tbody>
       <template v-if="props.scores.length">
         <tr v-for="(item, index) in props.scores" :key="index">
-          <th>
+          <th scope="row">
             <div class="flex gap-2 items-center">
               <div class="aspect-square mask mask-squircle flex">
                 <img
@@ -94,21 +100,21 @@ zh-CN:
             {{ item.score.playedAt.toLocaleDateString() }}
             {{ item.score.playedAt.toLocaleTimeString() }}
           </td>
-          <!-- <td class="text-center">
+          <td class="text-center">
             <div class="btn-group">
-              <t-button size="sm" variant="ghost">
-                download replay
-              </t-button>
-              <t-button size="sm" variant="ghost">
-                detail
-              </t-button>
+              <a :href="`/replay/${item.score.id}/download`" class="btn btn-ghost btn-sm align-middle">
+                Replay <icon name="line-md:download-loop" class="w-4 h-4" />
+              </a>
+              <nuxt-link-locale :to="`/score/${item.score.id}`" class="btn btn-ghost btn-sm align-middle">
+                Detail <icon name="fa-solid:expand" class="w-4 h-4" />
+              </nuxt-link-locale>
             </div>
-          </td> -->
+          </td>
         </tr>
       </template>
       <template v-else>
         <tr>
-          <th colspan="6">
+          <th colspan="6" scope="row">
             <div class="text-center">
               {{ t('no-score') }}
             </div>
@@ -118,5 +124,3 @@ zh-CN:
     </tbody>
   </table>
 </template>
-
-<style scoped></style>

@@ -51,6 +51,10 @@ export function toCountryName(country: CountryCode): string {
   return reverseCountryCode[country]
 }
 
-export function raise<Cause extends string, Opt extends {}, E extends new(msg?: Cause, opts?: Opt) => Error>(Constructor: E, text?: Cause, opts?: Opt): never {
-  throw new Constructor(text, opts)
+export function raise<E extends new(...con: any[]) => Error>(Constructor: E, ...params: ConstructorParameters<E>): never {
+  throw new Constructor(...params)
+}
+
+export function throwError<E>(e: E): never {
+  throw e
 }

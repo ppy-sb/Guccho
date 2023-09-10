@@ -15,13 +15,13 @@ import type {
 import type { Grade, RankingSystemScore, RulesetScore } from '~/def/score'
 import { Rank } from '~/def'
 
-export function toScore<RS extends PPRankingSystem>({
+export function toScore<M extends ActiveMode, RS extends PPRankingSystem>({
   score,
   mode,
   ruleset,
 }: {
   score: AbleToTransformToScores
-  mode: ActiveMode
+  mode: M
   ruleset: ActiveRuleset
 }) {
   const rtn1 = {
@@ -59,7 +59,8 @@ export function toScore<RS extends PPRankingSystem>({
 }
 
 export function toRankingSystemScore<
-  _RankingSystem extends LeaderboardRankingSystem,
+  M extends ActiveMode,
+  RS extends LeaderboardRankingSystem,
 >({
   score,
   rankingSystem,
@@ -67,8 +68,8 @@ export function toRankingSystemScore<
   rank,
 }: {
   score: AbleToTransformToScores
-  rankingSystem: _RankingSystem
-  mode: ActiveMode
+  rankingSystem: RS
+  mode: M
   rank: number
 }) {
   type HasBeatmap = (typeof score)['beatmap'] extends null
@@ -95,12 +96,12 @@ export function toRankingSystemScore<
       (rankingSystem === Rank.PPv1 || rankingSystem === Rank.PPv2)
         ? score.pp
         : undefined
-    ) as _RankingSystem extends PPRankingSystem ? number : never,
+    ) as RS extends PPRankingSystem ? number : never,
   } as RankingSystemScore<
     bigint,
     Id,
-    ActiveMode,
-    _RankingSystem,
+    M,
+    RS,
     HasBeatmap extends null ? BeatmapSource.Unknown : BeatmapSource.Bancho | BeatmapSource.PrivateServer,
     HasBeatmap extends null ? RankingStatus.NotFound : Exclude<RankingStatus, RankingStatus.NotFound>
   >
@@ -119,14 +120,14 @@ export function toScores({
   return scores.map(score => toScore({ score, mode, ruleset }))
 }
 
-export function toRankingSystemScores<RS extends LeaderboardRankingSystem>({
+export function toRankingSystemScores<M extends ActiveMode, RS extends LeaderboardRankingSystem>({
   scores,
   mode,
   rankingSystem,
 }: {
   scores: AbleToTransformToScores[]
   rankingSystem: RS
-  mode: ActiveMode
+  mode: M
 }) {
   return scores.map((score, index) =>
     toRankingSystemScore({ score, rankingSystem, mode, rank: index + 1 })
