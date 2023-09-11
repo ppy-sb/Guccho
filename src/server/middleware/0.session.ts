@@ -22,7 +22,7 @@ export async function sideEffect(event: H3Event) {
 }
 
 export function assertHaveSession(event: H3Event): asserts event is typeof event & { context: { session: Session } } {
-  !haveSession(event) && raise(Error, 'no session')
+  haveSession(event) || raise(Error, 'no session')
 }
 
 export function haveSession(event: H3Event): event is typeof event & { context: { session: Session } } {

@@ -19,7 +19,7 @@ export function sideEffect(event: H3Event) {
 }
 
 export function assertIsAdmin(event: H3Event & { context: { session: Session<any>; user: UserCompact<Id> } }): asserts event is typeof event & { context: { user: UserCompact<Id> & { roles: [...UserPrivilege[], UserPrivilege.Staff] } } } {
-  !isAdmin(event) && raise(Error, 'not admin')
+  isAdmin(event) || raise(Error, 'not admin')
 }
 
 export function isAdmin(event: H3Event & { context: { session: Session<any>; user: UserCompact<Id> } }): event is typeof event & { context: { user: UserCompact<Id> & { roles: [...UserPrivilege[], UserPrivilege.Staff] } } } {

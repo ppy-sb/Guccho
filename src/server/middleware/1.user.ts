@@ -29,7 +29,7 @@ export async function sideEffect(event: H3Event) {
 }
 
 export function assertLoggedIn(event: H3Event & { context: { session: Session<any> } }): asserts event is typeof event & { context: { user: UserCompact<Id> } } {
-  !loggedIn(event) && raise(Error, 'no session')
+  loggedIn(event) || raise(Error, 'no session')
 }
 
 export function loggedIn(event: H3Event & { context: { session: Session<any> } }): event is typeof event & { context: { user: UserCompact<Id> } } {
