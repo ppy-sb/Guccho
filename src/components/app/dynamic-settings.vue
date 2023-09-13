@@ -24,6 +24,11 @@ zh-CN:
   stored-at:
     0: 本地存储
     1: 保存至服务器
+
+fr-FR:
+  stored-at:
+    0: Sauvegardé localement
+    1: Sauvegardé sur serveur
 </i18n>
 
 <template>
