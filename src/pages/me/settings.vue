@@ -259,6 +259,7 @@ en-GB:
     actions: Action
     current: Current Session
     kick: Kick
+
 zh-CN:
   reset: 恢复
 
@@ -309,6 +310,57 @@ zh-CN:
     actions: 操作
     current: 我
     kick: 强制下线
+
+fr-FR:
+  reset: Retour Arrière
+
+  preferences: Préférences
+  username: Nom d'Utilisateur
+  safe-name: Lien
+  email: Email
+  flag: Drapeau
+  profile: Profil
+
+  status:
+    done: Terminé!
+    ready: Sauvegarder
+
+  avatar:
+    change: Modifier
+    size-too-big: Fichier trop volumineux
+    upload:
+      click-to-upload: Cliquer pour téléverser
+      placement: '{bold} ou glisser-déposer'
+      bold: Cliquer pour téléverser
+    status:
+      ready: Sauvegarder
+      uploading: Téléversement
+      done: Terminé
+      abort: Annuler
+
+  password:
+    change: Modifier
+    literal: Mot de passe
+    new-password-mismatch: Nouveau mot de passe différent
+    same-password-as-old: Mot de passe identique
+    old-password: Ancien mot de passe
+    new-password: Nouveau mot de passe
+    repeat-password: Confirmer mot de passe
+    ok: Confirmer
+    abort: Annuler
+
+  api-key:
+    literal: Clé API
+    placeholder: Votre clé API
+    request: Demander une
+    refresh: Demander une nouvelle
+
+  session:
+    name: Nom de l'appareil
+    last-activity: Vu pour la dernière fois
+    actions: Action
+    current: Session actuelle
+    kick: Exclure
 </i18n>
 
 <template>
