@@ -168,6 +168,19 @@ zh-CN:
   read-access: 访问权限
   write-access: 写入权限
   selecting: 请选择
+
+fr-FR:
+  editing: En Train de Modifier
+  load: Charger
+  new: Nouveau
+  save: Sauvegarder
+  delete: Supprimer
+  import: Importer
+  export: Exporter
+  dynamic-content: Contenu Dynamique
+  read-access: Accès à la Lecture
+  write-access: Accès à l'Écriture
+  selecting: Sélectionner
 </i18n>
 
 <template>
