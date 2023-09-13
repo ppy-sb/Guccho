@@ -28,6 +28,9 @@ en-GB:
   err-id-invalid: please provide a valid id.
 zh-CN:
   err-id-invalid: 请提供一个有效的id。
+
+fr-FR:
+  err-id-invalid: Veuillez entrer un id valide.
 </i18n>
 
 <script lang="ts">
