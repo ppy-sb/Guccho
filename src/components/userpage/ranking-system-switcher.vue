@@ -46,6 +46,9 @@ en-GB:
 
 zh-CN:
   folded-ranking-system: Other Ranks
+
+fr-FR:
+  folded-ranking-system: Autres Classements
 </i18n>
 
 <template>
