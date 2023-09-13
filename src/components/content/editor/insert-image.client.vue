@@ -49,6 +49,12 @@ zh-CN:
   description: 详细描述
   ok: 确认
   cancel: 取消
+
+fr-FR:
+  title: Titre
+  description: Description
+  ok: Confirmer
+  cancel: Annuler
 </i18n>
 
 <template>
