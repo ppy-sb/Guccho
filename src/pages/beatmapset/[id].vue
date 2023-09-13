@@ -144,6 +144,10 @@ en-GB:
 zh-CN:
   beatmapset:
     placement: "曲名:{title} \n 艺术家:{artist}"
+
+fr-FR:
+  beatmapset:
+    placement: '{title} par {artist}'
 </i18n>
 
 <template>
