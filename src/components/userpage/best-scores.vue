@@ -164,6 +164,9 @@ en-GB:
 
 zh-CN:
   bp: 最好成绩
+
+fr-FR:
+  bp: Meilleures Performances
 </i18n>
 
 <template>
