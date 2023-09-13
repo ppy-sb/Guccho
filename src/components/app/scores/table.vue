@@ -28,6 +28,10 @@ en-GB:
 zh-CN:
   no-score: 目前还没有任何成绩。
   actions: 操作
+
+fr-FR:
+  no-score: Aucun score trouvé.
+  actions: Actions
 </i18n>
 
 <template>
