@@ -3,3 +3,6 @@ en-GB:
 
 zh-CN:
   page: 第 {page} 页
+
+fr-FR:
+  page: Page {page}
