@@ -170,6 +170,10 @@ en-GB:
 zh-CN:
   top: 排行榜
   loading: 正在加载排行榜
+
+fr-FR:
+  top: Meilleures Performances
+  loading: Chargement des Scores...
 </i18n>
 
 <template>
