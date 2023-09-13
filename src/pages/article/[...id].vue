@@ -18,6 +18,9 @@ en-GB:
 
 zh-CN:
   edit: 编辑
+
+fr-FR:
+  edit: Modifier
 </i18n>
 
 <template>
