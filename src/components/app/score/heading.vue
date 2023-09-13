@@ -40,6 +40,11 @@ zh-CN:
   title: "曲名\t\t\t{title}\n艺术家\t\t{artist}"
   map: "难度\t\t\t{version}\n谱师\t\t\t{creator}"
   play: '{player} 于 {time} 留下了此成绩'
+
+fr-FR:
+  title: '{title} par {artist}'
+  map: '{version} créé par {creator}'
+  play: '{player} joué le {time}'
 </i18n>
 
 <template>
