@@ -73,6 +73,12 @@ zh-CN:
   user-or-email: 用户名 或者 邮箱地址
   user-id-email: 用户名 或者 用户ID 或者 邮箱地址
   password: 密码
+
+fr-FR:
+  have-no-account: Vous n'avez pas de compte?
+  user-or-email: Utilisateur / Email
+  user-id-email: Utilisateur / ID / Email
+  password: Mot de passe
 </i18n>
 
 <template>
