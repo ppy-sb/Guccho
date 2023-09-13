@@ -75,6 +75,9 @@ en-GB:
 
 zh-CN:
   unknown-beatmap: 未知铺面
+
+fr-FR:
+  unknown-beatmap: Beatmap Inconnue
 </i18n>
 
 <template>
