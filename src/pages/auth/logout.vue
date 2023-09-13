@@ -19,6 +19,9 @@ en-GB:
 
 zh-CN:
   logging-out: 正在登出...
+
+fr-FR:
+  logging-out: Déconnexion...
 </i18n>
 
 <template>
