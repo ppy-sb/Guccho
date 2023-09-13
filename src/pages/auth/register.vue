@@ -127,6 +127,17 @@ zh-CN:
   email: 电子邮箱
   password: 密码
   password-pattern: 必须包含至少一个数字、一个大写字母和一个小写字母,并且密码长度至少为8。
+
+fr-FR:
+  have-account: Vous avez déjà un compte?
+  key-required: '{key} ne peut pas être vide.'
+  key-taken: '{key} n'est pas disponible.'
+  name: Pseudo (vous pourrez le changer plus tard)
+  name-pattern: Ne doit pas contenir de lettre majuscule, ni commencer ou se terminer par _, doit contenir uniquement des chiffres, a-z et _
+  link: Nom d'utilisateur (semi-permanent)
+  email: Email
+  password: Mot de passe
+  password-pattern: Doit contenir au moins un chiffre et une lettre majuscule et minuscule, et au moins 8 caractères.
 </i18n>
 
 <template>
