@@ -14,6 +14,14 @@ zh-CN:
     users: 包含用户
     search: 搜索中
     noting: 什么都没找到
+
+fr-FR:
+  include:
+    beatmapsets: Inclure beatmapsets
+    beatmaps: Inclure beatmaps
+    users: Inclure utilisateurs
+    search: Cherche...
+    noting: Aucun résultat.
 </i18n>
 
 <script setup lang="ts">
