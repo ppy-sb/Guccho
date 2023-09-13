@@ -91,6 +91,16 @@ zh-CN:
   add-as-friend: 添加为好友
   supporter: 慷慨捐赠了{server}!
   staff: '为{server}辛苦付出'
+
+fr-FR:
+  status:
+    offline: Déconnecté, dernière connection le {lastSeen}
+    idle: Connecté.
+    afk: AFK
+  edit: Changer
+  add-as-friend: Ajouter en amis
+  supporter: A généreusement supporté {server}!
+  staff: 'Veille sur {server}'
 </i18n>
 
 <template>
