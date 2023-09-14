@@ -70,7 +70,7 @@ en-GB:
   unknown-error: something went wrong.
   back: bring me back
   retry: try again
-  
+
 zh-CN:
   error-occured: 抱歉
   unknown-error: 出现了一些小问题。
