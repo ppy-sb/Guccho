@@ -72,6 +72,12 @@ zh-CN:
   user-not-found: 该用户不存在
   remove-friend: 删除该好友
   regret: 后悔了
+fr-FR:
+  loading: Chargement...
+  err-message: Une erreur est survenue.
+  user-not-found: Utilisateur inexistant.
+  remove-friend: Retirer l'ami
+  regret: regret
 </i18n>
 
 <template>
