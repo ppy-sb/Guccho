@@ -131,7 +131,7 @@ zh-CN:
 fr-FR:
   have-account: Vous avez déjà un compte?
   key-required: '{key} ne peut pas être vide.'
-  key-taken: '{key} n'est pas disponible.'
+  key-taken: '{key} n''est pas disponible.'
   name: Pseudo (vous pourrez le changer plus tard)
   name-pattern: Ne doit pas contenir de lettre majuscule, ni commencer ou se terminer par _, doit contenir uniquement des chiffres, a-z et _
   link: Nom d'utilisateur (semi-permanent)
