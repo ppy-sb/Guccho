@@ -59,7 +59,7 @@ function exportArticle() {
   const file = new File(
     [stringify(article.value)],
     `${article.value.slug || 'unnamed'}.article`,
-    { type: 'application/text' }
+    { type: 'application/text' },
   )
 
   const url = URL.createObjectURL(file)

@@ -1,4 +1,5 @@
 import { fileURLToPath } from 'node:url'
+import { env } from 'node:process'
 
 import './scripts/ensure-env'
 import { Lang } from './src/def'
@@ -64,7 +65,7 @@ export default defineNuxtConfig({
   ],
 
   alias: {
-    $active: fileURLToPath(new URL(`./src/server/backend/${process.env.BACKEND}`, import.meta.url)),
+    $active: fileURLToPath(new URL(`./src/server/backend/${env.BACKEND}`, import.meta.url)),
     $base: fileURLToPath(new URL('./src/server/backend/$base', import.meta.url)),
     $articles: fileURLToPath(new URL('./articles', import.meta.url)),
   },

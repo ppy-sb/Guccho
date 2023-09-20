@@ -86,7 +86,7 @@ onMounted(() => {
   const animationDirection = <T extends readonly any[]>(
     val: T[number],
     prevVal: T[number],
-    array: T
+    array: T,
   ) => {
     const [idx, prevIdx] = [array.indexOf(val), array.indexOf(prevVal)]
     if (idx === prevIdx) {
@@ -117,7 +117,7 @@ onMounted(() => {
       const direction = animationDirection(
         value,
         previousValue,
-        arrayMap[key as keyof typeof prevSwitcherState]
+        arrayMap[key as keyof typeof prevSwitcherState],
       )
       if (!direction) {
         continue

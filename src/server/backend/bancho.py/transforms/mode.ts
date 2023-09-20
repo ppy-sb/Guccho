@@ -19,7 +19,7 @@ const BPyModeEntries = Object.entries(BPyMode)
 
 export function toBanchoPyMode(
   mode: ActiveMode,
-  ruleset: ActiveRuleset
+  ruleset: ActiveRuleset,
 ): BanchoPyMode {
   const patterns = match([mode, ruleset] as const)
 

@@ -25,7 +25,7 @@ export const router = _router({
       z.object({
         handle: zodHandle,
         md5HashedPassword: z.string(),
-      })
+      }),
     )
     .query(async ({ input: { handle, md5HashedPassword }, ctx }) => {
       try {

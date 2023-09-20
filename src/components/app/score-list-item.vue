@@ -20,7 +20,7 @@ const props = withDefaults(
   }>(),
   {
     useIntl: true,
-  }
+  },
 )
 
 const rankingStatusIconMapping: Partial<Record<RankingStatus, string>> = {
@@ -63,7 +63,7 @@ const meta = computed(
           || beatmap.value.beatmapset.meta.intl.title,
       }
     }
-  }
+  },
 )
 
 const { t, locale } = useI18n()

@@ -91,7 +91,7 @@ export function toBeatmapCompact(beatmap: {
 export function toBeatmapWithBeatmapset(
   beatmap: DBMap & {
     source: Source
-  }
+  },
 ) {
   const status = toRankingStatus(beatmap.status) || RankingStatus.WIP
   const beatmapset = toBeatmapset(beatmap.source, beatmap)

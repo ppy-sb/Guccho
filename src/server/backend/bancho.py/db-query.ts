@@ -61,7 +61,7 @@ export function createUserHandleWhereQuery(
   }: {
     handle: string
     selectAgainst?: Array<'id' | 'name' | 'safeName' | 'email'>
-  }
+  },
 ) {
   let handleNum = +handle
   if (Number.isNaN(handleNum)) {

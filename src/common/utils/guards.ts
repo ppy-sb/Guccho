@@ -6,7 +6,7 @@ export function isString(input: unknown): input is string {
 }
 
 export function isBanchoBeatmapset(
-  test: Beatmapset<BeatmapSource, any, unknown>
+  test: Beatmapset<BeatmapSource, any, unknown>,
 ): test is Beatmapset<BeatmapSource.Bancho, any, string | number> {
   return test.source === BeatmapSource.Bancho
 }

@@ -130,6 +130,6 @@ export function toRankingSystemScores<M extends ActiveMode, RS extends Leaderboa
   mode: M
 }) {
   return scores.map((score, index) =>
-    toRankingSystemScore({ score, rankingSystem, mode, rank: index + 1 })
+    toRankingSystemScore({ score, rankingSystem, mode, rank: index + 1 }),
   )
 }

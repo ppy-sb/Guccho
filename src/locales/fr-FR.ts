@@ -6,7 +6,7 @@ import { Scope, UserPrivilege } from '~/def/user'
 export default {
   mode: enGB.mode,
   ruleset: enGB.ruleset,
- rank: {
+  rank: {
     [Rank.PPv2]: 'Performance(v2)',
     [Rank.PPv1]: 'Performance(v1)',
     [Rank.RankedScore]: 'Score Classé',

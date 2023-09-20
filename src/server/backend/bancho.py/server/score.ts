@@ -43,7 +43,7 @@ export class ScoreProvider implements Base<bigint, Id> {
         mode,
         ruleset,
       }),
-      { user: toUserCompact(dbScore.user, this.config) }
+      { user: toUserCompact(dbScore.user, this.config) },
     )
   }
 

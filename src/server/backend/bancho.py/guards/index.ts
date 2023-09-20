@@ -43,7 +43,7 @@ const havingRankingSystem: ServerRankingSystemDef = {
 
 export const hasRuleset: HasRuleset = <M extends ActiveMode>(
   mode: M,
-  ruleset: ActiveRuleset
+  ruleset: ActiveRuleset,
 ): ruleset is ActiveRuleset & AvailableRuleset<M> => {
   const mDef = havingRankingSystem[mode]
   return ruleset in mDef
@@ -52,13 +52,13 @@ export const hasRuleset: HasRuleset = <M extends ActiveMode>(
 export const hasRankingSystem: HasRankingSystem = (
   mode,
   ruleset,
-  rankingSystem
+  rankingSystem,
 ): rankingSystem is RankingSystem =>
   havingRankingSystem[mode][ruleset].rankingSystem.includes(rankingSystem as PPRankingSystem)
 
 export const hasLeaderboardRankingSystem: HasLeaderboardRankingSystem = (
   mode,
   ruleset,
-  rankingSystem
+  rankingSystem,
 ): rankingSystem is LeaderboardRankingSystem =>
   havingRankingSystem[mode][ruleset].leaderboardRankingSystem.includes(rankingSystem as LeaderboardRankingSystem)

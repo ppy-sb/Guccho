@@ -25,18 +25,18 @@ export function stringToScoreId(id: string): ScoreId {
 export const hasRankingSystem: HasRankingSystem = (
   _1,
   _2,
-  rankingSystem
+  rankingSystem,
 ): rankingSystem is RankingSystem => false
 
 export const hasLeaderboardRankingSystem: HasLeaderboardRankingSystem = (
   _1,
   _2,
-  rankingSystem
+  rankingSystem,
 ): rankingSystem is LeaderboardRankingSystem => false
 
 export const hasRuleset: HasRuleset = <M extends ActiveMode>(
   mode: M,
-  ruleset: ActiveRuleset
+  ruleset: ActiveRuleset,
 ): ruleset is AvailableRuleset<M> => false
 
 export { modes, rulesets } from '~/def'

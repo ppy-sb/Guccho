@@ -5,7 +5,7 @@ import type { ManiaHitCount, StandardHitCount } from '~/def/score'
 
 export function createHitCount<M extends ActiveMode>(
   mode: M,
-  score: DBScore
+  score: DBScore,
 ) {
   return (mode === Mode.Mania ? hitCountMania(score) : hitCount(score)) as M extends Mode.Mania ? ManiaHitCount : StandardHitCount
 }

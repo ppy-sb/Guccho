@@ -30,7 +30,7 @@ const deferredRender = shallowReactive({ ...data.value })
 const playTime = computed(() =>
   deferredRender
     ? toDuration(new Date((deferredRender.playTime || 0) * 1000), new Date(0))
-    : { hours: 0, minutes: 0, seconds: 0 }
+    : { hours: 0, minutes: 0, seconds: 0 },
 )
 
 const selectedRankingSystem = computed(() => page.switcher.rankingSystem)
@@ -47,12 +47,12 @@ const userLevelPercent = computed(() =>
   (((deferredRender.level || 0) % 1) / 100).toLocaleString('en-US', {
     style: 'percent',
     maximumFractionDigits: 2,
-  })
+  }),
 )
 const ScoreToNextLevel = computed(
   () =>
     getRequiredScoreForLevel(userLevelInt.value + 1)
-    - getRequiredScoreForLevel(userLevelInt.value)
+    - getRequiredScoreForLevel(userLevelInt.value),
 )
 </script>
 

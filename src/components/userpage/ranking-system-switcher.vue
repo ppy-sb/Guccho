@@ -18,7 +18,7 @@ interface RankConf {
 }
 type Entry = [keyof typeof rankingSystem, RankConf]
 const rankingSystemEntries = computed(
-  () => Object.entries(rankingSystem) as Entry[]
+  () => Object.entries(rankingSystem) as Entry[],
 )
 
 function filter(showType: 'tab' | 'dropdown') {

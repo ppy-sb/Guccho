@@ -196,7 +196,7 @@ export abstract class ArticleProvider {
   static async checkPrivilege(
     access: keyof ArticleProvider.Meta['privilege'],
     content: ArticleProvider.Meta,
-    user?: { id: unknown; roles: UserPrivilege[] }
+    user?: { id: unknown; roles: UserPrivilege[] },
   ) {
     const privRequired = content.privilege[access]
 

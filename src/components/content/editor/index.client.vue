@@ -15,7 +15,7 @@ const props = withDefaults(
     modelValue: undefined,
     editable: true,
     indent: '  ',
-  }
+  },
 )
 const emit = defineEmits(['update:modelValue'])
 
@@ -40,7 +40,7 @@ onBeforeMount(async () => {
     onUpdated()
   }
   subscribe((content: Record<string, unknown>) =>
-    emit('update:modelValue', content)
+    emit('update:modelValue', content),
   )
 })
 defineExpose({

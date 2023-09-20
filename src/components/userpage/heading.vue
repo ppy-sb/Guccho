@@ -34,23 +34,23 @@ const { data, refresh } = await useAsyncData(async () => {
   }
 })
 const { data: live, refresh: reloadLiveData } = await useAsyncData(async () =>
-  page.user?.id ? await app$.$client.user.status.query({ id: page.user.id }) : null
+  page.user?.id ? await app$.$client.user.status.query({ id: page.user.id }) : null,
 )
 onMounted(() => {
   onBeforeUnmount(() => clearInterval(setInterval(reloadLiveData, 5000)))
 })
 const isMutualFriend = computed(
-  () => data.value?.relationWithMe?.mutual?.includes(MutualRelationship.MutualFriend) || false
+  () => data.value?.relationWithMe?.mutual?.includes(MutualRelationship.MutualFriend) || false,
 )
 const isFriend = computed(() =>
-  data.value?.relationWithMe?.self.includes(Relationship.Friend)
+  data.value?.relationWithMe?.self.includes(Relationship.Friend),
 )
 let isFriendButtonHovered = shallowRef(false)
 onBeforeMount(() => {
   isFriendButtonHovered = useElementHover(changeFriendStateButton)
 })
 const friendButtonContent = computed(
-  () => data.value?.friendCount || t('add-as-friend')
+  () => data.value?.friendCount || t('add-as-friend'),
 )
 async function toggleFriend() {
   if (!session.loggedIn) {

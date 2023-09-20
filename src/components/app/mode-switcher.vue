@@ -21,7 +21,7 @@ const { hasLeaderboardRankingSystem, hasRuleset, supportedModes, supportedRulese
 useI18n()
 
 const [switcher, setSwitcher] = useLeaderboardSwitcher(
-  toRaw(props.modelValue) || {}
+  toRaw(props.modelValue) || {},
 )
 function emitData() {
   emit('input', toRaw(switcher))

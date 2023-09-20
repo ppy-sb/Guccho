@@ -230,7 +230,7 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
     return toRankingSystemScores({ scores, rankingSystem, mode }).map(score =>
       Object.assign(score, {
         id: score.id.toString(),
-      })
+      }),
     )
   }
 
@@ -310,7 +310,7 @@ WHERE s.userid = ${id}
     return {
       count: scoreIds.length,
       scores: toRankingSystemScores({ scores, rankingSystem, mode }).map(
-        score => mapId(score, ScoreProvider.scoreIdToString)
+        score => mapId(score, ScoreProvider.scoreIdToString),
       ),
     }
   }
@@ -407,14 +407,14 @@ WHERE s.userid = ${id}
       parallels.push(
         this.getStatistics(returnValue).then((res) => {
           returnValue.statistics = res
-        })
+        }),
       )
     }
     if (excludes.relationships !== true) {
       parallels.push(
         this.relationships.get({ user }).then((res) => {
           returnValue.relationships = res
-        })
+        }),
       )
     }
     if (excludes.email !== true) {
@@ -442,7 +442,7 @@ WHERE s.userid = ${id}
       email?: string
       name?: string
       flag?: CountryCode
-    }
+    },
   ) {
     const result = await this.db.user.update({
       where: {
@@ -462,7 +462,7 @@ WHERE s.userid = ${id}
     user: UserCompact<Id>,
     input: {
       profile: ArticleProvider.JSONContent
-    }
+    },
   ) {
     const html = ArticleProvider.render(input.profile)
     try {
@@ -611,7 +611,7 @@ WHERE s.userid = ${id}
       rankedScoreRank: number
       totalScoreRank: number
     }[],
-    livePPRank?: Awaited<ReturnType<RedisUserProvider['getRedisRanks']>>
+    livePPRank?: Awaited<ReturnType<RedisUserProvider['getRedisRanks']>>,
   ) {
     const statistics: UserStatistic<
       ActiveMode,
@@ -621,7 +621,7 @@ WHERE s.userid = ${id}
       [Mode.Osu]: {
         [Ruleset.Standard]: createRulesetData({
           databaseResult: results.find(
-            i => i.mode === BanchoPyMode.OsuStandard
+            i => i.mode === BanchoPyMode.OsuStandard,
           ),
           ranks: ranks.find(i => i.mode === BanchoPyMode.OsuStandard),
           livePPRank: livePPRank?.[Mode.Osu][Ruleset.Standard],
@@ -633,7 +633,7 @@ WHERE s.userid = ${id}
         }),
         [Ruleset.Autopilot]: createRulesetData({
           databaseResult: results.find(
-            i => i.mode === BanchoPyMode.OsuAutopilot
+            i => i.mode === BanchoPyMode.OsuAutopilot,
           ),
           ranks: ranks.find(i => i.mode === BanchoPyMode.OsuAutopilot),
           livePPRank: livePPRank?.[Mode.Osu][Ruleset.Autopilot],
@@ -642,14 +642,14 @@ WHERE s.userid = ${id}
       [Mode.Taiko]: {
         [Ruleset.Standard]: createRulesetData({
           databaseResult: results.find(
-            i => i.mode === BanchoPyMode.TaikoStandard
+            i => i.mode === BanchoPyMode.TaikoStandard,
           ),
           ranks: ranks.find(i => i.mode === BanchoPyMode.TaikoStandard),
           livePPRank: livePPRank?.[Mode.Taiko][Ruleset.Standard],
         }),
         [Ruleset.Relax]: createRulesetData({
           databaseResult: results.find(
-            i => i.mode === BanchoPyMode.TaikoRelax
+            i => i.mode === BanchoPyMode.TaikoRelax,
           ),
           ranks: ranks.find(i => i.mode === BanchoPyMode.TaikoRelax),
           livePPRank: livePPRank?.[Mode.Taiko][Ruleset.Relax],
@@ -658,14 +658,14 @@ WHERE s.userid = ${id}
       [Mode.Fruits]: {
         [Ruleset.Standard]: createRulesetData({
           databaseResult: results.find(
-            i => i.mode === BanchoPyMode.FruitsStandard
+            i => i.mode === BanchoPyMode.FruitsStandard,
           ),
           ranks: ranks.find(i => i.mode === BanchoPyMode.FruitsStandard),
           livePPRank: livePPRank?.[Mode.Fruits][Ruleset.Standard],
         }),
         [Ruleset.Relax]: createRulesetData({
           databaseResult: results.find(
-            i => i.mode === BanchoPyMode.FruitsRelax
+            i => i.mode === BanchoPyMode.FruitsRelax,
           ),
           ranks: ranks.find(i => i.mode === BanchoPyMode.FruitsRelax),
           livePPRank: livePPRank?.[Mode.Fruits][Ruleset.Relax],
@@ -674,7 +674,7 @@ WHERE s.userid = ${id}
       [Mode.Mania]: {
         [Ruleset.Standard]: createRulesetData({
           databaseResult: results.find(
-            i => i.mode === BanchoPyMode.ManiaStandard
+            i => i.mode === BanchoPyMode.ManiaStandard,
           ),
           ranks: ranks.find(i => i.mode === BanchoPyMode.ManiaStandard),
           livePPRank: livePPRank?.[Mode.Mania][Ruleset.Standard],
@@ -711,11 +711,11 @@ export class RedisUserProvider extends DBUserProvider {
       return {
         rank: await this.redisClient.zRevRank(
           `bancho:leaderboard:${mode}`,
-          idToString(id)
+          idToString(id),
         ),
         countryRank: await this.redisClient.zRevRank(
           `bancho:leaderboard:${mode}:${country}`,
-          idToString(id)
+          idToString(id),
         ),
       }
     }
@@ -731,20 +731,20 @@ export class RedisUserProvider extends DBUserProvider {
         [Ruleset.Standard]: await this.getLiveRank(
           id,
           BanchoPyMode.OsuStandard,
-          country
+          country,
         ),
         [Ruleset.Relax]: await this.getLiveRank(id, BanchoPyMode.OsuRelax, country),
         [Ruleset.Autopilot]: await this.getLiveRank(
           id,
           BanchoPyMode.OsuAutopilot,
-          country
+          country,
         ),
       },
       [Mode.Taiko]: {
         [Ruleset.Standard]: await this.getLiveRank(
           id,
           BanchoPyMode.OsuStandard,
-          country
+          country,
         ),
         [Ruleset.Relax]: await this.getLiveRank(id, BanchoPyMode.OsuRelax, country),
       },
@@ -752,7 +752,7 @@ export class RedisUserProvider extends DBUserProvider {
         [Ruleset.Standard]: await this.getLiveRank(
           id,
           BanchoPyMode.OsuStandard,
-          country
+          country,
         ),
         [Ruleset.Relax]: await this.getLiveRank(id, BanchoPyMode.OsuRelax, country),
       },
@@ -760,7 +760,7 @@ export class RedisUserProvider extends DBUserProvider {
         [Ruleset.Standard]: await this.getLiveRank(
           id,
           BanchoPyMode.OsuStandard,
-          country
+          country,
         ),
       },
     }

@@ -26,7 +26,7 @@ export const router = _router({
     .input(
       object({
         handle: zodHandle,
-      })
+      }),
     )
     .query(async ({ input: { handle } }) => {
       return users.exists({ handle })
@@ -35,7 +35,7 @@ export const router = _router({
     .input(
       object({
         handle: zodHandle,
-      })
+      }),
     )
     .query(async ({ input: { handle }, ctx }) => {
       const user = await users.getFull({
@@ -63,7 +63,7 @@ export const router = _router({
           RankingStatus.Ranked,
           RankingStatus.Approved,
         ]),
-      })
+      }),
     )
     .query(async ({ input }) => {
       const user = await users.getCompact({ handle: input.handle })
@@ -114,7 +114,7 @@ export const router = _router({
           RankingStatus.Ranked,
           RankingStatus.Approved,
         ]),
-      })
+      }),
     )
     .query(async ({ input }) => {
       const user = await users.getCompact({ handle: input.handle })
@@ -159,7 +159,7 @@ export const router = _router({
     .input(
       object({
         handle: zodHandle,
-      })
+      }),
     )
     .query(async ({ input }) => {
       const user = await users.getCompact({ handle: input.handle })
@@ -171,7 +171,7 @@ export const router = _router({
       object({
         handle: zodHandle,
         type: zodRelationType,
-      })
+      }),
     )
     .query(async ({ input: { handle, type } }) => {
       const user = await users.getCompact({ handle })

@@ -25,7 +25,7 @@ export class UserProvider extends BanchoPyUser implements Base<Id> {
       email?: string
       name?: string
       flag?: CountryCode
-    }
+    },
   ) {
     const result = await this.db.user.update({
       where: {
@@ -47,7 +47,7 @@ export class UserProvider extends BanchoPyUser implements Base<Id> {
 
   async changeUserpage(
     user: UserCompact<number>,
-    input: { profile: ArticleProvider.JSONContent }
+    input: { profile: ArticleProvider.JSONContent },
   ) {
     try {
       const html = await ArticleProvider.render(input.profile)

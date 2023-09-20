@@ -1,13 +1,14 @@
 import { cpus } from 'node:os'
-import { memoryUsage } from 'node:process'
+import type process from 'node:process'
+import { cpuUsage, env, hrtime, memoryUsage } from 'node:process'
 import { currentLoad, mem } from 'systeminformation'
 
 import { Monitored } from './@extends'
 import * as services from '~/server/singleton/service'
 
 export class MonitorProvider {
-  static lastTime = process.hrtime()
-  static lastUsage = process.cpuUsage()
+  static lastTime = hrtime()
+  static lastUsage = cpuUsage()
   static interval = 2000
 
   static processUsage: {
@@ -51,11 +52,11 @@ export class MonitorProvider {
   }
 
   static collectLoad() {
-    const durationUsage = process.cpuUsage(MonitorProvider.lastUsage)
-    const duration = process.hrtime(MonitorProvider.lastTime)
+    const durationUsage = cpuUsage(MonitorProvider.lastUsage)
+    const duration = hrtime(MonitorProvider.lastTime)
 
-    MonitorProvider.lastTime = process.hrtime()
-    MonitorProvider.lastUsage = process.cpuUsage()
+    MonitorProvider.lastTime = hrtime()
+    MonitorProvider.lastUsage = cpuUsage()
 
     const calc = (a: number, b: [number, number]) => MonitorProvider.#calcPercentageLoad(a, b) / cpus().length
 
@@ -99,7 +100,7 @@ export class MonitorProvider {
     const npmConfig: Record<string, unknown> = {}
     const returnValue: Record<string, unknown> = {}
     let key: keyof typeof process['env']
-    for (key in process.env) {
+    for (key in env) {
       if (key.startsWith('npm_package_scripts')) {
         continue
       }
@@ -115,15 +116,15 @@ export class MonitorProvider {
       }
       const _npmConfig = 'npm_config_'
       if (key.startsWith(_npmConfig)) {
-        npmConfig[key.slice(_npmConfig.length)] = process.env[key]
+        npmConfig[key.slice(_npmConfig.length)] = env[key]
         continue
       }
       const _npm = 'npm_'
       if (key.startsWith(_npm)) {
-        npm[key.slice(_npm.length)] = process.env[key]
+        npm[key.slice(_npm.length)] = env[key]
         continue
       }
-      returnValue[key] = process.env[key]
+      returnValue[key] = env[key]
     }
     return {
       npm: {

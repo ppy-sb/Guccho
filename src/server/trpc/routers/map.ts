@@ -9,7 +9,7 @@ export const router = _router({
     .input(
       z.object({
         id: string().trim(),
-      })
+      }),
     )
     .query(async ({ input }) => {
       const bs = await maps.getBeatmapset({ id: MapProvider.stringToId(input.id) })

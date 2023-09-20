@@ -115,17 +115,17 @@ for (const key of Object.keys(rankingSystemDef)) {
     const rankingSystemDefs = ruleset[rule as unknown as keyof typeof ruleset]
 
     rankingSystemDefs.leaderboardRankingSystem.ppRankingSystem.map(rs =>
-      _leaderboardPPRankingSystem.add(rs)
+      _leaderboardPPRankingSystem.add(rs),
     )
     rankingSystemDefs.leaderboardRankingSystem.scoreRankingSystem.map(rs =>
-      _leaderboardScoreRankingSystem.add(rs)
+      _leaderboardScoreRankingSystem.add(rs),
     )
 
     rankingSystemDefs.rankingSystem.ppRankingSystem.map(rs =>
-      _ppRankingSystem.add(rs)
+      _ppRankingSystem.add(rs),
     )
     rankingSystemDefs.rankingSystem.scoreRankingSystem.map(rs =>
-      _scoreRankingSystem.add(rs)
+      _scoreRankingSystem.add(rs),
     )
   }
 }

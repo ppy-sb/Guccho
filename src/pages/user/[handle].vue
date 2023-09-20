@@ -13,7 +13,7 @@ useHead({
   titleTemplate: `%s - ${appConf.title}`,
   title: computed(
     () =>
-      `${page.user?.name} | ${page.switcher.mode} | ${page.switcher.ruleset} | ${page.switcher.rankingSystem}`
+      `${page.user?.name} | ${page.switcher.mode} | ${page.switcher.ruleset} | ${page.switcher.rankingSystem}`,
   ),
 })
 definePageMeta({

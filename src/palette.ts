@@ -62,7 +62,7 @@ export function convertSingle<TI, TR>(colors: Record<string, any>,
       acc[key] = transform(converter(value))
       return acc
     },
-    {}
+    {},
   )
 }
 
@@ -75,6 +75,6 @@ function to<TConverterReturn extends TReturn, TReturn = TConverterReturn>(conver
 }
 export const palette = to(
   convert.hex.hsl,
-  ([h, s, l]) => `hsl(${h} ${s}% ${l}%)` as const
+  ([h, s, l]) => `hsl(${h} ${s}% ${l}%)` as const,
 )
 export const hsvRaw = to(convert.hex.hsl)

@@ -37,7 +37,7 @@ export const contentSchema = object({
     })
       .or(object({
         dynamic: literal(true),
-      }))
+      })),
   )
 
 export const metaSchema = object({

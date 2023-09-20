@@ -18,8 +18,8 @@ const show = computed(() =>
   rankingSystems.filter(
     rs =>
       hasRuleset(props.mode, props.ruleset)
-      && hasRankingSystem(props.mode, props.ruleset, rs)
-  )
+      && hasRankingSystem(props.mode, props.ruleset, rs),
+  ),
 )
 defineExpose({
   rankingSystems: show,

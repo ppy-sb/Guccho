@@ -248,7 +248,7 @@ export default function () {
                 props: {
                   command: (fallback: CallableFunction) => {
                     const transaction = view.state.tr.setNodeMarkup(
-                      nodePos, undefined, { name: node.attrs.name, fallback }
+                      nodePos, undefined, { name: node.attrs.name, fallback },
                     )
                     view.dispatch(transaction)
                     popup.destroy()

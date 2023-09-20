@@ -17,19 +17,19 @@ const lazyBgCover = shallowRef('')
 const { t: _t } = useI18n()
 
 const { data: beatmapset, error } = await useAsyncData(() =>
-  app.$client.map.beatmapset.query({ id: route.params.id.toString() })
+  app.$client.map.beatmapset.query({ id: route.params.id.toString() }),
 )
 
 const queryBeatmap = route.query.beatmap?.toString()
 
 const hashed = beatmapset.value?.beatmaps.find(
-  bm => bm.md5 === queryBeatmap || bm.id === queryBeatmap
+  bm => bm.md5 === queryBeatmap || bm.id === queryBeatmap,
 )
 const selectedMapMd5 = shallowRef<string>(
-  hashed?.md5 || beatmapset.value?.beatmaps[0].md5 || ''
+  hashed?.md5 || beatmapset.value?.beatmaps[0].md5 || '',
 )
 const selectedMap = computed(() =>
-  beatmapset.value?.beatmaps.find(bm => bm.md5 === selectedMapMd5.value)
+  beatmapset.value?.beatmaps.find(bm => bm.md5 === selectedMapMd5.value),
 )
 const allowedModes = computed(() => {
   if (selectedMap.value?.mode === undefined) {
@@ -80,7 +80,7 @@ useHead({
   titleTemplate: `%s - ${config.title}`,
   title: computed(
     () =>
-      `${beatmapset.value?.meta.intl.artist} - ${beatmapset.value?.meta.intl.title} > ${selectedMap.value?.version}`
+      `${beatmapset.value?.meta.intl.artist} - ${beatmapset.value?.meta.intl.title} > ${selectedMap.value?.version}`,
   ),
 })
 

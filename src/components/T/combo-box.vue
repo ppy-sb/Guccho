@@ -31,8 +31,8 @@ const filtered = computed(() =>
       person.label
         .toLowerCase()
         .replace(/\s+/g, '')
-        .includes(query.value.toLowerCase().replace(/\s+/g, ''))
-    )
+        .includes(query.value.toLowerCase().replace(/\s+/g, '')),
+    ),
 )
 </script>
 

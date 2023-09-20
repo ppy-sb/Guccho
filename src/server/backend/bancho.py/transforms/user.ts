@@ -113,7 +113,7 @@ export function dedupeUserRelationship(
     type: Relationship
     toUserId: Id
     toUser: UserCompact<Id>
-  }>
+  }>,
 ) {
   const reduceUserRelationships = relations.reduce((acc, cur) => {
     if (!acc.has(cur.toUserId)) {
@@ -139,7 +139,7 @@ export function toFullUser(
     avatar: {
       domain?: string
     }
-  }
+  },
 ): UserCompact<Id> {
   return {
     id: user.id,

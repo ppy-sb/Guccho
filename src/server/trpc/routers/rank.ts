@@ -21,7 +21,7 @@ export const router = _router({
         mode: zodMode,
         ruleset: zodRuleset,
         rankingSystem: zodLeaderboardRankingSystem,
-      })
+      }),
     )
     .query(({ input }) => {
       return ranks.countLeaderboard(input as typeof input & Base.BaseQuery<ActiveMode>)
@@ -34,7 +34,7 @@ export const router = _router({
         rankingSystem: zodLeaderboardRankingSystem,
         page: z.number().gte(0).lt(10),
         pageSize: z.number().gte(20).lt(51),
-      })
+      }),
     )
     .query(
       async ({ input }) => {
@@ -53,7 +53,7 @@ export const router = _router({
           ...item,
           user: mapId(item.user, RankProvider.idToString),
         }))
-      }
+      },
     ),
   beatmap: publicProcedure
     .input(
@@ -64,7 +64,7 @@ export const router = _router({
         page: z.number().gte(0).lt(10),
         pageSize: z.number().gte(20).lt(51),
         md5: z.string(),
-      })
+      }),
     )
     .query(
       async ({
@@ -82,7 +82,7 @@ export const router = _router({
           ...item,
           user: mapId(item.user, RankProvider.idToString),
         }))
-      }
+      },
     ),
   countBeatmap: publicProcedure
     .input(
@@ -93,7 +93,7 @@ export const router = _router({
         page: z.number().gte(0).lt(10),
         pageSize: z.number().gte(20).lt(51),
         md5: z.string(),
-      })
+      }),
     )
     .query(
       async ({
@@ -111,6 +111,6 @@ export const router = _router({
           ...item,
           user: mapId(item.user, RankProvider.idToString),
         }))
-      }
+      },
     ),
 })

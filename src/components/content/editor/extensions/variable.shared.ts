@@ -38,7 +38,7 @@ export default function () {
       range.from + addedPosition,
       range.to,
 
-      this.type.create({ name, fallback })
+      this.type.create({ name, fallback }),
     )
   }
   return {

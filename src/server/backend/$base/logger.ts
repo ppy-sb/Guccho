@@ -9,7 +9,7 @@ export const Logger = createLogger({
   },
   format: combine(
     timestamp(),
-    json()
+    json(),
   ),
 })
 const logging = new Set<Transport>()

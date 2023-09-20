@@ -142,7 +142,7 @@ export class DatabaseRankProvider implements Base<Id> {
     query: Base.BaseQueryOptionalMode & Base.Pagination & {
       rankingSystem: RankingSystem
       md5: string
-    }
+    },
   ) {
     const { ruleset, rankingSystem, md5 } = query
     let { mode } = query
@@ -247,7 +247,7 @@ export class RedisRankProvider extends DatabaseRankProvider implements Monitored
     banchoPyMode: number,
     start: number,
     end: number,
-    country?: string
+    country?: string,
   ) {
     if (this.redisClient?.isReady) {
       return await this.redisClient.zRange(
@@ -263,7 +263,7 @@ export class RedisRankProvider extends DatabaseRankProvider implements Monitored
             offset: start,
             count: end,
           },
-        }
+        },
       )
     }
     raise(RedisNotReadyError, 'redis is not ready')
@@ -285,7 +285,7 @@ export class RedisRankProvider extends DatabaseRankProvider implements Monitored
       const rank = await this.getPPv2LiveLeaderboard(
         bPyMode,
         0,
-        500
+        500,
       ).then(res => res.map(Number))
 
       if (!rank.length) {
@@ -357,7 +357,7 @@ export class RedisRankProvider extends DatabaseRankProvider implements Monitored
         const rank = await this.getPPv2LiveLeaderboard(
           bPyMode,
           0,
-          start + pageSize * 2
+          start + pageSize * 2,
         ).then(res => res.map(Number))
 
         const [users, stats] = await Promise.all([

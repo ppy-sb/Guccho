@@ -1,4 +1,5 @@
 import { ok } from 'node:assert'
+import process from 'node:process'
 import type { ZodType, z } from 'zod'
 import { ZodError } from 'zod'
 import { fromZodError } from 'zod-validation-error'
@@ -23,11 +24,11 @@ export function ensureAndGetEnv<Z extends ZodType>(zod: Z): z.infer<Z> {
         prefixSeparator: '',
         issueSeparator: ';\n',
         unionSeparator: ',\n',
-      }
+      },
     )
     logger.error(formattedZodError)
     throw new Error(
-      formattedZodError.message
+      formattedZodError.message,
     )
   }
 }

@@ -11,7 +11,7 @@ const props = withDefaults(
   }>(),
   {
     rankingSystem: Rank.PPv2,
-  }
+  },
 )
 
 const { t } = useI18n()

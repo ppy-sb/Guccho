@@ -20,7 +20,7 @@ const serverConfig = showAdminStatus
 const { data: adminData, refresh: refreshAdmin } = await useAsyncData(async () =>
   showAdminStatus
     ? { metrics: await app.$client.status.metrics.query() }
-    : {}
+    : {},
 )
 
 const { data: publicData, refresh } = await useAsyncData(async () => app.$client.status.public.query())

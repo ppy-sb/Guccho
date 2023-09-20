@@ -10,7 +10,7 @@ export default (
     indent: string
   } = {
     indent: '  ',
-  }
+  },
 ) => {
   const extensions = useEditorExtensions(reactiveConfig)
   const editor = shallowRef<EditorVue>()
@@ -29,7 +29,7 @@ export default (
     editor.value.on('update', lazyLoadCodeBlock)
     created = true
     subscribedBeforeMounted.forEach(subscriber =>
-      editor.value?.on('update', ({ editor }) => subscriber(editor.getJSON()))
+      editor.value?.on('update', ({ editor }) => subscriber(editor.getJSON())),
     )
     subscribedBeforeMounted.clear()
   })

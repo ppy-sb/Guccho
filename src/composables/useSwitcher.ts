@@ -15,7 +15,7 @@ export interface SwitcherPropType<TRS> {
 }
 
 export function useLeaderboardSwitcher(
-  initial?: SwitcherPropType<LeaderboardRankingSystem>
+  initial?: SwitcherPropType<LeaderboardRankingSystem>,
 ) {
   const { mode, ruleset, rankingSystem } = initial || {}
   const {

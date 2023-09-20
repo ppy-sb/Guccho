@@ -19,7 +19,7 @@ const disabledSymbol = inject('disabled')
 
 const isDisabled = computed(() => props.value === disabledSymbol || props.disabled)
 const isActive = computed(
-  () => isDisabled.value === false && current?.value === props.value
+  () => isDisabled.value === false && current?.value === props.value,
 )
 </script>
 
