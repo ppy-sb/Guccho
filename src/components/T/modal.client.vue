@@ -55,28 +55,6 @@ onMounted(() => {
   </dialog>
 </template>
 
-<style lang="scss" scoped>
-// .t-modal {
-//   & .t-modal {
-//     position: fixed;
-//     left: 0;
-//     right: 0;
-//     top: 0;
-//     bottom: 0;
-//   }
-
-//   img {
-//     pointer-events: none;
-//   }
-
-//   &[status="show"] {
-//     img {
-//       pointer-events: all;
-//     }
-//   }
-// }
-</style>
-
 <style lang="scss">
 @import "~/assets/styles/modal.scss";
 
