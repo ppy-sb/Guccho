@@ -56,7 +56,7 @@ export const useSession = defineStore('session', {
     async retrieve() {
       try {
         const app$ = useNuxtApp()
-        const result = await app$.$client.session.retrieve.query()
+        const result = await app$.$client.session.retrieve.query().catch(noop)
         if (!result?.user) {
           this.$reset()
           return false
