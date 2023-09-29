@@ -51,7 +51,7 @@ export const router = _router({
       }
       return mapId(user, UserProvider.idToString)
     }),
-  best: p
+  best: optionalUserProcedure
     .input(
       object({
         handle: zodHandle,
@@ -65,8 +65,7 @@ export const router = _router({
         ]),
       }),
     )
-    .query(async ({ input }) => {
-      const user = await users.getCompact({ handle: input.handle })
+    .query(async ({ input, ctx }) => {
 
       const { mode, ruleset, rankingSystem } = input
       if (
@@ -77,6 +76,11 @@ export const router = _router({
           code: 'PRECONDITION_FAILED',
           message: 'ranking system not supported',
         })
+      }
+      const user = await users.getCompact({ handle: input.handle, scope: Scope.Self })
+
+      if (user.id !== ctx.user?.id && !user.roles.includes(UserPrivilege.Normal)) {
+        throw new TRPCError({ message: userNotFound, code: 'NOT_FOUND' })
       }
 
       const returnValue = await users.getBests({
@@ -102,7 +106,7 @@ export const router = _router({
           : v.beatmap,
       }))
     }),
-  tops: p
+  tops: optionalUserProcedure
     .input(
       object({
         handle: zodHandle,
@@ -116,9 +120,7 @@ export const router = _router({
         ]),
       }),
     )
-    .query(async ({ input }) => {
-      const user = await users.getCompact({ handle: input.handle })
-
+    .query(async ({ input, ctx }) => {
       const { mode, ruleset, rankingSystem } = input
       if (
         !hasRuleset(mode, ruleset)
@@ -128,6 +130,12 @@ export const router = _router({
           code: 'PRECONDITION_FAILED',
           message: 'ranking system not supported',
         })
+      }
+
+      const user = await users.getCompact({ handle: input.handle, scope: Scope.Self })
+
+      if (user.id !== ctx.user?.id && !user.roles.includes(UserPrivilege.Normal)) {
+        throw new TRPCError({ message: userNotFound, code: 'NOT_FOUND' })
       }
 
       const returnValue = await users.getTops({
