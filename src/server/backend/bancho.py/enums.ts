@@ -7,6 +7,8 @@ export enum BanchoPyPrivilege {
   // has bypass to low-ceiling anticheat measures (trusted).
   Whitelisted = 1 << 2,
 
+  OsuTourney = 1 << 3,
+
   // donation tiers, receives some extra benefits.
   Supporter = 1 << 4,
   Premium = 1 << 5,
