@@ -24,14 +24,20 @@ const pp = createPPFormatter()
 en-GB:
   no-score: No Score has been set so far.
   actions: Actions
+  detail: Detail
+  replay: Replay
 
 zh-CN:
   no-score: 目前还没有任何成绩。
   actions: 操作
+  detail: 详情
+  replay: 下载回放
 
 fr-FR:
   no-score: Aucun score trouvé.
   actions: Actions
+  detail: Detail
+  replay: Replay
 </i18n>
 
 <template>

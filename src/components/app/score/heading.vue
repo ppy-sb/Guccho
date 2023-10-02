@@ -17,6 +17,8 @@ defineProps<{
 
 const { hasRankingSystem, hasRuleset } = useAdapterConfig()
 
+const { t } = useI18n()
+
 const scoreFmt = createScoreFormatter({ notation: undefined })
 
 function haveStandardHitCounts(input: Score): input is typeof input & { hit: StandardHitCount } {
@@ -35,16 +37,19 @@ en-GB:
   title: '{title} by {artist}'
   map: '{version} created by {creator}'
   play: '{player} played at {time}'
+  download-replay: Download replay
 
 zh-CN:
   title: "曲名\t\t\t{title}\n艺术家\t\t{artist}"
   map: "难度\t\t\t{version}\n谱师\t\t\t{creator}"
   play: '{player} 于 {time} 留下了此成绩'
+  download-replay: 下载回放
 
 fr-FR:
   title: '{title} par {artist}'
   map: '{version} créé par {creator}'
   play: '{player} joué le {time}'
+  download-replay: Download replay
 </i18n>
 
 <template>
@@ -133,6 +138,6 @@ fr-FR:
     </div>
   </div>
   <div>
-    <a :href="`/replay/${score.id}/download`" class="btn btn-primary">Download replay <icon name="line-md:download-loop" class="w-5 h-5" /></a>
+    <a :href="`/replay/${score.id}/download`" class="btn btn-primary">{{ t('download-replay') }} <icon name="line-md:download-loop" class="w-5 h-5" /></a>
   </div>
 </template>

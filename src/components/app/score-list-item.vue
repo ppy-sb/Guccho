@@ -72,12 +72,15 @@ const { t, locale } = useI18n()
 <i18n lang="yaml">
 en-GB:
   unknown-beatmap: Unknown Beatmap
+  detail: Detail
 
 zh-CN:
   unknown-beatmap: 未知铺面
+  detail: 详情
 
 fr-FR:
   unknown-beatmap: Beatmap Inconnue
+  detail: Detail
 </i18n>
 
 <template>
@@ -163,7 +166,7 @@ fr-FR:
         class="flex gap-4 relative"
       >
         <div hover-btn>
-          <span class="text-2xl text-primary-content">Detail</span>
+          <span class="text-2xl text-primary-content">{{ t('detail') }}</span>
           <icon name="fa-solid:expand" class="pl-1 w-8 h-8" />
         </div>
         <div class="flex flex-col">
