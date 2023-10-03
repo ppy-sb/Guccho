@@ -57,7 +57,7 @@ function setLink() {
         </svg>
       </button>
       <template #popper="{ hide }">
-        <div class="card bg-gbase-100/70">
+        <div class="card bg-base-100/70">
           <div class="card-body p-2">
             <div class="input-group input-group-sm">
               <span>URL</span>

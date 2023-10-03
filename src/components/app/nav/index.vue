@@ -169,7 +169,7 @@ function clearFocus() {
 <style lang="postcss">
 .navbar-tint,
 .detached>.navbar {
-  @apply bg-gbase-100/80 dark:bg-gbase-700/80;
+  @apply bg-base-100/80 dark:bg-base-300/80;
   @apply backdrop-blur-md shadow-xl;
   @apply backdrop-saturate-[0.9] backdrop-brightness-[0.95];
   @apply dark:backdrop-saturate-[1] dark:backdrop-brightness-[1];

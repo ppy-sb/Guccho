@@ -136,7 +136,7 @@ body:before {
   left: 0;
   right: 0;
   bottom: 0;
-  @apply bg-gradient-to-b from-gbase-50/50 to-gbase-50 dark:from-gbase-800 dark:to-gbase-900 -z-50;
+  @apply bg-gradient-to-b from-base-100/50 to-base-100 dark:from-base-200 dark:to-base-100 -z-50;
 }
 
 .two-tone {

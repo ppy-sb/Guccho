@@ -108,7 +108,7 @@ const {
         </svg>
       </button>
     </div>
-    <div class="bg-gbase-50 dark:bg-gbase-800 shadow-2xl md:rounded-2xl relative max-h-[calc(100dvh-32px-4rem)] flex flex-col overflow-hidden">
+    <div class="bg-base-200/80 shadow-2xl md:rounded-2xl relative max-h-[calc(100dvh-32px-4rem)] flex flex-col overflow-hidden">
       <div class="form-control">
         <label v-if="mode === 'beatmap'" class="input-group">
           <span class="flex gap-2 bg-transparent">
