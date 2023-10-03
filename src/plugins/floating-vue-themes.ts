@@ -2,12 +2,12 @@ import floatingVue from 'floating-vue'
 
 const { options } = floatingVue
 
-options.themes['guweb-dropdown'] = {
+options.themes['guccho-dropdown'] = {
   $extend: 'dropdown',
   $resetCss: true,
   autoHide: true,
 }
-options.themes['guweb-dropdown-b'] = {
+options.themes['guccho-dropdown-b'] = {
   $extend: 'dropdown',
   $resetCss: true,
   autoHide: true,

@@ -47,7 +47,7 @@ function setLink() {
     :editor="editor"
   >
     <v-dropdown
-      theme="guweb-dropdown"
+      theme="guccho-dropdown"
       :distance="10"
       strategy="absolute"
     >

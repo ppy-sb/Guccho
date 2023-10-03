@@ -4,7 +4,7 @@
 
 <template>
   <v-dropdown
-    theme="guweb-dropdown"
+    theme="guccho-dropdown"
     placement="auto"
     :distance="6"
     v-bind="$attrs"

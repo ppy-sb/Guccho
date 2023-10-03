@@ -1,22 +1,27 @@
 /* eslint-env node */
-import * as convert from 'color-convert'
+// import * as convert from 'color-convert'
 
 // @ts-expect-error got nothing
 import themes from 'daisyui/src/theming/themes'
-import type { HSL } from 'color-convert/conversions'
-import { convertSingle, palette } from './src/palette'
 
-const cupcake = convertSingle(
-  themes['[data-theme=cupcake]'],
-  convert.hex.hsl,
-  ([h, s, l]: HSL) => `hsl(${h} ${s}% ${l}%)` as const,
-)
+// import type { HSL } from 'color-convert/conversions'
+// import { convertSingle } from './src/utils/color'
+import { hex as colors } from './src/palette'
+
+
+// const cupcake = convertSingle(
+//   themes['[data-theme=cupcake]'],
+//   convert.hex.hsl,
+//   ([h, s, l]: HSL) => `hsl(${h} ${s}% ${l}%)` as const,
+// )
+const cupcake = themes['[data-theme=cupcake]']
 // const valentine = convertSingle(themes['[data-theme=valentine]'], convert.hex.hsl, ([h, s, l]: [string, string, string]) => `hsl(${h} ${s}% ${l}%)`) as Record<keyof typeof themes['[data-theme=cupcake]'], string>
-const dracula = convertSingle(
-  themes['[data-theme=dracula]'],
-  convert.hex.hsl,
-  ([h, s, l]: HSL) => `hsl(${h} ${s}% ${l}%)` as const,
-)
+// const dracula = convertSingle(
+//   themes['[data-theme=dracula]'],
+//   convert.hex.hsl,
+//   ([h, s, l]: HSL) => `hsl(${h} ${s}% ${l}%)` as const,
+// )
+const dracula = themes['[data-theme=dracula]']
 const base = {
   '--rounded-btn': '1rem',
   '--btn-text-case': 'normal',
@@ -24,32 +29,32 @@ const base = {
   '--tab-radius': '.5rem',
   '--tw-border-opacity': '0.2',
 }
-export const guweb = [
+export const guccho = [
   {
-    'guweb-light': {
+    'guccho-light': {
       ...cupcake,
       ...base,
       'primary': cupcake.secondary,
       'secondary': cupcake.primary,
-      'neutral': palette.gbase[200],
-      'base-50': palette.gbase[50],
-      'base-100': palette.gbase[100],
-      'base-200': palette.gbase[200],
-      'base-300': palette.gbase[300],
-      'base-content': palette.gbase[900],
+      'neutral': colors.gbase[200],
+      'base-50': colors.gbase[50],
+      'base-100': colors.gbase[100],
+      'base-200': colors.gbase[200],
+      'base-300': colors.gbase[300],
+      'base-content': colors.gbase[900],
     },
   },
   {
-    'guweb-dark': {
+    'guccho-dark': {
       ...dracula,
       ...base,
-      'primary': palette.wewak[500],
-      'neutral': palette.gbase[500],
-      'base-50': palette.gbase[950],
-      'base-100': palette.gbase[900],
-      'base-200': palette.gbase[800],
-      'base-300': palette.gbase[700],
-      'base-content': palette.gbase[100],
+      'primary': colors.wewak[500],
+      'neutral': colors.gbase[500],
+      'base-50': colors.gbase[950],
+      'base-100': colors.gbase[900],
+      'base-200': colors.gbase[800],
+      'base-300': colors.gbase[700],
+      'base-content': colors.gbase[100],
     },
   },
 ]

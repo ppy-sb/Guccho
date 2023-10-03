@@ -1,6 +1,8 @@
 import convert from 'color-convert'
+import colors from 'tailwindcss/colors'
+import { convertSingle } from './utils/color'
 
-export const hex = {
+const customColors = {
   'pigeon-post': {
     50: '#EEEEF6',
     100: '#D7D7EA',
@@ -40,7 +42,7 @@ export const hex = {
     900: '#340919',
     950: '#0D0206',
   },
-  'gbase': {
+  'dark-horizon': {
     50: '#F0F0F5',
     100: '#E0E1EB',
     200: '#C1C4D7',
@@ -54,27 +56,22 @@ export const hex = {
     950: '#0A0B0F',
   },
 } as const
-export function convertSingle<TI, TR>(colors: Record<string, any>,
-  converter: (...any: any) => TI,
-  transform: (input: TI) => TR) {
-  return Object.entries(colors).reduce<Record<string, ReturnType<typeof transform>>>(
-    (acc, [key, value]) => {
-      acc[key] = transform(converter(value))
-      return acc
-    },
-    {},
-  )
+
+export const hex = {
+  ...customColors,
+  gbase: colors.slate,
 }
 
-function to<TConverterReturn extends TReturn, TReturn = TConverterReturn>(converter: (...any: any) => TConverterReturn,
-  transform: (input: TConverterReturn) => TReturn = a => a) {
-  return Object.entries(hex).reduce((acc, [key, colors]: [string, Record<string, unknown>]) => {
-    acc[key as keyof typeof hex] = convertSingle(colors, converter, transform)
-    return acc
-  }, {} as Record<any, any>) as Record<keyof typeof hex, Record<keyof typeof hex[keyof typeof hex], TReturn>>
-}
 export const palette = to(
   convert.hex.hsl,
   ([h, s, l]) => `hsl(${h} ${s}% ${l}%)` as const,
 )
 export const hsvRaw = to(convert.hex.hsl)
+
+export function to<TConverterReturn extends TReturn, TReturn = TConverterReturn>(converter: (...any: any) => TConverterReturn,
+  transform: (input: TConverterReturn) => TReturn = a => a) {
+  return Object.entries(hex).reduce((acc, [key, colors]: [string, Record<string, unknown>]) => {
+    acc[key as keyof typeof hex] = convertSingle(colors, converter, transform)
+    return acc
+  }, {} as Record<any, any>) as Record<keyof typeof hex, Record<keyof (typeof hex)[keyof typeof hex], TReturn>>
+}

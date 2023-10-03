@@ -2,8 +2,8 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 /* eslint-env node */
 
-import { guweb } from './daisyui.themes'
-import { palette } from './src/palette'
+import { guccho } from './daisyui.themes'
+import { hex as colors } from './src/palette'
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -31,7 +31,7 @@ module.exports = {
   ],
   theme: {
     extend: {
-      colors: palette,
+      colors,
       animation: {
         'role-text': 'text 7s ease infinite',
       },
@@ -59,7 +59,7 @@ module.exports = {
     require('@tailwindcss/container-queries'),
   ],
   daisyui: {
-    darkTheme: 'guweb-dark',
-    themes: guweb,
+    darkTheme: 'guccho-dark',
+    themes: guccho,
   },
 }
