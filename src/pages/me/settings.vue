@@ -433,7 +433,7 @@ fr-FR:
         </div>
         <t-button
           v-if="uploadingAvatarStat !== UploadingAvatarStatus.Succeed && newAvatar"
-          class="grow"
+          class="btn-shadow grow"
           :loading="uploadingAvatarStat === UploadingAvatarStatus.Uploading"
           @click="saveAvatar"
         >
@@ -444,8 +444,8 @@ fr-FR:
           }}
         </t-button>
         <t-button
+          class="btn-shadow grow"
           :variant="uploadingAvatarStat === UploadingAvatarStatus.Succeed ? 'success' : 'gbase'"
-          class="grow"
           @click="closeModal(resetAvatar)"
         >
           {{
@@ -468,7 +468,7 @@ fr-FR:
               <input
                 v-model="changePasswordForm.oldPassword"
                 type="password"
-                class="input input-sm input-ghost"
+                class="input input-shadow input-sm input-ghost"
                 required
               >
             </div>
@@ -479,7 +479,7 @@ fr-FR:
               <input
                 v-model="changePasswordForm.newPassword"
                 type="password"
-                class="input input-sm input-ghost"
+                class="input input-shadow input-sm input-ghost"
                 required
               >
             </div>
@@ -490,20 +490,20 @@ fr-FR:
               <input
                 v-model="changePasswordForm.repeatNewPassword"
                 type="password"
-                class="input input-sm input-ghost"
+                class="input input-shadow input-sm input-ghost"
                 required
               >
             </div>
             <span class="text-error px-2">{{ changePasswordError }}</span>
           </div>
           <div class="flex p-4 gap-2">
-            <t-button size="sm" variant="accent" class="grow">
+            <t-button class="btn-shadow grow" size="sm" variant="accent">
               <icon name="ic:round-check" class="w-5 h-5" size="100%" /> {{ t('password.ok') }}
             </t-button>
             <t-button
+              class="btn-shadow grow"
               size="sm"
               variant="secondary"
-              class="grow"
               type="button"
               @click="
                 closeModal(() => {
@@ -524,7 +524,7 @@ fr-FR:
         {{ t('preferences') }}
       </div>
       <button
-        class="btn btn-sm"
+        class="btn btn-shadow btn-sm"
         :class="[
           updateResult ? 'btn-success' : 'btn-accent',
           posting ? 'loading' : '',
@@ -659,7 +659,7 @@ fr-FR:
               v-model="user.name"
               type="text"
               :placeholder="t('username')"
-              class="w-full input input-sm"
+              class="w-full input input-shadow input-sm"
               :disabled="!user.roles.includes(UserPrivilege.Supporter)"
               :class="{
                 'input-bordered input-primary': unchanged.name !== user.name,
@@ -668,7 +668,7 @@ fr-FR:
             >
             <button
               v-if="unchanged.name !== user.name"
-              class="btn btn-sm"
+              class="btn btn-shadow btn-sm"
               type="button"
               :disabled="unchanged.name === user.name"
               @click="
@@ -691,7 +691,7 @@ fr-FR:
               id="userlink"
               v-model="user.safeName"
               type="text"
-              class="input input-sm grow"
+              class="input input-shadow input-sm grow"
               disabled
               :class="{
                 'input-bordered input-primary':
@@ -700,7 +700,7 @@ fr-FR:
                   unchanged.safeName === user.safeName,
               }"
             >
-            <!-- <button class="btn btn-sm btn-secondary" type="button" disabled>
+            <!-- <button class="btn btn-shadow btn-sm btn-secondary" type="button" disabled>
               request change
             </button> -->
           </div>
@@ -719,7 +719,7 @@ fr-FR:
               v-model="user.email"
               type="email"
               placeholder="abc@123.com"
-              class="w-full input input-sm"
+              class="w-full input input-shadow input-sm"
               :class="{
                 'input-bordered input-primary': unchanged.email !== user.email,
                 'input-ghost': unchanged.email === user.email,
@@ -727,7 +727,7 @@ fr-FR:
             >
             <button
               v-show="unchanged.email !== user.email"
-              class="btn btn-sm"
+              class="btn btn-shadow btn-sm"
               type="button"
               :disabled="unchanged.email === user.email"
               @click="
@@ -760,7 +760,7 @@ fr-FR:
             <span class="pl-3 label-text">{{ t('password.literal') }}</span>
             <button
               id="#password"
-              class="btn btn-sm btn-secondary"
+              class="btn btn-shadow btn-sm btn-secondary"
               type="button"
               @click.prevent="() => changePassword?.showModal()"
             >

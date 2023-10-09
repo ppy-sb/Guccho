@@ -70,7 +70,7 @@ fr-FR:
               id="src"
               v-model="img.src"
               type="url"
-              class="input input-sm input-ghost"
+              class="input input-shadow input-sm input-ghost"
               required
             >
           </div>
@@ -82,7 +82,7 @@ fr-FR:
               id="title"
               v-model="img.title"
               type="text"
-              class="input input-sm input-ghost"
+              class="input input-shadow input-sm input-ghost"
             >
           </div>
           <div class="form-control">
@@ -92,18 +92,18 @@ fr-FR:
             <textarea
               id="description"
               v-model="img.alt"
-              class="input input-sm input-ghost"
+              class="input input-shadow input-sm input-ghost"
             />
           </div>
         </div>
         <div class="flex p-4 gap-2">
-          <t-button size="sm" variant="accent" class="grow">
+          <t-button class="btn-shadow grow" size="sm" variant="accent">
             {{ t('ok') }}
           </t-button>
           <t-button
+            class="btn-shadow grow"
             size="sm"
             variant="secondary"
-            class="grow"
             type="button"
             @click="closeModal"
           >

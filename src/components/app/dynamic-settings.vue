@@ -45,7 +45,7 @@ fr-FR:
           v-model="model[key]"
           :placeholder="setting.label"
           :disabled="setting.disabled"
-          class="input input-sm grow blur-sm hover:blur-none"
+          class="input input-shadow input-sm grow blur-sm hover:blur-none"
           :class="{
             'input-bordered input-primary':
               props.unchanged[key] !== model[key],

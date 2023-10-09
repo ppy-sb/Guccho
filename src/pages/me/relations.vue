@@ -121,13 +121,13 @@ fr-FR:
                   @{{ user.safeName }}
                 </nuxt-link-locale>
                 <div class="flex gap-2 actions">
-                  <!-- <t-button variant="info" size="xs" class="md:btn-sm">
+                  <!-- <t-button class="btn-shadow" variant="info" size="xs" class="md:btn-sm">
                     chat
                   </t-button> -->
-                  <t-button :loading="pendingUser.has(user.id)" variant="warning" size="xs" class="md:btn-sm" @click="toggleFriend(user)">
+                  <t-button class="btn-shadow md:btn-sm" :loading="pendingUser.has(user.id)" variant="warning" size="xs" @click="toggleFriend(user)">
                     {{ pendingUser.has(user.id) ? '' : isFriend(user) ? t('remove-friend') : t('regret') }}
                   </t-button>
-                  <!-- <t-button :loading="pendingUser.has(user.id)" variant="warning" size="xs" class="md:btn-sm" @click="toggleBlock(user)">
+                  <!-- <t-button class="btn-shadow" :loading="pendingUser.has(user.id)" variant="warning" size="xs" class="md:btn-sm" @click="toggleBlock(user)">
                     {{ pendingUser.has(user.id) ? '' : isBlocked(user) ? 'remove block' : 'regret' }}
                   </t-button> -->
                 </div>

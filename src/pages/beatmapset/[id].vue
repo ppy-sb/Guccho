@@ -140,7 +140,7 @@ async function update() {
 en-GB:
   beatmapset:
     placement: '{title} by {artist}'
-    externam-links: External Links 
+    external-links: External Links
     direct-downloads: Direct downloads
     creator: Creator
     status: Status
@@ -161,7 +161,7 @@ en-GB:
 zh-CN:
   beatmapset:
     placement: "曲名:{title} \n 艺术家:{artist}"
-    externam-links: 其它链接 
+    external-links: 其它链接
     direct-downloads: 直接下载
     creator: 铺师
     status: 状态
@@ -170,9 +170,9 @@ zh-CN:
     last-update: 上次更新时间
     star-rating: 难度星级
     circle-size: 圆圈大小
-    approach-rate: 缩圈速度	
+    approach-rate: 缩圈速度
     od: 准度要求
-    hp-drain: 掉血速度	
+    hp-drain: 掉血速度
     duration: 长度
     hit-objects: 物件统计
     hit-object:
@@ -182,7 +182,7 @@ zh-CN:
 fr-FR:
   beatmapset:
     placement: '{title} par {artist}'
-    externam-links: External Links 
+    external-links: External Links
     direct-downloads: Direct downloads
     creator: Creator
     status: Status
@@ -265,14 +265,14 @@ fr-FR:
               <div v-if="links" class="pt-2">
                 <div class="w-min">
                   <t-menu>
-                    <button class="btn btn-primary btn-circle rounded-full">
+                    <button class="btn btn-shadow btn-primary btn-circle rounded-full">
                       <icon name="material-symbols:file-present-rounded" size="2em" />
                     </button>
                     <template #popper>
                       <ul class="menu menu-compact border-[1px] border-base-300/20 bg-base-200/80 w-max rounded-box">
                         <template v-if="links.external.length">
                           <li class="menu-title">
-                            <span>{{ _t('beatmapset.externam-links') }}</span>
+                            <span>{{ _t('beatmapset.external-links') }}</span>
                           </li>
                           <li v-for="{ link, label } in links.external" :key="`external-${label}`">
                             <a :href="link">{{ label }}</a>

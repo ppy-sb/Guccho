@@ -4,24 +4,19 @@ html {
   @apply bg-transparent #{!important};
 }
 
-.btn {
+.btn.btn-shadow {
   @apply transition-shadow transition-[background];
   @apply shadow-lg;
   @apply dark:shadow-md;
   animation: none;
 
   @each $variant in $variants {
-    &.btn-#{$variant}:not(.no-shadow) {
+    &.btn-#{$variant} {
       @apply shadow-#{$variant}/40 hover:shadow-#{$variant}/60 dark:shadow-#{$variant}/20 hover:dark:shadow-#{$variant}/30;
     }
   }
-
-  &.btn-ghost,
-  &.no-shadow {
-    @apply shadow-none;
-  }
 }
-.input {
+.input.input-shadow {
   @each $variant in $variants {
     &.input-#{$variant} {
       @apply shadow-#{$variant}/40 hover:shadow-#{$variant}/50 dark:shadow-#{$variant}/20 hover:dark:shadow-#{$variant}/30;

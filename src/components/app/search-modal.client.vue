@@ -123,7 +123,7 @@ const {
             v-model="keyword"
             type="text"
             :placeholder="t('search')"
-            class="input grow border-label-0 focus:input-primary bg-transparent !outline-0"
+            class="input input-shadow grow border-label-0 focus:input-primary bg-transparent !outline-0"
             @input="onInput"
             @keyup.enter="raw(true)"
           >
@@ -133,7 +133,7 @@ const {
           v-model="keyword"
           type="text"
           :placeholder="t('search')"
-          class="input grow border-label-0 focus:input-primary bg-transparent !outline-0"
+          class="input input-shadow grow border-label-0 focus:input-primary bg-transparent !outline-0"
           @input="onInput"
           @keyup.enter="raw(true)"
         >

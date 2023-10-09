@@ -111,7 +111,7 @@ fr-FR:
               type="user"
               autocomplete="off"
               required
-              class="w-full input input-ghost shadow-sm"
+              class="w-full input input-shadow input-ghost shadow-sm"
               :class="{ 'input-error': error }"
               :placeholder="t('user-id-email')"
             >
@@ -125,7 +125,7 @@ fr-FR:
               type="password"
               autocomplete="off"
               required
-              class="w-full input input-ghost shadow-sm"
+              class="w-full input input-shadow input-ghost shadow-sm"
               :class="{ 'input-error': error }"
               :placeholder="t('password')"
             >
@@ -135,15 +135,16 @@ fr-FR:
           </h1>
         </div>
         <div class="grid grid-cols-2 gap-2">
-          <t-nuxt-link-locale-button
+          <t-nuxt-link-button
+            class="btn-shadow"
             to="/auth/register"
             variant="accent"
             @mouseenter="registerButton = $t('global.register')"
             @mouseleave="registerButton = t('have-no-account')"
           >
             {{ registerButton }}
-          </t-nuxt-link-locale-button>
-          <button type="submit" class="btn btn-primary">
+          </t-nuxt-link-button>
+          <button type="submit" class="btn btn-shadow btn-primary">
             {{ $t('global.login') }}
           </button>
         </div>

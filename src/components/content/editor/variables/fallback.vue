@@ -21,8 +21,8 @@ defineExpose({
   <form action="#" @submit.prevent="send">
     <div class="card bg-gbase-100/80 backdrop-blur shadow-md p-3 gap-2">
       <label>Fallback content for <b>{{ $props.name }}</b>:</label>
-      <input ref="input" v-model="model" class="input input-sm input-primary" type="text">
-      <input type="submit" value="Save" class="btn btn-primary btn-sm">
+      <input ref="input" v-model="model" class="input input-shadow input-sm input-primary" type="text">
+      <input type="submit" value="Save" class="btn btn-shadow btn-primary btn-sm">
     </div>
   </form>
 </template>

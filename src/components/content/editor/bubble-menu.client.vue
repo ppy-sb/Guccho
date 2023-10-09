@@ -61,9 +61,9 @@ function setLink() {
           <div class="card-body p-2">
             <div class="input-group input-group-sm">
               <span>URL</span>
-              <input id="url" v-model="link" type="url" class="input input-sm shadow-sm">
+              <input id="url" v-model="link" type="url" class="input input-shadow input-sm shadow-sm">
               <button
-                class="btn btn-sm btn-success" @click="() => {
+                class="btn btn-shadow btn-sm btn-success" @click="() => {
                   setLink()
                   hide()
                 }"

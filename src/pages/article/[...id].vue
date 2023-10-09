@@ -26,7 +26,7 @@ fr-FR:
 <template>
   <section class="container mx-auto with-editor relative">
     <content-render v-bind="content" />
-    <button v-if="content.access.write" class="btn btn-neutral d-flex gap-1 absolute top-0 right-0">
+    <button v-if="content.access.write" class="btn btn-shadow btn-neutral d-flex gap-1 absolute top-0 right-0">
       {{ t('edit') }} <icon name="ic:round-edit-note" class="w-5 h-5" />
     </button>
   </section>

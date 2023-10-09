@@ -138,9 +138,9 @@ fr-FR:
         </p>
         <t-button
           ref="changeFriendStateButton"
+          class="btn-shadow gap-1"
           size="sm"
           :variant="isMutualFriend ? 'primary' : isFriend ? 'secondary' : 'gbase'"
-          class="gap-1"
           @click="toggleFriend"
         >
           <icon
@@ -157,7 +157,7 @@ fr-FR:
           />
           <span>{{ friendButtonContent }}</span>
         </t-button>
-        <!-- <t-button
+        <!-- <t-button class="btn-shadow"
           v-if="session.$state.loggedIn"
           size="sm"
           variant="secondary"
@@ -171,13 +171,14 @@ fr-FR:
         v-else
         class="container flex justify-around order-3 gap-3 pb-4 mx-auto md:order-1 md:justify-end md:pb-0"
       >
-        <!-- <t-button
+        <!-- <t-button class="btn-shadow"
           size="sm"
           variant="primary"
         >
           add as friend
         </t-button> -->
-        <t-nuxt-link-locale-button
+        <t-nuxt-link-button
+          class="btn-shadow"
           size="sm"
           variant="accent"
           :to="{
@@ -185,7 +186,7 @@ fr-FR:
           }"
         >
           {{ t('edit') }}
-        </t-nuxt-link-locale-button>
+        </t-nuxt-link-button>
       </div>
       <div
         class="container flex flex-col flex-wrap gap-4 mx-auto lg:flex-row lg:gap-0 sm:order-2 md:items-end md:justify-between md:pb-2"

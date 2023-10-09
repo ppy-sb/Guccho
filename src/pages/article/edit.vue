@@ -199,18 +199,18 @@ fr-FR:
       <div>
         <div class="flex gap-2 items-baseline">
           {{ t('editing') }}: <input
-            v-model="article.slug" type="text" class="input input-sm shadow-lg" :class="{
+            v-model="article.slug" type="text" class="input input-shadow input-sm shadow-lg" :class="{
               'input-error': !article.slug,
             }"
           >
-          <button class="btn btn-sm btn-info" @click="() => { update(); postFetch() }">
+          <button class="btn btn-shadow btn-sm btn-info" @click="() => { update(); postFetch() }">
             {{ t('load') }}
           </button>
-          <button class="btn btn-sm btn-primary" @click="() => { create(); postFetch() }">
+          <button class="btn btn-shadow btn-sm btn-primary" @click="() => { create(); postFetch() }">
             {{ t('new') }}
           </button>
           <button
-            class="btn btn-sm btn-success" :class="{
+            class="btn btn-shadow btn-sm btn-success" :class="{
               'btn-disabled': !(article.slug && article.json),
             }" @click="() => { save(); postFetch() }"
           >
@@ -218,7 +218,7 @@ fr-FR:
           </button>
           <div class="divider divider-horizontal" />
           <button
-            class="btn btn-sm btn-error" :class="{
+            class="btn btn-shadow btn-sm btn-error" :class="{
               'btn-disabled': !(article.slug && access?.write),
             }" @click="() => { del().then(postFetch) }"
           >
@@ -226,10 +226,10 @@ fr-FR:
           </button>
           <div class="divider divider-horizontal" />
           <input ref="importArticleFile" type="file" hidden @change="importArticle">
-          <button class="btn btn-sm btn-primary" @click="importArticleFile?.click">
+          <button class="btn btn-shadow btn-sm btn-primary" @click="importArticleFile?.click">
             {{ t('import') }}
           </button>
-          <button class="btn btn-sm btn-secondary" @click="exportArticle">
+          <button class="btn btn-shadow btn-sm btn-secondary" @click="exportArticle">
             {{ t('export') }}
           </button>
         </div>

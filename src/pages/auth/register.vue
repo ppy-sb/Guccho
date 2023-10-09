@@ -174,7 +174,7 @@ fr-FR:
               type="name"
               autocomplete="off"
               required
-              class="w-full input input-ghost shadow-sm"
+              class="w-full input input-shadow input-ghost shadow-sm"
               :class="{ 'input-error': error.name }"
               :placeholder="t('name')"
               @input="error.name = ''"
@@ -195,7 +195,7 @@ fr-FR:
                 required
                 :pattern="safeNamePatternStr"
                 :title="t('name-pattern')"
-                class="w-full input input-ghost shadow-sm"
+                class="w-full input input-shadow input-ghost shadow-sm"
                 :class="{ 'input-error': error.safeName }"
                 :placeholder="t('link')"
                 @input="error.safeName = ''"
@@ -214,7 +214,7 @@ fr-FR:
               type="email"
               autocomplete="off"
               required
-              class="w-full input input-ghost shadow-sm"
+              class="w-full input input-shadow input-ghost shadow-sm"
               :class="{ 'input-error': error.email }"
               :placeholder="t('email')"
               @input="error.email = ''"
@@ -234,7 +234,7 @@ fr-FR:
               required
               :pattern="pwPatternStr"
               :title="t('password-pattern')"
-              class="w-full input input-ghost shadow-sm"
+              class="w-full input input-shadow input-ghost shadow-sm"
               :class="{ 'input-error': error.password }"
               :placeholder="t('password')"
               @input="error.password = ''"
@@ -246,15 +246,16 @@ fr-FR:
         </div>
 
         <div class="grid grid-cols-2 gap-2">
-          <t-nuxt-link-locale-button
+          <t-nuxt-link-button
+            class="btn-shadow"
             :to="{ name: 'auth-login' }"
             variant="secondary"
             @mouseenter="loginButton = $t('global.login')"
             @mouseleave="loginButton = t('have-account')"
           >
             {{ loginButton }}
-          </t-nuxt-link-locale-button>
-          <button type="submit" class="btn btn-primary">
+          </t-nuxt-link-button>
+          <button type="submit" class="btn btn-shadow btn-primary">
             {{ $t('global.register') }}
           </button>
         </div>

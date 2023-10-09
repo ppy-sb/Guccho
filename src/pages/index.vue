@@ -36,7 +36,8 @@ fr-FR:
       </div>
       <div class="grid grid-cols-2 gap-2 justify-center">
         <template v-if="session.$state.loggedIn">
-          <t-nuxt-link-locale-button
+          <t-nuxt-link-button
+            class="btn-shadow"
             :to="{
               name: 'user-handle',
               params: { handle: session.$state.userId },
@@ -44,21 +45,22 @@ fr-FR:
             variant="primary"
           >
             {{ t('to-userpage') }}
-          </t-nuxt-link-locale-button>
-          <t-nuxt-link-locale-button :to="{ name: 'me-settings' }" variant="secondary">
+          </t-nuxt-link-button>
+          <t-nuxt-link-button class="btn-shadow" :to="{ name: 'me-settings' }" variant="secondary">
             {{ $t('titles.settings').toLocaleLowerCase() }}
-          </t-nuxt-link-locale-button>
+          </t-nuxt-link-button>
         </template>
         <template v-else>
-          <t-nuxt-link-locale-button :to="{ name: 'auth-login' }" variant="primary">
+          <t-nuxt-link-button class="btn-shadow" :to="{ name: 'auth-login' }" variant="primary">
             {{ $t('global.login') }}
-          </t-nuxt-link-locale-button>
-          <t-nuxt-link-locale-button
+          </t-nuxt-link-button>
+          <t-nuxt-link-button
+            class="btn-shadow"
             :to="{ name: 'auth-register' }"
             variant="secondary"
           >
             {{ $t('global.register') }}
-          </t-nuxt-link-locale-button>
+          </t-nuxt-link-button>
         </template>
       </div>
     </div>

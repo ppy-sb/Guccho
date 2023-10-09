@@ -97,10 +97,10 @@ fr-FR:
         {{ t('unknown-error') }}
       </h2>
       <div class="grid grid-cols-2 gap-2">
-        <t-button variant="primary" @click="$router.back()">
+        <t-button class="btn-shadow" variant="primary" @click="$router.back()">
           {{ t('back') }}
         </t-button>
-        <t-button variant="secondary" @click="page.refresh">
+        <t-button class="btn-shadow" variant="secondary" @click="page.refresh">
           {{ t('retry') }}
         </t-button>
       </div>
