@@ -176,58 +176,60 @@ fr-FR:
             </div>
           </div>
         </div>
-        <div class="divider text-xl py-8">
+        <div v-if="haveUserAsTheirFriend.length" class="divider text-xl py-8">
           {{ t('you-may-also-wonder') }}
         </div>
 
-        <div class="alert">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6">
-            <path
-              stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-          <span>{{ t('non-mutual-friends') }}</span>
-        </div>
-        <div class="mx-auto user-list">
-          <div
-            v-for="user in haveUserAsTheirFriend" :key="`relation-@${user.safeName}`"
-            class="w-full p-2 user-list-item"
-          >
-            <div class="flex items-center justify-center gap-2 md:justify-start face">
-              <div class="relative z-10 mask mask-squircle hoverable">
-                <img :src="user.avatarSrc" class="pointer-events-none w-14 md:w-[4em]">
-              </div>
-              <div class="grow">
-                <h1 class="text-2xl text-left md:text-3xl">
-                  {{ user.name }}
-                </h1>
-                <div class="flex justify-between w-full items-top">
-                  <nuxt-link-locale
-                    :key="`${user.id}:notMutual`"
-                    class="text-lg text-left underline md:text-2xl decoration-sky-500 text-gbase-600 dark:text-gbase-300 hover:text-gbase-500"
-                    :to="{
-                      name: 'user-handle',
-                      params: {
-                        handle: `@${user.safeName}`,
-                      },
-                    }"
-                  >
-                    @{{ user.safeName }}
-                  </nuxt-link-locale>
-                  <div class="flex gap-2 actions">
-                    <t-button
-                      class="btn-shadow md:btn-sm" :loading="pendingUser.has(user.id)" variant="primary" size="xs"
-                      @click="addAsMutual(Relationship.Friend, user)"
+        <template v-if="haveUserAsTheirFriend.length">
+          <div class="alert">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6">
+              <path
+                stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <span>{{ t('non-mutual-friends') }}</span>
+          </div>
+          <div class="mx-auto user-list">
+            <div
+              v-for="user in haveUserAsTheirFriend" :key="`relation-@${user.safeName}`"
+              class="w-full p-2 user-list-item"
+            >
+              <div class="flex items-center justify-center gap-2 md:justify-start face">
+                <div class="relative z-10 mask mask-squircle hoverable">
+                  <img :src="user.avatarSrc" class="pointer-events-none w-14 md:w-[4em]">
+                </div>
+                <div class="grow">
+                  <h1 class="text-2xl text-left md:text-3xl">
+                    {{ user.name }}
+                  </h1>
+                  <div class="flex justify-between w-full items-top">
+                    <nuxt-link-locale
+                      :key="`${user.id}:notMutual`"
+                      class="text-lg text-left underline md:text-2xl decoration-sky-500 text-gbase-600 dark:text-gbase-300 hover:text-gbase-500"
+                      :to="{
+                        name: 'user-handle',
+                        params: {
+                          handle: `@${user.safeName}`,
+                        },
+                      }"
                     >
-                      {{ t('mutual') }}<icon name="solar:heart-bold" class="w-4 h-4" />
-                    </t-button>
+                      @{{ user.safeName }}
+                    </nuxt-link-locale>
+                    <div class="flex gap-2 actions">
+                      <t-button
+                        class="btn-shadow md:btn-sm" :loading="pendingUser.has(user.id)" variant="primary" size="xs"
+                        @click="addAsMutual(Relationship.Friend, user)"
+                      >
+                        {{ t('mutual') }}<icon name="solar:heart-bold" class="w-4 h-4" />
+                      </t-button>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        </template>
       </div>
     </suspense>
   </div>
