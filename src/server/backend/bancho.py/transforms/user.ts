@@ -12,64 +12,103 @@ import type {
 import {
   UserStatus as G,
   Scope,
-  UserPrivilege,
+  UserRole,
 } from '~/def/user'
 import type { Relationship } from '~/def'
 
 import type { UserRelationship } from '~/def/user-relationship'
 import type { CountryCode } from '~/def/country-code'
 
-export function toRoles(priv: number): UserPrivilege[] {
-  const roles: UserPrivilege[] = []
-  if (priv & BanchoPyPrivilege.Normal) {
-    roles.push(UserPrivilege.Registered)
-  }
+export function toRoles(priv: number): UserRole[] {
+  const roles: UserRole[] = []
+  // if (priv & BanchoPyPrivilege.Normal) {
+  //   roles.push(UserRole.Registered)
+  // }
 
   if (priv & BanchoPyPrivilege.Verified) {
-    roles.push(UserPrivilege.Normal)
+    roles.push(UserRole.Normal)
   }
 
   if (priv & BanchoPyPrivilege.Whitelisted) {
-    roles.push(UserPrivilege.Verified)
+    roles.push(UserRole.Verified)
   }
 
   if (priv & BanchoPyPrivilege.Donator) {
-    roles.push(UserPrivilege.Supporter)
+    roles.push(UserRole.Supporter)
   }
 
   if (priv & BanchoPyPrivilege.Alumni) {
-    roles.push(UserPrivilege.Alumni)
+    roles.push(UserRole.Alumni)
   }
 
   if (priv & BanchoPyPrivilege.Tournament) {
-    roles.push(UserPrivilege.TournamentStuff)
+    roles.push(UserRole.TournamentStaff)
   }
 
   if (priv & BanchoPyPrivilege.Nominator) {
-    roles.push(UserPrivilege.BeatmapNominator)
+    roles.push(UserRole.BeatmapNominator)
   }
 
   if (priv & BanchoPyPrivilege.Mod) {
-    roles.push(UserPrivilege.Moderator)
+    roles.push(UserRole.Moderator)
   }
 
   if (priv & BanchoPyPrivilege.Staff) {
-    roles.push(UserPrivilege.Staff)
+    roles.push(UserRole.Staff)
   }
 
   if (priv & BanchoPyPrivilege.Admin) {
-    roles.push(UserPrivilege.Admin)
+    roles.push(UserRole.Admin)
   }
 
   if (priv & BanchoPyPrivilege.Dangerous) {
-    roles.push(UserPrivilege.Owner)
+    roles.push(UserRole.Owner)
   }
 
   if (priv & BanchoPyPrivilege.Bot) {
-    roles.push(UserPrivilege.Bot)
+    roles.push(UserRole.Bot)
   }
 
   return roles
+}
+
+export function toBanchoPyPriv(input: UserRole[]): number {
+  let curr = 0
+  for (const role of input) {
+    curr |= toOneBanchoPyPriv(role)
+  }
+  return curr
+}
+
+export function toOneBanchoPyPriv(role: UserRole): number {
+  switch (role) {
+    // case UserRole.Registered:
+    //   return BanchoPyPrivilege.Normal
+    case UserRole.Normal:
+      return BanchoPyPrivilege.Verified
+    case UserRole.Verified:
+      return BanchoPyPrivilege.Whitelisted
+    case UserRole.Supporter:
+      return BanchoPyPrivilege.Donator
+    case UserRole.Alumni:
+      return BanchoPyPrivilege.Alumni
+    case UserRole.TournamentStaff:
+      return BanchoPyPrivilege.Tournament
+    case UserRole.BeatmapNominator:
+      return BanchoPyPrivilege.Nominator
+    case UserRole.Moderator:
+      return BanchoPyPrivilege.Mod
+    case UserRole.Staff:
+      return BanchoPyPrivilege.Staff
+    case UserRole.Admin:
+      return BanchoPyPrivilege.Admin
+    case UserRole.Owner:
+      return BanchoPyPrivilege.Dangerous
+    case UserRole.Bot:
+      return BanchoPyPrivilege.Bot
+    default:
+      return 0
+  }
 }
 
 export type DatabaseUserCompactFields = 'id' | 'name' | 'safeName' | 'country' | 'priv' | 'pwBcrypt' | 'email'
@@ -103,9 +142,11 @@ export function toUserCompact<
     returnValue.email = user.email
   }
 
-  return returnValue as _Scope extends Scope.Self
-    ? UserCompact<Id> & UserSecrets
-    : UserCompact<Id>
+  return returnValue as (
+    UserCompact<Id>
+    & (_Scope extends Scope.Self ? UserSecrets : Record<never, never>)
+    & (Includes['email'] extends true ? { email: string } : Record<never, never>)
+  )
 }
 
 export function dedupeUserRelationship(
@@ -161,13 +202,13 @@ export function toBanchoPyAccess(priv: (ArticleProvider.TReadAccess | ArticlePro
   if (priv.includes(Scope.Public)) {
     carry &= Access.Public
   }
-  if (priv.includes(UserPrivilege.Moderator)) {
+  if (priv.includes(UserRole.Moderator)) {
     carry &= Access.Moderator
   }
-  if (priv.includes(UserPrivilege.BeatmapNominator)) {
+  if (priv.includes(UserRole.BeatmapNominator)) {
     carry &= Access.BeatmapNominator
   }
-  if (priv.includes(UserPrivilege.Staff)) {
+  if (priv.includes(UserRole.Staff)) {
     carry &= Access.Staff
   }
   return carry

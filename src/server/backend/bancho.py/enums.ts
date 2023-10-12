@@ -95,3 +95,9 @@ export const enum Access {
   BeatmapNominator = 1 << 3,
   Staff = 1 << 4,
 }
+
+export enum ClanPrivilege {
+  Member = 1,
+  Officer = 2,
+  Owner = 3,
+}

@@ -8,12 +8,12 @@ en-GB:
 </i18n>
 
 <template>
-  <div class="join">
+  <div class="join drop-shadow-lg">
     <t-nuxt-link-button
       :to="{
         name: 'article-edit',
       }"
-      class="btn-shadow join-item"
+      class="join-item"
     >
       {{ t('titles.articles') }}
     </t-nuxt-link-button>
@@ -21,7 +21,7 @@ en-GB:
       :to="{
         name: 'admin-logs',
       }"
-      class="btn-shadow join-item"
+      class="join-item"
     >
       {{ t('titles.logs') }}
     </t-nuxt-link-button>
@@ -29,7 +29,7 @@ en-GB:
       :to="{
         name: 'admin-users',
       }"
-      class="btn-shadow join-item"
+      class="join-item"
     >
       {{ t('user-management') }}
     </t-nuxt-link-button>

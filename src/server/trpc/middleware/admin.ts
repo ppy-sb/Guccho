@@ -1,22 +1,22 @@
 import { TRPCError } from '@trpc/server'
 import { userProcedure } from './user'
 
-export const privilegeProcedure = userProcedure.use(async ({ ctx, next }) => {
-  const privilege = calcUserPrivilege(ctx.user)
+export const roleProcedure = userProcedure.use(async ({ ctx, next }) => {
+  const role = computeUserRoles(ctx.user)
 
   return next({
     ctx: {
       ...ctx,
       user: {
         ...ctx.user,
-        privilege,
+        role,
       },
     },
   })
 })
 
-export const adminProcedure = privilegeProcedure.use(({ ctx, next }) => {
-  if (!ctx.user.privilege.staff) {
+export const adminProcedure = roleProcedure.use(({ ctx, next }) => {
+  if (!ctx.user.role.staff) {
     throw new TRPCError({
       code: 'FORBIDDEN',
       message:

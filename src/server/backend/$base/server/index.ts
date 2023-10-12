@@ -1,3 +1,4 @@
+export * from './admin'
 export * from './rank'
 export * from './map'
 export * from './score'

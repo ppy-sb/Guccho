@@ -140,7 +140,7 @@ function clearFocus() {
                   {{ t('titles.userpage') }}
                 </nuxt-link-locale>
               </li>
-              <li v-if="session.$state.privilege.staff">
+              <li v-if="session.$state.role.staff">
                 <nuxt-link-locale
                   :to="{
                     name: 'admin',
@@ -212,6 +212,12 @@ function clearFocus() {
     @apply transition-all;
   }
 
+  .navbar-center {
+    select {
+      @apply self-baseline;
+    }
+  }
+
   .avatar {
     & .avatar-img {
       @apply object-cover aspect-square;
@@ -245,6 +251,11 @@ function clearFocus() {
       @apply justify-center;
     }
 
+    & select {
+      @apply transition-all;
+      @apply origin-top scale-95;
+    }
+
     & .btn,
     & .nav-menu li {
       height:2rem;
@@ -252,11 +263,10 @@ function clearFocus() {
       @apply outline-transparent;
       @apply transition-all;
 
+
       &.btn-circle {
         width:2rem;
         min-width:2rem;
-        @apply outline-transparent;
-        @apply transition-all;
       }
 
       & a {

@@ -1,5 +1,5 @@
 import type { GlobalI18n } from './@types'
-import { Scope, UserPrivilege } from '~/def/user'
+import { Scope, UserRole } from '~/def/user'
 import { Mode, Rank, Ruleset } from '~/def'
 
 export default {
@@ -48,24 +48,24 @@ export default {
     'users': 'Users',
     'session': 'Session',
   },
-  priv: {
-    [UserPrivilege.Disabled]: 'Disabled',
-    [UserPrivilege.Restricted]: 'Restricted',
-    [UserPrivilege.Registered]: 'Registered',
-    [UserPrivilege.Inactive]: 'Inactive',
-    [UserPrivilege.Normal]: 'Normal',
-    [UserPrivilege.Supported]: 'Supported',
-    [UserPrivilege.Supporter]: 'Supporter',
-    [UserPrivilege.Verified]: 'Verified',
-    [UserPrivilege.Alumni]: 'Alumni',
-    [UserPrivilege.TournamentStuff]: 'Tournament Staff',
-    [UserPrivilege.ChannelModerator]: 'Channel Moderator',
-    [UserPrivilege.Moderator]: 'Moderator',
-    [UserPrivilege.BeatmapNominator]: 'Beatmap Nominator',
-    [UserPrivilege.Staff]: 'Staff',
-    [UserPrivilege.Admin]: 'Admin',
-    [UserPrivilege.Owner]: 'Owner',
-    [UserPrivilege.Bot]: 'Bot',
+  role: {
+    [UserRole.Disabled]: 'Disabled',
+    [UserRole.Restricted]: 'Restricted',
+    // [UserRole.Registered]: 'Registered',
+    [UserRole.Inactive]: 'Inactive',
+    [UserRole.Normal]: 'Normal',
+    [UserRole.Supported]: 'Supported',
+    [UserRole.Supporter]: 'Supporter',
+    [UserRole.Verified]: 'Verified',
+    [UserRole.Alumni]: 'Alumni',
+    [UserRole.TournamentStaff]: 'Tournament Staff',
+    [UserRole.ChannelModerator]: 'Channel Moderator',
+    [UserRole.Moderator]: 'Moderator',
+    [UserRole.BeatmapNominator]: 'Beatmap Nominator',
+    [UserRole.Staff]: 'Staff',
+    [UserRole.Admin]: 'Admin',
+    [UserRole.Owner]: 'Owner',
+    [UserRole.Bot]: 'Bot',
   },
   scope: {
     [Scope.Self]: 'Self',

@@ -1,6 +1,6 @@
 
 import type { LocaleMessageValue, VueMessageType } from '@nuxtjs/i18n/dist/runtime/composables'
-import type { Scope, UserPrivilege } from '~/def/user'
+import type { Scope, UserRole } from '~/def/user'
 import type { Rank } from '~/def'
 import type { ActiveMode, ActiveRuleset } from '~/def/common'
 
@@ -35,7 +35,7 @@ export interface GlobalI18n extends Record<string, LocaleMessageValue<VueMessage
   mode: Record<ActiveMode, string>
   ruleset: Record<ActiveRuleset, string>
   rank: Record<Rank, string>
-  priv: Record<UserPrivilege, string>
+  role: Record<UserRole, string>
   scope: Record<Scope, string>
   titles: Record<
     Titles,

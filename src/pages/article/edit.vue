@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { parse, stringify } from 'devalue'
-import { Scope, UserPrivilege } from '~/def/user'
+import { Scope, UserRole } from '~/def/user'
 import type { ContentEditor } from '#components'
 import type { ArticleProvider } from '$base/server'
 
@@ -20,7 +20,7 @@ const article = ref<{
 }>({
   privilege: {
     read: [Scope.Public],
-    write: [UserPrivilege.Staff],
+    write: [UserRole.Staff],
   },
 
   json: undefined,
@@ -40,9 +40,9 @@ const { data: content, refresh: refreshContent } = await useAsyncData(async () =
 const { data: articles, refresh: refreshTree } = app.$client.article.localSlugs.useQuery()
 
 const privileges: Record<ArticleProvider.TWriteAccess, string> = {
-  staff: app.$i18n.t(localeKey.priv(UserPrivilege.Staff)),
-  moderator: app.$i18n.t(localeKey.priv(UserPrivilege.Moderator)),
-  beatmapNominator: app.$i18n.t(localeKey.priv(UserPrivilege.BeatmapNominator)),
+  staff: app.$i18n.t(localeKey.role(UserRole.Staff)),
+  moderator: app.$i18n.t(localeKey.role(UserRole.Moderator)),
+  beatmapNominator: app.$i18n.t(localeKey.role(UserRole.BeatmapNominator)),
 }
 const readPrivileges: Record<ArticleProvider.TReadAccess, string> = {
   ...privileges,

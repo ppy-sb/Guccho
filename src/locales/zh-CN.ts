@@ -1,7 +1,7 @@
 import enGB from './en-GB'
 import type { GlobalI18n } from './@types'
 import { Rank } from '~/def'
-import { Scope, UserPrivilege } from '~/def/user'
+import { Scope, UserRole } from '~/def/user'
 
 export default {
   mode: enGB.mode,
@@ -40,24 +40,24 @@ export default {
     'accuracy': '准确度',
     'play-count': '游玩次数',
   },
-  priv: {
-    [UserPrivilege.Disabled]: '被禁用',
-    [UserPrivilege.Restricted]: '已被封禁',
-    [UserPrivilege.Registered]: '已注册',
-    [UserPrivilege.Inactive]: '不活跃的',
-    [UserPrivilege.Normal]: '普通',
-    [UserPrivilege.Supported]: '赞助过',
-    [UserPrivilege.Supporter]: '赞助者',
-    [UserPrivilege.Verified]: '认证用户',
-    [UserPrivilege.Alumni]: 'Alumni',
-    [UserPrivilege.TournamentStuff]: 'TournamentStuff',
-    [UserPrivilege.ChannelModerator]: 'ChannelModerator',
-    [UserPrivilege.Moderator]: '聊天管理员',
-    [UserPrivilege.BeatmapNominator]: 'BN',
-    [UserPrivilege.Staff]: 'Staff',
-    [UserPrivilege.Admin]: '管理员',
-    [UserPrivilege.Owner]: 'Owner',
-    [UserPrivilege.Bot]: 'Bot',
+  role: {
+    [UserRole.Disabled]: '被禁用',
+    [UserRole.Restricted]: '已被封禁',
+    // [UserRole.Registered]: '已注册',
+    [UserRole.Inactive]: '不活跃的',
+    [UserRole.Normal]: '普通',
+    [UserRole.Supported]: '赞助过',
+    [UserRole.Supporter]: '赞助者',
+    [UserRole.Verified]: '已认证',
+    [UserRole.Alumni]: 'Alumni',
+    [UserRole.TournamentStaff]: '赛事人员',
+    [UserRole.ChannelModerator]: '频道管理员',
+    [UserRole.Moderator]: '聊天管理员',
+    [UserRole.BeatmapNominator]: 'BN',
+    [UserRole.Staff]: 'Staff',
+    [UserRole.Admin]: '管理员',
+    [UserRole.Owner]: '服主',
+    [UserRole.Bot]: '机器人',
   },
   scope: {
     [Scope.Self]: '自己',

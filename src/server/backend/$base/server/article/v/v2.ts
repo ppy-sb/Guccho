@@ -1,15 +1,15 @@
 import { array, date, literal, nativeEnum, number, object, string, tuple, union } from 'zod'
 
 import { zodTipTapJSONContent } from '~/server/trpc/shapes'
-import { Scope, UserPrivilege } from '~/def/user'
+import { Scope, UserRole } from '~/def/user'
 
 export const v = 2 as const
 
 export type TWriteAccess = typeof WriteAccess[keyof typeof WriteAccess]
 export const WriteAccess = {
-  Staff: UserPrivilege.Staff,
-  Moderator: UserPrivilege.Moderator,
-  BeatmapNominator: UserPrivilege.BeatmapNominator,
+  Staff: UserRole.Staff,
+  Moderator: UserRole.Moderator,
+  BeatmapNominator: UserRole.BeatmapNominator,
 } as const
 
 export const writeAccess = nativeEnum(WriteAccess)

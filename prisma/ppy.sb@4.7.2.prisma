@@ -21,7 +21,7 @@ model User {
   silenceEnd      Int     @default(0) @map("silence_end")
   donorEnd        Int     @default(0) @map("donor_end")
   creationTime    Int     @default(0) @map("creation_time")
-  latestActivity  Int     @default(0) @map("latest_activity")
+  lastActivity  Int     @default(0) @map("latest_activity")
   preferredMode   Int     @default(0) @map("preferred_mode")
   playStyle       Int     @default(0) @map("play_style")
   customBadgeName String? @map("custom_badge_name") @db.VarChar(16)

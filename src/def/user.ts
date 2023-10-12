@@ -35,13 +35,13 @@ export enum UserStatus {
   OsuDirect,
 }
 
-export enum UserPrivilege {
+export enum UserRole {
   // restricted type
   Disabled = 'disabled',
   Restricted = 'restricted',
 
-  // registered without login
-  Registered = 'registered',
+  // // registered without login
+  // Registered = 'registered',
   Inactive = 'inactive',
   Normal = 'normal',
   Supported = 'supported',
@@ -54,7 +54,7 @@ export enum UserPrivilege {
   Alumni = 'alumni',
 
   // users that have privileges
-  TournamentStuff = 'tournamentStuff',
+  TournamentStaff = 'tournamentStaff',
   ChannelModerator = 'channelModerator',
   Moderator = 'moderator',
   BeatmapNominator = 'beatmapNominator',
@@ -82,6 +82,11 @@ export enum DynamicSettingStore {
 export interface UserSecrets {
   password: string
 }
+
+export interface UserClan<Id> {
+  id: Id
+  name: string
+}
 export interface UserCompact<Id> {
   id: Id
   ingameId: number
@@ -90,12 +95,11 @@ export interface UserCompact<Id> {
   flag?: CountryCode
   avatarSrc?: string
 
-  roles: UserPrivilege[]
+  roles: UserRole[]
 }
 
 export interface UserOptional {
-  reachable: boolean
-  oldNames: UserOldName[]
+  // oldNames?: UserOldName[]
   email: string
   status: UserStatus
 }

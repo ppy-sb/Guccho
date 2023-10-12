@@ -2,7 +2,7 @@ import { useSession } from '~/store/session'
 
 export default defineNuxtRouteMiddleware(() => {
   const { $state } = useSession()
-  if (!$state.privilege.staff) {
+  if (!$state.role.staff) {
     const returnValue = {
       name: 'article-id',
       param: {

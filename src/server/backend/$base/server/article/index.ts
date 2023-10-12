@@ -11,7 +11,7 @@ import dirTree from 'directory-tree'
 
 import { config as getConfig } from '../../env'
 import { latest, paths, v0, versions } from './v'
-import type { UserCompact, UserPrivilege } from '~/def/user'
+import type { UserCompact, UserRole } from '~/def/user'
 import useEditorExtensions from '~/composables/useEditorExtensionsServer'
 import { Logger } from '$base/logger'
 
@@ -196,7 +196,7 @@ export abstract class ArticleProvider {
   static async checkPrivilege(
     access: keyof ArticleProvider.Meta['privilege'],
     content: ArticleProvider.Meta,
-    user?: { id: unknown; roles: UserPrivilege[] },
+    user?: { id: unknown; roles: UserRole[] },
   ) {
     const privRequired = content.privilege[access]
 

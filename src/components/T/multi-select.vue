@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Float } from '@headlessui-float/vue'
 import {
   Listbox,
   ListboxButton,
@@ -28,7 +29,7 @@ const selected = computed(() => reset())
 
 <template>
   <Listbox :model-value="selected" multiple @update:model-value="(value) => e('update:modelValue', value.map((v: Option) => v.value))">
-    <div class="relative">
+    <Float :offset="4" portal>
       <ListboxButton class="select" :class="[props.size && `select-${props.size}`]">
         <div v-if="selected.length" class="flex gap-3">
           <span v-for="s in selected" :key="s.label" selected class="_item">
@@ -37,14 +38,13 @@ const selected = computed(() => reset())
         </div>
         <span v-else>select</span>
       </ListboxButton>
-
       <transition
         leave-active-class="transition duration-100 ease-in"
         leave-from-class="opacity-100"
         leave-to-class="opacity-0"
       >
         <ListboxOptions
-          class="absolute z-50 mt-1 menu menu-compact bg-gbase-100/80 backdrop-blur shadow"
+          class="z-50 mt-1 menu menu-compact bg-base-100/80 backdrop-blur shadow"
           :class="[
             props.size === 'sm' || props.size === 'xs' ? 'rounded-xl' : 'rounded-box',
           ]"
@@ -67,7 +67,7 @@ const selected = computed(() => reset())
           </ListboxOption>
         </ListboxOptions>
       </transition>
-    </div>
+    </Float>
   </Listbox>
 </template>
 
@@ -75,10 +75,10 @@ const selected = computed(() => reset())
 ._item + ._item{
   &::before {
     content: '';
-    position: absolute;
     top: 40%;
     bottom: 30%;
-    margin-left: -0.45rem;
+    margin: 0.45rem;
+    margin-left: -0.15rem;
     @apply border-l-[1px] border-base-content
   }
 }

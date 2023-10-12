@@ -4,14 +4,14 @@ import { JsonViewer } from 'vue3-json-viewer'
 import 'vue3-json-viewer/dist/index.css'
 import { Monitored } from '$base/server/@extends'
 import { useSession } from '~/store/session'
-import { UserPrivilege } from '~/def/user'
+import { UserRole } from '~/def/user'
 
 const config = useAppConfig()
 const session = useSession()
 const app = useNuxtApp()
 const { t } = useI18n()
 
-const showAdminStatus = session.user?.roles.includes(UserPrivilege.Staff)
+const showAdminStatus = session.user?.roles.includes(UserRole.Staff)
 
 const serverConfig = showAdminStatus
   ? await app.$client.status.config.query()

@@ -1,5 +1,5 @@
 import type { RouteLocationRaw } from 'vue-router'
-import { UserPrivilege } from '~/def/user'
+import { UserRole } from '~/def/user'
 import { useSession } from '~/store/session'
 
 function loggedIn() {
@@ -12,7 +12,7 @@ function notLoggedIn() {
 
 function admin() {
   const session = useSession()
-  return session.user?.roles.includes(UserPrivilege.Staff) || false
+  return session.user?.roles.includes(UserRole.Staff) || false
 }
 
 export const pages: {

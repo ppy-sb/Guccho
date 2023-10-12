@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { LocaleObject } from 'vue-i18n-routing'
 import { useSession } from '~/store/session'
-import { UserPrivilege } from '~/def/user'
+import { UserRole } from '~/def/user'
 
 const session = useSession()
 const { t, locale, locales, setLocale } = useI18n()
@@ -27,7 +27,7 @@ function clearFocus() {
       {{ t('titles.leaderboard') }}
     </nuxt-link-locale>
   </li>
-  <li v-if="session.user?.roles.includes(UserPrivilege.Staff)">
+  <li v-if="session.user?.roles.includes(UserRole.Staff)">
     <nuxt-link-locale :to="{ name: 'status' }" @click="clearFocus">
       <icon name="material-symbols:signal-cellular-alt-rounded" class="w-5 h-5" size="100%" />
       {{ t('titles.status') }}

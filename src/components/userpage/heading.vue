@@ -2,7 +2,7 @@
 import { useElementHover } from '@vueuse/core'
 
 import { MutualRelationship, Relationship } from '~/def'
-import { UserPrivilege, UserStatus } from '~/def/user'
+import { UserRole, UserStatus } from '~/def/user'
 import { useSession } from '~/store/session'
 
 import userpageStore from '~/store/userpage'
@@ -114,7 +114,7 @@ fr-FR:
         :style="`background-image: url(${page.user.avatarSrc}); background-position: center`"
         class="mask mask-squircle w-44 sm:w-56 md:w-72 lg:w-64 bg-cover aspect-square"
       />
-      <div v-if="page.user.roles.includes(UserPrivilege.Supporter)" class="absolute -top-10 -right-6 tooltip tooltip-primary tooltip-right" :data-tip="t('supporter', { server: cfg.title })">
+      <div v-if="page.user.roles.includes(UserRole.Supporter)" class="absolute -top-10 -right-6 tooltip tooltip-primary tooltip-right" :data-tip="t('supporter', { server: cfg.title })">
         <icon name="twemoji:crown" class="w-20 h-20 rotate-[40deg]" />
       </div>
     </div>
@@ -127,11 +127,11 @@ fr-FR:
         class="container flex items-center justify-center lg:justify-between order-3 gap-3 pb-2 mx-auto md:order-1 md:justify-end md:pb-0"
       >
         <p class="flex gap-1">
-          <span v-if="page.user.roles.includes(UserPrivilege.Verified)" class="flex items-center gap-1">
+          <span v-if="page.user.roles.includes(UserRole.Verified)" class="flex items-center gap-1">
             <icon name="ic:round-verified" class="w-5 h-5" />
-            {{ $t(localeKey.priv(UserPrivilege.Verified)) }}
+            {{ $t(localeKey.role(UserRole.Verified)) }}
           </span>
-          <span v-if="page.user.roles.includes(UserPrivilege.Staff)" class="flex items-center gap-1">
+          <span v-if="page.user.roles.includes(UserRole.Staff)" class="flex items-center gap-1">
             <icon name="healthicons:social-work" class="w-5 h-5" />
             {{ t('staff', { server: cfg.title }) }}
           </span>

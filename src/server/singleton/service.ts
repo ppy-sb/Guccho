@@ -1,4 +1,5 @@
 import {
+  AdminProvider,
   ArticleProvider,
   LogProvider,
   MapProvider,
@@ -11,6 +12,7 @@ import {
 } from '$active/server'
 
 export const articles = new ArticleProvider()
+export const admin = new AdminProvider()
 export const userRelations = new UserRelationProvider()
 export const users = new UserProvider()
 export const sessions = new SessionProvider()

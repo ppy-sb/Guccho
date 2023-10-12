@@ -1,5 +1,6 @@
 export {
   ArticleProvider,
+  AdminProvider,
   RankProvider,
   UserRelationProvider,
   ScoreProvider,

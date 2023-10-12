@@ -1,7 +1,7 @@
 import enGB from './en-GB'
 import type { GlobalI18n } from './@types'
 import { Rank } from '~/def'
-import { Scope, UserPrivilege } from '~/def/user'
+import { Scope, UserRole } from '~/def/user'
 
 export default {
   mode: enGB.mode,
@@ -40,24 +40,24 @@ export default {
     'users': 'Utilisateur',
     'session': 'Session',
   },
-  priv: {
-    [UserPrivilege.Disabled]: 'Désactivé',
-    [UserPrivilege.Restricted]: 'Restreint',
-    [UserPrivilege.Registered]: 'Enregistré',
-    [UserPrivilege.Inactive]: 'Inactif',
-    [UserPrivilege.Normal]: 'Normal',
-    [UserPrivilege.Supported]: 'Supporté',
-    [UserPrivilege.Supporter]: 'Supporter',
-    [UserPrivilege.Verified]: 'Vérifié',
-    [UserPrivilege.Alumni]: 'Alumni',
-    [UserPrivilege.TournamentStuff]: 'TournamentStuff',
-    [UserPrivilege.ChannelModerator]: 'Modérateur de Salon',
-    [UserPrivilege.Moderator]: 'Modérateur',
-    [UserPrivilege.BeatmapNominator]: 'BN',
-    [UserPrivilege.Staff]: 'Staff',
-    [UserPrivilege.Admin]: 'Admin',
-    [UserPrivilege.Owner]: 'Propriétaire',
-    [UserPrivilege.Bot]: 'Bot',
+  role: {
+    [UserRole.Disabled]: 'Désactivé',
+    [UserRole.Restricted]: 'Restreint',
+    // [UserRole.Registered]: 'Enregistré',
+    [UserRole.Inactive]: 'Inactif',
+    [UserRole.Normal]: 'Normal',
+    [UserRole.Supported]: 'Supporté',
+    [UserRole.Supporter]: 'Supporter',
+    [UserRole.Verified]: 'Vérifié',
+    [UserRole.Alumni]: 'Alumni',
+    [UserRole.TournamentStaff]: 'TournamentStaff',
+    [UserRole.ChannelModerator]: 'Modérateur de Salon',
+    [UserRole.Moderator]: 'Modérateur',
+    [UserRole.BeatmapNominator]: 'BN',
+    [UserRole.Staff]: 'Staff',
+    [UserRole.Admin]: 'Admin',
+    [UserRole.Owner]: 'Propriétaire',
+    [UserRole.Bot]: 'Bot',
   },
   scope: {
     [Scope.Self]: 'Moi',

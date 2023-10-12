@@ -1,16 +1,16 @@
 import { any, array, nativeEnum, number, object, string, union } from 'zod'
 
 import { zodTipTapJSONContent } from '~/server/trpc/shapes'
-import { UserPrivilege } from '~/def/user'
+import { UserRole } from '~/def/user'
 
 export const v = Symbol('dev-unstable')
 
 export type TWriteAccess = typeof WriteAccess[keyof typeof WriteAccess]
 export const WriteAccess = {
   Self: 'self',
-  Staff: UserPrivilege.Staff,
-  Moderator: UserPrivilege.Moderator,
-  BeatmapNominator: UserPrivilege.BeatmapNominator,
+  Staff: UserRole.Staff,
+  Moderator: UserRole.Moderator,
+  BeatmapNominator: UserRole.BeatmapNominator,
 } as const
 
 export type TReadAccess = typeof ReadAccess[keyof typeof ReadAccess]

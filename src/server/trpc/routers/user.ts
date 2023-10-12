@@ -16,7 +16,7 @@ import { sessionProcedure } from '../middleware/session'
 import { optionalUserProcedure } from '../middleware/optional-user'
 import { userNotFound } from '../messages'
 import { sessions, userRelations, users } from '~/server/singleton/service'
-import { Scope, UserPrivilege } from '~/def/user'
+import { Scope, UserRole } from '~/def/user'
 import { RankingStatus } from '~/def/beatmap'
 
 import { MapProvider, UserProvider } from '$active/server'
@@ -46,7 +46,7 @@ export const router = _router({
       })
 
       const isSelf = user.id === ctx.user?.id
-      if (!user.roles.includes(UserPrivilege.Normal) && !isSelf) {
+      if (!user.roles.includes(UserRole.Normal) && !isSelf) {
         throw new TRPCError({ code: 'NOT_FOUND', message: userNotFound })
       }
       return mapId(user, UserProvider.idToString)
@@ -79,7 +79,7 @@ export const router = _router({
       }
       const user = await users.getCompact({ handle: input.handle, scope: Scope.Self })
 
-      if (user.id !== ctx.user?.id && !user.roles.includes(UserPrivilege.Normal)) {
+      if (user.id !== ctx.user?.id && !user.roles.includes(UserRole.Normal)) {
         throw new TRPCError({ message: userNotFound, code: 'NOT_FOUND' })
       }
 
@@ -134,7 +134,7 @@ export const router = _router({
 
       const user = await users.getCompact({ handle: input.handle, scope: Scope.Self })
 
-      if (user.id !== ctx.user?.id && !user.roles.includes(UserPrivilege.Normal)) {
+      if (user.id !== ctx.user?.id && !user.roles.includes(UserRole.Normal)) {
         throw new TRPCError({ message: userNotFound, code: 'NOT_FOUND' })
       }
 

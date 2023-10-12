@@ -43,12 +43,17 @@ export abstract class UserProvider<Id> extends IdTransformable {
 
   abstract getCompact<_Scope extends Scope>(
     opt: UserProvider.OptType & { scope: _Scope }
-  ): Promise<_Scope extends Scope.Self ? UserCompact<Id> & UserSecrets : UserCompact<Id>>
+  ): Promise<UserCompact<Id>
+  & (_Scope extends Scope.Self ? UserSecrets : Record<never, never>)
+  >
 
   abstract getCompactById<_Scope extends Scope>(opt: {
     id: Id
     scope: _Scope
-  }): Promise<_Scope extends Scope.Self ? UserCompact<Id> & UserSecrets : UserCompact<Id>>
+  }): Promise<
+  UserCompact<Id>
+  & (_Scope extends Scope.Self ? UserSecrets : Record<never, never>)
+  >
 
   abstract getStatistics(query: {
     id: Id

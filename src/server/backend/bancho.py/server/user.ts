@@ -400,7 +400,6 @@ WHERE s.userid = ${id}
     const returnValue = await toFullUser(user, this.config) as NonNullable<Awaited<ReturnType<Base<Id>['getFull']>>>
     const parallels: PromiseLike<any>[] = []
 
-    returnValue.reachable = false
     returnValue.status = UserStatus.Offline
 
     if (excludes.statistics !== true) {

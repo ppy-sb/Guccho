@@ -48,7 +48,7 @@ defineExpose({
         leave-to-class="opacity-0"
       >
         <ListboxOptions
-          class="absolute z-50 mt-1 menu menu-compact bg-gbase-100/80 backdrop-blur shadow"
+          class="absolute z-50 mt-1 menu menu-compact bg-base-100/80 backdrop-blur shadow"
           :class="[
             props.size === 'sm' || props.size === 'xs' ? 'rounded-xl' : 'rounded-box',
           ]"

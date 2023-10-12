@@ -8,8 +8,8 @@ import { ArticleProvider, UserProvider as BanchoPyUser } from '~/server/backend/
 import { fromCountryCode, toFullUser, toSafeName, toUserCompact } from '~/server/backend/bancho.py/transforms'
 import { createUserHandleWhereQuery } from '~/server/backend/bancho.py/db-query'
 
-import type { UserCompact, UserOldName } from '~/def/user'
-import { Scope, UserPrivilege, UserStatus } from '~/def/user'
+import type { UserCompact } from '~/def/user'
+import { Scope, UserRole, UserStatus } from '~/def/user'
 
 import { type UserProvider as Base } from '$base/server'
 import type { CountryCode } from '~/def/country-code'
@@ -39,8 +39,8 @@ export class UserProvider extends BanchoPyUser implements Base<Id> {
       },
     })
     const updatedUser = toUserCompact(result, this.config)
-    if (!updatedUser.roles.includes(UserPrivilege.Supporter)) {
-      updatedUser.roles.push(UserPrivilege.Supporter)
+    if (!updatedUser.roles.includes(UserRole.Supporter)) {
+      updatedUser.roles.push(UserRole.Supporter)
     }
     return updatedUser
   }
@@ -130,12 +130,11 @@ export class UserProvider extends BanchoPyUser implements Base<Id> {
 
     const returnValue = {
       ...fullUser,
-      reachable: false,
       status: UserStatus.Offline as const,
 
-      oldNames: excludes?.oldNames === true
-        ? (undefined as never)
-        : <UserOldName[]>[],
+      // oldNames: excludes?.oldNames === true
+      //   ? (undefined as never)
+      //   : <UserOldName[]>[],
 
       statistics: excludes?.statistics === true
         ? (undefined as never)
@@ -165,8 +164,8 @@ export class UserProvider extends BanchoPyUser implements Base<Id> {
   _Scope extends Scope = Scope.Public,
   >(query: { handle: string; excludes?: Excludes; includeHidden?: boolean; scope: _Scope }) {
     const fullUser = await this.getFull(query)
-    if (!fullUser.roles.includes(UserPrivilege.Supporter)) {
-      fullUser.roles.push(UserPrivilege.Supporter)
+    if (!fullUser.roles.includes(UserRole.Supporter)) {
+      fullUser.roles.push(UserRole.Supporter)
     }
     return fullUser
   }

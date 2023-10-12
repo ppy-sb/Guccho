@@ -1,8 +1,8 @@
 import type { Mode, Rank, Ruleset } from '~/def'
-import type { Scope, UserPrivilege } from '~/def/user'
+import type { Scope, UserRole } from '~/def/user'
 
-export function priv(priv: UserPrivilege) {
-  return `priv.${priv}`
+export function role(priv: UserRole) {
+  return `role.${priv}`
 }
 
 export function scope(scope: Scope) {

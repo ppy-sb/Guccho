@@ -11,7 +11,7 @@ import type { ContentEditor } from '#components'
 import { useSession } from '~/store/session'
 
 import type { ArticleProvider } from '$base/server/article'
-import { UserPrivilege } from '~/def/user'
+import { UserRole } from '~/def/user'
 
 // eslint-disable-next-line antfu/no-const-enum
 const enum UploadingAvatarStatus {
@@ -660,7 +660,7 @@ fr-FR:
               type="text"
               :placeholder="t('username')"
               class="w-full input input-shadow input-sm"
-              :disabled="!user.roles.includes(UserPrivilege.Supporter)"
+              :disabled="!user.roles.includes(UserRole.Supporter)"
               :class="{
                 'input-bordered input-primary': unchanged.name !== user.name,
                 '!input-ghost border-none': unchanged.name === user.name,

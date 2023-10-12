@@ -8,13 +8,13 @@ export const useSession = defineStore('session', {
     loggedIn: boolean
     userId?: string
     user?: Omit<UserFull<string>, 'statistics'>
-    privilege: {
+    role: {
       staff: boolean
     }
   } => ({
     loggedIn: false,
     user: undefined,
-    privilege: {
+    role: {
       staff: false,
     },
   }),
@@ -23,7 +23,7 @@ export const useSession = defineStore('session', {
       if (!this.user) {
         return
       }
-      this.privilege = calcUserPrivilege(this.user)
+      this.role = computeUserRoles(this.user)
     },
     async login(handle: string, passwordText: string) {
       const md5HashedPassword = md5(passwordText)
