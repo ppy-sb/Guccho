@@ -84,6 +84,23 @@ export class UserRelationProvider implements Base<Id> {
     return deduped
   }
 
+  async notMutual(user: { id: Id }) {
+    return this.db.user.findMany({
+      where: {
+        relations: {
+          some: {
+            toUserId: user.id,
+          },
+        },
+        gotRelations: {
+          none: {
+            fromUserId: user.id,
+          },
+        },
+      },
+    }).then(res => res.map(r => toUserCompact(r, this.config)))
+  }
+
   async removeOne({
     fromUser,
     targetUser,
