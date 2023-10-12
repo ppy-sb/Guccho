@@ -6,8 +6,7 @@ import userpageStore from '~/store/userpage'
 const appConf = useAppConfig()
 const { t } = useI18n()
 const page = userpageStore()
-
-await page.refresh()
+await page.init()
 
 useHead({
   titleTemplate: `%s - ${appConf.title}`,

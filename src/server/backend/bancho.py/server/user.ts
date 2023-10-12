@@ -403,7 +403,7 @@ WHERE s.userid = ${id}
       },
     })
 
-    const returnValue = await toFullUser(user, this.config) as NonNullable<Awaited<ReturnType<Base<Id>['getFull']>>>
+    const returnValue = toFullUser(user, this.config) as NonNullable<Awaited<ReturnType<Base<Id>['getFull']>>>
     const parallels: PromiseLike<any>[] = []
 
     returnValue.status = UserStatus.Offline
@@ -442,11 +442,15 @@ WHERE s.userid = ${id}
   }
 
   async changeSettings(
-    user: UserCompact<Id>,
+    user: { id: Id },
     input: {
       email?: string
       name?: string
       flag?: CountryCode
+      preferredMode?: {
+        mode: Mode
+        ruleset: Ruleset
+      }
     },
   ) {
     const result = await this.db.user.update({
@@ -458,6 +462,7 @@ WHERE s.userid = ${id}
         name: input.name,
         safeName: input.name && toSafeName(input.name),
         country: input.flag && fromCountryCode(input.flag),
+        preferredMode: input.preferredMode ? toBanchoPyMode(input.preferredMode.mode, input.preferredMode.ruleset) : undefined,
       },
     })
     return toUserCompact(result, this.config)

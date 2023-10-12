@@ -29,6 +29,7 @@ export function useLeaderboardSwitcher(
     ruleset: ruleset || supportedRulesets[0],
     rankingSystem: rankingSystem || Rank.PPv2,
   })
+
   return [
     data,
     function setSwitcher({

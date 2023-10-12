@@ -1,5 +1,5 @@
 import { TRPCError } from '@trpc/server'
-import { z } from 'zod'
+import { nativeEnum, z } from 'zod'
 
 import bcrypt from 'bcryptjs'
 
@@ -18,6 +18,7 @@ import { userProcedure as pUser } from '~/server/trpc/middleware/user'
 import { UserProvider, UserRelationProvider } from '$active/server'
 import { CountryCode } from '~/def/country-code'
 import { DynamicSettingStore, Scope } from '~/def/user'
+import { Mode, Ruleset } from '~/def'
 
 const { compare } = bcrypt
 
@@ -57,13 +58,17 @@ export const router = _router({
   changeSettings: pUser
     .input(
       z.object({
-        email: z.string().email().optional(),
-        name: z.string().trim().optional(),
-        flag: z.nativeEnum(CountryCode).optional(),
-      }),
+        email: z.string().email(),
+        name: z.string().trim(),
+        flag: z.nativeEnum(CountryCode),
+        preferredMode: z.object({
+          mode: nativeEnum(Mode),
+          ruleset: nativeEnum(Ruleset),
+        }),
+      }).partial(),
     )
     .mutation(async ({ ctx, input }) => {
-      const update: typeof input = { flag: input.flag }
+      const update: typeof input = pick(input, ['flag', 'preferredMode'])
       // TODO: check email(should verified by frontend with another request (not impl'd yet ))
       if (input.name) {
         const existingUser = await users.getCompact({

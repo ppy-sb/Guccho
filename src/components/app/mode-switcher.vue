@@ -98,12 +98,12 @@ watch(switcher, () => emitData())
 
 <style lang="postcss" scoped>
 .h-mode {
-  @apply py-0 my-4 transition duration-200 ease-in-out font-semibold opacity-50 cursor-pointer;
+  @apply py-0 my-3 transition duration-200 ease-in-out font-semibold opacity-50 cursor-pointer;
   @apply sm:py-1 sm:my-0;
   @apply hover:opacity-100;
 
   & img {
-    @apply w-7 h-7;
+    @apply w-7 h-7 p-[1px];
   }
 }
 

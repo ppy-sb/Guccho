@@ -1,5 +1,6 @@
 import type { JSONContent } from '@tiptap/core'
 import type { ExtractLocationSettings, ExtractSettingType } from '../@define-setting'
+
 import { IdTransformable } from './@extends'
 import type { BeatmapSource, RankingStatus } from '~/def/beatmap'
 import type {
@@ -20,6 +21,7 @@ import type {
 } from '~/def/user'
 import type { CountryCode } from '~/def/country-code'
 import type { settings } from '$active/dynamic-settings'
+import type { Mode, Ruleset } from '~/def'
 
 export namespace UserProvider {
   export type ComposableProperties<Id> = UserExtra<Id> & UserOptional
@@ -98,6 +100,10 @@ export abstract class UserProvider<Id> extends IdTransformable {
       email?: string
       name?: string
       flag?: CountryCode
+      preferredMode: {
+        mode: Mode
+        ruleset: Ruleset
+      }
     }
   ): PromiseLike<UserCompact<Id>>
 

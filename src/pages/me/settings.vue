@@ -117,7 +117,9 @@ async function updateUserSettings() {
       user.value.email !== unchanged.value.email ? user.value.email : undefined,
     flag:
       user.value.flag !== unchanged.value.flag ? user.value.flag : undefined,
+    preferredMode: user.value.preferredMode,
   }
+
   posting.value = true
 
   const [result, profileResult] = await Promise.all([
@@ -218,6 +220,7 @@ en-GB:
   email: Email
   flag: Flag
   profile: Profile
+  preferred-mode: Preferred Mode
 
   status:
     done: Done!
@@ -753,6 +756,18 @@ fr-FR:
                 {{ toCountryName(countryCode) }}
               </option>
             </select>
+          </div>
+        </div>
+        <div class="form-control">
+          <label class="label" for="preferred-mode">
+            <span class="pl-3 label-text">{{ t('preferred-mode') }}</span>
+          </label>
+          <!-- <t-combo-box v-model="user.flag" size="sm" class="&[button]:w-full" :options="Object.entries(CountryCode).map(([k, v]) => ({ value: v, label: k }))" /> -->
+          <div class="flex gap-2 pl-3">
+            <app-mode-switcher
+              v-model="user.preferredMode"
+              class="w-full"
+            />
           </div>
         </div>
         <div>

@@ -132,7 +132,7 @@ function clearFocus() {
                   :to="{
                     name: 'user-handle',
                     params: {
-                      handle: session.$state.userId || 0,
+                      handle: `@${session.$state.user?.safeName}`,
                     },
                   }" @click="clearFocus"
                 >

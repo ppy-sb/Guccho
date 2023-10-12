@@ -5,7 +5,7 @@ import { abnormal } from '../../bancho.py/constants'
 import { getPrismaClient } from './prisma'
 
 import { ArticleProvider, UserProvider as BanchoPyUser } from '~/server/backend/bancho.py/server'
-import { fromCountryCode, toFullUser, toSafeName, toUserCompact } from '~/server/backend/bancho.py/transforms'
+import { fromBanchoPyMode,  toFullUser  } from '~/server/backend/bancho.py/transforms'
 import { createUserHandleWhereQuery } from '~/server/backend/bancho.py/db-query'
 
 import type { UserCompact } from '~/def/user'
@@ -13,6 +13,7 @@ import { Scope, UserRole, UserStatus } from '~/def/user'
 
 import { type UserProvider as Base } from '$base/server'
 import type { CountryCode } from '~/def/country-code'
+import type { Mode, Ruleset } from '~/def'
 
 const logger = Logger.child({ label: 'user' })
 
@@ -25,20 +26,13 @@ export class UserProvider extends BanchoPyUser implements Base<Id> {
       email?: string
       name?: string
       flag?: CountryCode
+      preferredMode?: {
+        mode: Mode
+        ruleset: Ruleset
+      }
     },
   ) {
-    const result = await this.db.user.update({
-      where: {
-        id: user.id,
-      },
-      data: {
-        email: input.email,
-        name: input.name,
-        safeName: input.name && toSafeName(input.name),
-        country: input.flag && fromCountryCode(input.flag),
-      },
-    })
-    const updatedUser = toUserCompact(result, this.config)
+    const updatedUser = await super.changeSettings(user, input)
     if (!updatedUser.roles.includes(UserRole.Supporter)) {
       updatedUser.roles.push(UserRole.Supporter)
     }
@@ -107,8 +101,8 @@ export class UserProvider extends BanchoPyUser implements Base<Id> {
   }
 
   async getFull<
-  Excludes extends Partial<Record<keyof Base.ComposableProperties<Id>, boolean>>,
-  _Scope extends Scope = Scope.Public,
+    Excludes extends Partial<Record<keyof Base.ComposableProperties<Id>, boolean>>,
+    _Scope extends Scope = Scope.Public,
   >({ handle, excludes, includeHidden, scope }: { handle: string; excludes?: Excludes; includeHidden?: boolean; scope?: _Scope }) {
     const user = await this.sbDb.user.findFirstOrThrow({
       where: {
@@ -127,9 +121,12 @@ export class UserProvider extends BanchoPyUser implements Base<Id> {
         userId: user.id,
       },
     })
-
+    const [mode, ruleset] = fromBanchoPyMode(user.preferredMode)
     const returnValue = {
       ...fullUser,
+      preferredMode: {
+        mode, ruleset,
+      },
       status: UserStatus.Offline as const,
 
       // oldNames: excludes?.oldNames === true
@@ -160,8 +157,8 @@ export class UserProvider extends BanchoPyUser implements Base<Id> {
   }
 
   async getFullWithSettings<
-  Excludes extends Partial<Record<keyof Base.ComposableProperties<Id>, boolean>>,
-  _Scope extends Scope = Scope.Public,
+    Excludes extends Partial<Record<keyof Base.ComposableProperties<Id>, boolean>>,
+    _Scope extends Scope = Scope.Public,
   >(query: { handle: string; excludes?: Excludes; includeHidden?: boolean; scope: _Scope }) {
     const fullUser = await this.getFull(query)
     if (!fullUser.roles.includes(UserRole.Supporter)) {

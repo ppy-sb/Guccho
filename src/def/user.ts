@@ -8,7 +8,7 @@ import type {
 import type { UserModeRulesetStatistics } from './statistics'
 import type { UserRelationship } from './user-relationship'
 import type { CountryCode } from './country-code'
-import type { Lang } from '.'
+import type { Lang, Mode, Ruleset } from '.'
 import type { ArticleProvider } from '$base/server'
 
 export enum Scope {
@@ -102,6 +102,10 @@ export interface UserOptional {
   // oldNames?: UserOldName[]
   email: string
   status: UserStatus
+  preferredMode: {
+    mode: Mode
+    ruleset: Ruleset
+  }
 }
 
 export interface Action<T> {
