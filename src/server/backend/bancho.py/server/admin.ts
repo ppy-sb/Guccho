@@ -49,10 +49,10 @@ export class AdminProvider extends Base<Id> implements Base<Id> {
       status: UserStatus.Unknown,
       lastActivityAt: new Date(user.lastActivity * 1000),
       registeredAt: new Date(user.creationTime * 1000),
-      clan: {
+      clan: user.clan ? {
         id: user.clan.id,
         name: user.clan.name,
-      },
+      } : undefined,
     }))
 
     return uCompacts

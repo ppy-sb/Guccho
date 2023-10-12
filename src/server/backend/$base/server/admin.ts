@@ -12,7 +12,7 @@ export abstract class AdminProvider<Id> extends IdTransformable {
   & {
     registeredAt: Date
     lastActivityAt: Date
-    clan: UserClan<Id>
+    clan?: UserClan<Id>
   }
   >>
 }

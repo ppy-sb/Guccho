@@ -31,7 +31,7 @@ model User {
   clanPriv        Int     @default(0) @map("clan_priv") @db.TinyInt
   apiKey          String? @unique(map: "users_api_key_uindex") @map("api_key") @db.Char(36)
 
-  clan             Clan              @relation("clan", fields: [clanId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  clan             Clan?             @relation("clan", fields: [clanId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   favourites       Favourite[]
   ingameLogins     IngameLogin[]
   receivedMessages Mail[]            @relation("receivedMessages")
