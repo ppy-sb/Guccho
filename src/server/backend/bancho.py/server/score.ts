@@ -13,7 +13,7 @@ import {
 import type { Id } from '..'
 import type { AbleToTransformToScores } from '../transforms'
 import { config as _config } from '../env'
-import { normal } from '../constants'
+import { abnormal } from '../constants'
 import { getPrismaClient } from './source/prisma'
 
 import type {
@@ -52,9 +52,7 @@ export class ScoreProvider implements Base<bigint, Id> {
       where: {
         id,
         user: {
-          priv: {
-            in: normal,
-          },
+          priv: { not: { in: abnormal } },
         },
       },
       include: {
@@ -79,7 +77,9 @@ export class ScoreProvider implements Base<bigint, Id> {
         where: {
           user: {
             priv: {
-              in: normal,
+              not: {
+                in: abnormal,
+              },
             },
             ...opt.user,
           },
@@ -104,9 +104,7 @@ export class ScoreProvider implements Base<bigint, Id> {
     const scores = await this.db.score.findMany({
       where: {
         user: {
-          priv: {
-            in: normal,
-          },
+          priv: { not: { in: abnormal } },
           ...opt.user,
         },
         beatmap: opt.beatmap,

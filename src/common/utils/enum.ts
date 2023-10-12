@@ -3,15 +3,30 @@ export class ExpandedBitwiseEnumArray<T extends number> extends Array<T> {
     return this.reduce((acc, cur) => acc | cur, 0)
   }
 
-  and(bits: T) {
-    return this.filter(v => v & bits) as ExpandedBitwiseEnumArray<T>
+  and(expandedArr: ExpandedBitwiseEnumArray<T>): ExpandedBitwiseEnumArray<T>
+  and(bits: T): ExpandedBitwiseEnumArray<T>
+  and(input: T | ExpandedBitwiseEnumArray<T>) {
+    if (Array.isArray(input)) {
+      return this.filter(v => input.includes(v))
+    }
+    return this.filter(v => v & input)
   }
 
-  not(bits: T) {
-    return this.filter(v => ~v & bits) as ExpandedBitwiseEnumArray<T>
+  not(expandedArr: ExpandedBitwiseEnumArray<T>): ExpandedBitwiseEnumArray<T>
+  not(bits: T): ExpandedBitwiseEnumArray<T>
+  not(input: T |  ExpandedBitwiseEnumArray<T>) {
+    if (Array.isArray(input)) {
+      return this.filter(v => !input.includes(v))
+    }
+    return this.filter(v => ~v & input) as ExpandedBitwiseEnumArray<T>
   }
 
-  or(bits: T) {
+  or(expandedArr: ExpandedBitwiseEnumArray<T>): ExpandedBitwiseEnumArray<T>
+  or(bits: T): ExpandedBitwiseEnumArray<T>
+  or(bits: T |  ExpandedBitwiseEnumArray<T>) {
+    if (Array.isArray(bits)) {
+      return ExpandedBitwiseEnumArray.from(new Set(this.concat(bits)))
+    }
     return this.filter(v => v | bits) as ExpandedBitwiseEnumArray<T>
   }
 

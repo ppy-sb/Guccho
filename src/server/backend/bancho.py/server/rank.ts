@@ -15,7 +15,7 @@ import type { Id } from '..'
 import { hasRuleset } from '..'
 
 import { config as _config } from '../env'
-import { normal } from '../constants'
+import { abnormal } from '../constants'
 import { RedisNotReadyError, client as redisClient } from './source/redis'
 import { getPrismaClient } from './source/prisma'
 
@@ -74,9 +74,7 @@ export class DatabaseRankProvider implements Base<Id> {
         totalScore: rankingSystem === Rank.TotalScore ? { gt: 0 } : undefined,
         mode: toBanchoPyMode(mode, ruleset),
         user: {
-          priv: {
-            in: normal,
-          },
+          priv: { not:{ in:abnormal } },
         },
       },
       select: {
@@ -122,9 +120,7 @@ export class DatabaseRankProvider implements Base<Id> {
         totalScore: rankingSystem === Rank.TotalScore ? { gt: 0 } : undefined,
         mode: toBanchoPyMode(mode, ruleset),
         user: {
-          priv: {
-            in: normal,
-          },
+          priv: { not:{ in:abnormal } },
         },
       },
 
@@ -177,9 +173,7 @@ export class DatabaseRankProvider implements Base<Id> {
           md5,
         },
         user: {
-          priv: {
-            in: normal,
-          },
+          priv: { not:{ in:abnormal } },
         },
         mode: toBanchoPyMode(mode, ruleset),
         status: {
@@ -220,9 +214,7 @@ export class DatabaseRankProvider implements Base<Id> {
           md5,
         },
         user: {
-          priv: {
-            in: normal,
-          },
+          priv: { not:{ in:abnormal } },
         },
         mode: toBanchoPyMode(mode, ruleset),
         status: {

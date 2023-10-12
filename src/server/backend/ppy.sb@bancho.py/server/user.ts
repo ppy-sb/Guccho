@@ -1,7 +1,7 @@
 import { TRPCError } from '@trpc/server'
 import type { Id } from '..'
 import { Logger } from '../log'
-import { normal } from '../../bancho.py/constants'
+import { abnormal } from '../../bancho.py/constants'
 import { getPrismaClient } from './prisma'
 
 import { ArticleProvider, UserProvider as BanchoPyUser } from '~/server/backend/bancho.py/server'
@@ -116,7 +116,7 @@ export class UserProvider extends BanchoPyUser implements Base<Id> {
           createUserHandleWhereQuery({
             handle,
           }),
-          (includeHidden || scope === Scope.Self) ? {} : { priv: { in: normal } },
+          (includeHidden || scope === Scope.Self) ? {} : { priv: { not: { in: abnormal } } },
         ],
       },
     })
