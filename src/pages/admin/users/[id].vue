@@ -1,12 +1,17 @@
 <script setup lang="ts">
 import { CountryCode } from '~/def/country-code'
-
+import { UserRole } from '~/def/user'
 
 const app = useNuxtApp()
+const { t } = useI18n()
 const route = useRoute('admin-users-id')
 const {
   data:detail,
 } = await app.$client.admin.userManagement.detail.useQuery(route.params.id)
+
+function options<T extends Record<string, string>, TTr extends (key: keyof T, value: T[keyof T]) => string>(priv: T, translate: TTr = ((a: keyof T, b: T[keyof T]) => a) as TTr) {
+  return Object.entries(priv).map(([label, value]) => ({ label: translate(label, value as T[keyof T]), value }) as { label: ReturnType<TTr>; value: T[keyof T] })
+}
 </script>
 
 <template>
@@ -53,6 +58,12 @@ const {
           </option>
         </select>
       </div>
+    </div>
+    <div class="form-control">
+      <label class="label">
+        <span class="label-text">Roles</span>
+      </label>
+      <t-multi-select v-model="detail.roles" size="sm" :options="options(UserRole, (_, value) => t(localeKey.role(value)))" />
     </div>
   </div>
 </template>
