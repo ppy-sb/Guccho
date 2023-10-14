@@ -29,45 +29,47 @@ const selected = computed(() => reset())
 
 <template>
   <Listbox :model-value="selected" multiple @update:model-value="(value) => e('update:modelValue', value.map((v: Option) => v.value))">
-    <Float :offset="4" portal>
-      <ListboxButton class="select" :class="[props.size && `select-${props.size}`]">
-        <div v-if="selected.length" class="flex gap-3">
-          <span v-for="s in selected" :key="s.label" selected class="_item">
-            {{ s.label }}
-          </span>
-        </div>
-        <span v-else>select</span>
-      </ListboxButton>
-      <transition
-        leave-active-class="transition duration-100 ease-in"
-        leave-from-class="opacity-100"
-        leave-to-class="opacity-0"
-      >
-        <ListboxOptions
-          class="z-50 mt-1 menu menu-compact bg-base-100/80 backdrop-blur shadow"
-          :class="[
-            props.size === 'sm' || props.size === 'xs' ? 'rounded-xl' : 'rounded-box',
-          ]"
+    <client-only>
+      <Float :offset="4" portal>
+        <ListboxButton class="select" :class="[props.size && `select-${props.size}`]">
+          <div v-if="selected.length" class="flex gap-3">
+            <span v-for="s in selected" :key="s.label" selected class="_item">
+              {{ s.label }}
+            </span>
+          </div>
+          <span v-else>select</span>
+        </ListboxButton>
+        <transition
+          leave-active-class="transition duration-100 ease-in"
+          leave-from-class="opacity-100"
+          leave-to-class="opacity-0"
         >
-          <ListboxOption
-            v-for="option in props.options"
-            v-slot="{ selected }"
-            :key="option.label"
-            :value="option"
-            as="template"
-            :disabled="option.disabled"
+          <ListboxOptions
+            class="z-50 mt-1 menu menu-compact bg-base-100/80 backdrop-blur shadow"
+            :class="[
+              props.size === 'sm' || props.size === 'xs' ? 'rounded-xl' : 'rounded-box',
+            ]"
           >
-            <li>
-              <span
-                class="block truncate" :class="[
-                  selected ? 'active' : '',
-                ]"
-              >{{ option.label }}</span>
-            </li>
-          </ListboxOption>
-        </ListboxOptions>
-      </transition>
-    </Float>
+            <ListboxOption
+              v-for="option in props.options"
+              v-slot="{ selected }"
+              :key="option.label"
+              :value="option"
+              as="template"
+              :disabled="option.disabled"
+            >
+              <li>
+                <span
+                  class="block truncate" :class="[
+                    selected ? 'active' : '',
+                  ]"
+                >{{ option.label }}</span>
+              </li>
+            </ListboxOption>
+          </ListboxOptions>
+        </transition>
+      </Float>
+    </client-only>
   </Listbox>
 </template>
 
