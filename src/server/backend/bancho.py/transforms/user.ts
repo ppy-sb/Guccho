@@ -114,17 +114,12 @@ export function toOneBanchoPyPriv(role: UserRole): number {
 }
 
 export type DatabaseUserCompactFields = 'id' | 'name' | 'safeName' | 'country' | 'priv'
-export function toUserCompact<
-  _Scope extends Scope = Scope.Public,
->(user: Pick<DatabaseUser, DatabaseUserCompactFields>, { avatar }: {
+export function toUserCompact(user: Pick<DatabaseUser, DatabaseUserCompactFields>, { avatar }: {
   avatar: {
     domain?: string
   }
-}, scope?: _Scope) {
-  if (scope === undefined) {
-    scope = Scope.Public as _Scope
-  }
-  const returnValue: UserCompact<Id> & Partial<UserOptional> = {
+}) {
+  return  {
     id: user.id,
     stableClientId: user.id,
     name: user.name,
@@ -134,19 +129,6 @@ export function toUserCompact<
     roles: toRoles(user.priv),
   }
 
-  // if (scope === Scope.Self) {
-  //   returnValue.password = user.pwBcrypt
-  // }
-
-  // if (includes?.email) {
-  //   returnValue.email = user.email
-  // }
-
-  return returnValue as (
-    UserCompact<Id>
-    & (_Scope extends Scope.Self ? UserSecrets : Record<never, never>)
-    // & (Includes['email'] extends true ? { email: string } : Record<never, never>)
-  )
 }
 export type DatabaseUserOptionalFields = 'email' | 'preferredMode'
 export function toUserOptional(user: Pick<DatabaseUser, DatabaseUserOptionalFields>): UserOptional {
@@ -158,6 +140,13 @@ export function toUserOptional(user: Pick<DatabaseUser, DatabaseUserOptionalFiel
       ruleset,
     },
     status: UserStatus.Unknown,
+  }
+}
+
+export type DatabaseUserSecretsFields = 'pwBcrypt'
+export function toUserSecrets(user: Pick<DatabaseUser, DatabaseUserSecretsFields>): UserSecrets {
+  return {
+    password: user.pwBcrypt,
   }
 }
 

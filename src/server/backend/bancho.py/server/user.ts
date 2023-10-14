@@ -21,6 +21,7 @@ import {
   toRankingSystemScores,
   toSafeName,
   toUserCompact,
+  toUserSecrets,
 } from '../transforms'
 
 import {
@@ -139,7 +140,7 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
       ...userCompacts,
     })
 
-    return toUserCompact(user, this.config, scope)
+    return toUserCompact(user, this.config)
   }
 
   async getCompact<
@@ -168,7 +169,7 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
       .catch(() => {
         throw new TRPCError({ code: 'NOT_FOUND', message: userNotFound })
       })
-    return toUserCompact(user, this.config, scope)
+    return Object.assign(toUserCompact(user, this.config), toUserSecrets(user))
   }
 
   // https://github.com/prisma/prisma/issues/6570 need two separate query to get count for now

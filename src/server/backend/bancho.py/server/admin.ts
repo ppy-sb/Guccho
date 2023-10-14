@@ -1,10 +1,10 @@
 import type { Id } from '..'
-import {  toOneBanchoPyPriv, toUserCompact, toUserOptional } from '../transforms'
+import { toOneBanchoPyPriv, toUserCompact, toUserOptional } from '../transforms'
 import { config } from '../env'
 import { BanchoPyPrivilege } from '../enums'
 import { getPrismaClient } from './source/prisma'
 
-import { Scope, type UserCompact, type UserOptional } from '~/def/user'
+import type { UserCompact, UserOptional } from '~/def/user'
 
 import { AdminProvider as Base } from '$base/server'
 
@@ -26,7 +26,7 @@ export class AdminProvider extends Base<Id> implements Base<Id> {
         country: query.flag,
         priv: query.roles?.length
           ? {
-              in:  query.roles.reduce((acc, cur) => acc.and(toOneBanchoPyPriv(cur)), all),
+              in: query.roles.reduce((acc, cur) => acc.and(toOneBanchoPyPriv(cur)), all),
             }
           : undefined,
       },
@@ -42,7 +42,7 @@ export class AdminProvider extends Base<Id> implements Base<Id> {
 
 
     const uCompacts = result.map(user => ({
-      ...toUserCompact(user, this.config, Scope.Self),
+      ...toUserCompact(user, this.config),
       ...toUserOptional(user),
       lastActivityAt: new Date(user.lastActivity * 1000),
       registeredAt: new Date(user.creationTime * 1000),
@@ -63,7 +63,7 @@ export class AdminProvider extends Base<Id> implements Base<Id> {
     })
 
     return {
-      ...toUserCompact(user, this.config, Scope.Self),
+      ...toUserCompact(user, this.config),
       ...toUserOptional(user),
     }
   }
