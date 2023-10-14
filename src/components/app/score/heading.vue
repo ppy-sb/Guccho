@@ -138,6 +138,6 @@ fr-FR:
     </div>
   </div>
   <div>
-    <a :href="`/replay/${score.id}/download`" class="btn btn-shadow btn-primary">{{ t('download-replay') }} <icon name="line-md:download-loop" class="w-5 h-5" /></a>
+    <a rel="nofollow" :href="`/replay/${score.id}/download`" class="btn btn-shadow btn-primary">{{ t('download-replay') }} <icon name="line-md:download-loop" class="w-5 h-5" /></a>
   </div>
 </template>
