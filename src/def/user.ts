@@ -89,7 +89,7 @@ export interface UserClan<Id> {
 }
 export interface UserCompact<Id> {
   id: Id
-  ingameId: number
+  stableClientId: number
   name: string
   safeName: string
   flag?: CountryCode

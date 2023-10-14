@@ -1,9 +1,9 @@
 import type { Id } from '..'
-import { toOneBanchoPyPriv, toUserCompact } from '../transforms'
+import {  toOneBanchoPyPriv, toUserCompact, toUserOptional } from '../transforms'
 import { config } from '../env'
 import { BanchoPyPrivilege } from '../enums'
-import { UserStatus } from './../../../../def/user'
 import { getPrismaClient } from './source/prisma'
+
 import { Scope, type UserCompact, type UserOptional } from '~/def/user'
 
 import { AdminProvider as Base } from '$base/server'
@@ -39,14 +39,11 @@ export class AdminProvider extends Base<Id> implements Base<Id> {
       skip: query.page * query.perPage,
       take: query.perPage,
     })
+
+
     const uCompacts = result.map(user => ({
-      ...toUserCompact(user, {
-        includes: {
-          email: true,
-        },
-        avatar: this.config.avatar,
-      }, Scope.Self),
-      status: UserStatus.Unknown,
+      ...toUserCompact(user, this.config, Scope.Self),
+      ...toUserOptional(user),
       lastActivityAt: new Date(user.lastActivity * 1000),
       registeredAt: new Date(user.creationTime * 1000),
       clan: user.clan ? {
@@ -56,5 +53,18 @@ export class AdminProvider extends Base<Id> implements Base<Id> {
     }))
 
     return uCompacts
+  }
+
+  async userDetail(query: { id: Id }): Promise<UserCompact<Id> & UserOptional> {
+    const user = await this.db.user.findFirstOrThrow({
+      where: {
+        id: query.id,
+      },
+    })
+
+    return {
+      ...toUserCompact(user, this.config, Scope.Self),
+      ...toUserOptional(user),
+    }
   }
 }

@@ -15,4 +15,5 @@ export abstract class AdminProvider<Id> extends IdTransformable {
     clan?: UserClan<Id>
   }
   >>
+  abstract userDetail(query: { id: Id }): PromiseLike<UserCompact<Id> & UserOptional>
 }

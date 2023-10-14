@@ -3,6 +3,7 @@ import type {
 } from 'prisma-client-bancho-py'
 import { Access, BanchoPyUserStatus as B, BanchoPyPrivilege } from '../enums'
 import type { Id } from '..'
+import { fromBanchoPyMode } from './mode'
 import type { ArticleProvider } from '$base/server'
 import type {
   UserCompact,
@@ -13,6 +14,7 @@ import {
   UserStatus as G,
   Scope,
   UserRole,
+  UserStatus,
 } from '~/def/user'
 import type { Relationship } from '~/def'
 
@@ -111,12 +113,10 @@ export function toOneBanchoPyPriv(role: UserRole): number {
   }
 }
 
-export type DatabaseUserCompactFields = 'id' | 'name' | 'safeName' | 'country' | 'priv' | 'pwBcrypt' | 'email'
+export type DatabaseUserCompactFields = 'id' | 'name' | 'safeName' | 'country' | 'priv'
 export function toUserCompact<
   _Scope extends Scope = Scope.Public,
-  Includes extends Partial<Record<keyof UserOptional, boolean>> = Record<never, never>,
->(user: Pick<DatabaseUser, DatabaseUserCompactFields>, { includes, avatar }: {
-  includes?: Includes
+>(user: Pick<DatabaseUser, DatabaseUserCompactFields>, { avatar }: {
   avatar: {
     domain?: string
   }
@@ -124,9 +124,9 @@ export function toUserCompact<
   if (scope === undefined) {
     scope = Scope.Public as _Scope
   }
-  const returnValue: UserCompact<Id> & Partial<UserOptional> & Partial<UserSecrets> = {
+  const returnValue: UserCompact<Id> & Partial<UserOptional> = {
     id: user.id,
-    ingameId: user.id,
+    stableClientId: user.id,
     name: user.name,
     safeName: user.safeName,
     flag: toCountryCode(user.country),
@@ -134,20 +134,33 @@ export function toUserCompact<
     roles: toRoles(user.priv),
   }
 
-  if (scope === Scope.Self) {
-    returnValue.password = user.pwBcrypt
-  }
+  // if (scope === Scope.Self) {
+  //   returnValue.password = user.pwBcrypt
+  // }
 
-  if (includes?.email) {
-    returnValue.email = user.email
-  }
+  // if (includes?.email) {
+  //   returnValue.email = user.email
+  // }
 
   return returnValue as (
     UserCompact<Id>
     & (_Scope extends Scope.Self ? UserSecrets : Record<never, never>)
-    & (Includes['email'] extends true ? { email: string } : Record<never, never>)
+    // & (Includes['email'] extends true ? { email: string } : Record<never, never>)
   )
 }
+export type DatabaseUserOptionalFields = 'email' | 'preferredMode'
+export function toUserOptional(user: Pick<DatabaseUser, DatabaseUserOptionalFields>): UserOptional {
+  const [mode, ruleset] = fromBanchoPyMode(user.preferredMode)
+  return {
+    email: user.email,
+    preferredMode: {
+      mode,
+      ruleset,
+    },
+    status: UserStatus.Unknown,
+  }
+}
+
 
 export function dedupeUserRelationship(
   relations: Array<{
@@ -184,7 +197,7 @@ export function toFullUser(
 ): UserCompact<Id> {
   return {
     id: user.id,
-    ingameId: user.id,
+    stableClientId: user.id,
     name: user.name,
     safeName: user.safeName,
     flag: toCountryCode(user.country),

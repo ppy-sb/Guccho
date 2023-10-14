@@ -407,7 +407,7 @@ export class RedisRankProvider extends DatabaseRankProvider implements Monitored
         return result.slice(start, start + pageSize).map((item, index) => ({
           user: {
             id: item.id,
-            ingameId: item.id,
+            stableClientId: item.id,
             name: item.name,
             safeName: item.safeName,
             flag: item.flag,
