@@ -34,7 +34,7 @@ import { getLiveUserStatus } from '../api-client'
 import { encryptBanchoPassword } from '../crypto'
 import { Logger } from '../log'
 import { config } from '../env'
-import { abnormal } from '../constants'
+import { normal } from '../constants'
 import { client as redisClient } from './source/redis'
 import { getPrismaClient } from './source/prisma'
 import { UserRelationProvider } from './user-relations'
@@ -119,9 +119,7 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
             }),
             {
               priv: {
-                not: {
-                  in: abnormal,
-                },
+                in: normal,
               },
             },
           ],
@@ -161,9 +159,7 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
             ? {}
             : {
                 priv: {
-                  not: {
-                    in: abnormal,
-                  },
+                  in: normal,
                 },
               }],
       },
@@ -330,9 +326,7 @@ WHERE s.userid = ${id}
     const baseQuery = {
       user: {
         priv: {
-          not: {
-            in: abnormal,
-          },
+          in: normal,
         },
       },
     }
@@ -398,7 +392,7 @@ WHERE s.userid = ${id}
           createUserHandleWhereQuery({
             handle,
           }),
-          includeHidden ? {} : { priv: { not: { in: abnormal } } },
+          includeHidden ? {} : { priv: { in: normal } },
         ],
       },
     })
@@ -558,7 +552,7 @@ WHERE s.userid = ${id}
     /* optimized */
     const result = await this.db.user.findMany({
       ...userCompacts,
-      ...merge(userLike, { where: { priv: { not: { in: abnormal } } } }),
+      ...merge(userLike, { where: { priv: { in: normal } } }),
       take: limit,
     })
 
@@ -570,9 +564,7 @@ WHERE s.userid = ${id}
     return await this.db.user.count({
       where: {
         priv: {
-          not: {
-            in: abnormal,
-          },
+          in: normal,
         },
       },
     })
