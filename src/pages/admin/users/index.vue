@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { CountryCode } from '../../def/country-code'
+import { CountryCode } from '~/def/country-code'
 import type { UserCompact, UserOptional } from '~/def/user'
 import { UserRole } from '~/def/user'
 
@@ -192,31 +192,36 @@ function options<T extends Record<string, string>, TTr extends (key: keyof T, va
                   </div>
                 </div>
                 <div>
-                  <nuxt-link-locale class="font-bold" :to="{ name: 'user-handle', params: { handle: `@${user.safeName}` } }">
+                  <nuxt-link-locale class="font-bold whitespace-nowrap" :to="{ name: 'user-handle', params: { handle: `@${user.safeName}` } }">
                     {{ user.name }}
                   </nuxt-link-locale>
-                  <div class="text-sm opacity-50">
+                  <div class="text-sm opacity-50 whitespace-nowrap">
                     {{ toCountryName(user.flag || CountryCode.Unknown) }}
                   </div>
                 </div>
               </div>
             </td>
             <td class="flex">
-              <!-- Zemlak, Daniel and Leannon -->
-              <!-- <br> -->
-              <div class="flex gap-1 flex-wrap">
-                <span v-for="role in user.roles" :key="user.id + role" class="badge badge-ghost badge-sm whitespace-nowrap">{{ t(localeKey.role(role)) }}</span>
+              <div class="f[[lex gap-1 flex-wrap">
+                <span v-for="role in user.roles" :key="user.id + role" class="badge badge-sm whitespace-nowrap">{{ t(localeKey.role(role)) }}</span>
               </div>
             </td>
             <td><a class="link decoration-sky-500" :href="`mailto:${user.email}`">{{ user.email }}</a></td>
-            <td>{{ user.registeredAt.toLocaleString(locale) }}</td>
-            <td>{{ user.lastActivityAt.toLocaleString(locale) }}</td>
+            <td><time class="whitespace-nowrap" :datetime="user.registeredAt.toString()">{{ user.registeredAt.toLocaleString(locale) }}</time></td>
+            <td><time class="whitespace-nowrap" :datetime="user.lastActivityAt.toString()">{{ user.lastActivityAt.toLocaleString(locale) }}</time></td>
             <!-- <td>Osu Stable ()</td> -->
             <!-- <td>localhost</td> -->
             <th>
-              <button class="btn btn-ghost btn-xs">
-                details
-              </button>
+              <nuxt-link-locale
+                :to="{
+                  name: 'admin-users-id',
+                  params: {
+                    id: user.id,
+                  },
+                }" class="btn btn-ghost btn-xs"
+              >
+                Details
+              </nuxt-link-locale>
             </th>
           </tr>
         </tbody>

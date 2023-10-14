@@ -37,5 +37,8 @@ export const router = _router({
         id: input.id ? UserProvider.stringToId(input.id) : undefined,
       })
     }),
+    detail: pAdmin.input(z.string()).query(({ input }) => {
+      return admin.userDetail({ id: UserProvider.stringToId(input) })
+    }),
   }),
 })
