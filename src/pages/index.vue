@@ -66,11 +66,15 @@ fr-FR:
     </div>
 
     <div class="hidden mascot lg:block">
-      <img
+      <nuxt-picture
+        defer
+        format="webp,avif"
         src="/mascot/riru.png"
-        style="max-height: 70vmin"
+        :img-attrs="{
+          style: 'max-height: 70vmin',
+        }"
         alt="riru Mascot"
-      >
+      />
     </div>
   </div>
 </template>

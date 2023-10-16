@@ -58,6 +58,7 @@ export default defineNuxtConfig({
     // '@nuxtjs/color-mode',
     '@nuxtjs/tailwindcss',
     '@pinia/nuxt',
+    '@nuxt/image',
     '@pinia-plugin-persistedstate/nuxt',
     '@nuxtjs/i18n',
     'nuxt-icon',
