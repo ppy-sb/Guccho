@@ -84,7 +84,7 @@ en-GB:
 
 zh-CN:
   status:
-    offline: 离线, 上次在线时间
+    offline: 离线, 上次在线于 {lastSeen}
     idle: 在线.
     afk: AFK
   edit: 编辑
