@@ -68,7 +68,7 @@
     "lodash-es": "^4.17.21",
     "lowlight": "^2.9.0",
     "md5": "^2.3.0",
-    "nuxt": "^3.5.3",
+    "nuxt": "^3.7.4",
     "prisma": "^5.4.2",
     "prosemirror-commands": "^1.5.2",
     "prosemirror-dropcursor": "^1.8.1",
