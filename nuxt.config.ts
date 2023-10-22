@@ -50,11 +50,6 @@ export default defineNuxtConfig({
   vue: {
     defineModel: true,
   },
-  nitro: {
-    externals: {
-      external: ['prisma-client-ppy-sb', 'prisma-client-bancho-py'],
-    },
-  },
 
   modules: [
     // '@nuxtjs/color-mode',

@@ -1,7 +1,8 @@
 import { CodeBlockLowlight } from '@tiptap/extension-code-block-lowlight'
-import { lowlight } from 'lowlight/lib/core.js'
+
 import { StarterKit } from '@tiptap/starter-kit'
 import useEditorExtensionsBase from './useEditorExtensionsBase'
+import { lowlight } from './useLazyLoadLowlight'
 import _Variable from '~/components/content/editor/extensions/variable.client'
 
 export default <TEdit extends boolean>(config?: { indent?: string; edit?: TEdit }) => {

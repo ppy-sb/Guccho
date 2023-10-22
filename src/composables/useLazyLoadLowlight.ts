@@ -1,6 +1,8 @@
 import type { JSONContent } from '@tiptap/core'
-import { lowlight } from 'lowlight/lib/core.js'
+import { createLowlight } from 'lowlight'
 import allLanguages from '~~/configs/hljs'
+
+export const lowlight = createLowlight()
 
 export type LanguageKey = keyof typeof allLanguages
 export type Language = typeof allLanguages[LanguageKey]
@@ -12,7 +14,7 @@ export async function importHighlightLanguage(language: Language) {
 export async function useLowlightLanguage(language: Language) {
   try {
     const f = await importHighlightLanguage(language)
-    lowlight.registerLanguage(language, f.default)
+    lowlight.register(language, f.default)
   }
   catch (e) {
     console.error('error on loading hljs lib:', e)
