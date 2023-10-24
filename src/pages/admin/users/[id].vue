@@ -6,7 +6,7 @@ const app = useNuxtApp()
 const { t } = useI18n()
 const route = useRoute('admin-users-id')
 const {
-  data:detail,
+  data: detail,
 } = await app.$client.admin.userManagement.detail.useQuery(route.params.id)
 
 function options<T extends Record<string, string>, TTr extends (key: keyof T, value: T[keyof T]) => string>(priv: T, translate: TTr = ((a: keyof T, b: T[keyof T]) => a) as TTr) {

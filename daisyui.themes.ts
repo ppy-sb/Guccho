@@ -8,7 +8,6 @@ import themes from 'daisyui/src/theming/themes'
 // import { convertSingle } from './src/utils/color'
 import { hex as colors } from './src/palette'
 
-
 // const cupcake = convertSingle(
 //   themes['[data-theme=cupcake]'],
 //   convert.hex.hsl,

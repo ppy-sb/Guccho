@@ -40,16 +40,17 @@ export class AdminProvider extends Base<Id> implements Base<Id> {
       take: query.perPage,
     })
 
-
     const uCompacts = result.map(user => ({
       ...toUserCompact(user, this.config),
       ...toUserOptional(user),
       lastActivityAt: new Date(user.lastActivity * 1000),
       registeredAt: new Date(user.creationTime * 1000),
-      clan: user.clan ? {
-        id: user.clan.id,
-        name: user.clan.name,
-      } : undefined,
+      clan: user.clan
+        ? {
+            id: user.clan.id,
+            name: user.clan.name,
+          }
+        : undefined,
     }))
 
     return uCompacts

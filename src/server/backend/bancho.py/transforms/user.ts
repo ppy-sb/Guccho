@@ -119,7 +119,7 @@ export function toUserCompact(user: Pick<DatabaseUser, DatabaseUserCompactFields
     domain?: string
   }
 }) {
-  return  {
+  return {
     id: user.id,
     stableClientId: user.id,
     name: user.name,
@@ -128,7 +128,6 @@ export function toUserCompact(user: Pick<DatabaseUser, DatabaseUserCompactFields
     avatarSrc: avatar.domain && `https://${avatar.domain}/${user.id}`,
     roles: toRoles(user.priv),
   }
-
 }
 export type DatabaseUserOptionalFields = 'email' | 'preferredMode'
 export function toUserOptional(user: Pick<DatabaseUser, DatabaseUserOptionalFields>): UserOptional {
@@ -149,7 +148,6 @@ export function toUserSecrets(user: Pick<DatabaseUser, DatabaseUserSecretsFields
     password: user.pwBcrypt,
   }
 }
-
 
 export function dedupeUserRelationship(
   relations: Array<{

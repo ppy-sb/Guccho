@@ -8,6 +8,7 @@ function detectServer() {
 }
 
 export default (def = false) =>
+  // eslint-disable-next-line n/prefer-global/process
   (process.server
     ? detectServer()
     : detectClient())

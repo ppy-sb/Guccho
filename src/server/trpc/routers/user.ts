@@ -66,7 +66,6 @@ export const router = _router({
       }),
     )
     .query(async ({ input, ctx }) => {
-
       const { mode, ruleset, rankingSystem } = input
       if (
         !hasRuleset(mode, ruleset)

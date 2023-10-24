@@ -1,4 +1,3 @@
-
 import { BanchoPyPrivilege } from '~/server/backend/bancho.py/enums'
 
 const eAll = ExpandedBitwiseEnumArray.fromTSBitwiseEnum(BanchoPyPrivilege)

@@ -5,7 +5,6 @@ import { UserRole } from '~/def/user'
 
 const { t, locale } = useI18n()
 
-
 const search = ref<
     Partial<UserCompact<string>
     & Pick<UserOptional, 'email' | 'status'>

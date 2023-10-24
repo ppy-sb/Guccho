@@ -38,5 +38,4 @@ export const validator = base.and(object({
   log,
 }).and(rank))
 
-
 export const config = lazySingleton(() => validator.parse(env))

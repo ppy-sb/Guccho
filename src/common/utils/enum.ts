@@ -14,7 +14,7 @@ export class ExpandedBitwiseEnumArray<T extends number> extends Array<T> {
 
   not(expandedArr: ExpandedBitwiseEnumArray<T>): ExpandedBitwiseEnumArray<T>
   not(bits: T): ExpandedBitwiseEnumArray<T>
-  not(input: T |  ExpandedBitwiseEnumArray<T>) {
+  not(input: T | ExpandedBitwiseEnumArray<T>) {
     if (Array.isArray(input)) {
       return this.filter(v => !input.includes(v))
     }
@@ -23,7 +23,7 @@ export class ExpandedBitwiseEnumArray<T extends number> extends Array<T> {
 
   or(expandedArr: ExpandedBitwiseEnumArray<T>): ExpandedBitwiseEnumArray<T>
   or(bits: T): ExpandedBitwiseEnumArray<T>
-  or(bits: T |  ExpandedBitwiseEnumArray<T>) {
+  or(bits: T | ExpandedBitwiseEnumArray<T>) {
     if (Array.isArray(bits)) {
       return ExpandedBitwiseEnumArray.from(new Set(this.concat(bits)))
     }

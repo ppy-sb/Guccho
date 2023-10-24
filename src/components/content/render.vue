@@ -14,6 +14,7 @@ onBeforeMount(hl)
 watch(() => props.html, hl)
 
 async function hl() {
+  // eslint-disable-next-line n/prefer-global/process
   if (process.server) {
     return props.html
   }

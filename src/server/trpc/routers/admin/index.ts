@@ -7,7 +7,6 @@ import { UserRole } from '~/def/user'
 import { admin } from '~/server/singleton/service'
 import { CountryCode } from '~/def/country-code'
 
-
 export const router = _router({
   log,
   serverStatus: pAdmin.query(() => {

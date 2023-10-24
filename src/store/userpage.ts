@@ -73,7 +73,6 @@ export default defineStore('userpage', () => {
     }
   }
 
-
   return {
     refresh,
     dispose,

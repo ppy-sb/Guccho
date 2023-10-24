@@ -5,7 +5,7 @@ import { normal } from '../../bancho.py/constants'
 import { getPrismaClient } from './prisma'
 
 import { ArticleProvider, UserProvider as BanchoPyUser } from '~/server/backend/bancho.py/server'
-import { fromBanchoPyMode,  toFullUser  } from '~/server/backend/bancho.py/transforms'
+import { fromBanchoPyMode, toFullUser } from '~/server/backend/bancho.py/transforms'
 import { createUserHandleWhereQuery } from '~/server/backend/bancho.py/db-query'
 
 import type { UserCompact } from '~/def/user'
