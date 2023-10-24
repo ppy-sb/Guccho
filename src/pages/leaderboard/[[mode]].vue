@@ -44,7 +44,7 @@ const selected = shallowRef<Required<SwitcherPropType<LeaderboardRankingSystem>>
 })
 const { data: total, refresh: refreshCount } = await app.$client.rank.countLeaderboard.useQuery(selected)
 
-const totalPages = computed(() => Math.min(Math.ceil(total.value / perPage), 5))
+const totalPages = computed(() => Math.min(Math.ceil(total.value || 0 / perPage), 5))
 
 const {
   data: table,
