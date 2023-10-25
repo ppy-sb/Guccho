@@ -311,8 +311,8 @@ zh-CN:
     name: 设备名称
     last-activity: 上次活跃时间
     actions: 操作
-    current: 我
-    kick: 强制下线
+    current: 当前会话
+    kick: 强制登出
 
 fr-FR:
   reset: Retour Arrière
@@ -372,7 +372,7 @@ fr-FR:
       ref="changeAvatar"
       v-slot="{ closeModal }"
       class="my-auto"
-      @ready="() => /* compatible with stable client */ showChangeAvatar && changeAvatar?.showModal()"
+      @ready="/* for compatibility with 'change avatar' in stable client. */ () => showChangeAvatar && changeAvatar?.showModal()"
     >
       <div class="p-4 rounded-xl flex flex-col gap-2 shadow-xl bg-gbase-50">
         <div class="flex items-center justify-center w-full">
