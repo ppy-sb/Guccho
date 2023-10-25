@@ -127,6 +127,7 @@ export abstract class UserProvider<Id> extends IdTransformable {
 
   abstract changePassword(
     user: { id: Id },
+    oldPasswordMD5: string,
     newPasswordMD5: string
   ): PromiseLike<UserCompact<Id>>
 

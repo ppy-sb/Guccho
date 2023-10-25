@@ -255,3 +255,5 @@ articles/*
 !articles/fallbacks
 !src/server/env
 /env.ts
+
+.generated

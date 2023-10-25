@@ -176,11 +176,11 @@ fr-FR:
             </div>
           </div>
         </div>
-        <div v-if="haveUserAsTheirFriend.length" class="divider text-xl py-8">
+        <div v-if="haveUserAsTheirFriend?.length" class="divider text-xl py-8">
           {{ t('you-may-also-wonder') }}
         </div>
 
-        <template v-if="haveUserAsTheirFriend.length">
+        <template v-if="haveUserAsTheirFriend?.length">
           <div class="alert">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6">
               <path

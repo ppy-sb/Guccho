@@ -4,7 +4,7 @@ import { Lang } from '~/def'
 import type { DynamicSettingStore, DynamicUserSetting } from '~/def/user'
 
 export type ExtractSettingType<TSetting extends Record<string, DynamicUserSetting<any, any, any>>> = {
-  [K in keyof TSetting]: TSetting[K] extends DynamicUserSetting<infer R, any, any> ? R : never
+  [K in keyof TSetting]?: TSetting[K] extends DynamicUserSetting<infer R, any, any> ? R : never
 }
 export type ExtractSettingValidatorType<TSetting extends Record<string, DynamicUserSetting<any, any, any>>> = {
   [K in keyof TSetting]: TSetting[K] extends DynamicUserSetting<infer R, any, any> ? ZodType<R> : never

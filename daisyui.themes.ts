@@ -1,7 +1,6 @@
 /* eslint-env node */
 // import * as convert from 'color-convert'
 
-// @ts-expect-error got nothing
 import themes from 'daisyui/src/theming/themes'
 
 // import type { HSL } from 'color-convert/conversions'

@@ -15,7 +15,7 @@ function options<T extends Record<string, string>, TTr extends (key: keyof T, va
 </script>
 
 <template>
-  <div class="sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+  <div v-if="detail" class="sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
     <div class="form-control">
       <label class="label">
         <span class="label-text">ID</span>

@@ -207,9 +207,14 @@ export abstract class ArticleProvider {
   }
 
   static async getLocalSlugs(query?: string) {
-    return dirTree(relative('.', ArticleProvider.articles), { normalizePath: true }, (item, PATH, stats) => {
+    // path: string
+    // name: string
+    // children?: Prop[]
+    // expandLevel?: number
+    // level?: number
+    return pick(dirTree(relative('.', ArticleProvider.articles), { normalizePath: true }, (item, PATH, stats) => {
       item.path = relative(config.article.location, item.path)
-    })
+    }), ['path', 'name', 'children'])
   }
 
   protected static async getLocalArticleData(opt: {

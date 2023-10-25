@@ -5,9 +5,9 @@ import { TRPCError } from '@trpc/server'
 
 import { glob } from 'glob'
 import imageType from 'image-type'
-import type { Prisma, Stat } from 'prisma-client-bancho-py'
 import { merge } from 'lodash-es'
 import bcrypt from 'bcryptjs'
+import type { Prisma, Stat } from 'prisma-client-bancho-py'
 import { BanchoPyMode, BanchoPyScoreStatus } from '../enums'
 import {
   BPyMode,
@@ -131,9 +131,7 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
     ) > 0
   }
 
-  async getCompactById<
-    _Scope extends Scope = Scope.Public,
-  >({ id, scope }: { id: Id; scope?: _Scope }) {
+  async getCompactById({ id }: { id: Id }) {
     /* optimized */
     const user = await this.db.user.findFirstOrThrow({
       where: {
@@ -512,11 +510,24 @@ WHERE s.userid = ${id}
     }
   }
 
-  async changePassword(user: UserCompact<Id>, newPasswordMD5: string) {
+  async changePassword(user: UserCompact<Id>, oldPasswordMD5: string, newPasswordMD5: string) {
+    const u = await this.db.user.findFirstOrThrow({
+      where: {
+        id: user.id,
+      },
+    })
+
+    if (!compare(oldPasswordMD5, u.pwBcrypt)) {
+      throw new TRPCError({
+        code: 'UNAUTHORIZED',
+        message: oldPasswordMismatch,
+      })
+    }
+
     const pwBcrypt = await encryptBanchoPassword(newPasswordMD5)
     const result = await this.db.user.update({
       where: {
-        id: user.id,
+        id: u.id,
       },
       data: {
         pwBcrypt,
@@ -711,15 +722,15 @@ WHERE s.userid = ${id}
   async getDynamicSettings({ id }: { id: Id }) {
     const user = await this.db.user.findFirstOrThrow({ where: { id } })
     return {
-      apiKey: user.apiKey ?? '',
-    }
+      apiKey: user.apiKey || undefined,
+    } satisfies ServerSetting as ServerSetting
   }
 
   async setDynamicSettings(user: { id: number }, args: ServerSetting): Promise<ServerSetting> {
     const result = await this.db.user.update({ where: { id: user.id }, data: { apiKey: args.apiKey } })
     return {
-      apiKey: result.apiKey,
-    } as ServerSetting
+      apiKey: result.apiKey || undefined,
+    } satisfies ServerSetting
   }
 }
 

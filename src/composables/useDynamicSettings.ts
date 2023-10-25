@@ -18,6 +18,7 @@ export default async function () {
     client.save(v)
     serverData.value = await app.$client.me.dynamicSettings.update.mutate(v)
   }
+
   return {
     data,
     unchanged,

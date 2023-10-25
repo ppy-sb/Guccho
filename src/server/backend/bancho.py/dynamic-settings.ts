@@ -10,7 +10,7 @@ export const settings = {
     label: 'api-key',
     type: 'input',
     disabled: true,
-    validator: z.string(),
+    validator: z.string().optional(),
     locale: {
       [Lang.enGB]: {
         'api-key': 'API Key',

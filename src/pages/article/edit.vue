@@ -184,7 +184,7 @@ fr-FR:
 </i18n>
 
 <template>
-  <section class="container pb-8 mx-auto custom-container lg:px-2">
+  <section v-if="articles" class="container pb-8 mx-auto custom-container lg:px-2">
     <div class="flex">
       <ul class="menu menu-xs bg-base-100 rounded-lg max-w-xs w-full">
         <tree

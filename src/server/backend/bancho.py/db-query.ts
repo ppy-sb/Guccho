@@ -10,7 +10,6 @@ export const userCompacts: Prisma.UserFindManyArgs = {
     safeName: true,
     country: true,
     priv: true,
-    email: true,
   },
 } as const satisfies {
   select: Record<DatabaseUserCompactFields, true>
