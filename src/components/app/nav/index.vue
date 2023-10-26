@@ -177,7 +177,7 @@ function clearFocus() {
 
 .navbar {
   @apply border-[1px] border-gbase-50/0 dark:border-gbase-500/0;
-  transition:all 0.5s cubic-bezier(0.05, 1, 0.4, 0.95);
+  transition: all 0.5s cubic-bezier(0.05, 1, 0.4, 0.95);
 
   & .btn,
   & a,
@@ -191,10 +191,10 @@ function clearFocus() {
     @apply transition-[padding];
   }
 
-  & .nav-menu li,
+  & ul.nav-menu>li,
   &.btn {
-    min-height:3em;
-    height:3em;
+    min-height: 3em;
+    height: 3em;
     @apply outline-transparent;
     @apply transition-all;
   }
@@ -234,7 +234,8 @@ function clearFocus() {
       }
     }
 
-    & .nav-menu li {
+    /* > ul > li */
+    & ul.nav-menu>li {
       @apply justify-center;
     }
 
@@ -244,15 +245,15 @@ function clearFocus() {
     }
 
     & .btn,
-    & .nav-menu li {
-      height:2rem;
-      min-height:2rem;
+    & ul.nav-menu>li {
+      height: 2rem;
+      min-height: 2rem;
       @apply outline-transparent;
       @apply transition-all;
 
       &.btn-circle {
-        width:2rem;
-        min-width:2rem;
+        width: 2rem;
+        min-width: 2rem;
       }
 
       & a {
