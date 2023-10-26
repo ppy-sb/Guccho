@@ -43,9 +43,6 @@ const includes = shallowReactive({
 const searchMode = computed(() => ((includes.beatmaps || includes.beatmapsets) && !includes.users) ? 'beatmap' : 'all')
 
 export async function useSearchResult() {
-  if (process.server) {
-    throw new Error('only useable in client.')
-  }
   const app = useNuxtApp()
 
   const {
@@ -132,10 +129,15 @@ export async function useSearchResult() {
       pages,
     },
     nothing: computed(() => {
-      const nothingBS = Array.isArray(beatmapsets.value) ? !beatmapsets.value.length : true
-      const nothingBM = Array.isArray(beatmaps.value) ? beatmaps.value.length : true
-      const nothingUser = Array.isArray(users.value) ? !users.value.length : true
-      return nothingBS && nothingBM && nothingUser
+      return (keyword.value || tags.value.length) && (
+        !pendingUsers.value
+        && !pendingBeatmaps.value
+        && !pendingBeatmapsets.value
+      ) && (
+        !beatmapsets?.value?.length
+        && !beatmaps?.value?.length
+        && !users?.value?.length
+      )
     }),
 
     includes,

@@ -16,6 +16,7 @@ function clearFocus() {
 </script>
 
 <template>
+  <slot name="start" />
   <li>
     <nuxt-link-locale :to="{ name: 'leaderboard-mode' }" @click="clearFocus">
       <icon name="material-symbols:leaderboard-rounded" class="w-5 h-5" size="100%" />

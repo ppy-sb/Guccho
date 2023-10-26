@@ -3,7 +3,7 @@ const fullYear = new Date().getFullYear()
 </script>
 
 <template>
-  <div class="h-full">
+  <div class="flex flex-col">
     <slot />
     <slot name="footer">
       <footer class="py-4 text-center relative">

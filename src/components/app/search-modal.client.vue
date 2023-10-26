@@ -4,24 +4,24 @@ en-GB:
     beatmapsets: Include beatmapsets
     beatmaps: Include beatmaps
     users: Include users
-    search: Search...
-    noting: Found nothing.
+  search: Search...
+  nothing: Found nothing.
 
 zh-CN:
   include:
     beatmapsets: 包括歌曲
     beatmaps: 包含铺面
     users: 包含用户
-    search: 搜索中
-    noting: 什么都没找到
+  search: 搜索
+  nothing: 什么都没找到。
 
 fr-FR:
   include:
     beatmapsets: Inclure beatmapsets
     beatmaps: Inclure beatmaps
     users: Inclure utilisateurs
-    search: Cherche...
-    noting: Aucun résultat.
+  search: Cherche...
+  nothing: Aucun résultat.
 </i18n>
 
 <script setup lang="ts">
@@ -66,7 +66,6 @@ const {
             <span class="label-text">{{ t('include.beatmapsets') }}</span>
           </label>
         </div>
-
         <div class="form-control">
           <label class="label cursor-pointer p-0 flex gap-2">
             <input

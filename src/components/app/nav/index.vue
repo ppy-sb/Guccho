@@ -11,7 +11,6 @@ const searchModalWrapper = shallowRef<{
   }
 }>()
 
-const config = useAppConfig()
 const detached = shallowRef(false)
 watch(scrollY, () => (detached.value = scrollY.value > 0))
 const root = shallowRef<HTMLElement>()
@@ -42,24 +41,12 @@ function clearFocus() {
       ]"
     >
       <div class="navbar-start">
-        <div class="dropdown">
-          <label tabindex="0" class="btn btn-ghost lg:hidden">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16" />
-            </svg>
-          </label>
-          <ul
-            tabindex="0" class="menu menu-tint menu-md dropdown-content mt-3 p-2 w-52" :class="{
-              'dropdown-open': shownMenu.left,
-            }"
-          >
-            <app-navbar-navs />
-          </ul>
-        </div>
-        <nuxt-link-locale :to="{ name: 'index' }" class="btn btn-ghost normal-case text-xl hidden lg:flex gap-1">
-          <icon name="ion:paw" />
-          {{ config.title }}
-        </nuxt-link-locale>
+        <label for="app-drawer-toggle" class="btn btn-ghost drawer-button lg:hidden">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16" />
+          </svg>
+        </label>
+        <app-nav-brand class="hidden lg:flex" />
         <button
           class="btn btn-ghost btn-circle lg:hidden"
           @click.prevent="() => searchModalWrapper?.searchModal?.showModal()"
@@ -77,7 +64,7 @@ function clearFocus() {
       </div>
       <div class="navbar-center hidden lg:flex">
         <ul class="menu nav-menu menu-horizontal px-1">
-          <app-navbar-navs />
+          <app-nav-items />
         </ul>
       </div>
       <div class="navbar-end">
@@ -262,7 +249,6 @@ function clearFocus() {
       min-height:2rem;
       @apply outline-transparent;
       @apply transition-all;
-
 
       &.btn-circle {
         width:2rem;

@@ -71,7 +71,11 @@ export default defineNuxtConfig({
     strict: true,
   },
 
-  devtools: { enabled: true },
+  devtools: {
+    timeline: {
+      enabled: true,
+    },
+  },
 
   i18n: {
     strategy: 'no_prefix',

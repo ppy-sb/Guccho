@@ -3,8 +3,8 @@ const fullYear = new Date().getFullYear()
 </script>
 
 <template>
-  <div class="absolute inset-0 flex overflow-clip">
-    <div class="w-full flex flex-col items-center justify-center">
+  <div class="flex flex-col min-h-[100dvh]">
+    <div class="grow flex flex-col items-center">
       <slot />
       <slot name="footer">
         <footer class="py-4 text-center relative">

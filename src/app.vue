@@ -12,24 +12,39 @@ onMounted(() => {
 </script>
 
 <template>
-  <NuxtLoadingIndicator />
-  <app-navbar />
   <DevOnly>
     <app-experience />
   </DevOnly>
-  <NuxtLayout
-    ref="scroll"
-    viewport
-    :class="[safari ? 'safari' : 'not-safari']"
-    class="zoom-modal-container overflow-x-clip"
-    :data-l1-status="status"
-    data-l2-status="hidden"
-    :style="status !== 'closed' && {
-      'transform-origin': `center calc(${scrollY} * 1px + 50dvh)`,
-    }"
-  >
-    <NuxtPage />
-  </NuxtLayout>
+  <app-nav />
+  <div id="app-drawer" class="drawer block">
+    <input id="app-drawer-toggle" type="checkbox" class="drawer-toggle">
+    <!-- Page content here -->
+    <NuxtLayout
+      ref="scroll"
+      viewport
+      :class="[safari ? 'safari' : 'not-safari']"
+      class="drawer-content zoom-modal-container overflow-x-clip"
+      :data-l1-status="status"
+      data-l2-status="hidden"
+      :style="status !== 'closed' && {
+        'transform-origin': `center calc(${scrollY} * 1px + 50dvh)`,
+      }"
+    >
+      <NuxtPage />
+    </NuxtLayout>
+    <div class="drawer-side z-40">
+      <label for="app-drawer-toggle" aria-label="close sidebar" class="drawer-overlay" />
+      <ul class="menu p-4 w-80 min-h-full bg-base-200">
+        <app-nav-items>
+          <template #start>
+            <li>
+              <app-nav-brand />
+            </li>
+          </template>
+        </app-nav-items>
+      </ul>
+    </div>
+  </div>
 </template>
 
 <style lang="scss">
@@ -40,18 +55,11 @@ $zoom-content-stage2: saturate(0.4) opacity(0.2);
 $scale: scale(0.98);
 $scale2: scale(0.96);
 
-.safari {
-  -webkit-overflow-scrolling: touch;
-  .notify-safari-something-will-change {
-    will-change: transform, filter;
-  }
-}
-
 .zoom-modal-container {
 
   &[data-l1-status="show"] {
 
-    &[data-l2-status="hidden"]  {
+    &[data-l2-status="hidden"] {
       animation: zoomOutModalContent $duration $animate-function forwards;
     }
 
@@ -59,7 +67,7 @@ $scale2: scale(0.96);
       animation: zoomOutModalContentL2 $duration $animate-function forwards !important;
     }
 
-    &[data-l2-status="closing"]  {
+    &[data-l2-status="closing"] {
       animation: zoomInModalContentL2 $duration $animate-function forwards;
     }
 
@@ -115,8 +123,41 @@ $scale2: scale(0.96);
     filter: $zoom-content-stage1;
   }
 }
+</style>
 
+<style lang="postcss">
 .zoom-modal-container[data-l2-status="show"] > dialog::backdrop {
   z-index: 1000 !important;
+}
+
+#app-drawer .drawer-toggle:checked ~ .drawer-side > .drawer-overlay {
+  @apply bg-gbase-950/30 dark:bg-gbase-950/70;
+  @apply transition-colors;
+  transition-duration: 350ms;
+}
+
+#app-drawer .drawer-content > * {
+  transition-property: transform filter;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 350ms;
+  transition-delay: 30ms;
+
+}
+
+#app-drawer .drawer-toggle:checked ~ .drawer-content > * {
+  @apply translate-x-5;
+  transition-duration: 250ms;
+  transition-delay: 50ms;
+  filter: saturate(0.5);
+}
+</style>
+
+<style>
+.safari {
+  -webkit-overflow-scrolling: touch;
+
+  .notify-safari-something-will-change {
+    will-change: transform, filter;
+  }
 }
 </style>

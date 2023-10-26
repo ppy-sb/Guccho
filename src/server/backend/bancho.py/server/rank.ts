@@ -281,7 +281,7 @@ export class RedisRankProvider extends DatabaseRankProvider implements Monitored
       ).then(res => res.map(Number))
 
       if (!rank.length) {
-        raise(RedisRankProvider.RedisNoDataError, 'redis leaderboard is empty')
+        raise(RedisRankProvider.RedisNoDataError, 'redis leaderboard is empty, fallback to use database as source.')
       }
 
       return this.db.stat.count({
