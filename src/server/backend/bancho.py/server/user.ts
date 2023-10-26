@@ -42,7 +42,7 @@ import { UserRelationProvider } from './user-relations'
 import { ArticleProvider } from './article'
 import { ScoreProvider } from './score'
 import type { ExtractLocationSettings, ExtractSettingType } from '$base/@define-setting'
-import { passwordMismatch, userNotFound } from '~/server/trpc/messages'
+import { oldPasswordMismatch, passwordMismatch, userNotFound } from '~/server/trpc/messages'
 
 import { UserProvider as Base } from '$base/server'
 import type { ActiveMode, ActiveRuleset, LeaderboardRankingSystem } from '~/def/common'

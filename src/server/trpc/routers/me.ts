@@ -109,6 +109,7 @@ export const router = _router({
 
       return await users.changePassword(
         ok,
+        input.oldPassword,
         input.newPassword,
       )
     }),
