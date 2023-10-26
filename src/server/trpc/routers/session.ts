@@ -1,9 +1,7 @@
 import { TRPCError } from '@trpc/server'
-import bcrypt from 'bcryptjs'
 import { z } from 'zod'
 
 import {
-  passwordMismatch,
   sessionNotFound,
   unableToRetrieveSession,
   unknownError,
@@ -15,7 +13,6 @@ import { Constant } from '../../common/constants'
 import { sessions, users } from '~/server/singleton/service'
 import { Logger } from '$base/logger'
 import { UserProvider } from '$active/server'
-import { Scope } from '~/def/user'
 
 const logger = Logger.child({ label: 'session', backend: 'transport', transport: 'trpc' })
 
@@ -29,17 +26,6 @@ export const router = _router({
     )
     .query(async ({ input: { handle, md5HashedPassword }, ctx }) => {
       try {
-        const user = await users.getCompact({
-          handle,
-          scope: Scope.Self,
-        })
-        const result = await bcrypt.compare(md5HashedPassword, user.password)
-        if (!result) {
-          throw new TRPCError({
-            code: 'UNAUTHORIZED',
-            message: passwordMismatch,
-          })
-        }
         const session = await ctx.session.getBinding()
         if (!session) {
           throw new TRPCError({
@@ -47,6 +33,7 @@ export const router = _router({
             message: unableToRetrieveSession,
           })
         }
+        const user = await users.testPassword({ handle }, md5HashedPassword)
         const newSessionId = await sessions.update(ctx.session.id, { userId: UserProvider.idToString(user.id) })
         if (newSessionId && newSessionId !== ctx.session.id) {
           setCookie(ctx.h3Event, Constant.SessionLabel, newSessionId, { httpOnly: true })

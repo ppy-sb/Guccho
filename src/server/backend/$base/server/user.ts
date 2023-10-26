@@ -42,13 +42,18 @@ export namespace UserProvider {
 export abstract class UserProvider<Id> extends IdTransformable {
   abstract exists({ handle, keys }: UserProvider.OptType): PromiseLike<boolean>
 
-  abstract getCompact<_Scope extends Scope>(
-    opt: UserProvider.OptType & { scope: _Scope }
+  abstract getCompact(
+    opt: UserProvider.OptType & { scope: Scope }
   ): Promise<UserCompact<Id>>
 
-  abstract getCompactById<_Scope extends Scope>(opt: {
+  abstract testPassword(
+    opt: UserProvider.OptType & { scope: Scope },
+    hashedPassowrd: string,
+  ): Promise<UserCompact<Id>>
+
+  abstract getCompactById(opt: {
     id: Id
-    scope: _Scope
+    scope: Scope
   }): Promise<UserCompact<Id>>
 
   abstract getStatistics(query: {

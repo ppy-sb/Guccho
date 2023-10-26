@@ -1,11 +1,8 @@
 import { TRPCError } from '@trpc/server'
 import { nativeEnum, z } from 'zod'
 
-import bcrypt from 'bcryptjs'
-
 import {
   atLeastOneUserNotExists,
-  oldPasswordMismatch,
   relationTypeNotFound,
   userExists,
 } from '../messages'
@@ -19,8 +16,6 @@ import { UserProvider, UserRelationProvider } from '$active/server'
 import { CountryCode } from '~/def/country-code'
 import { DynamicSettingStore, Scope } from '~/def/user'
 import { Mode, Ruleset } from '~/def'
-
-const { compare } = bcrypt
 
 // const verifiedEmail = new Map<string, Set<string>>()
 export const router = _router({
@@ -108,24 +103,12 @@ export const router = _router({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const userWithPassword = await users.getCompactById({
-        id: ctx.user.id,
-        scope: Scope.Self,
-      })
-      if (
-        !(await compare(
-          input.oldPassword,
-          userWithPassword.password,
-        ))
-      ) {
-        throw new TRPCError({
-          code: 'UNAUTHORIZED',
-          message: oldPasswordMismatch,
-        })
-      }
+      const ok = await users.testPassword({
+        handle: ctx.user.id.toString(),
+      }, input.oldPassword)
 
       return await users.changePassword(
-        userWithPassword,
+        ok,
         input.newPassword,
       )
     }),

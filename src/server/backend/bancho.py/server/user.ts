@@ -7,6 +7,7 @@ import { glob } from 'glob'
 import imageType from 'image-type'
 import type { Prisma, Stat } from 'prisma-client-bancho-py'
 import { merge } from 'lodash-es'
+import bcrypt from 'bcryptjs'
 import { BanchoPyMode, BanchoPyScoreStatus } from '../enums'
 import {
   BPyMode,
@@ -21,7 +22,6 @@ import {
   toRankingSystemScores,
   toSafeName,
   toUserCompact,
-  toUserSecrets,
 } from '../transforms'
 
 import {
@@ -42,7 +42,7 @@ import { UserRelationProvider } from './user-relations'
 import { ArticleProvider } from './article'
 import { ScoreProvider } from './score'
 import type { ExtractLocationSettings, ExtractSettingType } from '$base/@define-setting'
-import { userNotFound } from '~/server/trpc/messages'
+import { passwordMismatch, userNotFound } from '~/server/trpc/messages'
 
 import { UserProvider as Base } from '$base/server'
 import type { ActiveMode, ActiveRuleset, LeaderboardRankingSystem } from '~/def/common'
@@ -51,6 +51,8 @@ import type { DynamicSettingStore, UserCompact, UserStatistic } from '~/def/user
 import { Scope, UserStatus } from '~/def/user'
 import { Mode, Rank, Ruleset } from '~/def'
 import type { CountryCode } from '~/def/country-code'
+
+const { compare } = bcrypt
 
 type ServerSetting = ExtractSettingType<ExtractLocationSettings<DynamicSettingStore.Server, typeof settings>>
 
@@ -143,9 +145,7 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
     return toUserCompact(user, this.config)
   }
 
-  async getCompact<
- _Scope extends Scope = Scope.Public,
-  >(opt: Base.OptType & { scope?: _Scope }) {
+  async getCompact(opt: Base.OptType & { scope?: Scope }) {
     const { handle, scope, keys } = opt
     /* optimized */
     const user = await this.db.user.findFirstOrThrow({
@@ -169,7 +169,26 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
       .catch(() => {
         throw new TRPCError({ code: 'NOT_FOUND', message: userNotFound })
       })
-    return Object.assign(toUserCompact(user, this.config), toUserSecrets(user))
+    return toUserCompact(user, this.config)
+  }
+
+  async testPassword(opt: Base.OptType, hashedPassword: string) {
+    const user = await this.db.user.findFirstOrThrow({
+      where: {
+        ...createUserHandleWhereQuery({
+          handle: opt.handle,
+          selectAgainst: ['id', 'name', 'safeName', 'email'],
+        }),
+      },
+    })
+    const result = await compare(hashedPassword, user.pwBcrypt)
+    if (!result) {
+      throw new TRPCError({
+        code: 'UNAUTHORIZED',
+        message: passwordMismatch,
+      })
+    }
+    return toUserCompact(user, this.config)
   }
 
   // https://github.com/prisma/prisma/issues/6570 need two separate query to get count for now
