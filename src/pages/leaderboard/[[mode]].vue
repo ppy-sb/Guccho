@@ -1,5 +1,4 @@
 <script setup lang="ts" async>
-// TODO check max pages
 import type { ActiveMode, ActiveRuleset, LeaderboardRankingSystem } from '~/def/common'
 import type { SwitcherPropType } from '~/composables/useSwitcher'
 

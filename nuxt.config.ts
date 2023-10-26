@@ -88,14 +88,17 @@ export default defineNuxtConfig({
     locales: [
       {
         code: Lang.enGB,
+        flag: 'GB',
         name: 'English (International)',
       },
       {
         code: Lang.frFR,
+        flag: 'FR',
         name: 'French (France)',
       },
       {
         code: Lang.zhCN,
+        flag: 'CN',
         name: '简体中文 (中国)',
       },
     ],

@@ -4,14 +4,9 @@ import { useSession } from '~/store/session'
 import { UserRole } from '~/def/user'
 
 const session = useSession()
-const { t, locale, locales, setLocale } = useI18n()
+const { t, locale, locales, setLocale, localeProperties } = useI18n()
 
-const _locale = computed({
-  get: () => locale.value,
-  set(locale) {
-    setLocale(locale)
-  },
-})
+const langSw = ref<HTMLDetailsElement>()
 
 function clearFocus() {
   if (document.activeElement instanceof HTMLElement) {
@@ -33,19 +28,32 @@ function clearFocus() {
       {{ t('titles.status') }}
     </nuxt-link-locale>
   </li>
-  <select v-model="_locale" class="select select-ghost w-min-content select-sm">
-    <option value="" disabled>
-      select
-    </option>
-    <option
-      v-for="l in (locales as LocaleObject[])"
-      :key="l.code"
-      :value="l.code"
-      :disabled="l.code === _locale"
-    >
-      {{ l.name }}
-    </option>
-  </select>
+  <li tabindex="0">
+    <details ref="langSw">
+      <summary><icon name="tabler:world" class="w-5 h-5" />{{ localeProperties.name }}</summary>
+      <ul class="p-2 w-64">
+        <li
+          v-for="l in (locales as LocaleObject[])"
+          :key="l.code"
+          :class="{
+            disabled: l.code === locale,
+          }"
+        >
+          <a
+            class="whitespace-nowrap"
+            :class="{
+              active: l.code === locale,
+            }" @click="setLocale(l.code), langSw?.toggleAttribute('open', false)"
+          >
+            <img
+              :alt="l.name" class="h-6"
+              :src="getFlagURL(l.flag)"
+            > {{ l.name }}
+          </a>
+        </li>
+      </ul>
+    </details>
+  </li>
   <!-- <li tabindex="0">
     <a class="justify-between lg:justify-start">
       Parent
