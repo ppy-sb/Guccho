@@ -153,7 +153,7 @@ function options<T extends Record<string, string>, TTr extends (key: keyof T, va
     </div>
     <div class="overflow-x-auto border border-base-300 rounded-lg">
       <table
-        class="table" :class="{
+        class="table table-sm table-zebra" :class="{
           loading: pending,
         }"
       >

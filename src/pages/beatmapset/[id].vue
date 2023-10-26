@@ -412,21 +412,17 @@ fr-FR:
           </div>
         </div>
       </div>
-    </div>
-    <div class="container custom-container mx-auto mt-4">
       <AppScoresRankingSystemSwitcher
-        ref="scoreRS" v-model="switcher.rankingSystem" :mode="switcher.mode"
-        :ruleset="switcher.ruleset" class="mx-auto" @update:model-value="update"
+        ref="scoreRS"
+        v-model="switcher.rankingSystem" class="mt-2" :mode="switcher.mode"
+        :ruleset="switcher.ruleset" @update:model-value="update"
       />
-      <div class="overflow-auto">
-        <app-scores-table
-          v-if="leaderboard" :scores="leaderboard" :ranking-system="switcher.rankingSystem" class="w-full"
-          :class="{
-            'clear-rounded-tl':
-              scoreRS?.rankingSystems[0] === switcher.rankingSystem,
-          }"
-        />
-      </div>
+      <app-scores-table
+        v-if="leaderboard" :scores="leaderboard" :ranking-system="switcher.rankingSystem"
+        :class="{
+          'clear-rounded-tl': scoreRS?.rankingSystems[0] === switcher.rankingSystem,
+        }"
+      />
     </div>
   </div>
 </template>

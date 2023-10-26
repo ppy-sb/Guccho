@@ -118,7 +118,7 @@ fr-FR:
 </i18n>
 
 <template>
-  <div class="flex flex-col h-full leaderboard custom-container mx-auto">
+  <div class="flex flex-col h-full leaderboard custom-container mx-auto w-full">
     <header-simple-title-with-sub
       id="desc"
       class="container mx-auto custom-container !max-w-4xl"
@@ -147,12 +147,12 @@ fr-FR:
     </header-simple-title-with-sub>
     <div
       v-if="table"
-      class="container flex flex-col mx-auto grow"
+      class="container flex flex-col w-full"
       :class="{
         content: table.length,
       }"
     >
-      <div v-if="table.length" class="relative mx-auto xl:rounded-lg w-full max-w-max">
+      <div v-if="table.length" class="relative mx-auto xl:rounded-lg w-full max-w-max overflow-x-auto">
         <table class="table table-sm px-2 whitespace-nowrap" aria-describedby="desc">
           <thead>
             <tr class="bg-base-100">
