@@ -1,7 +1,9 @@
+import './scripts/ensure-env'
+
 import { fileURLToPath } from 'node:url'
 import { env } from 'node:process'
 
-import './scripts/ensure-env'
+import { CountryCode } from './src/def/country-code'
 import { Lang } from './src/def'
 
 export default defineNuxtConfig({
@@ -68,7 +70,6 @@ export default defineNuxtConfig({
   alias: {
     $active: fileURLToPath(new URL(`./src/server/backend/${env.BACKEND}`, import.meta.url)),
     $base: fileURLToPath(new URL('./src/server/backend/$base', import.meta.url)),
-    $articles: fileURLToPath(new URL('./articles', import.meta.url)),
   },
 
   typescript: {
@@ -88,17 +89,17 @@ export default defineNuxtConfig({
     locales: [
       {
         code: Lang.enGB,
-        flag: 'GB',
+        flag: CountryCode.UnitedKingdom,
         name: 'English (International)',
       },
       {
         code: Lang.frFR,
-        flag: 'FR',
+        flag: CountryCode.France,
         name: 'French (France)',
       },
       {
         code: Lang.zhCN,
-        flag: 'CN',
+        flag: CountryCode.China,
         name: '简体中文 (中国)',
       },
     ],
