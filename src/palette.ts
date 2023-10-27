@@ -55,11 +55,36 @@ const customColors = {
     900: '#14151F',
     950: '#0A0B0F',
   },
+  'china': {
+    // 50: '#FBF9F9',
+    // 100: '#F0E5E5',
+    // 200: '#E0C2C2',
+    // 300: '#D39797',
+    // 400: '#C96E6E',
+    // 500: '#C53A3A',
+    // 600: '#AF1D1D',
+    // 700: '#4b3131',
+    // 800: '#5E0808',
+    // 900: '#310202',
+    // 950: '#190000',
+    // https://tints.dev/china/C23D3D
+    50: '#F7F2F2',
+    100: '#F1E4E4',
+    200: '#E7CBCB',
+    300: '#DDACAC',
+    400: '#D18585',
+    500: '#C23D3D',
+    600: '#864646',
+    700: '#643535',
+    800: '#432323',
+    900: '#211212',
+    950: '#110909',
+  },
 } as const
 
 export const hex = {
   ...customColors,
-  gbase: colors.slate,
+  gbase: customColors.china,
 }
 
 export const palette = to(
