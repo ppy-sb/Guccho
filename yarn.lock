@@ -829,11 +829,11 @@
     source-map-js "^1.0.2"
 
 "@intlify/message-compiler@^9.4.0":
-  version "9.6.0"
-  resolved "https://registry.yarnpkg.com/@intlify/message-compiler/-/message-compiler-9.6.0.tgz#ca62669d5160e6484491c2773eafa0e7c1af11a0"
-  integrity sha512-GucIIYA2H86gdf/lKHAahfLpyYm9Q1IUc/yUEMk8wwwfrzBwuYmTDg90ooed7eRVx2N/omyDyuhKV4cRp3b+DQ==
+  version "9.6.1"
+  resolved "https://registry.yarnpkg.com/@intlify/message-compiler/-/message-compiler-9.6.1.tgz#bb394f71c9dea304db04ae55c8403a4a904345ee"
+  integrity sha512-kTOCEtKLg0pwz7Fh2z6to17jljy7kuZ1J77uGxCe3s+rixl1w0fXdaGvO59f9PwYSygR7Fe43I09EoSeuRW4UA==
   dependencies:
-    "@intlify/shared" "9.6.0"
+    "@intlify/shared" "9.6.1"
     source-map-js "^1.0.2"
 
 "@intlify/shared@9.5.0":
@@ -841,10 +841,10 @@
   resolved "https://registry.yarnpkg.com/@intlify/shared/-/shared-9.5.0.tgz#185d9ab9f6b4bb4f4d133cfdd51432e9b94c2c44"
   integrity sha512-tAxV14LMXZDZbu32XzLMTsowNlgJNmLwWHYzvMUl6L8gvQeoYiZONjY7AUsqZW8TOZDX9lfvF6adPkk9FSRdDA==
 
-"@intlify/shared@9.6.0", "@intlify/shared@^9.4.0", "@intlify/shared@^9.4.1":
-  version "9.6.0"
-  resolved "https://registry.yarnpkg.com/@intlify/shared/-/shared-9.6.0.tgz#589bd8b39e49522c82889fe510a6d100e38c4563"
-  integrity sha512-vZeID7kn10rhgRYZQvjULTOYXDGnC0j49HI0AD9CK08aj4nWmlPai/8awTsMg0qrfHVMTna8ZMNmBZNyFAUCfA==
+"@intlify/shared@9.6.1", "@intlify/shared@^9.4.0", "@intlify/shared@^9.4.1":
+  version "9.6.1"
+  resolved "https://registry.yarnpkg.com/@intlify/shared/-/shared-9.6.1.tgz#4672e7ac7a6088d5293a4bcef81156cf7de48b19"
+  integrity sha512-gD7r6xwG7II74JsJUXcVY0AvTyB5t7mlsB2WTot0ZncTLILQbyEeJtUOmvpvAXrh9TUr4jGPwhTC7SKtxjhl5A==
 
 "@intlify/unplugin-vue-i18n@^1.4.0":
   version "1.4.0"
@@ -2474,26 +2474,26 @@
   resolved "https://registry.yarnpkg.com/@vitejs/plugin-vue/-/plugin-vue-4.4.0.tgz#8ae96573236cdb12de6850a6d929b5537ec85390"
   integrity sha512-xdguqb+VUwiRpSg+nsc2HtbAUSGak25DXYvpQQi4RVU1Xq1uworyoH/md9Rfd8zMmPR/pSghr309QNcftUVseg==
 
-"@volar/language-core@1.10.5", "@volar/language-core@~1.10.5":
-  version "1.10.5"
-  resolved "https://registry.yarnpkg.com/@volar/language-core/-/language-core-1.10.5.tgz#53e27f7e45e71a567a9a8527561e81ade6388235"
-  integrity sha512-xD71j4Ee0Ycq8WsiAE6H/aCThGdTobiZZeD+jFD+bvmbopa1Az296pqJysr3Ck8c7n5+GGF+xlKCS3WxRFYgSQ==
+"@volar/language-core@1.10.6", "@volar/language-core@~1.10.5":
+  version "1.10.6"
+  resolved "https://registry.yarnpkg.com/@volar/language-core/-/language-core-1.10.6.tgz#14e0fe24992358784471d5bb4f07a1d5eddebdc2"
+  integrity sha512-yDXNZSkaq0I90qHb1Zxf2wcDoooyTnkB8iqhEvWxEbXjzih7W4qHygG688dgm4MdX1t/r+JzYY1wGJFClEfC9w==
   dependencies:
-    "@volar/source-map" "1.10.5"
+    "@volar/source-map" "1.10.6"
 
-"@volar/source-map@1.10.5", "@volar/source-map@~1.10.5":
-  version "1.10.5"
-  resolved "https://registry.yarnpkg.com/@volar/source-map/-/source-map-1.10.5.tgz#6bb04ae8b91d28424c6c9fbfbf6f53239ff63d77"
-  integrity sha512-s4kgo66SA1kMzYvF9HFE6Vc1rxtXLUmcLrT2WKnchPDvLne+97Kw+xoR2NxJFmsvHoL18vmu/YGXYcN+Q5re1g==
+"@volar/source-map@1.10.6", "@volar/source-map@~1.10.5":
+  version "1.10.6"
+  resolved "https://registry.yarnpkg.com/@volar/source-map/-/source-map-1.10.6.tgz#adb81767adfcbed1f6e177cfa6a1d91a4623bffe"
+  integrity sha512-PzMw/MWLcsIt1ruw6173MnFYGNXTCUmiK8qaBto0XMLfuTkt0MQ7w4cn0qx9gQwxwW/yrLaKczBw6E5d8lq7/g==
   dependencies:
     muggle-string "^0.3.1"
 
 "@volar/typescript@~1.10.5":
-  version "1.10.5"
-  resolved "https://registry.yarnpkg.com/@volar/typescript/-/typescript-1.10.5.tgz#40f1d2ab36c875d501d94c1a6766e9dc1adfaf25"
-  integrity sha512-kfDehpeLJku9i1BgsFOYIczPmFFH4herl+GZrLGdvX5urTqeCKsKYlF36iNmFaADzjMb9WlENcUZzPjK8MxNrQ==
+  version "1.10.6"
+  resolved "https://registry.yarnpkg.com/@volar/typescript/-/typescript-1.10.6.tgz#29d64f1cb940e70d2fdb5e5599506999295484e0"
+  integrity sha512-22hjyhdSl6uU/4zJI4ceDCSUrkIAvp0Zm1mV0phFVqeAIpQmIweWKmk7nRTXfnNqu6u05phR+NMzOnKkNC5yDQ==
   dependencies:
-    "@volar/language-core" "1.10.5"
+    "@volar/language-core" "1.10.6"
 
 "@vue-macros/common@^1.8.0":
   version "1.8.0"
@@ -2691,9 +2691,9 @@ acorn@8.10.0:
   integrity sha512-F0SAmZ8iUtS//m8DmCTA0jlh6TDKkHQyK6xc6V4KDTyZKA9dnvX9/3sRTVQrWm79glUAZbnmmNcdYwUIHWVybw==
 
 acorn@^8.10.0, acorn@^8.5.0, acorn@^8.6.0, acorn@^8.8.2, acorn@^8.9.0:
-  version "8.11.1"
-  resolved "https://registry.yarnpkg.com/acorn/-/acorn-8.11.1.tgz#29c6f12c3002d884b6f8baa37089e1917425cd3d"
-  integrity sha512-IJTNCJMRHfRfb8un89z1QtS0x890C2QUrUxFMK8zy+RizcId6mfnqOf68Bu9YkDgpLYuvCm6aYbwDatXVZPjMQ==
+  version "8.11.2"
+  resolved "https://registry.yarnpkg.com/acorn/-/acorn-8.11.2.tgz#ca0d78b51895be5390a5903c5b3bdcdaf78ae40b"
+  integrity sha512-nc0Axzp/0FILLEVsm4fNwLCwMttvhEI263QtVPQcbpfZZ3ts0hLsZGOpE6czNlid7CJ9MlyH8reXkpsf3YUY4w==
 
 agent-base@6, agent-base@^6.0.2:
   version "6.0.2"
@@ -4546,9 +4546,9 @@ eslint-plugin-unused-imports@^3.0.0:
     eslint-rule-composer "^0.3.0"
 
 eslint-plugin-vue@^9.17.0:
-  version "9.18.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-vue/-/eslint-plugin-vue-9.18.0.tgz#2a2dbb3c67317e8c11ab56cafaa15a3a7eac6282"
-  integrity sha512-yUM8a2OD/7Qs0PiugkRaxgz5KBRvzMvWShity2UvVFAN0yk8029mGpTdg/TNARPiYzp335mEwDHwcAR8tQNe4g==
+  version "9.18.1"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-vue/-/eslint-plugin-vue-9.18.1.tgz#73cf29df7450ce5913296465f8d1dc545344920c"
+  integrity sha512-7hZFlrEgg9NIzuVik2I9xSnJA5RsmOfueYgsUGUokEDLJ1LHtxO0Pl4duje1BriZ/jDWb+44tcIlC3yi0tdlZg==
   dependencies:
     "@eslint-community/eslint-utils" "^4.4.0"
     natural-compare "^1.4.0"
@@ -8202,9 +8202,9 @@ prosemirror-transform@^1.0.0, prosemirror-transform@^1.1.0, prosemirror-transfor
     prosemirror-model "^1.0.0"
 
 prosemirror-view@^1.0.0, prosemirror-view@^1.1.0, prosemirror-view@^1.13.3, prosemirror-view@^1.27.0, prosemirror-view@^1.28.2, prosemirror-view@^1.31.0, prosemirror-view@^1.32.1:
-  version "1.32.1"
-  resolved "https://registry.yarnpkg.com/prosemirror-view/-/prosemirror-view-1.32.1.tgz#bcd0877f1673ffe5f94c1e966b6fbdadcd2d5bbf"
-  integrity sha512-9SnB4HBgRczzTyIMZLPE1iszegL04hNfUyS8uPtP1RPxNM2NTCiIs8KwNsJU4nbZO9rxJTwVTv7Jm3zU4CR78A==
+  version "1.32.2"
+  resolved "https://registry.yarnpkg.com/prosemirror-view/-/prosemirror-view-1.32.2.tgz#e55fcf5b55847e3b9d9b7982c9a129ef237e60e1"
+  integrity sha512-l2RQUGaiDI8SG8ZjWIkjT8yjGmNwdzMFMzQmxv/Kh8Vx+ICnz5R+K0mrOS16rhfjX7n2t4emU0goh7TerQC3mw==
   dependencies:
     prosemirror-model "^1.16.0"
     prosemirror-state "^1.0.0"
