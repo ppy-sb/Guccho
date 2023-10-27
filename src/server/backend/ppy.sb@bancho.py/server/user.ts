@@ -100,10 +100,7 @@ export class UserProvider extends BanchoPyUser implements Base<Id> {
     }
   }
 
-  async getFull<
-    Excludes extends Partial<Record<keyof Base.ComposableProperties<Id>, boolean>>,
-    _Scope extends Scope = Scope.Public,
-  >({ handle, excludes, includeHidden, scope }: { handle: string; excludes?: Excludes; includeHidden?: boolean; scope?: _Scope }) {
+  async getFull<Excludes extends Partial<Record<keyof Base.ComposableProperties<Id>, boolean>>>({ handle, excludes, includeHidden, scope }: { handle: string; excludes?: Excludes; includeHidden?: boolean; scope?: Scope }) {
     const user = await this.sbDb.user.findFirstOrThrow({
       where: {
         AND: [

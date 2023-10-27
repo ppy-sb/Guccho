@@ -10,7 +10,7 @@ import type { ArticleProvider } from '$base/server/article'
 import type { ActiveMode, ActiveRuleset } from '~/def/common'
 import { RankingStatus } from '~/def/beatmap'
 
-export const zodHandle = string().trim()
+export const zodHandle = string().trim().transform(v => decodeURIComponent(v))
 export const zodRelationType = nativeEnum(Relationship)
 
 export const zodMode = nativeEnum(Mode)

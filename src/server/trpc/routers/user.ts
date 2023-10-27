@@ -42,7 +42,7 @@ export const router = _router({
         handle,
         excludes: { relationships: true, secrets: true, email: true },
         includeHidden: true,
-        scope: Scope.Public,
+        scope: Scope.Self,
       })
 
       const isSelf = user.id === ctx.user?.id
