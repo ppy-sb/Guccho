@@ -543,9 +543,9 @@ fr-FR:
     <div class="flex flex-col flex-wrap justify-between md:flex-row">
       <div class="grow w-full lg:[max-width:50%]">
         <div
-          class="flex items-end p-3 overflow-hidden gap-4 lg:mr-4"
+          class="flex flex-wrap items-end p-3 overflow-hidden gap-4 lg:mr-4"
         >
-          <div class="drop-shadow-md">
+          <div class="mx-auto drop-shadow-md">
             <div class="relative z-10 mask mask-squircle hoverable w-100 self-center [&>img]:hover:blur-lg [&>img]:hover:opacity-50 no-animation">
               <button
                 class="absolute top-0 z-20 w-full h-full btn btn-primary hover:bg-primary/50 focus:active:bg-primary/50"
@@ -561,12 +561,12 @@ fr-FR:
               >
             </div>
           </div>
-          <div>
-            <h1 class="text-5xl text-left">
+          <div class="mx-auto">
+            <h1 class="username">
               {{ user.name }}
             </h1>
             <h2
-              class="text-3xl text-left underline decoration-sky-500 text-gbase-600 dark:text-gbase-300"
+              class="userlink"
             >
               @{{ user.safeName }}
             </h2>

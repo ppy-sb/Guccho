@@ -130,7 +130,7 @@ fr-FR:
                 <img :src="user.avatarSrc" class="pointer-events-none w-14 md:w-[4em]">
               </div>
               <div class="grow">
-                <h1 class="text-2xl text-left md:text-3xl">
+                <h1 class="username">
                   {{ user.name }} <div v-if="user.mutualRelationship.some(r => r === MutualRelationship.MutualFriend)" class="badge badge-primary">
                     <icon name="solar:heart-bold" class="w-4 h-4" />
                   </div>

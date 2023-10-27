@@ -200,14 +200,14 @@ fr-FR:
         </div>
         <div class="order-1 md:order-2 lg:order-1 self-center md:self-start">
           <h1
-            class="pb-1 text-5xl xl:text-6xl"
+            class="pb-1 username"
             :class="useUserRoleColor(page.user)"
           >
             {{ page.user.name }}
           </h1>
           <nuxt-link-locale
             :to="{ name: 'user-handle', params: { handle: `@${page.user.safeName}` } }"
-            class="text-3xl underline md:text-left decoration-sky-500 text-gbase-600 dark:text-gbase-300"
+            class="userlink"
           >
             @{{ page.user.safeName }}
           </nuxt-link-locale>
