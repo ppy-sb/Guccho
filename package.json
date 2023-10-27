@@ -130,8 +130,5 @@
     "sass": "^1.69.3",
     "typescript": "^5.2.2",
     "vue-tsc": "^1.8.19"
-  },
-  "resolutions": {
-    "yargs/string-width": "^4.1.0"
   }
 }
