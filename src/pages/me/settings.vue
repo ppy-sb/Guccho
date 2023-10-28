@@ -545,7 +545,7 @@ fr-FR:
         <div
           class="flex flex-wrap items-end p-3 overflow-hidden gap-4 lg:mr-4"
         >
-          <div class="mx-auto drop-shadow-md">
+          <div class="drop-shadow-md">
             <div class="relative z-10 mask mask-squircle hoverable w-100 self-center [&>img]:hover:blur-lg [&>img]:hover:opacity-50 no-animation">
               <button
                 class="absolute top-0 z-20 w-full h-full btn btn-primary hover:bg-primary/50 focus:active:bg-primary/50"
@@ -561,7 +561,7 @@ fr-FR:
               >
             </div>
           </div>
-          <div class="mx-auto">
+          <div>
             <h1 class="username">
               {{ user.name }}
             </h1>

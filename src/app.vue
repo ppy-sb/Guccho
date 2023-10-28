@@ -15,6 +15,7 @@ onMounted(() => {
   <DevOnly>
     <app-experience />
   </DevOnly>
+  <nuxt-loading-indicator />
   <app-nav />
   <div id="app-drawer" class="drawer block">
     <input id="app-drawer-toggle" type="checkbox" class="drawer-toggle">

@@ -153,7 +153,7 @@ en-GB:
     od: OD
     hp-drain: HP Drain
     duration: Duration
-    hit-Objects: Hit Objects
+    hit-objects: Hit Objects
     hit-object:
       circles: circles
       sliders: sliders
@@ -195,7 +195,7 @@ fr-FR:
     od: OD
     hp-drain: HP Drain
     duration: Duration
-    hit-Objects: Hit Objects
+    hit-objects: Hit Objects
     hit-object:
       circles: circles
       sliders: sliders
@@ -296,107 +296,107 @@ fr-FR:
           </div>
           <div class="w-full md:w-2/3">
             <dl>
-              <div class="stripe-odd rounded-tl-xl">
+              <div class="striped rounded-tl-xl">
                 <dt class="text-sm font-medium text-gbase-500">
                   {{ _t('beatmapset.creator') }}
                 </dt>
-                <dd class="stripe-even  flex gap-1 items-center">
+                <dd class="striped-text flex gap-1 items-center">
                   {{ selectedMap.creator }}
                 </dd>
               </div>
-              <div class="stripe-odd">
+              <div class="striped">
                 <dt class="text-sm font-medium text-gbase-500">
                   {{ _t('beatmapset.status') }}
                 </dt>
-                <dd class="stripe-even  flex gap-1 items-center">
+                <dd class="striped-text flex gap-1 items-center">
                   {{ selectedMap.status }}
                 </dd>
               </div>
-              <div class="stripe-odd">
+              <div class="striped">
                 <dt class="text-sm font-medium text-gbase-500">
                   {{ _t('beatmapset.beatmap-id') }}
                 </dt>
-                <dd class="stripe-even  flex gap-1 items-center">
+                <dd class="striped-text flex gap-1 items-center">
                   {{ selectedMap.id }}
                 </dd>
               </div>
-              <div class="stripe-odd">
+              <div class="striped">
                 <dt class="text-sm font-medium text-gbase-500">
                   {{ _t('beatmapset.source-id') }}
                 </dt>
-                <dd class="stripe-even  flex gap-1 items-center">
+                <dd class="striped-text flex gap-1 items-center">
                   {{ BeatmapSource[beatmapset.source] }} | {{ selectedMap.foreignId }}
                 </dd>
               </div>
-              <div class="stripe-odd">
+              <div class="striped">
                 <dt class="text-sm font-medium text-gbase-500">
                   {{ _t('beatmapset.last-update') }}
                 </dt>
-                <dd class="stripe-even  flex gap-1 items-center">
+                <dd class="striped-text flex gap-1 items-center">
                   {{ selectedMap.lastUpdate }}
                 </dd>
               </div>
-              <div class="stripe-odd">
+              <div class="striped">
                 <dt class="text-sm font-medium text-gbase-500">
                   BPM
                 </dt>
-                <dd class="stripe-even  flex gap-1 items-center">
+                <dd class="striped-text flex gap-1 items-center">
                   <img src="~/assets/icons/bpm.png" alt="" class="w-5 color-theme-light-invert">{{ selectedMap.properties.bpm }}
                 </dd>
               </div>
-              <div class="stripe-odd">
+              <div class="striped">
                 <dt class="text-sm font-medium text-gbase-500">
                   {{ _t('beatmapset.star-rating') }}
                 </dt>
-                <dd class="stripe-even  flex gap-1 items-center">
+                <dd class="striped-text flex gap-1 items-center">
                   <img src="~/assets/icons/overall-difficulty.png" alt="" class="w-5 color-theme-light-invert">{{ selectedMap.properties.starRate }}
                 </dd>
               </div>
-              <div class="stripe-odd">
+              <div class="striped">
                 <dt class="text-sm font-medium text-gbase-500">
                   {{ _t('beatmapset.circle-size') }}
                 </dt>
-                <dd class="stripe-even  flex gap-1 items-center">
+                <dd class="striped-text flex gap-1 items-center">
                   <img src="~/assets/icons/size.png" alt="" class="w-5 color-theme-light-invert">{{ selectedMap.properties.circleSize }}
                 </dd>
               </div>
-              <div class="stripe-odd">
+              <div class="striped">
                 <dt class="text-sm font-medium text-gbase-500">
                   {{ _t('beatmapset.approach-rate') }}
                 </dt>
-                <dd class="stripe-even flex gap-1 items-center">
+                <dd class="striped-text flex gap-1 items-center">
                   <img src="~/assets/icons/approach-rate.png" alt="" class="w-5 color-theme-light-invert">{{ selectedMap.properties.approachRate }}
                 </dd>
               </div>
-              <div class="stripe-odd">
+              <div class="striped">
                 <dt class="text-sm font-medium text-gbase-500">
                   {{ _t('beatmapset.od') }}
                 </dt>
-                <dd class="stripe-even flex gap-1 items-center">
+                <dd class="striped-text flex gap-1 items-center">
                   <img src="~/assets/icons/accuracy.png" alt="" class="w-5 color-theme-light-invert">{{ selectedMap.properties.accuracy }}
                 </dd>
               </div>
-              <div class="stripe-odd">
+              <div class="striped">
                 <dt class="text-sm font-medium text-gbase-500">
                   {{ _t('beatmapset.hp-drain') }}
                 </dt>
-                <dd class="stripe-even  flex gap-1 items-center">
+                <dd class="striped-text flex gap-1 items-center">
                   <img src="~/assets/icons/hp-drain.png" alt="" class="w-5 color-theme-light-invert">{{ selectedMap.properties.hpDrain }}
                 </dd>
               </div>
-              <div class="stripe-odd">
+              <div class="striped">
                 <dt class="text-sm font-medium text-gbase-500">
                   {{ _t('beatmapset.duration') }}
                 </dt>
-                <dd class="stripe-even  flex gap-1 items-center">
+                <dd class="striped-text flex gap-1 items-center">
                   <img src="~/assets/icons/length.png" alt="" class="w-5 color-theme-light-invert">{{ selectedMap.properties.totalLength }} seconds
                 </dd>
               </div>
-              <div class="stripe-odd">
+              <div class="striped">
                 <dt class="text-sm font-medium text-gbase-500">
                   {{ _t('beatmapset.hit-objects') }}
                 </dt>
-                <dd class="stripe-even">
+                <dd class="striped-text">
                   <div class="flex gap-1 items-center">
                     <img src="~/assets/icons/circles.png" alt="" class="w-5 color-theme-light-invert"> {{ selectedMap.properties.count.circles }} {{ _t('beatmapset.hit-object.circles') }},
                   </div>
@@ -433,14 +433,14 @@ fr-FR:
   transition: 0.3s ease;
 }
 
-.stripe-odd {
+.striped {
   @apply px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6;
   &:nth-child(odd){
     @apply bg-gbase-50 dark:bg-gbase-800
   }
 }
 
-.stripe-even  flex gap-1 items-center {
+.striped-text {
   @apply mt-1 text-sm text-gbase-900 dark:text-gbase-100 sm:col-span-2 sm:mt-0;
 }
 
