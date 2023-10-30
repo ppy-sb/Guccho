@@ -43,6 +43,36 @@ function options<T extends Record<string, string>, TTr extends (key: keyof T, va
 }
 </script>
 
+<i18n lang="yaml">
+en-GB:
+  id: ID
+  stable-client-id: Stable Client ID
+  name: Name
+  link-name: Link (Safe name)
+  email: Email
+  flag: Flag
+  roles: Roles
+  save-btn: Save
+zh-CN:
+  id: ID
+  stable-client-id: Stable Client ID
+  name: 名称
+  link-name: 引用名称
+  email: 邮箱
+  flag: 国家/地区
+  roles: 角色
+  save-btn: 保存
+fr-FR:
+  id: ID
+  stable-client-id: Stable Client ID
+  name: Name
+  link-name: Link (Safe name)
+  email: Email
+  flag: Flag
+  roles: Roles
+  save-btn: Save
+</i18n>
+
 <template>
   <div v-if="detail" class="container custom-container">
     <div v-if="error" class="alert alert-error ">
@@ -52,7 +82,7 @@ function options<T extends Record<string, string>, TTr extends (key: keyof T, va
     <dl>
       <div class="striped">
         <dt class="striped-dt">
-          ID
+          {{ t('id') }}
         </dt>
         <dd class="striped-text flex gap-1 items-center">
           <input v-model="detail.id" type="text" class="input input-sm w-full">
@@ -61,7 +91,7 @@ function options<T extends Record<string, string>, TTr extends (key: keyof T, va
 
       <div class="striped">
         <dt class="striped-dt">
-          Stable Client ID
+          {{ t('stable-client-id') }}
         </dt>
         <dd class="striped-text flex gap-1 items-center">
           <input v-model="detail.stableClientId" disabled type="text" class="input input-sm w-full">
@@ -70,7 +100,7 @@ function options<T extends Record<string, string>, TTr extends (key: keyof T, va
 
       <div class="striped">
         <dt class="striped-dt">
-          Name
+          {{ t('name') }}
         </dt>
         <dd class="striped-text flex gap-1 items-center">
           <input v-model="detail.name" type="text" class="input input-sm w-full">
@@ -79,7 +109,7 @@ function options<T extends Record<string, string>, TTr extends (key: keyof T, va
 
       <div class="striped">
         <dt class="striped-dt">
-          Link (Safe name)
+          {{ t('link-name') }}
         </dt>
         <dd class="striped-text flex gap-1 items-center">
           <input v-model="detail.safeName" type="text" class="input input-sm w-full">
@@ -88,7 +118,7 @@ function options<T extends Record<string, string>, TTr extends (key: keyof T, va
 
       <div class="striped">
         <dt class="striped-dt">
-          Email
+          {{ t('email') }}
         </dt>
         <dd class="striped-text flex gap-1 items-center">
           <input v-model="detail.email" type="text" class="input input-sm w-full">
@@ -97,7 +127,7 @@ function options<T extends Record<string, string>, TTr extends (key: keyof T, va
 
       <div class="striped">
         <dt class="striped-dt">
-          Flag
+          {{ t('flag') }}
         </dt>
         <dd class="striped-text flex gap-2 items-center">
           <img :src="getFlagURL(detail.flag)" class="w-6">
@@ -111,7 +141,7 @@ function options<T extends Record<string, string>, TTr extends (key: keyof T, va
 
       <div class="striped">
         <dt class="striped-dt">
-          Roles
+          {{ t('roles') }}
         </dt>
         <dd class="striped-text flex gap-1 items-center">
           <t-multi-select v-model="detail.roles" class="w-full" size="sm" :options="options(UserRole, (_, value) => t(localeKey.role(value)))" />
@@ -125,7 +155,7 @@ function options<T extends Record<string, string>, TTr extends (key: keyof T, va
         'btn-error': status === Status.Errored,
       }" @click="save"
     >
-      Save
+      {{ t('save-btn') }}
       <Icon v-if="status !== Status.Pending" :name="icon[status]" class="w-5 h-5" />
     </button>
   </div>

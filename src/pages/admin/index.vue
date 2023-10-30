@@ -5,6 +5,10 @@ const { t } = useI18n()
 <i18n lang="yaml">
 en-GB:
   user-management: User Management
+zh-CN:
+  user-management: 用户管理
+fr-FR:
+  user-management: User Management
 </i18n>
 
 <template>

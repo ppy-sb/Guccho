@@ -31,42 +31,88 @@ function options<T extends Record<string, string>, TTr extends (key: keyof T, va
 }
 </script>
 
+<i18n lang="yaml">
+en-GB:
+  user: User
+  search-parameters: Search Parameters
+  page: page
+  page-size: Page size
+  user-id: User ID
+  username: Username
+  link-name: Link (Safe name)
+  email: Email
+  flag: Flag
+  roles: Roles
+  registered-at: Registered at
+  last-activity: Last activity record
+  search-btn: Search
+zh-CN:
+  user: 用户
+  search-parameters: 高级搜索
+  page: 页数
+  page-size: 单页显示个数
+  user-id: 用户 ID
+  username: 用户名
+  link-name: 引用名称
+  email: 游戏
+  flag: 国家/地区
+  roles: 角色
+  registered-at: 注册于
+  last-activity: 上次活跃于
+  details: 详情
+  search-btn: 搜索
+fr-FR:
+  user: User
+  search-parameters: Search Parameters
+  page: page
+  page-size: Page size
+  user-id: User ID
+  username: Username
+  link-name: Link (Safe name)
+  email: Email
+  flag: Flag
+  roles: Roles
+  registered-at: Registered at
+  last-activity: Last activity record
+  search-btn: Search
+</i18n>
+
 <template>
   <div class="flex flex-col gap-2">
     <div class="collapse collapse-arrow rounded-lg border border-base-300 bg-base-200">
       <input type="checkbox" class="peer">
       <div class="collapse-title text-md font-medium">
-        <span class="align-middle">Search Parameters</span> <icon name="ion:search-outline" class="w-6 h-6 align-middle" />
+        <span class="align-middle">{{ t('search-parameters') }}</span> <icon name="ion:search-outline" class="w-6 h-6 align-middle" />
       </div>
       <div class="collapse-content flex flex-col gap-2">
         <div class="sm:grid sm:grid-cols-2 md:grid-cols-4 gap-2">
           <div class="form-control">
             <label class="label">
-              <span class="label-text">User ID</span>
+              <span class="label-text">{{ t('user-id') }}</span>
             </label>
             <input v-model="search.id" type="text" class="input input-sm" @input="() => { if (search.id === '') search.id = undefined }">
           </div>
           <div class="form-control">
             <label class="label">
-              <span class="label-text">Username</span>
+              <span class="label-text">{{ t('username') }}</span>
             </label>
             <input v-model="search.name" type="text" class="input input-sm" @input="() => { if (search.name === '') search.name = undefined }">
           </div>
           <div class="form-control">
             <label class="label">
-              <span class="label-text">Link (Safe name)</span>
+              <span class="label-text">{{ t('link-name') }}</span>
             </label>
             <input v-model="search.safeName" type="text" class="input input-sm" @input="() => { if (search.safeName === '') search.safeName = undefined }">
           </div>
           <div class="form-control">
             <label class="label">
-              <span class="label-text">Email</span>
+              <span class="label-text">{{ t('email') }}</span>
             </label>
             <input v-model="search.email" type="email" class="input input-sm" @input="() => { if (search.email === '') search.email = undefined }">
           </div>
           <div class="form-control">
             <label class="label">
-              <span class="label-text">Flag</span>
+              <span class="label-text">{{ t('flag') }}</span>
             </label>
             <div class="flex gap-2">
               <img :src="getFlagURL(search.flag)" class="w-6">
@@ -80,13 +126,13 @@ function options<T extends Record<string, string>, TTr extends (key: keyof T, va
 
           <div class="form-control">
             <label class="label">
-              <span class="label-text">Roles</span>
+              <span class="label-text">{{ t('roles') }}</span>
             </label>
             <t-multi-select v-model="search.roles" size="sm" :options="options(UserRole, (_, value) => t(localeKey.role(value)))" />
           </div>
           <div class="form-control col-span-2 disbaled">
             <label class="label">
-              <span class="label-text">Registered at</span>
+              <span class="label-text">{{ t('registered-at') }}</span>
             </label>
             <div class="join">
               <input v-model="search.registeredFrom" disabled type="datetime-local" class="join-item input input-sm w-full">
@@ -98,7 +144,7 @@ function options<T extends Record<string, string>, TTr extends (key: keyof T, va
           </div>
           <div class="form-control col-span-2">
             <label class="label">
-              <span class="label-text">Last activity record</span>
+              <span class="label-text">{{ t('last-activity') }}</span>
             </label>
             <div class="join">
               <input v-model="search.latestActivityFrom" disabled type="datetime-local" class="join-item input input-sm w-full">
@@ -112,7 +158,7 @@ function options<T extends Record<string, string>, TTr extends (key: keyof T, va
         <div class="flex">
           <div class="ml-auto" />
           <button class="btn btn-primary btn-sm" @click="() => refresh()">
-            Search
+            {{ t('search-btn') }}
             <icon name="ion:search-outline" class="w-4 h-4" />
           </button>
         </div>
@@ -140,13 +186,13 @@ function options<T extends Record<string, string>, TTr extends (key: keyof T, va
       </div> -->
       <div class="form-control">
         <label class="label">
-          <span class="label-text">Page</span>
+          <span class="label-text">{{ t('page') }}</span>
         </label>
         <input v-model.number="search.page" type="number" min="0" max="20" step="1" class="input input-sm">
       </div>
       <div class="form-control">
         <label class="label">
-          <span class="label-text">Page size</span>
+          <span class="label-text">{{ t('page-size') }}</span>
         </label>
         <input v-model.number="search.perPage" type="number" min="1" max="20" step="1" class="input input-sm" @input="() => { if (search.perPage === 0) search.perPage = 1 }">
       </div>
@@ -165,11 +211,11 @@ function options<T extends Record<string, string>, TTr extends (key: keyof T, va
                 <input type="checkbox" class="checkbox">
               </label>
             </th> -->
-            <th>User</th>
-            <th>Roles</th>
-            <th>Email</th>
-            <th>Registered At</th>
-            <th>Last Login</th>
+            <th>{{ t('user') }}</th>
+            <th>{{ t('roles')}}</th>
+            <th>{{ t('email') }}</th>
+            <th>{{ t('registered-at') }}</th>
+            <th>{{ t('last-activity') }}</th>
             <!-- <th>Game Client</th> -->
             <!-- <th>IP</th> -->
             <th />
@@ -219,7 +265,7 @@ function options<T extends Record<string, string>, TTr extends (key: keyof T, va
                   },
                 }" class="btn btn-ghost btn-xs"
               >
-                Details
+                {{ t('details') }}
               </nuxt-link-locale>
             </th>
           </tr>
