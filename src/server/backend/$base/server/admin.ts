@@ -16,4 +16,5 @@ export abstract class AdminProvider<Id> extends IdTransformable {
   }
   >>
   abstract userDetail(query: { id: Id }): PromiseLike<UserCompact<Id> & UserOptional>
+  abstract updateUserDetail(query: { id: Id }, updateFields: Partial<UserCompact<Id> & UserOptional>): PromiseLike<UserCompact<Id> & UserOptional>
 }

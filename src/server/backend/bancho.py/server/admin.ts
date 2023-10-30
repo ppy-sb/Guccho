@@ -1,5 +1,5 @@
 import type { Id } from '..'
-import { toOneBanchoPyPriv, toUserCompact, toUserOptional } from '../transforms'
+import { fromCountryCode, toBanchoPyPriv, toOneBanchoPyPriv, toSafeName, toUserCompact, toUserOptional } from '../transforms'
 import { config } from '../env'
 import { BanchoPyPrivilege } from '../enums'
 import { getPrismaClient } from './source/prisma'
@@ -60,6 +60,27 @@ export class AdminProvider extends Base<Id> implements Base<Id> {
     const user = await this.db.user.findFirstOrThrow({
       where: {
         id: query.id,
+      },
+    })
+
+    return {
+      ...toUserCompact(user, this.config),
+      ...toUserOptional(user),
+    }
+  }
+
+  async updateUserDetail(query: { id: Id }, updateFields: Partial<UserCompact<Id> & UserOptional>): Promise<UserCompact<Id> & UserOptional> {
+    const user = await this.db.user.update({
+      where: {
+        id: query.id,
+      },
+      data: {
+        id: updateFields.id,
+        name: updateFields.name,
+        safeName: updateFields.name ? toSafeName(updateFields.name) : undefined,
+        email: updateFields.email,
+        country: updateFields.flag ? fromCountryCode(updateFields.flag) : undefined,
+        priv: updateFields.roles ? toBanchoPyPriv(updateFields.roles) : undefined,
       },
     })
 

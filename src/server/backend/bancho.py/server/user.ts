@@ -7,7 +7,8 @@ import { glob } from 'glob'
 import imageType from 'image-type'
 import { merge } from 'lodash-es'
 import bcrypt from 'bcryptjs'
-import type { Prisma, Stat } from 'prisma-client-bancho-py'
+import type { Stat } from 'prisma-client-bancho-py'
+import { Prisma } from 'prisma-client-bancho-py'
 import { BanchoPyMode, BanchoPyScoreStatus } from '../enums'
 import {
   BPyMode,
@@ -171,22 +172,32 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
   }
 
   async testPassword(opt: Base.OptType, hashedPassword: string) {
-    const user = await this.db.user.findFirstOrThrow({
-      where: {
-        ...createUserHandleWhereQuery({
-          handle: opt.handle,
-          selectAgainst: ['id', 'name', 'safeName', 'email'],
-        }),
-      },
-    })
-    const result = await compare(hashedPassword, user.pwBcrypt)
-    if (!result) {
-      throw new TRPCError({
-        code: 'UNAUTHORIZED',
-        message: passwordMismatch,
+    try {
+      const user = await this.db.user.findFirstOrThrow({
+        where: {
+          ...createUserHandleWhereQuery({
+            handle: opt.handle,
+            selectAgainst: ['id', 'name', 'safeName', 'email'],
+          }),
+        },
       })
+      const result = await compare(hashedPassword, user.pwBcrypt)
+      if (!result) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: passwordMismatch,
+        })
+      }
+      return toUserCompact(user, this.config)
     }
-    return toUserCompact(user, this.config)
+    catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        if (e.name === 'NotFoundError') {
+          throw new TRPCError({ code: 'NOT_FOUND', message: userNotFound })
+        }
+      }
+      throw e
+    }
   }
 
   // https://github.com/prisma/prisma/issues/6570 need two separate query to get count for now

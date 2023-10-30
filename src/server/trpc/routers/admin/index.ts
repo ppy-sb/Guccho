@@ -1,4 +1,5 @@
-import { z } from 'zod'
+import { array, nativeEnum, number, object, string, tuple } from 'zod'
+import { zodHandle } from '../../shapes'
 import { router as log } from './log'
 import { UserProvider } from '$active/server'
 import { adminProcedure as pAdmin } from '~/server/trpc/middleware/admin'
@@ -15,20 +16,20 @@ export const router = _router({
     }
   }),
   userManagement: _router({
-    search: pAdmin.input(z.object({
-      id: z.string().trim(),
-      name: z.string().trim(),
-      safeName: z.string().trim(),
-      email: z.string().email(),
-      flag: z.nativeEnum(CountryCode),
-      registeredFrom: z.string().datetime(),
-      registeredTo: z.string().datetime(),
-      latestActivityFrom: z.string().datetime(),
-      latestActivityTo: z.string().datetime(),
-      roles: z.array(z.nativeEnum(UserRole)),
-    }).partial().and(z.object({
-      perPage: z.number().min(1).max(20).default(10),
-      page: z.number().min(0).max(10).default(0),
+    search: pAdmin.input(object({
+      id: string().trim(),
+      name: string().trim(),
+      safeName: string().trim(),
+      email: string().email(),
+      flag: nativeEnum(CountryCode),
+      registeredFrom: string().datetime(),
+      registeredTo: string().datetime(),
+      latestActivityFrom: string().datetime(),
+      latestActivityTo: string().datetime(),
+      roles: array(nativeEnum(UserRole)),
+    }).partial().and(object({
+      perPage: number().min(1).max(20).default(10),
+      page: number().min(0).max(10).default(0),
     }))).query(({ ctx, input }) => {
       return admin.userList({
         ...input,
@@ -36,8 +37,27 @@ export const router = _router({
         id: input.id ? UserProvider.stringToId(input.id) : undefined,
       })
     }),
-    detail: pAdmin.input(z.string()).query(({ input }) => {
-      return admin.userDetail({ id: UserProvider.stringToId(input) })
+    detail: pAdmin.input(string()).query(({ input }) => {
+      return admin.userDetail({ id: UserProvider.stringToId(input) }).then(detail => mapId(detail, UserProvider.idToString))
+    }),
+    saveDetail: pAdmin.input(tuple([string(), object({
+      id: string(),
+      name: zodHandle,
+      safeName: zodHandle,
+      email: string().email(),
+      flag: nativeEnum(CountryCode),
+      roles: array(nativeEnum(UserRole)),
+    }).partial()])).mutation(async ({ input }) => {
+      const res = await admin.updateUserDetail(
+        {
+          id: UserProvider.stringToId(input[0]),
+        },
+        {
+          ...input[1],
+          id: UserProvider.stringToId(input[1].id),
+        })
+
+      return mapId(res, UserProvider.idToString)
     }),
   }),
 })

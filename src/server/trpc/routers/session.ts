@@ -47,8 +47,8 @@ export const router = _router({
           throw err
         }
 
+        // unknown error
         logger.error(err)
-
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: unknownError,
