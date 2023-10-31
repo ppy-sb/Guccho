@@ -55,7 +55,7 @@ zh-CN:
   username: 用户名
   link-name: 引用名称
   email: 游戏
-  flag: 国家/地区
+  flag: 国家或地区
   roles: 角色
   registered-at: 注册于
   last-activity: 上次活跃于
@@ -118,7 +118,7 @@ fr-FR:
               <img :src="getFlagURL(search.flag)" class="w-6">
               <select v-model="search.flag" class="select w-full select-sm">
                 <option v-for="countryCode in CountryCode" :key="countryCode" :disabled="countryCode === search.flag" :selected="countryCode === search.flag" :value="countryCode">
-                  {{ toCountryName(countryCode) }}
+                  {{ t(localeKey.country(countryCode)) }}
                 </option>
               </select>
             </div>
@@ -212,7 +212,7 @@ fr-FR:
               </label>
             </th> -->
             <th>{{ t('user') }}</th>
-            <th>{{ t('roles')}}</th>
+            <th>{{ t('roles') }}</th>
             <th>{{ t('email') }}</th>
             <th>{{ t('registered-at') }}</th>
             <th>{{ t('last-activity') }}</th>
@@ -241,7 +241,7 @@ fr-FR:
                     {{ user.name }}
                   </nuxt-link-locale>
                   <div class="text-sm opacity-50 whitespace-nowrap">
-                    {{ toCountryName(user.flag || CountryCode.Unknown) }}
+                    {{ t(localeKey.country(user.flag || CountryCode.Unknown)) }}
                   </div>
                 </div>
               </div>

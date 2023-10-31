@@ -99,6 +99,7 @@ fr-FR:
       <form
         class="mt-8 space-y-12"
         autocomplete="off"
+        method="post"
         @submit.prevent="userLogin"
       >
         <div class="flex flex-col gap-2">

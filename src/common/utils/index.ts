@@ -1,5 +1,3 @@
-import { CountryCode } from '~/def/country-code'
-
 export * from './asserts'
 export * from './guards'
 export * from './map'
@@ -37,18 +35,6 @@ export function lazySingleton<TArg, TRet, TFac extends (...args: readonly TArg[]
     ready = true
     return singleton
   }) as TFac
-}
-
-const reverseCountryCode = Object.fromEntries(Object.entries(CountryCode).map(([k, v]) => [v, k.replace(/([A-Z])/g, ' $1').trim()]))
-export function toCountryCode(country: string): CountryCode | undefined {
-  const uppercase = country.toUpperCase()
-  if (uppercase in reverseCountryCode) {
-    return uppercase as CountryCode
-  }
-}
-
-export function toCountryName(country: CountryCode): string {
-  return reverseCountryCode[country]
 }
 
 export function raise<E extends new(...con: any[]) => Error>(Constructor: E, ...params: ConstructorParameters<E>): never {

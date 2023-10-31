@@ -270,7 +270,7 @@ zh-CN:
   username: 用户名
   safe-name: 引用连接
   email: 电子邮箱
-  flag: 国家/地区
+  flag: 国家或地区
   profile: 个人简介
 
   status:
@@ -753,7 +753,7 @@ fr-FR:
             <img :src="getFlagURL(user.flag)" class="w-6">
             <select v-model="user.flag" class="select select-ghost w-full select-sm">
               <option v-for="countryCode in CountryCode" :key="countryCode" :disabled="countryCode === user.flag || countryCode === CountryCode.Unknown" :selected="countryCode === user.flag" :value="countryCode">
-                {{ toCountryName(countryCode) }}
+                {{ t(localeKey.country(countryCode)) }}
               </option>
             </select>
           </div>

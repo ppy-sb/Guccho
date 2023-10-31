@@ -1,3 +1,4 @@
+import type { CountryCode } from '~/def/country-code'
 import type { Mode, Rank, Ruleset } from '~/def'
 import type { Scope, UserRole } from '~/def/user'
 
@@ -22,4 +23,8 @@ export function rankingSystem(rs: Rank) {
 
 export function service(srv: string) {
   return `service.${srv}`
+}
+
+export function country(cd: CountryCode) {
+  return `country.${cd}`
 }

@@ -390,7 +390,7 @@ export class RedisRankProvider extends DatabaseRankProvider implements Monitored
             id: user.id,
             name: user.name,
             safeName: user.safeName,
-            flag: toCountryCode(user.country),
+            flag: user.country.toUpperCase() as CountryCode,
             [Rank.PPv2]: stat.pp,
             [Rank.TotalScore]: stat[Rank.TotalScore],
             [Rank.RankedScore]: stat[Rank.RankedScore],

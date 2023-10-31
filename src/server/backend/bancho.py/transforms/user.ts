@@ -124,7 +124,7 @@ export function toUserCompact(user: Pick<DatabaseUser, DatabaseUserCompactFields
     stableClientId: user.id,
     name: user.name,
     safeName: user.safeName,
-    flag: toCountryCode(user.country),
+    flag: user.country.toUpperCase() as CountryCode,
     avatarSrc: avatar.domain && `https://${avatar.domain}/${user.id}`,
     roles: toRoles(user.priv),
   }
@@ -187,7 +187,7 @@ export function toFullUser(
     stableClientId: user.id,
     name: user.name,
     safeName: user.safeName,
-    flag: toCountryCode(user.country),
+    flag: user.country.toUpperCase() as CountryCode,
     avatarSrc: config.avatar.domain && `https://${config.avatar.domain}/${user.id}`,
     roles: toRoles(user.priv),
   }

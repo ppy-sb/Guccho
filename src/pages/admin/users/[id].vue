@@ -59,18 +59,18 @@ zh-CN:
   name: 名称
   link-name: 引用名称
   email: 邮箱
-  flag: 国家/地区
+  flag: 国家或地区
   roles: 角色
   save-btn: 保存
 fr-FR:
-  id: ID
-  stable-client-id: Stable Client ID
-  name: Name
-  link-name: Link (Safe name)
+  id: Identifiant
+  stable-client-id: Identifiant Stable Client
+  name: Nom
+  link-name: Lien (Nom sécurisé)
   email: Email
-  flag: Flag
-  roles: Roles
-  save-btn: Save
+  flag: Drapeau
+  roles: Rôles
+  save-btn: Enregistrer
 </i18n>
 
 <template>
@@ -133,7 +133,7 @@ fr-FR:
           <img :src="getFlagURL(detail.flag)" class="w-6">
           <select v-model="detail.flag" class="select w-full select-sm">
             <option v-for="countryCode in CountryCode" :key="countryCode" :disabled="countryCode === detail.flag" :selected="countryCode === detail.flag" :value="countryCode">
-              {{ toCountryName(countryCode) }}
+              {{ t(localeKey.country(countryCode)) }}
             </option>
           </select>
         </dd>

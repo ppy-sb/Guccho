@@ -86,7 +86,7 @@ fr-FR:
                     {{ item.user.name }}
                   </nuxt-link-locale>
                   <!-- <div class="text-sm opacity-50 whitespace-nowrap">
-                    {{ toCountryName(item.user.flag || CountryCode.Unknown) }}
+                    {{ t(localeKey.country(item.user.flag || CountryCode.Unknown)) }}
                   </div> -->
                 </div>
               </div>
