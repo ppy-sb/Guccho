@@ -40,21 +40,24 @@ export const router = _router({
     detail: pAdmin.input(string()).query(({ input }) => {
       return admin.userDetail({ id: UserProvider.stringToId(input) }).then(detail => mapId(detail, UserProvider.idToString))
     }),
-    saveDetail: pAdmin.input(tuple([string(), object({
-      id: string(),
-      name: zodHandle,
-      safeName: zodHandle,
-      email: string().email(),
-      flag: nativeEnum(CountryCode),
-      roles: array(nativeEnum(UserRole)),
-    }).partial()])).mutation(async ({ input }) => {
+    saveDetail: pAdmin.input(tuple([
+      string(),
+      object({
+        id: string(),
+        name: zodHandle,
+        safeName: zodHandle,
+        email: string().email(),
+        flag: nativeEnum(CountryCode),
+        roles: array(nativeEnum(UserRole)),
+      }).partial()])).mutation(async ({ input }) => {
+      const [id, newVal] = input
       const res = await admin.updateUserDetail(
         {
-          id: UserProvider.stringToId(input[0]),
+          id: UserProvider.stringToId(id),
         },
         {
-          ...input[1],
-          id: UserProvider.stringToId(input[1].id),
+          ...newVal,
+          id: newVal.id ? UserProvider.stringToId(newVal.id) : undefined,
         })
 
       return mapId(res, UserProvider.idToString)
