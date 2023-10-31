@@ -1,7 +1,10 @@
 /* eslint-env node */
 // import * as convert from 'color-convert'
+import { hex } from 'color-convert'
 import themes from 'daisyui/src/theming/themes'
+import tw from 'tailwindcss/colors'
 import { hex as colors } from './src/palette'
+import { convertSingle } from './src/utils/color'
 
 const cupcake = themes['[data-theme=cupcake]']
 const dracula = themes['[data-theme=dracula]']
@@ -12,6 +15,22 @@ const base = {
   '--tab-radius': '.5rem',
   '--tw-border-opacity': '0.2',
 }
+
+const slateHSL = convertSingle(tw.slate, hex.hsl, ([h, s, l]) => `${h} ${s}% ${l}%`)
+const gSlate = {
+  '--color-gbase-50': slateHSL[50],
+  '--color-gbase-100': slateHSL[100],
+  '--color-gbase-200': slateHSL[200],
+  '--color-gbase-300': slateHSL[300],
+  '--color-gbase-400': slateHSL[400],
+  '--color-gbase-500': slateHSL[500],
+  '--color-gbase-600': slateHSL[600],
+  '--color-gbase-700': slateHSL[700],
+  '--color-gbase-800': slateHSL[800],
+  '--color-gbase-900': slateHSL[900],
+  '--color-gbase-950': slateHSL[950],
+}
+
 export const guccho = [
   {
     'guccho-light': {
@@ -19,12 +38,13 @@ export const guccho = [
       ...base,
       'primary': cupcake.secondary,
       'secondary': cupcake.primary,
-      'neutral': colors.gbase[200],
-      'base-50': colors.gbase[50],
-      'base-100': colors.gbase[100],
-      'base-200': colors.gbase[200],
-      'base-300': colors.gbase[300],
-      'base-content': colors.gbase[900],
+      'neutral': tw.slate[200],
+      'base-50': tw.slate[50],
+      'base-100': tw.slate[100],
+      'base-200': tw.slate[200],
+      'base-300': tw.slate[300],
+      'base-content': tw.slate[900],
+      ...gSlate,
     },
   },
   {
@@ -32,12 +52,13 @@ export const guccho = [
       ...dracula,
       ...base,
       'primary': colors.wewak[500],
-      'neutral': colors.gbase[500],
-      'base-50': colors.gbase[950],
-      'base-100': colors.gbase[900],
-      'base-200': colors.gbase[800],
-      'base-300': colors.gbase[700],
-      'base-content': colors.gbase[100],
+      'neutral': tw.slate[500],
+      'base-50': tw.slate[950],
+      'base-100': tw.slate[900],
+      'base-200': tw.slate[800],
+      'base-300': tw.slate[700],
+      'base-content': tw.slate[100],
+      ...gSlate,
     },
   },
 ]

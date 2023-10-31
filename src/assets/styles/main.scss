@@ -191,8 +191,14 @@ dialog {
 }
 
 .username {
-  @apply text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl;
+  @apply text-2xl sm:text-3xl md:text-4xl lg:text-5xl;
 }
+
+.userlink-style {
+  @apply underline decoration-sky-500 text-gbase-600 dark:text-gbase-300;
+}
+
 .userlink {
-  @apply text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl underline decoration-sky-500 text-gbase-600 dark:text-gbase-300;
+  @apply text-lg sm:text-xl md:text-2xl lg:text-3xl;
+  @extend .userlink-style;
 }

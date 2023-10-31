@@ -12,9 +12,9 @@ onMounted(() => {
 </script>
 
 <template>
-  <DevOnly>
+  <!-- <DevOnly>
     <app-experience />
-  </DevOnly>
+  </DevOnly> -->
   <nuxt-loading-indicator />
   <app-nav />
   <div id="app-drawer" class="drawer block">

@@ -60,5 +60,6 @@ module.exports = {
   daisyui: {
     darkTheme: 'guccho-dark',
     themes: guccho,
+    base: false,
   },
 }

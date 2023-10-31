@@ -1,5 +1,6 @@
 import convert from 'color-convert'
-import colors from 'tailwindcss/colors'
+
+// import colors from 'tailwindcss/colors'
 import { convertSingle } from './utils/color'
 
 const customColors = {
@@ -59,7 +60,19 @@ const customColors = {
 
 export const hex = {
   ...customColors,
-  gbase: colors.slate,
+  gbase: {
+    50: 'hsl(var(--color-gbase-50) / <alpha-value>)',
+    100: 'hsl(var(--color-gbase-100) / <alpha-value>)',
+    200: 'hsl(var(--color-gbase-200) / <alpha-value>)',
+    300: 'hsl(var(--color-gbase-300) / <alpha-value>)',
+    400: 'hsl(var(--color-gbase-400) / <alpha-value>)',
+    500: 'hsl(var(--color-gbase-500) / <alpha-value>)',
+    600: 'hsl(var(--color-gbase-600) / <alpha-value>)',
+    700: 'hsl(var(--color-gbase-700) / <alpha-value>)',
+    800: 'hsl(var(--color-gbase-800) / <alpha-value>)',
+    900: 'hsl(var(--color-gbase-900) / <alpha-value>)',
+    950: 'hsl(var(--color-gbase-950) / <alpha-value>)',
+  },
 }
 
 export const palette = to(
