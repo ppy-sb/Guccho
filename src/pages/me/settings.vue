@@ -748,9 +748,8 @@ fr-FR:
           <label class="label" for="flag">
             <span class="pl-3 label-text">{{ t('flag') }}</span>
           </label>
-          <!-- <t-combo-box v-model="user.flag" size="sm" class="&[button]:w-full" :options="Object.entries(CountryCode).map(([k, v]) => ({ value: v, label: k }))" /> -->
           <div class="flex gap-2 pl-3">
-            <img :src="getFlagURL(user.flag)" class="w-6">
+            <img :src="getFlagURL(user.flag)" class="w-6" alt="flag">
             <select v-model="user.flag" class="select select-ghost w-full select-sm">
               <option v-for="countryCode in CountryCode" :key="countryCode" :disabled="countryCode === user.flag || countryCode === CountryCode.Unknown" :selected="countryCode === user.flag" :value="countryCode">
                 {{ t(localeKey.country(countryCode)) }}
@@ -762,7 +761,6 @@ fr-FR:
           <label class="label" for="preferred-mode">
             <span class="pl-3 label-text">{{ t('preferred-mode') }}</span>
           </label>
-          <!-- <t-combo-box v-model="user.flag" size="sm" class="&[button]:w-full" :options="Object.entries(CountryCode).map(([k, v]) => ({ value: v, label: k }))" /> -->
           <div class="flex gap-2 pl-3">
             <app-mode-switcher
               v-model="user.preferredMode"

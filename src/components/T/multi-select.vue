@@ -24,16 +24,16 @@ const e = defineEmits<{
 function reset() {
   return props.modelValue?.map((v: unknown) => props.options.find(opt => opt.value === v)).filter(TSFilter) || []
 }
-const selected = computed(() => reset())
+const select = computed(() => reset())
 </script>
 
 <template>
-  <Listbox :model-value="selected" multiple @update:model-value="(value) => e('update:modelValue', value.map((v: Option) => v.value))">
+  <Listbox :model-value="select" multiple @update:model-value="(value) => e('update:modelValue', value.map((v: Option) => v.value))">
     <client-only>
       <Float :offset="4" portal>
         <ListboxButton class="select" :class="[props.size && `select-${props.size}`]">
-          <div v-if="selected.length" class="flex gap-3">
-            <span v-for="s in selected" :key="s.label" selected class="_item">
+          <div v-if="select.length" class="flex gap-3">
+            <span v-for="s in select" :key="s.label" selected class="_item">
               {{ s.label }}
             </span>
           </div>

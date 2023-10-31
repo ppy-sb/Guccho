@@ -31,6 +31,7 @@ import type {
 import type { RankProvider as Base } from '$base/server'
 import type { CountryCode } from '~/def/country-code'
 import { Monitored } from '$base/server/@extends'
+import type { ComponentLeaderboard } from '~/def/leaderboard'
 
 const logger = Logger.child({ label: 'leaderboard', backend: 'bancho.py' })
 
@@ -65,7 +66,7 @@ export class DatabaseRankProvider implements Base<Id> {
     rankingSystem: RS
     page: number
     pageSize: number
-  }) {
+  }): Promise<ComponentLeaderboard<Id>[]> {
     const start = page * pageSize
     const result = await this.db.stat.findMany({
       where: {
@@ -108,7 +109,7 @@ export class DatabaseRankProvider implements Base<Id> {
         playCount: stat.plays,
         rank: BigInt(start + index + 1),
       },
-    }))
+    })satisfies ComponentLeaderboard<Id>)
   }
 
   async countLeaderboard(query: Base.BaseQuery<Mode> & { rankingSystem: LeaderboardRankingSystem }) {
@@ -312,128 +313,104 @@ export class RedisRankProvider extends DatabaseRankProvider implements Monitored
     }
   }
 
-  async leaderboard<M extends ActiveMode, RS extends LeaderboardRankingSystem>(opt: {
+  async leaderboard<M extends ActiveMode, RS extends LeaderboardRankingSystem>({
+    mode,
+  ruleset,
+  rankingSystem,
+  page,
+  pageSize,
+  }: {
     mode: M
     ruleset: AvailableRuleset<M>
     rankingSystem: RS
     page: number
     pageSize: number
-  }) {
-    const { mode, ruleset, rankingSystem, page, pageSize } = opt
+  }): Promise<ComponentLeaderboard<Id>[]> {
+    if (!this.redisClient.isReady || rankingSystem !== Rank.PPv2) {
+      return super.leaderboard({ mode, ruleset, rankingSystem, page, pageSize })
+    }
 
-    const start = page * pageSize
-    if (
-      this.redisClient.isReady
-      && rankingSystem === Rank.PPv2
-    ) {
-      try {
-        const result: {
-          id: number
-          name: string
-          safeName: string
-          flag?: CountryCode
-          priv: number
-          _rank: bigint
-          accuracy: number
-          [Rank.TotalScore]: bigint
-          [Rank.RankedScore]: bigint
-          [Rank.PPv2]: number
-          playCount: number
-        }[] = []
-        const bPyMode = toBanchoPyMode(mode, ruleset)
-        if (bPyMode === undefined) {
-          // throw new Error('no mode')
-          raise(Error, 'no mode')
+    try {
+      const start = page * pageSize
+      const bPyMode = toBanchoPyMode(mode, ruleset)
+
+      if (bPyMode === undefined) {
+      // throw new Error('no mode')
+        raise(Error, 'no mode')
+      }
+
+      const rank = await this.getPPv2LiveLeaderboard(bPyMode, 0, start + pageSize * 2).then(res => res.map(Number))
+
+      const [users, stats] = await Promise.all([
+      /* optimized */
+        this.db.user.findMany({
+          where: {
+            id: {
+              in: rank,
+            },
+          },
+          ...userCompacts,
+        }),
+        /* optimized */
+        this.db.stat.findMany({
+          where: {
+            id: {
+              in: rank,
+            },
+            mode: bPyMode,
+          },
+          select: leaderboardFields,
+        }),
+      ])
+
+      const result: ComponentLeaderboard<Id>[] = []
+
+      for (const index in rank) {
+        if (result.length >= start + pageSize) {
+          break
         }
-        // TODO: banned players are included
-        const rank = await this.getPPv2LiveLeaderboard(
-          bPyMode,
-          0,
-          start + pageSize * 2,
-        ).then(res => res.map(Number))
 
-        const [users, stats] = await Promise.all([
-          /* optimized */
-          this.db.user.findMany({
-            where: {
-              id: {
-                in: rank,
-              },
-            },
-            ...userCompacts,
-          }),
-          /* optimized */
-          this.db.stat.findMany({
-            where: {
-              id: {
-                in: rank,
-              },
-              mode: bPyMode,
-            },
-            select: leaderboardFields,
-          }),
-        ])
+        const id = rank[index]
+        const user = users.find(u => u.id === id)
+        const stat = stats.find(s => s.id === id)
 
-        for (const index in rank) {
-          if (result.length >= start + pageSize) {
-            break
-          }
-          const id = rank[index]
-          const user = users.find(u => u.id === id)
-          const stat = stats.find(s => s.id === id)
+        if (!user || !stat || user.priv <= 2) {
+          continue
+        }
 
-          if (!user || !stat || user.priv <= 2) {
-            continue
-          }
-
-          result.push({
+        result.push({
+          user: {
             id: user.id,
+            stableClientId: user.id,
             name: user.name,
             safeName: user.safeName,
             flag: user.country.toUpperCase() as CountryCode,
+            avatarSrc: (this.config.avatar.domain && `https://${this.config.avatar.domain}/${user.id}`) || undefined,
+            roles: toRoles(user.priv),
+          },
+          inThisLeaderboard: {
             [Rank.PPv2]: stat.pp,
             [Rank.TotalScore]: stat[Rank.TotalScore],
             [Rank.RankedScore]: stat[Rank.RankedScore],
-            priv: user.priv,
-            _rank: BigInt(start + Number.parseInt(index) + 1),
             accuracy: stat.accuracy,
             playCount: stat.plays,
-          })
-        }
-
-        if (!result.length) {
-          return super.leaderboard(opt)
-        }
-        return result.slice(start, start + pageSize).map((item, index) => ({
-          user: {
-            id: item.id,
-            stableClientId: item.id,
-            name: item.name,
-            safeName: item.safeName,
-            flag: item.flag,
-            avatarSrc: (this.config.avatar.domain && `https://${this.config.avatar.domain}/${item.id}`) || undefined,
-            roles: toRoles(item.priv),
-          },
-          inThisLeaderboard: {
-            [Rank.PPv2]: item[Rank.PPv2],
-            [Rank.TotalScore]: item[Rank.TotalScore],
-            [Rank.RankedScore]: item[Rank.RankedScore],
-            accuracy: item.accuracy,
-            playCount: item.playCount,
             // rank: item._rank,
             // order is correct but rank contains banned user, since we didn't check user priv before when selecting count.
             // calculate rank based on page size * index of this page.
-            rank: BigInt(start + index + 1),
+            rank: BigInt(start + Number.parseInt(index) + 1),
           },
-        }))
+        })
       }
-      catch (e) {
-        logger.error(e)
-        return super.leaderboard(opt)
+
+      if (!result.length) {
+        return super.leaderboard({ mode, ruleset, rankingSystem, page, pageSize })
       }
+
+      return result.slice(start, start + pageSize)
     }
-    else {
-      return super.leaderboard(opt)
+    catch (e) {
+      logger.error(e)
+      return super.leaderboard({ mode, ruleset, rankingSystem, page, pageSize })
     }
   }
 }
