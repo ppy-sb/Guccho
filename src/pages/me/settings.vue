@@ -216,7 +216,7 @@ en-GB:
   email: Email
   flag: Flag
   profile: Profile
-  preferred-mode: Preferred Mode
+  default-mode: Default mode
 
   status:
     done: Done!
@@ -268,6 +268,7 @@ zh-CN:
   email: 电子邮箱
   flag: 国家或地区
   profile: 个人简介
+  default-mode: 主页默认模式
 
   status:
     done: 完成
@@ -319,6 +320,7 @@ fr-FR:
   email: Email
   flag: Drapeau
   profile: Profil
+  default-mode: Mode par défaut
 
   status:
     done: Terminé!
@@ -700,8 +702,8 @@ fr-FR:
           </div>
         </div>
         <div class="form-control">
-          <label class="label" for="preferred-mode">
-            <span class="pl-3 label-text">{{ t('preferred-mode') }}</span>
+          <label class="label" for="default-mode">
+            <span class="pl-3 label-text">{{ t('default-mode') }}</span>
           </label>
           <div class="flex gap-2 pl-3">
             <app-mode-switcher v-model="user.preferredMode" class="w-full" />
