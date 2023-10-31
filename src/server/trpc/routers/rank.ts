@@ -1,5 +1,4 @@
 import { z } from 'zod'
-
 import {
   zodLeaderboardRankingSystem,
   zodMode,
@@ -7,7 +6,6 @@ import {
   zodRuleset,
 } from '../shapes'
 import { router as _router, publicProcedure } from '../trpc'
-
 import { ranks } from '~/server/singleton/service'
 import type { RankProvider as Base } from '$base/server/rank'
 import { RankProvider } from '$active/server'

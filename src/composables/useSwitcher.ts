@@ -1,6 +1,5 @@
 import useAdapterConfig from './useAdapterConfig'
 import { Rank } from '~/def'
-
 import type {
   ActiveMode,
   ActiveRuleset,

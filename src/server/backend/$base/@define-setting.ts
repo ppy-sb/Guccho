@@ -1,5 +1,4 @@
-import type { ZodType } from 'zod'
-import { z } from 'zod'
+import { type ZodType, z } from 'zod'
 import { Lang } from '~/def'
 import type { DynamicSettingStore, DynamicUserSetting } from '~/def/user'
 

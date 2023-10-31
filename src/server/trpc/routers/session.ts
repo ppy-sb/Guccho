@@ -1,6 +1,5 @@
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
-
 import {
   sessionNotFound,
   unableToRetrieveSession,
@@ -9,8 +8,8 @@ import {
 import { sessionProcedure as pSession } from '../middleware/session'
 import { zodHandle } from '../shapes'
 import { router as _router, publicProcedure } from '../trpc'
-import { Constant } from '../../common/constants'
 import { sessions, users } from '~/server/singleton/service'
+import { Constant } from '~/server/common/constants'
 import { Logger } from '$base/logger'
 import { UserProvider } from '$active/server'
 

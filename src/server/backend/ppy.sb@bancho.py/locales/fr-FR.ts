@@ -1,5 +1,4 @@
 import { merge } from 'lodash-es'
-
 import frFR from '../../bancho.py/locales/fr-FR'
 import type { ServerLocale } from './@types'
 

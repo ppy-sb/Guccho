@@ -1,5 +1,4 @@
-import type { UserCompact } from '~/def/user'
-import { UserRole } from '~/def/user'
+import { type UserCompact, UserRole } from '~/def/user'
 
 // https://hypercolor.dev/
 export default function (user: UserCompact<unknown>) {

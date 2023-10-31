@@ -1,6 +1,5 @@
 import { TRPCError } from '@trpc/server'
 import { nativeEnum, z } from 'zod'
-
 import {
   atLeastOneUserNotExists,
   relationTypeNotFound,

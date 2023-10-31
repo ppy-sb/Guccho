@@ -1,6 +1,5 @@
 import { env as processEnv } from 'node:process'
-import type { Prisma } from 'prisma-client-bancho-py'
-import { PrismaClient } from 'prisma-client-bancho-py'
+import { type Prisma, PrismaClient } from 'prisma-client-bancho-py'
 import env from '~~/env'
 
 const log: Prisma.LogLevel[] = []

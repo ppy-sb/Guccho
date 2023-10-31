@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type JSONContent } from '@tiptap/vue-3'
+import type { JSONContent } from '@tiptap/vue-3'
 
 const props = defineProps<{
   json?: JSONContent

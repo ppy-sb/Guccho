@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { EditorContent, type HTMLContent, type JSONContent } from '@tiptap/vue-3'
 import { generateJSON } from '@tiptap/html'
-
+import { EditorContent, type HTMLContent, type JSONContent } from '@tiptap/vue-3'
 import useEditor from '~/composables/useEditor'
 
 const props = withDefaults(
@@ -55,11 +54,7 @@ defineExpose({
 <template>
   <div v-if="editor" class="editor">
     <content-editor-bubble-menu :editor="editor" />
-    <content-editor-menu-bar
-      v-model:indent="editorConf.indent"
-      class="editor__header"
-      :editor="editor"
-    />
+    <content-editor-menu-bar v-model:indent="editorConf.indent" class="editor__header" :editor="editor" />
     <EditorContent class="editor__content custom-typography" :editor="editor" />
   </div>
 </template>

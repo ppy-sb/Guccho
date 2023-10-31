@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import type { ExtractSettingType } from '$base/@define-setting'
-import { extractSettingLocales } from '$base/@define-setting'
+import { type ExtractSettingType, extractSettingLocales } from '$base/@define-setting'
 
 const props = defineProps<{
   modelValue: ExtractSettingType<typeof settings>

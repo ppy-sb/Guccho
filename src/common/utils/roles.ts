@@ -1,5 +1,4 @@
-import type { UserCompact } from '~/def/user'
-import { UserRole } from '~/def/user'
+import { type UserCompact, UserRole } from '~/def/user'
 
 export function computeUserRoles(user: UserCompact<unknown>) {
   const admin = user.roles.includes(UserRole.Admin)

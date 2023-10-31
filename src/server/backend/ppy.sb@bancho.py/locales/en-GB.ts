@@ -1,6 +1,5 @@
 import type { DeepPartial } from '@trpc/server'
 import { merge } from 'lodash-es'
-
 import enGB from '../../bancho.py/locales/en-GB'
 import type { GlobalI18n } from '~/locales/@types'
 

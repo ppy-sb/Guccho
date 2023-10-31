@@ -1,19 +1,17 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
-
-import type {
-  LeaderboardRankingSystem,
-  LeaderboardScoreRankingSystem,
-  PPRankingSystem,
-  ScoreRankingSystem,
-} from '~/def/common'
 import {
   leaderboardRankingSystems,
   leaderboardScoreRankingSystems,
   modes,
   rulesets,
 } from '~/def'
-
+import type {
+  LeaderboardRankingSystem,
+  LeaderboardScoreRankingSystem,
+  PPRankingSystem,
+  ScoreRankingSystem,
+} from '~/def/common'
 import userpageStore from '~/store/userpage'
 
 const app = useNuxtApp()
@@ -33,7 +31,7 @@ function stabilizeScoreRank(rankingSystem: LeaderboardRankingSystem) {
 }
 function switchBetweenScoreRanks() {
   return prevSwitcherState.rankingSystem !== page.switcher.rankingSystem
-  && stabilizeScoreRank(prevSwitcherState.rankingSystem)
+    && stabilizeScoreRank(prevSwitcherState.rankingSystem)
     === stabilizeScoreRank(page.switcher.rankingSystem)
 }
 const bpPage = shallowRef(0)
@@ -177,9 +175,7 @@ fr-FR:
     <div class="flex flex-col gap-6">
       <section v-if="bp?.scores?.length">
         <div class="card" :class="[pendingBP && 'pointer-events-none']">
-          <div
-            class="p-1 two-tone flex items-center w-100"
-          >
+          <div class="p-1 two-tone flex items-center w-100">
             <icon name="carbon:letter-pp" class="w-1/6" size="2em" />
             <div class="w-2/3 flex">
               <div class="text-3xl font-semibold mx-auto">
@@ -188,32 +184,24 @@ fr-FR:
             </div>
           </div>
           <div
-            class="px-1 py-2 card-body transition-[filter] transition-opacity duration-200"
-            :class="{
+            class="px-1 py-2 card-body transition-[filter] transition-opacity duration-200" :class="{
               'saturate-50 opacity-30 blur-sm': pendingBP,
             }"
           >
             <div class="relative">
               <transition :name="transition">
                 <ul
-                  :key="
-                    bp.lastSwitcherStatus.mode
-                      + bp.lastSwitcherStatus.ruleset
-                      + stabilizeScoreRank(bp.lastSwitcherStatus.rankingSystem)
-                      + page.user.id
-                      + bp.page
+                  :key="bp.lastSwitcherStatus.mode
+                    + bp.lastSwitcherStatus.ruleset
+                    + stabilizeScoreRank(bp.lastSwitcherStatus.rankingSystem)
+                    + page.user.id
+                    + bp.page
                   "
                 >
-                  <li
-                    v-for="i in bp.scores"
-                    :key="`bests-${i.id}`"
-                    class="score"
-                  >
+                  <li v-for="i in bp.scores" :key="`bests-${i.id}`" class="score">
                     <app-score-list-item
-                      :score="i"
-                      :mode="bp.lastSwitcherStatus.mode"
-                      :ruleset="bp.lastSwitcherStatus.ruleset"
-                      :ranking-system="bp.lastSwitcherStatus.rankingSystem"
+                      :score="i" :mode="bp.lastSwitcherStatus.mode"
+                      :ruleset="bp.lastSwitcherStatus.ruleset" :ranking-system="bp.lastSwitcherStatus.rankingSystem"
                     />
                   </li>
                 </ul>
@@ -224,21 +212,13 @@ fr-FR:
             class="btn-group d-flex w-full bg-gbase-300/30 dark:bg-gbase-700/50 rounded-2xl shadow"
             style="--rounded-btn: 1rem"
           >
-            <button
-              class="btn btn-ghost"
-              :disabled="bpPage === 0"
-              @click="prevBp"
-            >
+            <button class="btn btn-ghost" :disabled="bpPage === 0" @click="prevBp">
               «
             </button>
             <button class="btn btn-ghost grow" @click="() => refreshBP()">
               {{ t('page', { page: bpPage + 1 }) }}
             </button>
-            <button
-              class="btn btn-ghost"
-              :disabled="bp.scores.length < 10"
-              @click="nextBp"
-            >
+            <button class="btn btn-ghost" :disabled="bp.scores.length < 10" @click="nextBp">
               »
             </button>
           </div>

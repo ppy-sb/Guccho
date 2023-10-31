@@ -1,25 +1,22 @@
 import type {
   User as DatabaseUser,
 } from 'prisma-client-bancho-py'
-import { Access, BanchoPyUserStatus as B, BanchoPyPrivilege } from '../enums'
 import type { Id } from '..'
+import { Access, BanchoPyUserStatus as B, BanchoPyPrivilege } from '../enums'
 import { fromBanchoPyMode } from './mode'
 import type { ArticleProvider } from '$base/server'
-import type {
-  UserCompact,
-  UserOptional,
-  UserSecrets,
-} from '~/def/user'
+import type { Relationship } from '~/def'
+import type { CountryCode } from '~/def/country-code'
 import {
   UserStatus as G,
   Scope,
+  type UserCompact,
+  type UserOptional,
   UserRole,
+  type UserSecrets,
   UserStatus,
 } from '~/def/user'
-import type { Relationship } from '~/def'
-
 import type { UserRelationship } from '~/def/user-relationship'
-import type { CountryCode } from '~/def/country-code'
 
 export function toRoles(priv: number): UserRole[] {
   const roles: UserRole[] = []

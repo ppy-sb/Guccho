@@ -1,5 +1,5 @@
-import { type H3Event } from 'h3'
 import type { inferAsyncReturnType } from '@trpc/server'
+import type { H3Event } from 'h3'
 import { Constant } from '../common/constants'
 
 // type _ReturnType = Awaited<ReturnType<typeof getSession>> & Record<string, unknown>

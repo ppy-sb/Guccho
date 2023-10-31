@@ -1,19 +1,17 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
-
-import type {
-  LeaderboardRankingSystem,
-  LeaderboardScoreRankingSystem,
-  PPRankingSystem,
-  ScoreRankingSystem,
-} from '~/def/common'
 import {
   leaderboardRankingSystems,
   leaderboardScoreRankingSystems,
   modes,
   rulesets,
 } from '~/def'
-
+import type {
+  LeaderboardRankingSystem,
+  LeaderboardScoreRankingSystem,
+  PPRankingSystem,
+  ScoreRankingSystem,
+} from '~/def/common'
 import userpageStore from '~/store/userpage'
 
 const app = useNuxtApp()
@@ -35,7 +33,7 @@ function stabilizeScoreRank(rankingSystem: LeaderboardRankingSystem) {
 }
 function switchBetweenScoreRanks() {
   return prevSwitcherState.rankingSystem !== page.switcher.rankingSystem
-  && stabilizeScoreRank(prevSwitcherState.rankingSystem)
+    && stabilizeScoreRank(prevSwitcherState.rankingSystem)
     === stabilizeScoreRank(page.switcher.rankingSystem)
 }
 const topPage = shallowRef(0)
@@ -189,9 +187,7 @@ fr-FR:
           >
             First Ranks ({{ top.count }})
           </div> -->
-          <div
-            class="p-1 two-tone flex items-center w-100"
-          >
+          <div class="p-1 two-tone flex items-center w-100">
             <icon name="pajamas:first-contribution" class="w-1/6 text-3xl opacity-70" />
             <div class="w-2/3 flex">
               <div class="text-3xl font-semibold mx-auto">
@@ -205,32 +201,24 @@ fr-FR:
             </div>
           </div>
           <div
-            class="px-1 py-2 card-body transition-[filter] transition-opacity duration-200"
-            :class="{
+            class="px-1 py-2 card-body transition-[filter] transition-opacity duration-200" :class="{
               'saturate-50 opacity-30 blur-sm': pendingTop,
             }"
           >
             <div class="relative">
               <transition :name="transition">
                 <ul
-                  :key="
-                    top.lastSwitcherStatus.mode
-                      + top.lastSwitcherStatus.ruleset
-                      + stabilizeScoreRank(top.lastSwitcherStatus.rankingSystem)
-                      + page.user.id
-                      + top.page
+                  :key="top.lastSwitcherStatus.mode
+                    + top.lastSwitcherStatus.ruleset
+                    + stabilizeScoreRank(top.lastSwitcherStatus.rankingSystem)
+                    + page.user.id
+                    + top.page
                   "
                 >
-                  <li
-                    v-for="i in top.scores"
-                    :key="`bests-${i.id}`"
-                    class="score"
-                  >
+                  <li v-for="i in top.scores" :key="`bests-${i.id}`" class="score">
                     <app-score-list-item
-                      :score="i"
-                      :mode="top.lastSwitcherStatus.mode"
-                      :ruleset="top.lastSwitcherStatus.ruleset"
-                      :ranking-system="top.lastSwitcherStatus.rankingSystem"
+                      :score="i" :mode="top.lastSwitcherStatus.mode"
+                      :ruleset="top.lastSwitcherStatus.ruleset" :ranking-system="top.lastSwitcherStatus.rankingSystem"
                     />
                   </li>
                 </ul>
@@ -241,29 +229,19 @@ fr-FR:
             class="btn-group d-flex w-full bg-gbase-300/30 dark:bg-gbase-700/50 rounded-2xl shadow"
             style="--rounded-btn: 1rem"
           >
-            <button
-              class="btn btn-ghost"
-              :disabled="topPage === 0"
-              @click="prevTop"
-            >
+            <button class="btn btn-ghost" :disabled="topPage === 0" @click="prevTop">
               «
             </button>
             <button class="btn btn-ghost grow" @click="() => refreshTop()">
               {{ t('page', { page: topPage + 1 }) }}
             </button>
-            <button
-              class="btn btn-ghost"
-              :disabled="top.scores.length < 10"
-              @click="nextTop"
-            >
+            <button class="btn btn-ghost" :disabled="top.scores.length < 10" @click="nextTop">
               »
             </button>
           </div>
         </div>
       </section>
-      <div
-        v-else-if="!top?.scores.length && pendingTop"
-      >
+      <div v-else-if="!top?.scores.length && pendingTop">
         {{ t('loading') }}
       </div>
     </div>

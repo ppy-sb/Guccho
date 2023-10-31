@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { TRPCError } from '@trpc/server'
-
 import { useSession } from '~/store/session'
 
 const session = useSession()
@@ -82,52 +81,29 @@ fr-FR:
 </i18n>
 
 <template>
-  <div
-    class="w-full flex flex-col"
-  >
-    <div
-      class="mx-auto half-box"
-    >
+  <div class="w-full flex flex-col">
+    <div class="mx-auto half-box">
       <fetch-overlay :fetching="fetching" />
       <div>
-        <h2
-          class="text-2xl pl-2 text-gbase-800 dark:text-gbase-50"
-        >
+        <h2 class="text-2xl pl-2 text-gbase-800 dark:text-gbase-50">
           {{ $t('global.login') }}
         </h2>
       </div>
-      <form
-        class="mt-8 space-y-12"
-        autocomplete="off"
-        method="post"
-        @submit.prevent="userLogin"
-      >
+      <form class="mt-8 space-y-12" autocomplete="off" method="post" @submit.prevent="userLogin">
         <div class="flex flex-col gap-2">
           <div>
             <label for="user" class="sr-only">{{ t('user-or-email') }}</label>
             <input
-              id="user"
-              v-model="login.user"
-              name="user"
-              type="user"
-              autocomplete="off"
-              required
-              class="w-full input input-shadow input-ghost shadow-sm"
-              :class="{ 'input-error': error }"
+              id="user" v-model="login.user" name="user" type="user" autocomplete="off" required
+              class="w-full input input-shadow input-ghost shadow-sm" :class="{ 'input-error': error }"
               :placeholder="t('user-id-email')"
             >
           </div>
           <div>
             <label for="password" class="sr-only">{{ t('password') }}</label>
             <input
-              id="password"
-              v-model="login.password"
-              name="password"
-              type="password"
-              autocomplete="off"
-              required
-              class="w-full input input-shadow input-ghost shadow-sm"
-              :class="{ 'input-error': error }"
+              id="password" v-model="login.password" name="password" type="password" autocomplete="off" required
+              class="w-full input input-shadow input-ghost shadow-sm" :class="{ 'input-error': error }"
               :placeholder="t('password')"
             >
           </div>
@@ -137,11 +113,8 @@ fr-FR:
         </div>
         <div class="grid grid-cols-2 gap-2">
           <t-nuxt-link-button
-            class="btn-shadow"
-            to="/auth/register"
-            variant="accent"
-            @mouseenter="registerButton = $t('global.register')"
-            @mouseleave="registerButton = t('have-no-account')"
+            class="btn-shadow" to="/auth/register" variant="accent"
+            @mouseenter="registerButton = $t('global.register')" @mouseleave="registerButton = t('have-no-account')"
           >
             {{ registerButton }}
           </t-nuxt-link-button>

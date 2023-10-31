@@ -1,9 +1,8 @@
 <script lang="ts">
 import type { Editor } from '@tiptap/vue-3'
-
 import remixiconUrl from 'remixicon/fonts/remixicon.symbol.svg'
 import type { PropType } from 'vue'
-import { type ContentEditorInsertImage } from '#components'
+import type { ContentEditorInsertImage } from '#components'
 
 export default defineComponent({
 
@@ -162,21 +161,15 @@ export default defineComponent({
   <div class="menubar">
     <content-editor-insert-image ref="insertImage" :editor="editor" />
     <template v-for="(item, index) in items">
-      <div
-        v-if="'type' in item && item.type === 'divider'"
-        :key="`divider${index}`"
-        class="divider"
-      />
+      <div v-if="'type' in item && item.type === 'divider'" :key="`divider${index}`" class="divider" />
       <content-editor-menu-item v-else :key="index" v-bind="item" class="menu-item icon" />
     </template>
     <template v-if="editor.isActive('codeBlock')">
       <label for="indent" class="label">Indent:</label>
       <button
-        class="flex items-center menu-item"
-        :class="{
+        class="flex items-center menu-item" :class="{
           'is-active': indent === '  ',
-        }"
-        @click="$emit('update:indent', '  ')"
+        }" @click="$emit('update:indent', '  ')"
       >
         <svg class="remix" style="width: 1.5rem; height: 1.5rem">
           <use :xlink:href="`${remixiconUrl}#ri-space`" />
@@ -184,11 +177,9 @@ export default defineComponent({
         2
       </button>
       <button
-        class="flex menu-item"
-        :class="{
+        class="flex menu-item" :class="{
           'is-active': indent === '    ',
-        }"
-        @click="$emit('update:indent', '    ')"
+        }" @click="$emit('update:indent', '    ')"
       >
         <svg class="remix" style="width: 1.5rem; height: 1.5rem">
           <use :xlink:href="`${remixiconUrl}#ri-space`" />
@@ -196,11 +187,9 @@ export default defineComponent({
         4
       </button>
       <button
-        class="menu-item"
-        :class="{
+        class="menu-item" :class="{
           'is-active': indent === '\t',
-        }"
-        @click="$emit('update:indent', '\t')"
+        }" @click="$emit('update:indent', '\t')"
       >
         ⇥
       </button>
@@ -239,6 +228,7 @@ export default defineComponent({
     &.is-active,
     &:hover {
       @apply text-gbase-100 bg-gbase-800 dark:text-gbase-900 dark:bg-gbase-100;
+
       // color:#FFF;
       // background-color:#0D0D0D;
       svg {

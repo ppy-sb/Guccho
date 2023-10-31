@@ -1,17 +1,13 @@
 <script setup lang="ts">
-import { Cropper } from 'vue-advanced-cropper'
-import 'vue-advanced-cropper/dist/style.css'
-
 import md5 from 'md5'
-import { CountryCode } from '../../def/country-code'
-import { Client, OS } from '~/def/device'
-
-import { TModal, TResponsiveModal } from '#components'
-import type { ContentEditor } from '#components'
-import { useSession } from '~/store/session'
-
+import { Cropper } from 'vue-advanced-cropper'
+import { type ContentEditor, TModal, TResponsiveModal } from '#components'
 import type { ArticleProvider } from '$base/server/article'
+import 'vue-advanced-cropper/dist/style.css'
+import { CountryCode } from '~/def/country-code'
+import { Client, OS } from '~/def/device'
 import { UserRole } from '~/def/user'
+import { useSession } from '~/store/session'
 
 // eslint-disable-next-line antfu/no-const-enum
 const enum UploadingAvatarStatus {
@@ -127,11 +123,11 @@ async function updateUserSettings() {
       errorMessage.value.push(error.message)
     }),
     profile.value && profileEdited.value
-      && app$.$client.me.changeUserpage
-        .mutate({ profile: profile.value })
-        .catch((error) => {
-          errorMessage.value.push(error.message)
-        }),
+    && app$.$client.me.changeUserpage
+      .mutate({ profile: profile.value })
+      .catch((error) => {
+        errorMessage.value.push(error.message)
+      }),
   ])
   updateResult.value = true
   posting.value = false
@@ -369,38 +365,24 @@ fr-FR:
 <template>
   <section v-if="user" class="container mx-auto custom-container">
     <TResponsiveModal
-      ref="changeAvatar"
-      v-slot="{ closeModal }"
-      class="my-auto"
+      ref="changeAvatar" v-slot="{ closeModal }" class="my-auto"
       @ready="/* for compatibility with 'change avatar' in stable client. */ () => showChangeAvatar && changeAvatar?.showModal()"
     >
       <div class="p-4 rounded-xl flex flex-col gap-2 shadow-xl bg-gbase-50">
         <div class="flex items-center justify-center w-full">
           <label v-if="!newAvatar" for="dropzone-file" class="dropzone">
-            <div
-              class="flex flex-col items-center justify-center px-3 pt-5 pb-6"
-            >
+            <div class="flex flex-col items-center justify-center px-3 pt-5 pb-6">
               <svg
-                aria-hidden="true"
-                class="w-10 h-10 mb-3 text-gbase-600 dark:text-gbase-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true" class="w-10 h-10 mb-3 text-gbase-600 dark:text-gbase-400" fill="none"
+                stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
               >
                 <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
                 />
               </svg>
 
-              <i18n-t
-                keypath="avatar.upload.placement"
-                tag="p"
-                class="mb-2 text-sm text-gbase-500 dark:text-gbase-300"
-              >
+              <i18n-t keypath="avatar.upload.placement" tag="p" class="mb-2 text-sm text-gbase-500 dark:text-gbase-300">
                 <template #bold>
                   <span class="font-semibold">{{ t('avatar.upload.click-to-upload') }}</span>
                 </template>
@@ -417,28 +399,21 @@ fr-FR:
           </label>
           <output v-else-if="uploadingAvatarStat !== UploadingAvatarStatus.Succeed" class="drop-shadow m-2 w-96">
             <Cropper
-              ref="cropper"
-              class="cropper"
-              :src="newAvatarURL"
-              :stencil-props="{
+              ref="cropper" class="cropper" :src="newAvatarURL" :stencil-props="{
                 aspectRatio: 1,
-              }"
-              :canvas="{
+              }" :canvas="{
                 minHeight: 64,
                 minWidth: 64,
                 maxHeight: 640,
                 maxWidth: 640,
-              }"
-              @change="crop"
+              }" @change="crop"
             />
           </output>
           <img v-else :src="newAvatarURL" class="mask mask-squircle overflow-hidden _avatar w-56 h-56">
         </div>
         <t-button
-          v-if="uploadingAvatarStat !== UploadingAvatarStatus.Succeed && newAvatar"
-          class="btn-shadow grow"
-          :loading="uploadingAvatarStat === UploadingAvatarStatus.Uploading"
-          @click="saveAvatar"
+          v-if="uploadingAvatarStat !== UploadingAvatarStatus.Succeed && newAvatar" class="btn-shadow grow"
+          :loading="uploadingAvatarStat === UploadingAvatarStatus.Uploading" @click="saveAvatar"
         >
           {{
             uploadingAvatarStat === UploadingAvatarStatus.Idle
@@ -469,10 +444,8 @@ fr-FR:
                 <span class="pl-2 label-text">{{ t('password.old-password') }}</span>
               </label>
               <input
-                v-model="changePasswordForm.oldPassword"
-                type="password"
-                class="input input-shadow input-sm input-ghost"
-                required
+                v-model="changePasswordForm.oldPassword" type="password"
+                class="input input-shadow input-sm input-ghost" required
               >
             </div>
             <div class="form-control">
@@ -480,10 +453,8 @@ fr-FR:
                 <span class="pl-2 label-text">{{ t('password.new-password') }}</span>
               </label>
               <input
-                v-model="changePasswordForm.newPassword"
-                type="password"
-                class="input input-shadow input-sm input-ghost"
-                required
+                v-model="changePasswordForm.newPassword" type="password"
+                class="input input-shadow input-sm input-ghost" required
               >
             </div>
             <div class="form-control">
@@ -491,10 +462,8 @@ fr-FR:
                 <span class="pl-2 label-text">{{ t('password.repeat-password') }}</span>
               </label>
               <input
-                v-model="changePasswordForm.repeatNewPassword"
-                type="password"
-                class="input input-shadow input-sm input-ghost"
-                required
+                v-model="changePasswordForm.repeatNewPassword" type="password"
+                class="input input-shadow input-sm input-ghost" required
               >
             </div>
             <span class="text-error px-2">{{ changePasswordError }}</span>
@@ -504,11 +473,7 @@ fr-FR:
               <icon name="ic:round-check" class="w-5 h-5" size="100%" /> {{ t('password.ok') }}
             </t-button>
             <t-button
-              class="btn-shadow grow"
-              size="sm"
-              variant="secondary"
-              type="button"
-              @click="
+              class="btn-shadow grow" size="sm" variant="secondary" type="button" @click="
                 closeModal(() => {
                   changePasswordForm = {}
                   changePasswordError = ''
@@ -527,47 +492,41 @@ fr-FR:
         {{ t('preferences') }}
       </div>
       <button
-        class="btn btn-shadow btn-sm"
-        :class="[
+        class="btn btn-shadow btn-sm" :class="[
           updateResult ? 'btn-success' : 'btn-accent',
           posting ? 'loading' : '',
-        ]"
-        type="button"
-        @click="updateUserSettings"
+        ]" type="button" @click="updateUserSettings"
       >
-        <icon v-if="!posting" :name="updateResult ? 'line-md:confirm' : 'ic:round-save'" class="w-5 h-5 me-1" size="100%" />
+        <icon
+          v-if="!posting" :name="updateResult ? 'line-md:confirm' : 'ic:round-save'" class="w-5 h-5 me-1"
+          size="100%"
+        />
         {{ updateResult ? t('status.done') : t('status.ready') }}
       </button>
     </div>
 
     <div class="flex flex-col flex-wrap justify-between md:flex-row">
       <div class="grow w-full lg:[max-width:50%]">
-        <div
-          class="flex flex-wrap items-end p-3 overflow-hidden gap-4 lg:mr-4"
-        >
+        <div class="flex flex-wrap items-end p-3 overflow-hidden gap-4 lg:mr-4">
           <div class="drop-shadow-md">
-            <div class="relative z-10 mask mask-squircle hoverable w-100 self-center [&>img]:hover:blur-lg [&>img]:hover:opacity-50 no-animation">
+            <div
+              class="relative z-10 mask mask-squircle hoverable w-100 self-center [&>img]:hover:blur-lg [&>img]:hover:opacity-50 no-animation"
+            >
               <button
                 class="absolute top-0 z-20 w-full h-full btn btn-primary hover:bg-primary/50 focus:active:bg-primary/50"
-                type="button"
-                @click="() => changeAvatar?.showModal()"
+                type="button" @click="() => changeAvatar?.showModal()"
               >
                 <icon name="ic:round-edit-note" class="w-5 h-5" size="100%" />
                 {{ t('avatar.change') }}
               </button>
-              <img
-                :src="newAvatarURL || `${user.avatarSrc}`"
-                class="pointer-events-none _avatar w-40 h-40"
-              >
+              <img :src="newAvatarURL || `${user.avatarSrc}`" class="pointer-events-none _avatar w-40 h-40">
             </div>
           </div>
           <div>
             <h1 class="username">
               {{ user.name }}
             </h1>
-            <h2
-              class="userlink"
-            >
+            <h2 class="userlink">
               @{{ user.safeName }}
             </h2>
             <div class="pb-4" />
@@ -616,7 +575,10 @@ fr-FR:
                         </div>
                         <div>
                           <div class="font-bold">
-                            {{ OS[session.OS] }} <span v-if="session.current" class="badge badge-ghost badge-sm whitespace-nowrap">{{ t('session.current') }}</span>
+                            {{ OS[session.OS] }} <span
+                              v-if="session.current"
+                              class="badge badge-ghost badge-sm whitespace-nowrap"
+                            >{{ t('session.current') }}</span>
                           </div>
                           <div class="text-sm opacity-50">
                             {{ Client[session.client] }}
@@ -629,12 +591,11 @@ fr-FR:
                     </td>
                     <th>
                       <button
-                        class="btn btn-ghost btn-xs"
-                        :class="{ loading: pendingSession }"
-                        :disabled="pendingSession || session.current"
-                        @click="kickSession(id)"
+                        class="btn btn-ghost btn-xs" :class="{ loading: pendingSession }"
+                        :disabled="pendingSession || session.current" @click="kickSession(id)"
                       >
-                        <icon name="majesticons:logout-half-circle-line" class="w-5 h-5 me-1" size="100%" />{{ t('session.kick') }}
+                        <icon name="majesticons:logout-half-circle-line" class="w-5 h-5 me-1" size="100%" />{{
+                          t('session.kick') }}
                       </button>
                     </th>
                   </tr>
@@ -653,32 +614,22 @@ fr-FR:
             <span class="pl-3 label-text">{{ t('username') }}</span>
           </label>
           <div
-            :class="
-              unchanged.name !== user.name && 'input-group input-group-sm'
+            :class="unchanged.name !== user.name && 'input-group input-group-sm'
             "
           >
             <input
-              id="username"
-              v-model="user.name"
-              type="text"
-              :placeholder="t('username')"
-              class="w-full input input-shadow input-sm"
-              :disabled="!user.roles.includes(UserRole.Supporter)"
-              :class="{
+              id="username" v-model="user.name" type="text" :placeholder="t('username')"
+              class="w-full input input-shadow input-sm" :disabled="!user.roles.includes(UserRole.Supporter)" :class="{
                 'input-bordered input-primary': unchanged.name !== user.name,
                 '!input-ghost border-none': unchanged.name === user.name,
               }"
             >
             <button
-              v-if="unchanged.name !== user.name"
-              class="btn btn-shadow btn-sm"
-              type="button"
-              :disabled="unchanged.name === user.name"
-              @click="
-                () => {
-                  if (!user || !unchanged) return
-                  user.name = unchanged.name
-                }
+              v-if="unchanged.name !== user.name" class="btn btn-shadow btn-sm" type="button"
+              :disabled="unchanged.name === user.name" @click="() => {
+                if (!user || !unchanged) return
+                user.name = unchanged.name
+              }
               "
             >
               {{ t('reset') }}
@@ -691,11 +642,7 @@ fr-FR:
           </label>
           <div class="flex gap-4">
             <input
-              id="userlink"
-              v-model="user.safeName"
-              type="text"
-              class="input input-shadow input-sm grow"
-              disabled
+              id="userlink" v-model="user.safeName" type="text" class="input input-shadow input-sm grow" disabled
               :class="{
                 'input-bordered input-primary':
                   unchanged.safeName !== user.safeName,
@@ -713,31 +660,22 @@ fr-FR:
             <span class="pl-3 label-text">{{ t('email') }}</span>
           </label>
           <div
-            :class="
-              unchanged.email !== user.email && 'input-group input-group-sm'
+            :class="unchanged.email !== user.email && 'input-group input-group-sm'
             "
           >
             <input
-              id="email"
-              v-model="user.email"
-              type="email"
-              placeholder="abc@123.com"
-              class="w-full input input-shadow input-sm"
-              :class="{
+              id="email" v-model="user.email" type="email" placeholder="abc@123.com"
+              class="w-full input input-shadow input-sm" :class="{
                 'input-bordered input-primary': unchanged.email !== user.email,
                 'input-ghost': unchanged.email === user.email,
               }"
             >
             <button
-              v-show="unchanged.email !== user.email"
-              class="btn btn-shadow btn-sm"
-              type="button"
-              :disabled="unchanged.email === user.email"
-              @click="
-                () => {
-                  if (!user || !unchanged) return
-                  user.email = unchanged.email
-                }
+              v-show="unchanged.email !== user.email" class="btn btn-shadow btn-sm" type="button"
+              :disabled="unchanged.email === user.email" @click="() => {
+                if (!user || !unchanged) return
+                user.email = unchanged.email
+              }
               "
             >
               {{ t('reset') }}
@@ -751,7 +689,11 @@ fr-FR:
           <div class="flex gap-2 pl-3">
             <img :src="getFlagURL(user.flag)" class="w-6" alt="flag">
             <select v-model="user.flag" class="select select-ghost w-full select-sm">
-              <option v-for="countryCode in CountryCode" :key="countryCode" :disabled="countryCode === user.flag || countryCode === CountryCode.Unknown" :selected="countryCode === user.flag" :value="countryCode">
+              <option
+                v-for="countryCode in CountryCode" :key="countryCode"
+                :disabled="countryCode === user.flag || countryCode === CountryCode.Unknown"
+                :selected="countryCode === user.flag" :value="countryCode"
+              >
                 {{ t(localeKey.country(countryCode)) }}
               </option>
             </select>
@@ -762,19 +704,14 @@ fr-FR:
             <span class="pl-3 label-text">{{ t('preferred-mode') }}</span>
           </label>
           <div class="flex gap-2 pl-3">
-            <app-mode-switcher
-              v-model="user.preferredMode"
-              class="w-full"
-            />
+            <app-mode-switcher v-model="user.preferredMode" class="w-full" />
           </div>
         </div>
         <div>
           <label class="label" for="password">
             <span class="pl-3 label-text">{{ t('password.literal') }}</span>
             <button
-              id="#password"
-              class="btn btn-shadow btn-sm btn-secondary"
-              type="button"
+              id="#password" class="btn btn-shadow btn-sm btn-secondary" type="button"
               @click.prevent="() => changePassword?.showModal()"
             >
               <icon name="ic:round-edit-note" class="w-5 h-5" size="100%" /> {{ t('password.change') }}
@@ -789,27 +726,26 @@ fr-FR:
       <span class="pl-3 label-text">{{ t('profile') }}</span>
     </label>
     <lazy-content-editor
-      id="profile"
-      ref="editor"
-      v-model.lazy="profile"
-      :html="user.profile?.html"
-      class="safari-performance-boost"
-      @update:model-value="profileEdited = true"
+      id="profile" ref="editor" v-model.lazy="profile" :html="user.profile?.html"
+      class="safari-performance-boost" @update:model-value="profileEdited = true"
     />
   </section>
 </template>
 
 <style lang="scss" scoped>
 .hoverable {
+
   img,
   .btn {
     transition: opacity 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
     overflow: hidden;
     border: none;
   }
+
   .btn {
     opacity: 0;
   }
+
   &:hover {
     .btn {
       opacity: 1;
@@ -827,6 +763,7 @@ fr-FR:
   @apply hover:shadow-lg;
   @apply transition-shadow transition-colors;
 }
+
 ._avatar {
   min-width: 150px;
   max-width: 200px;

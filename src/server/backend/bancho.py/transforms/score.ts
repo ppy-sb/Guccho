@@ -1,11 +1,9 @@
 import type { Id } from '..'
 import { toBeatmapWithBeatmapset } from './beatmap'
 import { createHitCount } from './create-hit-count'
-import { toMods } from '.'
-
-import type { AbleToTransformToScores } from './index'
-import type { BeatmapSource } from '~/def/beatmap'
-import { RankingStatus } from '~/def/beatmap'
+import { type AbleToTransformToScores, toMods } from '.'
+import { Rank } from '~/def'
+import { type BeatmapSource, RankingStatus } from '~/def/beatmap'
 import type {
   ActiveMode,
   ActiveRuleset,
@@ -13,7 +11,6 @@ import type {
   PPRankingSystem,
 } from '~/def/common'
 import type { Grade, RankingSystemScore, RulesetScore } from '~/def/score'
-import { Rank } from '~/def'
 
 export function toScore<M extends ActiveMode, RS extends PPRankingSystem>({
   score,

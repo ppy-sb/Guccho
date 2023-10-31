@@ -1,10 +1,8 @@
 import { TRPCError } from '@trpc/server'
-import { publicProcedure } from '../trpc'
-
 import { unableToRefreshToken } from '../messages'
-
-import { haveSession } from '~/server/middleware/0.session'
+import { publicProcedure } from '../trpc'
 import { Constant } from '~/server/common/constants'
+import { haveSession } from '~/server/middleware/0.session'
 import { sessions } from '~/server/singleton/service'
 
 const config = {

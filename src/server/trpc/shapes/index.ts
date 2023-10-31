@@ -1,14 +1,11 @@
 import { existsSync } from 'node:fs'
-import type { ZodSchema } from 'zod'
-import { ZodIssueCode, literal, nativeEnum, number, string, tuple, union, z } from 'zod'
-
 import validator from 'validator'
+import { ZodIssueCode, type ZodSchema, literal, nativeEnum, number, string, tuple, union, z } from 'zod'
 import { hasRuleset } from '../config'
-import { LeaderboardScoreRank, Mode, PPRank, Relationship, Ruleset, ScoreRank } from '~/def'
 import type { ArticleProvider } from '$base/server/article'
-
-import type { ActiveMode, ActiveRuleset } from '~/def/common'
+import { LeaderboardScoreRank, Mode, PPRank, Relationship, Ruleset, ScoreRank } from '~/def'
 import { RankingStatus } from '~/def/beatmap'
+import type { ActiveMode, ActiveRuleset } from '~/def/common'
 
 export const zodHandle = string().trim().transform(v => decodeURIComponent(v))
 export const zodRelationType = nativeEnum(Relationship)

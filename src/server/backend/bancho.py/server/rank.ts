@@ -1,3 +1,9 @@
+import { type Id, hasRuleset } from '..'
+import { normal } from '../constants'
+import {
+  userCompacts,
+} from '../db-query'
+import { config as _config } from '../env'
 import { Logger } from '../log'
 import {
   fromBanchoMode,
@@ -8,30 +14,14 @@ import {
   toRoles,
   toUserCompact,
 } from '../transforms'
-import {
-  userCompacts,
-} from '../db-query'
-import type { Id } from '..'
-import { hasRuleset } from '..'
-
-import { config as _config } from '../env'
-import { normal } from '../constants'
-import { RedisNotReadyError, client as redisClient } from './source/redis'
 import { getPrismaClient } from './source/prisma'
-
-import type { Mode } from '~/def'
-import { Rank } from '~/def'
-
-import type {
-  ActiveMode,
-  AvailableRuleset,
-  LeaderboardRankingSystem,
-  RankingSystem,
-} from '~/def/common'
-import type { RankProvider as Base } from '$base/server'
-import type { CountryCode } from '~/def/country-code'
-import { Monitored } from '$base/server/@extends'
+import { RedisNotReadyError, client as redisClient } from './source/redis'
 import type { ComponentLeaderboard } from '~/def/leaderboard'
+import type { CountryCode } from '~/def/country-code'
+import type { ActiveMode, AvailableRuleset, LeaderboardRankingSystem, RankingSystem } from '~/def/common'
+import { type Mode, Rank } from '~/def'
+import { Monitored } from '$base/server/@extends'
+import type { RankProvider as Base } from '$base/server'
 
 const logger = Logger.child({ label: 'leaderboard', backend: 'bancho.py' })
 
@@ -109,7 +99,7 @@ export class DatabaseRankProvider implements Base<Id> {
         playCount: stat.plays,
         rank: BigInt(start + index + 1),
       },
-    })satisfies ComponentLeaderboard<Id>)
+    }) satisfies ComponentLeaderboard<Id>)
   }
 
   async countLeaderboard(query: Base.BaseQuery<Mode> & { rankingSystem: LeaderboardRankingSystem }) {
@@ -315,10 +305,10 @@ export class RedisRankProvider extends DatabaseRankProvider implements Monitored
 
   async leaderboard<M extends ActiveMode, RS extends LeaderboardRankingSystem>({
     mode,
-  ruleset,
-  rankingSystem,
-  page,
-  pageSize,
+    ruleset,
+    rankingSystem,
+    page,
+    pageSize,
   }: {
     mode: M
     ruleset: AvailableRuleset<M>
@@ -335,14 +325,14 @@ export class RedisRankProvider extends DatabaseRankProvider implements Monitored
       const bPyMode = toBanchoPyMode(mode, ruleset)
 
       if (bPyMode === undefined) {
-      // throw new Error('no mode')
+        // throw new Error('no mode')
         raise(Error, 'no mode')
       }
 
       const rank = await this.getPPv2LiveLeaderboard(bPyMode, 0, start + pageSize * 2).then(res => res.map(Number))
 
       const [users, stats] = await Promise.all([
-      /* optimized */
+        /* optimized */
         this.db.user.findMany({
           where: {
             id: {

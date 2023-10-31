@@ -1,7 +1,6 @@
 <script setup lang="ts">
 // @ts-expect-error we don't have to know
 import { JsonViewer } from 'vue3-json-viewer'
-
 import 'vue3-json-viewer/dist/index.css'
 import { Rank } from '~/def'
 

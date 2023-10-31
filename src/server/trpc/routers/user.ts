@@ -1,8 +1,9 @@
 import { TRPCError } from '@trpc/server'
 import { array, number, object, string } from 'zod'
-
 import { hasLeaderboardRankingSystem, hasRuleset } from '../config'
-
+import { userNotFound } from '../messages'
+import { optionalUserProcedure } from '../middleware/optional-user'
+import { sessionProcedure } from '../middleware/session'
 import {
   zodHandle,
   zodLeaderboardRankingSystem,
@@ -12,13 +13,9 @@ import {
   zodRuleset,
 } from '../shapes'
 import { router as _router, publicProcedure as p } from '../trpc'
-import { sessionProcedure } from '../middleware/session'
-import { optionalUserProcedure } from '../middleware/optional-user'
-import { userNotFound } from '../messages'
 import { sessions, userRelations, users } from '~/server/singleton/service'
 import { Scope, UserRole } from '~/def/user'
 import { RankingStatus } from '~/def/beatmap'
-
 import { MapProvider, UserProvider } from '$active/server'
 
 export const router = _router({

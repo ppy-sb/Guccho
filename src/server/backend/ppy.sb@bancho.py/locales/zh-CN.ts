@@ -1,5 +1,4 @@
 import { merge } from 'lodash-es'
-
 import zhCN from '../../bancho.py/locales/zh-CN'
 import type { ServerLocale } from './@types'
 import { CountryCode } from '~/def/country-code'

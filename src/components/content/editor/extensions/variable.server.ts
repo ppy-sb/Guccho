@@ -1,5 +1,4 @@
 import { Node, mergeAttributes } from '@tiptap/core'
-
 import ctx from './variable.shared'
 
 export default function () {
@@ -59,7 +58,7 @@ export default function () {
     },
 
     parseHTML() {
-    // @ts-expect-error L80
+      // @ts-expect-error L80
       return [{ tag: `span.custom-variable[data-key="${this.name}"][fallback="${this.fallback}"]` }]
     },
 

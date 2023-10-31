@@ -1,21 +1,22 @@
 import { request } from 'node:http'
 import type { H3Event } from 'h3'
 import type { User } from 'prisma-client-bancho-py'
+import type { Id } from '..'
+import { normal } from '../constants'
+import { config as _config } from '../env'
 import {
+  type AbleToTransformToScores,
   assertIsBanchoPyMode,
   fromBanchoPyMode,
   idToString,
   scoreIdToString,
   stringToId,
-  stringToScoreId, toBanchoPyMode, toScore, toUserCompact,
+  stringToScoreId,
+  toBanchoPyMode,
+  toScore,
+  toUserCompact,
 } from '../transforms'
-
-import type { Id } from '..'
-import type { AbleToTransformToScores } from '../transforms'
-import { config as _config } from '../env'
-import { normal } from '../constants'
 import { getPrismaClient } from './source/prisma'
-
 import type {
   ScoreProvider as Base,
 } from '$base/server'

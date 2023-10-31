@@ -1,10 +1,8 @@
-import './scripts/ensure-env'
-
-import { fileURLToPath } from 'node:url'
 import { env } from 'node:process'
-
-import { CountryCode } from './src/def/country-code'
+import { fileURLToPath } from 'node:url'
+import './scripts/ensure-env'
 import { Lang } from './src/def'
+import { CountryCode } from './src/def/country-code'
 
 export default defineNuxtConfig({
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode

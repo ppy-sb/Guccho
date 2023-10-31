@@ -1,15 +1,25 @@
 import { mkdirSync } from 'node:fs'
 import { unlink, writeFile } from 'node:fs/promises'
 import { isAbsolute, join, resolve, sep } from 'node:path'
-import { TRPCError } from '@trpc/server'
-
-import { glob } from 'glob'
-import imageType from 'image-type'
 import { merge } from 'lodash-es'
+import imageType from 'image-type'
+import { glob } from 'glob'
 import bcrypt from 'bcryptjs'
-import type { Stat } from 'prisma-client-bancho-py'
-import { Prisma } from 'prisma-client-bancho-py'
+import { TRPCError } from '@trpc/server'
+import { Prisma, type Stat } from 'prisma-client-bancho-py'
+import type { Id } from '..'
+import { getLiveUserStatus } from '../api-client'
+import { normal } from '../constants'
+import { encryptBanchoPassword } from '../crypto'
+import {
+  createUserHandleWhereQuery,
+  createUserLikeQuery,
+  userCompacts,
+} from '../db-query'
+import type { settings } from '../dynamic-settings'
 import { BanchoPyMode, BanchoPyScoreStatus } from '../enums'
+import { config } from '../env'
+import { Logger } from '../log'
 import {
   BPyMode,
   createRulesetData,
@@ -24,34 +34,18 @@ import {
   toSafeName,
   toUserCompact,
 } from '../transforms'
-
-import {
-  createUserHandleWhereQuery,
-  createUserLikeQuery,
-  userCompacts,
-} from '../db-query'
-import type { Id } from '..'
-import type { settings } from '../dynamic-settings'
-import { getLiveUserStatus } from '../api-client'
-import { encryptBanchoPassword } from '../crypto'
-import { Logger } from '../log'
-import { config } from '../env'
-import { normal } from '../constants'
-import { client as redisClient } from './source/redis'
-import { getPrismaClient } from './source/prisma'
-import { UserRelationProvider } from './user-relations'
 import { ArticleProvider } from './article'
 import { ScoreProvider } from './score'
-import type { ExtractLocationSettings, ExtractSettingType } from '$base/@define-setting'
+import { getPrismaClient } from './source/prisma'
+import { client as redisClient } from './source/redis'
+import { UserRelationProvider } from './user-relations'
 import { oldPasswordMismatch, passwordMismatch, userNotFound } from '~/server/trpc/messages'
-
-import { UserProvider as Base } from '$base/server'
-import type { ActiveMode, ActiveRuleset, LeaderboardRankingSystem } from '~/def/common'
-
-import type { DynamicSettingStore, UserCompact, UserStatistic } from '~/def/user'
-import { Scope, UserStatus } from '~/def/user'
-import { Mode, Rank, Ruleset } from '~/def'
+import { type DynamicSettingStore, Scope, type UserCompact, type UserStatistic, UserStatus } from '~/def/user'
 import type { CountryCode } from '~/def/country-code'
+import type { ActiveMode, ActiveRuleset, LeaderboardRankingSystem } from '~/def/common'
+import { Mode, Rank, Ruleset } from '~/def'
+import { UserProvider as Base } from '$base/server'
+import type { ExtractLocationSettings, ExtractSettingType } from '$base/@define-setting'
 
 const { compare } = bcrypt
 
@@ -410,7 +404,7 @@ WHERE s.userid = ${id}
     Excludes extends Partial<
       Record<keyof Base.ComposableProperties<Id>, boolean>
     >,
-   _Scope extends Scope = Scope.Public,
+    _Scope extends Scope = Scope.Public,
   >({ handle, excludes, includeHidden, scope }: { handle: string; excludes?: Excludes; includeHidden?: boolean; scope: _Scope }) {
     if (!excludes) {
       excludes = {} as Excludes

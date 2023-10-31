@@ -1,6 +1,5 @@
 import { merge } from 'lodash-es'
 import { Lang } from './src/def'
-
 import clientMessages from './src/locales'
 import { locales as serverMessages } from '$active/locales'
 

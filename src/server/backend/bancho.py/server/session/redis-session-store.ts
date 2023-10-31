@@ -1,12 +1,11 @@
 import { Buffer } from 'node:buffer'
 import type { Document } from 'bson'
-import { commandOptions } from 'redis'
-import type { createClient } from 'redis'
 import * as BSON from 'bson'
+import { commandOptions, type createClient } from 'redis'
 import { match } from 'switch-pattern'
 import { client as getRedis } from '../source/redis'
-import type { Session } from '$base/server/session'
 import { SessionStore, sessionConfig } from '$base/server/session/session-store'
+import type { Session } from '$base/server/session'
 import { Monitored } from '$base/server/@extends'
 
 type Key = string & { __brand: 'key' }

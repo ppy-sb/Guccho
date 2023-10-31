@@ -28,5 +28,11 @@ module.exports = {
       tuples: 'always-multiline',
     }],
     '@typescript-eslint/no-namespace': 'off',
+    // 'import/consistent-type-specifier-style': ['warn', 'prefer-top-level'],
+    '@typescript-eslint/consistent-type-imports': ['error', {
+      prefer: 'type-imports',
+      fixStyle: 'inline-type-imports',
+    }],
+    'import/no-duplicates': ['error', { 'prefer-inline': true, 'considerQueryString': true }],
   },
 }

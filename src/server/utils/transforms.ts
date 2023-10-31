@@ -3,7 +3,6 @@ import {
   Relationship,
 
 } from '~/def'
-
 import {
   Scope,
 } from '~/def/user'

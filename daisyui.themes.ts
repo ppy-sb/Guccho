@@ -1,24 +1,9 @@
 /* eslint-env node */
 // import * as convert from 'color-convert'
-
 import themes from 'daisyui/src/theming/themes'
-
-// import type { HSL } from 'color-convert/conversions'
-// import { convertSingle } from './src/utils/color'
 import { hex as colors } from './src/palette'
 
-// const cupcake = convertSingle(
-//   themes['[data-theme=cupcake]'],
-//   convert.hex.hsl,
-//   ([h, s, l]: HSL) => `hsl(${h} ${s}% ${l}%)` as const,
-// )
 const cupcake = themes['[data-theme=cupcake]']
-// const valentine = convertSingle(themes['[data-theme=valentine]'], convert.hex.hsl, ([h, s, l]: [string, string, string]) => `hsl(${h} ${s}% ${l}%)`) as Record<keyof typeof themes['[data-theme=cupcake]'], string>
-// const dracula = convertSingle(
-//   themes['[data-theme=dracula]'],
-//   convert.hex.hsl,
-//   ([h, s, l]: HSL) => `hsl(${h} ${s}% ${l}%)` as const,
-// )
 const dracula = themes['[data-theme=dracula]']
 const base = {
   '--rounded-btn': '1rem',

@@ -1,14 +1,12 @@
 <script setup lang="ts">
-import type { RankingSystemScore } from '~/def/score'
-import { StableMod } from '~/def/score'
-import type { ActiveMode, ActiveRuleset, LeaderboardPPRankingSystem, LeaderboardRankingSystem, LeaderboardScoreRankingSystem } from '~/def/common'
 import {
   Rank,
   leaderboardScoreRankingSystems,
   ppRankingSystems,
 } from '~/def'
-
 import { BeatmapSource, RankingStatus } from '~/def/beatmap'
+import type { ActiveMode, ActiveRuleset, LeaderboardPPRankingSystem, LeaderboardRankingSystem, LeaderboardScoreRankingSystem } from '~/def/common'
+import { type RankingSystemScore, StableMod } from '~/def/score'
 
 const props = withDefaults(
   defineProps<{

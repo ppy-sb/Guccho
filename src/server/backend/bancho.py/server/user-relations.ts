@@ -4,7 +4,6 @@ import { dedupeUserRelationship, fromBanchoPyRelationType, idToString, stringToI
 import type { Id } from '..'
 import { config as _config } from '../env'
 import { getPrismaClient } from './source/prisma'
-
 import type { UserRelationProvider as Base } from '$base/server'
 import { Relationship } from '~/def'
 import type { UserCompact } from '~/def/user'

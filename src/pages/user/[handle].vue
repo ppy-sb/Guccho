@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useIntersectionObserver } from '@vueuse/core'
-
 import userpageStore from '~/store/userpage'
 
 const appConf = useAppConfig()
@@ -125,8 +124,7 @@ fr-FR:
         <div class="btm-nav sticky fuck">
           <template v-for="(isVisible, el) of visible" :key="el">
             <a
-              v-if="icons[el]"
-              :class="{
+              v-if="icons[el]" :class="{
                 active: isVisible,
               }" :href="`#${el}`"
             >
@@ -150,7 +148,8 @@ fr-FR:
 .fuck {
   justify-content: center;
 }
-.fuck > * {
+
+.fuck>* {
   @apply md:basis-32
 }
 </style>

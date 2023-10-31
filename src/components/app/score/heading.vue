@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import type { inferRouterOutputs } from '@trpc/server'
-
-import type { RankingSystem } from '~/def/common'
 import { Mode, Rank } from '~/def'
+import type { RankingSystem } from '~/def/common'
 import type { ManiaHitCount, StandardHitCount } from '~/def/score'
-
 import type { AppRouter } from '~/server/trpc/routers'
 
 type RouterOutput = inferRouterOutputs<AppRouter>

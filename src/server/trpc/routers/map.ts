@@ -1,5 +1,4 @@
 import { string, z } from 'zod'
-
 import { router as _router, publicProcedure as p } from '../trpc'
 import { maps } from '~/server/singleton/service'
 import { MapProvider } from '$active/server'

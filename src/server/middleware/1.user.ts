@@ -1,11 +1,10 @@
 import type { H3Event } from 'h3'
 import { haveSession } from './0.session'
-import type { UserCompact } from '~/def/user'
 import type { Id } from '$active'
-
-import { users } from '~/server/singleton/service'
 import { UserProvider } from '$active/server'
 import type { Session } from '$base/server/session'
+import type { UserCompact } from '~/def/user'
+import { users } from '~/server/singleton/service'
 
 export default defineEventHandler(async (event) => {
   await sideEffect(event)

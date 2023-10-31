@@ -1,8 +1,6 @@
 import { cpus } from 'node:os'
-import type process from 'node:process'
 import { cpuUsage, env, hrtime, memoryUsage } from 'node:process'
 import { currentLoad, mem } from 'systeminformation'
-
 import { Monitored } from './@extends'
 import * as services from '~/server/singleton/service'
 
@@ -21,7 +19,7 @@ export class MonitorProvider {
       current: 0,
     }
 
-  static #calcPercentageLoad(usage: number, time: ReturnType<typeof process['hrtime']>) {
+  static #calcPercentageLoad(usage: number, time: ReturnType<typeof hrtime>) {
     return 100 * (usage / (time[0] * 1e9 + time[1]))
   }
 
@@ -99,7 +97,7 @@ export class MonitorProvider {
     const npm: Record<string, unknown> = {}
     const npmConfig: Record<string, unknown> = {}
     const returnValue: Record<string, unknown> = {}
-    let key: keyof typeof process['env']
+    let key: keyof typeof env
     for (key in env) {
       if (key.startsWith('npm_package_scripts')) {
         continue

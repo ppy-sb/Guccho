@@ -1,3 +1,4 @@
+import { settings } from '$active/dynamic-settings'
 import {
   hasLeaderboardRankingSystem,
   hasRankingSystem,
@@ -7,8 +8,6 @@ import {
   rankingSystems as supportedRankingSystems,
   rulesets as supportedRulesets,
 } from '~/server/trpc/config'
-
-import { settings } from '$active/dynamic-settings'
 
 export default () => {
   return {

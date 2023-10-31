@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import type { RouterLinkProps } from 'vue-router'
-
 import type { inferRouterOutputs } from '@trpc/server'
+import type { RouterLinkProps } from 'vue-router'
 import type { AppRouter } from '~/server/trpc/routers'
 
 type RouterOutput = inferRouterOutputs<AppRouter>
@@ -28,11 +27,7 @@ const config = useAppConfig()
       >
         <div v-if="user">
           <div class="flex items-center gap-2">
-            <img
-              :src="`https://a.${config.baseUrl}/${props.user.id}`"
-              alt=""
-              class="w-16 h-16 rounded-lg"
-            >
+            <img :src="`https://a.${config.baseUrl}/${props.user.id}`" alt="" class="w-16 h-16 rounded-lg">
             <div>
               <h1 class="text-xl">
                 {{ props.user.name }}

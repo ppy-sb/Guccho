@@ -6,12 +6,9 @@ import type {
 import { $enum } from 'ts-enum-util'
 import type { Id } from '..'
 import { BanchoPyRankedStatus } from '../enums'
-
 import { fromBanchoMode } from '.'
-import { BeatmapSource, RankingStatus } from '~/def/beatmap'
+import { type BeatmapCompact, BeatmapSource, type Beatmapset, RankingStatus } from '~/def/beatmap'
 import { StableMod } from '~/def/score'
-
-import type { BeatmapCompact, Beatmapset } from '~/def/beatmap'
 
 export function toBeatmapset(beatmapset: Source, luckyOneBeatmapInBeatmapset: DBMap) {
   const isBancho = beatmapset.server === 'bancho'

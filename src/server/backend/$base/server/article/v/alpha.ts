@@ -1,7 +1,6 @@
 import { any, array, nativeEnum, number, object, string, union } from 'zod'
-
-import { zodTipTapJSONContent } from '~/server/trpc/shapes'
 import { UserRole } from '~/def/user'
+import { zodTipTapJSONContent } from '~/server/trpc/shapes'
 
 export const v = Symbol('dev-unstable')
 

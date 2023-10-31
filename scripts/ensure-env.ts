@@ -1,7 +1,6 @@
 import assert from 'node:assert'
-import { env } from 'node:process'
-
 import { readdirSync } from 'node:fs'
+import { env } from 'node:process'
 
 const dataSources = readdirSync('./src/server/backend').filter(backend => backend !== 'base')
 

@@ -1,10 +1,9 @@
 <script lang="ts" setup>
 import type { inferRouterOutputs } from '@trpc/server'
-
+import { Rank } from '~/def'
 import type { LeaderboardRankingSystem } from '~/def/common'
 import type { ComponentLeaderboard } from '~/def/leaderboard'
 import type { AppRouter } from '~/server/trpc/routers'
-import { Rank } from '~/def'
 
 type RouterOutput = inferRouterOutputs<AppRouter>
 
@@ -41,12 +40,7 @@ const formatter = new Intl.NumberFormat(undefined, option)
     <th>
       <div class="flex gap-2 items-center">
         <div class="aspect-square mask mask-squircle w-7 overflow-hidden object-cover flex">
-          <img
-            class="m-auto"
-            :src="user.avatarSrc"
-            :alt="user.name"
-            width="30"
-          >
+          <img class="m-auto" :src="user.avatarSrc" :alt="user.name" width="30">
         </div>
         <nuxt-link-locale
           :to="{ name: 'user-handle', params: { handle: `@${user.safeName}` } }"
@@ -78,16 +72,19 @@ const formatter = new Intl.NumberFormat(undefined, option)
 
 <style scoped lang="scss">
 @import '~/assets/styles/text-shadow';
+
 tr [data-rank="1"] {
   @apply text-yellow-100 dark:text-yellow-600;
   @apply shadow-yellow-800/80 dark:shadow-yellow-200/30;
   @extend .text-shadow-sm;
 }
+
 tr [data-rank="2"] {
   @apply text-gray-50 dark:text-white;
   @apply shadow-gray-600/70 dark:shadow-gray-400/30;
   @extend .text-shadow-sm;
 }
+
 tr [data-rank="3"] {
   @apply text-orange-50 dark:text-orange-400;
   @apply shadow-yellow-700/80 dark:shadow-yellow-500/20;

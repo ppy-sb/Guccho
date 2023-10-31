@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
+import { ppRankingSystems } from '~/def'
 import type {
   LeaderboardRankingSystem, PPRankingSystem,
 } from '~/def/common'
-import { ppRankingSystems } from '~/def'
 import type { PPRank, ScoreRank } from '~/def/statistics'
-
 import userpageStore from '~/store/userpage'
 
 // const numbers = [...Array(10).keys()].map(String)
@@ -196,14 +195,17 @@ const ScoreToNextLevel = computed(
   /* @apply grid-flow-row sm:grid sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 */
   @apply flex flex-wrap justify-around;
 }
-.stats > .stat {
+
+.stats>.stat {
   @apply sm:w-1/2 md:w-min;
   border: 0;
   @apply py-2;
 }
+
 .stat-value,
 .stat-desc {
   @apply flex;
+
   .roller {
     @apply flex-nowrap;
   }

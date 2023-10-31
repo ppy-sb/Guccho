@@ -1,7 +1,6 @@
 import { match } from 'switch-pattern'
 import { Monitored } from '../@extends'
-import type { Session } from '.'
-import { logger } from '.'
+import { type Session, logger } from '.'
 
 export const sessionConfig = {
   expire: 1000 * 60 * 60 * 24, // 1D

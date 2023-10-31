@@ -1,5 +1,4 @@
 import { createEdge } from 'schema-evolution'
-
 import * as v0 from './alpha'
 import * as v1 from './v1'
 import * as v2 from './v2'

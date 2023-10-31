@@ -1,18 +1,16 @@
+import type { PathLike } from 'node:fs'
 import fs from 'node:fs/promises'
 import { isAbsolute, join, relative, resolve } from 'node:path'
-import type { PathLike } from 'node:fs'
-import * as BSON from 'bson'
 import type { JSONContent as TipTapJSONContent } from '@tiptap/core'
 import { generateHTML } from '@tiptap/html'
-
 import type { DeepPartial } from '@trpc/server'
-import { compileGraph, createPipeline, hops } from 'schema-evolution'
+import * as BSON from 'bson'
 import dirTree from 'directory-tree'
-
+import { compileGraph, createPipeline, hops } from 'schema-evolution'
 import { config as getConfig } from '../../env'
 import { latest, paths, v0, versions } from './v'
-import type { UserCompact, UserRole } from '~/def/user'
 import useEditorExtensions from '~/composables/useEditorExtensionsServer'
+import type { UserCompact, UserRole } from '~/def/user'
 import { Logger } from '$base/logger'
 
 const logger = Logger.child({ label: 'article' })

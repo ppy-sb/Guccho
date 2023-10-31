@@ -1,19 +1,15 @@
 import { TRPCError } from '@trpc/server'
 import type { Id } from '..'
-import { Logger } from '../log'
 import { normal } from '../../bancho.py/constants'
+import { Logger } from '../log'
 import { getPrismaClient } from './prisma'
-
+import type { UserProvider as Base } from '$base/server'
+import type { Mode, Ruleset } from '~/def'
+import type { CountryCode } from '~/def/country-code'
+import { Scope, type UserCompact, UserRole, UserStatus } from '~/def/user'
+import { createUserHandleWhereQuery } from '~/server/backend/bancho.py/db-query'
 import { ArticleProvider, UserProvider as BanchoPyUser } from '~/server/backend/bancho.py/server'
 import { fromBanchoPyMode, toFullUser } from '~/server/backend/bancho.py/transforms'
-import { createUserHandleWhereQuery } from '~/server/backend/bancho.py/db-query'
-
-import type { UserCompact } from '~/def/user'
-import { Scope, UserRole, UserStatus } from '~/def/user'
-
-import { type UserProvider as Base } from '$base/server'
-import type { CountryCode } from '~/def/country-code'
-import type { Mode, Ruleset } from '~/def'
 
 const logger = Logger.child({ label: 'user' })
 

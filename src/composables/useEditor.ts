@@ -1,6 +1,5 @@
 import type { Editor as EditorCore, JSONContent } from '@tiptap/core'
 import { Editor as EditorVue } from '@tiptap/vue-3'
-
 import useEditorExtensions from './useEditorExtensionsClient'
 
 type JSONCallback = (content: JSONContent) => void

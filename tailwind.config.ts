@@ -1,7 +1,6 @@
 /* eslint-disable antfu/no-cjs-exports */
 /* eslint-disable @typescript-eslint/no-require-imports */
 /* eslint-env node */
-
 import { guccho } from './daisyui.themes'
 import { hex as colors } from './src/palette'
 

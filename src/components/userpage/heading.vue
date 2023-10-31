@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import { useElementHover } from '@vueuse/core'
-
 import { MutualRelationship, Relationship } from '~/def'
 import { UserRole, UserStatus } from '~/def/user'
 import { useSession } from '~/store/session'
-
 import userpageStore from '~/store/userpage'
 
 const cfg = useAppConfig()
@@ -114,14 +112,16 @@ fr-FR:
         :style="`background-image: url(${page.user.avatarSrc}); background-position: center`"
         class="mask mask-squircle w-44 sm:w-56 md:w-72 lg:w-64 bg-cover aspect-square"
       />
-      <div v-if="page.user.roles.includes(UserRole.Supporter)" class="absolute -top-10 -right-6 tooltip tooltip-primary tooltip-right" :data-tip="t('supporter', { server: cfg.title })">
+      <div
+        v-if="page.user.roles.includes(UserRole.Supporter)"
+        class="absolute -top-10 -right-6 tooltip tooltip-primary tooltip-right"
+        :data-tip="t('supporter', { server: cfg.title })"
+      >
         <icon name="twemoji:crown" class="w-20 h-20 rotate-[40deg]" />
       </div>
     </div>
     <!-- info -->
-    <div
-      class="flex flex-col w-full pt-2 md:p-0 bg-gbase-200 dark:bg-gbase-700 md:bg-transparent md:grow"
-    >
+    <div class="flex flex-col w-full pt-2 md:p-0 bg-gbase-200 dark:bg-gbase-700 md:bg-transparent md:grow">
       <div
         v-if="session.$state.userId !== page.user.id"
         class="container flex items-center justify-center lg:justify-between order-3 gap-3 pb-2 mx-auto md:order-1 md:justify-end md:pb-0"
@@ -137,23 +137,16 @@ fr-FR:
           </span>
         </p>
         <t-button
-          ref="changeFriendStateButton"
-          class="btn-shadow gap-1"
-          size="sm"
-          :variant="isMutualFriend ? 'primary' : isFriend ? 'secondary' : 'gbase'"
-          @click="toggleFriend"
+          ref="changeFriendStateButton" class="btn-shadow gap-1" size="sm"
+          :variant="isMutualFriend ? 'primary' : isFriend ? 'secondary' : 'gbase'" @click="toggleFriend"
         >
           <icon
-            :name="
-              isFriendButtonHovered && isFriend
-                ? 'solar:heart-broken-bold'
-                : 'solar:heart-bold'
-            "
-            :class="{
+            :name="isFriendButtonHovered && isFriend
+              ? 'solar:heart-broken-bold'
+              : 'solar:heart-bold'
+            " :class="{
               'fa-bounce': isFriendButtonHovered,
-            }"
-            class="w-4"
-            size="100%"
+            }" class="w-4" size="100%"
           />
           <span>{{ friendButtonContent }}</span>
         </t-button>
@@ -167,10 +160,7 @@ fr-FR:
           <span>send message</span>
         </t-button> -->
       </div>
-      <div
-        v-else
-        class="container flex justify-around order-3 gap-3 pb-4 mx-auto md:order-1 md:justify-end md:pb-0"
-      >
+      <div v-else class="container flex justify-around order-3 gap-3 pb-4 mx-auto md:order-1 md:justify-end md:pb-0">
         <!-- <t-button class="btn-shadow"
           size="sm"
           variant="primary"
@@ -178,10 +168,7 @@ fr-FR:
           add as friend
         </t-button> -->
         <t-nuxt-link-button
-          class="btn-shadow"
-          size="sm"
-          variant="accent"
-          :to="{
+          class="btn-shadow" size="sm" variant="accent" :to="{
             name: 'me-settings',
           }"
         >
@@ -192,23 +179,13 @@ fr-FR:
         class="container flex flex-col flex-wrap gap-4 mx-auto lg:flex-row lg:gap-0 sm:order-2 md:items-end md:justify-between md:pb-2"
       >
         <div class="order-2 mx-10 sm:mx-32 md:mx-0 md:order-1 lg:order-2 md:ml-auto md:pt-4 lg:py-2">
-          <app-mode-switcher
-            :model-value="page.switcher"
-            class="self-start"
-            @update:model-value="page.setSwitcher"
-          />
+          <app-mode-switcher :model-value="page.switcher" class="self-start" @update:model-value="page.setSwitcher" />
         </div>
         <div class="order-1 md:order-2 lg:order-1 self-center md:self-start">
-          <h1
-            class="pb-1 username"
-            :class="useUserRoleColor(page.user)"
-          >
+          <h1 class="pb-1 username" :class="useUserRoleColor(page.user)">
             {{ page.user.name }}
           </h1>
-          <nuxt-link-locale
-            :to="{ name: 'user-handle', params: { handle: `@${page.user.safeName}` } }"
-            class="userlink"
-          >
+          <nuxt-link-locale :to="{ name: 'user-handle', params: { handle: `@${page.user.safeName}` } }" class="userlink">
             @{{ page.user.safeName }}
           </nuxt-link-locale>
           <div class="lg:pb-2" />
@@ -219,7 +196,8 @@ fr-FR:
           {{ t('status.offline', { lastSeen: live.lastSeen.toLocaleDateString(locale, { dateStyle: 'long' }) }) }}
         </div>
         <div v-else-if="live && live.beatmap" class="order-3 user-status">
-          {{ UserStatus[live.status] }} {{ autoLocale(live.beatmap.beatmapset.meta).artist }} - {{ autoLocale(live.beatmap.beatmapset.meta).title }} [{{ live.beatmap.version }}]
+          {{ UserStatus[live.status] }} {{ autoLocale(live.beatmap.beatmapset.meta).artist }} - {{
+            autoLocale(live.beatmap.beatmapset.meta).title }} [{{ live.beatmap.version }}]
         </div>
         <div v-else-if="live.status === UserStatus.Idle" class="order-3 user-status">
           {{ t('status.idle') }}

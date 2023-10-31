@@ -1,7 +1,6 @@
 import { ok } from 'node:assert'
 import process from 'node:process'
-import type { ZodType, z } from 'zod'
-import { ZodError } from 'zod'
+import { ZodError, type ZodType, type z } from 'zod'
 import { fromZodError } from 'zod-validation-error'
 import { Logger } from '$base/logger'
 import type { validator } from '$active/env'

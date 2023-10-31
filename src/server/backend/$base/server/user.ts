@@ -1,13 +1,15 @@
 import type { JSONContent } from '@tiptap/core'
 import type { ExtractLocationSettings, ExtractSettingType } from '../@define-setting'
-
 import { IdTransformable } from './@extends'
+import type { settings } from '$active/dynamic-settings'
+import type { Mode, Ruleset } from '~/def'
 import type { BeatmapSource, RankingStatus } from '~/def/beatmap'
 import type {
   ActiveMode,
   ActiveRuleset,
   LeaderboardRankingSystem,
 } from '~/def/common'
+import type { CountryCode } from '~/def/country-code'
 import type { RankingSystemScore } from '~/def/score'
 import type {
   DynamicSettingStore,
@@ -18,9 +20,6 @@ import type {
   UserStatistic,
   UserStatus,
 } from '~/def/user'
-import type { CountryCode } from '~/def/country-code'
-import type { settings } from '$active/dynamic-settings'
-import type { Mode, Ruleset } from '~/def'
 
 export namespace UserProvider {
   export type ComposableProperties<Id> = UserExtra<Id> & UserOptional
@@ -65,25 +64,25 @@ export abstract class UserProvider<Id> extends IdTransformable {
     Excludes extends Partial<
       Record<keyof UserProvider.ComposableProperties<Id>, boolean>
     >,
-   _Scope extends Scope = Scope.Public,
+    _Scope extends Scope = Scope.Public,
   >(query: {
     handle: string
     excludes?: Excludes
     includeHidden?: boolean
     scope: _Scope
   }): Promise<
-  UserCompact<Id> & {
-    [K in keyof UserProvider.ComposableProperties<Id> as Excludes[K] extends true
-      ? never
-      : K
-    ]: UserProvider.ComposableProperties<Id>[K];
-  }
+    UserCompact<Id> & {
+      [K in keyof UserProvider.ComposableProperties<Id> as Excludes[K] extends true
+        ? never
+        : K
+      ]: UserProvider.ComposableProperties<Id>[K];
+    }
   >
   getFullWithSettings<
     Excludes extends Partial<
       Record<keyof UserProvider.ComposableProperties<Id>, boolean>
     >,
-   _Scope extends Scope = Scope.Public,
+    _Scope extends Scope = Scope.Public,
   >(query: {
     handle: string
     excludes?: Excludes

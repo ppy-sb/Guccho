@@ -1,7 +1,5 @@
 <script setup  lang="ts">
-import type { Editor } from '@tiptap/vue-3'
-import { BubbleMenu } from '@tiptap/vue-3'
-
+import { BubbleMenu, type Editor } from '@tiptap/vue-3'
 import remixiconUrl from 'remixicon/fonts/remixicon.symbol.svg'
 
 const props = defineProps<{

@@ -1,12 +1,12 @@
 import { InputRule, Node, PasteRule, mergeAttributes } from '@tiptap/core'
 import Suggestion from '@tiptap/suggestion'
-import { Plugin, PluginKey } from 'prosemirror-state'
-
 import { VueRenderer } from '@tiptap/vue-3'
+import { Plugin, PluginKey } from 'prosemirror-state'
 import tippy from 'tippy.js'
 import 'tippy.js/animations/scale-subtle.css'
 import { nextTick } from 'vue'
 
+// put me after new line
 import ctx, { starInputRegex, starPasteRegex } from './variable.shared'
 import { ContentEditorVariablesFallback, ContentEditorVariablesOptions } from '#components'
 

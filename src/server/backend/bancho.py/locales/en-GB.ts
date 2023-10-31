@@ -1,5 +1,4 @@
 import type { DeepPartial } from '@trpc/server'
-
 import type { GlobalI18n } from '~/locales/@types'
 
 export default {
