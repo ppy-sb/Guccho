@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { parse, stringify } from 'devalue'
 import { Scope, UserRole } from '~/def/user'
-import type { ContentEditor } from '#components'
+import { ContentEditor } from '#components'
 import type { ArticleProvider } from '$base/server'
 
 definePageMeta({
@@ -251,6 +251,8 @@ fr-FR:
         </div>
       </div>
     </div>
-    <lazy-content-editor v-if="article.json" ref="editor" v-model="article.json" class="safari-performance-boost mt-2" />
+    <client-only>
+      <ContentEditor v-if="article.json" ref="editor" v-model="article.json" class="safari-performance-boost mt-2" />
+    </client-only>
   </section>
 </template>

@@ -725,10 +725,12 @@ fr-FR:
     <label class="label" for="profile">
       <span class="pl-3 label-text">{{ t('profile') }}</span>
     </label>
-    <lazy-content-editor
-      id="profile" ref="editor" v-model.lazy="profile" :html="user.profile?.html"
-      class="safari-performance-boost" @update:model-value="profileEdited = true"
-    />
+    <client-only>
+      <content-editor
+        id="profile" ref="editor" v-model.lazy="profile" :html="user.profile?.html"
+        class="safari-performance-boost" @update:model-value="profileEdited = true"
+      />
+    </client-only>
   </section>
 </template>
 

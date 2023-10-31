@@ -149,7 +149,7 @@ export const router = _router({
     return (await userRelations.get({ user: ctx.user })).map(f => mapId(f, UserRelationProvider.idToString))
   }),
 
-  notAsMutual: pUser.query(async ({ ctx }) => {
+  notMutual: pUser.query(async ({ ctx }) => {
     return (await userRelations.notMutual(ctx.user)).map(u => mapId(u, UserRelationProvider.idToString))
   }),
 

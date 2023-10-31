@@ -23,7 +23,7 @@ const {
 const {
   data: haveUserAsTheirFriend,
   refresh: refreshHaveUserAsTheirFriend,
-} = await app$.$client.me.notAsMutual.useQuery()
+} = await app$.$client.me.notMutual.useQuery()
 const config = useAppConfig()
 const { t } = useI18n()
 
@@ -90,7 +90,7 @@ en-GB:
   remove-friend: Breakup
   regret: Regret
   you-may-also-wonder: You may also wonder...
-  non-mutual-friends: These people have added you as their friend.
+  not-mutual-friends: These people have added you as their friend.
   mutual: Mutual
 
 zh-CN:
@@ -100,7 +100,7 @@ zh-CN:
   remove-friend: 删除好友
   regret: 后悔了。。
   you-may-also-wonder: 你可能也会好奇...
-  non-mutual-friends: 这些人已将你添加为好友。
+  not-mutual-friends: 这些人已将你添加为好友。
   mutual: 互粉
 
 fr-FR:
@@ -110,7 +110,7 @@ fr-FR:
   remove-friend: Retirer l'ami
   regret: Regret
   you-may-also-wonder: Vous pourriez également vous demander...
-  non-mutual-friends: Ces personnes vous ont ajouté en tant qu'ami.
+  not-mutual-friends: Ces personnes vous ont ajouté en tant qu'ami.
   mutual: Mutuel
 </i18n>
 
@@ -130,7 +130,7 @@ fr-FR:
                 <img :src="user.avatarSrc" class="pointer-events-none w-14 md:w-[4em]">
               </div>
               <div class="grow">
-                <h1 class="username">
+                <h1 class="text-2xl">
                   {{ user.name }} <div v-if="user.mutualRelationship.some(r => r === MutualRelationship.MutualFriend)" class="badge badge-primary">
                     <icon name="solar:heart-bold" class="w-4 h-4" />
                   </div>
@@ -138,7 +138,7 @@ fr-FR:
                 <div class="flex justify-between w-full items-top">
                   <nuxt-link-locale
                     :key="`${user.id}:${user.relationship.join('-')}`"
-                    class="text-lg text-left underline md:text-2xl decoration-sky-500 text-gbase-600 dark:text-gbase-300 hover:text-gbase-500"
+                    class="text-lg md:text-xl text-left userlink-style hover:text-gbase-500"
                     :to="{
                       name: 'user-handle',
                       params: {
@@ -153,8 +153,8 @@ fr-FR:
                       chat
                     </t-button> -->
                     <t-button
-                      class="btn-shadow md:btn-sm" :loading="pendingUser.has(user.id)"
-                      :variant="isFriend(user) ? 'warning' : 'primary'" size="xs"
+                      class="btn-shadow btn-xs md:btn-sm" :loading="pendingUser.has(user.id)"
+                      :variant="isFriend(user) ? 'warning' : 'primary'"
                       @click="toggleFriend(user)"
                     >
                       <template v-if="pendingUser.has(user.id)" />
@@ -181,14 +181,16 @@ fr-FR:
         </div>
 
         <template v-if="haveUserAsTheirFriend?.length">
-          <div class="alert">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6">
-              <path
-                stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <span>{{ t('non-mutual-friends') }}</span>
+          <div class="p-2 lg:p-0">
+            <div class="alert">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6">
+                <path
+                  stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <span>{{ t('not-mutual-friends') }}</span>
+            </div>
           </div>
           <div class="mx-auto user-list">
             <div
