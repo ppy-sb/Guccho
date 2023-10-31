@@ -2,6 +2,7 @@ import { merge } from 'lodash-es'
 
 import zhCN from '../../bancho.py/locales/zh-CN'
 import type { ServerLocale } from './@types'
+import { CountryCode } from '~/def/country-code'
 
 export default merge(zhCN, {
   landing: {
@@ -10,5 +11,10 @@ export default merge(zhCN, {
 群内的兽耳机器人24小时为您提供成绩查询等服务。
 详情请加QQ群: 792778662。
 Guccho 新版本目前仍在测试阶段，如出现问题或有改进建议，欢迎与我们联系与沟通。`,
+  },
+  country: {
+    [CountryCode.HongKong]: '香港特别行政区',
+    [CountryCode.Macao]: '澳门特别行政区',
+    [CountryCode.Taiwan]: '台湾省',
   },
 } satisfies ServerLocale as ServerLocale)
