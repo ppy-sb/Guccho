@@ -256,7 +256,6 @@ fr-FR:
               </t-tab>
             </template>
           </t-tabs>
-          <!-- // TODO in house beatmap links -->
         </div>
         <div class="flex flex-col md:flex-row">
           <div class="w-full md:w-1/3 grow">

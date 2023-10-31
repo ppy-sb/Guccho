@@ -218,8 +218,6 @@ export class DatabaseRankProvider implements Base<Id> {
 }
 
 export class RedisRankProvider extends DatabaseRankProvider implements Monitored {
-  static RedisNoDataError = class RedisNoDataError extends Error { name = 'RedisNoDataError' }
-
   redisClient = redisClient()
 
   get [Monitored.status](): Monitored[typeof Monitored.status] {
@@ -272,7 +270,7 @@ export class RedisRankProvider extends DatabaseRankProvider implements Monitored
       ).then(res => res.map(Number))
 
       if (!rank.length) {
-        raise(RedisRankProvider.RedisNoDataError, 'redis leaderboard is empty, fallback to use database as source.')
+        raise(RedisRankProvider.RedisNoDataError, 'redis leaderboard is empty, fallback to database..')
       }
 
       return this.db.stat.count({
@@ -403,6 +401,10 @@ export class RedisRankProvider extends DatabaseRankProvider implements Monitored
       return super.leaderboard({ mode, ruleset, rankingSystem, page, pageSize })
     }
   }
+}
+
+export namespace RedisRankProvider {
+  export class RedisNoDataError extends Error { name = 'RedisNoDataError' }
 }
 
 function reveal() {
