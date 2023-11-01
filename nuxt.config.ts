@@ -31,6 +31,11 @@ export default defineNuxtConfig({
       name: 'slide',
       mode: 'out-in', // default
     },
+    head: {
+      bodyAttrs: {
+        tabindex: '-1',
+      },
+    },
   },
 
   experimental: {

@@ -19,7 +19,6 @@ const props = defineProps<{
 .app-header {
   @apply sm:flex mt-2 items-center justify-between text-center text-gbase-900 dark:text-gbase-100;
   /* @apply sm:flex sm:w-full mt-2 items-center justify-between text-center text-gbase-900 dark:text-gbase-100 ; */
-  transition: 0.3s ease;
   display: flex;
   align-items: center;
   @apply pb-2;
