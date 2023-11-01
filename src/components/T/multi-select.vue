@@ -1,4 +1,18 @@
 <script setup lang="ts">
+// badge-primary
+// badge-secondary
+// badge-info
+// badge-neutral
+// badge-accent
+// badge-ghost
+// badge-success
+// badge-warning
+// badge-error
+// badge-outline
+// badge-lg
+// badge-md
+// badge-sm
+// badge-xs
 import { Float } from '@headlessui-float/vue'
 import {
   Listbox,
@@ -7,11 +21,13 @@ import {
   ListboxOption,
   ListboxOptions,
 } from '@headlessui/vue'
+import type { HTMLAttributes } from 'vue'
 
 interface Option {
   label: string | number
   value: unknown
   disabled?: boolean
+  attrs?: HTMLAttributes
 }
 const props = defineProps<{
   size?: 'xs' | 'sm' | 'lg'
@@ -31,9 +47,9 @@ const select = computed(() => reset())
   <Listbox :model-value="select" multiple @update:model-value="(value) => e('update:modelValue', value.map((v: Option) => v.value))">
     <client-only>
       <Float :offset="4" portal>
-        <ListboxButton class="select" :class="[props.size && `select-${props.size}`]">
-          <div v-if="select.length" class="flex gap-3">
-            <span v-for="s in select" :key="s.label" selected class="_item">
+        <ListboxButton class="select h-full w-full" :class="[props.size && `select-${props.size}`]">
+          <div v-if="select.length" class="flex gap-1 flex-wrap self-center">
+            <span v-for="s in select" :key="s.label" class="badge whitespace-nowrap" v-bind="s.attrs">
               {{ s.label }}
             </span>
           </div>
@@ -72,16 +88,3 @@ const select = computed(() => reset())
     </client-only>
   </Listbox>
 </template>
-
-<style lang="scss" scoped>
-._item + ._item{
-  &::before {
-    content: '';
-    top: 40%;
-    bottom: 30%;
-    margin: 0.45rem;
-    margin-left: -0.15rem;
-    @apply border-l-[1px] border-base-content
-  }
-}
-</style>

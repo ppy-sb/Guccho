@@ -44,3 +44,7 @@ export function raise<E extends new(...con: any[]) => Error>(Constructor: E, ...
 export function throwError<E>(e: E): never {
   throw e
 }
+
+export function createOptions<T extends Record<string, string>, TTr extends (key: keyof T, value: T[keyof T]) => string>(priv: T, createLabel: TTr = ((a: keyof T) => a) as unknown as TTr) {
+  return Object.entries(priv).map(([label, value]) => ({ label: createLabel(label, value as T[keyof T]), value: value as unknown as T[keyof T] }))
+}

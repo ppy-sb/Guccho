@@ -23,6 +23,13 @@ html {
     }
   }
 }
+.badge.badge-shadow {
+  @each $variant in $variants {
+    &.badge-#{$variant} {
+      @apply shadow-#{$variant}/40 hover:shadow-#{$variant}/50 dark:shadow-#{$variant}/20 hover:dark:shadow-#{$variant}/30;
+    }
+  }
+}
 
 .dv-tab.tab-active {
   @apply [--tab-bg:theme('colors.gbase.700')];

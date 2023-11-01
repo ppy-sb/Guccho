@@ -164,7 +164,7 @@ zh-CN:
   delete: 删除
   import: 导入
   export: 导出
-  dynamic-content: 允许动态内容
+  dynamic-content: 动态内容
   read-access: 访问权限
   write-access: 写入权限
   selecting: 请选择
@@ -184,9 +184,10 @@ fr-FR:
 </i18n>
 
 <template>
-  <section v-if="articles" class="container pb-8 mx-auto custom-container lg:px-2">
-    <div class="flex">
-      <ul class="menu menu-xs bg-base-100 rounded-lg max-w-xs w-full">
+  <section v-if="articles" class="container pb-8 mx-auto custom-container">
+    <input ref="importArticleFile" type="file" hidden @change="importArticle">
+    <div class="flex flex-col lg:flex-row">
+      <ul class="menu menu-xs bg-base-100 rounded-lg min-w-max">
         <tree
           v-bind="articles" @select="(entry) => {
             article.slug = entry.path
@@ -195,57 +196,60 @@ fr-FR:
           }"
         />
       </ul>
-      <div class="divider-horizontal divider" />
-      <div>
-        <div class="flex gap-2 items-baseline">
-          {{ t('editing') }}: <input
-            v-model="article.slug" type="text" class="input input-shadow input-sm shadow-lg" :class="{
-              'input-error': !article.slug,
-            }"
-          >
-          <button class="btn btn-shadow btn-sm btn-info" @click="() => { update(); postFetch() }">
-            {{ t('load') }}
-          </button>
-          <button class="btn btn-shadow btn-sm btn-primary" @click="() => { create(); postFetch() }">
-            {{ t('new') }}
-          </button>
-          <button
-            class="btn btn-shadow btn-sm btn-success" :class="{
-              'btn-disabled': !(article.slug && article.json),
-            }" @click="() => { save(); postFetch() }"
-          >
-            {{ t('save') }}
-          </button>
-          <div class="divider divider-horizontal" />
-          <button
-            class="btn btn-shadow btn-sm btn-error" :class="{
-              'btn-disabled': !(article.slug && access?.write),
-            }" @click="() => { del().then(postFetch) }"
-          >
-            {{ t('delete') }}
-          </button>
-          <div class="divider divider-horizontal" />
-          <input ref="importArticleFile" type="file" hidden @change="importArticle">
-          <button class="btn btn-shadow btn-sm btn-primary" @click="importArticleFile?.click">
-            {{ t('import') }}
-          </button>
-          <button class="btn btn-shadow btn-sm btn-secondary" @click="exportArticle">
-            {{ t('export') }}
-          </button>
+      <div class="divider divider-horizontal mx-2" />
+      <div class="w-full">
+        <div class="flex flex-wrap gap-2">
+          <span class="whitespace-nowrap align-middle">{{ t('editing') }}:</span>
+          <div class="join align-middle">
+            <input
+              v-model="article.slug" type="text" class="join-item input input-shadow input-sm shadow-lg" :class="{
+                'input-error': !article.slug,
+              }"
+            >
+            <button class="join-item btn btn-shadow btn-sm btn-info" @click="() => { update(); postFetch() }">
+              {{ t('load') }}
+            </button>
+            <button class="join-item btn btn-shadow btn-sm btn-primary" @click="() => { create(); postFetch() }">
+              {{ t('new') }}
+            </button>
+          </div>
+          <div class="join align-middle">
+            <button class="join-item btn btn-shadow btn-sm btn-primary" @click="importArticleFile?.click">
+              {{ t('import') }}
+            </button>
+            <button class="join-item btn btn-shadow btn-sm btn-secondary" @click="exportArticle">
+              {{ t('export') }}
+            </button>
+          </div>
+          <div class="flex gap-2 ms-auto">
+            <button
+              class="btn btn-shadow btn-sm btn-success" :class="{
+                'btn-disabled': !(article.slug && article.json),
+              }" @click="() => { save(); postFetch() }"
+            >
+              {{ t('save') }}
+            </button>
+            <button
+              class="btn btn-shadow btn-sm btn-error" :class="{
+                'btn-disabled': !(article.slug && access?.write),
+              }" @click="() => { del().then(postFetch) }"
+            >
+              {{ t('delete') }}
+            </button>
+          </div>
         </div>
         <div class="divider" />
         <div class="flex flex-col md:flex-row gap-3 flex-wrap">
           <div class="form-control flex-row items-center gap-2">
             <input v-model="article.dynamic" class="checkbox" type="checkbox">
-            <label class="label">{{ t('dynamic-content') }}</label>
+            <label class="label whitespace-nowrap">{{ t('dynamic-content') }}</label>
           </div>
-          <div class="divider divider-horizontal" />
-          <div class="form-control flex-row items-center gap-2">
-            <label class="label pl-0">{{ t('read-access') }}</label>
+          <div class="form-control flex flex-row items-center gap-2">
+            <label class="label whitespace-nowrap">{{ t('read-access') }}</label>
             <t-multi-select v-model="article.privilege.read" size="sm" :options="options(readPrivileges)" />
           </div>
-          <div class="form-control  flex-row items-center gap-2">
-            <label class="label">{{ t('write-access') }}</label>
+          <div class="form-control flex flex-row items-center gap-2">
+            <label class="label whitespace-nowrap">{{ t('write-access') }}</label>
             <t-multi-select v-model="article.privilege.write" size="sm" :options="options(privileges)" />
           </div>
         </div>
