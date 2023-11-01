@@ -33,6 +33,7 @@ export default defineNuxtConfig({
     },
     head: {
       bodyAttrs: {
+        // @ts-expect-error it's fine
         tabindex: '-1',
       },
     },
