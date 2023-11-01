@@ -1,4 +1,4 @@
-import { type ZodType, z } from 'zod'
+import { type ZodType, object } from 'zod'
 import { Lang } from '~/def'
 import type { DynamicSettingStore, DynamicUserSetting } from '~/def/user'
 
@@ -24,7 +24,7 @@ export function extractSettingValidators<TSetting extends Record<string, Dynamic
   for (const setting in settings) {
     returnValue[setting] = settings[setting].validator
   }
-  return z.object(returnValue as TRet)
+  return object(returnValue as TRet)
 }
 
 export function extractLocationSettings<TLoc extends DynamicSettingStore, TSetting extends Record<string, DynamicUserSetting<any, any, any>>>(location: TLoc, settings: TSetting): ExtractLocationSettings<TLoc, TSetting> {

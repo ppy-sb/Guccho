@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { array, number, object, string } from 'zod'
 import { router as _router, publicProcedure as p } from '../trpc'
 import { zodSearchBeatmap } from '../shapes'
 import { maps, users } from '~/server/singleton/service'
@@ -7,9 +7,9 @@ import { MapProvider, UserProvider } from '$active/server'
 export const router = _router({
   searchUser: p
     .input(
-      z.object({
-        keyword: z.string(),
-        limit: z.number().optional().default(10),
+      object({
+        keyword: string(),
+        limit: number().optional().default(10),
       }),
     )
     .query(async ({ input: { keyword, limit } }) => {
@@ -22,10 +22,10 @@ export const router = _router({
     }),
   searchBeatmap: p
     .input(
-      z.object({
-        keyword: z.string(),
-        limit: z.number().optional().default(5),
-        filters: z.array(zodSearchBeatmap).optional(),
+      object({
+        keyword: string(),
+        limit: number().optional().default(5),
+        filters: array(zodSearchBeatmap).optional(),
       }),
     )
     .query(async ({ input: { keyword, limit, filters } }) => {
@@ -39,10 +39,10 @@ export const router = _router({
     }),
   searchBeatmapset: p
     .input(
-      z.object({
-        keyword: z.string(),
-        limit: z.number().optional().default(5),
-        filters: z.array(zodSearchBeatmap).optional(),
+      object({
+        keyword: string(),
+        limit: number().optional().default(5),
+        filters: array(zodSearchBeatmap).optional(),
       }),
     )
     .query(async ({ input: { keyword, limit, filters } }) => {

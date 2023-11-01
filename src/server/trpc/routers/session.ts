@@ -1,5 +1,5 @@
 import { TRPCError } from '@trpc/server'
-import { z } from 'zod'
+import { object, string } from 'zod'
 import {
   sessionNotFound,
   unableToRetrieveSession,
@@ -18,9 +18,9 @@ const logger = Logger.child({ label: 'session', backend: 'transport', transport:
 export const router = _router({
   login: pSession
     .input(
-      z.object({
+      object({
         handle: zodHandle,
-        md5HashedPassword: z.string(),
+        md5HashedPassword: string(),
       }),
     )
     .query(async ({ input: { handle, md5HashedPassword }, ctx }) => {

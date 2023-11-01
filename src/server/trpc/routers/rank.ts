@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { number, object, string } from 'zod'
 import {
   zodLeaderboardRankingSystem,
   zodMode,
@@ -15,7 +15,7 @@ import type { ActiveMode } from '~/def/common'
 export const router = _router({
   countLeaderboard: publicProcedure
     .input(
-      z.object({
+      object({
         mode: zodMode,
         ruleset: zodRuleset,
         rankingSystem: zodLeaderboardRankingSystem,
@@ -26,12 +26,12 @@ export const router = _router({
     }),
   leaderboard: publicProcedure
     .input(
-      z.object({
+      object({
         mode: zodMode,
         ruleset: zodRuleset,
         rankingSystem: zodLeaderboardRankingSystem,
-        page: z.number().gte(0).lt(10),
-        pageSize: z.number().gte(20).lt(51),
+        page: number().gte(0).lt(10),
+        pageSize: number().gte(20).lt(51),
       }),
     )
     .query(
@@ -55,13 +55,13 @@ export const router = _router({
     ),
   beatmap: publicProcedure
     .input(
-      z.object({
+      object({
         mode: zodMode.optional(),
         ruleset: zodRuleset,
         rankingSystem: zodRankingSystem,
-        page: z.number().gte(0).lt(10),
-        pageSize: z.number().gte(20).lt(51),
-        md5: z.string(),
+        page: number().gte(0).lt(10),
+        pageSize: number().gte(20).lt(51),
+        md5: string(),
       }),
     )
     .query(
@@ -84,13 +84,13 @@ export const router = _router({
     ),
   countBeatmap: publicProcedure
     .input(
-      z.object({
+      object({
         mode: zodMode.optional(),
         ruleset: zodRuleset,
         rankingSystem: zodRankingSystem,
-        page: z.number().gte(0).lt(10),
-        pageSize: z.number().gte(20).lt(51),
-        md5: z.string(),
+        page: number().gte(0).lt(10),
+        pageSize: number().gte(20).lt(51),
+        md5: string(),
       }),
     )
     .query(

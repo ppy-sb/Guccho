@@ -1,13 +1,13 @@
 import { ok } from 'node:assert'
 import process from 'node:process'
-import { ZodError, type ZodType, type z } from 'zod'
+import { ZodError, type ZodType, type infer as infer_ } from 'zod'
 import { fromZodError } from 'zod-validation-error'
 import { Logger } from '$base/logger'
 import type { validator } from '$active/env'
 
 const logger = Logger.child({ label: 'env' })
 
-export function ensureAndGetEnv<Z extends ZodType>(zod: Z): z.infer<Z> {
+export function ensureAndGetEnv<Z extends ZodType>(zod: Z): infer_<Z> {
   try {
     return zod.parse(process.env)
   }
@@ -32,7 +32,7 @@ export function ensureAndGetEnv<Z extends ZodType>(zod: Z): z.infer<Z> {
   }
 }
 
-export type ActiveBackendConfig = z.infer<typeof validator>
+export type ActiveBackendConfig = infer_<typeof validator>
 export function defineBackendConfig(input: ActiveBackendConfig) {
   return input
 }

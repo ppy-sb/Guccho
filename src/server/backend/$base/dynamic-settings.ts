@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { nativeEnum } from 'zod'
 import { defineDynamicUserSetting } from './@define-setting'
 import { IntlPicker } from './intl-picker'
 import { DynamicSettingStore } from '~/def/user'
@@ -14,7 +14,7 @@ export const settings = {
       { value: IntlPicker.Localized, label: 'intl-name.localized' },
       { value: IntlPicker.Intl, label: 'intl-name.intl' },
     ],
-    validator: z.nativeEnum(IntlPicker),
+    validator: nativeEnum(IntlPicker),
     locale: {
       [Lang.enGB]: {
         'intl-name': {

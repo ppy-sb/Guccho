@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { string } from 'zod'
 import { defineDynamicUserSetting } from '$base/@define-setting'
 import * as base from '$base/dynamic-settings'
 import { DynamicSettingStore } from '~/def/user'
@@ -10,7 +10,7 @@ export const settings = {
     label: 'api-key',
     type: 'input',
     disabled: true,
-    validator: z.string().optional(),
+    validator: string().optional(),
     locale: {
       [Lang.enGB]: {
         'api-key': 'API Key',

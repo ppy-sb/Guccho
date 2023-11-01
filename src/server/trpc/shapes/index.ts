@@ -1,6 +1,20 @@
 import { existsSync } from 'node:fs'
 import validator from 'validator'
-import { ZodIssueCode, type ZodSchema, literal, nativeEnum, number, string, tuple, union, z } from 'zod'
+import {
+  NEVER,
+  ZodIssueCode,
+  type ZodSchema,
+  any,
+  literal,
+  nativeEnum,
+  number,
+  object,
+  record,
+  string,
+  tuple,
+  union,
+  type z,
+} from 'zod'
 import { hasRuleset } from '../config'
 import type { ArticleProvider } from '$base/server/article'
 import { LeaderboardScoreRank, Mode, PPRank, Relationship, Ruleset, ScoreRank } from '~/def'
@@ -18,7 +32,7 @@ export const zodScoreRankingSystem = nativeEnum(LeaderboardScoreRank)
 export const zodLeaderboardRankingSystem = zodPPRankingSystem.or(zodScoreRankingSystem)
 export const zodRankingSystem = zodPPRankingSystem.or(nativeEnum(ScoreRank))
 
-export const zodSafeModeRulesetBase = z.object({
+export const zodSafeModeRulesetBase = object({
   mode: zodMode,
   ruleset: zodRuleset,
 })
@@ -33,16 +47,9 @@ export function validateModeRuleset({
   return hasRuleset(mode, ruleset)
 }
 
-export const zodTipTapJSONContent = z
-  .record(string(), z.any())
+export const zodTipTapJSONContent = record(string(), any())
   .superRefine((input, ctx): input is ArticleProvider.JSONContent => {
-    // if (!('content' in input) || !Array.isArray(input.content)) {
-    //   ctx.addIssue({
-    //     code: z.ZodIssueCode.custom,
-    //     message: 'has no content',
-    //   })
-    // }
-    return z.NEVER
+    return NEVER
   }) as unknown as ZodSchema<ArticleProvider.JSONContent>
 
 export const zodRankingStatus = nativeEnum(RankingStatus)

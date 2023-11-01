@@ -1,5 +1,5 @@
 import { TRPCError } from '@trpc/server'
-import { nativeEnum, z } from 'zod'
+import { instanceof as instanceof_, nativeEnum, object, string } from 'zod'
 import {
   atLeastOneUserNotExists,
   relationTypeNotFound,
@@ -38,7 +38,7 @@ export const router = _router({
 
   changeUserpage: pUser
     .input(
-      z.object({
+      object({
         profile: zodTipTapJSONContent,
       }),
     )
@@ -51,11 +51,11 @@ export const router = _router({
 
   changeSettings: pUser
     .input(
-      z.object({
-        email: z.string().email(),
-        name: z.string().trim(),
-        flag: z.nativeEnum(CountryCode),
-        preferredMode: z.object({
+      object({
+        email: string().email(),
+        name: string().trim(),
+        flag: nativeEnum(CountryCode),
+        preferredMode: object({
           mode: nativeEnum(Mode),
           ruleset: nativeEnum(Ruleset),
         }),
@@ -88,17 +88,17 @@ export const router = _router({
     }),
 
   changeAvatar: pUser
-    .input(z.object({
-      avatar: z.instanceof(Uint8Array),
+    .input(object({
+      avatar: instanceof_(Uint8Array),
     })).mutation(async ({ ctx, input }) => {
       return await users.changeAvatar(ctx.user, input.avatar)
     }),
 
   updatePassword: pUser
     .input(
-      z.object({
-        oldPassword: z.string(),
-        newPassword: z.string(),
+      object({
+        oldPassword: string(),
+        newPassword: string(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -115,7 +115,7 @@ export const router = _router({
 
   relation: pUser
     .input(
-      z.object({
+      object({
         target: zodHandle,
       }),
     )
@@ -155,7 +155,7 @@ export const router = _router({
 
   removeOneRelation: pUser
     .input(
-      z.object({
+      object({
         target: zodHandle,
         type: zodRelationType,
       }),
@@ -192,7 +192,7 @@ export const router = _router({
 
   addOneRelation: pUser
     .input(
-      z.object({
+      object({
         target: zodHandle,
         type: zodRelationType,
       }),
@@ -242,8 +242,8 @@ export const router = _router({
     return results as Record<keyof TRes, TV>
   }),
 
-  kickSession: pUser.input(z.object({
-    session: z.string(),
+  kickSession: pUser.input(object({
+    session: string(),
   })).mutation(async ({ input, ctx }) => {
     const target = await sessions.get(input.session)
     if (!target) {
