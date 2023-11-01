@@ -129,14 +129,17 @@ html {
   }
 }
 
-body:before {
+body {
+  @apply bg-gbase-50 dark:bg-gbase-800;
+}
+body:after {
   content: "";
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  @apply bg-gradient-to-b from-gbase-50/50 to-gbase-50 dark:from-gbase-800 dark:to-gbase-900 -z-50;
+  @apply bg-gradient-to-b from-gbase-50 to-gbase-100/75 dark:from-gbase-800 dark:to-gbase-900 -z-50;
 }
 
 .two-tone {

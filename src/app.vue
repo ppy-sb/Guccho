@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+// import { guccho } from '../daisyui.themes'
+
 const safari = shallowRef(false)
 
 const scrollY = useScrollYObserver()
@@ -8,6 +10,17 @@ const { status } = useZoomModal()
 
 onMounted(() => {
   safari.value = useSafariDetector()
+})
+
+// const theme = ref('guccho-light')
+
+useHead({
+  meta() {
+    return [
+      // { name: 'theme-color', content: guccho.find(item => item[theme.value as keyof typeof guccho[number]])?.[theme.value as keyof typeof guccho[number]]?.['base-50'], media: '(prefers-color-scheme: light)' },
+      { name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' },
+    ]
+  },
 })
 </script>
 
