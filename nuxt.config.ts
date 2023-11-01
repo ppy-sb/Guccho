@@ -32,6 +32,10 @@ export default defineNuxtConfig({
       mode: 'out-in', // default
     },
     head: {
+
+      meta: [
+        { name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' },
+      ],
       bodyAttrs: {
         // @ts-expect-error it's fine
         tabindex: '-1',
