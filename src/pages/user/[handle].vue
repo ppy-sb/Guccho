@@ -1,19 +1,7 @@
-<script setup lang="ts">
+<script setup async lang="ts">
 import { useIntersectionObserver } from '@vueuse/core'
 import userpageStore from '~/store/userpage'
 
-const appConf = useAppConfig()
-const { t } = useI18n()
-const page = userpageStore()
-await page.init()
-
-useHead({
-  titleTemplate: `%s - ${appConf.title}`,
-  title: computed(
-    () =>
-      `${page.user?.name} | ${page.switcher.mode} | ${page.switcher.ruleset} | ${page.switcher.rankingSystem}`,
-  ),
-})
 definePageMeta({
   alias: [
     // compatible with osu stable client
@@ -21,7 +9,33 @@ definePageMeta({
   ],
 })
 
-// directive is not working: yield error when navigate to other page
+const appConf = useAppConfig()
+const { t } = useI18n()
+const page = userpageStore()
+const h = useRequestURL()
+await page.init()
+
+const switcherState = computed(() => `${page.switcher.mode} - ${page.switcher.ruleset} - ${page.switcher.rankingSystem}`)
+const userWithAppName = computed(() => `${page.user?.name} - ${appConf.title}`)
+const description = computed(() => switcherState.value)
+
+useSeoMeta({
+  description,
+  ogTitle: userWithAppName,
+  ogDescription: description,
+  ogImage: () => page.user?.avatarSrc,
+  ogUrl: () => h.href,
+  twitterTitle: userWithAppName,
+  twitterDescription: description,
+  twitterImage: page.user?.avatarSrc,
+  twitterCard: 'summary',
+})
+
+useHead({
+  titleTemplate: `%s - ${appConf.title}`,
+  title: () => page.user?.name || '',
+})
+
 const visible = reactive({
   heading: false,
   statistics: false,
@@ -41,6 +55,7 @@ const [handle, heading, statistics, bestScores, topScores] = [
   shallowRef<HTMLElement | null>(null),
   shallowRef<HTMLElement | null>(null),
 ]
+
 onMounted(() => {
   const stop = Object.entries({
     heading,
@@ -83,8 +98,8 @@ fr-FR:
 </i18n>
 
 <template>
-  <section v-if="page.error" class="grow flex">
-    <div class="m-auto flex flex-col items-center justify-center gap-3">
+  <section v-if="page.error" class="flex grow">
+    <div class="flex flex-col items-center justify-center gap-3 m-auto">
       <h1 class="text-3xl">
         {{ t('error-occured') }}
       </h1>
@@ -109,19 +124,19 @@ fr-FR:
     <userpage-heading id="heading" ref="heading" />
     <userpage-profile />
     <userpage-ranking-system-switcher class="z-10" />
-    <div class="container custom-container mx-auto">
+    <div class="container mx-auto custom-container">
       <userpage-statistics id="statistics" ref="statistics" />
       <userpage-score-rank-composition />
     </div>
-    <div id="bestScores" ref="bestScores" class="container custom-container mx-auto py-2">
+    <div id="bestScores" ref="bestScores" class="container py-2 mx-auto custom-container">
       <userpage-best-scores v-if="page.currentRankingSystem" />
     </div>
-    <div id="topScores" ref="topScores" class="container custom-container mx-auto py-4">
+    <div id="topScores" ref="topScores" class="container py-4 mx-auto custom-container">
       <userpage-top-scores v-if="page.currentRankingSystem" />
     </div>
     <client-only>
       <teleport to="body">
-        <div class="btm-nav sticky fuck">
+        <div class="sticky btm-nav fuck">
           <template v-for="(isVisible, el) of visible" :key="el">
             <a
               v-if="icons[el]" :class="{

@@ -76,12 +76,25 @@ const { data: leaderboard, refresh } = await useAsyncData(async () => {
 
 updateSwitcher()
 
+const title = computed(() => `${beatmapset.value?.meta.intl.artist} - ${beatmapset.value?.meta.intl.title} > ${selectedMap.value?.version}`)
+const description = computed(() => selectedMap.value?.version)
+const url = useRequestURL()
+
 useHead({
   titleTemplate: `%s - ${config.title}`,
-  title: computed(
-    () =>
-      `${beatmapset.value?.meta.intl.artist} - ${beatmapset.value?.meta.intl.title} > ${selectedMap.value?.version}`,
-  ),
+  title,
+})
+
+useSeoMeta({
+  description,
+  ogTitle: title,
+  ogDescription: description,
+  ogImage: () => beatmapset.value?.assets.cover,
+  ogUrl: () => url.href,
+  twitterTitle: title,
+  twitterDescription: description,
+  twitterImage: () => beatmapset.value?.assets.list,
+  twitterCard: 'summary',
 })
 
 const scoreRS = shallowRef<InstanceType<
@@ -203,7 +216,7 @@ fr-FR:
 </i18n>
 
 <template>
-  <section v-if="error" class="section custom-container mx-auto">
+  <section v-if="error" class="mx-auto section custom-container">
     <div>
       {{ error?.message }}
     </div>
@@ -214,22 +227,22 @@ fr-FR:
       lazyBgCover !== '' && 'ready',
     ]"
   >
-    <div class="container custom-container mx-auto">
-      <div class="header-with-maps flex-wrap">
-        <i18n-t keypath="beatmapset.placement" tag="p" class="font-light text-lg">
+    <div class="container mx-auto custom-container">
+      <div class="flex-wrap header-with-maps">
+        <i18n-t keypath="beatmapset.placement" tag="p" class="text-lg font-light">
           <template #title>
-            <span class="text-2xl font-bold text-center sm:text-left lg:whitespace-nowrap z-10">
+            <span class="z-10 text-2xl font-bold text-center sm:text-left lg:whitespace-nowrap">
               {{ beatmapset.meta.intl.title }}
             </span>
           </template>
           <template #artist>
-            <span class="font-semibold text-xl">
+            <span class="text-xl font-semibold">
               {{ beatmapset.meta.intl.artist }}
             </span>
           </template>
         </i18n-t>
         <t-tabs
-          v-model="selectedMapMd5" variant="bordered" size="md" class="mx-4 self-end bg-transparent"
+          v-model="selectedMapMd5" variant="bordered" size="md" class="self-end mx-4 bg-transparent"
           @update:model-value="update"
         >
           <t-tab v-for="bm in beatmapset.beatmaps" :key="bm.md5" :value="bm.md5" class="whitespace-nowrap grow">
@@ -237,8 +250,8 @@ fr-FR:
           </t-tab>
         </t-tabs>
       </div>
-      <div v-if="selectedMap" class="card bg-gbase-100 dark:bg-gbase-900 overflow-hidden">
-        <div class="m-2 relative flex flex-col md:flex-row items-center">
+      <div v-if="selectedMap" class="overflow-hidden card bg-gbase-100 dark:bg-gbase-900">
+        <div class="relative flex flex-col items-center m-2 md:flex-row">
           <t-tabs v-model="switcher.mode" class="md:mr-auto" @update:model-value="update">
             <template v-for="m in allowedModes">
               <t-tab v-if="hasRuleset(m, switcher.ruleset)" :key="`sw-${m}`" :value="m">
@@ -259,12 +272,12 @@ fr-FR:
         </div>
         <div class="flex flex-col md:flex-row">
           <div class="w-full md:w-1/3 grow">
-            <div class="flex flex-col p-4 md:p-3 h-full">
-              <img class="rounded-xl shadow-md max-w-content" :src="beatmapset.assets['list@2x']" :alt="selectedMap.version" :onerror="placeholder">
+            <div class="flex flex-col h-full p-4 md:p-3">
+              <img class="shadow-md rounded-xl max-w-content" :src="beatmapset.assets['list@2x']" :alt="selectedMap.version" :onerror="placeholder">
               <div v-if="links" class="pt-2">
                 <div class="w-min">
                   <t-menu>
-                    <button class="btn btn-shadow btn-primary btn-circle rounded-full">
+                    <button class="rounded-full btn btn-shadow btn-primary btn-circle">
                       <icon name="material-symbols:file-present-rounded" size="2em" />
                     </button>
                     <template #popper>
@@ -299,7 +312,7 @@ fr-FR:
                 <dt class="text-sm font-medium text-gbase-500">
                   {{ _t('beatmapset.creator') }}
                 </dt>
-                <dd class="striped-text flex gap-1 items-center">
+                <dd class="flex items-center gap-1 striped-text">
                   {{ selectedMap.creator }}
                 </dd>
               </div>
@@ -307,7 +320,7 @@ fr-FR:
                 <dt class="text-sm font-medium text-gbase-500">
                   {{ _t('beatmapset.status') }}
                 </dt>
-                <dd class="striped-text flex gap-1 items-center">
+                <dd class="flex items-center gap-1 striped-text">
                   {{ selectedMap.status }}
                 </dd>
               </div>
@@ -315,7 +328,7 @@ fr-FR:
                 <dt class="text-sm font-medium text-gbase-500">
                   {{ _t('beatmapset.beatmap-id') }}
                 </dt>
-                <dd class="striped-text flex gap-1 items-center">
+                <dd class="flex items-center gap-1 striped-text">
                   {{ selectedMap.id }}
                 </dd>
               </div>
@@ -323,7 +336,7 @@ fr-FR:
                 <dt class="text-sm font-medium text-gbase-500">
                   {{ _t('beatmapset.source-id') }}
                 </dt>
-                <dd class="striped-text flex gap-1 items-center">
+                <dd class="flex items-center gap-1 striped-text">
                   {{ BeatmapSource[beatmapset.source] }} | {{ selectedMap.foreignId }}
                 </dd>
               </div>
@@ -331,7 +344,7 @@ fr-FR:
                 <dt class="text-sm font-medium text-gbase-500">
                   {{ _t('beatmapset.last-update') }}
                 </dt>
-                <dd class="striped-text flex gap-1 items-center">
+                <dd class="flex items-center gap-1 striped-text">
                   {{ selectedMap.lastUpdate }}
                 </dd>
               </div>
@@ -339,7 +352,7 @@ fr-FR:
                 <dt class="text-sm font-medium text-gbase-500">
                   BPM
                 </dt>
-                <dd class="striped-text flex gap-1 items-center">
+                <dd class="flex items-center gap-1 striped-text">
                   <img src="~/assets/icons/bpm.png" alt="" class="w-5 color-theme-light-invert">{{ selectedMap.properties.bpm }}
                 </dd>
               </div>
@@ -347,7 +360,7 @@ fr-FR:
                 <dt class="text-sm font-medium text-gbase-500">
                   {{ _t('beatmapset.star-rating') }}
                 </dt>
-                <dd class="striped-text flex gap-1 items-center">
+                <dd class="flex items-center gap-1 striped-text">
                   <img src="~/assets/icons/overall-difficulty.png" alt="" class="w-5 color-theme-light-invert">{{ selectedMap.properties.starRate }}
                 </dd>
               </div>
@@ -355,7 +368,7 @@ fr-FR:
                 <dt class="text-sm font-medium text-gbase-500">
                   {{ _t('beatmapset.circle-size') }}
                 </dt>
-                <dd class="striped-text flex gap-1 items-center">
+                <dd class="flex items-center gap-1 striped-text">
                   <img src="~/assets/icons/size.png" alt="" class="w-5 color-theme-light-invert">{{ selectedMap.properties.circleSize }}
                 </dd>
               </div>
@@ -363,7 +376,7 @@ fr-FR:
                 <dt class="text-sm font-medium text-gbase-500">
                   {{ _t('beatmapset.approach-rate') }}
                 </dt>
-                <dd class="striped-text flex gap-1 items-center">
+                <dd class="flex items-center gap-1 striped-text">
                   <img src="~/assets/icons/approach-rate.png" alt="" class="w-5 color-theme-light-invert">{{ selectedMap.properties.approachRate }}
                 </dd>
               </div>
@@ -371,7 +384,7 @@ fr-FR:
                 <dt class="text-sm font-medium text-gbase-500">
                   {{ _t('beatmapset.od') }}
                 </dt>
-                <dd class="striped-text flex gap-1 items-center">
+                <dd class="flex items-center gap-1 striped-text">
                   <img src="~/assets/icons/accuracy.png" alt="" class="w-5 color-theme-light-invert">{{ selectedMap.properties.accuracy }}
                 </dd>
               </div>
@@ -379,7 +392,7 @@ fr-FR:
                 <dt class="text-sm font-medium text-gbase-500">
                   {{ _t('beatmapset.hp-drain') }}
                 </dt>
-                <dd class="striped-text flex gap-1 items-center">
+                <dd class="flex items-center gap-1 striped-text">
                   <img src="~/assets/icons/hp-drain.png" alt="" class="w-5 color-theme-light-invert">{{ selectedMap.properties.hpDrain }}
                 </dd>
               </div>
@@ -387,7 +400,7 @@ fr-FR:
                 <dt class="text-sm font-medium text-gbase-500">
                   {{ _t('beatmapset.duration') }}
                 </dt>
-                <dd class="striped-text flex gap-1 items-center">
+                <dd class="flex items-center gap-1 striped-text">
                   <img src="~/assets/icons/length.png" alt="" class="w-5 color-theme-light-invert">{{ selectedMap.properties.totalLength }} seconds
                 </dd>
               </div>
@@ -396,13 +409,13 @@ fr-FR:
                   {{ _t('beatmapset.hit-objects') }}
                 </dt>
                 <dd class="striped-text">
-                  <div class="flex gap-1 items-center">
+                  <div class="flex items-center gap-1">
                     <img src="~/assets/icons/circles.png" alt="" class="w-5 color-theme-light-invert"> {{ selectedMap.properties.count.circles }} {{ _t('beatmapset.hit-object.circles') }},
                   </div>
-                  <div class="flex gap-1 items-center">
+                  <div class="flex items-center gap-1">
                     <img src="~/assets/icons/sliders.png" alt="" class="w-5 color-theme-light-invert">{{ selectedMap.properties.count.sliders }} {{ _t('beatmapset.hit-object.sliders') }},
                   </div>
-                  <div class="flex gap-1 items-center">
+                  <div class="flex items-center gap-1">
                     <img src="~/assets/icons/spinners.png" alt="" class="w-5 color-theme-light-invert">{{ selectedMap.properties.count.spinners }} {{ _t('beatmapset.hit-object.spinners') }},<br>
                   </div>
                 </dd>

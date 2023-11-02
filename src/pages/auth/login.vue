@@ -12,12 +12,14 @@ const route = useRoute()
 const config = useAppConfig()
 const app = useNuxtApp()
 const { t } = useI18n()
-useHead({
-  titleTemplate: `${app.$i18n.t('global.login')} - ${config.title}`,
-})
 
 definePageMeta({
   layout: 'hero',
+})
+
+useHead({
+  titleTemplate: `%s - ${config.title}`,
+  title: () => app.$i18n.t('global.login'),
 })
 
 const error = shallowRef('')
@@ -81,11 +83,11 @@ fr-FR:
 </i18n>
 
 <template>
-  <div class="w-full flex flex-col">
+  <div class="flex flex-col w-full">
     <div class="mx-auto half-box">
       <fetch-overlay :fetching="fetching" />
       <div>
-        <h2 class="text-2xl pl-2 text-gbase-800 dark:text-gbase-50">
+        <h2 class="pl-2 text-2xl text-gbase-800 dark:text-gbase-50">
           {{ $t('global.login') }}
         </h2>
       </div>
@@ -95,7 +97,7 @@ fr-FR:
             <label for="user" class="sr-only">{{ t('user-or-email') }}</label>
             <input
               id="user" v-model="login.user" name="user" type="user" autocomplete="off" required
-              class="w-full input input-shadow input-ghost shadow-sm" :class="{ 'input-error': error }"
+              class="w-full shadow-sm input input-shadow input-ghost" :class="{ 'input-error': error }"
               :placeholder="t('user-id-email')"
             >
           </div>
@@ -103,7 +105,7 @@ fr-FR:
             <label for="password" class="sr-only">{{ t('password') }}</label>
             <input
               id="password" v-model="login.password" name="password" type="password" autocomplete="off" required
-              class="w-full input input-shadow input-ghost shadow-sm" :class="{ 'input-error': error }"
+              class="w-full shadow-sm input input-shadow input-ghost" :class="{ 'input-error': error }"
               :placeholder="t('password')"
             >
           </div>

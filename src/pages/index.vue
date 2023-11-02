@@ -6,10 +6,33 @@ definePageMeta({
 })
 const session = useSession()
 const config = useAppConfig()
+const url = useRequestURL()
+const { t } = useI18n()
+useSeoMeta({
+  description: t('landing.content'),
+  ogTitle: config.title,
+  ogDescription: t('landing.content'),
+  ogImage: '/mascot/riru.png',
+  ogUrl: url.href,
+  twitterTitle: config.title,
+  twitterDescription: t('landing.content'),
+  twitterImage: '/mascot/riru.png',
+  twitterCard: 'summary',
+})
+
 useHead({
   titleTemplate: `${config.title}`,
+  htmlAttrs: {
+    lang: 'en',
+  },
+  link: [
+    {
+      rel: 'icon',
+      type: 'image/png',
+      href: '/favicon.png',
+    },
+  ],
 })
-const { t } = useI18n()
 </script>
 
 <i18n lang="yaml">
