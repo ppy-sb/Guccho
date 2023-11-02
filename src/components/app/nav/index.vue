@@ -83,13 +83,11 @@ function clearFocus() {
           </svg>
         </button>
         <div v-if="session.loggedIn" class="dropdown dropdown-end">
-          <label tabindex="0" class="btn btn-ghost btn-circle avatar">
-            <div class="rounded-full ring ring-gbase-600/70 ring-offset-gbase-100 ring-offset-2 pointer-events-none">
-              <img :src="session.$state.user?.avatarSrc" class="avatar-img">
-            </div>
+          <label tabindex="0" class="pr-1 flex cursor-pointer active:scale-90 transition-transform">
+            <img :src="session.$state.user?.avatarSrc" class="avatar-img">
           </label>
           <ul
-            tabindex="0" class="menu menu-tint menu-md dropdown-content mt-3 p-2 w-52" :class="{
+            tabindex="0" class="menu menu-tint menu-md dropdown-content mt-4 p-2 w-52" :class="{
               'dropdown-open': shownMenu.user,
             }"
           >
@@ -205,12 +203,11 @@ function clearFocus() {
     }
   }
 
-  .avatar {
-    & .avatar-img {
-      @apply object-cover aspect-square;
-      @apply transition-all;
-      @apply w-8 h-8;
-    }
+  .avatar-img {
+    @apply transition-all;
+    @apply ring ring-gbase-600/70 ring-offset-gbase-100 ring-offset-2 pointer-events-none;
+    @apply rounded-full object-cover aspect-square;
+    @apply w-8 h-8;
   }
 
   & .navbar-end {
@@ -227,11 +224,9 @@ function clearFocus() {
     @apply rounded-2xl;
     @apply min-h-0;
 
-    .avatar {
-      & .avatar-img {
-        @apply transition-all;
-        @apply w-5 h-5;
-      }
+    .avatar-img {
+      @apply transition-all;
+      @apply w-7 h-7;
     }
 
     /* > ul > li */

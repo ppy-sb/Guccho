@@ -1,3 +1,5 @@
+import { TRPCError } from '@trpc/server'
+import { Prisma } from 'prisma-client-bancho-py'
 import type { Id } from '..'
 import { BanchoPyPrivilege } from '../enums'
 import { config } from '../env'
@@ -68,23 +70,34 @@ export class AdminProvider extends Base<Id> implements Base<Id> {
   }
 
   async updateUserDetail(query: { id: Id }, updateFields: Partial<UserCompact<Id> & UserOptional>): Promise<UserCompact<Id> & UserOptional> {
-    const user = await this.db.user.update({
-      where: {
-        id: query.id,
-      },
-      data: {
-        id: updateFields.id,
-        name: updateFields.name,
-        safeName: updateFields.name ? toSafeName(updateFields.name) : undefined,
-        email: updateFields.email,
-        country: updateFields.flag ? fromCountryCode(updateFields.flag) : undefined,
-        priv: updateFields.roles ? toBanchoPyPriv(updateFields.roles) : undefined,
-      },
-    })
+    try {
+      const user = await this.db.user.update({
+        where: {
+          id: query.id,
+        },
+        data: {
+          id: updateFields.id,
+          name: updateFields.name,
+          safeName: updateFields.name ? toSafeName(updateFields.name) : undefined,
+          email: updateFields.email,
+          country: updateFields.flag ? fromCountryCode(updateFields.flag) : undefined,
+          priv: updateFields.roles ? toBanchoPyPriv(updateFields.roles) : undefined,
+        },
+      })
 
-    return {
-      ...toUserCompact(user, this.config),
-      ...toUserOptional(user),
+      return {
+        ...toUserCompact(user, this.config),
+        ...toUserOptional(user),
+      }
+    }
+    catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        throw new TRPCError({
+          message: e.code + e.message,
+          code: 'CONFLICT',
+        })
+      }
+      throw e
     }
   }
 }

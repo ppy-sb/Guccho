@@ -528,7 +528,7 @@ fr-FR:
             <h1 class="username">
               {{ user.name }}
             </h1>
-            <h2 class="userlink">
+            <h2 class="g-link">
               @{{ user.safeName }}
             </h2>
             <div class="pb-4" />
@@ -639,12 +639,12 @@ fr-FR:
           </div>
         </div>
         <div>
-          <label class="label" for="userlink">
+          <label class="label" for="g-link">
             <span class="pl-3 label-text">{{ t('safe-name') }}</span>
           </label>
           <div class="flex gap-4">
             <input
-              id="userlink" v-model="user.safeName" type="text" class="input input-shadow input-sm grow" disabled
+              id="g-link" v-model="user.safeName" type="text" class="input input-shadow input-sm grow" disabled
               :class="{
                 'input-bordered input-primary':
                   unchanged.safeName !== user.safeName,

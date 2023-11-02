@@ -71,17 +71,17 @@ fr-FR:
 
 <template>
   <div v-if="detail" class="container custom-container">
-    <div v-if="error" class="alert alert-error ">
-      <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-      <span>{{ error.message }}</span>
+    <div v-if="error" class="overflow-x-auto text-left alert alert-error">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 stroke-current shrink-0" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+      <pre>{{ error.message }}</pre>
     </div>
     <dl>
       <div class="striped">
         <dt class="striped-dt">
           {{ t('id') }}
         </dt>
-        <dd class="striped-text flex gap-1 items-center">
-          <input v-model="detail.id" type="text" class="input input-sm w-full">
+        <dd class="flex items-center gap-1 striped-text">
+          <input v-model="detail.id" type="text" class="w-full input input-sm">
         </dd>
       </div>
 
@@ -89,8 +89,8 @@ fr-FR:
         <dt class="striped-dt">
           {{ t('stable-client-id') }}
         </dt>
-        <dd class="striped-text flex gap-1 items-center">
-          <input v-model="detail.stableClientId" disabled type="text" class="input input-sm w-full">
+        <dd class="flex items-center gap-1 striped-text">
+          <input v-model="detail.stableClientId" disabled type="text" class="w-full input input-sm">
         </dd>
       </div>
 
@@ -98,8 +98,8 @@ fr-FR:
         <dt class="striped-dt">
           {{ t('name') }}
         </dt>
-        <dd class="striped-text flex gap-1 items-center">
-          <input v-model="detail.name" type="text" class="input input-sm w-full">
+        <dd class="flex items-center gap-1 striped-text">
+          <input v-model="detail.name" type="text" class="w-full input input-sm">
         </dd>
       </div>
 
@@ -107,8 +107,8 @@ fr-FR:
         <dt class="striped-dt">
           {{ t('link-name') }}
         </dt>
-        <dd class="striped-text flex gap-1 items-center">
-          <input v-model="detail.safeName" type="text" class="input input-sm w-full">
+        <dd class="flex items-center gap-1 striped-text">
+          <input v-model="detail.safeName" type="text" class="w-full input input-sm">
         </dd>
       </div>
 
@@ -116,8 +116,8 @@ fr-FR:
         <dt class="striped-dt">
           {{ t('email') }}
         </dt>
-        <dd class="striped-text flex gap-1 items-center">
-          <input v-model="detail.email" type="text" class="input input-sm w-full">
+        <dd class="flex items-center gap-1 striped-text">
+          <input v-model="detail.email" type="text" class="w-full input input-sm">
         </dd>
       </div>
 
@@ -125,9 +125,9 @@ fr-FR:
         <dt class="striped-dt">
           {{ t('flag') }}
         </dt>
-        <dd class="striped-text flex gap-2 items-center">
+        <dd class="flex items-center gap-2 striped-text">
           <img :src="getFlagURL(detail.flag)" class="w-6">
-          <select v-model="detail.flag" class="select w-full select-sm">
+          <select v-model="detail.flag" class="w-full select select-sm">
             <option v-for="countryCode in CountryCode" :key="countryCode" :disabled="countryCode === detail.flag" :selected="countryCode === detail.flag" :value="countryCode">
               {{ t(localeKey.country(countryCode)) }}
             </option>
@@ -139,7 +139,7 @@ fr-FR:
         <dt class="striped-dt">
           {{ t('roles') }}
         </dt>
-        <dd class="striped-text flex gap-1 items-center">
+        <dd class="flex items-center gap-1 striped-text">
           <t-multi-select v-model="detail.roles" class="w-full" size="sm" :options="options(t)" />
         </dd>
       </div>

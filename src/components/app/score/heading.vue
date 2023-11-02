@@ -56,7 +56,7 @@ fr-FR:
       <template #title>
         <nuxt-link-locale
           :to="{ name: 'beatmapset-id', params: { id: score.beatmap.beatmapset.id }, query: { mode: score.mode } }"
-          class="text-3xl font-semibold underline decoration-sky-500"
+          class="text-3xl font-semibold g-link-style"
         >
           {{ autoLocale(score.beatmap.beatmapset.meta).title }}
         </nuxt-link-locale>
@@ -71,7 +71,7 @@ fr-FR:
     <i18n-t keypath="map" tag="p" class="font-light">
       <template #version>
         <nuxt-link-locale
-          class="text-2xl font-semibold underline decoration-sky-500"
+          class="text-2xl font-semibold g-link-style"
           :to="{ name: 'beatmapset-id', params: { id: score.beatmap.beatmapset.id }, query: { beatmap: score.beatmap.md5, mode: score.mode } }"
         >
           {{ score.beatmap.version }} (*{{ score.beatmap.properties.starRate }})
@@ -95,7 +95,7 @@ fr-FR:
           }"
         >
           <img class="mask mask-squircle inline align-bottom" width="30" :src="score.user.avatarSrc" alt="user avatar">
-          <div class="text-3xl font-normal underline decoration-sky-500">
+          <div class="text-3xl font-normal g-link-style">
             {{ score.user.name }}
           </div>
         </nuxt-link-locale>

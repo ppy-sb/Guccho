@@ -1,4 +1,8 @@
 <script setup lang="ts">
+// loading-xs
+// loading-sm
+// loading-md
+// loading-lg
 const props = defineProps<{
   variant?: string
   size?: string
@@ -12,9 +16,9 @@ const props = defineProps<{
     :class="[
       props.variant && `btn-${props.variant}`,
       props.size && `btn-${props.size}`,
-      props.loading && 'loading',
     ]"
   >
     <slot />
+    <span v-if="props.loading" :class="[props.loading && 'loading', props.size && `loading-${size}`, variant && `text-${variant}`]" />
   </button>
 </template>

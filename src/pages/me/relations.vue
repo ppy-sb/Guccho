@@ -71,8 +71,10 @@ async function removeOneAs(type: Relationship, user: { id: string }) {
 }
 
 async function addAsMutual(type: Relationship, user: { id: string }) {
+  pendingUser.add(user.id)
   await addOneAs(Relationship.Friend, user)
   await Promise.all([refreshRelations(), refreshHaveUserAsTheirFriend()])
+  pendingUser.delete(user.id)
 }
 
 const toggleFriend = toggleRelation.bind(null, Relationship.Friend)
@@ -125,9 +127,9 @@ fr-FR:
       <div>
         <div class="mx-auto user-list">
           <div v-for="user in relations" :key="`relation-@${user.safeName}`" class="w-full p-2 user-list-item">
-            <div class="flex items-center justify-center gap-2 md:justify-start face">
+            <div class="flex items-center justify-center gap-2 md:justify-start">
               <div class="relative z-10 mask mask-squircle hoverable">
-                <img :src="user.avatarSrc" class="pointer-events-none w-14 md:w-[4em]">
+                <img :alt="user.name" :src="user.avatarSrc" class="pointer-events-none w-14 md:w-[4em]">
               </div>
               <div class="grow">
                 <h1 class="text-2xl">
@@ -138,7 +140,7 @@ fr-FR:
                 <div class="flex justify-between w-full items-top">
                   <nuxt-link-locale
                     :key="`${user.id}:${user.relationship.join('-')}`"
-                    class="text-lg md:text-xl text-left userlink-style hover:text-gbase-500"
+                    class="text-lg text-left md:text-xl g-link-style hover:text-gbase-500"
                     :to="{
                       name: 'user-handle',
                       params: {
@@ -148,15 +150,12 @@ fr-FR:
                   >
                     @{{ user.safeName }}
                   </nuxt-link-locale>
-                  <div class="flex gap-2 actions">
+                  <div class="flex gap-2">
                     <!-- <t-button class="btn-shadow" variant="info" size="xs" class="md:btn-sm">
                       chat
                     </t-button> -->
-                    <t-button
-                      class="btn-shadow btn-xs md:btn-sm" :loading="pendingUser.has(user.id)"
-                      :variant="isFriend(user) ? 'warning' : 'primary'"
-                      @click="toggleFriend(user)"
-                    >
+
+                    <button class="btn btn-shadow btn-xs md:btn-sm" :class="isFriend(user) ? 'btn-warning' : 'btn-primary'" @click="toggleFriend(user)">
                       <template v-if="pendingUser.has(user.id)" />
                       <template v-else-if="isFriend(user)">
                         {{ t('remove-friend') }}
@@ -166,7 +165,9 @@ fr-FR:
                         {{ t('regret') }}
                         <icon name="solar:heart-bold" class="w-4 h-4" />
                       </template>
-                    </t-button>
+                      <span v-if="pendingUser.has(user.id)" class="loading loading-spinner loading-xs md:loading-md" />
+                    </button>
+
                     <!-- <t-button class="btn-shadow" :loading="pendingUser.has(user.id)" variant="warning" size="xs" class="md:btn-sm" @click="toggleBlock(user)">
                       {{ pendingUser.has(user.id) ? '' : isBlocked(user) ? 'remove block' : 'regret' }}
                     </t-button> -->
@@ -176,14 +177,14 @@ fr-FR:
             </div>
           </div>
         </div>
-        <div v-if="haveUserAsTheirFriend?.length" class="divider text-xl py-8">
+        <div v-if="haveUserAsTheirFriend?.length" class="py-8 text-xl divider">
           {{ t('you-may-also-wonder') }}
         </div>
 
         <template v-if="haveUserAsTheirFriend?.length">
           <div class="p-2 lg:p-0">
             <div class="alert">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="w-6 h-6 stroke-current shrink-0">
                 <path
                   stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
@@ -199,7 +200,7 @@ fr-FR:
             >
               <div class="flex items-center justify-center gap-2 md:justify-start face">
                 <div class="relative z-10 mask mask-squircle hoverable">
-                  <img :src="user.avatarSrc" class="pointer-events-none w-14 md:w-[4em]">
+                  <img :alt="user.name" :src="user.avatarSrc" class="pointer-events-none w-14 md:w-[4em]">
                 </div>
                 <div class="grow">
                   <h1 class="text-2xl text-left md:text-3xl">
@@ -208,7 +209,7 @@ fr-FR:
                   <div class="flex justify-between w-full items-top">
                     <nuxt-link-locale
                       :key="`${user.id}:notMutual`"
-                      class="text-lg text-left underline md:text-2xl decoration-sky-500 text-gbase-600 dark:text-gbase-300 hover:text-gbase-500"
+                      class="text-lg text-left md:text-2xl g-link-style"
                       :to="{
                         name: 'user-handle',
                         params: {
@@ -218,13 +219,12 @@ fr-FR:
                     >
                       @{{ user.safeName }}
                     </nuxt-link-locale>
-                    <div class="flex gap-2 actions">
-                      <t-button
-                        class="btn-shadow md:btn-sm" :loading="pendingUser.has(user.id)" variant="primary" size="xs"
-                        @click="addAsMutual(Relationship.Friend, user)"
-                      >
-                        {{ t('mutual') }}<icon name="solar:heart-bold" class="w-4 h-4" />
-                      </t-button>
+                    <div class="flex gap-2">
+                      <button class="btn btn-shadow btn-xs md:btn-sm btn-primary" @click="addAsMutual(Relationship.Friend, user)">
+                        {{ t('mutual') }}
+                        <span v-if="pendingUser.has(user.id)" class="loading loading-spinner loading-xs md:loading-md" />
+                        <icon v-else name="solar:heart-bold" class="w-4 h-4" />
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -240,31 +240,6 @@ fr-FR:
 <style lang="scss">
 .user-list {
   .user-list-item {
-    .face {
-      @apply transition-all;
-      @apply drop-shadow-sm;
-    }
-
-    // .actions {
-    //   filter: blur(0.2em) opacity(0);
-    //   transform: scale(1.05);
-    //   @apply transition-all;
-    // }
-
-    &:hover {
-      .face {
-        transform: translateY(-0.2em);
-        @apply drop-shadow-xl;
-        @apply transition-all;
-      }
-
-      .actions {
-        transform: scale(1) translateY(-0.2em);
-        // filter: blur(0) opacity(1);
-        @apply transition-all;
-      }
-    }
-
     @apply border-b-2 border-gbase-500/30;
   }
 

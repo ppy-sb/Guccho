@@ -2,10 +2,6 @@ html {
   scroll-behavior: smooth;
 }
 
-.custom-container {
-  @apply max-w-7xl lg:px-4;
-}
-
 .guccho-legacy {
   .v-popper {
     width: -webkit-max-content;
@@ -142,6 +138,26 @@ body:after {
   @apply bg-gradient-to-b from-gbase-50 to-gbase-100/75 dark:from-gbase-800 dark:to-gbase-900 -z-50;
 }
 
+dialog {
+  @apply bg-transparent p-0 m-0 mx-auto;
+  &::backdrop {
+    @apply bg-transparent;
+  }
+}
+
+.username {
+  @apply text-3xl md:text-4xl lg:text-5xl;
+}
+
+.g-link-style {
+  @apply underline decoration-sky-500 text-gbase-600 dark:text-gbase-300 hover:text-gbase-500;
+}
+
+.g-link {
+  @apply text-lg sm:text-xl md:text-2xl lg:text-3xl;
+  @apply g-link-style;
+}
+
 .two-tone {
   @apply relative;
   &::before {
@@ -171,13 +187,6 @@ body:after {
   }
 }
 
-dialog {
-  @apply bg-transparent p-0 m-0 mx-auto;
-  &::backdrop {
-    @apply bg-transparent;
-  }
-}
-
 .hover-floating {
   @apply transition-transform;
   &:hover {
@@ -193,15 +202,6 @@ dialog {
   }
 }
 
-.username {
-  @apply text-2xl sm:text-3xl md:text-4xl lg:text-5xl;
-}
-
-.userlink-style {
-  @apply underline decoration-sky-500 text-gbase-600 dark:text-gbase-300;
-}
-
-.userlink {
-  @apply text-lg sm:text-xl md:text-2xl lg:text-3xl;
-  @extend .userlink-style;
+.custom-container {
+  @apply max-w-7xl lg:px-4;
 }

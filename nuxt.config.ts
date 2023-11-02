@@ -96,7 +96,7 @@ export default defineNuxtConfig({
 
   experimental: {
     // viewTransition: true,
-    asyncContext: true,
+    // asyncContext: true,
     headNext: true,
     inlineRouteRules: true,
     typedPages: true,

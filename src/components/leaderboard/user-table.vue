@@ -2,6 +2,7 @@
 import type { inferRouterOutputs } from '@trpc/server'
 import { Rank } from '~/def'
 import type { LeaderboardRankingSystem } from '~/def/common'
+import { CountryCode } from '~/def/country-code'
 import type { ComponentLeaderboard } from '~/def/leaderboard'
 import type { AppRouter } from '~/server/trpc/routers'
 
@@ -13,6 +14,8 @@ const props = defineProps<{
   inThisLeaderboard: ComponentLeaderboard<string>['inThisLeaderboard']
   sort: LeaderboardRankingSystem
 }>()
+
+const { t } = useI18n()
 const addCommas = createNumberFormatter()
 const scoreFormat = createScoreFormatter()
 const option = {
@@ -25,19 +28,19 @@ const formatter = new Intl.NumberFormat(undefined, option)
 
 <template>
   <tr class="font-medium">
-    <th class="px-4 py-3 font-bold">
+    <th scope="row" class="px-4 py-3 font-bold">
       <p class="text-gbase-900 dark:text-gbase-100" :data-rank="props.inThisLeaderboard.rank?.toString()">
         #{{ props.inThisLeaderboard.rank }}
       </p>
     </th>
-    <th>
+    <th scope="row">
       <div class="flex justify-center items-center w-full">
         <div class="flex-shrink-0">
-          <img class="w-6" :src="getFlagURL(props.user.flag)">
+          <img :alt="t(localeKey.country(props.user.flag || CountryCode.Unknown))" class="w-6" :src="getFlagURL(props.user.flag)">
         </div>
       </div>
     </th>
-    <th>
+    <th scope="row">
       <div class="flex gap-2 items-center">
         <div class="aspect-square mask mask-squircle w-7 overflow-hidden object-cover flex">
           <img class="m-auto" :src="user.avatarSrc" :alt="user.name" width="30">
@@ -70,24 +73,23 @@ const formatter = new Intl.NumberFormat(undefined, option)
   </tr>
 </template>
 
-<style scoped lang="scss">
-@import '~/assets/styles/text-shadow';
-
+<style lang="postcss">
 tr [data-rank="1"] {
-  @apply text-yellow-100 dark:text-yellow-600;
-  @apply shadow-yellow-800/80 dark:shadow-yellow-200/30;
-  @extend .text-shadow-sm;
+  /* @apply text-yellow-100 dark:text-yellow-600; */
+  /* @apply shadow-yellow-800/80 dark:shadow-yellow-200/30; */
+  @apply text-accent-focus;
 }
 
 tr [data-rank="2"] {
-  @apply text-gray-50 dark:text-white;
-  @apply shadow-gray-600/70 dark:shadow-gray-400/30;
-  @extend .text-shadow-sm;
+  /* @apply text-gray-50 dark:text-white; */
+  /* @apply shadow-gray-600/70 dark:shadow-gray-400/30; */
+
+  @apply text-primary-focus;
 }
 
 tr [data-rank="3"] {
-  @apply text-orange-50 dark:text-orange-400;
-  @apply shadow-yellow-700/80 dark:shadow-yellow-500/20;
-  @extend .text-shadow-sm;
+  /* @apply text-orange-50 dark:text-orange-400; */
+  /* @apply shadow-yellow-700/80 dark:shadow-yellow-500/20; */
+  @apply text-secondary-focus;
 }
 </style>

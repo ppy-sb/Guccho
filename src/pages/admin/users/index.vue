@@ -78,14 +78,14 @@ fr-FR:
 
 <template>
   <div class="flex flex-col gap-2">
-    <div class="collapse collapse-arrow rounded-lg border border-base-300 bg-base-200">
+    <div class="border rounded-lg collapse collapse-arrow border-base-300 bg-base-200">
       <input type="checkbox" class="peer">
-      <div class="collapse-title text-md font-medium">
+      <div class="font-medium collapse-title text-md">
         <span class="align-middle">{{ t('search-parameters') }}</span>
         <icon name="ion:search-outline" class="w-6 h-6 align-middle" />
       </div>
-      <div class="collapse-content flex flex-col gap-2">
-        <div class="sm:grid sm:grid-cols-2 md:grid-cols-4 gap-2">
+      <div class="flex flex-col gap-2 collapse-content">
+        <div class="gap-2 sm:grid sm:grid-cols-2 md:grid-cols-4">
           <div class="form-control">
             <label class="label">
               <span class="label-text">{{ t('user-id') }}</span>
@@ -128,7 +128,7 @@ fr-FR:
             </label>
             <div class="flex gap-2">
               <img :src="getFlagURL(search.flag)" class="w-6">
-              <select v-model="search.flag" class="select w-full select-sm">
+              <select v-model="search.flag" class="w-full select select-sm">
                 <option
                   v-for="countryCode in CountryCode" :key="countryCode" :disabled="countryCode === search.flag"
                   :selected="countryCode === search.flag" :value="countryCode"
@@ -148,36 +148,36 @@ fr-FR:
               :options="options(UserRole, (_, value) => t(localeKey.role(value)))"
             />
           </div>
-          <div class="form-control col-span-2 disbaled">
+          <div class="col-span-2 form-control disbaled">
             <label class="label">
               <span class="label-text">{{ t('registered-at') }}</span>
             </label>
             <div class="join">
               <input
                 v-model="search.registeredFrom" disabled type="datetime-local"
-                class="join-item input input-sm w-full"
+                class="w-full join-item input input-sm"
               >
               <div class="join-item -bg-base-100">
                 <span class="align-middle">~</span>
               </div>
-              <input v-model="search.registeredTo" disabled type="datetime-local" class="input input-sm join-item w-full">
+              <input v-model="search.registeredTo" disabled type="datetime-local" class="w-full input input-sm join-item">
             </div>
           </div>
-          <div class="form-control col-span-2">
+          <div class="col-span-2 form-control">
             <label class="label">
               <span class="label-text">{{ t('last-activity') }}</span>
             </label>
             <div class="join">
               <input
                 v-model="search.latestActivityFrom" disabled type="datetime-local"
-                class="join-item input input-sm w-full"
+                class="w-full join-item input input-sm"
               >
               <div class="join-item -bg-base-100">
                 <span class="align-middle">~</span>
               </div>
               <input
                 v-model="search.latestActivityTo" disabled type="datetime-local"
-                class="input input-sm join-item w-full"
+                class="w-full input input-sm join-item"
               >
             </div>
           </div>
@@ -191,7 +191,7 @@ fr-FR:
         </div>
       </div>
     </div>
-    <div class="items-end sm:grid sm:grid-cols-2 md:grid-cols-3 gap-2">
+    <div class="items-end gap-2 sm:grid sm:grid-cols-2 md:grid-cols-3">
       <!-- <div class="join">
         <div>
           <input class="input input-sm input-shadow join-item" placeholder="Filter">
@@ -227,7 +227,7 @@ fr-FR:
         >
       </div>
     </div>
-    <div class="overflow-x-auto border border-base-300 rounded-lg">
+    <div class="overflow-x-auto border rounded-lg border-base-300">
       <table
         class="table table-sm table-zebra" :class="{
           loading: pending,
@@ -262,7 +262,7 @@ fr-FR:
             <td>
               <div class="flex items-center space-x-3">
                 <div class="avatar">
-                  <div class="mask mask-squircle w-12 h-12">
+                  <div class="w-12 h-12 mask mask-squircle">
                     <img :src="user.avatarSrc" alt="avatar">
                   </div>
                 </div>
@@ -279,13 +279,12 @@ fr-FR:
                 </div>
               </div>
             </td>
-            <td class="flex">
-              <div class="f[[lex gap-1 flex-wrap">
-                <span v-for="role in user.roles" :key="user.id + role" class="badge badge-sm whitespace-nowrap">{{
-                  t(localeKey.role(role)) }}</span>
-              </div>
+            <td>
+              <span v-for="role in user.roles" :key="user.id + role" class="badge badge-sm whitespace-nowrap">
+                {{ t(localeKey.role(role)) }}
+              </span>
             </td>
-            <td><a class="link decoration-sky-500" :href="`mailto:${user.email}`">{{ user.email }}</a></td>
+            <td><a class="link g-link-style" :href="`mailto:${user.email}`">{{ user.email }}</a></td>
             <td>
               <time class="whitespace-nowrap" :datetime="user.registeredAt.toString()">{{
                 user.registeredAt.toLocaleString(locale) }}</time>
@@ -303,7 +302,7 @@ fr-FR:
                   params: {
                     id: user.id,
                   },
-                }" class="btn btn-ghost btn-xs"
+                }" class="btn btn-ghost btn-xs whitespace-nowrap"
               >
                 {{ t('details') }}
               </nuxt-link-locale>

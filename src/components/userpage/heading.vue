@@ -190,7 +190,7 @@ fr-FR:
           <h1 class="pb-1 username" :class="useUserRoleColor(page.user)">
             {{ page.user.name }}
           </h1>
-          <nuxt-link-locale :to="{ name: 'user-handle', params: { handle: `@${page.user.safeName}` } }" class="userlink">
+          <nuxt-link-locale :to="{ name: 'user-handle', params: { handle: `@${page.user.safeName}` } }" class="g-link">
             @{{ page.user.safeName }}
           </nuxt-link-locale>
           <div class="lg:pb-2" />

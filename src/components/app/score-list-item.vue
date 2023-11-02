@@ -83,7 +83,7 @@ fr-FR:
 
 <template>
   <div class="score">
-    <div class="flex justify-between hover-floating hover-button">
+    <div class="flex justify-between">
       <div class="flex min-w-0 gap-4">
         <div class="hidden md:block">
           <picture
@@ -99,53 +99,50 @@ fr-FR:
               class="object-cover w-20 h-16 rounded-xl shadow-md"
             >
           </picture>
-          <div v-else class="w-20 h-16">
-            <icon name="clarity:unknown-status-line" size="100%" />
-          </div>
+          <icon v-else class="w-20 h-16" name="clarity:unknown-status-line" size="100%" />
         </div>
         <div class="flex flex-col min-w-0">
-          <template v-if="beatmap && beatmapIsVisible(beatmap)">
-            <router-link
-              :to="{
-                name: 'beatmapset-id',
-                params: {
-                  id: beatmap.beatmapset.id as string,
-                },
-                query: {
-                  beatmap: beatmap.id as string,
-                  mode: props.mode,
-                  ruleset: props.ruleset,
-                  rank: [Rank.TotalScore, Rank.RankedScore].includes(
-                    props.rankingSystem,
-                  )
-                    ? 'score'
-                    : props.rankingSystem,
-                },
-              }" class="truncate"
-            >
-              <div v-if="meta" class="flex gap-2 items-center">
-                <icon
-                  v-if="rankingStatusIconMapping[beatmap.status]"
-                  class="w-5 h-5 min-w-5 min-h-5 md:w-6 md:h-6"
-                  :name="rankingStatusIconMapping[beatmap.status]!"
-                  :aria-label="beatmap.status"
-                />
-                <span class=" text-sm truncate md:text-md lg:text-lg font-bold">
-                  {{ meta.artist }} - {{ meta.title }}
-                </span>
-              </div>
-            </router-link>
-          </template>
+          <router-link
+            v-if="beatmap && beatmapIsVisible(beatmap)"
+            class="truncate"
+            :to="{
+              name: 'beatmapset-id',
+              params: {
+                id: beatmap.beatmapset.id as string,
+              },
+              query: {
+                beatmap: beatmap.id as string,
+                mode: props.mode,
+                ruleset: props.ruleset,
+                rank: [Rank.TotalScore, Rank.RankedScore].includes(
+                  props.rankingSystem,
+                )
+                  ? 'score'
+                  : props.rankingSystem,
+              },
+            }"
+          >
+            <icon
+              v-if="rankingStatusIconMapping[beatmap.status]"
+              size="100%"
+              class="w-5 h-5 md:w-6 md:h-6"
+              :name="rankingStatusIconMapping[beatmap.status]!"
+              :aria-label="beatmap.status"
+            />
+            <span v-if="meta" class="text-sm truncate md:text-md xl:text-lg font-bold">
+              {{ meta.artist }} - {{ meta.title }}
+            </span>
+            <div class="flex gap-2 text-xs md:text-sm lg:text-md flex-wrap">
+              <span v-if="beatmap" class="font-semibold">
+                {{ beatmap.version }}
+              </span>
+              <span v-if="score.mods.length" class="flex justify-end gap-1 tooltip tooltip-primary lg:tooltip-right" :data-tip="score.mods.map(m => StableMod[m]).join(', ')">
+                <app-mod v-for="mod in score.mods" :key="mod" :mod="mod" class="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6" />
+              </span>
+            </div>
+          </router-link>
           <div v-else>
             {{ t('unknown-beatmap') }}
-          </div>
-          <div class="flex text-xs gap-2 md:text-sm lg:text-md flex-wrap">
-            <span v-if="beatmap" class="font-semibold">
-              {{ beatmap.version }}
-            </span>
-            <span v-if="score.mods.length" class="flex justify-end gap-1 tooltip tooltip-primary lg:tooltip-right" :data-tip="score.mods.map(m => StableMod[m]).join(', ')">
-              <app-mod v-for="mod in score.mods" :key="mod" :mod="mod" class="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6" />
-            </span>
           </div>
           <div class="mt-auto map-date">
             <time class="text-xs italic lg:text-sm font-extralight">
@@ -154,21 +151,9 @@ fr-FR:
           </div>
         </div>
       </div>
-      <nuxt-link-locale
-        :to="{
-          name: 'score-id',
-          params: {
-            id: score.id,
-          },
-        }"
-        class="flex gap-4 relative"
-      >
-        <div hover-btn>
-          <span class="text-2xl text-primary-content">{{ t('detail') }}</span>
-          <icon name="fa-solid:expand" class="pl-1 w-8 h-8" />
-        </div>
+      <div class="flex relative">
         <div class="flex flex-col">
-          <div class="flex items-center justify-end flex-grow text-lg md:text-xl lg:text-2xl">
+          <div class="flex items-center justify-end flex-grow text-lg sm:text-xl lg:text-2xl">
             <template v-if="(ppRankingSystems).includes(props.rankingSystem as LeaderboardPPRankingSystem)">
               <div class="font-bold font-mono">
                 {{ score.pp.toFixed(2) }}
@@ -181,69 +166,42 @@ fr-FR:
               </div>
             </template>
           </div>
-          <div class="flex gap-2 mt-auto text-sm md:text-md lg:text-md whitespace-nowrap justify-end">
-            <span class="flex items-center">
+          <div class="mt-auto text-sm md:text-md lg:text-md whitespace-nowrap justify-end">
+            <div class="text-right">
               <template v-if="beatmap">
-                <div class="font-semibold">
+                <span class="font-semibold align-middle">
                   {{ score.maxCombo }}
-                </div>
-                <div class="font-light text-xs px-1">
+                </span>
+                <span class="font-light align-middle">
                   /
-                </div>
-                <div>
+                </span>
+                <span class="align-middle">
                   {{ beatmap.properties.maxCombo }}
-                </div>
+                </span>
               </template>
-              <div v-else>
+              <span v-else class="align-middle">
                 {{ score.maxCombo }}
-              </div>
-              <div class="font-light">
+              </span>
+              <span class="font-light align-middle">
                 x
-              </div>
-            </span>
+              </span>
+            </div>
 
-            <span class="flex">
-              <b class="font-mono">{{ score.accuracy.toFixed(2) }}</b>
-              <div class="text-light">
-                % {{ $t('global.acc') }}
-              </div>
+            <span class="text-right">
+              <span><b class="font-mono">{{ score.accuracy.toFixed(2) }}</b></span>
+              <span class="text-light">% {{ $t('global.acc') }}</span>
             </span>
           </div>
         </div>
-        <div class="flex items-center justify-center">
-          <div class="text-5xl font-mono w-16 text-center">
-            {{ score.grade }}
-          </div>
+        <div class="text-4xl md:text-5xl font-mono w-14 md:w-20 text-center">
+          {{ score.grade }}
         </div>
-      </nuxt-link-locale>
+      </div>
     </div>
   </div>
 </template>
 
-<style scoped lang="postcss">
-/* .hover-button:hover,
-.hover-button:focus-within, */
-.hover-button *:focus-within {
-  [hover-btn] {
-    @apply opacity-100;
-  }
-}
-
-[hover-btn] {
-  @apply transition-opacity opacity-0 bg-primary/60 backdrop-blur-lg rounded-2xl;
-  @apply absolute inset-0 p-2 -m-2;
-  @apply flex items-center justify-center;
-
-  &:hover {
-    @apply opacity-100;
-  }
-}
-[hover-btn]:active {
-  @apply bg-primary-focus/60
-}
-</style>
-
-<style lang="scss">
+<style lang="postcss">
 .score {
   @apply py-2;
 }

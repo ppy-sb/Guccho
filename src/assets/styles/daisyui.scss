@@ -1,14 +1,10 @@
 $variants: primary, secondary, accent, neutral, base-100, info, success, warning,
   error;
-html {
-  @apply bg-transparent #{!important};
-}
 
 .btn.btn-shadow {
   @apply transition-shadow transition-[background];
   @apply shadow-lg;
   @apply dark:shadow-md;
-  animation: none;
 
   @each $variant in $variants {
     &.btn-#{$variant} {

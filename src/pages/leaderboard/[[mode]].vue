@@ -118,10 +118,9 @@ fr-FR:
 </i18n>
 
 <template>
-  <div class="flex flex-col h-full leaderboard custom-container mx-auto w-full">
+  <div class="flex flex-col h-full leaderboard custom-container mx-auto !max-w-4xl w-full">
     <header-simple-title-with-sub
       id="desc"
-      class="container mx-auto custom-container !max-w-4xl"
       :title="app.$i18n.t('titles.leaderboard')"
       :subtitle="
         selected.mode
@@ -138,7 +137,7 @@ fr-FR:
         @update:model-value="reloadPage()"
       />
       <template #after-title>
-        <i18n-t keypath="total" tag="p" class="opacity-40 text-xs">
+        <i18n-t keypath="total" tag="p" class="text-xs opacity-40">
           <template #total>
             <span class="font-mono">{{ total }}</span>
           </template>
@@ -147,13 +146,13 @@ fr-FR:
     </header-simple-title-with-sub>
     <div
       v-if="table"
-      class="container flex flex-col w-full"
+      class="flex flex-col w-full"
       :class="{
         content: table.length,
       }"
     >
-      <div v-if="table.length" class="relative mx-auto xl:rounded-lg w-full max-w-max overflow-x-auto">
-        <table class="table table-sm px-2 whitespace-nowrap" aria-describedby="desc">
+      <div v-if="table.length" class="relative w-full mx-auto overflow-x-auto xl:rounded-lg max-w-max">
+        <table class="table px-2 table-sm whitespace-nowrap" aria-describedby="desc">
           <thead>
             <tr class="bg-base-100">
               <th>Rank</th>
@@ -172,7 +171,12 @@ fr-FR:
               </th>
             </tr>
           </thead>
-          <tbody>
+          <tbody
+            class="transition-opacity origin-center transition-filter"
+            :class="{
+              'opacity-30 saturate-50 blur-md': pending,
+            }"
+          >
             <leaderboard-user-table
               v-for="(item, index) in table"
               :key="index"
@@ -182,6 +186,13 @@ fr-FR:
             />
           </tbody>
         </table>
+        <div
+          class="absolute inset-0 flex transition-opacity opacity-0 pointer-events-none transition-filter blur-sm" :class="{
+            'opacity-100 !blur-none': pending,
+          }"
+        >
+          <div class="m-auto loading loading-lg" />
+        </div>
       </div>
       <div
         v-else-if="!pending"
@@ -194,7 +205,7 @@ fr-FR:
           {{ t('no-score-alt') }}
         </h2>
       </div>
-      <div class="join mx-auto outline outline-2">
+      <div v-if="totalPages > 1" class="mx-auto join outline outline-2">
         <input v-for="i in totalPages" :key="`pagination-${i}`" class="join-item btn btn-ghost checked:outline outline-2" type="radio" :checked="page === i" name="options" :aria-label="i.toString()" @click="reloadPage(i)">
       </div>
     </div>

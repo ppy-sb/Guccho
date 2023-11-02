@@ -201,8 +201,8 @@ fr-FR:
             </div>
           </div>
           <div
-            class="px-1 py-2 card-body transition-[filter] transition-opacity duration-200" :class="{
-              'saturate-50 opacity-30 blur-sm': pendingTop,
+            class="transition-[filter] transition-opacity duration-200" :class="{
+              'saturate-50 opacity-30': pendingTop,
             }"
           >
             <div class="relative">
