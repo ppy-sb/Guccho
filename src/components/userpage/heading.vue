@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup async lang="ts">
 import { useElementHover } from '@vueuse/core'
 import { MutualRelationship, Relationship } from '~/def'
 import { UserRole, UserStatus } from '~/def/user'
@@ -31,8 +31,13 @@ const { data, refresh } = await useAsyncData(async () => {
     friendCount: await friendCount,
   }
 })
-const { data: live, refresh: reloadLiveData } = await useAsyncData(async () =>
-  page.user?.id ? await app$.$client.user.status.query({ id: page.user.id }) : null,
+const { data: live, refresh: reloadLiveData } = useAsyncData(async () =>
+  // eslint-disable-next-line n/prefer-global/process
+  process.server
+    ? null
+    : page.user?.id
+      ? await app$.$client.user.status.query({ id: page.user.id })
+      : null,
 )
 onMounted(() => {
   onBeforeUnmount(() => clearInterval(setInterval(reloadLiveData, 5000)))
