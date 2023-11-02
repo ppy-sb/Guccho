@@ -1,6 +1,4 @@
 <script setup lang="ts" async>
-import 'vue3-json-viewer/dist/index.css'
-
 const app = useNuxtApp()
 const serverLogs = await app.$client.admin.log.last.query(50)
 const { t, locale } = useI18n()
@@ -9,37 +7,36 @@ const logs = ref(serverLogs.reverse())
 
 <template>
   <div>
-    <h1 class="font-bold italic mb-10">
+    <h1 class="mb-10 italic font-bold">
       {{ t('titles.logs') }}
     </h1>
-    <!-- <JsonViewer v-for="(log, index) in logs" :key="`log-${index}`" :value="log" /> -->
     <div v-for="log in logs" :key="`log-${log.timestamp}`" class="relative mt-5 text-left">
-      <div class="flex items-center relative">
-        <div class="hidden md:block w-20">
+      <div class="relative flex items-center">
+        <div class="hidden w-20 md:block">
           <div
-            class="font-bold italic capitalize" :class="{
+            class="italic font-bold capitalize" :class="{
               'text-sky-600 dark:text-sky-300': log.level === 'info',
             }"
           >
             {{ log.level }}
           </div>
-          <div class="md:flex space-x-1 text-xs font-mono">
+          <div class="space-x-1 font-mono text-xs md:flex">
             {{ log.timestamp.toLocaleString(locale) }}
           </div>
         </div>
-        <div class="border-r-2 border-black dark:border-white absolute h-full left-1 md:left-20 top-2 z-10">
-          <i class="fas fa-circle -top-1 -ml-2 absolute" />
+        <div class="absolute z-10 h-full border-r-2 border-black dark:border-white left-1 md:left-20 top-2">
+          <i class="absolute -ml-2 fas fa-circle -top-1" />
         </div>
         <div class="ml-10">
           <div class="font-bold capitalize">
             {{ log.label }}
           </div>
-          <div class="italic md:mb-4 capitalize text-sm">
+          <div class="text-sm italic capitalize md:mb-4">
             <template v-if="log.backend">
               {{ log.backend }}
             </template>
           </div>
-          <div class="mb-4 mt-2 md:hidden">
+          <div class="mt-2 mb-4 md:hidden">
             <div class="font-bold">
               {{ log.timestamp.toLocaleDateString(locale) }}
             </div>
@@ -50,7 +47,7 @@ const logs = ref(serverLogs.reverse())
           <div v-if="log.message" class="mb-2 font-mono text-sm`">
             {{ log.message }}
           </div>
-          <div v-if="log.fix" class="mb-4 font-mono text-gbase-700 dark:text-gbase-300 text-xs">
+          <div v-if="log.fix" class="mb-4 font-mono text-xs text-gbase-700 dark:text-gbase-300">
             {{ log.fix }}
           </div>
         </div>

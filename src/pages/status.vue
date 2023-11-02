@@ -1,7 +1,4 @@
 <script setup lang="ts">
-// @ts-expect-error we don't have to know
-import { JsonViewer } from 'vue3-json-viewer'
-import 'vue3-json-viewer/dist/index.css'
 import { Monitored } from '$base/server/@extends'
 import { useSession } from '~/store/session'
 import { UserRole } from '~/def/user'
@@ -106,15 +103,15 @@ fr-FR:
 
 <template>
   <div>
-    <div class="container mx-auto custom-container font-mono">
+    <div class="container mx-auto font-mono custom-container">
       <div class="text-xl">
         Services
       </div>
-      <div class="grid gap-2 grid-flow-row md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div class="grid grid-flow-row gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         <div
           v-for="(service, key) in publicData"
           :key="key"
-          class="bg-gray-100 flex-grow text-black border-l-8 rounded-md px-3 py-2 w-full"
+          class="flex-grow w-full px-3 py-2 text-black bg-gray-100 border-l-8 rounded-md"
           :class="{
             'border-green-500': service[0] === Monitored.Status.Up,
             'border-orange-500': service[0] === Monitored.Status.Degraded,
@@ -123,35 +120,35 @@ fr-FR:
           }"
         >
           {{ $t(localeKey.service(key as string)) }}
-          <div class="text-gray-500 font-thin text-sm pt-1">
+          <div class="pt-1 text-sm font-thin text-gray-500">
             <span>{{ service[1] }}</span>
           </div>
         </div>
       </div>
     </div>
-    <div v-if="adminData?.metrics" class="container mx-auto custom-container font-mono">
-      <div class="flex flex-wrap gap-1 my-1 items-baseline drop-shadow-lg">
+    <div v-if="adminData?.metrics" class="container mx-auto font-mono custom-container">
+      <div class="flex flex-wrap items-baseline gap-1 my-1 drop-shadow-lg">
         <h1 class="text-xl">
           {{ t('system-load') }}
         </h1>
-        <span class="badge text-blue-50 bg-blue-500 border-blue-500">{{ t('user') }}: {{ fmtPercent.format(adminData.metrics.load.system.user / 100) }}</span>
-        <span class="badge text-teal-50 bg-teal-500 border-teal-500">{{ t('system') }}: {{ fmtPercent.format(adminData.metrics.load.system.system / 100) }}</span>
+        <span class="bg-blue-500 border-blue-500 badge text-blue-50">{{ t('user') }}: {{ fmtPercent.format(adminData.metrics.load.system.user / 100) }}</span>
+        <span class="bg-teal-500 border-teal-500 badge text-teal-50">{{ t('system') }}: {{ fmtPercent.format(adminData.metrics.load.system.system / 100) }}</span>
       </div>
-      <div class="multi-progress-bar-container bg-gbase-500/10 shadow-lg">
+      <div class="shadow-lg multi-progress-bar-container bg-gbase-500/10">
         <div
           :style="percentWidth(adminData.metrics.load.system.user)"
-          class="multi-progress-bar bg-blue-500 text-white"
+          class="text-white bg-blue-500 multi-progress-bar"
         >
           {{ t('user') }}
         </div>
         <div
           :style="percentWidth(adminData.metrics.load.system.system)"
-          class="multi-progress-bar bg-teal-500 text-white"
+          class="text-white bg-teal-500 multi-progress-bar"
         >
           {{ t('system') }}
         </div>
       </div>
-      <h1 class="flex flex-wrap items-baseline gap-1 drop-shadow-lg my-1">
+      <h1 class="flex flex-wrap items-baseline gap-1 my-1 drop-shadow-lg">
         <div class="text-xl">
           {{ t('app-load') }}
         </div>
@@ -161,12 +158,12 @@ fr-FR:
           class="badge"
         >{{ key }}: {{ fmtPercent.format(_data.current / adminData.metrics.load.system.current) }}</span>
       </h1>
-      <div class="multi-progress-bar-container bg-gbase-500/10 shadow-lg">
+      <div class="shadow-lg multi-progress-bar-container bg-gbase-500/10">
         <div
           v-for="(_data, key) of adminData.metrics.load.app"
           :key="key"
           :style="percentWidth(_data.current / adminData.metrics.load.system.current * 100)"
-          class="multi-progress-bar bg-blue-500 text-white"
+          class="text-white bg-blue-500 multi-progress-bar"
         >
           {{ key }}
         </div>
@@ -177,25 +174,25 @@ fr-FR:
           {{ t('other') }}
         </div>
       </div>
-      <div class="flex flex-wrap gap-1 my-1 drop-shadow-lg items-baseline">
+      <div class="flex flex-wrap items-baseline gap-1 my-1 drop-shadow-lg">
         <h1 class="text-xl">
           {{ t('memory') }}
         </h1>
-        <span class="badge text-blue-50 bg-blue-500 border-blue-500">{{ t('active') }}: {{ fmtCompact.format(adminData.metrics.memory.system.active / 1_000_000) }}</span>
-        <span class="badge text-teal-50 bg-teal-500 border-teal-500">{{ t('cache') }}: {{ fmtCompact.format(adminData.metrics.memory.system.buffcache / 1_000_000) }}</span>
+        <span class="bg-blue-500 border-blue-500 badge text-blue-50">{{ t('active') }}: {{ fmtCompact.format(adminData.metrics.memory.system.active / 1_000_000) }}</span>
+        <span class="bg-teal-500 border-teal-500 badge text-teal-50">{{ t('cache') }}: {{ fmtCompact.format(adminData.metrics.memory.system.buffcache / 1_000_000) }}</span>
         <span class="badge">{{ t('total') }}: {{ fmtCompact.format(adminData.metrics.memory.system.total / 1_000_000) }}</span>
         <span class="badge">{{ t('free') }}: {{ fmtCompact.format(adminData.metrics.memory.system.free / 1_000_000) }}</span>
       </div>
-      <div class="multi-progress-bar-container bg-gbase-500/10 shadow-lg">
+      <div class="shadow-lg multi-progress-bar-container bg-gbase-500/10">
         <div
           :style="percentWidth(adminData.metrics.memory.system.active / adminData.metrics.memory.system.total * 100)"
-          class="multi-progress-bar bg-blue-500 text-white"
+          class="text-white bg-blue-500 multi-progress-bar"
         >
           {{ t('active') }}
         </div>
         <div
           :style="percentWidth(adminData.metrics.memory.system.buffcache / adminData.metrics.memory.system.total * 100)"
-          class="multi-progress-bar bg-teal-500 text-white"
+          class="text-white bg-teal-500 multi-progress-bar"
         >
           {{ t('cache') }}
         </div>
@@ -206,7 +203,7 @@ fr-FR:
           {{ t('free') }}
         </div>
       </div>
-      <h1 class="text-xl drop-shadow-lg my-1">
+      <h1 class="my-1 text-xl drop-shadow-lg">
         {{ t('web-app-config') }}
       </h1>
       <JsonViewer
@@ -217,7 +214,7 @@ fr-FR:
         boxed
         class="rounded-xl"
       />
-      <h1 class="text-xl drop-shadow-lg my-1">
+      <h1 class="my-1 text-xl drop-shadow-lg">
         {{ t('npm-env') }}
       </h1>
       <JsonViewer
@@ -228,7 +225,7 @@ fr-FR:
         boxed
         class="rounded-xl"
       />
-      <h1 class="text-xl drop-shadow-lg my-1">
+      <h1 class="my-1 text-xl drop-shadow-lg">
         {{ t('env') }}
       </h1>
       <JsonViewer

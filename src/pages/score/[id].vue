@@ -1,7 +1,4 @@
 <script setup lang="ts">
-// @ts-expect-error we don't have to know
-import { JsonViewer } from 'vue3-json-viewer'
-import 'vue3-json-viewer/dist/index.css'
 import { Rank } from '~/def'
 
 const route = useRoute('score-id')
@@ -13,11 +10,10 @@ const data = await app$.$client.score.id.query({ id })
 </script>
 
 <template>
-  <div v-if="data" class="container custom-container mx-auto">
+  <div v-if="data" class="container !max-w-4xl mx-auto custom-container px-4">
     <app-score-heading :score="data" :ranking-system="Rank.PPv2" />
-
     <dev-only>
-      <JsonViewer :value="data" class="rounded-lg" />
+      <JsonViewer :value="data" class="mt-2 rounded-lg" />
     </dev-only>
   </div>
 </template>

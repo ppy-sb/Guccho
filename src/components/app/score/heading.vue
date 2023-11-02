@@ -82,11 +82,10 @@ fr-FR:
         <span class="text-xl font-semibold">{{ score.beatmap.creator }}</span>
       </template>
     </i18n-t>
-
-    <i18n-t keypath="play" tag="p" class="font-light pt-2">
+    <i18n-t keypath="play" tag="p" class="pt-6 font-light">
       <template #player>
         <nuxt-link-locale
-          class="align-bottom inline-flex"
+          class="inline-flex align-bottom"
           :to="{
             name: 'user-handle',
             params: {
@@ -94,7 +93,7 @@ fr-FR:
             },
           }"
         >
-          <img class="mask mask-squircle inline align-bottom" width="30" :src="score.user.avatarSrc" alt="user avatar">
+          <img class="inline object-cover align-bottom mask mask-squircle" width="30" :src="score.user.avatarSrc" :alt="score.user.name">
           <div class="text-3xl font-normal g-link-style">
             {{ score.user.name }}
           </div>
@@ -108,8 +107,9 @@ fr-FR:
       </template>
     </i18n-t>
   </div>
-  <div class="flex flex-col md:flex-row w-full justify-between items-center">
-    <div class="flex flex-col gap-2 items-baseline flex-grow">
+  <div class="divider" />
+  <div class="flex flex-col items-center justify-between w-full md:flex-row">
+    <div class="flex flex-col items-baseline flex-grow w-full gap-2 md:w-auto">
       <div>
         <template v-if="rankingSystem === Rank.Score">
           <span class="text-5xl">{{ scoreFmt(score.score) }}</span>
@@ -119,15 +119,15 @@ fr-FR:
           <span class="text-3xl">{{ $t('global.pp') }}</span>
         </template>
       </div>
-      <div v-if="haveManiaHitCounts(score)" class="grid gap-4 grid-flow-row grid-cols-2 w-full">
-        <div><span class="text-4xl font-mono">{{ scoreFmt(score.hit[300]) }}</span>x 300</div> <div><span class="text-4xl font-mono">{{ scoreFmt(score.hit.max) }}</span>x 300p</div>
-        <div><span class="text-4xl font-mono">{{ scoreFmt(score.hit[200]) }}</span>x 200</div> <div><span class="text-4xl font-mono">{{ scoreFmt(score.hit[100]) }}</span>x 100</div>
-        <div><span class="text-4xl font-mono">{{ scoreFmt(score.hit[50]) }}</span>x 50</div> <div><span class="text-4xl font-mono">{{ scoreFmt(score.hit.miss) }}</span>x miss</div>
+      <div v-if="haveManiaHitCounts(score)" class="grid w-full grid-flow-row grid-cols-2 gap-4">
+        <div><span class="font-mono text-4xl">{{ scoreFmt(score.hit[300]) }}</span>x 300</div> <div><span class="font-mono text-4xl">{{ scoreFmt(score.hit.max) }}</span>x 300p</div>
+        <div><span class="font-mono text-4xl">{{ scoreFmt(score.hit[200]) }}</span>x 200</div> <div><span class="font-mono text-4xl">{{ scoreFmt(score.hit[100]) }}</span>x 100</div>
+        <div><span class="font-mono text-4xl">{{ scoreFmt(score.hit[50]) }}</span>x 50</div> <div><span class="font-mono text-4xl">{{ scoreFmt(score.hit.miss) }}</span>x miss</div>
       </div>
-      <div v-else-if="haveStandardHitCounts(score)" class="grid gap-4 grid-flow-row grid-cols-2 w-full">
-        <div><span class="text-4xl font-mono">{{ scoreFmt(score.hit[300]) }}</span>x 300</div> <div><span class="text-4xl font-mono">{{ scoreFmt(score.hit.geki) }}</span>x geki</div>
-        <div><span class="text-4xl font-mono">{{ scoreFmt(score.hit[100]) }}</span>x 100</div> <div><span class="text-4xl font-mono">{{ scoreFmt(score.hit.katu) }}</span>x katu</div>
-        <div><span class="text-4xl font-mono">{{ scoreFmt(score.hit[50]) }}</span>x 50</div> <div><span class="text-4xl font-mono">{{ scoreFmt(score.hit.miss) }}</span>x miss</div>
+      <div v-else-if="haveStandardHitCounts(score)" class="grid w-full grid-flow-row grid-cols-2 gap-4">
+        <div><span class="font-mono text-4xl">{{ scoreFmt(score.hit[300]) }}</span>x 300</div> <div><span class="font-mono text-4xl">{{ scoreFmt(score.hit.geki) }}</span>x geki</div>
+        <div><span class="font-mono text-4xl">{{ scoreFmt(score.hit[100]) }}</span>x 100</div> <div><span class="font-mono text-4xl">{{ scoreFmt(score.hit.katu) }}</span>x katu</div>
+        <div><span class="font-mono text-4xl">{{ scoreFmt(score.hit[50]) }}</span>x 50</div> <div><span class="font-mono text-4xl">{{ scoreFmt(score.hit.miss) }}</span>x miss</div>
       </div>
       <div>Accuracy {{ score.accuracy }} %</div>
     </div>
@@ -135,6 +135,7 @@ fr-FR:
       {{ score.grade }}
     </div>
   </div>
+  <div class="divider" />
   <div>
     <a rel="nofollow" :href="`/replay/${score.id}/download`" class="btn btn-shadow btn-primary">{{ t('download-replay') }} <icon name="line-md:download-loop" class="w-5 h-5" /></a>
   </div>
