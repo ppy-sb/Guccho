@@ -14,6 +14,31 @@ export default defineNuxtConfig({
     transpile: ['trpc-nuxt'],
   },
 
+  modules: [
+    '@nuxtjs/tailwindcss',
+    '@pinia/nuxt',
+    '@nuxt/image',
+    '@pinia-plugin-persistedstate/nuxt',
+    '@nuxtjs/i18n',
+    'nuxt-icon',
+  ],
+
+  alias: {
+    $active: fileURLToPath(new URL(`./src/server/backend/${env.BACKEND}`, import.meta.url)),
+    $base: fileURLToPath(new URL('./src/server/backend/$base', import.meta.url)),
+  },
+
+  vite: {
+  },
+
+  vue: {
+    defineModel: true,
+  },
+
+  typescript: {
+    strict: true,
+  },
+
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
     '~/assets/styles/main.scss',
@@ -32,7 +57,6 @@ export default defineNuxtConfig({
       mode: 'out-in', // default
     },
     head: {
-
       meta: [
         { name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' },
       ],
@@ -40,47 +64,6 @@ export default defineNuxtConfig({
         // @ts-expect-error it's fine
         tabindex: '-1',
       },
-    },
-  },
-
-  experimental: {
-    // viewTransition: true,
-    renderJsonPayloads: true,
-    componentIslands: true,
-  },
-
-  vite: {
-    build: {
-      minify: true,
-      sourcemap: 'inline',
-    },
-  },
-  vue: {
-    defineModel: true,
-  },
-
-  modules: [
-    '@nuxtjs/tailwindcss',
-    '@pinia/nuxt',
-    '@nuxt/image',
-    '@pinia-plugin-persistedstate/nuxt',
-    '@nuxtjs/i18n',
-    'nuxt-icon',
-    'nuxt-typed-router',
-  ],
-
-  alias: {
-    $active: fileURLToPath(new URL(`./src/server/backend/${env.BACKEND}`, import.meta.url)),
-    $base: fileURLToPath(new URL('./src/server/backend/$base', import.meta.url)),
-  },
-
-  typescript: {
-    strict: true,
-  },
-
-  devtools: {
-    timeline: {
-      enabled: true,
     },
   },
 
@@ -110,4 +93,20 @@ export default defineNuxtConfig({
       },
     ],
   },
+
+  experimental: {
+    // viewTransition: true,
+    asyncContext: true,
+    headNext: true,
+    inlineRouteRules: true,
+    typedPages: true,
+    typescriptBundlerResolution: true,
+  },
+
+  devtools: {
+    timeline: {
+      enabled: true,
+    },
+  },
+
 })

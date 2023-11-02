@@ -126,7 +126,6 @@
     "mysql2": "^3.6.2",
     "nuxt-animejs": "^2.0.0",
     "nuxt-icon": "^0.5.0",
-    "nuxt-typed-router": "^3.3.1",
     "sass": "^1.69.3",
     "typescript": "^5.2.2",
     "vue-tsc": "^1.8.19"
