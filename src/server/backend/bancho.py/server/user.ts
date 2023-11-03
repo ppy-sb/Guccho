@@ -628,6 +628,7 @@ WHERE s.userid = ${id}
           safeName: toSafeName(name),
           email,
           pwBcrypt: await encryptBanchoPassword(passwordMd5),
+          creationTime: Math.floor(Date.now() / 1000),
         },
       })
 
