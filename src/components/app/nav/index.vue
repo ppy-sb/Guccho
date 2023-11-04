@@ -48,7 +48,7 @@ function clearFocus() {
         </label>
         <app-nav-brand class="hidden lg:flex" />
         <button
-          class="btn btn-ghost btn-circle lg:hidden"
+          class="btn btn-ghost btn-circle"
           @click.prevent="() => searchModalWrapper?.searchModal?.showModal()"
         >
           <svg
@@ -62,32 +62,18 @@ function clearFocus() {
           </svg>
         </button>
       </div>
-      <div class="navbar-center hidden lg:flex">
-        <ul class="menu nav-menu menu-horizontal px-1">
+      <div class="hidden navbar-center lg:flex">
+        <ul class="px-1 menu nav-menu menu-horizontal">
           <app-nav-items />
         </ul>
       </div>
       <div class="navbar-end">
-        <button
-          class="btn btn-ghost btn-circle hidden lg:flex"
-          @click.prevent="() => searchModalWrapper?.searchModal?.showModal()"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" size="100%" fill="none" viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            />
-          </svg>
-        </button>
         <div v-if="session.loggedIn" class="dropdown dropdown-end">
-          <label tabindex="0" class="pr-1 flex cursor-pointer active:scale-90 transition-transform">
+          <label tabindex="0" class="flex pr-1 transition-transform cursor-pointer active:scale-90">
             <img :src="session.$state.user?.avatarSrc" class="avatar-img">
           </label>
           <ul
-            tabindex="0" class="menu menu-tint menu-md dropdown-content mt-4 p-2 w-52" :class="{
+            tabindex="0" class="p-2 mt-4 menu menu-tint menu-md dropdown-content w-52" :class="{
               'dropdown-open': shownMenu.user,
             }"
           >
@@ -135,7 +121,7 @@ function clearFocus() {
                   {{ t('titles.admin-panel') }}
                 </nuxt-link-locale>
               </li>
-              <div class="divider my-0" />
+              <div class="my-0 divider" />
               <li>
                 <nuxt-link-locale :to="{ name: 'auth-logout' }" @click="clearFocus">
                   <icon name="majesticons:logout-half-circle-line" class="w-5 h-5" size="100%" />
