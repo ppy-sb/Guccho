@@ -17,28 +17,33 @@ export class AdminProvider extends Base<Id> implements Base<Id> {
     page: number
     perPage: number
   }) {
-    const result = await this.db.user.findMany({
-      where: {
-        id: query.id,
-        name: query.name,
-        safeName: query.safeName,
-        email: query.email,
-        country: query.flag,
-        priv: query.roles?.length
-          ? {
-              in: query.roles.reduce((acc, cur) => acc.and(toOneBanchoPyPriv(cur)), all),
-            }
-          : undefined,
-      },
-      include: {
-        clan: true,
-      },
-      orderBy: {
-        lastActivity: 'desc',
-      },
-      skip: query.page * query.perPage,
-      take: query.perPage,
-    })
+    const cond = {
+      id: query.id,
+      name: query.name,
+      safeName: query.safeName,
+      email: query.email,
+      country: query.flag,
+      priv: query.roles?.length
+        ? {
+            in: query.roles.reduce((acc, cur) => acc.and(toOneBanchoPyPriv(cur)), all),
+          }
+        : undefined,
+    } as const
+
+    const [result, count] = await this.db.$transaction([
+      this.db.user.findMany({
+        where: cond,
+        include: {
+          clan: true,
+        },
+        orderBy: {
+          lastActivity: 'desc',
+        },
+        skip: query.page * query.perPage,
+        take: query.perPage,
+      }),
+      this.db.user.count({ where: cond }),
+    ])
 
     const uCompacts = result.map(user => ({
       ...toUserCompact(user, this.config),
@@ -53,7 +58,7 @@ export class AdminProvider extends Base<Id> implements Base<Id> {
         : undefined,
     }))
 
-    return uCompacts
+    return [count, uCompacts] as const
   }
 
   async userDetail(query: { id: Id }): Promise<UserCompact<Id> & UserOptional> {

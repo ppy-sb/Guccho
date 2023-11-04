@@ -28,8 +28,8 @@ export const router = _router({
       latestActivityTo: string().datetime(),
       roles: array(nativeEnum(UserRole)),
     }).partial().and(object({
-      perPage: number().min(1).max(20).default(10),
-      page: number().min(0).max(10).default(0),
+      perPage: number().default(10),
+      page: number().default(0),
     }))).query(({ input }) => {
       return admin.userList({
         ...input,

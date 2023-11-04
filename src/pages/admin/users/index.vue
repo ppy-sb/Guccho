@@ -1,9 +1,18 @@
 <script setup lang="ts">
+import { array, coerce, nativeEnum, object, string } from 'zod'
 import { CountryCode } from '~/def/country-code'
 import { type UserCompact, type UserOptional, UserRole } from '~/def/user'
 
 const { t, locale } = useI18n()
-
+const route = useRoute('admin-users')
+const validator = object({
+  page: coerce.number().default(0),
+  perPage: coerce.number().default(10),
+  name: string().optional(),
+  id: string().optional(),
+  sfeName: string().optional(),
+  roles: array(nativeEnum(UserRole)).optional(),
+})
 const search = ref<
   Partial<UserCompact<string>
   & Pick<UserOptional, 'email' | 'status'>
@@ -17,16 +26,35 @@ const search = ref<
     page: number
     perPage: number
   }
->({
-  roles: [],
-  page: 0,
-  perPage: 10,
-})
+>(validator.parse({
+  ...route.query,
+  // TODO: fix roles parse
+  roles: undefined,
+}))
+
 const app = useNuxtApp()
-const { data: users, refresh, pending } = await app.$client.admin.userManagement.search.useQuery(search)
+const { data: result, refresh, pending } = await useAsyncData(async () => {
+  const [count, users] = await app.$client.admin.userManagement.search.query(search.value)
+  return {
+    perPage: search.value.perPage,
+    count,
+    user: users,
+  }
+})
+
+const pages = computed(() => Math.ceil((result.value?.count || 0) / (result.value?.perPage ?? 10)))
 
 function options<T extends Record<string, string>, TTr extends (key: keyof T, value: T[keyof T]) => string>(priv: T, translate: TTr = ((a: keyof T, b: T[keyof T]) => a) as TTr) {
   return Object.entries(priv).map(([label, value]) => ({ label: translate(label, value as T[keyof T]), value }) as { label: ReturnType<TTr>; value: T[keyof T] })
+}
+function rewrite() {
+  const newURL = location.href.replace(location.search, '')
+  const searchParams = new URLSearchParams(search.value as any)
+  history.replaceState({}, '', `${newURL}?${searchParams}`)
+}
+async function reload() {
+  await refresh()
+  rewrite()
 }
 </script>
 
@@ -184,7 +212,7 @@ fr-FR:
         </div>
         <div class="flex">
           <div class="ml-auto" />
-          <button class="btn btn-primary btn-sm" @click="() => refresh()">
+          <button class="btn btn-primary btn-sm" @click="() => reload()">
             {{ t('search-btn') }}
             <icon name="ion:search-outline" class="w-4 h-4" />
           </button>
@@ -211,12 +239,12 @@ fr-FR:
           </button>
         </div>
       </div> -->
-      <div class="form-control">
+      <!-- <div class="form-control">
         <label class="label">
           <span class="label-text">{{ t('page') }}</span>
         </label>
         <input v-model.number="search.page" type="number" min="0" max="20" step="1" class="input input-sm">
-      </div>
+      </div> -->
       <div class="form-control">
         <label class="label">
           <span class="label-text">{{ t('page-size') }}</span>
@@ -248,7 +276,7 @@ fr-FR:
             'opacity-30 saturate-50 blur-md': pending,
           }"
         >
-          <tr v-for="user in users" :key="user.id">
+          <tr v-for="user in result?.user" :key="user.id">
             <td>
               <div class="flex items-center space-x-3">
                 <div class="avatar">
@@ -305,6 +333,38 @@ fr-FR:
       >
         <div class="m-auto loading loading-lg" />
       </div>
+    </div>
+    <div class="mx-auto join">
+      <template v-for="(i, n) in pages" :key="`sw${i}`">
+        <button
+          v-if="n === 0" class="join-item btn"
+          :class="{
+            'btn-active': n === search.page,
+          }"
+          @click="(search.page = n, reload())"
+        >
+          {{ Math.abs(n - search.page) > 3 && '|&lt;' || '' }} {{ i }}
+        </button>
+        <button
+          v-else-if="Math.abs(n - search.page) <= 3"
+          class="join-item btn"
+          :class="{
+            'btn-active': n === search.page,
+          }"
+          @click="(search.page = n, reload())"
+        >
+          {{ i }}
+        </button>
+        <button
+          v-else-if="i === pages" class="join-item btn"
+          :class="{
+            'btn-active': n === search.page,
+          }"
+          @click="(search.page = n, reload())"
+        >
+          {{ i }} &gt;|
+        </button>
+      </template>
     </div>
   </div>
 </template>

@@ -7,15 +7,18 @@ export abstract class AdminProvider<Id> extends IdTransformable {
     perPage: number
   }):
   Promise<
-    Array<
-      UserCompact<Id>
-      & Pick<UserOptional, 'email' | 'status'>
-      & {
-        registeredAt: Date
-        lastActivityAt: Date
-        clan?: UserClan<Id>
-      }
-    >
+    readonly [
+      number,
+      Array<
+        UserCompact<Id>
+        & Pick<UserOptional, 'email' | 'status'>
+        & {
+          registeredAt: Date
+          lastActivityAt: Date
+          clan?: UserClan<Id>
+        }
+      >,
+    ]
   >
   abstract userDetail(query: { id: Id }): PromiseLike<UserCompact<Id> & UserOptional>
   abstract updateUserDetail(query: { id: Id }, updateFields: Partial<UserCompact<Id> & UserOptional>): PromiseLike<UserCompact<Id> & UserOptional>
