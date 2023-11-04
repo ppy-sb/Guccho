@@ -120,10 +120,9 @@ export const router = _router({
       }),
     )
     .query(async ({ input: { target }, ctx }) => {
-      const [fromUser, targetUser] = await Promise.all([
-        ctx.user,
-        users.getCompact({ handle: target }),
-      ])
+      const fromUser = ctx.user
+      const targetUser = await users.getCompact({ handle: target })
+
       if (!fromUser || targetUser == null) {
         return
       }
@@ -161,10 +160,9 @@ export const router = _router({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      const [fromUser, targetUser] = await Promise.all([
-        ctx.user,
-        users.getCompact({ handle: input.target }),
-      ])
+      const fromUser = ctx.user
+      const targetUser = await users.getCompact({ handle: input.target })
+
       if (!fromUser || targetUser == null) {
         throw new TRPCError({
           code: 'PRECONDITION_FAILED',
@@ -198,10 +196,8 @@ export const router = _router({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      const [fromUser, targetUser] = await Promise.all([
-        ctx.user,
-        users.getCompact({ handle: input.target }),
-      ])
+      const fromUser = ctx.user
+      const targetUser = await users.getCompact({ handle: input.target })
       if (!fromUser || targetUser == null) {
         throw new TRPCError({
           code: 'PRECONDITION_FAILED',

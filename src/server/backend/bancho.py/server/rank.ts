@@ -329,7 +329,7 @@ export class RedisRankProvider extends DatabaseRankProvider implements Monitored
 
       const rank = await this.getPPv2LiveLeaderboard(bPyMode, 0, start + pageSize * 2).then(res => res.map(Number))
 
-      const [users, stats] = await Promise.all([
+      const [users, stats] = await this.db.$transaction([
         /* optimized */
         this.db.user.findMany({
           where: {

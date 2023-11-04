@@ -229,36 +229,26 @@ fr-FR:
     </div>
     <div class="overflow-x-auto border rounded-lg border-base-300">
       <table
-        class="table table-sm table-zebra" :class="{
-          loading: pending,
-        }"
+        description="users"
+        class="table table-sm table-zebra"
       >
-        <!-- head -->
         <thead>
           <tr>
-            <!-- <th>
-              <label>
-                <input type="checkbox" class="checkbox">
-              </label>
-            </th> -->
             <th>{{ t('user') }}</th>
             <th>{{ t('roles') }}</th>
             <th>{{ t('email') }}</th>
             <th>{{ t('registered-at') }}</th>
             <th>{{ t('last-activity') }}</th>
-            <!-- <th>Game Client</th> -->
-            <!-- <th>IP</th> -->
             <th />
           </tr>
         </thead>
-        <tbody>
-          <!-- row 1 -->
+        <tbody
+          class="transition-opacity origin-center transition-filter"
+          :class="{
+            'opacity-30 saturate-50 blur-md': pending,
+          }"
+        >
           <tr v-for="user in users" :key="user.id">
-            <!-- <th>
-              <label>
-                <input type="checkbox" class="checkbox">
-              </label>
-            </th> -->
             <td>
               <div class="flex items-center space-x-3">
                 <div class="avatar">
@@ -293,8 +283,6 @@ fr-FR:
               <time class="whitespace-nowrap" :datetime="user.lastActivityAt.toString()">{{
                 user.lastActivityAt.toLocaleString(locale) }}</time>
             </td>
-            <!-- <td>Osu Stable ()</td> -->
-            <!-- <td>localhost</td> -->
             <th>
               <nuxt-link-locale
                 :to="{
@@ -310,6 +298,13 @@ fr-FR:
           </tr>
         </tbody>
       </table>
+      <div
+        class="absolute inset-0 flex transition-opacity opacity-0 pointer-events-none transition-filter blur-sm" :class="{
+          'opacity-100 !blur-none': pending,
+        }"
+      >
+        <div class="m-auto loading loading-lg" />
+      </div>
     </div>
   </div>
 </template>

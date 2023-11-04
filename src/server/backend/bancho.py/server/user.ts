@@ -354,7 +354,7 @@ WHERE s.userid = ${id}
       },
     }
     const ranks = await Promise.all(results.map(async (stat) => {
-      const [ppv2, rankedScore, totalScore] = await Promise.all([
+      const [ppv2, rankedScore, totalScore] = await this.db.$transaction([
         this.db.stat.count({
           where: {
             ...baseQuery,
