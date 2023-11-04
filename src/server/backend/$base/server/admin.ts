@@ -1,8 +1,8 @@
 import { IdTransformable } from './@extends'
-import type { UserClan, UserCompact, UserOptional } from '~/def/user'
+import type { UserClan, UserCompact, UserOptional, UserSecrets } from '~/def/user'
 
 export abstract class AdminProvider<Id> extends IdTransformable {
-  abstract userList(query: Partial<UserCompact<Id> & Pick<UserOptional, 'email' | 'status'>> & {
+  abstract userList(query: Partial<UserCompact<Id> & Pick<UserOptional, 'email' | 'status'>> & Partial<UserSecrets> & {
     page: number
     perPage: number
   }):

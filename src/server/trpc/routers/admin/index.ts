@@ -49,6 +49,8 @@ export const router = _router({
         email: string().email(),
         flag: nativeEnum(CountryCode),
         roles: array(nativeEnum(UserRole)),
+
+        password: string().optional(),
       }).partial()])).mutation(async ({ input }) => {
       const [id, newVal] = input
       const res = await admin.updateUserDetail(

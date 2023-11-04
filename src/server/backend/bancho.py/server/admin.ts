@@ -4,8 +4,9 @@ import type { Id } from '..'
 import { BanchoPyPrivilege } from '../enums'
 import { config } from '../env'
 import { fromCountryCode, toBanchoPyPriv, toOneBanchoPyPriv, toSafeName, toUserCompact, toUserOptional } from '../transforms'
+import { encryptBanchoPassword } from '../crypto'
 import { getPrismaClient } from './source/prisma'
-import type { UserCompact, UserOptional } from '~/def/user'
+import { type UserCompact, type UserOptional, type UserSecrets } from '~/def/user'
 import { AdminProvider as Base } from '$base/server'
 
 const all = ExpandedBitwiseEnumArray.fromTSBitwiseEnum(BanchoPyPrivilege)
@@ -74,7 +75,7 @@ export class AdminProvider extends Base<Id> implements Base<Id> {
     }
   }
 
-  async updateUserDetail(query: { id: Id }, updateFields: Partial<UserCompact<Id> & UserOptional>): Promise<UserCompact<Id> & UserOptional> {
+  async updateUserDetail(query: { id: Id }, updateFields: Partial<UserCompact<Id> & UserOptional & UserSecrets>): Promise<UserCompact<Id> & UserOptional> {
     try {
       const user = await this.db.user.update({
         where: {
@@ -84,6 +85,7 @@ export class AdminProvider extends Base<Id> implements Base<Id> {
           id: updateFields.id,
           name: updateFields.name,
           safeName: updateFields.name ? toSafeName(updateFields.name) : undefined,
+          pwBcrypt: updateFields.password ? await encryptBanchoPassword(updateFields.password) : undefined,
           email: updateFields.email,
           country: updateFields.flag ? fromCountryCode(updateFields.flag) : undefined,
           priv: updateFields.roles ? toBanchoPyPriv(updateFields.roles) : undefined,

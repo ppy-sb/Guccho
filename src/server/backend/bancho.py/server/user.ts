@@ -4,13 +4,12 @@ import { isAbsolute, join, resolve, sep } from 'node:path'
 import { merge } from 'lodash-es'
 import imageType from 'image-type'
 import { glob } from 'glob'
-import bcrypt from 'bcryptjs'
 import { TRPCError } from '@trpc/server'
 import { Prisma, type Stat } from 'prisma-client-bancho-py'
 import type { Id } from '..'
 import { getLiveUserStatus } from '../api-client'
 import { normal } from '../constants'
-import { encryptBanchoPassword } from '../crypto'
+import { compareBanchoPassword, encryptBanchoPassword } from '../crypto'
 import {
   createUserHandleWhereQuery,
   createUserLikeQuery,
@@ -46,8 +45,6 @@ import type { ActiveMode, ActiveRuleset, LeaderboardRankingSystem } from '~/def/
 import { Mode, Rank, Ruleset } from '~/def'
 import { UserProvider as Base } from '$base/server'
 import type { ExtractLocationSettings, ExtractSettingType } from '$base/@define-setting'
-
-const { compare } = bcrypt
 
 type ServerSetting = ExtractSettingType<ExtractLocationSettings<DynamicSettingStore.Server, typeof settings>>
 
@@ -175,7 +172,7 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
           }),
         },
       })
-      const result = await compare(hashedPassword, user.pwBcrypt)
+      const result = await compareBanchoPassword(hashedPassword, user.pwBcrypt)
       if (!result) {
         throw new TRPCError({
           code: 'UNAUTHORIZED',
@@ -522,7 +519,7 @@ WHERE s.userid = ${id}
       },
     })
 
-    if (!compare(oldPasswordMD5, u.pwBcrypt)) {
+    if (!compareBanchoPassword(oldPasswordMD5, u.pwBcrypt)) {
       throw new TRPCError({
         code: 'UNAUTHORIZED',
         message: oldPasswordMismatch,

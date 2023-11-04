@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import md5 from 'md5'
 import { CountryCode } from '~/def/country-code'
 import { roles as options } from '~/common/options'
 
@@ -6,7 +7,9 @@ const app = useNuxtApp()
 const { t } = useI18n()
 const route = useRoute('admin-users-id')
 
-const detail = ref(await app.$client.admin.userManagement.detail.query(route.params.id))
+const f = await app.$client.admin.userManagement.detail.query(route.params.id)
+
+const detail = ref(f as typeof f & { password?: string })
 const error = ref<Error>()
 // eslint-disable-next-line antfu/no-const-enum
 const enum Status {
@@ -26,9 +29,10 @@ async function save() {
   error.value = undefined
   status.value = Status.Pending
   try {
-    const newValue = await app.$client.admin.userManagement.saveDetail.mutate([route.params.id, detail.value])
+    const send = { ...detail.value, password: detail.value.password ? md5(detail.value.password) : undefined }
+    const newValue = await app.$client.admin.userManagement.saveDetail.mutate([route.params.id, send])
     status.value = Status.Succeed
-    detail.value = newValue
+    detail.value = { ...newValue }
   }
   catch (e) {
     status.value = Status.Errored
@@ -45,6 +49,7 @@ en-GB:
   stable-client-id: Stable Client ID
   name: Name
   link-name: Link (Safe name)
+  password: Password
   email: Email
   flag: Flag
   roles: Roles
@@ -54,6 +59,7 @@ zh-CN:
   stable-client-id: Stable Client ID
   name: 名称
   link-name: 引用名称
+  password: 密码
   email: 邮箱
   flag: 国家或地区
   roles: 角色
@@ -63,6 +69,7 @@ fr-FR:
   stable-client-id: Identifiant Stable Client
   name: Nom
   link-name: Lien (Nom sécurisé)
+  password: Mot de passe
   email: Email
   flag: Drapeau
   roles: Rôles
@@ -109,6 +116,14 @@ fr-FR:
         </dt>
         <dd class="flex items-center gap-1 striped-text">
           <input v-model="detail.safeName" type="text" class="w-full input input-sm">
+        </dd>
+      </div>
+      <div class="striped">
+        <dt class="striped-dt">
+          {{ t('password') }}
+        </dt>
+        <dd class="flex items-center gap-1 striped-text">
+          <input v-model="detail.password" type="text" class="w-full input input-sm">
         </dd>
       </div>
 
