@@ -18,9 +18,20 @@ export class LogProvider implements Monitored {
           if (!line.trim()) {
             return undefined
           }
-          const v = JSON.parse(line)
-          v.timestamp = new Date(v.timestamp)
-          return v
+          try {
+            const v = JSON.parse(line)
+            v.timestamp = new Date(v.timestamp)
+            return v
+          }
+          catch (e) {
+            return {
+              level: 'Worst',
+              label: 'Unknown cause, recorded bad log',
+              backend: 'Log',
+              message: line,
+              timestamp: new Date(0),
+            }
+          }
         }).filter(TSFilter)) as Promise<{
           [x: string]: unknown
           level: string
