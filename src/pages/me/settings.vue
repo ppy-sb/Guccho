@@ -168,17 +168,20 @@ function crop({ canvas }: { canvas: HTMLCanvasElement }) {
     croppedAvatar.value = await blob?.arrayBuffer()
   }, 'image/png', 1)
 }
+
+const updatingPassword = ref(false)
 async function updatePassword(closeModal: () => void) {
+  updatingPassword.value = true
   if (!changePasswordForm.newPassword) {
-    return
+    return updatingPassword.value = false
   } // checked by browser
   if (changePasswordForm.newPassword !== changePasswordForm.repeatNewPassword) {
     changePasswordError.value = t('password.new-password-mismatch')
-    return
+    return updatingPassword.value = false
   }
   if (changePasswordForm.oldPassword === changePasswordForm.newPassword) {
     changePasswordError.value = t('password.same-password-as-old')
-    return
+    return updatingPassword.value = false
   }
 
   const md5HashedPassword = {
@@ -197,6 +200,7 @@ async function updatePassword(closeModal: () => void) {
   catch (error: any) {
     changePasswordError.value = error.message
   }
+  updatingPassword.value = false
 }
 
 function resetAvatar() {
@@ -477,7 +481,8 @@ fr-FR:
           </div>
           <div class="flex gap-2 p-4">
             <t-button class="btn-shadow grow" size="sm" variant="accent">
-              <icon name="ic:round-check" class="w-5 h-5" size="100%" /> {{ t('password.ok') }}
+              <span v-if="updatingPassword" class="loading loading-sm" />
+              <icon v-else name="ic:round-check" class="w-5 h-5" size="100%" /> {{ t('password.ok') }}
             </t-button>
             <t-button
               class="btn-shadow grow" size="sm" variant="secondary" type="button" @click="

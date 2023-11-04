@@ -176,7 +176,7 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
       if (!result) {
         throw new TRPCError({
           code: 'UNAUTHORIZED',
-          message: passwordMismatch,
+          message: `old ${passwordMismatch}`,
         })
       }
       return toUserCompact(user, this.config)

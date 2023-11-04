@@ -33,7 +33,7 @@ const { locale } = useI18n()
 <i18n lang="yaml">
 en-GB:
   title: '{title} by {artist}'
-  map: '{version} created by {creator}'
+  map: '{version} made by {creator}'
   play: '{player} played at {time}'
   download-replay: Download replay
 

@@ -55,7 +55,9 @@ onBeforeMount(() => {
 const friendButtonContent = computed(
   () => data.value?.friendCount || t('add-as-friend'),
 )
+const pendingRelation = ref(false)
 async function toggleFriend() {
+  pendingRelation.value = true
   if (!session.loggedIn) {
     return
   }
@@ -70,7 +72,8 @@ async function toggleFriend() {
     await app$.$client.me.addOneRelation.mutate(input)
   }
 
-  refresh()
+  await refresh()
+  pendingRelation.value = false
 }
 </script>
 
@@ -153,7 +156,14 @@ fr-FR:
               'fa-bounce': isFriendButtonHovered,
             }" class="w-4" size="100%"
           />
-          <span>{{ friendButtonContent }}</span>
+          <span
+            v-if="pendingRelation"
+            class="loading-sm"
+            :class="{
+              loading: pendingRelation,
+            }"
+          />
+          <span v-else>{{ friendButtonContent }}</span>
         </t-button>
         <!-- <t-button class="btn-shadow"
           v-if="session.$state.loggedIn"
