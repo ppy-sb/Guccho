@@ -7,7 +7,7 @@ import type { Label } from '~/composables/useLinks'
 definePageMeta({
   alias: ['/s/:id', '/beatmapsets/:id'],
 })
-
+const { t } = useI18n()
 const app = useNuxtApp()
 const route = useRoute('beatmapset-id')
 const config = useAppConfig()
@@ -61,7 +61,7 @@ if (
 
 watch(selectedMapMd5, updateSwitcher)
 
-const { data: leaderboard, refresh } = await useAsyncData(async () => {
+const { data: leaderboard, refresh, pending: pendingLeaderboard } = await useAsyncData(async () => {
   if (!selectedMap.value) {
     return null
   }
@@ -256,6 +256,7 @@ fr-FR:
             <template v-for="m in allowedModes">
               <t-tab v-if="hasRuleset(m, switcher.ruleset)" :key="`sw-${m}`" :value="m">
                 <img
+                  :alt="m"
                   :src="`/icons/mode/${m}.svg`"
                   class="color-theme-light-invert h-mode"
                 >
@@ -265,7 +266,7 @@ fr-FR:
           <t-tabs v-model="switcher.ruleset" variant="" @update:model-value="update">
             <template v-for="r in supportedRulesets">
               <t-tab v-if="hasRuleset(switcher.mode, r)" :key="`sw-${r}`" :value="r">
-                {{ r }}
+                {{ t(localeKey.ruleset(r)) }}
               </t-tab>
             </template>
           </t-tabs>
@@ -429,12 +430,23 @@ fr-FR:
         v-model="switcher.rankingSystem" class="mt-2" :mode="switcher.mode"
         :ruleset="switcher.ruleset" @update:model-value="update"
       />
-      <app-scores-table
-        v-if="leaderboard" :scores="leaderboard" :ranking-system="switcher.rankingSystem"
-        :class="{
-          'clear-rounded-tl': scoreRS?.rankingSystems[0] === switcher.rankingSystem,
-        }"
-      />
+      <div class="overflow-x-auto relative">
+        <app-scores-table
+          v-if="leaderboard" :scores="leaderboard" :ranking-system="switcher.rankingSystem"
+          class="transition-filter transition-opacity opacity-100"
+          :class="{
+            'clear-rounded-tl': scoreRS?.rankingSystems[0] === switcher.rankingSystem,
+            'opacity-30 saturate-50 blur-md': pendingLeaderboard,
+          }"
+        />
+        <div
+          class="absolute inset-0 flex transition-opacity opacity-0 pointer-events-none transition-filter blur-sm" :class="{
+            'opacity-100 !blur-none': pendingLeaderboard,
+          }"
+        >
+          <div class="m-auto loading loading-lg" />
+        </div>
+      </div>
     </div>
   </div>
 </template>

@@ -172,7 +172,7 @@ fr-FR:
             </tr>
           </thead>
           <tbody
-            class="transition-opacity origin-center transition-filter"
+            class="origin-center transition-filter transition-opacity"
             :class="{
               'opacity-30 saturate-50 blur-md': pending,
             }"
