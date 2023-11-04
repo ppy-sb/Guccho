@@ -1,18 +1,8 @@
 <script setup lang="ts">
-// badge-primary
-// badge-secondary
-// badge-info
-// badge-neutral
-// badge-accent
-// badge-ghost
-// badge-success
-// badge-warning
-// badge-error
-// badge-outline
-// badge-lg
-// badge-md
-// badge-sm
-// badge-xs
+// select-lg
+// select-md
+// select-sm
+// select-xs
 import { Float } from '@headlessui-float/vue'
 import {
   Listbox,

@@ -8,7 +8,7 @@ import { hex as colors } from './src/palette'
 module.exports = {
   important: false,
   content: [
-    './src/components/**/*.{vue,js}',
+    './src/components/**/*.{vue,ts,js}',
     './src/layouts/**/*.vue',
     './src/pages/**/*.vue',
     './src/plugins/**/*.{js,ts}',
@@ -22,10 +22,7 @@ module.exports = {
       pattern: /btn.+/,
     },
     {
-      pattern: /hljs+/,
-    },
-    {
-      pattern: /select+/,
+      pattern: /hljs.+/,
     },
   ],
   theme: {
