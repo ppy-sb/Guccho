@@ -1,4 +1,5 @@
 .custom-typography {
+  @apply mx-2 lg:mx-0;
   @apply prose prose-base xl:prose-lg prose-slate dark:prose-invert max-w-none;
 
   @apply prose-pre:bg-gbase-900 prose-pre:text-gbase-50;

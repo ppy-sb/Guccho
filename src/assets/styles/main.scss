@@ -146,7 +146,7 @@ dialog {
 }
 
 .username {
-  @apply text-3xl md:text-4xl lg:text-5xl;
+  @apply text-4xl lg:text-5xl;
 }
 
 .g-link-style {
@@ -154,7 +154,7 @@ dialog {
 }
 
 .g-link {
-  @apply text-lg sm:text-xl md:text-2xl lg:text-3xl;
+  @apply text-xl md:text-2xl lg:text-3xl;
   @apply g-link-style;
 }
 

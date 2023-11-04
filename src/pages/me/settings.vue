@@ -370,7 +370,7 @@ fr-FR:
       ref="changeAvatar" v-slot="{ closeModal }" class="my-auto"
       @ready="/* for compatibility with 'change avatar' in stable client. */ () => showChangeAvatar && changeAvatar?.showModal()"
     >
-      <div class="p-4 rounded-xl flex flex-col gap-2 shadow-xl bg-gbase-50">
+      <div class="flex flex-col gap-2 p-4 shadow-xl rounded-xl bg-gbase-50">
         <div class="flex items-center justify-center w-full">
           <label v-if="!newAvatar" for="dropzone-file" class="dropzone">
             <div class="flex flex-col items-center justify-center px-3 pt-5 pb-6">
@@ -399,7 +399,7 @@ fr-FR:
             </div>
             <input id="dropzone-file" accept="image/*" type="file" class="hidden" @change="selectAvatarFile">
           </label>
-          <output v-else-if="uploadingAvatarStat !== UploadingAvatarStatus.Succeed" class="drop-shadow m-2 w-96">
+          <output v-else-if="uploadingAvatarStat !== UploadingAvatarStatus.Succeed" class="m-2 drop-shadow w-96">
             <Cropper
               ref="cropper" class="cropper" :src="newAvatarURL" :stencil-props="{
                 aspectRatio: 1,
@@ -411,7 +411,7 @@ fr-FR:
               }" @change="crop"
             />
           </output>
-          <img v-else :src="newAvatarURL" class="mask mask-squircle overflow-hidden _avatar w-56 h-56">
+          <img v-else :src="newAvatarURL" class="w-56 h-56 overflow-hidden mask mask-squircle _avatar">
         </div>
         <t-button
           v-if="uploadingAvatarStat !== UploadingAvatarStatus.Succeed && newAvatar" class="btn-shadow grow"
@@ -438,7 +438,7 @@ fr-FR:
     </TResponsiveModal>
 
     <TModal ref="changePassword" v-slot="{ closeModal }" class="my-auto">
-      <div class="card bg-base-100 shadow-lg">
+      <div class="shadow-lg card bg-base-100">
         <form action="#" @submit.prevent="updatePassword(closeModal)">
           <div class="card-body w-96">
             <div class="form-control">
@@ -468,9 +468,9 @@ fr-FR:
                 class="input input-shadow input-sm input-ghost" required
               >
             </div>
-            <span class="text-error px-2">{{ changePasswordError }}</span>
+            <span class="px-2 text-error">{{ changePasswordError }}</span>
           </div>
-          <div class="flex p-4 gap-2">
+          <div class="flex gap-2 p-4">
             <t-button class="btn-shadow grow" size="sm" variant="accent">
               <icon name="ic:round-check" class="w-5 h-5" size="100%" /> {{ t('password.ok') }}
             </t-button>
@@ -489,7 +489,7 @@ fr-FR:
         </form>
       </div>
     </TModal>
-    <div class="flex justify-between p-2 items-end">
+    <div class="flex items-end justify-between p-2">
       <div class="text-3xl font-bold">
         {{ t('preferences') }}
       </div>
@@ -509,7 +509,7 @@ fr-FR:
 
     <div class="flex flex-col flex-wrap justify-between md:flex-row">
       <div class="grow w-full lg:[max-width:50%]">
-        <div class="flex flex-wrap items-end p-3 overflow-hidden gap-4 lg:mr-4">
+        <div class="flex flex-wrap items-end gap-4 p-3 overflow-hidden lg:mr-4">
           <div class="drop-shadow-md">
             <div
               class="relative z-10 mask mask-squircle hoverable w-100 self-center [&>img]:hover:blur-lg [&>img]:hover:opacity-50 no-animation"
@@ -521,7 +521,7 @@ fr-FR:
                 <icon name="ic:round-edit-note" class="w-5 h-5" size="100%" />
                 {{ t('avatar.change') }}
               </button>
-              <img :src="newAvatarURL || `${user.avatarSrc}`" class="pointer-events-none _avatar w-40 h-40">
+              <img :src="newAvatarURL || `${user.avatarSrc}`" class="w-40 h-40 pointer-events-none _avatar">
             </div>
           </div>
           <div>
@@ -690,7 +690,7 @@ fr-FR:
           </label>
           <div class="flex gap-2 pl-3">
             <img :src="getFlagURL(user.flag)" class="w-6" alt="flag">
-            <select v-model="user.flag" class="select select-ghost w-full select-sm">
+            <select v-model="user.flag" class="w-full select select-ghost select-sm">
               <option
                 v-for="countryCode in CountryCode" :key="countryCode"
                 :disabled="countryCode === user.flag || countryCode === CountryCode.Unknown"

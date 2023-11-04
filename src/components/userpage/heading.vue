@@ -109,7 +109,7 @@ fr-FR:
 <template>
   <section
     v-if="page.user"
-    class="flex flex-col items-center w-full gap-5 mx-auto mt-2 md:container custom-container md:flex-row md:items-end"
+    class="flex flex-col items-center w-full gap-5 mx-auto mt-2 md:p-2 md:container custom-container md:flex-row md:items-end"
   >
     <!-- Logo -->
     <div class="relative">
@@ -126,12 +126,12 @@ fr-FR:
       </div>
     </div>
     <!-- info -->
-    <div class="flex flex-col w-full pt-2 md:p-0 bg-gbase-200 dark:bg-gbase-700 md:bg-transparent md:grow">
+    <div class="flex flex-col w-full p-2 lg:p-0 md:p-0 bg-gbase-200 dark:bg-gbase-700 md:bg-transparent md:grow">
       <div
         v-if="session.$state.userId !== page.user.id"
         class="container flex items-center justify-center order-3 gap-3 pb-2 mx-auto lg:justify-between md:order-1 md:justify-end md:pb-0"
       >
-        <p class="flex gap-1">
+        <p class="flex flex-wrap gap-1">
           <span v-if="page.user.roles.includes(UserRole.Verified)" class="flex items-center gap-1">
             <icon name="ic:round-verified" class="w-5 h-5" />
             {{ $t(localeKey.role(UserRole.Verified)) }}
