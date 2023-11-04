@@ -84,7 +84,7 @@ export function toOneBanchoPyPriv(role: UserRole): number {
     // case UserRole.Registered:
     //   return BanchoPyPrivilege.Normal
     case UserRole.Normal:
-      return BanchoPyPrivilege.Verified
+      return BanchoPyPrivilege.Verified | BanchoPyPrivilege.Normal
     case UserRole.Verified:
       return BanchoPyPrivilege.Whitelisted
     case UserRole.Supporter:
