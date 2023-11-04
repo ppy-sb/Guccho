@@ -379,7 +379,7 @@ fr-FR:
       ref="changeAvatar" v-slot="{ closeModal }" class="my-auto"
       @ready="/* for compatibility with 'change avatar' in stable client. */ () => showChangeAvatar && changeAvatar?.showModal()"
     >
-      <div class="flex flex-col gap-2 p-4 shadow-xl rounded-xl bg-gbase-50">
+      <div class="flex flex-col gap-2 p-4 shadow-xl rounded-xl bg-gbase-50 dark:bg-gbase-700">
         <div class="flex items-center justify-center w-full">
           <label v-if="!newAvatar" for="dropzone-file" class="dropzone">
             <div class="flex flex-col items-center justify-center px-3 pt-5 pb-6">
