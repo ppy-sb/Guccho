@@ -19,12 +19,14 @@ import { Mode, Ruleset } from '~/def'
 // const verifiedEmail = new Map<string, Set<string>>()
 export const router = _router({
   settings: pUser.query(async ({ ctx }) => {
-    return await users.getFullWithSettings({
+    const result = await users.getFullWithSettings({
       handle: UserProvider.idToString(ctx.user.id),
       includeHidden: true,
       excludes: { statistics: true, relationships: true, secrets: false },
       scope: Scope.Self,
     })
+
+    return mapId(result, UserProvider.idToString)
   }),
 
   dynamicSettings: _router({
@@ -84,7 +86,7 @@ export const router = _router({
         throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' })
       }
       ctx.user = result
-      return ctx.user
+      return mapId(ctx.user, UserProvider.idToString)
     }),
 
   changeAvatar: pUser
@@ -106,11 +108,13 @@ export const router = _router({
         handle: ctx.user.id.toString(),
       }, input.oldPassword)
 
-      return await users.changePassword(
+      const result = await users.changePassword(
         ok,
         input.oldPassword,
         input.newPassword,
       )
+
+      return mapId(result, UserProvider.idToString)
     }),
 
   relation: pUser

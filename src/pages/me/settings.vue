@@ -137,6 +137,11 @@ async function updateUserSettings() {
   if (result) {
     unchanged.value = { ...unchanged.value, ...result }
     user.value = { ...unchanged.value }
+
+    session.user = {
+      ...session.user,
+      ...result,
+    }
   }
   if (profileResult) {
     profile.value = profileResult.raw
@@ -538,7 +543,7 @@ fr-FR:
           <label class="label" for="session">
             <span class="pl-3 label-text">{{ $t('global.session') }}</span>
           </label>
-          <div id="session">
+          <div id="session" class="relative">
             <div class="overflow-x-auto">
               <table class="table">
                 <thead>
@@ -553,26 +558,26 @@ fr-FR:
                     <th>{{ t('session.actions') }}</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody
+                  class="origin-center transition-filter transition-opacity"
+                  :class="{
+                    'opacity-30 saturate-50 blur-md': pendingSession,
+                  }"
+                >
                   <!-- eslint-disable-next-line vue/no-template-shadow -->
                   <tr v-for="session, id of sessions" :key="id">
-                    <!-- <th>
-                      <label>
-                        <input type="checkbox" class="checkbox">
-                      </label>
-                    </th> -->
                     <td>
                       <div class="flex items-center space-x-3">
                         <div class="avatar">
                           <div class="mask mask-squircle">
                             <icon v-if="session.OS === OS.Unknown" name="carbon:unknown" class="w-9 h-9" />
-                            <icon v-if="session.OS === OS.Windows" name="basil:windows-solid" class="w-9 h-9" />
-                            <icon v-if="session.OS === OS.macOS" name="ic:baseline-apple" class="w-9 h-9" />
-                            <icon v-if="session.OS === OS.iPadOS" name="ic:baseline-apple" class="w-9 h-9" />
-                            <icon v-if="session.OS === OS.iOS" name="wpf:iphone" class="w-9 h-9" />
-                            <icon v-if="session.OS === OS.Android" name="mingcute:android-2-fill" class="w-9 h-9" />
-                            <icon v-if="session.OS === OS.ChromeOS" name="ri:chrome-fill" class="w-9 h-9" />
-                            <icon v-if="session.OS === OS.Linux" name="fluent-mdl2:linux-logo-32" class="w-9 h-9" />
+                            <icon v-else-if="session.OS === OS.Windows" name="basil:windows-solid" class="w-9 h-9" />
+                            <icon v-else-if="session.OS === OS.macOS" name="ic:baseline-apple" class="w-9 h-9" />
+                            <icon v-else-if="session.OS === OS.iPadOS" name="ic:baseline-apple" class="w-9 h-9" />
+                            <icon v-else-if="session.OS === OS.iOS" name="wpf:iphone" class="w-9 h-9" />
+                            <icon v-else-if="session.OS === OS.Android" name="mingcute:android-2-fill" class="w-9 h-9" />
+                            <icon v-else-if="session.OS === OS.ChromeOS" name="ri:chrome-fill" class="w-9 h-9" />
+                            <icon v-else-if="session.OS === OS.Linux" name="fluent-mdl2:linux-logo-32" class="w-9 h-9" />
                           </div>
                         </div>
                         <div>
@@ -593,16 +598,23 @@ fr-FR:
                     </td>
                     <th>
                       <button
-                        class="btn btn-ghost btn-xs" :class="{ loading: pendingSession }"
+                        class="btn btn-ghost btn-xs"
                         :disabled="pendingSession || session.current" @click="kickSession(id)"
                       >
-                        <icon name="majesticons:logout-half-circle-line" class="w-5 h-5 me-1" size="100%" />{{
-                          t('session.kick') }}
+                        {{ t('session.kick') }}
+                        <icon name="majesticons:logout-half-circle-line" class="w-5 h-5 me-1" size="100%" />
                       </button>
                     </th>
                   </tr>
                 </tbody>
               </table>
+              <div
+                class="absolute inset-0 flex transition-opacity opacity-0 pointer-events-none transition-filter blur-sm" :class="{
+                  'opacity-100 !blur-none': pendingSession,
+                }"
+              >
+                <div class="m-auto loading loading-lg" />
+              </div>
             </div>
           </div>
         </div>
