@@ -713,7 +713,7 @@ fr-FR:
                 :disabled="countryCode === user.flag || countryCode === CountryCode.Unknown"
                 :selected="countryCode === user.flag" :value="countryCode"
               >
-                {{ t(localeKey.country(countryCode)) }}
+                {{ $t(localeKey.country(countryCode)) }}
               </option>
             </select>
           </div>

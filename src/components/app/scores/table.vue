@@ -84,9 +84,6 @@ fr-FR:
                 <nuxt-link-locale class="font-bold whitespace-nowrap" :class="useUserRoleColor(item.user)" :to="{ name: 'user-handle', params: { handle: `@${item.user.safeName}` } }">
                   {{ item.user.name }}
                 </nuxt-link-locale>
-                <!-- <div class="text-sm opacity-50 whitespace-nowrap">
-                    {{ t(localeKey.country(item.user.flag || CountryCode.Unknown)) }}
-                  </div> -->
               </div>
             </div>
           </th>

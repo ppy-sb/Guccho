@@ -144,7 +144,7 @@ fr-FR:
           <img :src="getFlagURL(detail.flag)" class="w-6">
           <select v-model="detail.flag" class="w-full select select-sm">
             <option v-for="countryCode in CountryCode" :key="countryCode" :disabled="countryCode === detail.flag" :selected="countryCode === detail.flag" :value="countryCode">
-              {{ t(localeKey.country(countryCode)) }}
+              {{ $t(localeKey.country(countryCode)) }}
             </option>
           </select>
         </dd>
@@ -155,7 +155,7 @@ fr-FR:
           {{ t('roles') }}
         </dt>
         <dd class="flex items-center gap-1 striped-text">
-          <t-multi-select v-model="detail.roles" class="w-full" size="sm" :options="options(t)" />
+          <t-multi-select v-model="detail.roles" class="w-full" size="sm" :options="options($t)" />
         </dd>
       </div>
     </dl>
