@@ -87,6 +87,7 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
   static stringToId = stringToId
   static idToString = idToString
   db = getPrismaClient()
+  usernamePattern = /^[\w \[\]-]{2,15}$/
 
   relationships: UserRelationProvider
 
@@ -536,16 +537,24 @@ LIMIT ?, ?
       }
     },
   ) {
+    input.name && this.assertUsernameAllowed(input.name)
+
     const result = await this.db.user.update({
       where: {
         id: user.id,
       },
       data: {
         email: input.email,
+
         name: input.name,
+
         safeName: input.name && toSafeName(input.name),
+
         country: input.flag && fromCountryCode(input.flag),
-        preferredMode: input.preferredMode ? toBanchoPyMode(input.preferredMode.mode, input.preferredMode.ruleset) : undefined,
+
+        preferredMode: input.preferredMode
+          ? toBanchoPyMode(input.preferredMode.mode, input.preferredMode.ruleset)
+          : undefined,
       },
     })
     return toUserCompact(result, this.config)
@@ -686,6 +695,7 @@ LIMIT ?, ?
 
   async register(opt: { name: string; email: string; passwordMd5: string }) {
     const { name, email, passwordMd5 } = opt
+    this.assertUsernameAllowed(name)
 
     const user = await this.db.$transaction(async (tx) => {
       const user = await tx.user.create({
@@ -803,6 +813,13 @@ LIMIT ?, ?
     return {
       apiKey: result.apiKey || undefined,
     } satisfies ServerSetting
+  }
+
+  assertUsernameAllowed(input: string) {
+    const result = input.match(this.usernamePattern)
+    if (!result) {
+      throw new Error('Invalid username, please try something different.')
+    }
   }
 }
 

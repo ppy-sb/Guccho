@@ -15,6 +15,7 @@ const logger = Logger.child({ label: 'user' })
 
 export class UserProvider extends BanchoPyUser implements Base<Id> {
   sbDb = getPrismaClient()
+  usernamePattern = /^.{2,15}[^\.]$/
 
   async changeSettings(
     user: { id: Id },

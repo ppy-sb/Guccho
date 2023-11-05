@@ -24,6 +24,7 @@ const loginButton = shallowRef(t('have-account'))
 
 const reg = shallowReactive({ ...shape })
 const error = shallowReactive({ ...shape })
+const unknownError = ref<Error>()
 const fetching = shallowRef(false)
 
 function unique(key: keyof Shape) {
@@ -80,17 +81,26 @@ async function userRegisterAction() {
   })
     .catch((ex: E) => {
       const e = ex.data?.zodError?.fieldErrors
-      for (const f in e) {
-        switch (f) {
-          case 'email': {
-            error.email = e[f]?.join(', ') || ''
-            break
-          }
-          case 'passwordMd5': {
-            error.password = e[f]?.join(', ') || ''
-            break
+      if (e) {
+        for (const f in e) {
+          switch (f) {
+            case 'name': {
+              error.name = e[f]?.join(', ') || ''
+              break
+            }
+            case 'email': {
+              error.email = e[f]?.join(', ') || ''
+              break
+            }
+            case 'passwordMd5': {
+              error.password = e[f]?.join(', ') || ''
+              break
+            }
           }
         }
+      }
+      else {
+        unknownError.value = ex
       }
     })
   fetching.value = false
@@ -158,9 +168,9 @@ fr-FR:
         autocomplete="off"
         @submit.prevent="userRegisterAction"
       >
-        <!-- <div class="text-error text-sm pl-4">
-          {{ serverError }}
-        </div> -->
+        <div v-if="unknownError" class="text-error ">
+          {{ unknownError.message }}
+        </div>
         <div class="space-y-2">
           <div>
             <label for="name" class="sr-only">{{ t('name') }}</label>
