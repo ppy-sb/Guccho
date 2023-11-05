@@ -82,8 +82,9 @@ const changePasswordForm = shallowReactive<{
 })
 const changePasswordError = shallowRef('')
 
-// compatible with stable client: change avatar
-const showChangeAvatar = route.hash === '#avatar'
+onMounted(() => {
+  route.hash === '#avatar' && changeAvatar.value?.showModal()
+})
 
 async function saveAvatar() {
   if (!croppedAvatar.value) {
@@ -377,7 +378,6 @@ fr-FR:
   <section v-if="user" class="container mx-auto custom-container">
     <TResponsiveModal
       ref="changeAvatar" v-slot="{ closeModal }" class="my-auto"
-      @ready="/* for compatibility with 'change avatar' in stable client. */ () => showChangeAvatar && changeAvatar?.showModal()"
     >
       <div class="flex flex-col gap-2 p-4 shadow-xl rounded-xl bg-gbase-50 dark:bg-gbase-700">
         <div class="flex items-center justify-center w-full">
