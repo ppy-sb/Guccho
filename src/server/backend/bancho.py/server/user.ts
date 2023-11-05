@@ -22,6 +22,7 @@ import { Logger } from '../log'
 import {
   BPyMode,
   createRulesetData,
+  fromBanchoPyMode,
   fromCountryCode,
   fromRankingStatus,
   idToString,
@@ -418,6 +419,10 @@ WHERE s.userid = ${id}
     })
 
     const returnValue = toFullUser(user, this.config) as NonNullable<Awaited<ReturnType<Base<Id>['getFull']>>>
+    const [mode, ruleset] = fromBanchoPyMode(user.preferredMode)
+    returnValue.preferredMode = {
+      mode, ruleset,
+    }
     const parallels: PromiseLike<any>[] = []
 
     returnValue.status = UserStatus.Offline

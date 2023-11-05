@@ -49,6 +49,7 @@ export default defineStore('userpage', () => {
       ], refresh)
     }
     catch (e) {
+      console.error(e)
       error.value = {
         message: (e as RouterError).message,
       }
@@ -67,6 +68,7 @@ export default defineStore('userpage', () => {
       error.value = null
     }
     catch (e) {
+      console.error(e)
       error.value = {
         message: (e as RouterError).message,
       }
