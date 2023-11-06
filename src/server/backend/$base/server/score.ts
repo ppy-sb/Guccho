@@ -1,4 +1,3 @@
-import type { H3Event } from 'h3'
 import { Mixin } from 'ts-mixer'
 import { IdTransformable, ScoreIdTransformable } from './@extends'
 import type { ActiveMode, ActiveRuleset, PPRankingSystem } from '~/def/common'
@@ -44,6 +43,4 @@ export abstract class ScoreProvider<TScoreId, TId> extends Mixin(IdTransformable
       user: UserCompact<TId>
     })[]
   >
-
-  abstract downloadReplay(id: bigint, ev: H3Event): Promise<void>
 }

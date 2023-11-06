@@ -1,13 +1,14 @@
 export {
-  ArticleProvider,
   AdminProvider,
-  RankProvider,
-  UserRelationProvider,
-  ScoreProvider,
+  ArticleProvider,
+  FileProvider,
+  LogProvider,
   MapProvider,
   MonitorProvider,
+  RankProvider,
+  ScoreProvider,
   SessionProvider,
-  LogProvider,
+  UserRelationProvider,
 } from '~/server/backend/bancho.py/server'
 
 export { UserProvider } from './user'

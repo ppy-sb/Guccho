@@ -1,5 +1,3 @@
-import { request } from 'node:http'
-import type { H3Event } from 'h3'
 import type { User } from 'prisma-client-bancho-py'
 import type { Id } from '..'
 import { normal } from '../constants'
@@ -119,41 +117,5 @@ export class ScoreProvider implements Base<bigint, Id> {
       },
     })
     return scores.map(this.#transformScore).filter(TSFilter)
-  }
-
-  // async replay(id: bigint): Promise<ReadableStream<Uint8Array>> {
-  //   this.config.api?.v1 ?? raise(Error, 'need bancho.py api to work.')
-
-  //   const url = new URL(`${this.config.api?.v1}/get_replay`)
-  //   url.searchParams.set('id', id.toString())
-
-  //   const req = await fetch(url)
-
-  //   return (req.ok && req.body) || raise(Error, 'no replay')
-  // }
-
-  async downloadReplay(id: bigint, ev: H3Event): Promise<void> {
-    this.config.api?.v1 ?? raise(Error, 'need bancho.py api to work.')
-
-    const url = new URL(`${this.config.api?.v1}/get_replay`)
-    url.searchParams.set('id', id.toString())
-
-    return new Promise((resolve, reject) => {
-      const req = request(url, (im) => {
-        im.on('error', reject)
-        if ((im.statusCode || 0) >= 400) {
-          reject(new Error('Returned bad code'))
-        }
-        else {
-          ev.node.res.writeHead(im.statusCode as number, im.statusMessage, im.rawHeaders)
-          im.pipe(ev.node.res)
-          im.on('end', resolve)
-        }
-      })
-
-      req.on('error', reject)
-
-      req.end() // Send the request
-    })
   }
 }

@@ -1,5 +1,6 @@
 export { AdminProvider } from './admin'
 export { ArticleProvider } from './article'
+export { FileProvider } from './file'
 export { MapProvider } from './map'
 export { MonitorProvider } from './monitor'
 export { RankProvider } from './rank'

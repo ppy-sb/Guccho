@@ -1,4 +1,4 @@
-import { ScoreProvider, scores } from '~/server/singleton/service'
+import { ScoreProvider, files } from '~/server/singleton/service'
 import { haveSession } from '~/server/middleware/0.session'
 
 export default defineEventHandler(async (event) => {
@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
   try {
     let scoreId = event.context.params?.id
     scoreId = scoreId ?? raise(Error, 'required id')
-    await scores.downloadReplay(ScoreProvider.stringToScoreId(scoreId), event)
+    await files.replay(ScoreProvider.stringToScoreId(scoreId), event)
   }
   catch (e) {
     // await sendRedirect(event, '/404')
