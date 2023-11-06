@@ -1,7 +1,6 @@
 import { object, string } from 'zod'
 import { router as _router, publicProcedure as p } from '../trpc'
-import { maps } from '~/server/singleton/service'
-import { MapProvider } from '$active/server'
+import { MapProvider, maps } from '~/server/singleton/service'
 
 export const router = _router({
   beatmapset: p

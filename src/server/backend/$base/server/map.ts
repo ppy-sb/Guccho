@@ -1,4 +1,4 @@
-import type { IdTransformable } from './@extends'
+import { IdTransformable } from './@extends'
 import type { Tag } from '~/def/search'
 import type {
   BeatmapCompact, BeatmapSource, BeatmapWithMeta, Beatmapset, RankingStatus,
@@ -9,13 +9,13 @@ export namespace MapProvider {
     id: Id
   }
 }
-export interface MapProvider<Id> extends IdTransformable {
-  getBeatmapset(query: MapProvider.IdQuery<Id>): PromiseLike<
+export abstract class MapProvider<Id> extends IdTransformable {
+  abstract getBeatmapset(query: MapProvider.IdQuery<Id>): PromiseLike<
     Beatmapset<BeatmapSource, Id, unknown> & {
       beatmaps: BeatmapCompact<Id, unknown>[]
     }
   >
-  getBeatmap(
+  abstract getBeatmap(
     query: string
   ): PromiseLike<BeatmapWithMeta<
     BeatmapSource,
@@ -23,15 +23,14 @@ export interface MapProvider<Id> extends IdTransformable {
     Id,
     unknown
   >>
-  searchBeatmap(opt: { keyword: string; limit: number; filters?: Tag[] }): PromiseLike<
+  abstract searchBeatmap(opt: { keyword: string; limit: number; filters?: Tag[] }): PromiseLike<
     (BeatmapCompact<Id, unknown> & {
       beatmapset: Beatmapset<BeatmapSource, Id, unknown>
     })[]
   >
-  searchBeatmapset(opt: {
+  abstract searchBeatmapset(opt: {
     keyword: string
     limit: number
     filters?: Tag[]
   }): PromiseLike<Beatmapset<BeatmapSource, Id, unknown>[]>
-
 }

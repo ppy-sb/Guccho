@@ -13,10 +13,9 @@ import {
   zodRuleset,
 } from '../shapes'
 import { router as _router, publicProcedure as p } from '../trpc'
-import { sessions, userRelations, users } from '~/server/singleton/service'
+import { MapProvider, UserProvider, sessions, userRelations, users } from '~/server/singleton/service'
 import { Scope, UserRole } from '~/def/user'
 import { RankingStatus } from '~/def/beatmap'
-import { MapProvider, UserProvider } from '$active/server'
 
 export const router = _router({
   exists: p

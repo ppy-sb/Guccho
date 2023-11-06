@@ -21,3 +21,16 @@ export const maps = new MapProvider()
 export const ranks = new RankProvider()
 export const scores = new ScoreProvider()
 export const serviceStatuses = new MonitorProvider()
+
+export {
+  AdminProvider,
+  ArticleProvider,
+  LogProvider,
+  MapProvider,
+  MonitorProvider,
+  RankProvider,
+  ScoreProvider,
+  SessionProvider,
+  UserProvider,
+  UserRelationProvider,
+} from '$active/server'

@@ -1,6 +1,6 @@
 import { sessionProcedure } from './session'
 import type { UserCompact } from '~/def/user'
-import { UserProvider } from '$active/server'
+import { UserProvider } from '~/server/singleton/service'
 
 const userProvider = new UserProvider()
 export const optionalUserProcedure = sessionProcedure.use(async ({ ctx, next }) => {

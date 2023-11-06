@@ -1,11 +1,10 @@
 import { array, nativeEnum, number, object, string, tuple } from 'zod'
 import { zodHandle } from '../../shapes'
 import { router as log } from './log'
-import { UserProvider } from '$active/server'
+import { UserProvider, admin } from '~/server/singleton/service'
 import { adminProcedure as pAdmin } from '~/server/trpc/middleware/admin'
 import { router as _router } from '~/server/trpc/trpc'
 import { UserRole } from '~/def/user'
-import { admin } from '~/server/singleton/service'
 import { CountryCode } from '~/def/country-code'
 
 export const router = _router({

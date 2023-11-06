@@ -1,4 +1,10 @@
-import type { ActiveMode, ActiveRuleset, AvailableRuleset, LeaderboardRankingSystem, RankingSystem } from '~/def/common'
+import type {
+  ActiveMode,
+  ActiveRuleset,
+  AvailableRuleset,
+  LeaderboardRankingSystem,
+  RankingSystem,
+} from '~/def/common'
 import type { Feature } from '~/def/features'
 import type {
   HasLeaderboardRankingSystem,

@@ -1,7 +1,6 @@
 import { object, string } from 'zod'
 import { router as _router, publicProcedure as p } from '../trpc'
-import { ScoreProvider } from '$active/server'
-import { scores } from '~/server/singleton/service'
+import { ScoreProvider, scores } from '~/server/singleton/service'
 
 export const router = _router({
   id: p

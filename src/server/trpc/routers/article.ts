@@ -3,8 +3,7 @@ import { router as _router } from '../trpc'
 import { adminProcedure } from '../middleware/admin'
 import { optionalUserProcedure } from '../middleware/optional-user'
 import { userProcedure } from '../middleware/user'
-import { articles } from '~/server/singleton/service'
-import { ArticleProvider } from '$active/server'
+import { ArticleProvider, articles } from '~/server/singleton/service'
 
 export const router = _router({
   get: userProcedure.input(string().trim()).query(({ input, ctx }) => articles.get({ slug: input, user: ctx.user })),

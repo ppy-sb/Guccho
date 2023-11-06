@@ -5,8 +5,7 @@ import {
   youNeedToLogin,
 } from '../messages'
 import { sessionProcedure } from './session'
-import { users } from '~/server/singleton/service'
-import { UserProvider } from '$active/server'
+import { UserProvider, users } from '~/server/singleton/service'
 
 export const userProcedure = sessionProcedure.use(async ({ ctx, next }) => {
   const session = await ctx.session.getBinding()

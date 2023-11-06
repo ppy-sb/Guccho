@@ -1,8 +1,7 @@
 import { array, number, object, string } from 'zod'
 import { router as _router, publicProcedure as p } from '../trpc'
 import { zodSearchBeatmap } from '../shapes'
-import { maps, users } from '~/server/singleton/service'
-import { MapProvider, UserProvider } from '$active/server'
+import { MapProvider, UserProvider, maps, users } from '~/server/singleton/service'
 
 export const router = _router({
   searchUser: p

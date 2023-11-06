@@ -1,4 +1,4 @@
-import type { IdTransformable } from './@extends'
+import { IdTransformable } from './@extends'
 import type {
   ActiveMode,
   ActiveRuleset,
@@ -28,27 +28,27 @@ export namespace RankProvider {
   }
 }
 
-export interface RankProvider<Id> extends IdTransformable {
-  leaderboard(
+export abstract class RankProvider<Id> extends IdTransformable {
+  abstract leaderboard(
     query: RankProvider.BaseQuery & RankProvider.Pagination & {
       rankingSystem: LeaderboardRankingSystem
     }
   ): PromiseLike<ComponentLeaderboard<Id>[]>
 
-  countLeaderboard(
+  abstract countLeaderboard(
     query: RankProvider.BaseQuery & {
       rankingSystem: LeaderboardRankingSystem
     }
   ): PromiseLike<number>
 
-  beatmap(
+  abstract beatmap(
     query: RankProvider.BaseQueryOptionalMode & RankProvider.Pagination & {
       rankingSystem: RankingSystem
       md5: string
     }
   ): PromiseLike<BeatmapLeaderboard<Id>[]>
 
-  countBeatmap(
+  abstract countBeatmap(
     query: RankProvider.BaseQueryOptionalMode & {
       rankingSystem: RankingSystem
       md5: string

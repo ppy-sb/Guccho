@@ -1,6 +1,5 @@
-import { ScoreProvider } from '$active/server'
+import { ScoreProvider, scores } from '~/server/singleton/service'
 import { haveSession } from '~/server/middleware/0.session'
-import { scores } from '~/server/singleton/service'
 
 export default defineEventHandler(async (event) => {
   haveSession(event) || throwError(createError({

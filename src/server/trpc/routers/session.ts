@@ -8,10 +8,9 @@ import {
 import { sessionProcedure as pSession } from '../middleware/session'
 import { zodHandle } from '../shapes'
 import { router as _router, publicProcedure } from '../trpc'
-import { sessions, users } from '~/server/singleton/service'
+import { UserProvider, sessions, users } from '~/server/singleton/service'
 import { Constant } from '~/server/common/constants'
 import { Logger } from '$base/logger'
-import { UserProvider } from '$active/server'
 
 const logger = Logger.child({ label: 'session', backend: 'transport', transport: 'trpc' })
 
