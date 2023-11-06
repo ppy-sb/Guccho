@@ -11,6 +11,7 @@ on:
       - develop
       - rc
       - stable
+  workflow_dispatch:
 
 jobs:
   ci:
@@ -23,7 +24,11 @@ jobs:
 
     steps:
       - name: Checkout 🛎
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 7
 
       - name: Setup node env 🏗
         uses: actions/setup-node@v3
@@ -31,22 +36,19 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
           check-latest: true
-          cache: yarn
+          cache: pnpm
 
       - name: preparing .env ⏚
-        run: cp .env.example .env
+        run: cp .env.example .env && cp env.example.ts env.ts
 
       - name: install dependencies 🎁
-        run: yarn --frozen-lockfile
-
-      - name: build gen
-        run: yarn build:gen
+        run: pnpm install
 
       - name: type check ⚙️
-        run: yarn nuxi typecheck
+        run: pnpm run typecheck
 
       - name: Run linter 👀
-        run: yarn lint
+        run: pnpm run lint
 
       - name: Test build 👀
-        run: yarn build
+        run: pnpm run build
