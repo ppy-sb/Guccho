@@ -16,8 +16,8 @@ Guccho is a client interface to interact with osu private servers with compatibi
   - edit env.ts follow the comment
   - optionally create .env from .env.example
 
-- Run `yarn`
-- Run `yarn build:hljs`
+- Run `pnpm install`
+- Run `pnpm run build:hljs`
 
 ## tooling
 
@@ -26,7 +26,7 @@ Guccho is a client interface to interact with osu private servers with compatibi
 ## upgrade
 
 ```sh
-yarn && yarn build:all
+pnpm install && pnpm run build
 ```
 
 ## backends
@@ -35,14 +35,14 @@ yarn && yarn build:all
 
 - ### ppy.sb
 
-  Run `yarn build:schemas`
+  Run `pnpm run build:schemas`
 
 ## Development Server
 
 Start the development server on <http://localhost:3000>
 
 ```bash
-yarn dev
+pnpm run dev
 ```
 
 ## Production
@@ -50,22 +50,19 @@ yarn dev
 Build the application for production:
 
 ```bash
-# yarn
-yarn build
+pnpm run build
 ```
 
 Locally preview production build:
 
 ```bash
-# yarn
-yarn preview:dev # or yarn preview:prod
+pnpm run preview:dev # or preview:prod
 ```
 
 Start Production server
 
 ```bash
-# yarn
-yarn start:prod
+pnpm run start:prod
 ```
 
 Checkout the [deployment documentation](https://v3.nuxtjs.org/guide/deploy/presets) for more information.
