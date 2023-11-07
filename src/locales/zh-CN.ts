@@ -5,6 +5,7 @@ import { Rank } from '~/def'
 import { Scope, UserRole } from '~/def/user'
 
 export default {
+// intentionally omit 'server' to fallback to enGB
   mode: enGB.mode,
   ruleset: enGB.ruleset,
   rank: {
@@ -25,7 +26,6 @@ export default {
     'articles': '文章',
   },
   global: {
-    'server-title': 'Guccho',
     'logout': '登出',
     'login': '登录',
     'register': '注册',
@@ -323,4 +323,4 @@ export default {
     [CountryCode.Zambia]: '赞比亚',
     [CountryCode.Zimbabwe]: '津巴布韦',
   },
-} satisfies GlobalI18n as GlobalI18n
+} satisfies Omit<GlobalI18n, 'server'>

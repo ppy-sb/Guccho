@@ -18,7 +18,6 @@ const shape: Shape = {
   password: '',
 }
 
-const config = useAppConfig()
 const app = useNuxtApp()
 const { t } = useI18n()
 const loginButton = shallowRef(t('have-account'))
@@ -59,7 +58,7 @@ const validate: {
 }
 
 useHead({
-  titleTemplate: `${app.$i18n.t('global.register')} - ${config.title}`,
+  title: () => `${app.$i18n.t('global.register')} - ${app.$i18n.t('server.name')}`,
 })
 definePageMeta({
   layout: 'hero',

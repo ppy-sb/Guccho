@@ -9,7 +9,6 @@ if (session.loggedIn) {
 }
 
 const route = useRoute()
-const config = useAppConfig()
 const app = useNuxtApp()
 const { t } = useI18n()
 
@@ -18,8 +17,7 @@ definePageMeta({
 })
 
 useHead({
-  titleTemplate: `%s - ${config.title}`,
-  title: () => app.$i18n.t('global.login'),
+  title: () => `${app.$i18n.t('global.login')} - ${app.$i18n.t('server.name')}`,
 })
 
 const error = shallowRef('')

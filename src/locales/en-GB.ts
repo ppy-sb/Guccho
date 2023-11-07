@@ -4,6 +4,7 @@ import { Scope, UserRole } from '~/def/user'
 import { Mode, Rank, Ruleset } from '~/def'
 
 export default {
+  // intentionally omit 'server' to fallback to enGB
   mode: {
     [Mode.Osu]: 'Osu',
     [Mode.Taiko]: 'Taiko',
@@ -33,7 +34,6 @@ export default {
     'articles': 'Articles',
   },
   global: {
-    'server-title': 'Guccho',
     'logout': 'Sign out',
     'login': 'Sign in',
     'register': 'Sign up',
@@ -331,4 +331,4 @@ export default {
     [CountryCode.Zambia]: 'Zambia',
     [CountryCode.Zimbabwe]: 'Zimbabwe',
   },
-} satisfies GlobalI18n as GlobalI18n
+} satisfies Omit<GlobalI18n, 'server'>

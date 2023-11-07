@@ -11,7 +11,6 @@ interface AppConfigItemBase {
 const config: {
   baseUrl: string
   version: `${number}.${number}.${number}`
-  title: string
 
   leaderboardRankingSystem: Record<
     LeaderboardRankingSystem,
@@ -24,7 +23,6 @@ const config: {
 } = {
   baseUrl: 'dev.ppy.sb',
   version: PackageJSON.version as `${number}.${number}.${number}`,
-  title: 'Guccho',
   leaderboardRankingSystem: {
     [Rank.PPv2]: {
       userpage: {

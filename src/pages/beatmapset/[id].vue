@@ -9,7 +9,6 @@ definePageMeta({
 })
 const app = useNuxtApp()
 const route = useRoute('beatmapset-id')
-const config = useAppConfig()
 const { supportedModes, supportedRulesets, hasRankingSystem, hasRuleset } = useAdapterConfig()
 const [switcher, setSwitcher] = useSwitcher()
 const lazyBgCover = shallowRef('')
@@ -80,8 +79,7 @@ const description = computed(() => selectedMap.value?.version)
 const url = useRequestURL()
 
 useHead({
-  titleTemplate: `%s - ${config.title}`,
-  title,
+  title: () => `${title.value} - ${app.$i18n.t('server.name')}`,
 })
 
 useSeoMeta({

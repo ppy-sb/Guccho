@@ -64,8 +64,7 @@ const {
 })
 
 useHead({
-  titleTemplate: `%s - Leaderboard - ${config.title}`,
-  title: computed(() => ` ${selected.value.mode} | ${selected.value.ruleset} | ${selected.value.rankingSystem}`),
+  title: () => ` ${selected.value.mode} | ${selected.value.ruleset} | ${selected.value.rankingSystem} - Leaderboard - ${app.$i18n.t('server.name')}`,
 })
 
 function boundaryPage() {

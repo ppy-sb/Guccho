@@ -24,11 +24,11 @@ const {
   data: haveUserAsTheirFriend,
   refresh: refreshHaveUserAsTheirFriend,
 } = await app$.$client.me.notMutual.useQuery()
-const config = useAppConfig()
+
 const { t } = useI18n()
 
 useHead({
-  titleTemplate: `Friends - ${config.title}`,
+  title: () => `Friends & Blocks - ${app$.$i18n.t('server.name')}`,
 })
 if (!relations.value) {
   throw new Error(t('user-not-found'))

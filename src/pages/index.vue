@@ -5,23 +5,23 @@ definePageMeta({
   layout: 'hero',
 })
 const session = useSession()
-const config = useAppConfig()
+
 const url = useRequestURL()
 const { t } = useI18n()
 useSeoMeta({
   description: t('landing.content'),
-  ogTitle: config.title,
+  ogTitle: () => t('server.name'),
   ogDescription: t('landing.content'),
   ogImage: '/mascot/riru.png',
   ogUrl: url.href,
-  twitterTitle: config.title,
+  twitterTitle: () => t('server.name'),
   twitterDescription: t('landing.content'),
   twitterImage: '/mascot/riru.png',
   twitterCard: 'summary',
 })
 
 useHead({
-  titleTemplate: `${config.title}`,
+  title: () => t('server.name'),
   htmlAttrs: {
     lang: 'en',
   },
@@ -51,10 +51,10 @@ fr-FR:
     <div class="content p-8">
       <div class="mb-6">
         <h1 class="mb-2 text-4xl font-bold text-center">
-          {{ config.title }}
+          {{ t('server.name') }}
         </h1>
         <h2 class="font-semibold px-2 sm:px-0 h-sub text-md sm:text-left whitespace-pre-line">
-          {{ $t('landing.content', { title: config.title }) }}
+          {{ $t('landing.content', { title: t('server.name') }) }}
         </h2>
       </div>
       <div class="grid grid-cols-2 gap-2 justify-center">

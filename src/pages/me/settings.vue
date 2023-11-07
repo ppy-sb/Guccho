@@ -18,7 +18,6 @@ const enum UploadingAvatarStatus {
 }
 
 const app$ = useNuxtApp()
-const config = useAppConfig()
 const route = useRoute()
 const { t, locale } = useI18n()
 const session = useSession()
@@ -30,7 +29,7 @@ definePageMeta({
 })
 
 useHead({
-  titleTemplate: `${t('titles.settings')} - ${config.title}`,
+  title: () => `${t('titles.settings')} - ${app$.$i18n.t('server.name')}`,
 })
 
 const { data: user, refresh: refreshSettings } = await useAsyncData(() => app$.$client.me.settings.query())

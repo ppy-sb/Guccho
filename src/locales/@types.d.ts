@@ -15,7 +15,6 @@ type Titles =
 | 'articles'
 
 type KGlobal =
-| 'server-title'
 | 'logout'
 | 'login'
 | 'register'
@@ -33,6 +32,9 @@ type KGlobal =
 | 'session'
 
 export interface GlobalI18n extends Record<string, LocaleMessageValue<VueMessageType>> {
+  server: {
+    name: string
+  }
   mode: Record<ActiveMode, string>
   ruleset: Record<ActiveRuleset, string>
   rank: Record<Rank, string>
