@@ -7,8 +7,7 @@ if (!id) {
 }
 
 const app$ = useNuxtApp()
-const content = await app$.$client.article.getRendered.query(id)
-
+const content = await app$.$client.article.getStaticOrDynamic.query(id)
 const { t } = useI18n()
 </script>
 
@@ -47,5 +46,3 @@ fr-FR:
   }
 }
 </style>
-
-<style src="@/components/content/styles/typography.scss" lang="scss"></style>

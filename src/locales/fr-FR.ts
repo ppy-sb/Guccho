@@ -25,6 +25,7 @@ export default {
     'articles': 'Articles',
   },
   global: {
+    'server-title': 'Guccho',
     'logout': 'Déconnexion',
     'login': 'Connexion',
     'register': 'Inscription',

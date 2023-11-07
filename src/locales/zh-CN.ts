@@ -25,6 +25,7 @@ export default {
     'articles': '文章',
   },
   global: {
+    'server-title': 'Guccho',
     'logout': '登出',
     'login': '登录',
     'register': '注册',

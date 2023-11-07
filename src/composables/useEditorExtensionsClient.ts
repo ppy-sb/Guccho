@@ -4,8 +4,8 @@ import useEditorExtensionsBase from './useEditorExtensionsBase'
 import { lowlight } from './useLazyLoadLowlight'
 import _Variable from '~/components/content/editor/extensions/variable.client'
 
-export default <TEdit extends boolean>(config?: { indent?: string; edit?: TEdit }) => {
-  const Variable = _Variable()
+export default <TEdit extends boolean>(config: { indent?: string; edit?: TEdit; i18n: { t: (str: string) => string } }) => {
+  const Variable = _Variable(config)
   return [
     StarterKit.configure({
       codeBlock: false,

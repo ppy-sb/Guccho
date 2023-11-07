@@ -7,8 +7,10 @@ type JSONCallback = (content: JSONContent) => void
 export default (
   reactiveConfig: {
     indent: string
+    i18n: { t: (key: string) => string }
   } = {
     indent: '  ',
+    i18n: useI18n(),
   },
 ) => {
   const extensions = useEditorExtensions(reactiveConfig)

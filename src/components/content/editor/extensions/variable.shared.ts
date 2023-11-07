@@ -5,8 +5,8 @@ import useEditorVariables from '~/composables/useEditorVariables'
 export const starInputRegex = /(?:^|\s)((?:{{ ?)((?:[^}}]+))(?: ?}}))$/
 export const starPasteRegex = /(?:^|\s)((?:{{ ?)((?:[^}}]+))(?: ?}}))/g
 
-export default function () {
-  const { variables } = useEditorVariables()
+export default function (i: { i18n: { t: (str: string) => string } }) {
+  const { variables } = useEditorVariables(i)
 
   function handleRule(this: {
     name: string

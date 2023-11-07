@@ -33,6 +33,7 @@ export default {
     'articles': 'Articles',
   },
   global: {
+    'server-title': 'Guccho',
     'logout': 'Sign out',
     'login': 'Sign in',
     'register': 'Sign up',

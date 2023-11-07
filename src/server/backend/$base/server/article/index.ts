@@ -163,7 +163,7 @@ export abstract class ArticleProvider {
   }
 
   static async render(doc: ArticleProvider.JSONContent) {
-    const renderExtensions = useEditorExtensions()
+    const renderExtensions = useEditorExtensions({ i18n: { t: i => i } })
     return generateHTML(doc, renderExtensions)
   }
 

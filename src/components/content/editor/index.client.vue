@@ -20,6 +20,7 @@ const emit = defineEmits(['update:modelValue'])
 
 const editorConf = shallowReactive({
   indent: props.indent,
+  i18n: useI18n(),
 })
 const context = useEditor(editorConf)
 const { editor, subscribe, extensions } = context
@@ -58,7 +59,5 @@ defineExpose({
     <EditorContent class="editor__content custom-typography" :editor="editor" />
   </div>
 </template>
-
-<style src="@/components/content/styles/typography.scss" lang="scss"></style>
 
 <style src="@/components/content/styles/editor.scss" lang="scss"></style>

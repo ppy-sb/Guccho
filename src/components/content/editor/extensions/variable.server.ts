@@ -1,8 +1,8 @@
 import { Node, mergeAttributes } from '@tiptap/core'
 import ctx from './variable.shared'
 
-export default function () {
-  const { variables } = ctx()
+export default function (i: { i18n: { t: (str: string) => string } }) {
+  const { variables } = ctx(i)
   const Variable = Node.create({
     name: 'variable',
     draggable: false,
@@ -68,10 +68,21 @@ export default function () {
 
       if (!_entry) {
         attributes['missing-key'] = ''
+        return ['span', attributes, node.attrs.name]
       }
-      attributes.fallback ||= _entry?.fallback
 
-      return ['span', attributes, _entry?.value || attributes.fallback || attributes.name]
+      if (_entry.t) {
+        attributes['data-tip'] = i.i18n.t(node.attrs.name)
+        return ['span', attributes, node.attrs.name]
+      }
+      else {
+        if (this.editor?.isEditable) {
+          attributes['data-tip'] = `${_entry.value}${attributes.fallback ? ` |  ${attributes.fallback}` : ''} | ${_entry.fallback}`
+          return ['span', attributes, `${node.attrs.name}`]
+        }
+
+        return ['span', attributes, _entry?.value || node.attrs.fallback || _entry?.fallback || node.attrs.name]
+      }
     },
 
     renderText({ node }) {

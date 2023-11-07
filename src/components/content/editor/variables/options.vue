@@ -1,10 +1,8 @@
-<script>
-const { variables: template } = useEditorVariables()
-
+<script lang="ts">
 export default {
   props: {
     command: {
-      type: Function,
+      type: Function as unknown as () => (tmp: { name: string }) => void,
       required: true,
     },
     query: {
@@ -15,11 +13,13 @@ export default {
   data() {
     return {
       selectedIndex: 0,
+      template: useEditorVariables({ i18n: useI18n() }).variables,
     }
   },
   computed: {
     availableOptions() {
-      return [...template.entries()].filter(([k]) => k.toLowerCase().includes(this.query.toLowerCase())).map(([_k, v]) => ({
+      // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
+      return [...this.template.entries()].filter(([k]) => k.toLowerCase().includes(this.query?.toLowerCase()!)).map(([_k, v]) => ({
         ...v,
         name: _k,
       }))
@@ -31,7 +31,7 @@ export default {
     },
   },
   methods: {
-    onKeyDown({ event }) {
+    onKeyDown({ event }: { event: KeyboardEvent }) {
       switch (event.key) {
         case 'ArrowUp':
           this.selectedIndex = ((this.selectedIndex + this.availableOptions.length) - 1) % this.availableOptions.length
@@ -47,7 +47,7 @@ export default {
 
       return false
     },
-    selectItem(selectedIndex) {
+    selectItem(selectedIndex: number) {
       const variable = this.availableOptions[selectedIndex]
       if (!variable) {
         return
@@ -64,7 +64,8 @@ export default {
       <div class="flex flex-col items-start">
         <div class="flex gap-2">
           <strong>{{ option.name }}</strong>
-          <span class="text-muted">{{ option.value }} | {{ option.fallback }}</span>
+          <span v-if="option.t" class="text-muted">{{ $t(option.name) }}</span>
+          <span v-else class="text-muted">{{ option.value }} | {{ option.fallback }}</span>
         </div>
         <em class="text-sm">{{ option.description }}</em>
       </div>

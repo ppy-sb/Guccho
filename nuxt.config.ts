@@ -42,6 +42,7 @@ export default defineNuxtConfig({
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
     '~/assets/styles/main.scss',
+    '~/components/content/styles/typography.scss',
     '~/assets/styles/transitions.scss',
     '~/assets/styles/daisyui.scss',
     '~/assets/styles/popper.scss',
@@ -95,6 +96,7 @@ export default defineNuxtConfig({
   },
 
   experimental: {
+    componentIslands: true,
     // viewTransition: true,
     // asyncContext: true,
     headNext: true,

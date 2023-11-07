@@ -10,8 +10,8 @@ import { nextTick } from 'vue'
 import ctx, { starInputRegex, starPasteRegex } from './variable.shared'
 import { ContentEditorVariablesFallback, ContentEditorVariablesOptions } from '#components'
 
-export default function () {
-  const { handleRule, variables } = ctx()
+export default function (config: { i18n: { t: (str: string) => string } }) {
+  const { handleRule, variables } = ctx(config)
   const Variable = Node.create({
     name: 'variable',
     draggable: false,
@@ -63,12 +63,27 @@ export default function () {
             }
           },
         },
+        t: {
+          default: false,
+          parseHTML: (element) => {
+            return element.getAttribute('t')
+          },
+          renderHTML: (attributes) => {
+            if (!attributes.t) {
+              return {}
+            }
+
+            return {
+              t: attributes.t,
+            }
+          },
+        },
       }
     },
 
     parseHTML() {
       // @ts-expect-error L80
-      return [{ tag: `span.custom-variable[data-key="${this.name}"][fallback="${this.fallback}"]` }]
+      return [{ tag: `span.custom-variable[data-key="${this.name}"][data-t="${this.t}"][fallback="${this.fallback}"]` }]
     },
 
     renderHTML({ node, HTMLAttributes }) {
@@ -80,12 +95,18 @@ export default function () {
         return ['span', attributes, `${node.attrs.name}`]
       }
 
-      if (this.editor?.isEditable) {
-        attributes['data-tip'] = `${_entry.value}${attributes.fallback ? ` |  ${attributes.fallback}` : ''} | ${_entry.fallback}`
-        return ['span', attributes, `${node.attrs.name}`]
+      if (_entry.t) {
+        attributes['data-tip'] = config.i18n.t(node.attrs.name)
+        return ['span', attributes, node.attrs.name]
       }
+      else {
+        if (this.editor?.isEditable) {
+          attributes['data-tip'] = `${_entry.value}${attributes.fallback ? ` |  ${attributes.fallback}` : ''} | ${_entry.fallback}`
+          return ['span', attributes, `${node.attrs.name}`]
+        }
 
-      return ['span', attributes, _entry?.value || node.attrs.fallback || _entry?.fallback || node.attrs.name]
+        return ['span', attributes, _entry?.value || node.attrs.fallback || _entry?.fallback || node.attrs.name]
+      }
     },
 
     renderText({ node }) {
@@ -94,7 +115,11 @@ export default function () {
       }
       const _entry = variables.get(node.attrs.name)
 
-      return `{{ ${_entry?.value || node.attrs.fallback || _entry?.fallback || node.attrs.name} }}`
+      return _entry
+        ? _entry.t
+          ? `{{ ${node.attrs.name} }}`
+          : `{{ ${_entry.value || node.attrs.fallback || _entry.fallback || node.attrs.name} }}`
+        : `{{ ${node.attrs.name} }}`
     },
 
     addKeyboardShortcuts() {

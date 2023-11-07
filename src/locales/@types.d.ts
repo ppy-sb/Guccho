@@ -15,6 +15,7 @@ type Titles =
 | 'articles'
 
 type KGlobal =
+| 'server-title'
 | 'logout'
 | 'login'
 | 'register'
