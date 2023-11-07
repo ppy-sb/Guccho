@@ -30,18 +30,18 @@ export default function useEditorVariables(i: { i18n: { t: (str: string) => stri
 }
 
 function addAppConfigVariables(i: { i18n: { t: (str: string) => string } }) {
-  const config = useAppConfig()
+  const config = useRuntimeConfig()
 
   setVariable('domain', {
     description: 'domain',
     fallback: 'domain',
-    value: config.baseUrl,
+    value: config.public.baseUrl,
   })
 
   setVariable('guccho.version', {
     description: 'current guccho version',
     fallback: 'some version',
-    value: config.version,
+    value: config.public.version,
   })
 
   setVariable('server.name', {

@@ -9,14 +9,14 @@ definePageMeta({
   ],
 })
 
-const appConf = useAppConfig()
+const config = useRuntimeConfig()
 const { t } = useI18n()
 const page = userpageStore()
 const h = useRequestURL()
 await page.init()
 
 const switcherState = computed(() => `${page.switcher.mode} - ${page.switcher.ruleset} - ${page.switcher.rankingSystem}`)
-const userWithAppName = computed(() => `${page.user?.name} - ${appConf.title}`)
+const userWithAppName = computed(() => `${page.user?.name} - ${config.public.title}`)
 const description = computed(() => switcherState.value)
 
 useSeoMeta({
@@ -32,7 +32,7 @@ useSeoMeta({
 })
 
 useHead({
-  titleTemplate: `%s - ${appConf.title}`,
+  titleTemplate: `%s - ${config.public.title}`,
   title: () => page.user?.name || '',
 })
 

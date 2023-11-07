@@ -2,7 +2,7 @@
 import type { ActiveMode, ActiveRuleset, LeaderboardRankingSystem } from '~/def/common'
 import type { SwitcherPropType } from '~/composables/useSwitcher'
 
-const config = useAppConfig()
+const config = useRuntimeConfig()
 
 const route = useRoute('leaderboard-mode')
 const router = useRouter()
@@ -13,7 +13,7 @@ const { t } = useI18n()
 const { mode: pMode } = route.params
 const { ruleset: pRuleset, ranking: pRankingSystem, page: pPage } = route.query
 
-const availableRankingSystems = Object.keys(config.leaderboardRankingSystem)
+const availableRankingSystems = Object.keys(config.public.leaderboardRankingSystem)
 const mode = (
   (isString(pMode) && includes(pMode, supportedModes))
     ? pMode

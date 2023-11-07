@@ -2,7 +2,7 @@ import type { LocaleMessageValue, VueMessageType } from '@nuxtjs/i18n/dist/runti
 import type { DeepPartial } from '@trpc/server'
 import type { CountryCode } from '../def/country-code'
 import type { Scope, UserRole } from '~/def/user'
-import type { Lang, Rank } from '~/def'
+import { Lang, type Rank } from '~/def'
 import type { ActiveMode, ActiveRuleset } from '~/def/common'
 
 type Titles =
@@ -52,6 +52,7 @@ export interface GlobalI18n extends Record<string, LocaleMessageValue<VueMessage
   country: Record<CountryCode, string>
 }
 
-export type AllLocales = {
+interface T { [x: string]: localeMessages<VueMessageType> }
+export interface AllLocales extends T {
   [lang in Lang]: lang extends Lang.enGB ? GlobalI18n : DeepPartial<GlobalI18n>
 }

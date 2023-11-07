@@ -11,8 +11,6 @@ const props = defineProps<{
   user: User
   to: RouterLinkProps['to']
 }>()
-// const runtimeConfig = useAppConfig()
-const config = useAppConfig()
 </script>
 
 <template>
@@ -27,7 +25,7 @@ const config = useAppConfig()
       >
         <div v-if="user">
           <div class="flex items-center gap-2">
-            <img :src="`https://a.${config.baseUrl}/${props.user.id}`" alt="" class="w-16 h-16 rounded-lg">
+            <img :src="`https://a.${$config.public.baseUrl}/${props.user.id}`" alt="" class="w-16 h-16 rounded-lg">
             <div>
               <h1 class="text-xl">
                 {{ props.user.name }}

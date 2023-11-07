@@ -1,8 +1,16 @@
 import { env } from 'node:process'
 import { fileURLToPath } from 'node:url'
 import './scripts/ensure-env'
-import { Lang } from './src/def'
+import { Lang, Rank } from './src/def'
 import { CountryCode } from './src/def/country-code'
+import PackageJSON from './package.json'
+import type {
+  LeaderboardRankingSystem,
+} from '~/def/common'
+
+interface AppConfigItemBase {
+  icon: string
+}
 
 export default defineNuxtConfig({
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
@@ -65,6 +73,47 @@ export default defineNuxtConfig({
         // @ts-expect-error it's fine
         tabindex: '-1',
       },
+    },
+  },
+  runtimeConfig: {
+    public: {
+      baseUrl: 'dev.ppy.sb',
+      version: PackageJSON.version as `${number}.${number}.${number}`,
+      leaderboardRankingSystem: {
+        [Rank.PPv2]: {
+          userpage: {
+            show: 'tab',
+          },
+          icon: 'pp',
+        },
+        [Rank.PPv1]: {
+          userpage: {
+            show: 'dropdown',
+          },
+          icon: 'pp',
+        },
+        [Rank.RankedScore]: {
+          userpage: {
+            show: 'tab',
+          },
+          icon: 'score',
+        },
+        [Rank.TotalScore]: {
+          userpage: {
+            show: 'tab',
+          },
+          icon: 'score',
+        },
+      } satisfies Record<
+        LeaderboardRankingSystem,
+        AppConfigItemBase & {
+          userpage: {
+            show: 'tab' | 'dropdown'
+          }
+        }
+      >,
+      appModalTeleportTargetId: 'app-modal-portal',
+      needConfirmWebsite: false,
     },
   },
 

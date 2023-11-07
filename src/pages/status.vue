@@ -3,7 +3,6 @@ import { Monitored } from '$base/server/@extends'
 import { useSession } from '~/store/session'
 import { UserRole } from '~/def/user'
 
-const config = useAppConfig()
 const session = useSession()
 const app = useNuxtApp()
 const { t } = useI18n()
@@ -26,16 +25,16 @@ let publicInterval: ReturnType<typeof setInterval>
 onBeforeMount(() => {
   clearInterval(publicInterval)
   publicInterval = setInterval(refresh, 60 * 1000)
+  onBeforeUnmount(() => clearInterval(publicInterval))
 })
-onBeforeUnmount(() => clearInterval(publicInterval))
 
 if (showAdminStatus) {
   let adminInterval: ReturnType<typeof setInterval>
   onBeforeMount(() => {
     clearInterval(adminInterval)
     adminInterval = setInterval(refreshAdmin, 2000)
+    onBeforeUnmount(() => clearInterval(adminInterval))
   })
-  onBeforeUnmount(() => clearInterval(adminInterval))
 }
 function percentWidth(count: number) {
   return {
@@ -66,7 +65,7 @@ en-GB:
   active: Active
   cache: Cache
   free: Free
-  web-app-config: Web App Config
+  app-config: App Config
   npm-env: npm env
   env: env
 
@@ -81,7 +80,7 @@ zh-CN:
   active: 活跃
   cache: 缓存
   free: 可用
-  web-app-config: 网络应用配置
+  app-config: 应用配置
   npm-env: npm环境变量
   env: 环境变量
 
@@ -96,7 +95,7 @@ fr-FR:
   active: Actif
   cache: Cache
   free: Libre
-  web-app-config: Configuration Web App
+  app-config: Configuration App
   npm-env: Environnement npm
   env: Environnement
 </i18n>
@@ -204,10 +203,10 @@ fr-FR:
         </div>
       </div>
       <h1 class="my-1 text-xl drop-shadow-lg">
-        {{ t('web-app-config') }}
+        {{ t('app-config') }}
       </h1>
       <JsonViewer
-        :value="config"
+        :value="$config"
         :expand-depth="999"
         theme="light"
         copyable

@@ -3,9 +3,9 @@ import type { LeaderboardRankingSystem } from '~/def/common'
 import userpageStore from '~/store/userpage'
 
 const { hasRuleset, hasLeaderboardRankingSystem } = await useAdapterConfig()
-const config = useAppConfig()
+const config = useRuntimeConfig()
 const { t } = useI18n()
-const rankingSystem = config.leaderboardRankingSystem
+const rankingSystem = config.public.leaderboardRankingSystem
 
 const page = userpageStore()
 
@@ -34,7 +34,7 @@ function filter(showType: 'tab' | 'dropdown') {
     }
     acc[key] = value
     return acc
-  }, {} as Partial<Record<keyof typeof rankingSystem, RankConf>>)
+  }, {} as Partial<Record<LeaderboardRankingSystem, RankConf>>)
 }
 const tabs = computed(() => filter('tab'))
 const dropdown = computed(() => filter('dropdown'))

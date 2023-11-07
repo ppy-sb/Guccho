@@ -5,7 +5,6 @@ import { UserRole, UserStatus } from '~/def/user'
 import { useSession } from '~/store/session'
 import userpageStore from '~/store/userpage'
 
-const cfg = useAppConfig()
 const page = userpageStore()
 const { t, locale } = useI18n()
 const app$ = useNuxtApp()
@@ -123,7 +122,7 @@ fr-FR:
       <div
         v-if="page.user.roles.includes(UserRole.Supporter)"
         class="absolute -top-10 -right-6 tooltip tooltip-primary tooltip-right"
-        :data-tip="t('supporter', { server: cfg.title })"
+        :data-tip="t('supporter', { server: $t('server.name') })"
       >
         <icon name="twemoji:crown" class="w-20 h-20 rotate-[40deg]" />
       </div>
@@ -141,7 +140,7 @@ fr-FR:
           </span>
           <span v-if="page.user.roles.includes(UserRole.Staff)" class="flex items-center gap-1">
             <icon name="healthicons:social-work" class="w-5 h-5" />
-            {{ t('staff', { server: cfg.title }) }}
+            {{ t('staff', { server: $t('server.name') }) }}
           </span>
         </p>
         <t-button
