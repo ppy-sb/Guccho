@@ -60,9 +60,7 @@ const validate: {
 useHead({
   title: () => `${app.$i18n.t('global.register')} - ${app.$i18n.t('server.name')}`,
 })
-definePageMeta({
-  layout: 'hero',
-})
+
 
 async function userRegisterAction() {
   fetching.value = true

@@ -12,9 +12,7 @@ const route = useRoute()
 const app = useNuxtApp()
 const { t } = useI18n()
 
-definePageMeta({
-  layout: 'hero',
-})
+
 
 useHead({
   title: () => `${app.$i18n.t('global.login')} - ${app.$i18n.t('server.name')}`,

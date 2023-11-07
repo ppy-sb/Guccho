@@ -13,8 +13,8 @@ onMounted(() => {
 
 <template>
   <nuxt-loading-indicator />
-  <app-nav />
-  <div id="app-drawer" class="drawer block">
+  <div id="app-drawer" class="drawer flex flex-col min-h-[100dvh]">
+    <app-nav />
     <input id="app-drawer-toggle" type="checkbox" class="drawer-toggle">
     <!-- Page content here -->
     <NuxtLayout
@@ -30,6 +30,7 @@ onMounted(() => {
     >
       <NuxtPage />
     </NuxtLayout>
+    <app-footer class="mt-auto" />
     <div class="drawer-side z-40">
       <label for="app-drawer-toggle" aria-label="close sidebar" class="drawer-overlay" />
       <ul class="menu p-4 w-80 min-h-full bg-base-200">

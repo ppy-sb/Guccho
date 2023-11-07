@@ -1,9 +1,6 @@
 <script setup lang="ts">
 import { useSession } from '~/store/session'
 
-definePageMeta({
-  layout: 'hero',
-})
 const session = useSession()
 
 const url = useRequestURL()

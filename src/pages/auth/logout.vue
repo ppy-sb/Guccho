@@ -1,9 +1,6 @@
 <script lang="ts" setup>
 import { useSession } from '~/store/session'
 
-definePageMeta ({
-  layout: 'hero',
-})
 const $router = useRouter()
 const session = useSession()
 const { t } = useI18n()

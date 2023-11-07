@@ -1,0 +1,72 @@
+<script lang="ts" setup>
+const fullYear = new Date().getFullYear()
+</script>
+
+<template>
+  <footer>
+    <div class="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
+      <div class="md:flex md:justify-between">
+        <!-- <div class="mb-6 md:mb-0">
+          <nuxt-link-locale :to="{ name: 'index' }" class="flex items-center">
+            <icon name="ion:paw" class="h-8 w-auto mr-3" />
+            <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">{{ $t('server.name') }}</span>
+          </nuxt-link-locale>
+        </div> -->
+        <!-- <div class="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
+          <div>
+            <h2 class="mb-6 text-sm font-semibold text-gbase-900 uppercase dark:text-white">
+              Resources
+            </h2>
+            <ul class="text-gbase-500 dark:text-gbase-400 font-medium">
+              <li class="mb-4">
+                <a :href="`//${$config.public.baseUrl}`" class="hover:underline">{{ $t('server.name') }}</a>
+              </li>
+              <li>
+                <a href="https://tailwindcss.com/" class="hover:underline">Tailwind CSS</a>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h2 class="mb-6 text-sm font-semibold text-gbase-900 uppercase dark:text-white">
+              Follow us
+            </h2>
+            <ul class="text-gbase-500 dark:text-gbase-400 font-medium">
+              <li class="mb-4">
+                <a href="https://github.com/themesberg/flowbite" class="hover:underline ">Github</a>
+              </li>
+              <li>
+                <a href="https://discord.gg/4eeurUVvTy" class="hover:underline">Discord</a>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h2 class="mb-6 text-sm font-semibold text-gbase-900 uppercase dark:text-white">
+              Legal
+            </h2>
+            <ul class="text-gbase-500 dark:text-gbase-400 font-medium">
+              <li class="mb-4">
+                <a href="#" class="hover:underline">Privacy Policy</a>
+              </li>
+              <li>
+                <a href="#" class="hover:underline">Terms &amp; Conditions</a>
+              </li>
+            </ul>
+          </div>
+        </div> -->
+      </div>
+      <hr class="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8">
+      <div class="sm:flex sm:items-center sm:justify-between">
+        <span class="text-sm text-gbase-500 sm:text-center dark:text-gbase-400">© {{ fullYear }} <a href="https://flowbite.com/" class="hover:underline">ppy.sb. All Rights Reserved.
+        </a></span>
+        <div v-if="$config.public.links?.length" class="flex mt-4 space-x-5 sm:justify-center sm:mt-0">
+          <a v-for="link in $config.public.links" :key="link.name" :href="link.link" class="text-gbase-500 hover:text-gbase-900 dark:hover:text-white">
+            <icon :name="link.icon" class="w-4 h-4" />
+            <span class="sr-only">{{ link.name }}</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+</template>
+
+<style scoped></style>
