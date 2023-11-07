@@ -1,10 +1,11 @@
-import { Lang } from '../def'
+import { type AllLocales } from '../@types'
 import enGB from './en-GB'
 import frFR from './fr-FR'
 import zhCN from './zh-CN'
+import { Lang } from '~/def'
 
 export default {
   [Lang.enGB]: enGB,
   [Lang.frFR]: frFR,
   [Lang.zhCN]: zhCN,
-} as const
+} satisfies AllLocales as AllLocales

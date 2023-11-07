@@ -1,5 +1,5 @@
+import type { GlobalI18n } from '../@types'
 import enGB from './en-GB'
-import type { GlobalI18n } from './@types'
 import { CountryCode } from '~/def/country-code'
 import { Rank } from '~/def'
 import { Scope, UserRole } from '~/def/user'

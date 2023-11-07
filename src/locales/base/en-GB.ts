@@ -1,10 +1,12 @@
-import type { GlobalI18n } from './@types'
+import type { GlobalI18n } from '../@types'
 import { CountryCode } from '~/def/country-code'
 import { Scope, UserRole } from '~/def/user'
 import { Mode, Rank, Ruleset } from '~/def'
 
 export default {
-  // intentionally omit 'server' to fallback to enGB
+  server: {
+    name: 'Guccho',
+  },
   mode: {
     [Mode.Osu]: 'Osu',
     [Mode.Taiko]: 'Taiko',
@@ -331,4 +333,4 @@ export default {
     [CountryCode.Zambia]: 'Zambia',
     [CountryCode.Zimbabwe]: 'Zimbabwe',
   },
-} satisfies Omit<GlobalI18n, 'server'>
+} satisfies GlobalI18n as GlobalI18n
