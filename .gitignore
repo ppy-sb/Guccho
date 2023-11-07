@@ -254,6 +254,11 @@ configs/hljs.*
 articles/*
 !articles/fallbacks
 !src/server/env
+
+/guccho.config.ts
+/backend.config.ts
+
+# will be removed later
 /env.ts
 
 .generated

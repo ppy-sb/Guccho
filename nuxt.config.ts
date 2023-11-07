@@ -1,16 +1,9 @@
-import { env } from 'node:process'
 import { fileURLToPath } from 'node:url'
+import guccho from './guccho.config'
 import './scripts/ensure-env'
-import { Lang, Rank } from './src/def'
+import { Lang } from './src/def'
 import { CountryCode } from './src/def/country-code'
-import PackageJSON from './package.json'
-import type {
-  LeaderboardRankingSystem,
-} from '~/def/common'
-
-interface AppConfigItemBase {
-  icon: string
-}
+import type { UIConfig } from './src/def/config'
 
 export default defineNuxtConfig({
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
@@ -32,7 +25,7 @@ export default defineNuxtConfig({
   ],
 
   alias: {
-    $active: fileURLToPath(new URL(`./src/server/backend/${env.BACKEND}`, import.meta.url)),
+    $active: fileURLToPath(new URL(`./src/server/backend/${guccho.use.backend}`, import.meta.url)),
     $base: fileURLToPath(new URL('./src/server/backend/$base', import.meta.url)),
   },
 
@@ -76,46 +69,13 @@ export default defineNuxtConfig({
     },
   },
   runtimeConfig: {
-    public: {
-      baseUrl: 'dev.ppy.sb',
-      version: PackageJSON.version as `${number}.${number}.${number}`,
-      leaderboardRankingSystem: {
-        [Rank.PPv2]: {
-          userpage: {
-            show: 'tab',
-          },
-          icon: 'pp',
-        },
-        [Rank.PPv1]: {
-          userpage: {
-            show: 'dropdown',
-          },
-          icon: 'pp',
-        },
-        [Rank.RankedScore]: {
-          userpage: {
-            show: 'tab',
-          },
-          icon: 'score',
-        },
-        [Rank.TotalScore]: {
-          userpage: {
-            show: 'tab',
-          },
-          icon: 'score',
-        },
-      } satisfies Record<
-        LeaderboardRankingSystem,
-        AppConfigItemBase & {
-          userpage: {
-            show: 'tab' | 'dropdown'
-          }
-        }
-      >,
-      appModalTeleportTargetId: 'app-modal-portal',
-      needConfirmWebsite: false,
-    },
+    public: { ...guccho.ui },
   },
+  watch: [
+    './guccho.config.ts',
+    './daisyui.themes.ts',
+    './tailwind.config.ts',
+  ],
 
   i18n: {
     strategy: 'no_prefix',

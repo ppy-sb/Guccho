@@ -1,7 +1,9 @@
 import { resolve } from 'node:path'
 import { discriminatedUnion, literal, object, string } from 'zod'
 import { zodPath } from '~/server/trpc/shapes'
-import env from '~~/env'
+import guccho from '~~/guccho.config'
+
+const { backend: env } = guccho
 
 export const redisURL = string().url()
 export const memory = literal('memory')

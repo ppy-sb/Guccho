@@ -120,14 +120,14 @@ fr-FR:
   <div class="flex flex-col h-full leaderboard custom-container mx-auto !max-w-4xl w-full">
     <header-simple-title-with-sub
       id="desc"
-      :title="app.$i18n.t('titles.leaderboard')"
+      :title="$t('titles.leaderboard')"
       :subtitle="
         selected.mode
           && selected.ruleset
           && selected.rankingSystem
-          && `${app.$i18n.t(localeKey.mode(selected.mode))} - ${
-            app.$i18n.t(localeKey.ruleset(selected.ruleset))
-          } | ${app.$i18n.t(localeKey.rankingSystem(selected.rankingSystem))}`
+          && `${$t(localeKey.mode(selected.mode))} - ${
+            $t(localeKey.ruleset(selected.ruleset))
+          } | ${$t(localeKey.rankingSystem(selected.rankingSystem))}`
       "
     >
       <app-mode-switcher
