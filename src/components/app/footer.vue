@@ -1,5 +1,9 @@
 <script lang="ts" setup>
+import type { IconLink } from '~/def/config'
+
 const fullYear = new Date().getFullYear()
+const runtime = useRuntimeConfig()
+const links = runtime.public.links as unknown as readonly IconLink[] | undefined
 </script>
 
 <template>
@@ -58,8 +62,8 @@ const fullYear = new Date().getFullYear()
       <div class="sm:flex sm:items-center sm:justify-between">
         <span class="text-sm text-gbase-500 sm:text-center dark:text-gbase-400">© {{ fullYear }} <a href="https://flowbite.com/" class="hover:underline">ppy.sb. All Rights Reserved.
         </a></span>
-        <div v-if="$config.public.links?.length" class="flex mt-4 space-x-5 sm:justify-center sm:mt-0">
-          <a v-for="link in $config.public.links" :key="link.name" :href="link.link" class="text-gbase-500 hover:text-gbase-900 dark:hover:text-white">
+        <div v-if="links?.length" class="flex mt-4 space-x-5 sm:justify-center sm:mt-0">
+          <a v-for="link in links" :key="link.name" :href="link.link" class="text-gbase-500 hover:text-gbase-900 dark:hover:text-white">
             <icon :name="link.icon" class="w-4 h-4" />
             <span class="sr-only">{{ link.name }}</span>
           </a>

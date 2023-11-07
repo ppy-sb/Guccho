@@ -256,7 +256,7 @@ articles/*
 !src/server/env
 
 /guccho.config.ts
-/backend.config.ts
+/guccho.*.config.ts
 
 # will be removed later
 /env.ts

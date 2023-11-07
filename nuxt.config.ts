@@ -1,9 +1,9 @@
 import { fileURLToPath } from 'node:url'
-import guccho from './guccho.config'
+import backend from './guccho.backend.config'
+import ui from './guccho.ui.config'
 import './scripts/ensure-env'
 import { Lang } from './src/def'
 import { CountryCode } from './src/def/country-code'
-import type { UIConfig } from './src/def/config'
 
 export default defineNuxtConfig({
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
@@ -25,7 +25,7 @@ export default defineNuxtConfig({
   ],
 
   alias: {
-    $active: fileURLToPath(new URL(`./src/server/backend/${guccho.use.backend}`, import.meta.url)),
+    $active: fileURLToPath(new URL(`./src/server/backend/${backend.use}`, import.meta.url)),
     $base: fileURLToPath(new URL('./src/server/backend/$base', import.meta.url)),
   },
 
@@ -69,7 +69,7 @@ export default defineNuxtConfig({
     },
   },
   runtimeConfig: {
-    public: { ...guccho.ui },
+    public: ui,
   },
   watch: [
     './guccho.config.ts',

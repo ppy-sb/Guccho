@@ -2,9 +2,7 @@ import type { Prisma } from 'prisma-client-bancho-py'
 import { array, discriminatedUnion, literal, object, string } from 'zod'
 import { zodFQDN as FQDN, zodPath as path } from '~/server/trpc/shapes'
 import { validator as base, redis, redisURL } from '$base/env'
-import guccho from '~~/guccho.config'
-
-const { backend: env } = guccho
+import env from '~~/guccho.backend.config'
 
 export const database = literal('database')
 export const header = literal('header')
