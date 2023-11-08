@@ -19,6 +19,9 @@ export interface IconLink {
 }
 
 export interface UIConfig {
+  legacyOption?: {
+    name: string
+  }
   baseUrl: string
   version: string
   leaderboardRankingSystem: R

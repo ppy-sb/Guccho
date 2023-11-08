@@ -9,14 +9,14 @@ definePageMeta({
   ],
 })
 
-const config = useRuntimeConfig()
+const app = useNuxtApp()
 const { t } = useI18n()
 const page = userpageStore()
 const h = useRequestURL()
 await page.init()
 
 const switcherState = computed(() => `${page.switcher.mode} - ${page.switcher.ruleset} - ${page.switcher.rankingSystem}`)
-const userWithAppName = computed(() => `${page.user?.name} - ${config.public.title}`)
+const userWithAppName = computed(() => `${page.user?.name} - ${app.$i18n.t('server.name')}`)
 const description = computed(() => switcherState.value)
 
 useSeoMeta({
@@ -32,7 +32,7 @@ useSeoMeta({
 })
 
 useHead({
-  titleTemplate: `%s - ${config.public.title}`,
+  titleTemplate: `%s - ${app.$i18n.t('server.name')}`,
   title: () => page.user?.name || '',
 })
 

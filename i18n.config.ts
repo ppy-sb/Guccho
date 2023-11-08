@@ -10,11 +10,15 @@ import { every } from '~/locales/utils'
 const locales = new Layer(clientMessages)
   .add(serverMessages)
 
+if (ui.legacyOption?.name) {
+  locales.add(every({ server: { name: ui.legacyOption.name } }))
+}
+
 export default defineI18nConfig(() => {
   return {
     legacy: false,
     locale: Lang.enGB,
     fallbackLocale: Lang.enGB,
-    messages: locales.add(every({ server: { name: ui.baseUrl } })).flat(),
+    messages: locales.flat(),
   }
 })
