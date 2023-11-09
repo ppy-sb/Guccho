@@ -1,8 +1,9 @@
-import type { PublicRuntimeConfig } from 'nuxt/schema'
+import type { VueMessageType } from '@nuxtjs/i18n/dist/runtime/composables'
+import type { KFooter } from '../locales/@types'
 import type {
   LeaderboardRankingSystem,
 } from './common'
-
+import { type Lang } from '~/def'
 import type { ActiveBackendConfig } from '~/server/env'
 
 export interface RankConf {
@@ -12,10 +13,22 @@ export interface RankConf {
 }
 
 export interface R extends Record<LeaderboardRankingSystem, RankConf> {}
-export interface IconLink {
-  icon: string
+
+interface Link {
   link: string
+}
+
+export type Locale = {
+  localeKey: string
+  name?: string
+} | {
   name: string
+}
+
+export type FooterLink = Locale & Link
+
+export type IconLink = Locale & Link & {
+  icon: string
 }
 
 export interface UIConfig {
@@ -25,7 +38,11 @@ export interface UIConfig {
   baseUrl: string
   version: string
   leaderboardRankingSystem: R
-  links?: IconLink[]
+  iconLinks?: IconLink[]
+  footerLink?: Partial<Record<KFooter, FooterLink[]>>
+  i18n?: {
+    messages: Partial<Lang, VueMessageType>
+  }
 }
 
 export interface Use {

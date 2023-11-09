@@ -32,10 +32,16 @@ type KGlobal =
 | 'users'
 | 'session'
 
+type KFooter =
+| 'about'
+| 'resources'
+
 export interface GlobalI18n extends Record<string, LocaleMessageValue<VueMessageType>> {
   server: {
     name: string
   }
+  footer: Record<KFooter, string>
+
   mode: Record<ActiveMode, string>
   ruleset: Record<ActiveRuleset, string>
   rank: Record<Rank, string>

@@ -13,6 +13,9 @@ const locales = new Layer(clientMessages)
 if (ui.legacyOption?.name) {
   locales.add(every({ server: { name: ui.legacyOption.name } }))
 }
+if (ui.i18n?.messages) {
+  locales.add(ui.i18n.messages)
+}
 
 export default defineI18nConfig(() => {
   return {

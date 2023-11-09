@@ -1,13 +1,14 @@
+import type { DeepPartial } from '@trpc/server'
 import type { GlobalI18n } from '../@types'
-import enGB from './en-GB'
 import { CountryCode } from '~/def/country-code'
 import { Rank } from '~/def'
 import { Scope, UserRole } from '~/def/user'
 
 export default {
-// intentionally omit 'server' to fallback to enGB
-  mode: enGB.mode,
-  ruleset: enGB.ruleset,
+  footer: {
+    about: '关于',
+    resources: '资源',
+  },
   rank: {
     [Rank.PPv2]: 'Performance(v2)',
     [Rank.PPv1]: 'Performance(v1)',
@@ -323,4 +324,4 @@ export default {
     [CountryCode.Zambia]: '赞比亚',
     [CountryCode.Zimbabwe]: '津巴布韦',
   },
-} satisfies Omit<GlobalI18n, 'server'>
+} satisfies DeepPartial<GlobalI18n>

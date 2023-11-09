@@ -7,6 +7,11 @@ export default {
   server: {
     name: 'Guccho',
   },
+  footer: {
+    about: 'About',
+    resources: 'Resources',
+  },
+
   mode: {
     [Mode.Osu]: 'Osu',
     [Mode.Taiko]: 'Taiko',
