@@ -3,7 +3,7 @@ import type { IconLink, UIConfig } from '~/def/config'
 
 const fullYear = new Date().getFullYear()
 const runtime = useRuntimeConfig()
-const { links, footerLink } = runtime.public as unknown as { links: readonly IconLink[] | undefined; footerLink: UIConfig['footerLink'] }
+const { iconLinks, footerLink } = runtime.public as unknown as { iconLinks: readonly IconLink[] | undefined; footerLink: UIConfig['footerLink'] }
 </script>
 
 <template>
@@ -35,8 +35,8 @@ const { links, footerLink } = runtime.public as unknown as { links: readonly Ico
       <div class="sm:flex sm:items-center sm:justify-between">
         <span class="text-sm text-gbase-500 sm:text-center dark:text-gbase-400">© {{ fullYear }} <a href="https://github.com/ppy-sb" class="hover:underline">ppy.sb. All Rights Reserved.
         </a></span>
-        <div v-if="links?.length" class="flex mt-4 space-x-5 sm:justify-center sm:mt-0">
-          <a v-for="link in links" :key="link.name" :href="link.link" class="text-gbase-500 hover:text-gbase-900 dark:hover:text-white">
+        <div v-if="iconLinks?.length" class="flex mt-4 space-x-5 sm:justify-center sm:mt-0">
+          <a v-for="link in iconLinks" :key="link.name" :href="link.link" class="text-gbase-500 hover:text-gbase-900 dark:hover:text-white">
             <icon :name="link.icon" class="w-4 h-4" />
             <span class="sr-only">{{ link.name }}</span>
           </a>
@@ -45,5 +45,3 @@ const { links, footerLink } = runtime.public as unknown as { links: readonly Ico
     </div>
   </footer>
 </template>
-
-<style scoped></style>
