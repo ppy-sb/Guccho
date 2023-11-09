@@ -12,22 +12,16 @@ Guccho is a client interface to interact with osu private servers with compatibi
 ## Setup
 
 - configure environment *important*
-  - create env.ts from env.example.ts
-  - edit env.ts follow the comment
-  - optionally create .env from .env.example
+  - create guccho.ui.ts from guccho.ui.example.ts
+  - create guccho.backend.ts from guccho.backend.example.ts
+  - edit guccho.*.ts follow the comment
+  - optionally create .env from .env.example if you are using env() or safeEnv() as example showed
 
 - Run `pnpm install`
-- Run `pnpm run build:hljs`
 
 ## tooling
 
 `bancho.py` or `ppy.sb@bancho.py` requires DB_DSN to be set in order to use prisma tooling.
-
-## upgrade
-
-```sh
-pnpm install && pnpm run build
-```
 
 ## backends
 
@@ -35,7 +29,7 @@ pnpm install && pnpm run build
 
 - ### ppy.sb
 
-  Run `pnpm run build:schemas`
+  for this two Run `pnpm run build:schemas`
 
 ## Development Server
 

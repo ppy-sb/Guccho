@@ -72,7 +72,7 @@ export default defineNuxtConfig({
     public: ui,
   },
   watch: [
-    './guccho.config.ts',
+    /\.\/guccho.(ui|backend).config.ts/,
     './daisyui.themes.ts',
     './tailwind.config.ts',
   ],
