@@ -3,7 +3,7 @@ import type { IconLink, UIConfig } from '~/def/config'
 
 const fullYear = new Date().getFullYear()
 const runtime = useRuntimeConfig()
-const { links, footerLink } = toRefs(runtime.public) as unknown as { links: readonly IconLink[] | undefined; footerLink: UIConfig['footerLink'] }
+const { links, footerLink } = runtime.public as unknown as { links: readonly IconLink[] | undefined; footerLink: UIConfig['footerLink'] }
 </script>
 
 <template>
@@ -17,21 +17,23 @@ const { links, footerLink } = toRefs(runtime.public) as unknown as { links: read
           </nuxt-link-locale>
         </div>
         <div v-if="footerLink" class="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
-          <div v-for="(col, nm) in footerLink" :key="nm">
-            <h2 class="mb-6 text-sm font-semibold text-gbase-900 uppercase dark:text-white">
-              {{ $t(`footer.${nm}`) }}
-            </h2>
-            <ul class="text-gbase-500 dark:text-gbase-400 font-medium">
-              <li v-for="(i, index) in col" :key="nm + index" class="mb-4">
-                <a :href="i.link" class="hover:underline ">{{ 'localeKey' in i ? $t(i.localeKey) : i.name }}</a>
-              </li>
-            </ul>
-          </div>
+          <template v-for="(col, nm) in footerLink" :key="nm">
+            <div v-if="col?.length">
+              <h2 class="mb-6 text-sm font-semibold text-gbase-900 uppercase dark:text-white">
+                {{ $t(`footer.${nm}`) }}
+              </h2>
+              <ul class="text-gbase-500 dark:text-gbase-400 font-medium">
+                <li v-for="(i, index) in col" :key="nm + index" class="mb-4">
+                  <a :href="i.link" class="hover:underline ">{{ 'localeKey' in i ? $t(i.localeKey) : i.name }}</a>
+                </li>
+              </ul>
+            </div>
+          </template>
         </div>
       </div>
       <hr class="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8">
       <div class="sm:flex sm:items-center sm:justify-between">
-        <span class="text-sm text-gbase-500 sm:text-center dark:text-gbase-400">© {{ fullYear }} <a href="https://flowbite.com/" class="hover:underline">ppy.sb. All Rights Reserved.
+        <span class="text-sm text-gbase-500 sm:text-center dark:text-gbase-400">© {{ fullYear }} <a href="https://github.com/ppy-sb" class="hover:underline">ppy.sb. All Rights Reserved.
         </a></span>
         <div v-if="links?.length" class="flex mt-4 space-x-5 sm:justify-center sm:mt-0">
           <a v-for="link in links" :key="link.name" :href="link.link" class="text-gbase-500 hover:text-gbase-900 dark:hover:text-white">
