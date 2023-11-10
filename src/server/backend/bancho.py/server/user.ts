@@ -16,18 +16,19 @@ import {
   userCompacts,
 } from '../db-query'
 import type { settings } from '../dynamic-settings'
-import { BanchoPyMode, BanchoPyScoreStatus } from '../enums'
+import { BanchoPyMode, BanchoPyPrivilege, BanchoPyScoreStatus } from '../enums'
 import { config } from '../env'
 import { Logger } from '../log'
 import {
+  type AbleToTransformToScores,
   BPyMode,
   createRulesetData,
   fromBanchoPyMode,
   fromCountryCode,
   fromRankingStatus,
+
   idToString,
   stringToId,
-
   toBanchoPyMode,
   toFullUser,
   toRankingSystemScores,
@@ -263,73 +264,136 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
 
     const banchoPyRankingStatus = rankingStatus.map(i => fromRankingStatus(i))
 
-    let scoreIds: number[]
-    if (rankingSystem === Rank.RankedScore || rankingSystem === Rank.TotalScore) {
-      scoreIds = await this.db.$queryRaw<{ id: string }[]>`
-SELECT s.id
-FROM scores AS s
-INNER JOIN (
-    SELECT s.map_md5, MAX(s.pp) AS maxPP
-    FROM users AS u
-    INNER JOIN scores AS s ON s.userid = u.id
-    WHERE u.priv > 2
-      AND s.mode = ${toBanchoPyMode(mode, ruleset)}
-      AND s.pp > 0
-      AND s.status = ${BanchoPyScoreStatus.Pick}
-    GROUP BY s.map_md5
-) AS tmp ON tmp.maxPP = s.pp AND tmp.map_md5 = s.map_md5
-WHERE s.userid = ${id}
-`.then(res => res.map(res => Number.parseInt(res.id)))
-    }
-    else if (rankingSystem === Rank.PPv2) {
-      scoreIds = await this.db.$queryRaw<{ id: string }[]>`
-SELECT s.id
+    const rankingColumn = rankingSystem === Rank.PPv2 ? 'pp' : 'score'
+
+    const sql = /* sql */`
+SELECT s.*,
+       m.id map_id,
+       m.server map_server,
+       m.set_id,
+       m.status map_status,
+       m.md5 map_md5,
+       m.artist,
+       m.title,
+       m.version,
+       m.creator,
+       m.filename,
+       m.last_update,
+       m.total_length,
+       m.max_combo map_max_combo,
+       m.frozen,
+       m.plays,
+       m.passes,
+       m.mode map_mode,
+       m.bpm,
+       m.cs,
+       m.ar,
+       m.od,
+       m.hp,
+       m.diff,
+       ms.server source_server,
+       ms.id source_id,
+       ms.last_osuapi_check,
+       COUNT(*) OVER() full_count
 FROM scores s
 INNER JOIN (
-    SELECT s.map_md5, MAX(s.score) AS maxScore
-    FROM users u
-    INNER JOIN scores s ON s.userid = u.id
-    WHERE u.priv > 2
-      AND s.mode = ${toBanchoPyMode(mode, ruleset)}
-      AND s.score > 0
-      AND s.status = ${BanchoPyScoreStatus.Pick}
-    GROUP BY s.map_md5
-) tmp ON tmp.maxScore = s.score AND tmp.map_md5 = s.map_md5
-WHERE s.userid = ${id}
-`.then(res => res.map(res => Number.parseInt(res.id)))
-    }
-    else {
+    SELECT s2.map_md5, MAX(s2.${rankingColumn}) v, COUNT(*) count_scores, MIN(s2.id) lowestId
+    FROM scores s2
+    INNER JOIN users u ON s2.userid = u.id
+    WHERE u.priv & ${BanchoPyPrivilege.Normal | BanchoPyPrivilege.Verified} = ${BanchoPyPrivilege.Normal | BanchoPyPrivilege.Verified}
+      AND s2.mode = ?
+      AND s2.map_md5 IN (
+        SELECT DISTINCT(s3.map_md5) from scores s3
+        WHERE s3.mode = ?
+          AND s3.userid = ?
+    )
+    GROUP BY s2.map_md5
+) max_scores
+ON s.map_md5 = max_scores.map_md5 AND s.${rankingColumn} = max_scores.v AND s.id = max_scores.lowestId
+
+INNER JOIN maps m ON m.md5 = s.map_md5 AND m.status IN (${banchoPyRankingStatus.join(',')})
+INNER JOIN mapsets ms ON m.set_id = ms.id AND m.server = ms.server
+INNER JOIN users u ON u.id = s.userid
+
+WHERE s.userid = ?
+ORDER BY
+  max_scores.count_scores DESC,
+  s.id DESC
+LIMIT ?, ?
+`
+
+    const scoresData = await this.db.$queryRawUnsafe<ScoreWithMapDetails[]>(
+      sql,
+      // params
+      toBanchoPyMode(mode, ruleset),
+      toBanchoPyMode(mode, ruleset),
+      id,
+      id,
+      start,
+      perPage, // Used in LIMIT for pagination (number of rows to fetch)
+    )
+
+    const count = scoresData.length > 0 ? scoresData[0].full_count : 0
+    const scores = scoresData.map((sd) => {
       return {
-        count: 0,
-        scores: [],
-      }
-    }
-    const scores = await this.db.score.findMany({
-      where: {
-        id: {
-          in: scoreIds,
-        },
+        id: BigInt(sd.id),
+        mapMd5: sd.map_md5,
+        score: sd.score,
+        pp: sd.pp,
+        acc: sd.acc,
+        maxCombo: sd.max_combo,
+        mods: sd.mods,
+        n300: sd.n300,
+        n100: sd.n100,
+        n50: sd.n50,
+        nMiss: sd.nmiss,
+        nGeki: sd.ngeki,
+        nKatu: sd.nkatu,
+        grade: sd.grade,
+        status: sd.status,
+        mode: sd.mode,
+        playTime: sd.play_time, // Assuming date is returned in a format that Date constructor can parse
+        timeElapsed: sd.time_elapsed,
+        clientFlags: sd.client_flags,
+        userId: sd.userid,
+        perfect: !!sd.perfect, // If perfect is returned as 1/0, convert to boolean
+        onlineChecksum: sd.online_checksum,
         beatmap: {
-          status: {
-            in: banchoPyRankingStatus,
+          artist: sd.artist,
+          title: sd.title,
+          version: sd.version,
+          creator: sd.creator,
+          lastUpdate: sd.last_update, // Assuming date is returned in a format that Date constructor can parse
+          totalLength: sd.total_length,
+          maxCombo: sd.map_max_combo,
+          mode: sd.map_mode,
+          bpm: sd.bpm,
+          cs: sd.cs,
+          ar: sd.ar,
+          od: sd.od,
+          hp: sd.hp,
+          diff: sd.diff,
+
+          id: sd.map_id,
+          server: sd.map_server === 'osu!' ? 'bancho' : 'privateServer',
+          setId: sd.set_id,
+          status: sd.map_status,
+          md5: sd.map_md5,
+          filename: sd.filename,
+          frozen: !!sd.frozen,
+          plays: sd.plays,
+          passes: sd.passes,
+          source: {
+            server: sd.source_server === 'osu!' ? 'bancho' : 'privateServer',
+            id: sd.source_id,
+            lastOsuApiCheck: sd.last_osuapi_check,
           },
         },
-      },
-      include: {
-        beatmap: {
-          include: {
-            source: true,
-          },
-        },
-      },
-      orderBy: {
-        id: 'desc',
-      },
-      skip: start,
-      take: perPage,
+      } satisfies AbleToTransformToScores
     })
+
     return {
-      count: scoreIds.length,
+      count,
       scores: toRankingSystemScores({ scores, rankingSystem, mode }).map(
         score => mapId(score, ScoreProvider.scoreIdToString),
       ),
@@ -818,3 +882,60 @@ export class RedisUserProvider extends DBUserProvider {
 }
 
 export const UserProvider = config().leaderboardSource === 'redis' ? RedisUserProvider : DBUserProvider
+
+interface ScoreWithMapDetails {
+  // Fields from the 'scores' table
+  id: string // or number | bigint, depending on how your database returns BIGINT
+  map_md5: string
+  map_server: 'osu!' | 'private'
+  score: number
+  pp: number
+  acc: number
+  max_combo: number
+  mods: number
+  n300: number
+  n100: number
+  n50: number
+  nmiss: number
+  ngeki: number
+  nkatu: number
+  grade: string
+  status: number
+  mode: number
+  play_time: Date
+  time_elapsed: number
+  client_flags: number
+  userid: number
+  perfect: number
+  online_checksum: string
+
+  map_id: number
+  set_id: number
+  map_status: number
+  artist: string
+  title: string
+  version: string
+  creator: string
+  filename: string
+  last_update: Date
+  total_length: number
+  map_max_combo: number
+  frozen: number
+  plays: number
+  passes: number
+  map_mode: number
+  bpm: number
+  cs: number
+  ar: number
+  od: number
+  hp: number
+  diff: number
+
+  // Fields from the 'mapsets' table
+  source_server: 'osu!' | 'private'
+  source_id: number
+  last_osuapi_check: Date
+
+  // The count of all rows that match the query without the limit
+  full_count: number
+}

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { type JSONContent } from '@tiptap/vue-3'
-
 import { generateHTML } from '@tiptap/html'
+import { type JSONContent } from '@tiptap/vue-3'
+import { notNullish } from '@vueuse/core'
 
 const props = defineProps<
   { json?: JSONContent; html?: string }
@@ -21,7 +21,7 @@ watch ([props, i18n.locale], () => {
 watch(html, hl)
 
 function generate() {
-  return props.html ? (props.html as string) : generateHTML(props.json as JSONContent, extensions)
+  return notNullish(props.html) ? (props.html as string) : generateHTML(props.json as JSONContent, extensions)
 }
 
 async function hl() {
