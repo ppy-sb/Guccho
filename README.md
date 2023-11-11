@@ -65,10 +65,6 @@ Checkout the [deployment documentation](https://v3.nuxtjs.org/guide/deploy/prese
 
 TODO Give first registered user owner privilege
 
-## AppConfig
-
-see `src/app.config.ts`
-
 ## Diagram
 
 ```mermaid
