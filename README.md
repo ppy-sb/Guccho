@@ -6,12 +6,12 @@ Guccho is a client interface to interact with osu private servers with compatibi
 
 ## Requirements
 
-- Nodejs >= 16
+- Nodejs >= 18
 - at least one supported platform (see supporting platforms down below)
 
 ## Setup
 
-- configure environment *important*
+- configs *important*
   - create guccho.ui.ts from guccho.ui.example.ts
   - create guccho.backend.ts from guccho.backend.example.ts
   - edit guccho.*.ts follow the comment
@@ -21,23 +21,13 @@ Guccho is a client interface to interact with osu private servers with compatibi
 
 ## tooling
 
-`bancho.py` or `ppy.sb@bancho.py` requires DB_DSN to be set in order to use prisma tooling.
+`bancho.py` or `ppy.sb@bancho.py` requires DB_DSN to be set in env in order to use prisma tooling.
 
 ## backends
 
 - ### bancho.py (aka gulag)
 
 - ### ppy.sb
-
-  for this two Run `pnpm run build:schemas`
-
-## Development Server
-
-Start the development server on <http://localhost:3000>
-
-```bash
-pnpm run dev
-```
 
 ## Production
 
@@ -60,6 +50,14 @@ pnpm run start:prod
 ```
 
 Checkout the [deployment documentation](https://v3.nuxtjs.org/guide/deploy/presets) for more information.
+
+## Development
+
+Start development server on <http://localhost:3000>
+
+```bash
+pnpm run dev
+```
 
 ### todo(s)
 
