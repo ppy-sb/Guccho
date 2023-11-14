@@ -212,7 +212,7 @@ fr-FR:
         </div>
         <div class="flex">
           <div class="ml-auto" />
-          <button class="btn btn-primary btn-sm" @click="() => reload()">
+          <button class="btn btn-primary btn-sm" @click="reload()">
             {{ t('search-btn') }}
             <icon name="ion:search-outline" class="w-4 h-4" />
           </button>

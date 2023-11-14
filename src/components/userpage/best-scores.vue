@@ -215,7 +215,7 @@ fr-FR:
             <button class="btn btn-ghost" :disabled="bpPage === 0" @click="prevBp">
               «
             </button>
-            <button class="btn btn-ghost grow" @click="() => refreshBP()">
+            <button class="btn btn-ghost grow" @click="refreshBP()">
               {{ t('page', { page: bpPage + 1 }) }}
             </button>
             <button class="btn btn-ghost" :disabled="bp.scores.length < 10" @click="nextBp">

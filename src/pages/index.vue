@@ -2,26 +2,23 @@
 import { useSession } from '~/store/session'
 
 const session = useSession()
-
+const app = useNuxtApp()
 const url = useRequestURL()
 const { t } = useI18n()
 useSeoMeta({
-  description: t('landing.content'),
-  ogTitle: () => t('server.name'),
-  ogDescription: t('landing.content'),
+  description: () => app.$i18n.t('landing.content'),
+  ogTitle: () => app.$i18n.t('server.name'),
+  ogDescription: () => app.$i18n.t('landing.content'),
   ogImage: '/mascot/riru.png',
   ogUrl: url.href,
-  twitterTitle: () => t('server.name'),
-  twitterDescription: t('landing.content'),
+  twitterTitle: () => app.$i18n.t('server.name'),
+  twitterDescription: app.$i18n.t('landing.content'),
   twitterImage: '/mascot/riru.png',
   twitterCard: 'summary',
 })
 
 useHead({
-  title: () => t('server.name'),
-  htmlAttrs: {
-    lang: 'en',
-  },
+  title: () => app.$i18n.t('server.name'),
   link: [
     {
       rel: 'icon',
@@ -48,10 +45,10 @@ fr-FR:
     <div class="content p-8">
       <div class="mb-6">
         <h1 class="mb-2 text-4xl font-bold text-center">
-          {{ t('server.name') }}
+          {{ $t('server.name') }}
         </h1>
         <h2 class="font-semibold px-2 sm:px-0 h-sub text-md sm:text-left whitespace-pre-line">
-          {{ $t('landing.content', { title: t('server.name') }) }}
+          {{ $t('landing.content', { title: $t('server.name') }) }}
         </h2>
       </div>
       <div class="grid grid-cols-2 gap-2 justify-center">

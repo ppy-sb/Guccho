@@ -232,7 +232,7 @@ fr-FR:
             <button class="btn btn-ghost" :disabled="topPage === 0" @click="prevTop">
               «
             </button>
-            <button class="btn btn-ghost grow" @click="() => refreshTop()">
+            <button class="btn btn-ghost grow" @click="refreshTop()">
               {{ t('page', { page: topPage + 1 }) }}
             </button>
             <button class="btn btn-ghost" :disabled="top.scores.length < 10" @click="nextTop">
