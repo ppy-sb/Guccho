@@ -1,6 +1,7 @@
 /* eslint-disable antfu/no-cjs-exports */
 /* eslint-disable @typescript-eslint/no-require-imports */
 /* eslint-env node */
+import defaultTheme from 'tailwindcss/defaultTheme'
 import { guccho } from './daisyui.themes'
 import { hex as colors } from './src/palette'
 
@@ -27,6 +28,15 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: [
+          'Kodchasan',
+          'Hannotate SC',
+          'LXGW WenKai',
+          'ヒラギノ丸ゴ Pro W4', 'ヒラギノ丸ゴ Pro', 'Hiragino Maru Gothic Pro', 'ヒラギノ角ゴ Pro W3', 'Hiragino Kaku Gothic Pro', 'HG丸ｺﾞｼｯｸM-PRO', 'HGMaruGothicMPRO',
+          ...defaultTheme.fontFamily.sans,
+        ],
+      },
       colors,
       animation: {
         'role-text': 'text 7s ease infinite',
