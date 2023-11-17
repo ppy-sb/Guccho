@@ -1,4 +1,3 @@
-import PackageJSON from './package.json'
 import { Lang, Rank } from './src/def'
 import { type UIConfig } from './src/def/config'
 
@@ -33,7 +32,6 @@ export default {
       },
     },
   },
-  version: PackageJSON.version,
   leaderboardRankingSystem: {
     [Rank.PPv2]: {
       userpage: {

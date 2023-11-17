@@ -3,26 +3,27 @@ import type { IconLink, UIConfig } from '~/def/config'
 
 const fullYear = new Date().getFullYear()
 const runtime = useRuntimeConfig()
-const { iconLinks, footerLink } = runtime.public as unknown as { iconLinks: readonly IconLink[] | undefined; footerLink: UIConfig['footerLink'] }
+const { iconLinks, footerLink, brand } = runtime.public as unknown as { iconLinks: readonly IconLink[] | undefined; footerLink: UIConfig['footerLink']; brand?: UIConfig['brand'] }
 </script>
 
 <template>
   <footer>
-    <div class="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
+    <div class="w-full max-w-screen-xl p-4 py-6 mx-auto lg:py-8">
       <div class="md:flex md:justify-between">
         <div class="mb-6 md:mb-0">
           <nuxt-link-locale :to="{ name: 'index' }" class="flex items-center">
-            <icon name="ion:paw" class="h-8 w-auto mr-3" />
-            <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">{{ $t('server.name') }}</span>
+            <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
+              <icon v-if="brand" :name="brand.icon" class="mr-2" :class="brand.iconClass" />{{ $t('server.name') }}
+            </span>
           </nuxt-link-locale>
         </div>
         <div v-if="footerLink" class="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
           <template v-for="(col, nm) in footerLink" :key="nm">
             <div v-if="col?.length">
-              <h2 class="mb-6 text-sm font-semibold text-gbase-900 uppercase dark:text-white">
+              <h2 class="mb-6 text-sm font-semibold uppercase text-gbase-900 dark:text-white">
                 {{ $t(`footer.${nm}`) }}
               </h2>
-              <ul class="text-gbase-500 dark:text-gbase-400 font-medium">
+              <ul class="font-medium text-gbase-500 dark:text-gbase-400">
                 <li v-for="(i, index) in col" :key="nm + index" class="mb-4">
                   <a :href="i.link" class="hover:underline ">{{ 'localeKey' in i ? $t(i.localeKey) : i.name }}</a>
                 </li>

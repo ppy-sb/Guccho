@@ -1,5 +1,4 @@
 import { type UIConfig } from './src/def/config.d'
-import PackageJSON from './package.json'
 import { Rank } from './src/def'
 import { Lang } from '~/def'
 
@@ -8,7 +7,10 @@ export default {
     name: 'Guccho',
   },
   baseUrl: 'dev.ppy.sb',
-  version: PackageJSON.version,
+  brand: {
+    icon: 'ion:paw',
+    iconClass: 'w-8 h-4',
+  },
   iconLinks: [{ icon: 'tabler:brand-nuxt', link: '//nuxt.com', name: 'nuxt' }],
   footerLink: {
     about: [{

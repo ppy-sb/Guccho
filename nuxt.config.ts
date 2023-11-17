@@ -1,4 +1,5 @@
 import { fileURLToPath } from 'node:url'
+import PackageJSON from './package.json'
 import backend from './guccho.backend.config'
 import ui from './guccho.ui.config'
 import './scripts/ensure-env'
@@ -69,7 +70,7 @@ export default defineNuxtConfig({
     },
   },
   runtimeConfig: {
-    public: ui,
+    public: { version: PackageJSON.version, ...ui },
   },
   watch: [
     /\.\/guccho.(ui|backend).config.ts/,
@@ -108,6 +109,7 @@ export default defineNuxtConfig({
     componentIslands: true,
     // viewTransition: true,
     // asyncContext: true,
+    renderJsonPayloads: true,
     headNext: true,
     inlineRouteRules: true,
     typedPages: true,

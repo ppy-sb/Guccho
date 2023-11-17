@@ -35,8 +35,11 @@ export interface UIConfig {
   legacyOption?: {
     name: string
   }
+  brand?: {
+    icon: string
+    iconClass?: string | string[] | Record<string, string>
+  }
   baseUrl: string
-  version: string
   leaderboardRankingSystem: R
   iconLinks?: IconLink[]
   footerLink?: Partial<Record<KFooter, FooterLink[]>>
