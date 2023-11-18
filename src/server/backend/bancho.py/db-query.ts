@@ -145,3 +145,11 @@ export function createFilter(tags: Tag[]) {
   })
   return filter
 }
+
+export const clanCond = {
+  where: {
+    id: {
+      not: 0,
+    },
+  },
+}

@@ -18,6 +18,7 @@ onMounted(() => {
     <input id="app-drawer-toggle" type="checkbox" class="drawer-toggle">
     <!-- Page content here -->
     <NuxtLayout
+      id="layout"
       ref="scroll"
       viewport
       :class="[safari ? 'safari' : 'not-safari']"
@@ -32,7 +33,7 @@ onMounted(() => {
     </NuxtLayout>
     <app-footer class="mt-auto" />
     <div class="drawer-side z-40">
-      <label for="app-drawer-toggle" aria-label="close sidebar" class="drawer-overlay" />
+      <label for="app-drawer-toggle" aria-label="Close sidebar" class="drawer-overlay" />
       <ul class="menu p-4 w-80 min-h-full bg-base-200">
         <app-nav-items>
           <template #start>
@@ -152,7 +153,7 @@ $scale2: scale(0.96);
 </style>
 
 <style>
-.safari {
+#layout.safari {
   -webkit-overflow-scrolling: touch;
 
   .notify-safari-something-will-change {

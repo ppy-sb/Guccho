@@ -2,6 +2,7 @@ import { TRPCError } from '@trpc/server'
 import type { Id } from '..'
 import { normal } from '../../bancho.py/constants'
 import { Logger } from '../log'
+import { clanCond } from './../../bancho.py/db-query'
 import { getPrismaClient } from './prisma'
 import type { UserProvider as Base } from '$base/server'
 import type { Mode, Ruleset } from '~/def'
@@ -9,7 +10,7 @@ import type { CountryCode } from '~/def/country-code'
 import { Scope, type UserCompact, UserRole, UserStatus } from '~/def/user'
 import { createUserHandleWhereQuery } from '~/server/backend/bancho.py/db-query'
 import { ArticleProvider, UserProvider as BanchoPyUser } from '~/server/backend/bancho.py/server'
-import { fromBanchoPyMode, toFullUser } from '~/server/backend/bancho.py/transforms'
+import { fromBanchoPyMode, toFullUser, toUserClan } from '~/server/backend/bancho.py/transforms'
 
 const logger = Logger.child({ label: 'user' })
 
@@ -98,7 +99,7 @@ export class UserProvider extends BanchoPyUser implements Base<Id> {
   }
 
   async getFull<Excludes extends Partial<Record<keyof Base.ComposableProperties<Id>, boolean>>>({ handle, excludes, includeHidden, scope }: { handle: string; excludes?: Excludes; includeHidden?: boolean; scope?: Scope }) {
-    const user = await this.sbDb.user.findFirstOrThrow({
+    const user = await this.db.user.findFirstOrThrow({
       where: {
         AND: [
           createUserHandleWhereQuery({
@@ -106,6 +107,9 @@ export class UserProvider extends BanchoPyUser implements Base<Id> {
           }),
           (includeHidden || scope === Scope.Self) ? {} : { priv: { in: normal } },
         ],
+      },
+      include: {
+        clan: clanCond,
       },
     })
 
@@ -118,6 +122,7 @@ export class UserProvider extends BanchoPyUser implements Base<Id> {
     const [mode, ruleset] = fromBanchoPyMode(user.preferredMode)
     const returnValue = {
       ...fullUser,
+      clan: excludes?.clan === true ? (undefined as never) : toUserClan(user).clan,
       preferredMode: {
         mode, ruleset,
       },

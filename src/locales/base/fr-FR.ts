@@ -24,6 +24,7 @@ export default {
     'admin-panel': 'Panneau Administrateur',
     'logs': 'Logs',
     'articles': 'Articles',
+    'clans': 'Clans',
   },
   global: {
     'logout': 'Déconnexion',

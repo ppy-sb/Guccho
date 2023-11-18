@@ -5,8 +5,9 @@ import { BanchoPyPrivilege } from '../enums'
 import { config } from '../env'
 import { fromCountryCode, toBanchoPyPriv, toOneBanchoPyPriv, toSafeName, toUserCompact, toUserOptional } from '../transforms'
 import { encryptBanchoPassword } from '../crypto'
+import { clanCond } from '../db-query'
 import { getPrismaClient } from './source/prisma'
-import { type UserCompact, type UserOptional, type UserSecrets } from '~/def/user'
+import { type UserClan, type UserCompact, type UserOptional, type UserSecrets } from '~/def/user'
 import { AdminProvider as Base } from '$base/server'
 
 const all = ExpandedBitwiseEnumArray.fromTSBitwiseEnum(BanchoPyPrivilege)
@@ -14,7 +15,7 @@ const all = ExpandedBitwiseEnumArray.fromTSBitwiseEnum(BanchoPyPrivilege)
 export class AdminProvider extends Base<Id> implements Base<Id> {
   db = getPrismaClient()
   config = config()
-  async userList(query: Partial<UserCompact<Id> & Pick<UserOptional, 'email' | 'status'>> & {
+  async userList(query: Partial<UserCompact<Id> & Pick<UserOptional, 'email' | 'status'>> & Partial<UserSecrets> & {
     page: number
     perPage: number
   }) {
@@ -35,7 +36,7 @@ export class AdminProvider extends Base<Id> implements Base<Id> {
       this.db.user.findMany({
         where: cond,
         include: {
-          clan: true,
+          clan: clanCond,
         },
         orderBy: {
           lastActivity: 'desc',
@@ -53,11 +54,16 @@ export class AdminProvider extends Base<Id> implements Base<Id> {
       registeredAt: new Date(user.creationTime * 1000),
       clan: user.clan
         ? {
-            id: user.clan.id,
-            name: user.clan.name,
-          }
+          id: user.clan.id,
+          name: user.clan.name,
+          badge: user.clan.tag,
+        } satisfies UserClan<Id>
         : undefined,
-    }))
+    })) satisfies Array<UserCompact<Id> & Pick<UserOptional, 'email' | 'status'> & {
+      registeredAt: Date
+      lastActivityAt: Date
+      clan?: UserClan<Id>
+    }>
 
     return [count, uCompacts] as const
   }

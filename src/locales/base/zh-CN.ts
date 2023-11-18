@@ -25,6 +25,7 @@ export default {
     'admin-panel': '管理面板',
     'logs': '系统日志',
     'articles': '文章',
+    'clans': '家人们',
   },
   global: {
     'logout': '登出',

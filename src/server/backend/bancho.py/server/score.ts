@@ -66,7 +66,7 @@ export class ScoreProvider implements Base<bigint, Id> {
     return this.#transformScore(dbScore)
   }
 
-  async findOne(opt: Base.SearchQueryMany<Id> | Base.SearchId<bigint>) {
+  async findOne(opt: Base.SearchQuery<Id> | Base.SearchId<bigint>) {
     if ('id' in opt) {
       return this.id(opt.id)
     }
@@ -96,7 +96,7 @@ export class ScoreProvider implements Base<bigint, Id> {
     }
   }
 
-  async findMany(opt: Base.SearchQueryMany<Id>) {
+  async findMany(opt: Base.SearchQuery<Id>) {
     const banchoPyMode = toBanchoPyMode(opt.mode, opt.ruleset)
     const scores = await this.db.score.findMany({
       where: {

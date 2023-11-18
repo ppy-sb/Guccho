@@ -11,6 +11,7 @@ import { router as search } from './search'
 import { router as session } from './session'
 import { router as status } from './status'
 import { router as user } from './user'
+import { router as clan } from './clan'
 
 export const appRouter = router({
   admin,
@@ -18,13 +19,14 @@ export const appRouter = router({
   session,
   me,
 
+  article,
+  clan,
+  map,
   user,
   rank,
-  map,
   search,
   score,
   status,
-  article,
 })
 
 // export type definition of API

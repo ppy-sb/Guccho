@@ -39,6 +39,7 @@ export default {
     'admin-panel': 'Admin Panel',
     'logs': 'Logs',
     'articles': 'Articles',
+    'clans': 'Clans',
   },
   global: {
     'logout': 'Sign out',

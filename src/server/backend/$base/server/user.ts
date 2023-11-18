@@ -1,6 +1,7 @@
 import type { JSONContent } from '@tiptap/core'
 import type { ExtractLocationSettings, ExtractSettingType } from '../@define-setting'
 import { IdTransformable } from './@extends'
+import type { Composition } from './@common'
 import type { settings } from '$active/dynamic-settings'
 import type { Mode, Ruleset } from '~/def'
 import type { BeatmapSource, RankingStatus } from '~/def/beatmap'
@@ -14,7 +15,9 @@ import type { RankingSystemScore } from '~/def/score'
 import type {
   DynamicSettingStore,
   Scope,
+  UserClan,
   UserCompact,
+  UserCompact as UserCompact$2,
   UserExtra,
   UserOptional,
   UserStatistic,
@@ -22,21 +25,26 @@ import type {
 } from '~/def/user'
 
 export namespace UserProvider {
-  export type ComposableProperties<Id> = UserExtra<Id> & UserOptional
+  export type ComposableProperties<Id> = UserExtra<Id> & UserOptional & { clan: UserClan<Id> | null }
   export interface OptType {
     handle: string
     keys?: Array<'id' | 'name' | 'safeName' | 'email'>
   }
 
-  export interface BaseQuery<Id, Mode extends ActiveMode, Ruleset extends ActiveRuleset, RankingSystem extends LeaderboardRankingSystem> {
+  export interface BaseQuery<
+    Id,
+    Mode extends ActiveMode,
+    Ruleset extends ActiveRuleset,
+    RankingSystem extends LeaderboardRankingSystem,
+    > extends Composition.Pagination {
     id: Id
     mode: Mode
     ruleset: Ruleset
     rankingSystem: RankingSystem
-    page: number
-    perPage: number
     rankingStatus: RankingStatus[]
   }
+
+  export type UserCompact<Id> = UserCompact$2<Id>
 }
 export abstract class UserProvider<Id> extends IdTransformable {
   abstract exists({ handle, keys }: UserProvider.OptType): PromiseLike<boolean>
@@ -135,7 +143,7 @@ export abstract class UserProvider<Id> extends IdTransformable {
   abstract search(opt: {
     keyword: string
     limit: number
-  }): PromiseLike<UserCompact<Id>[]>
+  }): PromiseLike<Array<UserCompact<Id> & { clan: UserClan<Id> | null }>>
 
   abstract count(opt: {
     keyword?: string

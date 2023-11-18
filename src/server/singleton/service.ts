@@ -1,6 +1,7 @@
 import {
   AdminProvider,
   ArticleProvider,
+  ClanProvider,
   FileProvider,
   LogProvider,
   MapProvider,
@@ -23,6 +24,7 @@ export const scores = new ScoreProvider()
 export const sessions = new SessionProvider()
 export const users = new UserProvider()
 export const userRelations = new UserRelationProvider()
+export const clanProvider = new ClanProvider()
 
 export {
   AdminProvider,
@@ -36,4 +38,5 @@ export {
   SessionProvider,
   UserProvider,
   UserRelationProvider,
+  ClanProvider,
 } from '$active/server'

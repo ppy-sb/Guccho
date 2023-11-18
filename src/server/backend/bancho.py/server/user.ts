@@ -11,6 +11,7 @@ import { getLiveUserStatus } from '../api-client'
 import { normal } from '../constants'
 import { compareBanchoPassword, encryptBanchoPassword } from '../crypto'
 import {
+  clanCond,
   createUserHandleWhereQuery,
   createUserLikeQuery,
   userCompacts,
@@ -33,6 +34,7 @@ import {
   toFullUser,
   toRankingSystemScores,
   toSafeName,
+  toUserClan,
   toUserCompact,
 } from '../transforms'
 import { ArticleProvider } from './article'
@@ -87,7 +89,7 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
   static stringToId = stringToId
   static idToString = idToString
   db = getPrismaClient()
-  usernamePattern = /^[\w \[\]-]{2,15}$/
+  usernamePattern = /^[\w [\]-]{2,15}$/
 
   relationships: UserRelationProvider
 
@@ -105,7 +107,7 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
 
   async exists({
     handle,
-    keys,
+    keys = ['id', 'name', 'safeName', 'email'],
   }: Base.OptType) {
     return (
       await this.db.user.count({
@@ -113,7 +115,7 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
           AND: [
             createUserHandleWhereQuery({
               handle,
-              selectAgainst: keys || ['id', 'name', 'safeName', 'email'],
+              selectAgainst: keys,
             }),
             {
               priv: {
@@ -139,7 +141,7 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
   }
 
   async getCompact(opt: Base.OptType & { scope?: Scope }) {
-    const { handle, scope, keys } = opt
+    const { handle, scope, keys = ['id', 'name', 'safeName', 'email'] } = opt
     /* optimized */
     const user = await this.db.user.findFirstOrThrow({
 
@@ -147,7 +149,7 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
         AND: [
           createUserHandleWhereQuery({
             handle,
-            selectAgainst: keys || ['id', 'name', 'safeName', 'email'],
+            selectAgainst: keys,
           }),
           scope === Scope.Self
             ? {}
@@ -481,6 +483,9 @@ LIMIT ?, ?
           includeHidden ? {} : { priv: { in: normal } },
         ],
       },
+      include: {
+        clan: clanCond,
+      },
     })
 
     const returnValue = toFullUser(user, this.config) as NonNullable<Awaited<ReturnType<Base<Id>['getFull']>>>
@@ -508,6 +513,10 @@ LIMIT ?, ?
     }
     if (excludes.email !== true) {
       returnValue.email = user.email
+    }
+
+    if (excludes.clan !== true) {
+      returnValue.clan = toUserClan(user).clan
     }
 
     if (excludes.profile !== true) {
@@ -556,8 +565,14 @@ LIMIT ?, ?
           ? toBanchoPyMode(input.preferredMode.mode, input.preferredMode.ruleset)
           : undefined,
       },
+      include: {
+        clan: clanCond,
+      },
     })
-    return toUserCompact(result, this.config)
+    return {
+      ...toUserCompact(result, this.config),
+      ...toUserClan(result),
+    }
   }
 
   async changeUserpage(
@@ -664,10 +679,16 @@ LIMIT ?, ?
     const result = await this.db.user.findMany({
       ...userCompacts,
       ...merge(userLike, { where: { priv: { in: normal } } }),
+      include: {
+        clan: clanCond,
+      },
       take: limit,
     })
 
-    return result.map(user => toUserCompact(user, this.config))
+    return result.map(user => ({
+      ...toUserCompact(user, this.config),
+      ...toUserClan(user),
+    }))
   }
 
   async count() {

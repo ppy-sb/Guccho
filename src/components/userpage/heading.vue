@@ -126,6 +126,13 @@ fr-FR:
       >
         <icon name="twemoji:crown" class="w-20 h-20 rotate-[40deg]" />
       </div>
+      <div
+        v-if="page.user.clan?.badge"
+        class="absolute bottom-0 right-0 badge lg:badge-lg tooltip tooltip-primary tooltip-right"
+        :data-tip="page.user.clan.name"
+      >
+        {{ page.user.clan.badge }}
+      </div>
     </div>
     <!-- info -->
     <div class="flex flex-col w-full p-2 lg:p-0 md:p-0 bg-gbase-200 dark:bg-gbase-700 md:bg-transparent md:grow">

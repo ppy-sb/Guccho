@@ -3,6 +3,7 @@ export enum Feature {
   // SearchBeatmap,
   // SearchBeatmapset,
   // AdvancedBeatmapSearch,
+  Clan,
   StableUsername,
   RankHistory,
   OldNames,

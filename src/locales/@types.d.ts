@@ -14,6 +14,7 @@ type Titles =
 | 'admin-panel'
 | 'logs'
 | 'articles'
+| 'clans'
 
 type KGlobal =
 | 'logout'

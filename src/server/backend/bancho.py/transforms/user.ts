@@ -1,21 +1,23 @@
 import type {
+  Clan,
   User as DatabaseUser,
 } from 'prisma-client-bancho-py'
 import type { Id } from '..'
 import { Access, BanchoPyUserStatus as B, BanchoPyPrivilege } from '../enums'
 import { fromBanchoPyMode } from './mode'
-import type { ArticleProvider } from '$base/server'
-import type { Relationship } from '~/def'
-import type { CountryCode } from '~/def/country-code'
 import {
   UserStatus as G,
   Scope,
+  type UserClan,
   type UserCompact,
   type UserOptional,
   UserRole,
   type UserSecrets,
   UserStatus,
 } from '~/def/user'
+import type { ArticleProvider } from '$base/server'
+import type { Relationship } from '~/def'
+import type { CountryCode } from '~/def/country-code'
 import type { UserRelationship } from '~/def/user-relationship'
 
 export function toRoles(priv: number): UserRole[] {
@@ -110,22 +112,42 @@ export function toOneBanchoPyPriv(role: UserRole): number {
   }
 }
 
+export function toUserClan(user: Pick<DatabaseUser & { clan: Clan | null }, 'name' | 'clan'>) {
+  return {
+    clan: user.clan
+      ? {
+          name: user.clan?.name,
+          id: user.clan.id,
+        } as UserClan<Id>
+      : null,
+  }
+}
+
 export type DatabaseUserCompactFields = 'id' | 'name' | 'safeName' | 'country' | 'priv'
 export function toUserCompact(user: Pick<DatabaseUser, DatabaseUserCompactFields>, { avatar }: {
   avatar: {
     domain?: string
   }
-}) {
+}): UserCompact<Id> {
   return {
     id: user.id,
     stableClientId: user.id,
     name: user.name,
     safeName: user.safeName,
     flag: user.country.toUpperCase() as CountryCode,
-    avatarSrc: avatar.domain && `https://${avatar.domain}/${user.id}`,
+    avatarSrc: avatar.domain && toUserAvatarSrc(
+      user,
+      // @ts-expect-error you are dumb
+      { avatar }
+    ),
     roles: toRoles(user.priv),
-  }
+  } satisfies UserCompact<Id>
 }
+
+export function toUserAvatarSrc(user: { id: Id }, config: { avatar: { domain: string } }) {
+  return `https://${config.avatar.domain}/${user.id}`
+}
+
 export type DatabaseUserOptionalFields = 'email' | 'preferredMode'
 export function toUserOptional(user: Pick<DatabaseUser, DatabaseUserOptionalFields>): UserOptional {
   const [mode, ruleset] = fromBanchoPyMode(user.preferredMode)
@@ -136,7 +158,7 @@ export function toUserOptional(user: Pick<DatabaseUser, DatabaseUserOptionalFiel
       ruleset,
     },
     status: UserStatus.Unknown,
-  }
+  } satisfies UserOptional
 }
 
 export type DatabaseUserSecretsFields = 'pwBcrypt'
@@ -185,7 +207,11 @@ export function toFullUser(
     name: user.name,
     safeName: user.safeName,
     flag: user.country.toUpperCase() as CountryCode,
-    avatarSrc: config.avatar.domain && `https://${config.avatar.domain}/${user.id}`,
+    avatarSrc: config.avatar.domain && toUserAvatarSrc(
+      user,
+      // @ts-expect-error you are dumb
+      config
+    ),
     roles: toRoles(user.priv),
   }
 }

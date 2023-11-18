@@ -454,17 +454,6 @@ fr-FR:
   transition: 0.3s ease;
 }
 
-.striped {
-  @apply px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6;
-  &:nth-child(odd){
-    @apply bg-gbase-50 dark:bg-gbase-800
-  }
-}
-
-.striped-text {
-  @apply mt-1 text-sm text-gbase-900 dark:text-gbase-100 sm:col-span-2 sm:mt-0;
-}
-
 :deep(table.table.clear-rounded-tl) {
   >thead {
     >tr:first-child {

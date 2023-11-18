@@ -1,11 +1,9 @@
 import { IdTransformable } from './@extends'
+import type { Composition } from './@common'
 import type { UserClan, UserCompact, UserOptional, UserSecrets } from '~/def/user'
 
 export abstract class AdminProvider<Id> extends IdTransformable {
-  abstract userList(query: Partial<UserCompact<Id> & Pick<UserOptional, 'email' | 'status'>> & Partial<UserSecrets> & {
-    page: number
-    perPage: number
-  }):
+  abstract userList(query: Partial<UserCompact<Id> & Pick<UserOptional, 'email' | 'status'>> & Partial<UserSecrets> & Composition.Pagination):
   Promise<
     readonly [
       number,

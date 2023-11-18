@@ -91,7 +91,7 @@ const {
         </div>
       </div>
       <div class="ml-auto" />
-      <button class="btn btn-ghost btn-sm" @click="() => closeModal()">
+      <button class="btn btn-ghost btn-sm" @click="closeModal()">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           class="h-6 w-6"
@@ -148,7 +148,7 @@ const {
             >
               <nuxt-link-locale
                 :to="page.route"
-                @click="() => closeModal()"
+                @click="closeModal()"
               >
                 <div class="flex gap-2 items-center">
                   <component :is="page.render" />
@@ -175,7 +175,7 @@ const {
                     id: bs.id,
                   },
                 }"
-                @click="() => closeModal()"
+                @click="closeModal()"
               >
                 <div class="flex gap-2 items-center">
                   <img
@@ -207,7 +207,7 @@ const {
                     id: bm.beatmapset.id,
                   },
                 }"
-                @click="() => closeModal()"
+                @click="closeModal()"
               >
                 <div class="flex gap-2 items-center max-w-full">
                   <img
@@ -238,7 +238,7 @@ const {
                     handle: `@${user.safeName}`,
                   },
                 }"
-                @click="() => closeModal()"
+                @click="closeModal()"
               >
                 <div class="flex gap-2 items-center">
                   <img

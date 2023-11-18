@@ -86,6 +86,7 @@ export interface UserSecrets {
 export interface UserClan<Id> {
   id: Id
   name: string
+  badge: string
 }
 export interface UserCompact<Id> {
   id: Id
