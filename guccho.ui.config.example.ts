@@ -1,6 +1,5 @@
 import { type UIConfig } from './src/def/config.d'
-import { Rank } from './src/def'
-import { Lang } from '~/def'
+import { Lang, Rank } from './src/def'
 
 export default {
   legacyOption: {

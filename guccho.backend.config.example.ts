@@ -1,57 +1,27 @@
-import { Lang, Rank } from './src/def'
-import { type UIConfig } from './src/def/config'
+import { resolve } from 'node:path'
+import { type UserBackendConfig } from './src/def/config'
+import { env, safeEnv } from './src/server/common/utils'
 
 export default {
-  legacyOption: {
-    name: 'Guccho',
+  use: 'ppy.sb@bancho.py',
+  article: {
+    location: resolve('articles'), // must be a resolved path. Put absolute path or use 'resolve()' here.
   },
-  baseUrl: 'ppy.sb',
-  iconLinks: [{ icon: 'tabler:brand-nuxt', link: '//nuxt.com', name: 'nuxt' }],
-  footerLink: {
-    about: [{
-      localeKey: 'footer.blog',
-      link: 'https://blog.ppy.sb',
-    }],
-    resources: [{
-      localeKey: 'footer.nuxt',
-      link: 'https://nuxt.com',
-    }],
+
+  sessionStore: 'redis',
+  leaderboardSource: 'redis',
+
+  redisURL: safeEnv('REDIS_URL') ?? 'redis://localhost',
+  dsn: env('DB_DSN'),
+
+  avatar: {
+    // must be a resolved path. Put absolute path or use 'resolve()' here.
+    location: resolve('.dump/ppy.sb/avatar'),
+    domain: 'a.ppy.sb',
   },
-  i18n: {
-    messages: {
-      [Lang.enGB]: {
-        footer: {
-          blog: 'Blog',
-          nuxt: 'Nuxt',
-        },
-      },
-      [Lang.zhCN]: {
-        footer: {
-          blog: '博客',
-        },
-      },
-    },
+
+  api: {
+    v1: 'http://api.dev.ppy.sb/v1',
   },
-  leaderboardRankingSystem: {
-    [Rank.PPv2]: {
-      userpage: {
-        show: 'tab',
-      },
-    },
-    [Rank.PPv1]: {
-      userpage: {
-        show: 'dropdown',
-      },
-    },
-    [Rank.RankedScore]: {
-      userpage: {
-        show: 'tab',
-      },
-    },
-    [Rank.TotalScore]: {
-      userpage: {
-        show: 'tab',
-      },
-    },
-  },
-} satisfies UIConfig as UIConfig
+
+} satisfies UserBackendConfig
