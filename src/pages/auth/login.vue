@@ -12,8 +12,6 @@ const route = useRoute()
 const app = useNuxtApp()
 const { t } = useI18n()
 
-
-
 useHead({
   title: () => `${app.$i18n.t('global.login')} - ${app.$i18n.t('server.name')}`,
 })

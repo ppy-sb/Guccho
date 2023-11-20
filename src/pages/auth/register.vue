@@ -62,7 +62,6 @@ useHead({
   title: () => `${app.$i18n.t('global.register')} - ${app.$i18n.t('server.name')}`,
 })
 
-
 async function userRegisterAction() {
   fetching.value = true
   const result = (await Promise.all(Object.values(validate).map(test => test()))).every(Boolean)
