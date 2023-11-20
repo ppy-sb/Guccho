@@ -1,6 +1,8 @@
-import type { User } from 'prisma-client-bancho-py'
+import { TRPCError } from '@trpc/server'
+import type { Prisma, User } from 'prisma-client-bancho-py'
 import type { Id } from '..'
 import { normal } from '../constants'
+import { BanchoPyScoreStatus } from '../enums'
 import { config as _config } from '../env'
 import {
   type AbleToTransformToScores,
@@ -15,6 +17,7 @@ import {
   toUserCompact,
 } from '../transforms'
 import { getPrismaClient } from './source/prisma'
+import { Rank } from '~/def'
 import type {
   ScoreProvider as Base,
 } from '$base/server'
@@ -66,42 +69,14 @@ export class ScoreProvider implements Base<bigint, Id> {
     return this.#transformScore(dbScore)
   }
 
-  async findOne(opt: Base.SearchQuery<Id> | Base.SearchId<bigint>) {
-    if ('id' in opt) {
-      return this.id(opt.id)
-    }
-    else {
-      const banchoPyMode = toBanchoPyMode(opt.mode, opt.ruleset)
-      const score = await this.db.score.findFirstOrThrow({
-        where: {
-          user: {
-            priv: {
-              in: normal,
-            },
-            ...opt.user,
-          },
-          beatmap: opt.beatmap,
-          mode: banchoPyMode,
-        },
-        include: {
-          beatmap: {
-            include: {
-              source: true,
-            },
-          },
-          user: true,
-        },
-      })
-      return this.#transformScore(score)
-    }
-  }
-
-  async findMany(opt: Base.SearchQuery<Id>) {
+  async findOne(opt: Base.SearchQuery<Id>) {
     const banchoPyMode = toBanchoPyMode(opt.mode, opt.ruleset)
-    const scores = await this.db.score.findMany({
+    const score = await this.db.score.findFirstOrThrow({
       where: {
         user: {
-          priv: { in: normal },
+          priv: {
+            in: normal,
+          },
           ...opt.user,
         },
         beatmap: opt.beatmap,
@@ -116,6 +91,89 @@ export class ScoreProvider implements Base<bigint, Id> {
         user: true,
       },
     })
+    return this.#transformScore(score)
+  }
+
+  async findMany(opt: Base.SearchQuery<Id>) {
+    const banchoPyMode = toBanchoPyMode(opt.mode, opt.ruleset)
+    const scores = await this.db.score.findMany({
+      where: {
+        user: {
+          priv: { in: normal },
+          ...opt.user,
+          clan: opt.user?.clan
+            ? {
+                id: opt.user.clan.id,
+                name: opt.user.clan.name,
+                tag: opt.user.clan.badge,
+              }
+            : undefined,
+        },
+        beatmap: opt.beatmap,
+        mode: banchoPyMode,
+      },
+      include: {
+        beatmap: {
+          include: {
+            source: true,
+          },
+        },
+        user: true,
+      },
+    })
     return scores.map(this.#transformScore).filter(TSFilter)
+  }
+
+  async #createScoreSearchQuery(opt: Base.SearchQuery<Id>) {
+    const { user, mode, ruleset, rankingSystem } = opt
+    const _mode = toBanchoPyMode(mode, ruleset)
+    if (_mode === undefined) {
+      throw new TRPCError({
+        code: 'PRECONDITION_FAILED',
+        message: 'unsupported mode',
+      })
+    }
+
+    const orderBy: Prisma.ScoreFindManyArgs['orderBy'] = {}
+    if (rankingSystem === Rank.PPv2) {
+      orderBy.pp = 'desc'
+    }
+    else if (rankingSystem === Rank.RankedScore) {
+      orderBy.score = 'desc'
+    }
+    else if (rankingSystem === Rank.TotalScore) {
+      orderBy.score = 'desc'
+    }
+    else {
+      throw new Error('unknown ranking system')
+    }
+    const scores = await this.db.score.findMany({
+      where: {
+        user,
+        mode: _mode,
+        status: BanchoPyScoreStatus.Pick,
+        beatmap: {
+          status: {
+            in: [BanchoPyScoreStatus.Pick, BanchoPyScoreStatus.Normal],
+          },
+        },
+      },
+      include: {
+        beatmap: {
+
+          include: {
+            source: true,
+          },
+        },
+      },
+      orderBy,
+      skip: start,
+      take: perPage,
+    })
+    return toRankingSystemScores({ scores, rankingSystem, mode }).map(score =>
+      Object.assign(score, {
+        id: score.id.toString(),
+      }),
+    )
   }
 }
