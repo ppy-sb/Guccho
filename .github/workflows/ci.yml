@@ -38,8 +38,8 @@ jobs:
           check-latest: true
           cache: pnpm
 
-      - name: preparing .env ⏚
-        run: cp .env.example .env && cp env.example.ts env.ts
+      - name: preparing configs ⏚
+        run: cp guccho.ui.config.example.ts guccho.ui.config.ts && cp guccho.backend.config.example.ts guccho.backend.config.ts
 
       - name: install dependencies 🎁
         run: pnpm install
