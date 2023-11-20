@@ -39,7 +39,7 @@ jobs:
           cache: pnpm
 
       - name: preparing configs ⏚
-        run: cp guccho.ui.config.example.ts guccho.ui.config.ts && cp guccho.backend.config.example.ts guccho.backend.config.ts
+        run: cp guccho.ui.config.example.ts guccho.ui.config.ts && cp guccho.backend.config.example.ts guccho.backend.config.ts && cp .env.example .env
 
       - name: install dependencies 🎁
         run: pnpm install
