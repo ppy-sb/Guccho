@@ -32,6 +32,7 @@ type KGlobal =
 | 'beatmaps'
 | 'users'
 | 'session'
+| 'wip'
 
 type KFooter =
 | 'about'

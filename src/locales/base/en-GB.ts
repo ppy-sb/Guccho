@@ -57,6 +57,7 @@ export default {
     'beatmaps': 'Beatmaps',
     'users': 'Users',
     'session': 'Session',
+    'wip': 'WIP',
   },
   role: {
     [UserRole.Disabled]: 'Disabled',
