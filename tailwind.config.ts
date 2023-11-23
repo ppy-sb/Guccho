@@ -32,8 +32,8 @@ module.exports = {
         sans: [
           'Kodchasan',
           'Hannotate SC',
-          'LXGW WenKai',
-          'ヒラギノ丸ゴ Pro W4', 'ヒラギノ丸ゴ Pro', 'Hiragino Maru Gothic Pro', 'ヒラギノ角ゴ Pro W3', 'Hiragino Kaku Gothic Pro', 'HG丸ｺﾞｼｯｸM-PRO', 'HGMaruGothicMPRO',
+          // 'LXGW WenKai',
+          // 'ヒラギノ丸ゴ Pro W4', 'ヒラギノ丸ゴ Pro', 'Hiragino Maru Gothic Pro', 'ヒラギノ角ゴ Pro W3', 'Hiragino Kaku Gothic Pro', 'HG丸ｺﾞｼｯｸM-PRO', 'HGMaruGothicMPRO',
           ...defaultTheme.fontFamily.sans,
         ],
       },

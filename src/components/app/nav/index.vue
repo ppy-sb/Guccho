@@ -62,12 +62,11 @@ function clearFocus() {
           </svg>
         </button>
       </div>
-      <div class="navbar-center hidden lg:flex">
+      <div class="navbar-center hidden lg:flex" />
+      <div class="navbar-end items-baseline !gap-2">
         <ul class="menu nav-menu menu-horizontal px-1">
           <app-nav-items />
         </ul>
-      </div>
-      <div class="navbar-end !gap-2">
         <button
           class="btn btn-ghost btn-circle hidden lg:flex"
           @click.prevent="() => searchModalWrapper?.searchModal?.showModal()"

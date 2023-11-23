@@ -2,24 +2,24 @@ $scale: 1.0012;
 $translate: 0.28vw;
 $element-translate: 0.14em;
 
-@keyframes move-to-left {
+@keyframes g-move-down {
   to {
-    transform: translateX(-$translate) scaleX($scale);
+    transform: translateY($translate) scaleY($scale);
     transform-origin: 0%;
     opacity: 0;
   }
 }
 
-@keyframes move-from-right {
+@keyframes g-move-up {
   from {
-    transform: translateX($translate) scaleX($scale);
+    transform: translateY($translate) scaleY($scale);
     transform-origin: 0%;
     opacity: 0;
   }
 }
 
 .slide-enter-active {
-  animation: move-from-right 0.5s ease both;
+  animation: g-move-up 0.5s ease both;
 
   & a,
   & img,
@@ -33,7 +33,7 @@ $element-translate: 0.14em;
 }
 
 .slide-leave-active {
-  animation: move-to-left 0.2s ease-in-out both;
+  animation: g-move-down 0.2s ease-in-out both;
 
   & a,
   & img,
@@ -47,14 +47,14 @@ $element-translate: 0.14em;
 
 @keyframes elements-initial {
   from {
-    transform: translateX($element-translate);
+    transform: translateY($element-translate);
     transform-origin: 0%;
   }
 }
 
 @keyframes elements-disappear {
   to {
-    transform: translateX(-$element-translate);
+    transform: translateY(-$element-translate);
   }
 }
 
