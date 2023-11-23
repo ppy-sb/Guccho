@@ -8,6 +8,7 @@ export class MonitorProvider {
   static lastTime = hrtime()
   static lastUsage = cpuUsage()
   static interval = 2000
+  static tick: NodeJS.Timeout
 
   static processUsage: {
     system: number
@@ -132,5 +133,9 @@ export class MonitorProvider {
       ...returnValue,
     }
   }
+
+  static start() {
+    clearInterval(MonitorProvider.tick)
+    MonitorProvider.tick = setInterval(MonitorProvider.collectLoad, MonitorProvider.interval)
+  }
 }
-setInterval(MonitorProvider.collectLoad, MonitorProvider.interval)
