@@ -62,9 +62,8 @@ function clearFocus() {
           </svg>
         </button>
       </div>
-      <div class="navbar-center hidden lg:flex" />
-      <div class="navbar-end items-baseline !gap-2">
-        <ul class="menu nav-menu menu-horizontal px-1">
+      <div class="navbar-end w-full items-baseline !gap-2">
+        <ul class="menu nav-menu menu-horizontal hidden lg:inline-flex">
           <app-nav-items />
         </ul>
         <button
@@ -81,7 +80,7 @@ function clearFocus() {
             />
           </svg>
         </button>
-        <div v-if="session.loggedIn" class="dropdown dropdown-end">
+        <div v-if="session.loggedIn" class="dropdown dropdown-end self-center">
           <label tabindex="0" class="pr-1 flex cursor-pointer active:scale-90 transition-transform">
             <img :src="session.$state.user?.avatarSrc" class="avatar-img">
           </label>
