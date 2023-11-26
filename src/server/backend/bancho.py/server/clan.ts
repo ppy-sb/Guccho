@@ -1,9 +1,11 @@
 import { zip } from 'lodash-es'
+import { and, eq, like, or, sql } from 'drizzle-orm'
+import * as schema from '../drizzle/schema'
 import type { Id } from '..'
 import { config } from '../env'
 import { assertIsBanchoPyMode, idToString, stringToId, toBanchoPyMode, toUserAvatarSrc, toUserCompact } from '../transforms'
 import { BanchoPyPrivilege } from './../enums'
-import { getPrismaClient } from './source/prisma'
+import getDrizzle from './source/drizzle'
 import { users } from '~/server/singleton/service'
 import { Rank } from '~/def'
 import { ClanProvider as Base } from '$base/server'
@@ -13,8 +15,14 @@ export class ClanProvider extends Base<Id> {
   static stringToId = stringToId
   static idToString = idToString
 
+  static #userPriv = sql`${schema.users.priv} & ${BanchoPyPrivilege.Normal | BanchoPyPrivilege.Verified} = ${BanchoPyPrivilege.Normal | BanchoPyPrivilege.Verified}`
+
   config = config()
-  db = getPrismaClient()
+
+  #drizzleLoader = getDrizzle(schema)
+  get drizzle() {
+    return this.#drizzleLoader() ?? raise(Error, 'database is not ready')
+  }
 
   async search(opt: Base.SearchParam): Promise<Base.SearchResult<Id>> {
     const { keyword, page, perPage, mode, ruleset } = opt
@@ -24,82 +32,50 @@ export class ClanProvider extends Base<Id> {
 
     const start = page * perPage
     const iNumber = ClanProvider.stringToId(keyword)
-    interface ReturnValue {
-      ownerId: number
-      countUser: bigint
-      sumPP: bigint
-      sumRankedScore: bigint
-      sumTotalScore: bigint
-      name: string
-      badge: string
-      createdAt: Date
-      id: number
-      userIdList: string
-      userNameList: string
-    }
 
-    const [count, result] = await this.db.$transaction([
-      this.db.clan.count({
-        where: {
-          OR: [
-            {
-              name: {
-                contains: keyword,
-              },
-            },
-            {
-              tag: {
-                contains: keyword,
-              },
-            },
-            Number.isNaN(iNumber)
-              ? undefined
-              : {
-                  id: {
-                    equals: iNumber,
-                  },
-                },
-          ].filter(TSFilter),
-        },
-      }),
-      this.db.$queryRaw<ReturnValue[]>`
-SELECT
-  ownerId,
-  COUNT(*) AS countUser,
-  SUM(pp) AS sumPP,
-  SUM(rscore) as sumRankedScore,
-  SUM(tscore) as sumTotalScore,
-  id,
-  name,
-  badge,
-  createdAt,
-  GROUP_CONCAT(REPLACE(userName, ',' ,'&#44;') ORDER BY pp DESC) AS userNameList,
-  GROUP_CONCAT(userId ORDER BY pp DESC) AS userIdList
-FROM (
-  SELECT
-    c.owner AS ownerId,
-    s.pp,
-    s.rscore,
-    s.tscore,
-    c.id,
-    c.name,
-    c.tag AS badge,
-    c.created_at AS createdAt,
-    u.name AS userName,
-    u.id AS userId
-  FROM clans c
-  INNER JOIN users u ON u.clan_id = c.id
-  INNER JOIN stats s ON s.id = u.id AND s.mode = ${bMode}
-  WHERE (c.name LIKE ${`%${keyword}%`}
-    OR c.tag LIKE ${`%${keyword}%`}
-    OR (CASE WHEN 1 = ${Number.isNaN(iNumber)} THEN c.id = ${iNumber} ELSE 0 END))
-    AND (u.priv & ${BanchoPyPrivilege.Normal | BanchoPyPrivilege.Verified} = ${BanchoPyPrivilege.Normal | BanchoPyPrivilege.Verified})
-) AS _
-GROUP BY id, name, badge, createdAt
-ORDER BY sumPP DESC
-LIMIT ${start}, ${perPage};
-    `,
-    ])
+    const subQuery = this.drizzle.select({
+      pp: schema.stats.pp,
+      rankedScore: schema.stats.rankedScore,
+      totalScore: schema.stats.totalScore,
+      ownerId: schema.clans.ownerId,
+      id: schema.clans.id,
+      name: schema.clans.name,
+      badge: schema.clans.badge,
+      createdAt: schema.clans.createdAt,
+      userId: sql`${schema.users.id}`.as('userId'),
+      userName: sql`${schema.users.name}`.as('userName'),
+    }).from(schema.clans)
+      .innerJoin(schema.users, and(eq(schema.users.clanId, schema.clans.id), ClanProvider.#userPriv))
+      .innerJoin(schema.stats, and(eq(schema.stats.id, schema.users.id), eq(schema.stats.mode, bMode)))
+      .where(
+        or(
+          like(schema.clans.name, `%${keyword}%`),
+          like(schema.clans.badge, `%${keyword}%`),
+          Number.isNaN(iNumber) ? undefined : eq(schema.clans.id, iNumber)
+        ),
+      ).as('sq')
+
+    const query = this.drizzle.select({
+      ownerId: subQuery.ownerId,
+      countUser: sql`count(*)`.mapWith(Number),
+      sumPP: sql`sum(${subQuery.pp})`.mapWith(Number),
+      sumRankedScore: sql`sum(${subQuery.rankedScore})`.mapWith(BigInt),
+      sumTotalScore: sql`sum(${subQuery.totalScore})`.mapWith(BigInt),
+      id: subQuery.id,
+      name: subQuery.name,
+      badge: subQuery.badge,
+      createdAt: subQuery.createdAt,
+      userNameList: sql<string>`GROUP_CONCAT(REPLACE(${subQuery.userName}, ',', '&#44;') ORDER BY ${subQuery.pp} DESC)`,
+      userIdList: sql<string>`GROUP_CONCAT(${subQuery.userId} ORDER BY ${subQuery.pp} DESC)`,
+    })
+      .from(subQuery)
+      .groupBy(schema.clans.id, schema.clans.name, schema.clans.badge, schema.clans.createdAt)
+      .offset(start)
+      .limit(perPage)
+
+    const [{ count }] = await this.drizzle.select({ count: sql`count(*)`.mapWith(Number) }).from(query.as('selected'))
+
+    const result = await query.execute()
 
     return [
       count,
@@ -116,11 +92,11 @@ LIMIT ${start}, ${perPage};
           avatarSrc: owner.avatarSrc,
           sum: {
             [Rank.PPv1]: 0,
-            [Rank.PPv2]: Number(a.sumPP),
-            [Rank.RankedScore]: BigInt(a.sumRankedScore),
-            [Rank.TotalScore]: BigInt(a.sumTotalScore),
+            [Rank.PPv2]: a.sumPP,
+            [Rank.RankedScore]: a.sumRankedScore,
+            [Rank.TotalScore]: a.sumTotalScore,
           },
-          countUser: Number(a.countUser),
+          countUser: a.countUser,
           owner,
         }
       })),
@@ -128,36 +104,38 @@ LIMIT ${start}, ${perPage};
   }
 
   async detail(opt: Base.DetailParam<Id>): Promise<Base.DetailResult<Id>> {
-    const [result, countUser] = await this.db.$transaction([
-      this.db.clan.findFirstOrThrow({
-        where: {
-          id: opt.id,
-        },
-        include: {
-          owner: {
-            select: {
-              name: true,
-              id: true,
-              safeName: true,
-              priv: true,
-              country: true,
-            },
+    const result = await this.drizzle.query.clans.findFirst({
+      where: (clans, { eq }) => eq(clans.id, opt.id),
+      with: {
+        owner: {
+          columns: {
+            name: true,
+            id: true,
+            safeName: true,
+            priv: true,
+            country: true,
           },
         },
-      }),
-      this.db.user.count({ where: { clanId: opt.id } }),
-    ])
+      },
+    }) ?? raise(Error, 'not found')
     const uc = toUserCompact(result.owner, this.config)
 
     return {
       name: result.name,
       id: result.id,
-      badge: result.tag,
+      badge: result.badge,
       createdAt: result.createdAt,
       owner: toUserCompact(result.owner, this.config),
       avatarSrc: uc.avatarSrc,
-      countUser,
-      // joinedUsers: result.joinedUsers.map(user => toUserCompact(user, this.config)),
+      countUser: await this.drizzle.select({ count: sql`count(1)`.mapWith(Number) })
+        .from(schema.users)
+        .where(
+          and(
+            eq(schema.users.clanId, result.id),
+            ClanProvider.#userPriv
+          )
+        )
+        .then(res => res[0].count),
     }
   }
 
@@ -237,14 +215,10 @@ LIMIT ${start}, ${perPage};
 
   async users(opt: Base.UsersParam<Id>): Promise<Base.UsersResult<Id>> {
     const start = opt.page * opt.perPage
-    const users = await this.db.user.findMany({
-      where: {
-        clan: {
-          id: opt.id,
-        },
-      },
-      skip: start,
-      take: opt.perPage,
+    const users = await this.drizzle.query.users.findMany({
+      where: eq(schema.users.clanId, opt.id),
+      offset: start,
+      limit: opt.perPage,
     })
 
     return users.map(v => toUserCompact(v, this.config))

@@ -1,4 +1,4 @@
-import { bigint, char, date, datetime, float, index, int, mysqlEnum, mysqlTable, primaryKey, text, tinyint, unique, varchar } from 'drizzle-orm/mysql-core'
+import { bigint, char, date, datetime, float, index, int, mysqlEnum, mysqlTable, primaryKey, tinyint, unique, varchar } from 'drizzle-orm/mysql-core'
 import { relations, sql } from 'drizzle-orm'
 
 const bpyServerEnum = mysqlEnum('server', ['osu!', 'private'])
@@ -350,20 +350,6 @@ export const userAchievements = mysqlTable('user_achievements', {
 (table) => {
   return {
     userAchievementsUserIdAchievementIdPk: primaryKey({ columns: [table.userId, table.achievementId], name: 'user_achievements_userid_achid_pk' }),
-  }
-})
-
-export const userpages = mysqlTable('userpages', {
-  id: int('id').autoincrement().notNull(),
-  userId: int('user_id').notNull(),
-  html: text('html'),
-  raw: text('raw'),
-  rawType: mysqlEnum('raw_type', ['tiptap']),
-},
-(table) => {
-  return {
-    userId: index('user_id').on(table.userId),
-    userpagesIdPk: primaryKey({ columns: [table.id], name: 'userpages_id_pk' }),
   }
 })
 
