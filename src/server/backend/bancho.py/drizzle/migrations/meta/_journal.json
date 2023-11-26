@@ -1,0 +1,13 @@
+{
+  "version": "5",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1700828412767,
+      "tag": "0000_lethal_the_stranger",
+      "breakpoints": true
+    }
+  ]
+}

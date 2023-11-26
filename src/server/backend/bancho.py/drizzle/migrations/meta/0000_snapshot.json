@@ -1,0 +1,1876 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "prevId": "",
+  "version": "5",
+  "dialect": "mysql",
+  "tables": {
+    "achievements": {
+      "name": "achievements",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "file": {
+          "autoincrement": false,
+          "name": "file",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "desc": {
+          "autoincrement": false,
+          "name": "desc",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "cond": {
+          "autoincrement": false,
+          "name": "cond",
+          "type": "varchar(64)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "achievements_id_pk": {
+          "name": "achievements_id_pk",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {
+        "achievements_desc_uindex": {
+          "name": "achievements_desc_uindex",
+          "columns": [
+            "desc"
+          ]
+        },
+        "achievements_file_uindex": {
+          "name": "achievements_file_uindex",
+          "columns": [
+            "file"
+          ]
+        },
+        "achievements_name_uindex": {
+          "name": "achievements_name_uindex",
+          "columns": [
+            "name"
+          ]
+        }
+      }
+    },
+    "channels": {
+      "name": "channels",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "topic": {
+          "autoincrement": false,
+          "name": "topic",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "read_priv": {
+          "default": 1,
+          "autoincrement": false,
+          "name": "read_priv",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "write_priv": {
+          "default": 2,
+          "autoincrement": false,
+          "name": "write_priv",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "auto_join": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "auto_join",
+          "type": "tinyint",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "channels_id_pk": {
+          "name": "channels_id_pk",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {
+        "channels_name_uindex": {
+          "name": "channels_name_uindex",
+          "columns": [
+            "name"
+          ]
+        }
+      }
+    },
+    "clans": {
+      "name": "clans",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "varchar(16)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tag": {
+          "autoincrement": false,
+          "name": "tag",
+          "type": "varchar(6)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "owner": {
+          "autoincrement": false,
+          "name": "owner",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "datetime",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "clans_id_pk": {
+          "name": "clans_id_pk",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {
+        "clans_name_uindex": {
+          "name": "clans_name_uindex",
+          "columns": [
+            "name"
+          ]
+        },
+        "clans_owner_uindex": {
+          "name": "clans_owner_uindex",
+          "columns": [
+            "owner"
+          ]
+        },
+        "clans_tag_uindex": {
+          "name": "clans_tag_uindex",
+          "columns": [
+            "tag"
+          ]
+        }
+      }
+    },
+    "client_hashes": {
+      "name": "client_hashes",
+      "columns": {
+        "userid": {
+          "autoincrement": false,
+          "name": "userid",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "osupath": {
+          "autoincrement": false,
+          "name": "osupath",
+          "type": "char(32)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "adapters": {
+          "autoincrement": false,
+          "name": "adapters",
+          "type": "char(32)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "uninstall_id": {
+          "autoincrement": false,
+          "name": "uninstall_id",
+          "type": "char(32)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "disk_serial": {
+          "autoincrement": false,
+          "name": "disk_serial",
+          "type": "char(32)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "latest_time": {
+          "autoincrement": false,
+          "name": "latest_time",
+          "type": "datetime",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "occurrences": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "occurrences",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "client_hashes_userid_osupath_adapters_uninstall_id_disk_serial_pk": {
+          "name": "client_hashes_userid_osupath_adapters_uninstall_id_disk_serial_pk",
+          "columns": [
+            "userid",
+            "osupath",
+            "adapters",
+            "uninstall_id",
+            "disk_serial"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {}
+    },
+    "comments": {
+      "name": "comments",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "target_id": {
+          "autoincrement": false,
+          "name": "target_id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "target_type": {
+          "autoincrement": false,
+          "name": "target_type",
+          "type": "enum('replay','map','song')",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "userid": {
+          "autoincrement": false,
+          "name": "userid",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "time": {
+          "autoincrement": false,
+          "name": "time",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "comment": {
+          "autoincrement": false,
+          "name": "comment",
+          "type": "varchar(80)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "colour": {
+          "autoincrement": false,
+          "name": "colour",
+          "type": "char(6)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "comments_id_pk": {
+          "name": "comments_id_pk",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {
+        "comments_userid_fkey": {
+          "name": "comments_userid_fkey",
+          "columns": [
+            "userid"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "uniqueConstraints": {}
+    },
+    "favourites": {
+      "name": "favourites",
+      "columns": {
+        "userid": {
+          "autoincrement": false,
+          "name": "userid",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "setid": {
+          "autoincrement": false,
+          "name": "setid",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "favourites_userid_setid_pk": {
+          "name": "favourites_userid_setid_pk",
+          "columns": [
+            "userid",
+            "setid"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {}
+    },
+    "ingame_logins": {
+      "name": "ingame_logins",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "userid": {
+          "autoincrement": false,
+          "name": "userid",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ip": {
+          "autoincrement": false,
+          "name": "ip",
+          "type": "varchar(45)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "osu_ver": {
+          "autoincrement": false,
+          "name": "osu_ver",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "osu_stream": {
+          "autoincrement": false,
+          "name": "osu_stream",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "datetime": {
+          "autoincrement": false,
+          "name": "datetime",
+          "type": "datetime",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "ingame_logins_id_pk": {
+          "name": "ingame_logins_id_pk",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {}
+    },
+    "logs": {
+      "name": "logs",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "from": {
+          "autoincrement": false,
+          "name": "from",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "to": {
+          "autoincrement": false,
+          "name": "to",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "msg": {
+          "autoincrement": false,
+          "name": "msg",
+          "type": "varchar(2048)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "time": {
+          "autoincrement": false,
+          "name": "time",
+          "type": "datetime",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "logs_id_pk": {
+          "name": "logs_id_pk",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {}
+    },
+    "mail": {
+      "name": "mail",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "from_id": {
+          "autoincrement": false,
+          "name": "from_id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "to_id": {
+          "autoincrement": false,
+          "name": "to_id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "msg": {
+          "autoincrement": false,
+          "name": "msg",
+          "type": "varchar(2048)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "time": {
+          "autoincrement": false,
+          "name": "time",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "read": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "read",
+          "type": "tinyint",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "mail_id_pk": {
+          "name": "mail_id_pk",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {}
+    },
+    "map_requests": {
+      "name": "map_requests",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "map_id": {
+          "autoincrement": false,
+          "name": "map_id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "player_id": {
+          "autoincrement": false,
+          "name": "player_id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "datetime": {
+          "autoincrement": false,
+          "name": "datetime",
+          "type": "datetime",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "active": {
+          "autoincrement": false,
+          "name": "active",
+          "type": "tinyint",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "map_requests_id_pk": {
+          "name": "map_requests_id_pk",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {}
+    },
+    "maps": {
+      "name": "maps",
+      "columns": {
+        "id": {
+          "autoincrement": false,
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "server": {
+          "default": "'osu!'",
+          "autoincrement": false,
+          "name": "server",
+          "type": "enum('osu!','private')",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "set_id": {
+          "autoincrement": false,
+          "name": "set_id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "autoincrement": false,
+          "name": "status",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "md5": {
+          "autoincrement": false,
+          "name": "md5",
+          "type": "char(32)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "artist": {
+          "autoincrement": false,
+          "name": "artist",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "title": {
+          "autoincrement": false,
+          "name": "title",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "version": {
+          "autoincrement": false,
+          "name": "version",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "creator": {
+          "autoincrement": false,
+          "name": "creator",
+          "type": "varchar(19)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "filename": {
+          "autoincrement": false,
+          "name": "filename",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "last_update": {
+          "autoincrement": false,
+          "name": "last_update",
+          "type": "datetime",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "total_length": {
+          "autoincrement": false,
+          "name": "total_length",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "max_combo": {
+          "autoincrement": false,
+          "name": "max_combo",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "frozen": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "frozen",
+          "type": "tinyint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "plays": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "plays",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "passes": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "passes",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "mode": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "mode",
+          "type": "tinyint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bpm": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "bpm",
+          "type": "float(12,2)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "cs": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "cs",
+          "type": "float(4,2)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ar": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "ar",
+          "type": "float(4,2)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "od": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "od",
+          "type": "float(4,2)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "hp": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "hp",
+          "type": "float(4,2)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "diff": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "diff",
+          "type": "float(6,3)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "maps_server_id_pk": {
+          "name": "maps_server_id_pk",
+          "columns": [
+            "server",
+            "id"
+          ]
+        }
+      },
+      "indexes": {
+        "filename": {
+          "name": "filename",
+          "columns": [
+            "filename"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "uniqueConstraints": {
+        "maps_id_uindex": {
+          "name": "maps_id_uindex",
+          "columns": [
+            "id"
+          ]
+        },
+        "maps_md5_uindex": {
+          "name": "maps_md5_uindex",
+          "columns": [
+            "md5"
+          ]
+        }
+      }
+    },
+    "maps_lack": {
+      "name": "maps_lack",
+      "columns": {
+        "md5": {
+          "autoincrement": false,
+          "name": "md5",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lack_type": {
+          "autoincrement": false,
+          "name": "lack_type",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "maps_lack_md5_pk": {
+          "name": "maps_lack_md5_pk",
+          "columns": [
+            "md5"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {}
+    },
+    "mapsets": {
+      "name": "mapsets",
+      "columns": {
+        "server": {
+          "default": "'osu!'",
+          "autoincrement": false,
+          "name": "server",
+          "type": "enum('osu!','private')",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id": {
+          "autoincrement": false,
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "last_osuapi_check": {
+          "default": "CURRENT_TIMESTAMP",
+          "autoincrement": false,
+          "name": "last_osuapi_check",
+          "type": "datetime",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "mapsets_server_id_pk": {
+          "name": "mapsets_server_id_pk",
+          "columns": [
+            "server",
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {
+        "nmapsets_id_uindex": {
+          "name": "nmapsets_id_uindex",
+          "columns": [
+            "id"
+          ]
+        }
+      }
+    },
+    "performance_reports": {
+      "name": "performance_reports",
+      "columns": {
+        "scoreid": {
+          "autoincrement": false,
+          "name": "scoreid",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "mod_mode": {
+          "default": "'vanilla'",
+          "autoincrement": false,
+          "name": "mod_mode",
+          "type": "enum('vanilla','relax','autopilot')",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "os": {
+          "autoincrement": false,
+          "name": "os",
+          "type": "varchar(64)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "fullscreen": {
+          "autoincrement": false,
+          "name": "fullscreen",
+          "type": "tinyint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "fps_cap": {
+          "autoincrement": false,
+          "name": "fps_cap",
+          "type": "varchar(16)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "compatibility": {
+          "autoincrement": false,
+          "name": "compatibility",
+          "type": "tinyint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "version": {
+          "autoincrement": false,
+          "name": "version",
+          "type": "varchar(16)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "start_time": {
+          "autoincrement": false,
+          "name": "start_time",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "end_time": {
+          "autoincrement": false,
+          "name": "end_time",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "frame_count": {
+          "autoincrement": false,
+          "name": "frame_count",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "spike_frames": {
+          "autoincrement": false,
+          "name": "spike_frames",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "aim_rate": {
+          "autoincrement": false,
+          "name": "aim_rate",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "completion": {
+          "autoincrement": false,
+          "name": "completion",
+          "type": "tinyint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "identifier": {
+          "autoincrement": false,
+          "name": "identifier",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "average_frametime": {
+          "autoincrement": false,
+          "name": "average_frametime",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "performance_reports_scoreid_mod_mode_pk": {
+          "name": "performance_reports_scoreid_mod_mode_pk",
+          "columns": [
+            "scoreid",
+            "mod_mode"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {}
+    },
+    "ratings": {
+      "name": "ratings",
+      "columns": {
+        "userid": {
+          "autoincrement": false,
+          "name": "userid",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "map_md5": {
+          "autoincrement": false,
+          "name": "map_md5",
+          "type": "char(32)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "rating": {
+          "autoincrement": false,
+          "name": "rating",
+          "type": "tinyint",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "ratings_userid_map_md5_pk": {
+          "name": "ratings_userid_map_md5_pk",
+          "columns": [
+            "userid",
+            "map_md5"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {}
+    },
+    "relationships": {
+      "name": "relationships",
+      "columns": {
+        "user1": {
+          "autoincrement": false,
+          "name": "user1",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user2": {
+          "autoincrement": false,
+          "name": "user2",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "autoincrement": false,
+          "name": "type",
+          "type": "enum('friend','block')",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "relationships_user1_user2_pk": {
+          "name": "relationships_user1_user2_pk",
+          "columns": [
+            "user1",
+            "user2"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {}
+    },
+    "scores": {
+      "name": "scores",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "map_md5": {
+          "autoincrement": false,
+          "name": "map_md5",
+          "type": "char(32)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "score": {
+          "autoincrement": false,
+          "name": "score",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "pp": {
+          "autoincrement": false,
+          "name": "pp",
+          "type": "float(7,3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "acc": {
+          "autoincrement": false,
+          "name": "acc",
+          "type": "float(6,3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "max_combo": {
+          "autoincrement": false,
+          "name": "max_combo",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "mods": {
+          "autoincrement": false,
+          "name": "mods",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "n300": {
+          "autoincrement": false,
+          "name": "n300",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "n100": {
+          "autoincrement": false,
+          "name": "n100",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "n50": {
+          "autoincrement": false,
+          "name": "n50",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "nmiss": {
+          "autoincrement": false,
+          "name": "nmiss",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ngeki": {
+          "autoincrement": false,
+          "name": "ngeki",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "nkatu": {
+          "autoincrement": false,
+          "name": "nkatu",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "grade": {
+          "default": "'N'",
+          "autoincrement": false,
+          "name": "grade",
+          "type": "varchar(2)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "autoincrement": false,
+          "name": "status",
+          "type": "tinyint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "mode": {
+          "autoincrement": false,
+          "name": "mode",
+          "type": "tinyint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "play_time": {
+          "autoincrement": false,
+          "name": "play_time",
+          "type": "datetime",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "time_elapsed": {
+          "autoincrement": false,
+          "name": "time_elapsed",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "client_flags": {
+          "autoincrement": false,
+          "name": "client_flags",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "userid": {
+          "autoincrement": false,
+          "name": "userid",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "perfect": {
+          "autoincrement": false,
+          "name": "perfect",
+          "type": "tinyint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "online_checksum": {
+          "autoincrement": false,
+          "name": "online_checksum",
+          "type": "char(32)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "scores_id_pk": {
+          "name": "scores_id_pk",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {
+        "map_md5": {
+          "name": "map_md5",
+          "columns": [
+            "map_md5"
+          ],
+          "isUnique": false
+        },
+        "userid": {
+          "name": "userid",
+          "columns": [
+            "userid"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "uniqueConstraints": {}
+    },
+    "startups": {
+      "name": "startups",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ver_major": {
+          "autoincrement": false,
+          "name": "ver_major",
+          "type": "tinyint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ver_minor": {
+          "autoincrement": false,
+          "name": "ver_minor",
+          "type": "tinyint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ver_micro": {
+          "autoincrement": false,
+          "name": "ver_micro",
+          "type": "tinyint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "datetime": {
+          "autoincrement": false,
+          "name": "datetime",
+          "type": "datetime",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "startups_id_pk": {
+          "name": "startups_id_pk",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {}
+    },
+    "stats": {
+      "name": "stats",
+      "columns": {
+        "id": {
+          "autoincrement": false,
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "mode": {
+          "autoincrement": false,
+          "name": "mode",
+          "type": "tinyint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tscore": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "tscore",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "rscore": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "rscore",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "pp": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "pp",
+          "type": "int unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "plays": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "plays",
+          "type": "int unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "playtime": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "playtime",
+          "type": "int unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "acc": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "acc",
+          "type": "float(6,3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "max_combo": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "max_combo",
+          "type": "int unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "total_hits": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "total_hits",
+          "type": "int unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "replay_views": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "replay_views",
+          "type": "int unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "xh_count": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "xh_count",
+          "type": "int unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "x_count": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "x_count",
+          "type": "int unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sh_count": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "sh_count",
+          "type": "int unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "s_count": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "s_count",
+          "type": "int unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "a_count": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "a_count",
+          "type": "int unsigned",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "stats_id_mode_pk": {
+          "name": "stats_id_mode_pk",
+          "columns": [
+            "id",
+            "mode"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {}
+    },
+    "tourney_pool_maps": {
+      "name": "tourney_pool_maps",
+      "columns": {
+        "map_id": {
+          "autoincrement": false,
+          "name": "map_id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "pool_id": {
+          "autoincrement": false,
+          "name": "pool_id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "mods": {
+          "autoincrement": false,
+          "name": "mods",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "slot": {
+          "autoincrement": false,
+          "name": "slot",
+          "type": "tinyint",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "tourney_pool_maps_map_id_pool_id_pk": {
+          "name": "tourney_pool_maps_map_id_pool_id_pk",
+          "columns": [
+            "map_id",
+            "pool_id"
+          ]
+        }
+      },
+      "indexes": {
+        "tourney_pool_maps_tourney_pools_id_fk": {
+          "name": "tourney_pool_maps_tourney_pools_id_fk",
+          "columns": [
+            "pool_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "uniqueConstraints": {}
+    },
+    "tourney_pools": {
+      "name": "tourney_pools",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "varchar(16)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "autoincrement": false,
+          "name": "created_at",
+          "type": "datetime",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_by": {
+          "autoincrement": false,
+          "name": "created_by",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "tourney_pools_id_pk": {
+          "name": "tourney_pools_id_pk",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {
+        "tourney_pools_users_id_fk": {
+          "name": "tourney_pools_users_id_fk",
+          "columns": [
+            "created_by"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "uniqueConstraints": {}
+    },
+    "user_achievements": {
+      "name": "user_achievements",
+      "columns": {
+        "userid": {
+          "autoincrement": false,
+          "name": "userid",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "achid": {
+          "autoincrement": false,
+          "name": "achid",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "user_achievements_userid_achid_pk": {
+          "name": "user_achievements_userid_achid_pk",
+          "columns": [
+            "userid",
+            "achid"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {}
+    },
+    "userpages": {
+      "name": "userpages",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "autoincrement": false,
+          "name": "user_id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "html": {
+          "autoincrement": false,
+          "name": "html",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "raw": {
+          "autoincrement": false,
+          "name": "raw",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "raw_type": {
+          "autoincrement": false,
+          "name": "raw_type",
+          "type": "enum('tiptap')",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "userpages_id_pk": {
+          "name": "userpages_id_pk",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {
+        "user_id": {
+          "name": "user_id",
+          "columns": [
+            "user_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "uniqueConstraints": {}
+    },
+    "users": {
+      "name": "users",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "safe_name": {
+          "autoincrement": false,
+          "name": "safe_name",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "autoincrement": false,
+          "name": "email",
+          "type": "varchar(254)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "priv": {
+          "default": 1,
+          "autoincrement": false,
+          "name": "priv",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "pw_bcrypt": {
+          "autoincrement": false,
+          "name": "pw_bcrypt",
+          "type": "char(60)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "country": {
+          "default": "'xx'",
+          "autoincrement": false,
+          "name": "country",
+          "type": "char(2)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "silence_end": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "silence_end",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "donor_end": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "donor_end",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "creation_time": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "creation_time",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "latest_activity": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "latest_activity",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "preferred_mode": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "preferred_mode",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "play_style": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "play_style",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "custom_badge_name": {
+          "autoincrement": false,
+          "name": "custom_badge_name",
+          "type": "varchar(16)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "custom_badge_icon": {
+          "autoincrement": false,
+          "name": "custom_badge_icon",
+          "type": "varchar(64)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "userpage_content": {
+          "autoincrement": false,
+          "name": "userpage_content",
+          "type": "varchar(2048)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "clan_id": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "clan_id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "clan_priv": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "clan_priv",
+          "type": "tinyint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "api_key": {
+          "autoincrement": false,
+          "name": "api_key",
+          "type": "char(36)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "users_id_pk": {
+          "name": "users_id_pk",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {
+        "users_clan_id_fkey": {
+          "name": "users_clan_id_fkey",
+          "columns": [
+            "clan_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "uniqueConstraints": {
+        "users_api_key_uindex": {
+          "name": "users_api_key_uindex",
+          "columns": [
+            "api_key"
+          ]
+        },
+        "users_email_uindex": {
+          "name": "users_email_uindex",
+          "columns": [
+            "email"
+          ]
+        },
+        "users_name_uindex": {
+          "name": "users_name_uindex",
+          "columns": [
+            "name"
+          ]
+        },
+        "users_safe_name_uindex": {
+          "name": "users_safe_name_uindex",
+          "columns": [
+            "safe_name"
+          ]
+        }
+      }
+    }
+  },
+  "schemas": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  }
+}
