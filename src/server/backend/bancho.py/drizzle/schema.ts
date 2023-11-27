@@ -406,7 +406,7 @@ export const mapsRelations = relations(maps, ({ one }) => ({
   source: one(sources, { fields: [maps.setId, maps.server], references: [sources.id, sources.server] }),
 }))
 export const statsRelations = relations(stats, ({ one }) => ({
-  user: one(users),
+  user: one(users, { fields: [stats.id], references: [users.id] }),
 }))
 export const scoresRelations = relations(scores, ({ one }) => ({
   user: one(users, { fields: [scores.userId], references: [users.id] }),
@@ -416,4 +416,8 @@ export const clansRelations = relations(clans, ({ one }) => ({
 }))
 export const usersRelations = relations(users, ({ one }) => ({
   clan: one(clans, { fields: [users.clanId], references: [clans.id] }),
+}))
+export const usersAchievementsRelations = relations(userAchievements, ({ one }) => ({
+  user: one(users, { fields: [userAchievements.userId], references: [users.id] }),
+  achievement: one(achievements, { fields: [userAchievements.achievementId], references: [achievements.id] }),
 }))
