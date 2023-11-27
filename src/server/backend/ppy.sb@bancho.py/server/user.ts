@@ -85,7 +85,7 @@ export class UserProvider extends BanchoPyUser implements Base<Id> {
           eq(schema.users.name, handle),
           Number.isNaN(nHandle) ? undefined : eq(schema.users.id, nHandle)
         ),
-        (includeHidden || scope === Scope.Self) ? sql`1` : userPriv
+        (includeHidden || scope === Scope.Self) ? sql`1` : userPriv(schema.users)
       ),
       with: {
         clan: true,

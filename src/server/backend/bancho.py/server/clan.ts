@@ -1,4 +1,4 @@
-import { and, eq, like, or, sql } from 'drizzle-orm'
+import { aliasedTable, and, eq, like, or, sql } from 'drizzle-orm'
 import { zip } from 'lodash-es'
 import type { Id } from '..'
 import * as schema from '../drizzle/schema'
@@ -41,7 +41,7 @@ export class ClanProvider extends Base<Id> {
       userId: sql`${schema.users.id}`.as('userId'),
       userName: sql`${schema.users.name}`.as('userName'),
     }).from(schema.clans)
-      .innerJoin(schema.users, and(eq(schema.users.clanId, schema.clans.id), userPriv))
+      .innerJoin(schema.users, and(eq(schema.users.clanId, schema.clans.id), userPriv(schema.users)))
       .innerJoin(schema.stats, and(eq(schema.stats.id, schema.users.id), eq(schema.stats.mode, bMode)))
       .where(
         or(
@@ -66,12 +66,13 @@ export class ClanProvider extends Base<Id> {
     })
       .from(subQuery)
       .groupBy(schema.clans.id, schema.clans.name, schema.clans.badge, schema.clans.createdAt)
-      .offset(start)
-      .limit(perPage)
 
     const [{ count }] = await this.drizzle.select({ count: sql`count(*)`.mapWith(Number) }).from(query.as('selected'))
 
-    const result = await query.execute()
+    const result = await query
+      .offset(start)
+      .limit(perPage)
+      .execute()
 
     return [
       count,
@@ -100,38 +101,38 @@ export class ClanProvider extends Base<Id> {
   }
 
   async detail(opt: Base.DetailParam<Id>): Promise<Base.DetailResult<Id>> {
-    const result = await this.drizzle.query.clans.findFirst({
-      where: (clans, { eq }) => eq(clans.id, opt.id),
-      with: {
-        owner: {
-          columns: {
-            name: true,
-            id: true,
-            safeName: true,
-            priv: true,
-            country: true,
-          },
-        },
+    const owners = aliasedTable(schema.users, 'owners')
+    const query = this.drizzle.select({
+      countUser: sql`count(${schema.users.id})`.mapWith(Number),
+      owner: {
+        id: schema.clans.ownerId,
+        name: owners.name,
+        safeName: owners.safeName,
+        priv: owners.priv,
+        country: owners.country,
       },
-    }) ?? raise(Error, 'not found')
+      clan: {
+        id: schema.clans.id,
+        name: schema.clans.name,
+        badge: schema.clans.badge,
+        createdAt: schema.clans.createdAt,
+      },
+    })
+      .from(schema.clans)
+      .innerJoin(schema.users, and(eq(schema.users.clanId, schema.clans.id), userPriv(schema.users)))
+      .innerJoin(owners, and(eq(schema.clans.ownerId, owners.id), userPriv(owners)))
+      .where(eq(schema.clans.id, opt.id))
+      .groupBy(schema.clans.id, schema.clans.name, schema.clans.badge, schema.clans.createdAt)
+
+    const [result] = await query.execute()
+
     const uc = toUserCompact(result.owner, this.config)
 
     return {
-      name: result.name,
-      id: result.id,
-      badge: result.badge,
-      createdAt: result.createdAt,
+      ...result.clan,
       owner: toUserCompact(result.owner, this.config),
       avatarSrc: uc.avatarSrc,
-      countUser: await this.drizzle.select({ count: sql`count(1)`.mapWith(Number) })
-        .from(schema.users)
-        .where(
-          and(
-            eq(schema.users.clanId, result.id),
-            userPriv
-          )
-        )
-        .then(res => res[0].count),
+      countUser: result.countUser,
     }
   }
 
