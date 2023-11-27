@@ -6,7 +6,7 @@ import { config } from '../env'
 import { fromCountryCode, toBanchoPyPriv, toSafeName, toUserCompact, toUserOptional } from '../transforms'
 import { Logger } from '../log'
 import { userNotFound } from './../../../trpc/messages/index'
-import useDrizzle, { userPriv } from './source/drizzle'
+import useDrizzle from './source/drizzle'
 import { type UserClan, type UserCompact, type UserOptional, type UserSecrets } from '~/def/user'
 import { AdminProvider as Base } from '$base/server'
 
@@ -25,7 +25,7 @@ export class AdminProvider extends Base<Id> implements Base<Id> {
       user: pick(schema.users, ['id', 'name', 'safeName', 'priv', 'country', 'email', 'preferredMode', 'lastActivity', 'creationTime']),
       clan: pick(schema.clans, ['id', 'name', 'badge']),
     }).from(schema.users)
-      .innerJoin(schema.clans, eq(schema.clans.id, schema.users.clanId))
+      .leftJoin(schema.clans, eq(schema.clans.id, schema.users.clanId))
       .where(
         and(
           ...[
@@ -34,8 +34,7 @@ export class AdminProvider extends Base<Id> implements Base<Id> {
             query.safeName ? eq(schema.users.safeName, query.safeName) : undefined,
             query.email ? eq(schema.users.email, query.email) : undefined,
             query.flag ? eq(schema.users.country, query.flag) : undefined,
-          ].filter(TSFilter),
-          userPriv(schema.users)
+          ].filter(TSFilter)
         )
       )
       .orderBy(desc(schema.users.lastActivity))

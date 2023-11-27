@@ -405,6 +405,9 @@ export const mailRelations = relations(mail, ({ one }) => ({
 export const mapsRelations = relations(maps, ({ one }) => ({
   source: one(sources, { fields: [maps.setId, maps.server], references: [sources.id, sources.server] }),
 }))
+export const sourcesRelations = relations(sources, ({ many }) => ({
+  beatmaps: many(maps),
+}))
 export const statsRelations = relations(stats, ({ one }) => ({
   user: one(users, { fields: [stats.id], references: [users.id] }),
 }))
