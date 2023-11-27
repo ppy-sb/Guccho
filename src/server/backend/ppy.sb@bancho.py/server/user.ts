@@ -2,7 +2,6 @@ import { TRPCError } from '@trpc/server'
 import type { Id } from '..'
 import { normal } from '../../bancho.py/constants'
 import { Logger } from '../log'
-import { clanCond } from './../../bancho.py/db-query'
 import { getPrismaClient } from './prisma'
 import type { UserProvider as Base } from '$base/server'
 import type { Mode, Ruleset } from '~/def'
@@ -109,7 +108,7 @@ export class UserProvider extends BanchoPyUser implements Base<Id> {
         ],
       },
       include: {
-        clan: clanCond,
+        clan: true,
       },
     })
 

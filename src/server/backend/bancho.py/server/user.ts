@@ -11,7 +11,6 @@ import { getLiveUserStatus } from '../api-client'
 import { normal } from '../constants'
 import { compareBanchoPassword, encryptBanchoPassword } from '../crypto'
 import {
-  clanCond,
   createUserHandleWhereQuery,
   createUserLikeQuery,
   userCompacts,
@@ -484,7 +483,7 @@ LIMIT ?, ?
         ],
       },
       include: {
-        clan: clanCond,
+        clan: true,
       },
     })
 
@@ -566,7 +565,7 @@ LIMIT ?, ?
           : undefined,
       },
       include: {
-        clan: clanCond,
+        clan: true,
       },
     })
     return {
@@ -676,14 +675,7 @@ LIMIT ?, ?
   async search({ keyword, limit }: { keyword: string; limit: number }) {
     const userLike = createUserLikeQuery(keyword)
     /* optimized */
-    const result = await this.db.user.findMany({
-      ...userCompacts,
-      ...merge(userLike, { where: { priv: { in: normal } } }),
-      include: {
-        clan: clanCond,
-      },
-      take: limit,
-    })
+    const result = await this.db.user.findMany(merge(userCompacts, merge(userLike, { where: { priv: { in: normal } }, select: { clan: true }, take: limit })))
 
     return result.map(user => ({
       ...toUserCompact(user, this.config),

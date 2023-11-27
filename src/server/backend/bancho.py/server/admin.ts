@@ -5,7 +5,6 @@ import { BanchoPyPrivilege } from '../enums'
 import { config } from '../env'
 import { fromCountryCode, toBanchoPyPriv, toOneBanchoPyPriv, toSafeName, toUserCompact, toUserOptional } from '../transforms'
 import { encryptBanchoPassword } from '../crypto'
-import { clanCond } from '../db-query'
 import { getPrismaClient } from './source/prisma'
 import { type UserClan, type UserCompact, type UserOptional, type UserSecrets } from '~/def/user'
 import { AdminProvider as Base } from '$base/server'
@@ -36,7 +35,7 @@ export class AdminProvider extends Base<Id> implements Base<Id> {
       this.db.user.findMany({
         where: cond,
         include: {
-          clan: clanCond,
+          clan: true,
         },
         orderBy: {
           lastActivity: 'desc',
