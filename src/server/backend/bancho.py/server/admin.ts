@@ -1,61 +1,55 @@
-import { TRPCError } from '@trpc/server'
-import { Prisma } from 'prisma-client-bancho-py'
+import { and, desc, eq } from 'drizzle-orm'
 import type { Id } from '..'
-import { BanchoPyPrivilege } from '../enums'
-import { config } from '../env'
-import { fromCountryCode, toBanchoPyPriv, toOneBanchoPyPriv, toSafeName, toUserCompact, toUserOptional } from '../transforms'
 import { encryptBanchoPassword } from '../crypto'
-import { getPrismaClient } from './source/prisma'
+import * as schema from '../drizzle/schema'
+import { config } from '../env'
+import { fromCountryCode, toBanchoPyPriv, toSafeName, toUserCompact, toUserOptional } from '../transforms'
+import { Logger } from '../log'
+import { userNotFound } from './../../../trpc/messages/index'
+import useDrizzle, { userPriv } from './source/drizzle'
 import { type UserClan, type UserCompact, type UserOptional, type UserSecrets } from '~/def/user'
 import { AdminProvider as Base } from '$base/server'
 
-const all = ExpandedBitwiseEnumArray.fromTSBitwiseEnum(BanchoPyPrivilege)
+const logger = Logger.child({ label: 'user' })
 
+// eslint-disable-next-line n/prefer-global/process
+const drizzle = await useDrizzle(schema, { logger: !!process.env.DEV })
 export class AdminProvider extends Base<Id> implements Base<Id> {
-  db = getPrismaClient()
   config = config()
+  drizzle = drizzle
   async userList(query: Partial<UserCompact<Id> & Pick<UserOptional, 'email' | 'status'>> & Partial<UserSecrets> & {
     page: number
     perPage: number
   }) {
-    const cond = {
-      id: query.id,
-      name: query.name,
-      safeName: query.safeName,
-      email: query.email,
-      country: query.flag,
-      priv: query.roles?.length
-        ? {
-            in: query.roles.reduce((acc, cur) => acc.and(toOneBanchoPyPriv(cur)), all),
-          }
-        : undefined,
-    } as const
+    const baseQuery = this.drizzle.select({
+      user: pick(schema.users, ['id', 'name', 'safeName', 'priv', 'country', 'email', 'preferredMode', 'lastActivity', 'creationTime']),
+      clan: pick(schema.clans, ['id', 'name', 'badge']),
+    }).from(schema.users)
+      .innerJoin(schema.clans, eq(schema.clans.id, schema.users.clanId))
+      .where(
+        and(
+          ...[
+            query.id ? eq(schema.users.id, query.id) : undefined,
+            query.name ? eq(schema.users.name, query.name) : undefined,
+            query.safeName ? eq(schema.users.safeName, query.safeName) : undefined,
+            query.email ? eq(schema.users.email, query.email) : undefined,
+            query.flag ? eq(schema.users.country, query.flag) : undefined,
+          ].filter(TSFilter),
+          userPriv(schema.users)
+        )
+      )
+      .orderBy(desc(schema.users.lastActivity))
 
-    const [result, count] = await this.db.$transaction([
-      this.db.user.findMany({
-        where: cond,
-        include: {
-          clan: true,
-        },
-        orderBy: {
-          lastActivity: 'desc',
-        },
-        skip: query.page * query.perPage,
-        take: query.perPage,
-      }),
-      this.db.user.count({ where: cond }),
-    ])
-
-    const uCompacts = result.map(user => ({
+    const uCompacts = (await baseQuery.offset(query.page * query.perPage).limit(query.perPage)).map(({ user, clan }) => ({
       ...toUserCompact(user, this.config),
       ...toUserOptional(user),
       lastActivityAt: new Date(user.lastActivity * 1000),
       registeredAt: new Date(user.creationTime * 1000),
-      clan: user.clan
+      clan: clan
         ? {
-          id: user.clan.id,
-          name: user.clan.name,
-          badge: user.clan.tag,
+          id: clan.id,
+          name: clan.name,
+          badge: clan.badge,
         } satisfies UserClan<Id>
         : undefined,
     })) satisfies Array<UserCompact<Id> & Pick<UserOptional, 'email' | 'status'> & {
@@ -64,15 +58,13 @@ export class AdminProvider extends Base<Id> implements Base<Id> {
       clan?: UserClan<Id>
     }>
 
-    return [count, uCompacts] as const
+    return [100, uCompacts] as const
   }
 
   async userDetail(query: { id: Id }): Promise<UserCompact<Id> & UserOptional> {
-    const user = await this.db.user.findFirstOrThrow({
-      where: {
-        id: query.id,
-      },
-    })
+    const user = await this.drizzle.query.users.findFirst({
+      where: eq(schema.users.id, query.id),
+    }) ?? raise(Error, userNotFound)
 
     return {
       ...toUserCompact(user, this.config),
@@ -81,35 +73,25 @@ export class AdminProvider extends Base<Id> implements Base<Id> {
   }
 
   async updateUserDetail(query: { id: Id }, updateFields: Partial<UserCompact<Id> & UserOptional & UserSecrets>): Promise<UserCompact<Id> & UserOptional> {
-    try {
-      const user = await this.db.user.update({
-        where: {
-          id: query.id,
-        },
-        data: {
-          id: updateFields.id,
-          name: updateFields.name,
-          safeName: updateFields.name ? toSafeName(updateFields.name) : undefined,
-          pwBcrypt: updateFields.password ? await encryptBanchoPassword(updateFields.password) : undefined,
-          email: updateFields.email,
-          country: updateFields.flag ? fromCountryCode(updateFields.flag) : undefined,
-          priv: updateFields.roles ? toBanchoPyPriv(updateFields.roles) : undefined,
-        },
+    await this.drizzle.update(schema.users)
+      .set({
+        id: updateFields.id,
+        name: updateFields.name,
+        safeName: updateFields.name ? toSafeName(updateFields.name) : undefined,
+        pwBcrypt: updateFields.password ? await encryptBanchoPassword(updateFields.password) : undefined,
+        email: updateFields.email,
+        country: updateFields.flag ? fromCountryCode(updateFields.flag) : undefined,
+        priv: updateFields.roles ? toBanchoPyPriv(updateFields.roles) : undefined,
       })
+      .where(eq(schema.users.id, query.id))
 
-      return {
-        ...toUserCompact(user, this.config),
-        ...toUserOptional(user),
-      }
-    }
-    catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError) {
-        throw new TRPCError({
-          message: e.code + e.message,
-          code: 'CONFLICT',
-        })
-      }
-      throw e
+    const user = await this.drizzle.query.users.findFirst({
+      where: eq(schema.users.id, updateFields.id ?? query.id),
+    }) ?? raise(Error, 'cannot find updated user. Did you changed user id?')
+
+    return {
+      ...toUserCompact(user, this.config),
+      ...toUserOptional(user),
     }
   }
 }
