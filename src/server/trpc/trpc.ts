@@ -10,15 +10,21 @@ export const t = initTRPC.context<Context>().create({
   transformer,
   errorFormatter(opts) {
     const { shape, error } = opts
-    return {
-      ...shape,
-      data: {
-        ...shape.data,
-        zodError:
+    const eData = {
+      ...(import.meta.dev ? shape.data : {}),
+      zodError:
           (error.code === 'BAD_REQUEST' && error.cause instanceof ZodError)
             ? error.cause.flatten()
-            : null,
-      },
+            : undefined,
+    }
+    for (const i in eData) {
+      if (typeof eData[i as keyof typeof eData] === 'undefined') {
+        delete eData[i as keyof typeof eData]
+      }
+    }
+    return {
+      ...pick(shape, ['code', 'message']),
+      data: { ...eData },
     }
   },
 
