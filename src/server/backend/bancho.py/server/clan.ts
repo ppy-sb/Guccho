@@ -4,23 +4,21 @@ import type { Id } from '..'
 import * as schema from '../drizzle/schema'
 import { config } from '../env'
 import { assertIsBanchoPyMode, idToString, stringToId, toBanchoPyMode, toUserAvatarSrc, toUserCompact } from '../transforms'
-import getDrizzle, { userPriv } from './source/drizzle'
+import useDrizzle, { userPriv } from './source/drizzle'
 import { userNotFound } from '~/server/trpc/messages'
 import { users } from '~/server/singleton/service'
 import { ClanRelation } from '~/def/clan'
 import { Rank } from '~/def'
 import { ClanProvider as Base } from '$base/server'
 
+const drizzle = await useDrizzle(schema)
 export class ClanProvider extends Base<Id> {
   static stringToId = stringToId
   static idToString = idToString
 
   config = config()
 
-  #drizzleLoader = getDrizzle(schema)
-  get drizzle() {
-    return this.#drizzleLoader() ?? raise(Error, 'database is not ready')
-  }
+  drizzle = drizzle
 
   async search(opt: Base.SearchParam): Promise<Base.SearchResult<Id>> {
     const { keyword, page, perPage, mode, ruleset } = opt

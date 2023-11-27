@@ -14,11 +14,10 @@ import { fromBanchoPyMode, toFullUser, toUserClan } from '~/server/backend/banch
 
 const logger = Logger.child({ label: 'user' })
 
+const drizzle = await getDrizzle(schema)
+
 export class UserProvider extends BanchoPyUser implements Base<Id> {
-  #drizzleLoader = getDrizzle(schema)
-  get drizzle() {
-    return this.#drizzleLoader() ?? raise(Error, 'database is not ready')
-  }
+  drizzle = drizzle
 
   usernamePattern = /^.{2,15}[^\.]$/
 
