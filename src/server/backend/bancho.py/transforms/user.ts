@@ -112,7 +112,7 @@ export function toOneBanchoPyPriv(role: UserRole): number {
   }
 }
 
-export function toUserClan(user: Pick<DatabaseUser & { clan: Clan | null }, 'name' | 'clan'>) {
+export function toUserClan(user: Pick<DatabaseUser & { clan: Pick<Clan, 'id' | 'name'> | null }, 'name' | 'clan'>) {
   return {
     clan: user.clan
       ? {

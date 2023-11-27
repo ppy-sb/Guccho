@@ -4,8 +4,7 @@ import type { Id } from '..'
 import * as schema from '../drizzle/schema'
 import { config } from '../env'
 import { assertIsBanchoPyMode, idToString, stringToId, toBanchoPyMode, toUserAvatarSrc, toUserCompact } from '../transforms'
-import { BanchoPyPrivilege } from './../enums'
-import getDrizzle from './source/drizzle'
+import getDrizzle, { userPriv } from './source/drizzle'
 import { userNotFound } from '~/server/trpc/messages'
 import { users } from '~/server/singleton/service'
 import { ClanRelation } from '~/def/clan'
@@ -15,8 +14,6 @@ import { ClanProvider as Base } from '$base/server'
 export class ClanProvider extends Base<Id> {
   static stringToId = stringToId
   static idToString = idToString
-
-  static #userPriv = sql`${schema.users.priv} & ${BanchoPyPrivilege.Normal | BanchoPyPrivilege.Verified} = ${BanchoPyPrivilege.Normal | BanchoPyPrivilege.Verified}`
 
   config = config()
 
@@ -46,7 +43,7 @@ export class ClanProvider extends Base<Id> {
       userId: sql`${schema.users.id}`.as('userId'),
       userName: sql`${schema.users.name}`.as('userName'),
     }).from(schema.clans)
-      .innerJoin(schema.users, and(eq(schema.users.clanId, schema.clans.id), ClanProvider.#userPriv))
+      .innerJoin(schema.users, and(eq(schema.users.clanId, schema.clans.id), userPriv))
       .innerJoin(schema.stats, and(eq(schema.stats.id, schema.users.id), eq(schema.stats.mode, bMode)))
       .where(
         or(
@@ -133,7 +130,7 @@ export class ClanProvider extends Base<Id> {
         .where(
           and(
             eq(schema.users.clanId, result.id),
-            ClanProvider.#userPriv
+            userPriv
           )
         )
         .then(res => res[0].count),

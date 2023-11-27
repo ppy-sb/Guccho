@@ -1,20 +1,25 @@
+import { and, eq, or, sql } from 'drizzle-orm'
 import { TRPCError } from '@trpc/server'
 import type { Id } from '..'
-import { normal } from '../../bancho.py/constants'
+import getDrizzle, { userPriv } from '../../bancho.py/server/source/drizzle'
+import * as schema from '../drizzle/schema'
 import { Logger } from '../log'
-import { getPrismaClient } from './prisma'
+import { userNotFound } from '~/server/trpc/messages'
 import type { UserProvider as Base } from '$base/server'
 import type { Mode, Ruleset } from '~/def'
 import type { CountryCode } from '~/def/country-code'
 import { Scope, type UserCompact, UserRole, UserStatus } from '~/def/user'
-import { createUserHandleWhereQuery } from '~/server/backend/bancho.py/db-query'
 import { ArticleProvider, UserProvider as BanchoPyUser } from '~/server/backend/bancho.py/server'
 import { fromBanchoPyMode, toFullUser, toUserClan } from '~/server/backend/bancho.py/transforms'
 
 const logger = Logger.child({ label: 'user' })
 
 export class UserProvider extends BanchoPyUser implements Base<Id> {
-  sbDb = getPrismaClient()
+  #drizzleLoader = getDrizzle(schema)
+  get drizzle() {
+    return this.#drizzleLoader() ?? raise(Error, 'database is not ready')
+  }
+
   usernamePattern = /^.{2,15}[^\.]$/
 
   async changeSettings(
@@ -40,83 +45,57 @@ export class UserProvider extends BanchoPyUser implements Base<Id> {
     user: UserCompact<number>,
     input: { profile: ArticleProvider.JSONContent },
   ) {
-    try {
-      const html = await ArticleProvider.render(input.profile)
+    const html = await ArticleProvider.render(input.profile)
 
-      const userpage = await this.sbDb.userpage.findFirst({
-        where: {
-          userId: user.id,
-        },
-        select: {
-          id: true,
-        },
-      })
-      if (!userpage) {
-        const inserted = await this.sbDb.userpage.create({
-          data: {
-            userId: user.id,
-            html,
-            raw: JSON.stringify(input.profile),
-            rawType: 'tiptap',
-          },
-        })
-        if (!inserted.id) {
-          throw new TRPCError({
-            code: 'INTERNAL_SERVER_ERROR',
-            message: 'unable to save',
-          })
-        }
+    const { id = undefined } = await this.drizzle.query.userpages.findFirst({
+      where: eq(schema.userpages.userId, user.id),
+      columns: {
+        id: true,
+      },
+    }) ?? {}
 
-        return {
-          html: inserted.html as string,
-          raw: JSON.parse(inserted.raw ?? '') || {},
-        }
-      }
-      else {
-        const updated = await this.sbDb.userpage.update({
-          where: {
-            id: userpage.id,
-          },
-          data: {
-            html,
-            raw: JSON.stringify(input.profile),
-          },
-        })
-        return {
-          html: updated.html as string,
-          raw: JSON.parse(updated.raw ?? '') || {},
-        }
-      }
-    }
-    catch (err) {
-      logger.error(err)
-      throw new TRPCError({
-        code: 'PARSE_ERROR',
-        message: 'unable to process your request at this moment.',
-      })
+    const data = {
+      userId: user.id,
+      html,
+      raw: JSON.stringify(input.profile),
+      rawType: 'tiptap',
+    } as const
+
+    await this.drizzle.insert(schema.userpages)
+      .values({
+        id,
+        ...data,
+      }).onDuplicateKeyUpdate({ set: data })
+
+    const updated = await this.drizzle.query.userpages.findFirst({
+      where: eq(schema.userpages.userId, user.id),
+    }) ?? raise(TRPCError, { code: 'INTERNAL_SERVER_ERROR', message: 'failed saving userpage' })
+
+    return {
+      html: updated.html as string,
+      raw: JSON.parse(updated.raw ?? '') || {},
     }
   }
 
   async getFull<Excludes extends Partial<Record<keyof Base.ComposableProperties<Id>, boolean>>>({ handle, excludes, includeHidden, scope }: { handle: string; excludes?: Excludes; includeHidden?: boolean; scope?: Scope }) {
-    const user = await this.db.user.findFirstOrThrow({
-      where: {
-        AND: [
-          createUserHandleWhereQuery({
-            handle,
-          }),
-          (includeHidden || scope === Scope.Self) ? {} : { priv: { in: normal } },
-        ],
-      },
-      include: {
+    const nHandle = Number.parseInt(handle)
+    const user = await this.drizzle.query.users.findFirst({
+      where: and(
+        or(
+          eq(schema.users.safeName, handle.startsWith('@') ? handle.slice(1) : handle),
+          eq(schema.users.name, handle),
+          Number.isNaN(nHandle) ? undefined : eq(schema.users.id, nHandle)
+        ),
+        (includeHidden || scope === Scope.Self) ? sql`1` : userPriv
+      ),
+      with: {
         clan: true,
       },
-    })
+    }) ?? raise(Error, userNotFound)
 
     const fullUser = toFullUser(user, this.config)
-    const profile = await this.sbDb.userpage.findFirst({
-      where: {
-        userId: user.id,
-      },
+    const profile = await this.drizzle.query.userpages.findFirst({
+      where: eq(schema.userpages.userId, user.id),
     })
     const [mode, ruleset] = fromBanchoPyMode(user.preferredMode)
     const returnValue = {

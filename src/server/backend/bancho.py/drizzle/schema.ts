@@ -364,7 +364,7 @@ export const users = mysqlTable('users', {
   silenceEnd: int('silence_end').default(0).notNull(),
   donorEnd: int('donor_end').default(0).notNull(),
   creationTime: int('creation_time').default(0).notNull(),
-  latestActivity: int('latest_activity').default(0).notNull(),
+  lastActivity: int('latest_activity').default(0).notNull(),
   preferredMode: int('preferred_mode').default(0).notNull(),
   playStyle: int('play_style').default(0).notNull(),
   customBadgeName: varchar('custom_badge_name', { length: 16 }),
