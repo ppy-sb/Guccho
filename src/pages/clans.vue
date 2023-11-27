@@ -99,7 +99,7 @@ const { data: res } = await app.$client.clan.search.useQuery(mergeQuery)
             </span>
           </div>
           <div class="flex flex-col md:items-center">
-            <span class="font-serif text-xl font-bold">{{ clan.name }}</span>
+            <span class="text-xl font-bold">{{ clan.name }}</span>
             <div class="flex mt-2 -space-x-4 md:mt-4 rtl:space-x-reverse">
               <div v-for="user in clan.users" :key="clan.id + user.name" class="tooltip" :data-tip="user.name">
                 <img class="object-cover w-12 h-12 mask mask-squircle " :src="user.avatarSrc" :alt="user.name">

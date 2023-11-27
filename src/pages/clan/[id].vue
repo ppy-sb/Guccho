@@ -56,7 +56,7 @@ const { data: clan } = app.$client.clan.detail.useQuery(mergeQuery)
             </span>
           </div>
           <p class="md:self-end">
-            <span class="font-serif text-3xl md:text-4xl">{{ clan.name }}</span>
+            <span class="text-3xl md:text-4xl">{{ clan.name }}</span>
           </p>
         </div>
       </div>
