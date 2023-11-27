@@ -24,7 +24,7 @@ function clearFocus() {
     </nuxt-link-locale>
   </li>
   <li>
-    <nuxt-link-locale :to="{ name: 'clan' }" @click="clearFocus">
+    <nuxt-link-locale :to="{ name: 'clans' }" @click="clearFocus">
       <icon name="material-symbols:leaderboard-rounded" class="w-5 h-5" size="100%" />
       [{{ t('global.wip') }}] {{ t('titles.clans') }}
     </nuxt-link-locale>
