@@ -19,8 +19,8 @@ export async function sideEffect(event: H3Event) {
   if (!event.context.session.userId) {
     return
   }
-  const user = await users.getCompactById({ id: UserProvider.stringToId(event.context.session.userId) })
-  if (user == null) {
+  const user = await users.getCompactById({ id: UserProvider.stringToId(event.context.session.userId) }).catch(noop)
+  if (!user) {
     return
   }
   event.context.user = user
