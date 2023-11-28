@@ -1,5 +1,6 @@
-import { bigint, char, date, datetime, float, index, int, mysqlEnum, mysqlTable, primaryKey, tinyint, unique, varchar } from 'drizzle-orm/mysql-core'
+import { bigint, boolean, char, date, datetime, index, int, mysqlEnum, mysqlTable, primaryKey, tinyint, unique, varchar } from 'drizzle-orm/mysql-core'
 import { relations, sql } from 'drizzle-orm'
+import { decimal } from './fixed-point'
 
 const bpyServerEnum = mysqlEnum('server', ['osu!', 'private'])
 
@@ -25,7 +26,7 @@ export const channels = mysqlTable('channels', {
   topic: varchar('topic', { length: 256 }).notNull(),
   readPriv: int('read_priv').default(1).notNull(),
   writePriv: int('write_priv').default(2).notNull(),
-  autoJoin: tinyint('auto_join').default(0).notNull(),
+  autoJoin: boolean('auto_join').default(false).notNull(),
 },
 (table) => {
   return {
@@ -126,7 +127,7 @@ export const mail = mysqlTable('mail', {
   toId: int('to_id').notNull(),
   msg: varchar('msg', { length: 2048 }).notNull(),
   time: int('time'),
-  read: tinyint('read').default(0).notNull(),
+  read: boolean('read').default(false).notNull(),
 },
 (table) => {
   return {
@@ -139,7 +140,7 @@ export const mapRequests = mysqlTable('map_requests', {
   mapId: int('map_id').notNull(),
   playerId: int('player_id').notNull(),
   datetime: datetime('datetime', { mode: 'date' }).notNull(),
-  active: tinyint('active').notNull(),
+  active: boolean('active').notNull(),
 },
 (table) => {
   return {
@@ -161,16 +162,28 @@ export const maps = mysqlTable('maps', {
   lastUpdate: datetime('last_update', { mode: 'date' }).notNull(),
   totalLength: int('total_length').notNull(),
   maxCombo: int('max_combo').notNull(),
-  frozen: tinyint('frozen').default(0).notNull(),
+  frozen: boolean('frozen').default(false).notNull(),
   plays: int('plays').default(0).notNull(),
   passes: int('passes').default(0).notNull(),
   mode: tinyint('mode').default(0).notNull(),
-  bpm: float('bpm').notNull(),
-  cs: float('cs').notNull(),
-  ar: float('ar').notNull(),
-  od: float('od').notNull(),
-  hp: float('hp').notNull(),
-  diff: float('diff').notNull(),
+  // Warning: Can't parse float(12,2) from database
+  // float(12,2)Type: float(12,2)("bpm").notNull(),
+  bpm: decimal('bpm', { scale: 12, precision: 2 }).notNull(),
+  // Warning: Can't parse float(4,2) from database
+  // float(4,2)Type: float(4,2)("cs").notNull(),
+  cs: decimal('cs', { scale: 4, precision: 2 }).notNull(),
+  // Warning: Can't parse float(4,2) from database
+  // float(4,2)Type: float(4,2)("ar").notNull(),
+  ar: decimal('ar', { scale: 4, precision: 2 }).notNull(),
+  // Warning: Can't parse float(4,2) from database
+  // float(4,2)Type: float(4,2)("od").notNull(),
+  od: decimal('od', { scale: 4, precision: 2 }).notNull(),
+  // Warning: Can't parse float(4,2) from database
+  // float(4,2)Type: float(4,2)("hp").notNull(),
+  hp: decimal('hp', { scale: 4, precision: 2 }).notNull(),
+  // Warning: Can't parse float(6,3) from database
+  // float(6,3)Type: float(6,3)("diff").notNull(),
+  diff: decimal('diff', { scale: 6, precision: 3 }).notNull(),
 },
 (table) => {
   return {
@@ -207,16 +220,16 @@ export const performanceReports = mysqlTable('performance_reports', {
   scoreId: bigint('scoreid', { mode: 'number', unsigned: true }).notNull(),
   modMode: mysqlEnum('mod_mode', ['vanilla', 'relax', 'autopilot']).default('vanilla').notNull(),
   os: varchar('os', { length: 64 }).notNull(),
-  fullscreen: tinyint('fullscreen').notNull(),
+  fullscreen: boolean('fullscreen').notNull(),
   fpsCap: varchar('fps_cap', { length: 16 }).notNull(),
-  compatibility: tinyint('compatibility').notNull(),
+  compatibility: boolean('compatibility').notNull(),
   version: varchar('version', { length: 16 }).notNull(),
   startTime: int('start_time').notNull(),
   endTime: int('end_time').notNull(),
   frameCount: int('frame_count').notNull(),
   spikeFrames: int('spike_frames').notNull(),
   aimRate: int('aim_rate').notNull(),
-  completion: tinyint('completion').notNull(),
+  completion: boolean('completion').notNull(),
   identifier: varchar('identifier', { length: 128 }),
   averageFrametime: int('average_frametime').notNull(),
 },
@@ -252,8 +265,12 @@ export const scores = mysqlTable('scores', {
   id: bigint('id', { mode: 'number', unsigned: true }).autoincrement().notNull(),
   mapMd5: char('map_md5', { length: 32 }).notNull(),
   score: int('score').notNull(),
-  pp: float('pp').notNull(),
-  acc: float('acc').notNull(),
+  // Warning: Can't parse float(7,3) from database
+  // float(7,3)Type: float(7,3)("pp").notNull(),
+  pp: decimal('pp', { scale: 7, precision: 3 }).notNull(),
+  // Warning: Can't parse float(6,3) from database
+  // float(6,3)Type: float(6,3)("acc").notNull(),
+  acc: decimal('acc', { scale: 6, precision: 3 }).notNull(),
   maxCombo: int('max_combo').notNull(),
   mods: int('mods').notNull(),
   n300: int('n300').notNull(),
@@ -269,7 +286,7 @@ export const scores = mysqlTable('scores', {
   timeElapsed: int('time_elapsed').notNull(),
   clientFlags: int('client_flags').notNull(),
   userId: int('userid').notNull(),
-  perfect: tinyint('perfect').notNull(),
+  perfect: boolean('perfect').notNull(),
   onlineChecksum: char('online_checksum', { length: 32 }).notNull(),
 },
 (table) => {
@@ -301,7 +318,7 @@ export const stats = mysqlTable('stats', {
   pp: int('pp', { unsigned: true }).default(0).notNull(),
   plays: int('plays', { unsigned: true }).default(0).notNull(),
   playtime: int('playtime', { unsigned: true }).default(0).notNull(),
-  acc: float('acc').notNull(),
+  acc: decimal('acc', { scale: 6, precision: 3 }).notNull(),
   maxCombo: int('max_combo', { unsigned: true }).default(0).notNull(),
   totalHits: int('total_hits', { unsigned: true }).default(0).notNull(),
   replayViews: int('replay_views', { unsigned: true }).default(0).notNull(),
