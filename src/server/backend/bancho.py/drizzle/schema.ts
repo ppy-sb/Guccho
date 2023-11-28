@@ -415,5 +415,5 @@ export const clansRelations = relations(clans, ({ one }) => ({
   owner: one(users, { fields: [clans.ownerId], references: [users.id] }),
 }))
 export const usersRelations = relations(users, ({ one }) => ({
-  clan: one(clans, { fields: [users.id], references: [clans.id] }),
+  clan: one(clans, { fields: [users.clanId], references: [clans.id] }),
 }))

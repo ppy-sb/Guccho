@@ -1,15 +1,16 @@
-import { zip } from 'lodash-es'
 import { and, eq, like, or, sql } from 'drizzle-orm'
-import * as schema from '../drizzle/schema'
+import { zip } from 'lodash-es'
 import type { Id } from '..'
+import * as schema from '../drizzle/schema'
 import { config } from '../env'
 import { assertIsBanchoPyMode, idToString, stringToId, toBanchoPyMode, toUserAvatarSrc, toUserCompact } from '../transforms'
 import { BanchoPyPrivilege } from './../enums'
 import getDrizzle from './source/drizzle'
+import { userNotFound } from '~/server/trpc/messages'
 import { users } from '~/server/singleton/service'
+import { ClanRelation } from '~/def/clan'
 import { Rank } from '~/def'
 import { ClanProvider as Base } from '$base/server'
-import { ClanRelation } from '~/def/clan'
 
 export class ClanProvider extends Base<Id> {
   static stringToId = stringToId
@@ -141,22 +142,18 @@ export class ClanProvider extends Base<Id> {
 
   async checkRelation(opt: Base.ChangeRelationRequestParam<Id>) {
     const { userId, clanId } = opt
-    const result = await this.db.user.findFirstOrThrow({
-      select: {
+    const result = await this.drizzle.query.users.findFirst({
+      columns: {},
+      with: {
         clan: true,
       },
-      where: {
-        id: userId,
-      },
-    })
+      where: eq(schema.users.id, userId),
+    }) ?? raise(Error, userNotFound)
 
     switch (true) {
       case result.clan === null:
-        // @ts-expect-error you are dumb
-      // eslint-disable-next-line no-fallthrough
       case result.clan.id === 0: return ClanRelation.Free
 
-      // @ts-expect-error you are dumb
       case result.clan.id === clanId: return ClanRelation.Joined
       default: return ClanRelation.JoinedOtherClan
     }
@@ -165,28 +162,23 @@ export class ClanProvider extends Base<Id> {
   async joinRequest(opt: Base.ChangeRelationRequestParam<Id>) {
     const { userId, clanId } = opt
     // due to no index constraint user clan may point to null
-    const result = await this.db.user.findFirstOrThrow({
-      where: {
-        id: userId,
-      },
-      include: {
+    const result = await this.drizzle.query.users.findFirst({
+      where: eq(schema.users.id, userId),
+      columns: {},
+      with: {
         clan: true,
       },
-    })
+    }) ?? raise(Error, userNotFound)
 
     switch (true) {
       case result.clan === null:
-      case result.clanId === 0: {
-        const result = await this.db.user.update({
-          where: {
-            id: userId,
-          },
-          data: {
-            clanId,
-          },
+      case result.clan.id === 0: {
+        const result = await this.drizzle.update(schema.users).set({
+          clanId,
         })
+          .where(eq(schema.users.id, userId))
 
-        return result.clanId === clanId
+        return result[0].affectedRows
           ? ClanRelation.Joined
           : ClanRelation.Left
       }
@@ -196,20 +188,17 @@ export class ClanProvider extends Base<Id> {
 
   async leaveRequest(opt: Base.ChangeRelationRequestParam<Id>) {
     const { userId, clanId } = opt
-    const result = await this.db.user.update({
-      where: {
-        id: userId,
-        clanId,
-      },
+    const result = await this.drizzle.update(schema.users).set({
+      clanId: 0,
+    }).where(
+      and(
+        eq(schema.users.id, userId),
+        eq(schema.users.clanId, clanId)
+      )
+    )
 
-      data: {
-        clanId: 0,
-      },
-    }).catch(noop)
-    return result
-      ? result.clanId === clanId
-        ? ClanRelation.Joined
-        : ClanRelation.Left
+    return result[0].affectedRows
+      ? ClanRelation.Left
       : ClanRelation.JoinedOtherClan
   }
 
