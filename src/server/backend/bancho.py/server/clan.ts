@@ -105,7 +105,7 @@ LIMIT ${start}, ${perPage};
       await Promise.all(result.map(async (a) => {
         const idList = a.userIdList.split(',').slice(0, 20).map(v => Number.parseInt(v))
         const nameList = a.userNameList.split(',').slice(0, 20)
-        const owner = await users.getCompactById({ id: a.ownerId })
+        const owner = await users.getCompactById({ id: a.ownerId }).catch(() => users.getCompactById({ id: 999 }))
         return {
           ...pick(a, ['id', 'name', 'badge', 'createdAt']),
           users: zip(idList, nameList).filter((cur): cur is [Id, string] => !!(cur[0] && cur[1])).slice(0, 5).map(([id, name]) => ({

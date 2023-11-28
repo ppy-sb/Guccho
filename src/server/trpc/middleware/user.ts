@@ -21,8 +21,8 @@ export const userProcedure = sessionProcedure.use(async ({ ctx, next }) => {
       message: youNeedToLogin,
     })
   }
-  const user = await users.getCompactById({ id: UserProvider.stringToId(session.userId) })
-  if (user == null) {
+  const user = await users.getCompactById({ id: UserProvider.stringToId(session.userId) }).catch(noop)
+  if (!user) {
     throw new TRPCError({
       code: 'NOT_FOUND',
       message: userNotFound,
