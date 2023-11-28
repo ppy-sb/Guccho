@@ -675,7 +675,7 @@ LIMIT ?, ?
   async search({ keyword, limit }: { keyword: string; limit: number }) {
     const userLike = createUserLikeQuery(keyword)
     /* optimized */
-    const result = await this.db.user.findMany(merge(userCompacts, merge(userLike, { where: { priv: { in: normal } }, select: { clan: true }, take: limit })))
+    const result = await this.db.user.findMany(merge(structuredClone(userCompacts), merge(userLike, { where: { priv: { in: normal } }, select: { clan: true }, take: limit })))
 
     return result.map(user => ({
       ...toUserCompact(user, this.config),
