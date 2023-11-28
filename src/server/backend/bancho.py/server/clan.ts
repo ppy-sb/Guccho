@@ -7,6 +7,7 @@ import { getPrismaClient } from './source/prisma'
 import { users } from '~/server/singleton/service'
 import { Rank } from '~/def'
 import { ClanProvider as Base } from '$base/server'
+import { ClanRelation } from '~/def/clan'
 
 export class ClanProvider extends Base<Id> {
   static stringToId = stringToId
@@ -158,6 +159,80 @@ LIMIT ${start}, ${perPage};
       countUser,
       // joinedUsers: result.joinedUsers.map(user => toUserCompact(user, this.config)),
     }
+  }
+
+  async checkRelation(opt: Base.ChangeRelationRequestParam<Id>) {
+    const { userId, clanId } = opt
+    const result = await this.db.user.findFirstOrThrow({
+      select: {
+        clan: true,
+      },
+      where: {
+        id: userId,
+      },
+    })
+
+    switch (true) {
+      case result.clan === null:
+        // @ts-expect-error you are dumb
+      // eslint-disable-next-line no-fallthrough
+      case result.clan.id === 0: return ClanRelation.Free
+
+      // @ts-expect-error you are dumb
+      case result.clan.id === clanId: return ClanRelation.Joined
+      default: return ClanRelation.JoinedOtherClan
+    }
+  }
+
+  async joinRequest(opt: Base.ChangeRelationRequestParam<Id>) {
+    const { userId, clanId } = opt
+    // due to no index constraint user clan may point to null
+    const result = await this.db.user.findFirstOrThrow({
+      where: {
+        id: userId,
+      },
+      include: {
+        clan: true,
+      },
+    })
+
+    switch (true) {
+      case result.clan === null:
+      case result.clanId === 0: {
+        const result = await this.db.user.update({
+          where: {
+            id: userId,
+          },
+          data: {
+            clanId,
+          },
+        })
+
+        return result.clanId === clanId
+          ? ClanRelation.Joined
+          : ClanRelation.Left
+      }
+      default: return ClanRelation.JoinedOtherClan
+    }
+  }
+
+  async leaveRequest(opt: Base.ChangeRelationRequestParam<Id>) {
+    const { userId, clanId } = opt
+    const result = await this.db.user.update({
+      where: {
+        id: userId,
+        clanId,
+      },
+
+      data: {
+        clanId: 0,
+      },
+    }).catch(noop)
+    return result
+      ? result.clanId === clanId
+        ? ClanRelation.Joined
+        : ClanRelation.Left
+      : ClanRelation.JoinedOtherClan
   }
 
   async users(opt: Base.UsersParam<Id>): Promise<Base.UsersResult<Id>> {

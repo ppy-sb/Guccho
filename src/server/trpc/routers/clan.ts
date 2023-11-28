@@ -1,6 +1,7 @@
 import { nativeEnum, number, object, string } from 'zod'
 import { zodLeaderboardRankingSystem } from '../shapes'
 import { router as _router, publicProcedure as p } from '../trpc'
+import { userProcedure } from './../middleware/user'
 import { Mode, Ruleset } from '~/def'
 import { ClanProvider, clanProvider } from '~/server/singleton/service'
 
@@ -16,10 +17,25 @@ export const router = _router({
     return clanProvider.search(input)
   }),
   detail: p.input(object({
-    id: string().trim(),
-  })).query(({ input }) => {
-    return clanProvider.detail({
+    id: string(),
+  })).query(async ({ input }) => {
+    return mapId(await clanProvider.detail({
       id: ClanProvider.stringToId(input.id),
-    })
+    }), ClanProvider.idToString)
+  }),
+  relation: userProcedure.input(object({
+    id: string(),
+  })).query(({ input, ctx }) => {
+    return clanProvider.checkRelation({ userId: ctx.user.id, clanId: ClanProvider.stringToId(input.id) })
+  }),
+  join: userProcedure.input(object({
+    id: string(),
+  })).mutation(({ input, ctx }) => {
+    return clanProvider.joinRequest({ userId: ctx.user.id, clanId: ClanProvider.stringToId(input.id) })
+  }),
+  leave: userProcedure.input(object({
+    id: string(),
+  })).mutation(({ input, ctx }) => {
+    return clanProvider.leaveRequest({ userId: ctx.user.id, clanId: ClanProvider.stringToId(input.id) })
   }),
 })

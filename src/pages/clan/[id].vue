@@ -1,5 +1,6 @@
-<script lang="ts" setup>
+<script lang="ts" async setup>
 import type { ActiveMode, ActiveRuleset, LeaderboardRankingSystem } from '~/def/common'
+import { ClanRelation } from '~/def/clan'
 
 // import { Rank } from '~/def'
 
@@ -41,11 +42,38 @@ const selected = ref<Required<SwitcherPropType<LeaderboardRankingSystem>>>({
 })
 
 const mergeQuery = computed(() => ({ ...selected.value, id }))
-const { data: clan } = app.$client.clan.detail.useQuery(mergeQuery)
+const { data: clan, refresh: refreshClan } = await app.$client.clan.detail.useQuery(mergeQuery)
+const relation = ref(
+  clan.value ? await app.$client.clan.relation.query({ id: clan.value.id }) : ClanRelation.JoinedOtherClan
+)
+
+const allowToJoin = [
+  ClanRelation.Free,
+  ClanRelation.Left,
+  ClanRelation.QuitPendingVerification,
+]
+const allowToLeave = [
+  ClanRelation.Joined,
+  ClanRelation.JoinPendingVerification,
+]
+async function requestJoin() {
+  if (!clan.value) {
+    return
+  }
+  relation.value = await app.$client.clan.join.mutate({ id: clan.value.id })
+  return refreshClan()
+}
+async function requestLeave() {
+  if (!clan.value) {
+    return
+  }
+  relation.value = await app.$client.clan.leave.mutate({ id: clan.value.id })
+  return refreshClan()
+}
 </script>
 
 <template>
-  <section class="container mx-auto custom-container">
+  <section class="container mx-auto custom-container !max-w-5xl">
     <template v-if="clan">
       <div class="px-2 lg:px-0">
         <div class="flex flex-col items-center gap-8 md:flex-row">
@@ -55,8 +83,14 @@ const { data: clan } = app.$client.clan.detail.useQuery(mergeQuery)
               {{ clan.badge }}
             </span>
           </div>
-          <p class="md:self-end">
+          <p class="md:self-end flex flex-col md:flex-row grow">
             <span class="text-3xl md:text-4xl">{{ clan.name }}</span>
+            <button v-if="allowToJoin.includes(relation)" class="mx-auto md:ms-auto md:me-0 btn btn-primary btn-circle" @click="requestJoin">
+              <icon name="material-symbols:group-add-outline-rounded" class="w-5 h-5" />
+            </button>
+            <button v-else-if="allowToLeave.includes(relation)" class="mx-auto md:ms-auto md:me-0 btn btn-primary btn-circle" @click="requestLeave">
+              <icon name="material-symbols:group-remove-outline-rounded" class="w-5 h-5" />
+            </button>
           </p>
         </div>
       </div>
