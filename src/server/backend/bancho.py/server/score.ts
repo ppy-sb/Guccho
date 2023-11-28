@@ -1,8 +1,6 @@
-import { TRPCError } from '@trpc/server'
-import type { Prisma, User } from 'prisma-client-bancho-py'
+import type { User } from 'prisma-client-bancho-py'
 import type { Id } from '..'
 import { normal } from '../constants'
-import { BanchoPyScoreStatus } from '../enums'
 import { config as _config } from '../env'
 import {
   type AbleToTransformToScores,
@@ -17,7 +15,6 @@ import {
   toUserCompact,
 } from '../transforms'
 import { getPrismaClient } from './source/prisma'
-import { Rank } from '~/def'
 import type {
   ScoreProvider as Base,
 } from '$base/server'
@@ -122,58 +119,5 @@ export class ScoreProvider implements Base<bigint, Id> {
       },
     })
     return scores.map(this.#transformScore).filter(TSFilter)
-  }
-
-  async #createScoreSearchQuery(opt: Base.SearchQuery<Id>) {
-    const { user, mode, ruleset, rankingSystem } = opt
-    const _mode = toBanchoPyMode(mode, ruleset)
-    if (_mode === undefined) {
-      throw new TRPCError({
-        code: 'PRECONDITION_FAILED',
-        message: 'unsupported mode',
-      })
-    }
-
-    const orderBy: Prisma.ScoreFindManyArgs['orderBy'] = {}
-    if (rankingSystem === Rank.PPv2) {
-      orderBy.pp = 'desc'
-    }
-    else if (rankingSystem === Rank.RankedScore) {
-      orderBy.score = 'desc'
-    }
-    else if (rankingSystem === Rank.TotalScore) {
-      orderBy.score = 'desc'
-    }
-    else {
-      throw new Error('unknown ranking system')
-    }
-    const scores = await this.db.score.findMany({
-      where: {
-        user,
-        mode: _mode,
-        status: BanchoPyScoreStatus.Pick,
-        beatmap: {
-          status: {
-            in: [BanchoPyScoreStatus.Pick, BanchoPyScoreStatus.Normal],
-          },
-        },
-      },
-      include: {
-        beatmap: {
-
-          include: {
-            source: true,
-          },
-        },
-      },
-      orderBy,
-      skip: start,
-      take: perPage,
-    })
-    return toRankingSystemScores({ scores, rankingSystem, mode }).map(score =>
-      Object.assign(score, {
-        id: score.id.toString(),
-      }),
-    )
   }
 }
