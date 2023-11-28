@@ -3,35 +3,69 @@ import type {
   Score as DBScore,
   Source,
 } from 'prisma-client-bancho-py'
+
 import { $enum } from 'ts-enum-util'
 import type { Id } from '..'
 import { BanchoPyRankedStatus } from '../enums'
+import type * as schema from '../drizzle/schema'
 import { fromBanchoMode } from '.'
 import { type BeatmapCompact, BeatmapSource, type Beatmapset, RankingStatus } from '~/def/beatmap'
 import { StableMod } from '~/def/score'
 
-export function toBeatmapset(beatmapset: Source, luckyOneBeatmapInBeatmapset: DBMap) {
-  const isBancho = beatmapset.server === 'bancho'
-  const rest: Beatmapset<BeatmapSource.Bancho | BeatmapSource.PrivateServer | BeatmapSource.Unknown, typeof beatmapset['id'], typeof beatmapset['id']> = {
-    id: luckyOneBeatmapInBeatmapset.setId,
-    foreignId: beatmapset.id || luckyOneBeatmapInBeatmapset.setId,
-    source: isBancho ? BeatmapSource.Bancho : beatmapset.server === 'privateServer' ? BeatmapSource.PrivateServer : BeatmapSource.Unknown,
-    meta: {
-      intl: {
-        artist: luckyOneBeatmapInBeatmapset.artist,
-        title: luckyOneBeatmapInBeatmapset.title,
-      },
-    },
-    assets: {},
+function createBanchoAssets(beatmapset: { id: unknown }) {
+  const v = Math.floor(new Date().getTime() / 1000)
+
+  return {
+    'cover': `https://assets.ppy.sh/beatmaps/${beatmapset.id}/covers/cover.jpg?${v}`,
+    'cover@2x': `https://assets.ppy.sh/beatmaps/${beatmapset.id}/covers/cover@2x.jpg?${v}`,
+    'list': `https://assets.ppy.sh/beatmaps/${beatmapset.id}/covers/list.jpg?${v}`,
+    'list@2x': `https://assets.ppy.sh/beatmaps/${beatmapset.id}/covers/list@2x.jpg?${v}`,
   }
-  if (isBancho) {
-    const v = Math.floor(new Date().getTime() / 1000)
-    rest.assets.cover = `https://assets.ppy.sh/beatmaps/${beatmapset.id}/covers/cover.jpg?${v}`
-    rest.assets['cover@2x'] = `https://assets.ppy.sh/beatmaps/${beatmapset.id}/covers/cover@2x.jpg?${v}`
-    rest.assets.list = `https://assets.ppy.sh/beatmaps/${beatmapset.id}/covers/list.jpg?${v}`
-    rest.assets['list@2x'] = `https://assets.ppy.sh/beatmaps/${beatmapset.id}/covers/list@2x.jpg?${v}`
+}
+
+function createMeta(beatmap: { artist: string; title: string }) {
+  return {
+    intl: {
+      artist: beatmap.artist,
+      title: beatmap.title,
+    },
+  }
+}
+function toBeatmapsetReal<T>(beatmapset: { id: T }, luckyOneBeatmapInBeatmapset: { artist: string; title: string }, source: BeatmapSource) {
+  const isBancho = source === BeatmapSource.Bancho
+  const rest: Beatmapset<BeatmapSource, typeof beatmapset['id'], typeof beatmapset['id']> = {
+    id: beatmapset.id,
+    foreignId: beatmapset.id,
+    source,
+    meta: createMeta(luckyOneBeatmapInBeatmapset),
+    assets: isBancho ? createBanchoAssets(beatmapset) : {},
   }
   return rest
+}
+/**
+ * @deprecated Prisma will be replaced by drizzle
+ */
+export function toBeatmapsetPrisma(beatmapset: Source, luckyOneBeatmapInBeatmapset: DBMap) {
+  return toBeatmapsetReal(
+    beatmapset,
+    luckyOneBeatmapInBeatmapset,
+    beatmapset.server === 'bancho'
+      ? BeatmapSource.Bancho
+      : beatmapset.server === 'privateServer'
+        ? BeatmapSource.PrivateServer
+        : BeatmapSource.Unknown
+  )
+}
+export function toBeatmapset<T>(beatmapset: { id: T; server: 'osu!' | 'private' }, luckyOneBeatmapInBeatmapset: { artist: string; title: string }) {
+  return toBeatmapsetReal(
+    beatmapset,
+    luckyOneBeatmapInBeatmapset,
+    beatmapset.server === 'osu!'
+      ? BeatmapSource.Bancho
+      : beatmapset.server === 'private'
+        ? BeatmapSource.PrivateServer
+        : BeatmapSource.Unknown
+  )
 }
 
 export function toBeatmapCompact(beatmap: {
@@ -67,14 +101,15 @@ export function toBeatmapCompact(beatmap: {
     lastUpdate: beatmap.lastUpdate,
     mode: fromBanchoMode(beatmap.mode),
     properties: {
-      bpm: beatmap.bpm,
       circleSize: beatmap.cs,
       approachRate: beatmap.ar,
       accuracy: beatmap.od,
       hpDrain: beatmap.hp,
+      starRate: beatmap.diff,
+      bpm: beatmap.bpm,
+      // int
       totalLength: beatmap.totalLength,
       maxCombo: beatmap.maxCombo,
-      starRate: beatmap.diff,
       // TODO: count data not available?
       count: {
         circles: 0,
@@ -85,9 +120,25 @@ export function toBeatmapCompact(beatmap: {
   }
 }
 
-export function toBeatmapWithBeatmapset(
+/**
+ * @deprecated Prisma will be replaced by drizzle
+ */
+export function toBeatmapWithBeatmapsetPrisma(
   beatmap: DBMap & {
     source: Source
+  },
+) {
+  const status = toRankingStatus(beatmap.status) || RankingStatus.WIP
+  const beatmapset = toBeatmapsetPrisma(beatmap.source, beatmap)
+  return Object.assign(toBeatmapCompact(beatmap), {
+    status,
+    beatmapset,
+  })
+}
+
+export function toBeatmapWithBeatmapset(
+  beatmap: typeof schema['maps']['$inferSelect'] & {
+    source: typeof schema['sources']['$inferSelect']
   },
 ) {
   const status = toRankingStatus(beatmap.status) || RankingStatus.WIP

@@ -1,5 +1,5 @@
 import type { Id } from '..'
-import { toBeatmapWithBeatmapset } from './beatmap'
+import { toBeatmapWithBeatmapsetPrisma } from './beatmap'
 import { createHitCount } from './create-hit-count'
 import { type AbleToTransformToScores, toMods } from '.'
 import { Rank } from '~/def'
@@ -31,7 +31,7 @@ export function toScore<M extends ActiveMode, RS extends PPRankingSystem>({
     accuracy: score.acc,
     hit: createHitCount(mode, score),
     beatmap: (score.beatmap !== null
-      && toBeatmapWithBeatmapset(score.beatmap)) || {
+      && toBeatmapWithBeatmapsetPrisma(score.beatmap)) || {
       status: RankingStatus.NotFound,
     },
     mods: toMods(score.mods),
@@ -81,7 +81,7 @@ export function toRankingSystemScore<
     grade: score.grade as Grade,
     hit: createHitCount(mode, score),
     beatmap: score.beatmap !== null
-      ? toBeatmapWithBeatmapset(score.beatmap)
+      ? toBeatmapWithBeatmapsetPrisma(score.beatmap)
       : {
           status: RankingStatus.NotFound,
         },
