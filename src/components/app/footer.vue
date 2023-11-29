@@ -13,7 +13,7 @@ const { iconLinks, footerLink, brand } = runtime.public as unknown as { iconLink
         <div class="mb-6 md:mb-0">
           <nuxt-link-locale :to="{ name: 'index' }">
             <span class="flex items-center text-2xl font-semibold whitespace-nowrap dark:text-white">
-              <icon v-if="brand" :name="brand.icon" class="w-full h-full mr-2" :class="brand.iconClass" />
+              <icon v-if="brand" :name="brand.icon" class="h-full mr-2" :class="brand.iconClass" />
               <span>{{ $t('server.name') }}</span>
             </span>
           </nuxt-link-locale>

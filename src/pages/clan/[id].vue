@@ -1,13 +1,13 @@
 <script lang="ts" async setup>
+import { useSession } from '../../store/session'
 import type { ActiveMode, ActiveRuleset, LeaderboardRankingSystem } from '~/def/common'
 import { ClanRelation } from '~/def/clan'
 
-// import { Rank } from '~/def'
-
-const fmt = createNumberFormatter()
 // const pp = createPPFormatter()
 // const score = createScoreFormatter()
+const fmt = createNumberFormatter()
 
+const session = useSession()
 const { locale } = useI18n()
 const app = useNuxtApp()
 const config = useRuntimeConfig()
@@ -44,7 +44,11 @@ const selected = ref<Required<SwitcherPropType<LeaderboardRankingSystem>>>({
 const mergeQuery = computed(() => ({ ...selected.value, id }))
 const { data: clan, refresh: refreshClan } = await app.$client.clan.detail.useQuery(mergeQuery)
 const relation = ref(
-  clan.value ? await app.$client.clan.relation.query({ id: clan.value.id }) : ClanRelation.JoinedOtherClan
+  session.loggedIn
+    ? clan.value
+      ? await app.$client.clan.relation.query({ id: clan.value.id })
+      : ClanRelation.JoinedOtherClan
+    : null
 )
 
 const allowToJoin = [
@@ -85,12 +89,14 @@ async function requestLeave() {
           </div>
           <p class="md:self-end flex flex-col md:flex-row grow">
             <span class="text-3xl md:text-4xl">{{ clan.name }}</span>
-            <button v-if="allowToJoin.includes(relation)" class="mx-auto md:ms-auto md:me-0 btn btn-primary btn-circle" @click="requestJoin">
-              <icon name="material-symbols:group-add-outline-rounded" class="w-5 h-5" />
-            </button>
-            <button v-else-if="allowToLeave.includes(relation)" class="mx-auto md:ms-auto md:me-0 btn btn-primary btn-circle" @click="requestLeave">
-              <icon name="material-symbols:group-remove-outline-rounded" class="w-5 h-5" />
-            </button>
+            <template v-if="session.loggedIn">
+              <button v-if="includes(relation, allowToJoin)" class="mx-auto md:ms-auto md:me-0 btn btn-primary btn-circle" @click="requestJoin">
+                <icon name="material-symbols:group-add-outline-rounded" class="w-5 h-5" />
+              </button>
+              <button v-else-if="includes(relation, allowToLeave)" class="mx-auto md:ms-auto md:me-0 btn btn-primary btn-circle" @click="requestLeave">
+                <icon name="material-symbols:group-remove-outline-rounded" class="w-5 h-5" />
+              </button>
+            </template>
           </p>
         </div>
       </div>
