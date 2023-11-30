@@ -6,18 +6,13 @@ import * as schema from '../drizzle/schema'
 import { config } from '../env'
 import { assertIsBanchoPyMode, idToString, stringToId, toBanchoPyMode, toUserAvatarSrc, toUserCompact } from '../transforms'
 import { Logger } from '../log'
+import { ClanPrivilege as BanchopyClanPrivilege } from './../enums'
 import useDrizzle, { userPriv } from './source/drizzle'
 import { userNotFound } from '~/server/trpc/messages'
 import { users } from '~/server/singleton/service'
 import { ClanRelation } from '~/def/clan'
 import { Rank } from '~/def'
 import { ClanProvider as Base } from '$base/server'
-
-enum BanchopyClanPrivilege {
-  Member = 1,
-  Officer = 2,
-  Owner = 3,
-}
 
 const logger = Logger.child({ label: 'clan' })
 
