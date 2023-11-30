@@ -87,6 +87,9 @@ const bpyNumModes = Object.keys(BPyMode)
 class DBUserProvider extends Base<Id> implements Base<Id> {
   static stringToId = stringToId
   static idToString = idToString
+  /**
+   * @deprecated prisma will be replaced by drizzle
+   */
   db = getPrismaClient()
   usernamePattern = /^[\w [\]-]{2,15}$/
 
