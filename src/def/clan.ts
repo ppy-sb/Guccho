@@ -4,5 +4,7 @@ export enum ClanRelation {
   Left,
   QuitPendingVerification,
   JoinPendingVerification,
-  Joined,
+  Member,
+  Moderator,
+  Owner,
 }

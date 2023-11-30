@@ -10,7 +10,7 @@ export abstract class ClanProvider<Id> extends IdTransformable {
   abstract search(opt: ClanProvider.SearchParam): PromiseLike<ClanProvider.SearchResult<Id>>
   abstract detail(opt: ClanProvider.DetailParam<Id>): PromiseLike<ClanProvider.DetailResult<Id>>
   abstract users(opt: ClanProvider.UsersParam<Id>): PromiseLike<ClanProvider.UsersResult<Id>>
-  abstract checkRelation(opt: ClanProvider.ChangeRelationRequestParam<Id>): PromiseLike<ClanRelation>
+  abstract getClanRelation(opt: ClanProvider.ChangeRelationRequestParam<Id>): PromiseLike<ClanRelation>
   abstract joinRequest(opt: ClanProvider.ChangeRelationRequestParam<Id>): PromiseLike<ClanRelation>
   abstract leaveRequest(opt: ClanProvider.ChangeRelationRequestParam<Id>): PromiseLike<ClanRelation>
 }

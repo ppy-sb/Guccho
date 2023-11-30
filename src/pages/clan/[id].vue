@@ -57,7 +57,7 @@ const allowToJoin = [
   ClanRelation.QuitPendingVerification,
 ]
 const allowToLeave = [
-  ClanRelation.Joined,
+  ClanRelation.Member,
   ClanRelation.JoinPendingVerification,
 ]
 async function requestJoin() {

@@ -26,7 +26,7 @@ export const router = _router({
   relation: userProcedure.input(object({
     id: string(),
   })).query(({ input, ctx }) => {
-    return clanProvider.checkRelation({ userId: ctx.user.id, clanId: ClanProvider.stringToId(input.id) })
+    return clanProvider.getClanRelation({ userId: ctx.user.id, clanId: ClanProvider.stringToId(input.id) })
   }),
   join: userProcedure.input(object({
     id: string(),

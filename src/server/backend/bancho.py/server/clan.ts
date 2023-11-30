@@ -1,15 +1,27 @@
-import { aliasedTable, and, eq, like, or, sql } from 'drizzle-orm'
+import { aliasedTable, and, eq, like, not, or, sql } from 'drizzle-orm'
 import { zip } from 'lodash-es'
+import { $enum } from 'ts-enum-util'
 import type { Id } from '..'
 import * as schema from '../drizzle/schema'
 import { config } from '../env'
 import { assertIsBanchoPyMode, idToString, stringToId, toBanchoPyMode, toUserAvatarSrc, toUserCompact } from '../transforms'
+import { Logger } from '../log'
 import useDrizzle, { userPriv } from './source/drizzle'
 import { userNotFound } from '~/server/trpc/messages'
 import { users } from '~/server/singleton/service'
 import { ClanRelation } from '~/def/clan'
 import { Rank } from '~/def'
 import { ClanProvider as Base } from '$base/server'
+
+enum BanchopyClanPrivilege {
+  Member = 1,
+  Officer = 2,
+  Owner = 3,
+}
+
+const logger = Logger.child({ label: 'clan' })
+
+const iBanchoPyClanPrivilege = $enum(BanchopyClanPrivilege)
 
 const drizzle = await useDrizzle(schema)
 export class ClanProvider extends Base<Id> {
@@ -19,6 +31,9 @@ export class ClanProvider extends Base<Id> {
   config = config()
 
   drizzle = drizzle
+  clanLegalPrivFilter = or(
+    ...iBanchoPyClanPrivilege.map(priv => eq(schema.users.clanPriv, priv))
+  )
 
   async search(opt: Base.SearchParam): Promise<Base.SearchResult<Id>> {
     const { keyword, page, perPage, mode, ruleset } = opt
@@ -40,8 +55,14 @@ export class ClanProvider extends Base<Id> {
       createdAt: schema.clans.createdAt,
       userId: sql`${schema.users.id}`.as('userId'),
       userName: sql`${schema.users.name}`.as('userName'),
+      userClanPriv: schema.users.clanPriv,
     }).from(schema.clans)
-      .innerJoin(schema.users, and(eq(schema.users.clanId, schema.clans.id), userPriv(schema.users)))
+      .innerJoin(schema.users, and(
+        eq(schema.users.clanId, schema.clans.id),
+        this.clanLegalPrivFilter,
+        userPriv(schema.users),
+
+      ))
       .innerJoin(schema.stats, and(eq(schema.stats.id, schema.users.id), eq(schema.stats.mode, bMode)))
       .where(
         or(
@@ -61,8 +82,21 @@ export class ClanProvider extends Base<Id> {
       name: subQuery.name,
       badge: subQuery.badge,
       createdAt: subQuery.createdAt,
-      userNameList: sql<string>`GROUP_CONCAT(REPLACE(${subQuery.userName}, ',', '&#44;') ORDER BY ${subQuery.pp} DESC)`,
-      userIdList: sql<string>`GROUP_CONCAT(${subQuery.userId} ORDER BY ${subQuery.pp} DESC)`,
+      userNameList: sql<string>`
+        GROUP_CONCAT(
+          REPLACE(${subQuery.userName}, ',', '&#44;')
+          ORDER BY
+          ${subQuery.userClanPriv} DESC,
+          ${subQuery.pp} DESC
+        )
+      `,
+      userIdList: sql<string>`
+        GROUP_CONCAT(
+          ${subQuery.userId}
+          ORDER BY
+            ${subQuery.userClanPriv} DESC,
+            ${subQuery.pp} DESC
+        )`,
     })
       .from(subQuery)
       .groupBy(schema.clans.id, schema.clans.name, schema.clans.badge, schema.clans.createdAt)
@@ -136,10 +170,12 @@ export class ClanProvider extends Base<Id> {
     }
   }
 
-  async checkRelation(opt: Base.ChangeRelationRequestParam<Id>) {
+  async getClanRelation(opt: Base.ChangeRelationRequestParam<Id>) {
     const { userId, clanId } = opt
     const result = await this.drizzle.query.users.findFirst({
-      columns: {},
+      columns: {
+        clanPriv: true,
+      },
       with: {
         clan: true,
       },
@@ -147,10 +183,19 @@ export class ClanProvider extends Base<Id> {
     }) ?? raise(Error, userNotFound)
 
     switch (true) {
-      case result.clan === null:
-      case result.clan.id === 0: return ClanRelation.Free
+      case result.clan === null :
+      case result.clan.id === 0 : return ClanRelation.Free
 
-      case result.clan.id === clanId: return ClanRelation.Joined
+      case result.clan.id === clanId :
+        switch (result.clanPriv) {
+          case BanchopyClanPrivilege.Member : return ClanRelation.Member
+          case BanchopyClanPrivilege.Officer : return ClanRelation.Moderator
+          case BanchopyClanPrivilege.Owner : return ClanRelation.Owner
+
+          default:
+            logger.error({ message: `unknown clan priv: ${result.clanPriv}` })
+            return ClanRelation.Free
+        }
       default: return ClanRelation.JoinedOtherClan
     }
   }
@@ -171,11 +216,12 @@ export class ClanProvider extends Base<Id> {
       case result.clan.id === 0: {
         const result = await this.drizzle.update(schema.users).set({
           clanId,
+          clanPriv: BanchopyClanPrivilege.Member,
         })
           .where(eq(schema.users.id, userId))
 
         return result[0].affectedRows
-          ? ClanRelation.Joined
+          ? ClanRelation.Member
           : ClanRelation.Left
       }
       default: return ClanRelation.JoinedOtherClan
@@ -186,10 +232,12 @@ export class ClanProvider extends Base<Id> {
     const { userId, clanId } = opt
     const result = await this.drizzle.update(schema.users).set({
       clanId: 0,
+      clanPriv: 0,
     }).where(
       and(
         eq(schema.users.id, userId),
-        eq(schema.users.clanId, clanId)
+        eq(schema.users.clanId, clanId),
+        not(eq(schema.users.clanPriv, BanchopyClanPrivilege.Owner))
       )
     )
 
