@@ -56,6 +56,10 @@ export async function useSearchResult() {
     return await app.$client.search.searchUser.query({
       keyword: keyword.value,
       limit: autoResultSize(),
+    }, {
+      context: {
+        skipBatch: true,
+      },
     })
   })
 
@@ -71,6 +75,10 @@ export async function useSearchResult() {
       keyword: keyword.value,
       filters: tags.value,
       limit: autoResultSize(),
+    }, {
+      context: {
+        skipBatch: true,
+      },
     })
   })
 
@@ -86,6 +94,10 @@ export async function useSearchResult() {
       keyword: keyword.value,
       filters: tags.value,
       limit: autoResultSize(),
+    }, {
+      context: {
+        skipBatch: true,
+      },
     })
   })
 
