@@ -86,8 +86,8 @@ const { data: res } = await app.$client.clan.search.useQuery(mergeQuery)
         </button>
       </div>
     </form>
-    <div v-if="res" class="grid gap-8 pt-8 md:grid-cols-2">
-      <div v-for="clan in res[Paginated.Data]" :key="clan.id" class="mx-4 md:mx-auto">
+    <div v-if="res" class="grid max-w-2xl gap-8 pt-8 mx-auto md:pt-16 md:gap-y-16 md:grid-cols-2">
+      <div v-for="clan in res[Paginated.Data]" :key="clan.id" class="mx-4">
         <nuxt-link-locale
           class="flex flex-row items-center gap-2 md:flex-col"
           :to="{ name: 'clan-id', params: { id: clan.id } }"
@@ -100,11 +100,11 @@ const { data: res } = await app.$client.clan.search.useQuery(mergeQuery)
           </div>
           <div class="flex flex-col md:items-center">
             <span class="text-xl font-bold">{{ clan.name }}</span>
-            <div class="flex mt-2 -space-x-4 md:mt-4 rtl:space-x-reverse">
+            <div class="flex mt-2 -space-x-5 md:mt-4 rtl:space-x-reverse">
               <div v-for="user in clan.users" :key="clan.id + user.name" class="tooltip" :data-tip="user.name">
-                <img class="object-cover w-12 h-12 mask mask-squircle " :src="user.avatarSrc" :alt="user.name">
+                <img class="object-cover w-10 h-10 rounded-full shadow " :src="user.avatarSrc" :alt="user.name">
               </div>
-              <div v-if="clan.countUser - clan.users.length" class="flex items-center justify-center w-12 h-12 text-xs font-medium text-white bg-gray-700 mask mask-squircle tooltip hover:bg-gray-600">
+              <div v-if="clan.countUser - clan.users.length" class="z-10 flex items-center justify-center w-10 h-10 text-xs font-medium text-white rounded-full bg-gbase-700 hover:bg-gbase-600">
                 +{{ (clan.countUser - clan.users.length).toLocaleString() }}
               </div>
             </div>

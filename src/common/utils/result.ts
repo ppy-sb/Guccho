@@ -2,7 +2,7 @@ export class ResultWithRaw<T, TData> {
   $raw: TData
   value: T
 
-  constructor($raw: TData, data: T) {
+  constructor(data: T, $raw: TData) {
     this.value = data
     this.$raw = $raw
   }

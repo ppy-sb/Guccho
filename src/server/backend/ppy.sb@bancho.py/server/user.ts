@@ -19,7 +19,7 @@ const drizzle = await getDrizzle(schema)
 export class UserProvider extends BanchoPyUser implements Base<Id> {
   drizzle = drizzle
 
-  usernamePattern = /^.{2,15}[^\.]$/
+  usernamePattern = /^.{2,15}[^.]$/
 
   async changeSettings(
     user: { id: Id },
@@ -46,12 +46,12 @@ export class UserProvider extends BanchoPyUser implements Base<Id> {
   ) {
     const html = await ArticleProvider.render(input.profile)
 
-    const { id = undefined } = await this.drizzle.query.userpages.findFirst({
+    const { id } = await this.drizzle.query.userpages.findFirst({
       where: eq(schema.userpages.userId, user.id),
       columns: {
         id: true,
       },
-    }) ?? {}
+    }) ?? raise(TRPCError, { code: 'NOT_FOUND', message: userNotFound })
 
     const data = {
       userId: user.id,

@@ -103,12 +103,8 @@ export const router = _router({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const ok = await users.testPassword({
-        handle: ctx.user.id.toString(),
-      }, input.oldPassword)
-
       const result = await users.changePassword(
-        ok,
+        ctx.user,
         input.oldPassword,
         input.newPassword,
       )

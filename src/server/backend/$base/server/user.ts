@@ -56,7 +56,7 @@ export abstract class UserProvider<Id> extends IdTransformable {
   abstract testPassword(
     opt: UserProvider.OptType & { scope: Scope },
     hashedPassowrd: string,
-  ): Promise<UserCompact<Id>>
+  ): Promise<[boolean, UserCompact<Id> | undefined]>
 
   abstract getCompactById(opt: {
     id: Id

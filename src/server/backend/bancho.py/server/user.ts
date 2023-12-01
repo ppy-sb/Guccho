@@ -41,7 +41,7 @@ import { ScoreProvider } from './score'
 import { getPrismaClient } from './source/prisma'
 import { client as redisClient } from './source/redis'
 import { UserRelationProvider } from './user-relations'
-import { oldPasswordMismatch, passwordMismatch, userNotFound } from '~/server/trpc/messages'
+import { oldPasswordMismatch, userNotFound } from '~/server/trpc/messages'
 import { type DynamicSettingStore, Scope, type UserCompact, type UserStatistic, UserStatus } from '~/def/user'
 import type { CountryCode } from '~/def/country-code'
 import type { ActiveMode, ActiveRuleset, LeaderboardRankingSystem } from '~/def/common'
@@ -169,7 +169,7 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
     return toUserCompact(user, this.config)
   }
 
-  async testPassword(opt: Base.OptType, hashedPassword: string) {
+  async testPassword(opt: Base.OptType, hashedPassword: string): Promise<[boolean, UserCompact<Id>]> {
     try {
       const user = await this.db.user.findFirstOrThrow({
         where: {
@@ -179,14 +179,7 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
           }),
         },
       })
-      const result = await compareBanchoPassword(hashedPassword, user.pwBcrypt)
-      if (!result) {
-        throw new TRPCError({
-          code: 'UNAUTHORIZED',
-          message: `old ${passwordMismatch}`,
-        })
-      }
-      return toUserCompact(user, this.config)
+      return [await compareBanchoPassword(hashedPassword, user.pwBcrypt), toUserCompact(user, this.config)]
     }
     catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
@@ -607,14 +600,14 @@ LIMIT ?, ?
     }
   }
 
-  async changePassword(user: UserCompact<Id>, oldPasswordMD5: string, newPasswordMD5: string) {
+  async changePassword(user: Pick<UserCompact<Id>, 'id'>, oldPasswordMD5: string, newPasswordMD5: string) {
     const u = await this.db.user.findFirstOrThrow({
       where: {
         id: user.id,
       },
     })
 
-    if (!compareBanchoPassword(oldPasswordMD5, u.pwBcrypt)) {
+    if (!await compareBanchoPassword(oldPasswordMD5, u.pwBcrypt)) {
       throw new TRPCError({
         code: 'UNAUTHORIZED',
         message: oldPasswordMismatch,

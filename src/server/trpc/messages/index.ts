@@ -1,5 +1,5 @@
 export const userNotFound = 'user not found.'
-export const passwordMismatch = 'password mismatch.'
+export const passwordMismatch = 'wrong password.'
 export const oldPasswordMismatch = 'old password is wrong.'
 export const userExists = 'user exists.'
 export const atLeastOneUserNotExists = 'at least one of user is not exist.'

@@ -1,6 +1,7 @@
 import { TRPCError } from '@trpc/server'
 import { object, string } from 'zod'
 import {
+  passwordMismatch,
   sessionNotFound,
   unableToRetrieveSession,
   unknownError,
@@ -31,7 +32,13 @@ export const router = _router({
             message: unableToRetrieveSession,
           })
         }
-        const user = await users.testPassword({ handle }, md5HashedPassword)
+        const [ok, user] = await users.testPassword({ handle }, md5HashedPassword)
+        if (!ok) {
+          throw new TRPCError({
+            code: 'UNAUTHORIZED',
+            message: passwordMismatch,
+          })
+        }
         const newSessionId = await sessions.update(ctx.session.id, { userId: UserProvider.idToString(user.id) })
         if (newSessionId && newSessionId !== ctx.session.id) {
           setCookie(ctx.h3Event, Constant.SessionLabel, newSessionId, { httpOnly: true })
