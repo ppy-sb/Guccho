@@ -115,9 +115,9 @@ export async function useSearchResult() {
       }
     }
 
-    includes.users ? searchUsers() : users.value = []
-    includes.beatmaps ? searchBeatmaps() : beatmaps.value = []
-    includes.beatmapsets ? searchBeatmapsets() : beatmapsets.value = []
+    includes.users ? searchUsers() : (users.value = [])
+    includes.beatmaps ? searchBeatmaps() : (beatmaps.value = [])
+    includes.beatmapsets ? searchBeatmapsets() : (beatmapsets.value = [])
   }
 
   const search = useDebounceFn(raw, 500)
@@ -191,11 +191,9 @@ function extractTags(force: boolean) {
       if (!token.includes(operator)) {
         continue
       }
-      if (!token.includes(operator)) {
-        continue
-      }
 
       const [left, right] = token.split(operator)
+
       if (!left || !right) {
         continue
       }
@@ -232,16 +230,19 @@ function extractQueries(force: boolean) {
       if (!left || !right) {
         continue
       }
+
       let field: keyof typeof queryable
       for (field in queryable) {
         const keywords: readonly string[] = queryable[field]
         if (!keywords.includes(left)) {
           continue
         }
+
         const nRight = +right
         if (Number.isNaN(nRight)) {
           continue
         }
+
         tags.value.push(query(field, op, nRight))
         return false
       }

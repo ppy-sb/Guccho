@@ -290,8 +290,11 @@ devDependencies:
     specifier: ^0.20.6
     version: 0.20.6
   eslint:
-    specifier: ^8.51.0
+    specifier: ^8.54.0
     version: 8.54.0
+  eslint-plugin-drizzle:
+    specifier: ^0.2.2
+    version: 0.2.2(eslint@8.54.0)
   eslint-plugin-vue:
     specifier: ^9.17.0
     version: 9.18.1(eslint@8.54.0)
@@ -5635,6 +5638,14 @@ packages:
       - eslint
       - supports-color
       - typescript
+    dev: true
+
+  /eslint-plugin-drizzle@0.2.2(eslint@8.54.0):
+    resolution: {integrity: sha512-dyGlL9iOYjSK7jpgh87jL6zZP42mLZV0xrAYv+/hMbh/4ml3oR758wnk5G3frH60rHYscIS6GYL5juSir4yELg==}
+    peerDependencies:
+      eslint: '>=8.0.0'
+    dependencies:
+      eslint: 8.54.0
     dev: true
 
   /eslint-plugin-es-x@7.4.0(eslint@8.54.0):

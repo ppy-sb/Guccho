@@ -91,16 +91,13 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
    * @deprecated prisma will be replaced by drizzle
    */
   db = getPrismaClient()
-  usernamePattern = /^[\w [\]-]{2,15}$/
-
-  relationships: UserRelationProvider
-
+  relationships = new UserRelationProvider()
   config = config()
+
+  usernamePattern = /^[\w [\]-]{2,15}$/
 
   constructor() {
     super()
-    this.db = getPrismaClient()
-    this.relationships = new UserRelationProvider()
 
     if (this.config.avatar.location) {
       ensureDirectorySync(this.config.avatar.location)

@@ -217,7 +217,7 @@ export const sources = mysqlTable('mapsets', {
 })
 
 export const performanceReports = mysqlTable('performance_reports', {
-  scoreId: bigint('scoreid', { mode: 'number', unsigned: true }).notNull(),
+  scoreId: bigint('scoreid', { mode: 'bigint', unsigned: true }).notNull(),
   modMode: mysqlEnum('mod_mode', ['vanilla', 'relax', 'autopilot']).default('vanilla').notNull(),
   os: varchar('os', { length: 64 }).notNull(),
   fullscreen: boolean('fullscreen').notNull(),
@@ -262,7 +262,7 @@ export const relationships = mysqlTable('relationships', {
 })
 
 export const scores = mysqlTable('scores', {
-  id: bigint('id', { mode: 'number', unsigned: true }).autoincrement().notNull(),
+  id: bigint('id', { mode: 'bigint', unsigned: true }).autoincrement().notNull(),
   mapMd5: char('map_md5', { length: 32 }).notNull(),
   score: int('score').notNull(),
   // Warning: Can't parse float(7,3) from database
@@ -313,8 +313,8 @@ export const startups = mysqlTable('startups', {
 export const stats = mysqlTable('stats', {
   id: int('id').notNull(),
   mode: tinyint('mode').notNull(),
-  totalScore: bigint('tscore', { mode: 'number', unsigned: true }).notNull(),
-  rankedScore: bigint('rscore', { mode: 'number', unsigned: true }).notNull(),
+  totalScore: bigint('tscore', { mode: 'bigint', unsigned: true }).notNull(),
+  rankedScore: bigint('rscore', { mode: 'bigint', unsigned: true }).notNull(),
   pp: int('pp', { unsigned: true }).default(0).notNull(),
   plays: int('plays', { unsigned: true }).default(0).notNull(),
   playtime: int('playtime', { unsigned: true }).default(0).notNull(),
@@ -430,6 +430,7 @@ export const statsRelations = relations(stats, ({ one }) => ({
 }))
 export const scoresRelations = relations(scores, ({ one }) => ({
   user: one(users, { fields: [scores.userId], references: [users.id] }),
+  map: one(maps, { fields: [scores.mapMd5], references: [maps.md5] }),
 }))
 export const clansRelations = relations(clans, ({ one }) => ({
   owner: one(users, { fields: [clans.ownerId], references: [users.id] }),

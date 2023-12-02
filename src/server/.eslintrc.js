@@ -7,4 +7,6 @@ module.exports = {
   rules: {
     'antfu/no-const-enum': ['off'],
   },
+  plugins: ['drizzle'],
+  extends: ['plugin:drizzle/all'],
 }
