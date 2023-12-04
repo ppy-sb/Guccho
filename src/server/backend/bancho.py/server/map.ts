@@ -32,7 +32,7 @@ export class MapProvider implements Base<Id> {
     const beatmap = await this.drizzle.query.maps.findFirst({
       where: or(
         eq(schema.maps.md5, query),
-        Number.isNaN(queryAsId) ? undefined : eq(schema.maps.setId, queryAsId),
+        Number.isNaN(queryAsId) ? undefined : eq(schema.maps.id, queryAsId),
       ),
       with: {
         source: true,
