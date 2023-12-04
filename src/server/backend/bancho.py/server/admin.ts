@@ -34,6 +34,7 @@ export class AdminProvider extends Base<Id> implements Base<Id> {
             query.safeName ? eq(schema.users.safeName, query.safeName) : undefined,
             query.email ? eq(schema.users.email, query.email) : undefined,
             query.flag ? eq(schema.users.country, query.flag) : undefined,
+            query.roles?.length ? eq(schema.users.priv, toBanchoPyPriv(query.roles)) : undefined,
           ].filter(TSFilter)
         )
       )
