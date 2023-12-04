@@ -81,7 +81,7 @@ zh-CN:
   user-id: 用户 ID
   username: 用户名
   link-name: 引用名称
-  email: 游戏
+  email: 邮箱
   flag: 国家或地区
   roles: 角色
   registered-at: 注册于
