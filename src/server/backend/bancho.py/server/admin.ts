@@ -1,4 +1,4 @@
-import { and, desc, eq } from 'drizzle-orm'
+import { and, desc, eq, sql } from 'drizzle-orm'
 import type { Id } from '..'
 import { encryptBanchoPassword } from '../crypto'
 import * as schema from '../drizzle/schema'
@@ -21,6 +21,14 @@ export class AdminProvider extends Base<Id> implements Base<Id> {
     page: number
     perPage: number
   }) {
+    const cond = [
+      query.id ? eq(schema.users.id, query.id) : undefined,
+      query.name ? eq(schema.users.name, query.name) : undefined,
+      query.safeName ? eq(schema.users.safeName, query.safeName) : undefined,
+      query.email ? eq(schema.users.email, query.email) : undefined,
+      query.flag ? eq(schema.users.country, query.flag) : undefined,
+      query.roles?.length ? eq(schema.users.priv, toBanchoPyPriv(query.roles)) : undefined,
+    ].filter(TSFilter)
     const baseQuery = this.drizzle.select({
       user: pick(schema.users, ['id', 'name', 'safeName', 'priv', 'country', 'email', 'preferredMode', 'lastActivity', 'creationTime']),
       clan: pick(schema.clans, ['id', 'name', 'badge']),
@@ -28,19 +36,14 @@ export class AdminProvider extends Base<Id> implements Base<Id> {
       .leftJoin(schema.clans, eq(schema.clans.id, schema.users.clanId))
       .where(
         and(
-          ...[
-            query.id ? eq(schema.users.id, query.id) : undefined,
-            query.name ? eq(schema.users.name, query.name) : undefined,
-            query.safeName ? eq(schema.users.safeName, query.safeName) : undefined,
-            query.email ? eq(schema.users.email, query.email) : undefined,
-            query.flag ? eq(schema.users.country, query.flag) : undefined,
-            query.roles?.length ? eq(schema.users.priv, toBanchoPyPriv(query.roles)) : undefined,
-          ].filter(TSFilter)
+          ...cond
         )
       )
       .orderBy(desc(schema.users.lastActivity))
+      .offset(query.page * query.perPage)
+      .limit(query.perPage)
 
-    const uCompacts = (await baseQuery.offset(query.page * query.perPage).limit(query.perPage)).map(({ user, clan }) => ({
+    const uCompacts = baseQuery.then(res => res.map(({ user, clan }) => ({
       ...toUserCompact(user, this.config),
       ...toUserOptional(user),
       lastActivityAt: new Date(user.lastActivity * 1000),
@@ -52,13 +55,26 @@ export class AdminProvider extends Base<Id> implements Base<Id> {
           badge: clan.badge,
         } satisfies UserClan<Id>
         : undefined,
-    })) satisfies Array<UserCompact<Id> & Pick<UserOptional, 'email' | 'status'> & {
+    }))) satisfies Promise<Array<UserCompact<Id> & Pick<UserOptional, 'email' | 'status'> & {
       registeredAt: Date
       lastActivityAt: Date
       clan?: UserClan<Id>
-    }>
+    }>>
 
-    return [100, uCompacts] as const
+    return Promise.all([
+
+      this.drizzle.select({
+        count: sql`count(*)`.mapWith(Number),
+      }).from(schema.users)
+        .leftJoin(schema.clans, eq(schema.clans.id, schema.users.clanId))
+        .where(
+          and(...cond)
+        ).execute()
+        .then(res => res[0].count),
+
+      uCompacts,
+
+    ] as const)
   }
 
   async userDetail(query: { id: Id }): Promise<UserCompact<Id> & UserOptional> {
