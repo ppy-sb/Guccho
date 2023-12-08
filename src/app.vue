@@ -137,7 +137,7 @@ $scale2: scale(0.96);
 }
 
 #app-drawer .drawer-content > * {
-  transition-property: transform filter;
+  transition-property: transform, filter;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 350ms;
   transition-delay: 30ms;

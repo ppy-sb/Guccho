@@ -8,8 +8,8 @@ const { iconLinks, footerLink, brand } = runtime.public as unknown as { iconLink
 
 <template>
   <footer>
-    <div class="w-full max-w-screen-xl p-4 py-6 mx-auto lg:py-8">
-      <div class="md:flex md:justify-between">
+    <div class="w-full p-4 py-6 lg:py-8">
+      <div class="md:flex md:justify-between max-w-screen-xl mx-auto">
         <div class="mb-6 md:mb-0">
           <nuxt-link-locale :to="{ name: 'index' }">
             <span class="flex items-center text-2xl font-semibold whitespace-nowrap dark:text-white">
