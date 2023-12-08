@@ -1,21 +1,31 @@
 <script setup lang="ts" async>
 const app = useNuxtApp()
-const serverLogs = await app.$client.admin.log.last.query(50)
+const last = ref(50)
+const { data: logs } = await app.$client.admin.log.last.useQuery(last)
 const { t, locale } = useI18n()
-const logs = ref(serverLogs.reverse())
+async function truncate() {
+  logs.value = await app.$client.admin.log.truncate.mutate()
+}
 </script>
 
 <template>
   <div>
-    <h1 class="mb-10 italic font-bold">
-      {{ t('titles.logs') }}
-    </h1>
+    <div class="mb-5 px-4 flex justify-between">
+      <h1 class="text-xl italic font-bold inline-block">
+        {{ t('titles.logs') }}
+      </h1>
+      <button class="btn btn-primary" @click="truncate">
+        truncate
+      </button>
+    </div>
     <div v-for="log in logs" :key="`log-${log.timestamp}`" class="relative mt-5 text-left">
-      <div class="relative flex items-center">
+      <div class="relative flex">
         <div class="hidden w-20 md:block">
           <div
             class="italic font-bold capitalize" :class="{
-              'text-sky-600 dark:text-sky-300': log.level === 'info',
+              'text-info': log.level === 'info',
+              'text-warning': log.level === 'warn',
+              'text-error': log.level === 'error',
             }"
           >
             {{ log.level }}
@@ -27,7 +37,7 @@ const logs = ref(serverLogs.reverse())
         <div class="absolute z-10 h-full border-r-2 border-black dark:border-white left-1 md:left-20 top-2">
           <i class="absolute -ml-2 fas fa-circle -top-1" />
         </div>
-        <div class="ml-10">
+        <div class="ml-5 w-full">
           <div class="font-bold capitalize">
             {{ log.label }}
           </div>
