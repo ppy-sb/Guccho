@@ -495,7 +495,19 @@ fr-FR:
     filter: opacity(0.4) contrast(0.2) brightness(1.5) blur(3em);
   }
 }
+.dark {
 
+  @keyframes fadeIn {
+    0% {
+      filter: opacity(0) contrast(0.5) brightness(1) blur(5em);
+    }
+
+    100% {
+      filter: opacity(1) contrast(0.5) brightness(0.5) blur(3em);
+    }
+  }
+
+}
 @media (prefers-color-scheme: dark) {
   @keyframes fadeIn {
     0% {

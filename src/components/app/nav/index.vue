@@ -35,7 +35,7 @@ function clearFocus() {
     :class="[detached && 'detached']"
   >
     <div
-      class="navbar transition-[border-radius]" :class="[
+      class="navbar snow transition-[border-radius]" :class="[
         shownMenu.left && 'navbar-tint',
         shownMenu.user && 'navbar-tint',
       ]"
@@ -165,10 +165,11 @@ function clearFocus() {
 <style lang="postcss">
 .navbar-tint,
 .detached>.navbar {
-  @apply bg-gbase-100/80 dark:bg-gbase-700/80;
-  @apply backdrop-blur-md shadow-xl;
+  @apply bg-gbase-100 dark:bg-gbase-800;
+  @apply shadow-xl;
   @apply backdrop-saturate-[0.9] backdrop-brightness-[0.95];
   @apply dark:backdrop-saturate-[1] dark:backdrop-brightness-[1];
+
 }
 
 .navbar {
@@ -264,7 +265,7 @@ function clearFocus() {
 
 <style lang="postcss" scoped>
 .menu-tint {
-  @apply shadow rounded-box bg-base-100/80 backdrop-blur-lg;
+  @apply shadow rounded-box bg-gbase-900;
 }
 
 .detached {

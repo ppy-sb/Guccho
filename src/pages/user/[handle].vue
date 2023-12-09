@@ -162,6 +162,7 @@ fr-FR:
 <style lang="postcss" scoped>
 .fuck {
   justify-content: center;
+
 }
 
 .fuck>* {

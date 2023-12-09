@@ -130,7 +130,7 @@ html {
 }
 
 body {
-  @apply bg-gbase-50 dark:bg-gbase-800;
+  @apply bg-gbase-50 dark:bg-gbase-950;
 }
 body:after {
   content: "";
@@ -139,7 +139,8 @@ body:after {
   left: 0;
   right: 0;
   bottom: 0;
-  @apply bg-gradient-to-b from-gbase-50 to-gbase-100/75 dark:from-gbase-800 dark:to-gbase-900 -z-50;
+  /* @apply bg-gradient-to-b from-gbase-50 to-gbase-100/75 dark:from-gbase-900 dark:to-gbase-950 -z-50; */
+  @apply -z-50;
 }
 
 dialog {
@@ -177,17 +178,32 @@ dialog {
       theme("colors.gbase.200 / 30%") 83.4%,
       transparent 100%
     );
-    @media (prefers-color-scheme: dark) {
-      background: linear-gradient(
-        110deg,
-        transparent,
-        theme("colors.gbase.700 / 30%") 16.6%,
-        theme("colors.gbase.700 / 50%") 16.7%,
-        theme("colors.gbase.700 / 60%") 83.3%,
-        theme("colors.gbase.700 / 30%") 83.4%,
-        transparent 100%
-      );
-    }
+  }
+}
+
+.dark .two-tone {
+  background: linear-gradient(
+    110deg,
+    transparent,
+    theme("colors.gbase.700 / 30%") 16.6%,
+    theme("colors.gbase.700 / 50%") 16.7%,
+    theme("colors.gbase.700 / 60%") 83.3%,
+    theme("colors.gbase.700 / 30%") 83.4%,
+    transparent 100%
+  );
+}
+
+@media (prefers-color-scheme: dark) {
+  .two-tone {
+    background: linear-gradient(
+      110deg,
+      transparent,
+      theme("colors.gbase.700 / 30%") 16.6%,
+      theme("colors.gbase.700 / 50%") 16.7%,
+      theme("colors.gbase.700 / 60%") 83.3%,
+      theme("colors.gbase.700 / 30%") 83.4%,
+      transparent 100%
+    );
   }
 }
 

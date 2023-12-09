@@ -44,6 +44,7 @@ export default defineNuxtConfig({
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
     '~/assets/styles/main.scss',
+    '~/assets/styles/components.css',
     '~/components/content/styles/typography.scss',
     '~/assets/styles/transitions.scss',
     '~/assets/styles/daisyui.scss',

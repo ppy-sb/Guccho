@@ -138,6 +138,27 @@ $in: blur(0.5em) opacity(0) saturate(0.5);
   }
 }
 
+.dark {
+  @keyframes backdrop-fade-in {
+    from {
+      background-color: transparent;
+    }
+    to{
+      @apply bg-gbase-900/80;
+      @apply backdrop-blur-lg;
+    }
+  }
+  @keyframes backdrop-fade-out {
+    from {
+      @apply bg-gbase-900/80;
+      @apply backdrop-blur-lg;
+    }
+    to {
+      background-color: transparent;
+    }
+  }
+}
+
 @media (prefers-color-scheme: dark) {
   @keyframes backdrop-fade-in {
     from {

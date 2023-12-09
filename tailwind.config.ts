@@ -8,6 +8,7 @@ import { hex as colors } from './src/palette'
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   important: false,
+  darkMode: 'class',
   content: [
     './src/components/**/*.{vue,ts,js}',
     './src/layouts/**/*.vue',
