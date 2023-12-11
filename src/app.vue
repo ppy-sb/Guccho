@@ -1,12 +1,9 @@
 <script lang="ts" setup>
 const safari = shallowRef(false)
-
 const scrollY = useScrollYObserver()
-
-const scroll = shallowRef<HTMLElement>()
 const { status } = useZoomModal()
 
-onMounted(() => {
+onBeforeMount(() => {
   safari.value = useSafariDetector()
 })
 </script>
@@ -19,7 +16,6 @@ onMounted(() => {
     <!-- Page content here -->
     <NuxtLayout
       id="layout"
-      ref="scroll"
       viewport
       :class="[safari ? 'safari' : 'not-safari']"
       class="drawer-content zoom-modal-container overflow-x-clip"
