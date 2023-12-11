@@ -29,7 +29,7 @@ function getScrollPercent() {
   const clientHeight = document.documentElement.clientHeight
   // console.log(scrollTop, scrollHeight, clientHeight)
 
-  return (scrollTop / (scrollHeight - clientHeight))
+  return Math.min(scrollTop / (scrollHeight - clientHeight), 1)
 }
 </script>
 
