@@ -243,7 +243,7 @@ $scale2: scale(0.96);
   position: absolute;
   bottom: 0;
 
-  height: 100dvh;
+  height: 100vh;
   min-width: 100%;
   object-fit: cover;
 }
