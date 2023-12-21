@@ -1,15 +1,27 @@
-export {
-  AdminProvider,
-  ArticleProvider,
-  FileProvider,
-  LogProvider,
-  MapProvider,
-  MonitorProvider,
-  RankProvider,
-  ScoreProvider,
-  SessionProvider,
-  UserRelationProvider,
-  ClanProvider,
+import {
+  AdminProvider as BAdminProvider,
+  ArticleProvider as BArticleProvider,
+  ClanProvider as BClanProvider,
+  FileProvider as BFileProvider,
+  LogProvider as BLogProvider,
+  MapProvider as BMapProvider,
+  MonitorProvider as BMonitorProvider,
+  RankProvider as BRankProvider,
+  ScoreProvider as BScoreProvider,
+  SessionProvider as BSessionProvider,
+  UserRelationProvider as BUserRelationProvider,
 } from '~/server/backend/bancho.py/server'
 
 export { UserProvider } from './user'
+
+export class AdminProvider extends BAdminProvider {}
+export class ArticleProvider extends BArticleProvider {}
+export class ClanProvider extends BClanProvider {}
+export class FileProvider extends BFileProvider {}
+export class LogProvider extends BLogProvider {}
+export class MapProvider extends BMapProvider {}
+export class MonitorProvider extends BMonitorProvider {}
+export class RankProvider extends BRankProvider {}
+export class ScoreProvider extends BScoreProvider {}
+export class SessionProvider extends BSessionProvider {}
+export class UserRelationProvider extends BUserRelationProvider {}
