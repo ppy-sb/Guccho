@@ -4,6 +4,8 @@ import type {
   Source,
 } from 'prisma-client-bancho-py'
 
+import type { InferSelectModel } from 'drizzle-orm'
+
 import { $enum } from 'ts-enum-util'
 import type { Id } from '..'
 import { BanchoPyRankedStatus } from '../enums'
@@ -137,7 +139,7 @@ export function toBeatmapWithBeatmapsetPrisma(
 }
 
 export function toBeatmapWithBeatmapset(
-  beatmap: typeof schema['maps']['$inferSelect'] & {
+  beatmap: typeof schema['beatmaps']['$inferSelect'] & {
     source: typeof schema['sources']['$inferSelect']
   },
 ) {
@@ -148,8 +150,13 @@ export function toBeatmapWithBeatmapset(
     beatmapset,
   })
 }
+export type AbleToTransformToScores = InferSelectModel<typeof schema['scores']> & {
+  beatmap: InferSelectModel<typeof schema['beatmaps']> & {
+    source: InferSelectModel<typeof schema['sources']>
+  }
+}
 
-export type AbleToTransformToScores = DBScore & {
+export type PrismaAbleToTransformToScores = DBScore & {
   beatmap:
   | (DBMap & {
     source: Source

@@ -17,6 +17,7 @@ const drizzle = await useDrizzle(schema, { logger: !!process.env.DEV })
 export class AdminProvider extends Base<Id> implements Base<Id> {
   config = config()
   drizzle = drizzle
+  logger = logger
   async userList(query: Partial<UserCompact<Id> & Pick<UserOptional, 'email' | 'status'>> & Partial<UserSecrets> & {
     page: number
     perPage: number

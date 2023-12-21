@@ -1,6 +1,7 @@
 import { mkdirSync } from 'node:fs'
 import { unlink, writeFile } from 'node:fs/promises'
 import { isAbsolute, join, resolve, sep } from 'node:path'
+import { aliasedTable, and, desc, eq, inArray, sql } from 'drizzle-orm'
 import { merge } from 'lodash-es'
 import imageType from 'image-type'
 import { glob } from 'glob'
@@ -16,7 +17,7 @@ import {
   userCompacts,
 } from '../db-query'
 import type { settings } from '../dynamic-settings'
-import { BanchoPyMode, BanchoPyPrivilege, BanchoPyScoreStatus } from '../enums'
+import { BanchoPyMode, BanchoPyScoreStatus } from '../enums'
 import { config } from '../env'
 import { Logger } from '../log'
 import {
@@ -24,10 +25,11 @@ import {
   BPyMode,
   createRulesetData,
   fromBanchoPyMode,
+
   fromCountryCode,
   fromRankingStatus,
-
   idToString,
+  prismaToRankingSystemScores,
   stringToId,
   toBanchoPyMode,
   toFullUser,
@@ -36,11 +38,13 @@ import {
   toUserClan,
   toUserCompact,
 } from '../transforms'
+import * as schema from '../drizzle/schema'
 import { ArticleProvider } from './article'
 import { ScoreProvider } from './score'
 import { prismaClient } from './source/prisma'
 import { client as redisClient } from './source/redis'
 import { UserRelationProvider } from './user-relations'
+import { useDrizzle, userPriv } from './source/drizzle'
 import { oldPasswordMismatch, userNotFound } from '~/server/trpc/messages'
 import { type DynamicSettingStore, Scope, type UserCompact, type UserStatistic, UserStatus } from '~/def/user'
 import type { CountryCode } from '~/def/country-code'
@@ -83,6 +87,7 @@ function ensureDirectorySync(targetDir: string, { isRelativeToScript = false } =
 }
 
 const bpyNumModes = Object.keys(BPyMode)
+const drizzle = await useDrizzle(schema)
 
 class DBUserProvider extends Base<Id> implements Base<Id> {
   static stringToId = stringToId
@@ -91,6 +96,7 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
    * @deprecated prisma will be replaced by drizzle
    */
   db = prismaClient
+  drizzle = drizzle
   relationships = new UserRelationProvider()
   config = config()
 
@@ -244,7 +250,7 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
       skip: start,
       take: perPage,
     })
-    return toRankingSystemScores({ scores, rankingSystem, mode }).map(score =>
+    return prismaToRankingSystemScores({ scores, rankingSystem, mode }).map(score =>
       Object.assign(score, {
         id: score.id.toString(),
       }),
@@ -259,129 +265,78 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
 
     const banchoPyRankingStatus = rankingStatus.map(i => fromRankingStatus(i))
 
-    const rankingColumn = rankingSystem === Rank.PPv2 ? 'pp' : 'score'
+    // derived tables
+    const s = aliasedTable(schema.scores, 's')
+    const s2 = aliasedTable(schema.scores, 's2')
+    const s3 = aliasedTable(schema.scores, 's3')
+    const u = aliasedTable(schema.users, 'u')
+    const u2 = aliasedTable(schema.users, 'u2')
+    const bm = aliasedTable(schema.beatmaps, 'm')
+    const bms = aliasedTable(schema.sources, 'ms')
 
-    const sql = /* sql */`
-SELECT s.*,
-       m.id map_id,
-       m.server map_server,
-       m.set_id,
-       m.status map_status,
-       m.md5 map_md5,
-       m.artist,
-       m.title,
-       m.version,
-       m.creator,
-       m.filename,
-       m.last_update,
-       m.total_length,
-       m.max_combo map_max_combo,
-       m.frozen,
-       m.plays,
-       m.passes,
-       m.mode map_mode,
-       m.bpm,
-       m.cs,
-       m.ar,
-       m.od,
-       m.hp,
-       m.diff,
-       ms.server source_server,
-       ms.id source_id,
-       ms.last_osuapi_check,
-       COUNT(*) OVER() full_count
-FROM scores s
-INNER JOIN (
-    SELECT s2.map_md5, MAX(s2.${rankingColumn}) v, COUNT(*) count_scores, MIN(s2.id) lowestId
-    FROM scores s2
-    INNER JOIN users u ON s2.userid = u.id
-    WHERE u.priv & ${BanchoPyPrivilege.Normal | BanchoPyPrivilege.Verified} = ${BanchoPyPrivilege.Normal | BanchoPyPrivilege.Verified}
-      AND s2.mode = ?
-      AND s2.map_md5 IN (
-        SELECT DISTINCT(s3.map_md5) from scores s3
-        WHERE s3.mode = ?
-          AND s3.userid = ?
-    )
-    GROUP BY s2.map_md5
-) max_scores
-ON s.map_md5 = max_scores.map_md5 AND s.${rankingColumn} = max_scores.v AND s.id = max_scores.lowestId
+    const userHaveScores = this.drizzle.selectDistinct({ md5: s3.mapMd5 })
+      .from(s3)
+      .where(and(
+        eq(s3.mode, toBanchoPyMode(mode, ruleset)),
+        eq(s3.userId, id)
+      )).as('ssq')
 
-INNER JOIN maps m ON m.md5 = s.map_md5 AND m.status IN (${banchoPyRankingStatus.join(',')})
-INNER JOIN mapsets ms ON m.set_id = ms.id AND m.server = ms.server
-INNER JOIN users u ON u.id = s.userid
+    const maxScores = this.drizzle.select({
+      mapMd5: s2.mapMd5,
+      v: sql`MAX(${rankingSystem === Rank.PPv2 ? s2.pp : s2.score})`.as('v'),
+      countScores: sql`COUNT(*)`.mapWith(Number).as('countScores'),
+      lowestId: sql`MIN(${s2.id})`.as('lowestId'),
+    }).from(s2)
+      .innerJoin(u2, eq(s2.userId, u2.id))
+      .innerJoin(userHaveScores, eq(userHaveScores.md5, s2.mapMd5))
+      .where(and(
+        userPriv(u2),
+        eq(s2.mode, toBanchoPyMode(mode, ruleset)),
+      ))
+      .groupBy(s2.mapMd5)
+      .as('sq')
 
-WHERE s.userid = ?
-ORDER BY
-  max_scores.count_scores DESC,
-  s.id DESC
-LIMIT ?, ?
-`
+    const q2 = this.drizzle.select({
+      score: s,
+      beatmap: bm,
+      beatmapset: bms,
+      fullCount: sql`COUNT(*) OVER()`.mapWith(Number).as('full_count'),
+    }).from(s)
+      .innerJoin(maxScores, and(
+        eq(maxScores.mapMd5, s.mapMd5),
+        eq(rankingSystem === Rank.PPv2 ? s.pp : s.score, maxScores.v),
+        eq(s.id, maxScores.lowestId)
+      ))
+      .innerJoin(bm, and(
+        eq(bm.md5, s.mapMd5),
+        inArray(bm.status, banchoPyRankingStatus),
+      ))
+      .innerJoin(bms, and(
+        eq(bm.setId, bms.id),
+        eq(bm.server, bms.server)
+      ))
+      .innerJoin(u, eq(u.id, s.userId))
+      .where(eq(s.userId, id))
+      .orderBy(
+        desc(maxScores.countScores),
+        desc(s.id)
+      )
+      .offset(start)
+      .limit(perPage)
 
-    const scoresData = await this.db.$queryRawUnsafe<ScoreWithMapDetails[]>(
-      sql,
-      // params
-      toBanchoPyMode(mode, ruleset),
-      toBanchoPyMode(mode, ruleset),
-      id,
-      id,
-      start,
-      perPage, // Used in LIMIT for pagination (number of rows to fetch)
-    )
+    const scoresData = await q2
 
-    const count = scoresData.length > 0 ? scoresData[0].full_count : 0
+    const count = scoresData.length > 0 ? scoresData[0].fullCount : 0
     const scores = scoresData.map((sd) => {
+      const { score, beatmap, beatmapset } = sd
       return {
-        id: BigInt(sd.id),
-        mapMd5: sd.map_md5,
-        score: sd.score,
-        pp: sd.pp,
-        acc: sd.acc,
-        maxCombo: sd.max_combo,
-        mods: sd.mods,
-        n300: sd.n300,
-        n100: sd.n100,
-        n50: sd.n50,
-        nMiss: sd.nmiss,
-        nGeki: sd.ngeki,
-        nKatu: sd.nkatu,
-        grade: sd.grade,
-        status: sd.status,
-        mode: sd.mode,
-        playTime: sd.play_time, // Assuming date is returned in a format that Date constructor can parse
-        timeElapsed: sd.time_elapsed,
-        clientFlags: sd.client_flags,
-        userId: sd.userid,
-        perfect: !!sd.perfect, // If perfect is returned as 1/0, convert to boolean
-        onlineChecksum: sd.online_checksum,
+        ...score,
         beatmap: {
-          artist: sd.artist,
-          title: sd.title,
-          version: sd.version,
-          creator: sd.creator,
-          lastUpdate: sd.last_update, // Assuming date is returned in a format that Date constructor can parse
-          totalLength: sd.total_length,
-          maxCombo: sd.map_max_combo,
-          mode: sd.map_mode,
-          bpm: sd.bpm,
-          cs: sd.cs,
-          ar: sd.ar,
-          od: sd.od,
-          hp: sd.hp,
-          diff: sd.diff,
-
-          id: sd.map_id,
-          server: sd.map_server === 'osu!' ? 'bancho' : 'privateServer',
-          setId: sd.set_id,
-          status: sd.map_status,
-          md5: sd.map_md5,
-          filename: sd.filename,
-          frozen: !!sd.frozen,
-          plays: sd.plays,
-          passes: sd.passes,
+          ...beatmap,
           source: {
-            server: sd.source_server === 'osu!' ? 'bancho' : 'privateServer',
-            id: sd.source_id,
-            lastOsuApiCheck: sd.last_osuapi_check,
+            server: beatmapset.server,
+            id: beatmapset.id,
+            lastOsuApiCheck: beatmapset.lastOsuApiCheck,
           },
         },
       } satisfies AbleToTransformToScores
@@ -905,60 +860,3 @@ export class RedisUserProvider extends DBUserProvider {
 }
 
 export const UserProvider = config().leaderboardSource === 'redis' ? RedisUserProvider : DBUserProvider
-
-interface ScoreWithMapDetails {
-  // Fields from the 'scores' table
-  id: string // or number | bigint, depending on how your database returns BIGINT
-  map_md5: string
-  map_server: 'osu!' | 'private'
-  score: number
-  pp: number
-  acc: number
-  max_combo: number
-  mods: number
-  n300: number
-  n100: number
-  n50: number
-  nmiss: number
-  ngeki: number
-  nkatu: number
-  grade: string
-  status: number
-  mode: number
-  play_time: Date
-  time_elapsed: number
-  client_flags: number
-  userid: number
-  perfect: number
-  online_checksum: string
-
-  map_id: number
-  set_id: number
-  map_status: number
-  artist: string
-  title: string
-  version: string
-  creator: string
-  filename: string
-  last_update: Date
-  total_length: number
-  map_max_combo: number
-  frozen: number
-  plays: number
-  passes: number
-  map_mode: number
-  bpm: number
-  cs: number
-  ar: number
-  od: number
-  hp: number
-  diff: number
-
-  // Fields from the 'mapsets' table
-  source_server: 'osu!' | 'private'
-  source_id: number
-  last_osuapi_check: Date
-
-  // The count of all rows that match the query without the limit
-  full_count: number
-}

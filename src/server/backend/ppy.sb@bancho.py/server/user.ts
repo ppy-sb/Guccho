@@ -18,7 +18,7 @@ const drizzle = await useDrizzle(schema)
 
 export class UserProvider extends BanchoPyUser implements Base<Id> {
   drizzle = drizzle
-
+  logger = logger
   usernamePattern = /^.{2,15}[^.]$/
 
   async changeSettings(

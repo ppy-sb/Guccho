@@ -14,7 +14,9 @@ import {
   toRoles,
   toUserCompact,
 } from '../transforms'
+import * as schema from '../drizzle/schema'
 import { RedisNotReadyError, client as redisClient } from './source/redis'
+import { useDrizzle } from './source/drizzle'
 import { prismaClient } from './source/prisma'
 import type { ComponentLeaderboard } from '~/def/leaderboard'
 import type { CountryCode } from '~/def/country-code'
@@ -26,6 +28,8 @@ import type { RankProvider as Base } from '$base/server'
 const logger = Logger.child({ label: 'leaderboard', backend: 'bancho.py' })
 
 const config = _config()
+// eslint-disable-next-line n/prefer-global/process
+const drizzle = await useDrizzle(schema, { logger: !!process.env.DEV })
 
 const leaderboardFields = {
   id: true,
