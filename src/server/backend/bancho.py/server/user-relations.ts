@@ -3,7 +3,7 @@ import { dedupeUserRelationship, fromBanchoPyRelationType, idToString, stringToI
 // import { idToString, stringToId } from '../transforms'
 import type { Id } from '..'
 import { config as _config } from '../env'
-import { getPrismaClient } from './source/prisma'
+import { prismaClient } from './source/prisma'
 import type { UserRelationProvider as Base } from '$base/server'
 import { Relationship } from '~/def'
 import type { UserCompact } from '~/def/user'
@@ -16,8 +16,7 @@ export class UserRelationProvider implements Base<Id> {
   /**
    * @deprecated prisma will be replaced by drizzle
    */
-  db = getPrismaClient()
-
+  db = prismaClient
   config = config
 
   async getOne(fromUser: { id: Id }, toUser: { id: Id }) {
@@ -122,6 +121,8 @@ export class UserRelationProvider implements Base<Id> {
       throw new Error('not-found')
     }
 
+    // it's prisma, don't worry about it
+    // eslint-disable-next-line drizzle/enforce-delete-with-where
     await this.db.relationship.delete({
       where: {
         fromUserId_toUserId: {

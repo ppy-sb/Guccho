@@ -14,7 +14,7 @@ import {
   toScore,
   toUserCompact,
 } from '../transforms'
-import { getPrismaClient } from './source/prisma'
+import { prismaClient } from './source/prisma'
 import type {
   ScoreProvider as Base,
 } from '$base/server'
@@ -31,7 +31,7 @@ export class ScoreProvider implements Base<bigint, Id> {
   /**
    * @deprecated prisma will be replaced by drizzle
    */
-  db = getPrismaClient()
+  db = prismaClient
 
   config = config
 

@@ -5,6 +5,6 @@ const log: Prisma.LogLevel[] = []
 /**
  * @deprecated prisma will be replaced by drizzle
  */
-export const getPrismaClient = lazySingleton(() => new PrismaClient({
+export const prismaClient = new PrismaClient({
   log,
-}))
+})

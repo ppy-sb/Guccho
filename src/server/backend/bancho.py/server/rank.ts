@@ -14,9 +14,8 @@ import {
   toRoles,
   toUserCompact,
 } from '../transforms'
-import { getPrismaClient } from './source/prisma'
 import { RedisNotReadyError, client as redisClient } from './source/redis'
-
+import { prismaClient } from './source/prisma'
 import type { ComponentLeaderboard } from '~/def/leaderboard'
 import type { CountryCode } from '~/def/country-code'
 import type { ActiveMode, AvailableRuleset, LeaderboardRankingSystem, RankingSystem } from '~/def/common'
@@ -44,8 +43,8 @@ export class DatabaseRankProvider implements Base<Id> {
   /**
    * @deprecated prisma will be replaced by drizzle
    */
-  db = getPrismaClient()
-
+  db = prismaClient
+  drizzle = drizzle
   config = config
 
   async leaderboard<M extends ActiveMode, RS extends LeaderboardRankingSystem>({
@@ -177,6 +176,7 @@ export class DatabaseRankProvider implements Base<Id> {
       },
       orderBy: sort,
     })
+
     return scores.map((item, index) => ({
       user: toUserCompact(item.user, this.config),
       score: {

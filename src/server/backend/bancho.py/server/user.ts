@@ -38,7 +38,7 @@ import {
 } from '../transforms'
 import { ArticleProvider } from './article'
 import { ScoreProvider } from './score'
-import { getPrismaClient } from './source/prisma'
+import { prismaClient } from './source/prisma'
 import { client as redisClient } from './source/redis'
 import { UserRelationProvider } from './user-relations'
 import { oldPasswordMismatch, userNotFound } from '~/server/trpc/messages'
@@ -90,7 +90,7 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
   /**
    * @deprecated prisma will be replaced by drizzle
    */
-  db = getPrismaClient()
+  db = prismaClient
   relationships = new UserRelationProvider()
   config = config()
 
