@@ -27,18 +27,19 @@ export interface SessionUnknown {
 export type SessionClient = SessionBrowser | SessionOsuClient | SessionUnknown
 
 export type Session<T = string> = SessionBase<T> & SessionClient
+export type SessionIdType<T extends Session> = T extends Session<infer R> ? R : never
 
-export abstract class SessionProvider<TSession extends Session<any>> {
-  store: SessionStore<string, TSession>
+export abstract class SessionProvider<TSession extends Session<string>> {
+  store: SessionStore<TSession>
 
-  abstract prepare(): SessionStore<string, TSession>
+  abstract prepare(): SessionStore<TSession>
 
   constructor() {
     this.store = this.prepare()
   }
 
   async create(data: Omit<Session, 'lastSeen'>) {
-    const sessionId = v4() as string
+    const sessionId = v4() as SessionIdType<TSession>
 
     const _session = {
       ...data,
@@ -48,7 +49,7 @@ export abstract class SessionProvider<TSession extends Session<any>> {
     return sessionId
   }
 
-  async get(sessionId: string) {
+  async get(sessionId: SessionIdType<TSession>) {
     const _session = await this.store.get(sessionId)
     if (!_session) {
       return undefined
@@ -57,11 +58,11 @@ export abstract class SessionProvider<TSession extends Session<any>> {
     return _session
   }
 
-  async destroy(sessionId: string) {
+  async destroy(sessionId: SessionIdType<TSession>) {
     await this.store.destroy(sessionId)
   }
 
-  async refresh(sessionId: string) {
+  async refresh(sessionId: SessionIdType<TSession>) {
     const _session = await this.store.get(sessionId)
     if (!_session) {
       return
@@ -71,7 +72,7 @@ export abstract class SessionProvider<TSession extends Session<any>> {
     return sessionId
   }
 
-  async update(sessionId: string, data: Partial<Session>) {
+  async update(sessionId: SessionIdType<TSession>, data: Partial<Session>) {
     const _session = await this.store.get(sessionId)
     if (!_session) {
       return undefined
@@ -86,9 +87,9 @@ export abstract class SessionProvider<TSession extends Session<any>> {
   }
 }
 
-const s = lazySingleton(<TSessionId extends string, TSession extends Session>() => new MemorySessionStore<TSessionId, TSession>())
-export class MemorySessionProvider<TSessionId extends string, TSession extends Session<any>> extends SessionProvider<TSession> implements SessionProvider<TSession> {
+const s = lazySingleton(<TSession extends Session<any>>() => new MemorySessionStore<TSession>())
+export class MemorySessionProvider<TSession extends Session<any>> extends SessionProvider<TSession> implements SessionProvider<TSession> {
   prepare() {
-    return s<TSessionId, TSession>()
+    return s<TSession>()
   }
 }

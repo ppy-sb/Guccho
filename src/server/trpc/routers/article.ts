@@ -3,6 +3,7 @@ import { router as _router } from '../trpc'
 import { adminProcedure } from '../middleware/admin'
 import { optionalUserProcedure } from '../middleware/optional-user'
 import { userProcedure } from '../middleware/user'
+import { type ArticleProvider as BaseArticleProvider } from '$base/server/article'
 import { ArticleProvider, articles } from '~/server/singleton/service'
 
 export const router = _router({
@@ -66,7 +67,7 @@ export const router = _router({
 
   save: adminProcedure.input(object({
     slug: string().trim(),
-    json: record(any(), any()).refine((arg): arg is ArticleProvider.JSONContent => {
+    json: record(any(), any()).refine((arg): arg is BaseArticleProvider.JSONContent => {
       return !!arg
     }),
     privilege: object({
@@ -78,6 +79,7 @@ export const router = _router({
 
   delete: adminProcedure.input(object({
     slug: string().trim(),
+  // eslint-disable-next-line drizzle/enforce-delete-with-where
   })).mutation(({ input, ctx }) => articles.delete(Object.assign(input, { user: ctx.user }))),
 
   localSlugs: adminProcedure.input(string().trim().optional()).query(({ input }) => ArticleProvider.getLocalSlugs(input)),

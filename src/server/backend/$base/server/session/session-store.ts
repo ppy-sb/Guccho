@@ -1,12 +1,12 @@
 import { match } from 'switch-pattern'
 import { Monitored } from '../@extends'
-import { type Session, logger } from '.'
+import { type Session, type SessionIdType, logger } from '.'
 
 export const sessionConfig = {
   expire: 1000 * 60 * 60 * 24, // 1D
 }
 
-export abstract class SessionStore<TSessionId extends string, TSession extends Session<string>> implements Monitored {
+export abstract class SessionStore<TSession extends Session<any>, TSessionId extends SessionIdType<TSession> = SessionIdType<TSession>> implements Monitored {
   abstract [Monitored.status]: Monitored[typeof Monitored.status]
   abstract get(key: TSessionId): PromiseLike<TSession | undefined>
   abstract set(key: TSessionId, value: TSession): PromiseLike<TSessionId>
@@ -15,9 +15,9 @@ export abstract class SessionStore<TSessionId extends string, TSession extends S
   abstract findAll(query: Partial<Pick<TSession, 'OS' | 'userId'>>): PromiseLike<Record<TSessionId, TSession>>
 }
 
-export abstract class HouseKeeperSession<TSessionId extends string, TSession extends Session<string>> extends SessionStore<TSessionId, TSession> implements SessionStore<TSessionId, TSession> {
-  #houseKeeping: Partial<Record<'minutely' | 'hourly' | 'daily', (store: SessionStore<TSessionId, TSession>, _config: typeof sessionConfig) => PromiseLike<void>>> = {
-    async minutely(this: MemorySessionStore<TSessionId, TSession>, sessionStore) {
+export abstract class HouseKeeperSession<TSession extends Session<any>, TSessionId extends SessionIdType<TSession> = SessionIdType<TSession>> extends SessionStore<TSession> implements SessionStore<TSession> {
+  #houseKeeping: Partial<Record<'minutely' | 'hourly' | 'daily', (store: SessionStore<TSession>, _config: typeof sessionConfig) => PromiseLike<void>>> = {
+    async minutely(this: MemorySessionStore<TSession>, sessionStore) {
       sessionStore.forEach((session, sessionId) => this.#removeIfExpired(session, sessionId))
     },
   }
@@ -40,7 +40,7 @@ export abstract class HouseKeeperSession<TSessionId extends string, TSession ext
   }
 }
 
-export class MemorySessionStore<TSessionId extends string, TSession extends Session<string>> extends HouseKeeperSession<TSessionId, TSession> implements HouseKeeperSession<TSessionId, TSession> {
+export class MemorySessionStore<TSession extends Session<any>, TSessionId extends SessionIdType<TSession> = SessionIdType<TSession>> extends HouseKeeperSession<TSession> implements HouseKeeperSession<TSession> {
   private store: Map<TSessionId, TSession>
 
   [Monitored.status]: Monitored[typeof Monitored.status] = [Monitored.Status.Up, 'Memory Session driver']
@@ -61,6 +61,7 @@ export class MemorySessionStore<TSessionId extends string, TSession extends Sess
   }
 
   async destroy(key: TSessionId): Promise<boolean> {
+    // eslint-disable-next-line drizzle/enforce-delete-with-where
     return this.store.delete(key)
   }
 
