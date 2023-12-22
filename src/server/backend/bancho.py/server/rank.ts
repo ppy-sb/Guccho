@@ -16,6 +16,7 @@ import {
 } from '../transforms'
 import { getPrismaClient } from './source/prisma'
 import { RedisNotReadyError, client as redisClient } from './source/redis'
+
 import type { ComponentLeaderboard } from '~/def/leaderboard'
 import type { CountryCode } from '~/def/country-code'
 import type { ActiveMode, AvailableRuleset, LeaderboardRankingSystem, RankingSystem } from '~/def/common'

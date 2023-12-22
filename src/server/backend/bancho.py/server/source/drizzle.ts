@@ -4,7 +4,7 @@ import type * as _schema from '../../drizzle/schema'
 import { BanchoPyPrivilege } from '../../enums'
 import mysql2 from './mysql2'
 
-export default function<T extends Record<string, unknown>>(schema: T, opt?: Partial<MySql2DrizzleConfig<T>>) {
+export function useDrizzle<T extends Record<string, unknown>>(schema: T, opt?: Partial<MySql2DrizzleConfig<T>>) {
   return mysql2().then(conn => drizzle(conn, { mode: 'default', schema, ...opt }))
 }
 

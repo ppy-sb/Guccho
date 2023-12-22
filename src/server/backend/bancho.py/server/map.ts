@@ -12,7 +12,7 @@ import {
   toBeatmapWithBeatmapset, toBeatmapset, toRankingStatus,
 } from '../transforms'
 import * as schema from '../drizzle/schema'
-import useDrizzle from './source/drizzle'
+import {useDrizzle} from './source/drizzle'
 import { toBanchoMode } from '~/server/backend/bancho.py/transforms'
 import type { Tag } from '~/def/search'
 import { type BeatmapSource, type Beatmapset, RankingStatus } from '~/def/beatmap'
