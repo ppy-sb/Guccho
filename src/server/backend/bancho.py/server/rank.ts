@@ -1,3 +1,5 @@
+import { TRPCError } from '@trpc/server'
+import { aliasedTable, and, desc, eq, inArray } from 'drizzle-orm'
 import { type Id, hasRuleset } from '..'
 import { normal } from '../constants'
 import {
@@ -16,7 +18,7 @@ import {
 } from '../transforms'
 import * as schema from '../drizzle/schema'
 import { RedisNotReadyError, client as redisClient } from './source/redis'
-import { useDrizzle } from './source/drizzle'
+import { useDrizzle, userPriv } from './source/drizzle'
 import { prismaClient } from './source/prisma'
 import type { ComponentLeaderboard } from '~/def/leaderboard'
 import type { CountryCode } from '~/def/country-code'
@@ -128,8 +130,13 @@ export class DatabaseRankProvider implements Base<Id> {
   }
 
   async determineBeatmapMode(md5: string) {
-    const beatmap = await this.db.map.findFirst({ where: { md5 } })
-    return fromBanchoMode(beatmap?.mode ?? raise(Error, 'beatmap not found'))
+    const q = await this.drizzle.query.beatmaps.findFirst({
+      columns: {
+        mode: true,
+      },
+      where: eq(schema.beatmaps.md5, md5),
+    }) ?? raise(TRPCError, { message: 'beatmap not found', code: 'NOT_FOUND' })
+    return fromBanchoMode(q.mode)
   }
 
   async beatmap(
@@ -147,49 +154,42 @@ export class DatabaseRankProvider implements Base<Id> {
       return []
     }
 
-    let sort: { score: 'desc' } | { pp: 'desc' }
+    const s = aliasedTable(schema.scores, 's')
+    const u = aliasedTable(schema.users, 'u')
+    const _q = this.drizzle.select({
+      score: s,
+      user: u,
+    }).from(s)
+      .innerJoin(u, eq(s.userId, u.id))
+      .where(and(
+        eq(s.mapMd5, md5),
+        userPriv(u),
+        eq(s.mode, toBanchoPyMode(mode, ruleset)),
+        inArray(s.status, [2, 3])
+      ))
+
+    let q
     if (rankingSystem === 'score') {
-      sort = {
-        score: 'desc',
-      }
+      q = _q.orderBy(desc(s.score))
     }
     else if (rankingSystem === Rank.PPv2) {
-      sort = {
-        pp: 'desc',
-      }
+      q = _q.orderBy(desc(s.pp))
     }
     else {
       return []
     }
 
-    const scores = await this.db.score.findMany({
-      include: {
-        user: true,
-      },
-      where: {
-        beatmap: {
-          md5,
-        },
-        user: {
-          priv: { in: normal },
-        },
-        mode: toBanchoPyMode(mode, ruleset),
-        status: {
-          in: [2, 3],
-        },
-      },
-      orderBy: sort,
-    })
+    const res = await q
 
-    return scores.map((item, index) => ({
-      user: toUserCompact(item.user, this.config),
+    return res.map(({ score, user }, index) => ({
+      user: toUserCompact(user, this.config),
       score: {
-        id: item.id.toString(),
-        [Rank.PPv2]: item.pp,
-        accuracy: item.acc,
-        score: item.score,
-        playedAt: item.playTime,
-        mods: toMods(item.mods),
+        id: score.id.toString(),
+        [Rank.PPv2]: score.pp,
+        accuracy: score.acc,
+        score: score.score,
+        playedAt: score.playTime,
+        mods: toMods(score.mods),
       },
       rank: index,
     }))
