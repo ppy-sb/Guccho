@@ -29,10 +29,10 @@ export class MapProvider implements Base<Id> {
   async getBeatmap(query: string) {
     const queryAsId = stringToId(query)
 
-    const beatmap = await this.drizzle.query.maps.findFirst({
+    const beatmap = await this.drizzle.query.beatmaps.findFirst({
       where: or(
-        eq(schema.maps.md5, query),
-        Number.isNaN(queryAsId) ? undefined : eq(schema.maps.id, queryAsId),
+        eq(schema.beatmaps.md5, query),
+        Number.isNaN(queryAsId) ? undefined : eq(schema.beatmaps.id, queryAsId),
       ),
       with: {
         source: true,
@@ -72,9 +72,9 @@ export class MapProvider implements Base<Id> {
     approachRate: 'ar',
     hpDrain: 'hp',
     length: 'totalLength',
-  } as const satisfies Record<Exclude<Tag[0], 'mode'>, keyof typeof schema['maps']>
+  } as const satisfies Record<Exclude<Tag[0], 'mode'>, keyof typeof schema['beatmaps']>
 
-  createFiltersFromTags(fields: Pick<typeof schema['maps'], typeof this.MAP [keyof typeof this.MAP] | 'mode'>, filters: Tag[] = []) {
+  createFiltersFromTags(fields: Pick<typeof schema['beatmaps'], typeof this.MAP [keyof typeof this.MAP] | 'mode'>, filters: Tag[] = []) {
     const ops: operators.SQL[] = []
     for (const tag of filters ?? []) {
       const [type, op, val] = tag
@@ -95,7 +95,7 @@ export class MapProvider implements Base<Id> {
     const { keyword, limit, filters } = opt
     const idKw = stringToId(keyword)
 
-    const sql = this.drizzle.query.maps.findMany({
+    const sql = this.drizzle.query.beatmaps.findMany({
 
       where: (fields) => {
         return and(
@@ -111,13 +111,13 @@ export class MapProvider implements Base<Id> {
       },
 
       orderBy: [
-        desc(eq(schema.maps.version, keyword)),
-        desc(like(schema.maps.version, `${keyword}%`)),
-        desc(eq(schema.maps.title, keyword)),
-        desc(like(schema.maps.title, `${keyword}%`)),
-        desc(eq(schema.maps.artist, keyword)),
-        desc(like(schema.maps.artist, `${keyword}%`)),
-        desc(schema.maps.setId),
+        desc(eq(schema.beatmaps.version, keyword)),
+        desc(like(schema.beatmaps.version, `${keyword}%`)),
+        desc(eq(schema.beatmaps.title, keyword)),
+        desc(like(schema.beatmaps.title, `${keyword}%`)),
+        desc(eq(schema.beatmaps.artist, keyword)),
+        desc(like(schema.beatmaps.artist, `${keyword}%`)),
+        desc(schema.beatmaps.setId),
       ],
       limit,
     })
@@ -139,31 +139,31 @@ export class MapProvider implements Base<Id> {
       id: schema.sources.id,
       server: schema.sources.server,
       meta: {
-        title: schema.maps.title,
-        artist: schema.maps.artist,
+        title: schema.beatmaps.title,
+        artist: schema.beatmaps.artist,
       },
     })
       .from(schema.sources)
-      .innerJoin(schema.maps, and(
-        eq(schema.maps.setId, schema.sources.id),
-        eq(schema.maps.server, schema.sources.server),
+      .innerJoin(schema.beatmaps, and(
+        eq(schema.beatmaps.setId, schema.sources.id),
+        eq(schema.beatmaps.server, schema.sources.server),
       ))
       .where(and(
         or(
-          like(schema.maps.version, `%${keyword}%`),
-          like(schema.maps.title, `%${keyword}%`),
-          like(schema.maps.artist, `%${keyword}%`),
-          like(schema.maps.creator, `%${keyword}%`),
-          Number.isNaN(idKw) ? undefined : eq(schema.maps.setId, idKw),
+          like(schema.beatmaps.version, `%${keyword}%`),
+          like(schema.beatmaps.title, `%${keyword}%`),
+          like(schema.beatmaps.artist, `%${keyword}%`),
+          like(schema.beatmaps.creator, `%${keyword}%`),
+          Number.isNaN(idKw) ? undefined : eq(schema.beatmaps.setId, idKw),
         ),
-        ...this.createFiltersFromTags(schema.maps, filters)
+        ...this.createFiltersFromTags(schema.beatmaps, filters)
       ))
-      .groupBy(schema.sources.id, schema.sources.server, schema.maps.title, schema.maps.artist)
+      .groupBy(schema.sources.id, schema.sources.server, schema.beatmaps.title, schema.beatmaps.artist)
       .orderBy(
-        desc(eq(schema.maps.title, keyword)),
-        desc(eq(schema.maps.artist, keyword)),
-        desc(like(schema.maps.title, `${keyword}%`)),
-        desc(like(schema.maps.artist, `${keyword}%`)),
+        desc(eq(schema.beatmaps.title, keyword)),
+        desc(eq(schema.beatmaps.artist, keyword)),
+        desc(like(schema.beatmaps.title, `${keyword}%`)),
+        desc(like(schema.beatmaps.artist, `${keyword}%`)),
         desc(schema.sources.id)
       )
       .limit(limit)

@@ -148,7 +148,7 @@ export const mapRequests = mysqlTable('map_requests', {
   }
 })
 
-export const maps = mysqlTable('maps', {
+export const beatmaps = mysqlTable('maps', {
   id: int('id').notNull(),
   server: bpyServerEnum.default('osu!').notNull(),
   setId: int('set_id').notNull(),
@@ -276,9 +276,9 @@ export const scores = mysqlTable('scores', {
   n300: int('n300').notNull(),
   n100: int('n100').notNull(),
   n50: int('n50').notNull(),
-  nmiss: int('nmiss').notNull(),
-  ngeki: int('ngeki').notNull(),
-  nkatu: int('nkatu').notNull(),
+  nMiss: int('nmiss').notNull(),
+  nGeki: int('ngeki').notNull(),
+  nKatu: int('nkatu').notNull(),
   grade: varchar('grade', { length: 2 }).default('N').notNull(),
   status: tinyint('status').notNull(),
   mode: tinyint('mode').notNull(),
@@ -419,18 +419,18 @@ export const mailRelations = relations(mail, ({ one }) => ({
   from: one(users, { fields: [mail.fromId], references: [users.id] }),
   to: one(users, { fields: [mail.toId], references: [users.id] }),
 }))
-export const mapsRelations = relations(maps, ({ one }) => ({
-  source: one(sources, { fields: [maps.setId, maps.server], references: [sources.id, sources.server] }),
+export const mapsRelations = relations(beatmaps, ({ one }) => ({
+  source: one(sources, { fields: [beatmaps.setId, beatmaps.server], references: [sources.id, sources.server] }),
 }))
 export const sourcesRelations = relations(sources, ({ many }) => ({
-  beatmaps: many(maps),
+  beatmaps: many(beatmaps),
 }))
 export const statsRelations = relations(stats, ({ one }) => ({
   user: one(users, { fields: [stats.id], references: [users.id] }),
 }))
 export const scoresRelations = relations(scores, ({ one }) => ({
   user: one(users, { fields: [scores.userId], references: [users.id] }),
-  map: one(maps, { fields: [scores.mapMd5], references: [maps.md5] }),
+  beatmap: one(beatmaps, { fields: [scores.mapMd5], references: [beatmaps.md5] }),
 }))
 export const clansRelations = relations(clans, ({ one }) => ({
   owner: one(users, { fields: [clans.ownerId], references: [users.id] }),

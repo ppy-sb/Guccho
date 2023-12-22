@@ -145,7 +145,7 @@ export const mapRequests = mysqlTable('map_requests', {
   }
 })
 
-export const maps = mysqlTable('maps', {
+export const maps = mysqlTable('beatmaps', {
   id: int('id').notNull(),
   server: mysqlEnum('server', ['osu!', 'private']).default('osu!').notNull(),
   setId: int('set_id').notNull(),
