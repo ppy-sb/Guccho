@@ -29,7 +29,7 @@ function getScrollPercent() {
   const clientHeight = document.documentElement.clientHeight
   // console.log(scrollTop, scrollHeight, clientHeight)
 
-  return Math.min(scrollTop / (scrollHeight - clientHeight), 1)
+  return Math.max(0, Math.min(scrollTop / (scrollHeight - clientHeight), 1))
 }
 </script>
 
@@ -39,19 +39,11 @@ function getScrollPercent() {
     <app-nav />
     <input id="app-drawer-toggle" type="checkbox" class="drawer-toggle">
     <!-- Page content here -->
-    <NuxtLayout
-      id="layout"
-      viewport
-      :class="[safari ? 'safari' : 'not-safari']"
-      class="drawer-content zoom-modal-container overflow-x-clip"
-      :data-l1-status="status"
-      data-l2-status="hidden"
-      :style="
-        status !== 'closed' && {
+    <NuxtLayout id="layout" viewport :class="[safari ? 'safari' : 'not-safari']"
+      class="drawer-content zoom-modal-container overflow-x-clip" :data-l1-status="status" data-l2-status="hidden" :style="status !== 'closed' && {
           'transform-origin': `center calc(${scrollY} * 1px + 50dvh)`,
         }
-      "
-    >
+        ">
       <NuxtPage />
     </NuxtLayout>
     <app-footer class="mt-auto" />
@@ -67,16 +59,11 @@ function getScrollPercent() {
         </app-nav-items>
       </ul>
     </div>
-    <div
-      class="parallax"
-      :style="{
-        '--scroll': scrollPercent,
-      }"
-    >
+    <div class="parallax" :style="{
+      '--scroll': scrollPercent,
+    }">
       <div class="parallax__layer parallax__layer__0">
-        <img
-          src="~/assets/images/Sky.png"
-        >
+        <img src="~/assets/images/Sky.png">
       </div>
       <!-- <div class="parallax__layer parallax__layer__1">
         <img
@@ -84,24 +71,16 @@ function getScrollPercent() {
         >
       </div> -->
       <div class="parallax__layer parallax__layer__2">
-        <img
-          src="~/assets/images/Middle.png"
-        >
+        <img src="~/assets/images/Middle.png">
       </div>
       <div class="parallax__layer parallax__layer__3">
-        <img
-          src="~/assets/images/Foreground.png"
-        >
+        <img src="~/assets/images/Foreground.png">
       </div>
       <div class="parallax__layer parallax__layer__4">
-        <img
-          src="~/assets/images/Ground_01.png"
-        >
+        <img src="~/assets/images/Ground_01.png">
       </div>
       <div class="parallax__layer parallax__layer__5">
-        <img
-          src="~/assets/images/Ground_02.png"
-        >
+        <img src="~/assets/images/Ground_02.png">
       </div>
       <!-- <div class="parallax__layer parallax__layer__6">
         <img
@@ -188,24 +167,24 @@ $scale2: scale(0.96);
 </style>
 
 <style lang="postcss">
-.zoom-modal-container[data-l2-status="show"] > dialog::backdrop {
+.zoom-modal-container[data-l2-status="show"]>dialog::backdrop {
   z-index: 1000 !important;
 }
 
-#app-drawer .drawer-toggle:checked ~ .drawer-side > .drawer-overlay {
+#app-drawer .drawer-toggle:checked~.drawer-side>.drawer-overlay {
   @apply bg-gbase-950/30 dark:bg-gbase-950/70;
   @apply transition-colors;
   transition-duration: 350ms;
 }
 
-#app-drawer .drawer-content > * {
+#app-drawer .drawer-content>* {
   transition-property: transform, filter;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 350ms;
   transition-delay: 30ms;
 }
 
-#app-drawer .drawer-toggle:checked ~ .drawer-content > * {
+#app-drawer .drawer-toggle:checked~.drawer-content>* {
   @apply translate-x-5;
   transition-duration: 250ms;
   transition-delay: 50ms;
