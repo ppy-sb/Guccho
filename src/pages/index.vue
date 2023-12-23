@@ -9,11 +9,11 @@ useSeoMeta({
   description: () => app.$i18n.t('landing.content'),
   ogTitle: () => app.$i18n.t('server.name'),
   ogDescription: () => app.$i18n.t('landing.content'),
-  ogImage: '/mascot/riru.png',
+  ogImage: '/mascot/IMG_0471.png',
   ogUrl: url.href,
   twitterTitle: () => app.$i18n.t('server.name'),
   twitterDescription: app.$i18n.t('landing.content'),
-  twitterImage: '/mascot/riru.png',
+  twitterImage: '/mascot/IMG_0471.png',
   twitterCard: 'summary',
 })
 
@@ -53,14 +53,10 @@ fr-FR:
       </div>
       <div class="grid grid-cols-2 gap-2 justify-center">
         <template v-if="session.$state.loggedIn">
-          <t-nuxt-link-button
-            class="btn-shadow"
-            :to="{
-              name: 'user-handle',
-              params: { handle: session.$state.userId },
-            }"
-            variant="primary"
-          >
+          <t-nuxt-link-button class="btn-shadow" :to="{
+            name: 'user-handle',
+            params: { handle: session.$state.userId },
+          }" variant="primary">
             {{ t('to-userpage') }}
           </t-nuxt-link-button>
           <t-nuxt-link-button class="btn-shadow" :to="{ name: 'me-settings' }" variant="secondary">
@@ -71,11 +67,7 @@ fr-FR:
           <t-nuxt-link-button class="btn-shadow" :to="{ name: 'auth-login' }" variant="primary">
             {{ $t('global.login') }}
           </t-nuxt-link-button>
-          <t-nuxt-link-button
-            class="btn-shadow"
-            :to="{ name: 'auth-register' }"
-            variant="secondary"
-          >
+          <t-nuxt-link-button class="btn-shadow" :to="{ name: 'auth-register' }" variant="secondary">
             {{ $t('global.register') }}
           </t-nuxt-link-button>
         </template>
@@ -83,15 +75,9 @@ fr-FR:
     </div>
 
     <div class="hidden mascot lg:block">
-      <nuxt-picture
-        defer
-        format="webp,avif"
-        src="/mascot/riru.png"
-        :img-attrs="{
-          style: 'max-height: 70vmin',
-        }"
-        alt="riru Mascot"
-      />
+      <nuxt-picture defer format="webp,avif" src="/mascot/IMG_0471.png" :img-attrs="{
+        style: 'max-height: 70vmin',
+      }" alt="riru Mascot" />
     </div>
   </div>
 </template>
@@ -100,6 +86,7 @@ fr-FR:
 .h-sub {
   max-width: 32rem;
 }
+
 .heading {
   @apply relative flex items-center justify-between px-4 lg:px-0 mx-auto my-auto text-left text-gbase-900 dark:text-gbase-100;
   /* &::before,
