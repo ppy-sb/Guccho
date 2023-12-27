@@ -255,7 +255,7 @@ fr-FR:
         >
       </div>
     </div>
-    <div class="overflow-x-auto border rounded-lg border-base-300">
+    <div class="overflow-x-auto border rounded-lg bg-base-100 border-base-300">
       <table
         description="users"
         class="table table-sm table-zebra"

@@ -427,7 +427,11 @@ fr-FR:
         v-model="switcher.rankingSystem" class="mt-2" :mode="switcher.mode"
         :ruleset="switcher.ruleset" @update:model-value="update"
       />
-      <div class="overflow-x-auto relative">
+      <div
+        class="overflow-x-auto relative bg-base-100 rounded-lg" :class="{
+          '!rounded-tl-none': scoreRS?.rankingSystems[0] === switcher.rankingSystem,
+        }"
+      >
         <app-scores-table
           v-if="leaderboard" :scores="leaderboard" :ranking-system="switcher.rankingSystem"
           class="transition-filter transition-opacity opacity-100"
@@ -456,8 +460,8 @@ fr-FR:
 
 :deep(table.table.clear-rounded-tl) {
   >thead {
-    >tr:first-child {
-      >th:first-child {
+    tr:first-child {
+      th:first-child {
         @apply rounded-tl-none;
       }
     }
