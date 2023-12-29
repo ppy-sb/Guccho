@@ -1,5 +1,5 @@
 import { TRPCError } from '@trpc/server'
-import { aliasedTable, and, desc, eq, inArray } from 'drizzle-orm'
+import { aliasedTable, and, desc, eq, gt, inArray, sql } from 'drizzle-orm'
 import { type Id, hasRuleset } from '..'
 import { normal } from '../constants'
 import {
@@ -49,7 +49,7 @@ export class DatabaseRankProvider implements Base<Id> {
   /**
    * @deprecated prisma will be replaced by drizzle
    */
-  db = prismaClient
+  prisma = prismaClient
   drizzle = drizzle
   config = config
 
@@ -67,7 +67,7 @@ export class DatabaseRankProvider implements Base<Id> {
     pageSize: number
   }): Promise<ComponentLeaderboard<Id>[]> {
     const start = page * pageSize
-    const result = await this.db.stat.findMany({
+    const result = await this.prisma.stat.findMany({
       where: {
         pp: rankingSystem === Rank.PPv2 ? { gt: 0 } : undefined,
         rankedScore: rankingSystem === Rank.RankedScore ? { gt: 0 } : undefined,
@@ -113,20 +113,23 @@ export class DatabaseRankProvider implements Base<Id> {
 
   async countLeaderboard(query: Base.BaseQuery<Mode> & { rankingSystem: LeaderboardRankingSystem }) {
     const { mode, ruleset, rankingSystem } = query
-    const result = await this.db.stat.count({
-      where: {
-        pp: rankingSystem === Rank.PPv2 ? { gt: 0 } : undefined,
-        rankedScore: rankingSystem === Rank.RankedScore ? { gt: 0 } : undefined,
-        totalScore: rankingSystem === Rank.TotalScore ? { gt: 0 } : undefined,
-        mode: toBanchoPyMode(mode, ruleset),
-        user: {
-          priv: { in: normal },
-        },
-      },
+    const c = await this.drizzle.select({
+      count: sql`COUNT(*)`.mapWith(Number),
+    }).from(schema.stats)
+      .innerJoin(schema.users, eq(schema.users.id, schema.stats.id))
+      .where(
+        and(
+          ...[
+            rankingSystem === Rank.PPv2 ? gt(schema.stats.pp, 0) : undefined,
+            rankingSystem === Rank.RankedScore ? gt(schema.stats.rankedScore, 0n) : undefined,
+            rankingSystem === Rank.TotalScore ? gt(schema.stats.totalScore, 0n) : undefined,
+            eq(schema.stats.mode, toBanchoPyMode(mode, ruleset)),
+            userPriv(schema.users),
+          ].filter(TSFilter)
+        )
+      )
 
-    })
-
-    return result
+    return c[0].count
   }
 
   async determineBeatmapMode(md5: string) {
@@ -205,7 +208,7 @@ export class DatabaseRankProvider implements Base<Id> {
       return 0
     }
 
-    const scores = await this.db.score.count({
+    const scores = await this.prisma.score.count({
       where: {
         pp: rankingSystem === Rank.PPv2 ? { gt: 0 } : undefined,
         score: rankingSystem === Rank.Score ? { gt: 0 } : undefined,
@@ -281,7 +284,7 @@ export class RedisRankProvider extends DatabaseRankProvider implements Monitored
         raise(RedisRankProvider.RedisNoDataError, 'redis leaderboard is empty, fallback to database..')
       }
 
-      return this.db.stat.count({
+      return this.prisma.stat.count({
         where: {
           id: {
             in: rank,
@@ -337,9 +340,9 @@ export class RedisRankProvider extends DatabaseRankProvider implements Monitored
 
       const rank = await this.getPPv2LiveLeaderboard(bPyMode, 0, start + pageSize * 2).then(res => res.map(Number))
 
-      const [users, stats] = await this.db.$transaction([
+      const [users, stats] = await this.prisma.$transaction([
         /* optimized */
-        this.db.user.findMany({
+        this.prisma.user.findMany({
           where: {
             id: {
               in: rank,
@@ -348,7 +351,7 @@ export class RedisRankProvider extends DatabaseRankProvider implements Monitored
           ...userCompacts,
         }),
         /* optimized */
-        this.db.stat.findMany({
+        this.prisma.stat.findMany({
           where: {
             id: {
               in: rank,

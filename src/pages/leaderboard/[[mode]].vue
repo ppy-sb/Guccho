@@ -36,32 +36,25 @@ const page = shallowRef((isString(pPage) && Number.parseInt(pPage)) || 1)
 
 const perPage = 20
 
-const selected = shallowRef<Required<SwitcherPropType<LeaderboardRankingSystem>>>({
+const selected = ref<Required<SwitcherPropType<LeaderboardRankingSystem>>>({
   mode,
   ruleset,
   rankingSystem,
 })
-const { data: total, refresh: refreshCount } = await app.$client.rank.countLeaderboard.useQuery(selected)
+const { data: total } = await app.$client.rank.countLeaderboard.useQuery(selected)
 
-const totalPages = computed(() => Math.min(Math.ceil(total.value || 0 / perPage), 5))
+const totalPages = computed(() => Math.min(Math.ceil((total.value || 0) / perPage), 5))
+watch(totalPages, boundaryPage, { immediate: true })
 
-const {
-  data: table,
-  pending,
-  refresh,
-} = await useAsyncData(async () => {
-  await refreshCount()
+const queryLeaderboardValue = computed(() => ({
+  mode: selected.value.mode,
+  ruleset: selected.value.ruleset,
+  rankingSystem: selected.value.rankingSystem,
+  page: Math.max(page.value - 1, 0),
+  pageSize: perPage,
+}))
 
-  boundaryPage()
-
-  return app.$client.rank.leaderboard.query({
-    mode: selected.value.mode,
-    ruleset: selected.value.ruleset,
-    rankingSystem: selected.value.rankingSystem,
-    page: Math.max(page.value - 1, 0),
-    pageSize: perPage,
-  })
-})
+const { pending, data: table } = await app.$client.rank.leaderboard.useQuery(queryLeaderboardValue)
 
 useHead({
   title: () => ` ${selected.value.mode} | ${selected.value.ruleset} | ${selected.value.rankingSystem} - Leaderboard - ${app.$i18n.t('server.name')}`,
@@ -97,7 +90,6 @@ function reloadPage(i?: number) {
     page.value = i
   }
   rewriteHistory()
-  refresh()
 }
 </script>
 
