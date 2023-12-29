@@ -208,23 +208,24 @@ export class DatabaseRankProvider implements Base<Id> {
       return 0
     }
 
-    const scores = await this.prisma.score.count({
-      where: {
-        pp: rankingSystem === Rank.PPv2 ? { gt: 0 } : undefined,
-        score: rankingSystem === Rank.Score ? { gt: 0 } : undefined,
-        beatmap: {
-          md5,
-        },
-        user: {
-          priv: { in: normal },
-        },
-        mode: toBanchoPyMode(mode, ruleset),
-        status: {
-          in: [2, 3],
-        },
-      },
+    const s = await this.drizzle.select({
+      count: sql`COUNT(*)`.mapWith(Number),
     })
-    return scores
+      .from(schema.scores)
+      .innerJoin(schema.users, eq(schema.scores.userId, schema.users.id))
+      .innerJoin(schema.beatmaps, eq(schema.scores.mapMd5, schema.beatmaps.md5))
+      .where(and(
+        ...[
+          rankingSystem === Rank.PPv2 ? gt(schema.scores.pp, 0) : undefined,
+          rankingSystem === Rank.Score ? gt(schema.scores.score, 0) : undefined,
+          eq(schema.beatmaps.md5, md5),
+          userPriv(schema.users),
+          eq(schema.scores.mode, toBanchoPyMode(mode, ruleset)),
+          inArray(schema.scores.status, [2, 3]),
+        ].filter(TSFilter)
+      ))
+
+    return s[0].count
   }
 }
 

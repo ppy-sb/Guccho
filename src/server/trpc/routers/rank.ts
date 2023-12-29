@@ -87,27 +87,20 @@ export const router = _router({
         mode: zodMode.optional(),
         ruleset: zodRuleset,
         rankingSystem: zodRankingSystem,
-        page: number().gte(0).lt(10),
-        pageSize: number().gte(20).lt(51),
         md5: string(),
       }),
     )
     .query(
       async ({
-        input: { mode, ruleset, rankingSystem, page, pageSize, md5 },
+        input: { mode, ruleset, rankingSystem, md5 },
       }) => {
-        const result = await ranks.beatmap({
+        const result = await ranks.countBeatmap({
           mode,
           ruleset,
           rankingSystem,
-          page,
-          pageSize,
           md5,
         })
-        return result.map(item => ({
-          ...item,
-          user: mapId(item.user, RankProvider.idToString),
-        }))
+        return result
       },
     ),
 })
