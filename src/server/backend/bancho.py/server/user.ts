@@ -6,7 +6,7 @@ import { merge } from 'lodash-es'
 import imageType from 'image-type'
 import { glob } from 'glob'
 import { TRPCError } from '@trpc/server'
-import { Prisma, type Stat } from 'prisma-client-bancho-py'
+import { Prisma } from 'prisma-client-bancho-py'
 import type { Id } from '..'
 import { getLiveUserStatus } from '../api-client'
 import { normal } from '../constants'
@@ -352,64 +352,47 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
 
   async _getStatistics(opt: { id: Id; flag?: CountryCode }) {
     const { id } = opt
-    const results = await this.prisma.stat.findMany({
-      where: {
-        id,
-      },
+    const sq = this.drizzle.select({
+      id: schema.stats.id,
+      mode: schema.stats.mode,
+      ppv2Rank: sql`RANK() OVER(PARTITION BY ${schema.stats.mode} ORDER BY ${schema.stats.pp} DESC)`
+        .mapWith(Number)
+        .as('ppRank'),
+      totalScoreRank: sql`RANK() OVER(PARTITION BY ${schema.stats.mode} ORDER BY ${schema.stats.totalScore} DESC)`
+        .mapWith(Number)
+        .as('tscoreRank'),
+      rankedScoreRank: sql`RANK() OVER(PARTITION BY ${schema.stats.mode} ORDER BY ${schema.stats.rankedScore} DESC)`
+        .mapWith(Number)
+        .as('rscoreRank'),
     })
+      .from(schema.stats)
+      .innerJoin(schema.users, and(
+        eq(schema.users.id, schema.stats.id),
+        userPriv(schema.users)
+      )).as('sq')
 
-    const baseQuery = {
-      user: {
-        priv: {
-          in: normal,
-        },
-      },
-    }
-    const ranks = await Promise.all(results.map(async (stat) => {
-      const [ppv2, rankedScore, totalScore] = await this.prisma.$transaction([
-        this.prisma.stat.count({
-          where: {
-            ...baseQuery,
-            mode: stat.mode,
-            pp: {
-              gt: stat.pp,
-            },
-          },
-        }),
-        this.prisma.stat.count({
-          where: {
-            ...baseQuery,
-            mode: stat.mode,
-            [Rank.RankedScore]: {
-              gt: stat[Rank.RankedScore],
-            },
-          },
-        }),
-        this.prisma.stat.count({
-          where: {
-            ...baseQuery,
-            mode: stat.mode,
-            [Rank.TotalScore]: {
-              gt: stat[Rank.TotalScore],
-            },
-          },
-        }),
-      ])
+    const s2 = aliasedTable(schema.stats, 's2')
+    const mq = this.drizzle.select({
+      ppv2Rank: sq.ppv2Rank,
+      totalScoreRank: sq.totalScoreRank,
+      rankedScoreRank: sq.rankedScoreRank,
+      stat: s2,
+    }).from(sq)
+      .innerJoin(s2,
+        and(
+          eq(sq.id, s2.id),
+          eq(sq.mode, s2.mode),
+        )
+      )
+      .where(eq(s2.id, id))
 
-      return {
-        mode: stat.mode,
-        ppv2Rank: ppv2 + 1,
-        rankedScoreRank: rankedScore + 1,
-        totalScoreRank: totalScore + 1,
-      }
-    }))
-    return { results, ranks }
+    return await mq
   }
 
   async getStatistics(opt: { id: Id; flag?: CountryCode }) {
-    const { results, ranks } = await this._getStatistics(opt)
+    const query = await this._getStatistics(opt)
 
-    return this._toStatistics(results, ranks)
+    return this._toStatistics(query)
   }
 
   async getFull<
@@ -633,13 +616,9 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
 
   async count() {
     /* optimized */
-    return await this.prisma.user.count({
-      where: {
-        priv: {
-          in: normal,
-        },
-      },
-    })
+    return await this.drizzle.select({
+      count: sql`COUNT(*)`.mapWith(Number),
+    }).from(schema.users).where(userPriv(schema.users)).then(res => res[0].count)
   }
 
   async changeVisibility(user: UserCompact<Id>) {
@@ -682,13 +661,12 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
   }
 
   async _toStatistics(
-    results: Stat[],
-    ranks: {
-      mode: number
+    results: ({
+      stat: typeof schema.stats.$inferSelect
       ppv2Rank: number
-      rankedScoreRank: number
       totalScoreRank: number
-    }[],
+      rankedScoreRank: number
+    })[],
     livePPRank?: Awaited<ReturnType<RedisUserProvider['getRedisRanks']>>,
   ) {
     const statistics: UserStatistic<
@@ -699,62 +677,54 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
       [Mode.Osu]: {
         [Ruleset.Standard]: createRulesetData({
           databaseResult: results.find(
-            i => i.mode === BanchoPyMode.OsuStandard,
+            i => i.stat.mode === BanchoPyMode.OsuStandard,
           ),
-          ranks: ranks.find(i => i.mode === BanchoPyMode.OsuStandard),
           livePPRank: livePPRank?.[Mode.Osu][Ruleset.Standard],
         }),
         [Ruleset.Relax]: createRulesetData({
-          databaseResult: results.find(i => i.mode === BanchoPyMode.OsuRelax),
-          ranks: ranks.find(i => i.mode === BanchoPyMode.OsuRelax),
+          databaseResult: results.find(i => i.stat.mode === BanchoPyMode.OsuRelax),
           livePPRank: livePPRank?.[Mode.Osu][Ruleset.Relax],
         }),
         [Ruleset.Autopilot]: createRulesetData({
           databaseResult: results.find(
-            i => i.mode === BanchoPyMode.OsuAutopilot,
+            i => i.stat.mode === BanchoPyMode.OsuAutopilot,
           ),
-          ranks: ranks.find(i => i.mode === BanchoPyMode.OsuAutopilot),
           livePPRank: livePPRank?.[Mode.Osu][Ruleset.Autopilot],
         }),
       },
       [Mode.Taiko]: {
         [Ruleset.Standard]: createRulesetData({
           databaseResult: results.find(
-            i => i.mode === BanchoPyMode.TaikoStandard,
+            i => i.stat.mode === BanchoPyMode.TaikoStandard,
           ),
-          ranks: ranks.find(i => i.mode === BanchoPyMode.TaikoStandard),
           livePPRank: livePPRank?.[Mode.Taiko][Ruleset.Standard],
         }),
         [Ruleset.Relax]: createRulesetData({
           databaseResult: results.find(
-            i => i.mode === BanchoPyMode.TaikoRelax,
+            i => i.stat.mode === BanchoPyMode.TaikoRelax,
           ),
-          ranks: ranks.find(i => i.mode === BanchoPyMode.TaikoRelax),
           livePPRank: livePPRank?.[Mode.Taiko][Ruleset.Relax],
         }),
       },
       [Mode.Fruits]: {
         [Ruleset.Standard]: createRulesetData({
           databaseResult: results.find(
-            i => i.mode === BanchoPyMode.FruitsStandard,
+            i => i.stat.mode === BanchoPyMode.FruitsStandard,
           ),
-          ranks: ranks.find(i => i.mode === BanchoPyMode.FruitsStandard),
           livePPRank: livePPRank?.[Mode.Fruits][Ruleset.Standard],
         }),
         [Ruleset.Relax]: createRulesetData({
           databaseResult: results.find(
-            i => i.mode === BanchoPyMode.FruitsRelax,
+            i => i.stat.mode === BanchoPyMode.FruitsRelax,
           ),
-          ranks: ranks.find(i => i.mode === BanchoPyMode.FruitsRelax),
           livePPRank: livePPRank?.[Mode.Fruits][Ruleset.Relax],
         }),
       },
       [Mode.Mania]: {
         [Ruleset.Standard]: createRulesetData({
           databaseResult: results.find(
-            i => i.mode === BanchoPyMode.ManiaStandard,
+            i => i.stat.mode === BanchoPyMode.ManiaStandard,
           ),
-          ranks: ranks.find(i => i.mode === BanchoPyMode.ManiaStandard),
           livePPRank: livePPRank?.[Mode.Mania][Ruleset.Standard],
         }),
       },
@@ -852,10 +822,10 @@ export class RedisUserProvider extends DBUserProvider {
   }
 
   async getStatistics(opt: { id: Id; flag: CountryCode }) {
-    const { results, ranks } = await this._getStatistics(opt)
+    const res = await this._getStatistics(opt)
     const livePPRank = await this.getRedisRanks(opt)
 
-    return this._toStatistics(results, ranks, livePPRank)
+    return this._toStatistics(res, livePPRank)
   }
 }
 

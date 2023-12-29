@@ -1,18 +1,17 @@
-import type { Stat } from 'prisma-client-bancho-py'
+import type * as schema from '../drizzle/schema'
 import type { LeaderboardRankingSystem } from '~/def/common'
 import type { UserModeRulesetStatistics } from '~/def/statistics'
 import { Rank } from '~/def'
 
 export function createRulesetData<RankingSystem extends LeaderboardRankingSystem>({
   databaseResult: dbResult,
-  ranks,
   livePPRank,
 }: {
-  databaseResult?: Stat
-  ranks?: {
-    ppv2Rank: number | bigint
-    totalScoreRank: number | bigint
-    rankedScoreRank: number | bigint
+  databaseResult?: {
+    stat: typeof schema.stats.$inferSelect
+    ppv2Rank: number
+    totalScoreRank: number
+    rankedScoreRank: number
   }
   livePPRank?: {
     rank: number | null
@@ -56,30 +55,30 @@ export function createRulesetData<RankingSystem extends LeaderboardRankingSystem
 
   return {
     [Rank.PPv2]: {
-      rank: livePPRank?.rank || Number(ranks?.ppv2Rank) || undefined,
+      rank: livePPRank?.rank || dbResult.ppv2Rank || undefined,
       countryRank: livePPRank?.countryRank || undefined,
-      performance: dbResult.pp,
+      performance: dbResult.stat.pp,
     },
     [Rank.RankedScore]: {
-      rank: Number(ranks?.rankedScoreRank) || undefined,
-      score: dbResult.rankedScore,
+      rank: dbResult.rankedScoreRank || undefined,
+      score: dbResult.stat.rankedScore,
     },
     [Rank.TotalScore]: {
-      rank: Number(ranks?.totalScoreRank) || undefined,
-      score: dbResult.totalScore,
+      rank: dbResult.totalScoreRank || undefined,
+      score: dbResult.stat.totalScore,
     },
-    playCount: dbResult.plays,
-    playTime: dbResult.playTime,
-    totalHits: dbResult.totalHits,
-    level: getLevelWithProgress(dbResult.totalScore),
-    maxCombo: dbResult.maxCombo,
-    replayWatchedByOthers: dbResult.replayViews,
+    playCount: dbResult.stat.plays,
+    playTime: dbResult.stat.playTime,
+    totalHits: dbResult.stat.totalHits,
+    level: getLevelWithProgress(dbResult.stat.totalScore),
+    maxCombo: dbResult.stat.maxCombo,
+    replayWatchedByOthers: dbResult.stat.replayViews,
     scoreRankComposition: {
-      ssh: dbResult.xhCount,
-      ss: dbResult.xCount,
-      sh: dbResult.shCount,
-      s: dbResult.sCount,
-      a: dbResult.aCount,
+      ssh: dbResult.stat.xhCount,
+      ss: dbResult.stat.xCount,
+      sh: dbResult.stat.shCount,
+      s: dbResult.stat.sCount,
+      a: dbResult.stat.aCount,
       b: 0,
       c: 0,
       d: 0,

@@ -317,7 +317,7 @@ export const stats = mysqlTable('stats', {
   rankedScore: bigint('rscore', { mode: 'bigint', unsigned: true }).notNull(),
   pp: int('pp', { unsigned: true }).default(0).notNull(),
   plays: int('plays', { unsigned: true }).default(0).notNull(),
-  playtime: int('playtime', { unsigned: true }).default(0).notNull(),
+  playTime: int('playtime', { unsigned: true }).default(0).notNull(),
   acc: decimal('acc', { scale: 6, precision: 3 }).notNull(),
   maxCombo: int('max_combo', { unsigned: true }).default(0).notNull(),
   totalHits: int('total_hits', { unsigned: true }).default(0).notNull(),
