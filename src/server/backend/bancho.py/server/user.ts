@@ -95,7 +95,7 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
   /**
    * @deprecated prisma will be replaced by drizzle
    */
-  db = prismaClient
+  prisma = prismaClient
   drizzle = drizzle
   relationships = new UserRelationProvider()
   config = config()
@@ -115,7 +115,7 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
     keys = ['id', 'name', 'safeName', 'email'],
   }: Base.OptType) {
     return (
-      await this.db.user.count({
+      await this.prisma.user.count({
         where: {
           AND: [
             createUserHandleWhereQuery({
@@ -135,7 +135,7 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
 
   async getCompactById({ id }: { id: Id }) {
     /* optimized */
-    const user = await this.db.user.findFirstOrThrow({
+    const user = await this.prisma.user.findFirstOrThrow({
       where: {
         id,
       },
@@ -148,7 +148,7 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
   async getCompact(opt: Base.OptType & { scope?: Scope }) {
     const { handle, scope, keys = ['id', 'name', 'safeName', 'email'] } = opt
     /* optimized */
-    const user = await this.db.user.findFirstOrThrow({
+    const user = await this.prisma.user.findFirstOrThrow({
 
       where: {
         AND: [
@@ -174,7 +174,7 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
 
   async testPassword(opt: Base.OptType, hashedPassword: string): Promise<[boolean, UserCompact<Id>]> {
     try {
-      const user = await this.db.user.findFirstOrThrow({
+      const user = await this.prisma.user.findFirstOrThrow({
         where: {
           ...createUserHandleWhereQuery({
             handle: opt.handle,
@@ -227,7 +227,7 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
     else {
       throw new Error('unknown ranking system')
     }
-    const scores = await this.db.score.findMany({
+    const scores = await this.prisma.score.findMany({
       where: {
         userId: id,
         mode: _mode,
@@ -352,7 +352,7 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
 
   async _getStatistics(opt: { id: Id; flag?: CountryCode }) {
     const { id } = opt
-    const results = await this.db.stat.findMany({
+    const results = await this.prisma.stat.findMany({
       where: {
         id,
       },
@@ -366,8 +366,8 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
       },
     }
     const ranks = await Promise.all(results.map(async (stat) => {
-      const [ppv2, rankedScore, totalScore] = await this.db.$transaction([
-        this.db.stat.count({
+      const [ppv2, rankedScore, totalScore] = await this.prisma.$transaction([
+        this.prisma.stat.count({
           where: {
             ...baseQuery,
             mode: stat.mode,
@@ -376,7 +376,7 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
             },
           },
         }),
-        this.db.stat.count({
+        this.prisma.stat.count({
           where: {
             ...baseQuery,
             mode: stat.mode,
@@ -385,7 +385,7 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
             },
           },
         }),
-        this.db.stat.count({
+        this.prisma.stat.count({
           where: {
             ...baseQuery,
             mode: stat.mode,
@@ -421,7 +421,7 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
     if (!excludes) {
       excludes = {} as Excludes
     }
-    const user = await this.db.user.findFirstOrThrow({
+    const user = await this.prisma.user.findFirstOrThrow({
       where: {
         AND: [
           createUserHandleWhereQuery({
@@ -495,7 +495,7 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
   ) {
     input.name && this.assertUsernameAllowed(input.name)
 
-    const result = await this.db.user.update({
+    const result = await this.prisma.user.update({
       where: {
         id: user.id,
       },
@@ -530,7 +530,7 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
   ) {
     const html = ArticleProvider.render(input.profile)
     try {
-      const result = await this.db.user.update({
+      const result = await this.prisma.user.update({
         where: {
           id: user.id,
         },
@@ -553,7 +553,7 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
   }
 
   async changePassword(user: Pick<UserCompact<Id>, 'id'>, oldPasswordMD5: string, newPasswordMD5: string) {
-    const u = await this.db.user.findFirstOrThrow({
+    const u = await this.prisma.user.findFirstOrThrow({
       where: {
         id: user.id,
       },
@@ -567,7 +567,7 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
     }
 
     const pwBcrypt = await encryptBanchoPassword(newPasswordMD5)
-    const result = await this.db.user.update({
+    const result = await this.prisma.user.update({
       where: {
         id: u.id,
       },
@@ -623,7 +623,7 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
   async search({ keyword, limit }: { keyword: string; limit: number }) {
     const userLike = createUserLikeQuery(keyword)
     /* optimized */
-    const result = await this.db.user.findMany(merge(structuredClone(userCompacts), merge(userLike, { where: { priv: { in: normal } }, select: { clan: true }, take: limit })))
+    const result = await this.prisma.user.findMany(merge(structuredClone(userCompacts), merge(userLike, { where: { priv: { in: normal } }, select: { clan: true }, take: limit })))
 
     return result.map(user => ({
       ...toUserCompact(user, this.config),
@@ -633,7 +633,7 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
 
   async count() {
     /* optimized */
-    return await this.db.user.count({
+    return await this.prisma.user.count({
       where: {
         priv: {
           in: normal,
@@ -658,7 +658,7 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
     const { name, email, passwordMd5 } = opt
     this.assertUsernameAllowed(name)
 
-    const user = await this.db.$transaction(async (tx) => {
+    const user = await this.prisma.$transaction(async (tx) => {
       const user = await tx.user.create({
         data: {
           name,
@@ -669,7 +669,7 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
         },
       })
 
-      await this.db.stat.createMany({
+      await this.prisma.stat.createMany({
         data: bpyNumModes.map(mode => ({
           id: user.id,
           mode: Number.parseInt(mode),
@@ -763,14 +763,14 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
   }
 
   async getDynamicSettings({ id }: { id: Id }) {
-    const user = await this.db.user.findFirstOrThrow({ where: { id } })
+    const user = await this.prisma.user.findFirstOrThrow({ where: { id } })
     return {
       apiKey: user.apiKey || undefined,
     } satisfies ServerSetting as ServerSetting
   }
 
   async setDynamicSettings(user: { id: number }, args: ServerSetting): Promise<ServerSetting> {
-    const result = await this.db.user.update({ where: { id: user.id }, data: { apiKey: args.apiKey } })
+    const result = await this.prisma.user.update({ where: { id: user.id }, data: { apiKey: args.apiKey } })
     return {
       apiKey: result.apiKey || undefined,
     } satisfies ServerSetting

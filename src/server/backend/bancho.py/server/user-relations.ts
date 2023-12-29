@@ -16,11 +16,11 @@ export class UserRelationProvider implements Base<Id> {
   /**
    * @deprecated prisma will be replaced by drizzle
    */
-  db = prismaClient
+  prisma = prismaClient
   config = config
 
   async getOne(fromUser: { id: Id }, toUser: { id: Id }) {
-    const relationships = await this.db.relationship.findFirst({
+    const relationships = await this.prisma.relationship.findFirst({
       where: {
         fromUserId: fromUser.id,
         toUserId: toUser.id,
@@ -40,7 +40,7 @@ export class UserRelationProvider implements Base<Id> {
   }
 
   async get({ user }: { user: { id: Id } }) {
-    const pRelationResult = this.db.relationship.findMany({
+    const pRelationResult = this.prisma.relationship.findMany({
       where: {
         fromUserId: user.id,
       },
@@ -50,7 +50,7 @@ export class UserRelationProvider implements Base<Id> {
         toUserId: true,
       },
     })
-    const pGotRelationResult = this.db.relationship.findMany({
+    const pGotRelationResult = this.prisma.relationship.findMany({
       where: {
         toUserId: user.id,
       },
@@ -86,7 +86,7 @@ export class UserRelationProvider implements Base<Id> {
   }
 
   async notMutual(user: { id: Id }) {
-    return this.db.user.findMany({
+    return this.prisma.user.findMany({
       where: {
         relations: {
           some: {
@@ -123,7 +123,7 @@ export class UserRelationProvider implements Base<Id> {
 
     // it's prisma, don't worry about it
     // eslint-disable-next-line drizzle/enforce-delete-with-where
-    await this.db.relationship.delete({
+    await this.prisma.relationship.delete({
       where: {
         fromUserId_toUserId: {
           fromUserId: fromUser.id,
@@ -152,7 +152,7 @@ export class UserRelationProvider implements Base<Id> {
       throw new Error('has-relationship')
     }
 
-    await this.db.relationship.create({
+    await this.prisma.relationship.create({
       data: {
         fromUserId: fromUser.id,
         toUserId: targetUser.id,
@@ -162,7 +162,7 @@ export class UserRelationProvider implements Base<Id> {
   }
 
   async count({ user, type }: { user: UserCompact<Id>; type: Relationship }) {
-    return await this.db.relationship.count({
+    return await this.prisma.relationship.count({
       where: {
         toUserId: user.id,
         type: toBanchoPyRelationType(type),

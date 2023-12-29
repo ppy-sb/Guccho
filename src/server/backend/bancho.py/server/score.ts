@@ -37,7 +37,7 @@ export class ScoreProvider implements Base<bigint, Id> {
   /**
    * @deprecated prisma will be replaced by drizzle
    */
-  db = prismaClient
+  prima = prismaClient
   drizzle = drizzle
   config = config
 
@@ -85,7 +85,7 @@ export class ScoreProvider implements Base<bigint, Id> {
 
   async findOne(opt: Base.SearchQuery<Id>) {
     const banchoPyMode = toBanchoPyMode(opt.mode, opt.ruleset)
-    const score = await this.db.score.findFirstOrThrow({
+    const score = await this.prima.score.findFirstOrThrow({
       where: {
         user: {
           ...opt.user,
@@ -107,7 +107,7 @@ export class ScoreProvider implements Base<bigint, Id> {
 
   async findMany(opt: Base.SearchQuery<Id>) {
     const banchoPyMode = toBanchoPyMode(opt.mode, opt.ruleset)
-    const scores = await this.db.score.findMany({
+    const scores = await this.prima.score.findMany({
       where: {
         user: {
           priv: { in: normal },
