@@ -54,9 +54,9 @@ const {
 <template>
   <t-modal ref="searchModal" v-slot="{ closeModal }" class="m-0 w-full max-h-[100dvh] my-8 max-w-screen-md mx-auto overflow-visible text-base-content ">
     <div class="card-actions">
-      <div class="flex flex-col gap-4 sm:flex-row items-baseline pl-3">
+      <div class="flex flex-col items-baseline gap-4 pl-3 sm:flex-row">
         <div class="form-control">
-          <label class="label cursor-pointer p-0 flex gap-2">
+          <label class="flex gap-2 p-0 cursor-pointer label">
             <input
               v-model="includes.beatmapsets" type="checkbox" class="checkbox checkbox-sm" @change="() => {
                 includes.users = !includes.beatmaps && !includes.beatmapsets
@@ -67,7 +67,7 @@ const {
           </label>
         </div>
         <div class="form-control">
-          <label class="label cursor-pointer p-0 flex gap-2">
+          <label class="flex gap-2 p-0 cursor-pointer label">
             <input
               v-model="includes.beatmaps" type="checkbox" class="checkbox checkbox-sm" @change="() => {
                 includes.users = !includes.beatmaps && !includes.beatmapsets
@@ -78,7 +78,7 @@ const {
           </label>
         </div>
         <div class="form-control">
-          <label class="label cursor-pointer p-0 flex gap-2">
+          <label class="flex gap-2 p-0 cursor-pointer label">
             <input
               v-model="includes.users" type="checkbox" class="checkbox checkbox-sm" @change="() => {
                 includes.beatmaps = !includes.users
@@ -94,7 +94,7 @@ const {
       <button class="btn btn-ghost btn-sm" @click="closeModal()">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          class="h-6 w-6"
+          class="w-6 h-6"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -112,8 +112,8 @@ const {
       <div class="form-control">
         <label v-if="mode === 'beatmap'" class="input-group">
           <span class="flex gap-2 bg-transparent">
-            <span v-if="!tags.length" class="opacity-50 bg-transparent">Tags</span>
-            <span v-for="tag, index in tags" :key="index" class="badge badge-md badge-primary gap-1 cursor-pointer whitespace-nowrap" @click="tags.splice(index, 1)">
+            <span v-if="!tags.length" class="bg-transparent opacity-50">Tags</span>
+            <span v-for="tag, index in tags" :key="index" class="gap-1 cursor-pointer badge badge-md badge-primary whitespace-nowrap" @click="tags.splice(index, 1)">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-4 h-4 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
               <div v-html="tag.toString()" />
             </span>
@@ -150,7 +150,7 @@ const {
                 :to="page.route"
                 @click="closeModal()"
               >
-                <div class="flex gap-2 items-center">
+                <div class="flex items-center gap-2">
                   <component :is="page.render" />
                 </div>
               </nuxt-link-locale>
@@ -160,7 +160,7 @@ const {
         <template
           v-if="Array.isArray(beatmapsets) && beatmapsets.length"
         >
-          <div class="divider font-bold">
+          <div class="font-bold divider">
             <span v-if="loading.beatmapsets" class="loading loading-spinner loading-lg" /> {{ $t('global.beatmapsets') }}
           </div>
           <transition-group tag="ul" class="menu" name="left">
@@ -177,10 +177,10 @@ const {
                 }"
                 @click="closeModal()"
               >
-                <div class="flex gap-2 items-center">
+                <div class="flex items-center gap-2">
                   <img
                     v-if="isBanchoBeatmapset(bs)"
-                    class="h-[30px] mask mask-squircle overflow-hidden object-cover aspect-square"
+                    class="h-[30px] w-[30px] mask mask-squircle overflow-hidden object-cover aspect-square"
                     :src="`https://b.ppy.sh/thumb/${bs.foreignId}.jpg`"
                     :onerror="placeholder"
                   >
@@ -192,10 +192,10 @@ const {
           </transition-group>
         </template>
         <template v-if="Array.isArray(beatmaps) && beatmaps.length">
-          <div class="divider font-bold">
+          <div class="font-bold divider">
             <span v-if="loading.beatmaps" class="loading loading-spinner loading-lg" /> {{ $t('global.beatmaps') }}
           </div>
-          <transition-group tag="ul" class="menu truncate" name="left">
+          <transition-group tag="ul" class="truncate menu" name="left">
             <li
               v-for="bm in beatmaps"
               :key="`searchResult-bm-${bm.id}`"
@@ -209,10 +209,10 @@ const {
                 }"
                 @click="closeModal()"
               >
-                <div class="flex gap-2 items-center max-w-full">
+                <div class="flex items-center max-w-full gap-2">
                   <img
                     v-if="isBanchoBeatmapset(bm.beatmapset)"
-                    class="h-[30px] mask mask-squircle overflow-hidden object-cover aspect-square"
+                    class="h-[30px] w-[30px] mask mask-squircle overflow-hidden object-cover aspect-square"
                     :src="`https://b.ppy.sh/thumb/${bm.beatmapset.foreignId}.jpg`"
                     :onerror="placeholder"
                   >
@@ -223,7 +223,7 @@ const {
           </transition-group>
         </template>
         <template v-if="Array.isArray(users) && users.length">
-          <div class="divider font-bold">
+          <div class="font-bold divider">
             <span v-if="loading.users" class="loading loading-spinner loading-lg" /> {{ $t('global.users') }}
           </div>
           <transition-group tag="ul" class="menu" name="left">
@@ -240,10 +240,10 @@ const {
                 }"
                 @click="closeModal()"
               >
-                <div class="flex gap-2 items-center">
+                <div class="flex items-center gap-2">
                   <img
                     :src="user.avatarSrc"
-                    class="w-[30px] mask mask-squircle overflow"
+                    class="w-[30px] h-[30px] mask mask-squircle overflow"
                     :onerror="placeholder"
                   >
                   <span>{{ user.name }}</span>
