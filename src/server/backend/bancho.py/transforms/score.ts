@@ -76,7 +76,7 @@ export function toScore<M extends ActiveMode, RS extends PPRankingSystem>({
     // mods: score.mods,
     score: BigInt(score.score),
     grade: (score.grade === 'N' ? 'F' : score.grade) as Grade,
-    accuracy: score.acc,
+    accuracy: score.accuracy,
     hit: createHitCount(mode, score),
     beatmap: (score.beatmap !== null
       && toBeatmapWithBeatmapset(score.beatmap)) || {
@@ -174,7 +174,7 @@ export function toRankingSystemScore<
     id: score.id,
     // mods: score.mods,
     score: BigInt(score.score),
-    accuracy: score.acc,
+    accuracy: score.accuracy,
     grade: score.grade as Grade,
     hit: createHitCount(mode, score),
     beatmap: score.beatmap !== null

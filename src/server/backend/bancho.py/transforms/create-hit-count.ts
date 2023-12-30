@@ -5,12 +5,12 @@ import type { ManiaHitCount, StandardHitCount } from '~/def/score'
 
 export function createHitCount<M extends ActiveMode>(
   mode: M,
-  score: DBScore,
+  score: Pick<DBScore, 'n100' | 'n300' | 'n50' | 'nGeki' | 'nKatu' | 'nMiss'>,
 ) {
   return (mode === Mode.Mania ? hitCountMania(score) : hitCount(score)) as M extends Mode.Mania ? ManiaHitCount : StandardHitCount
 }
 
-function hitCountMania(score: DBScore): ManiaHitCount {
+function hitCountMania(score: Pick<DBScore, 'n100' | 'n300' | 'n50' | 'nGeki' | 'nKatu' | 'nMiss'>): ManiaHitCount {
   return {
     max: score.nGeki,
     300: score.n300,
@@ -21,7 +21,7 @@ function hitCountMania(score: DBScore): ManiaHitCount {
   }
 }
 
-function hitCount(score: DBScore): StandardHitCount {
+function hitCount(score: Pick<DBScore, 'n100' | 'n300' | 'n50' | 'nGeki' | 'nKatu' | 'nMiss'>): StandardHitCount {
   return {
     300: score.n300,
     geki: score.nGeki,
