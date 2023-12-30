@@ -2,9 +2,6 @@ import { TRPCError } from '@trpc/server'
 import { aliasedTable, and, desc, eq, gt, inArray, sql } from 'drizzle-orm'
 import { type Id, hasRuleset } from '..'
 import { normal } from '../constants'
-import {
-  userCompacts,
-} from '../db-query'
 import { config as _config } from '../env'
 import { Logger } from '../log'
 import {
@@ -13,7 +10,6 @@ import {
   stringToId,
   toBanchoPyMode,
   toMods,
-  toRoles,
   toUserCompact,
 } from '../transforms'
 import * as schema from '../drizzle/schema'
@@ -21,7 +17,6 @@ import { RedisNotReadyError, client as redisClient } from './source/redis'
 import { useDrizzle, userPriv } from './source/drizzle'
 import { prismaClient } from './source/prisma'
 import type { ComponentLeaderboard } from '~/def/leaderboard'
-import type { CountryCode } from '~/def/country-code'
 import type { ActiveMode, AvailableRuleset, LeaderboardRankingSystem, RankingSystem } from '~/def/common'
 import { type Mode, Rank } from '~/def'
 import { Monitored } from '$base/server/@extends'
@@ -189,7 +184,7 @@ export class DatabaseRankProvider implements Base<Id> {
       score: {
         id: score.id.toString(),
         [Rank.PPv2]: score.pp,
-        accuracy: score.acc,
+        accuracy: score.accuracy,
         score: score.score,
         playedAt: score.playTime,
         mods: toMods(score.mods),
@@ -339,74 +334,47 @@ export class RedisRankProvider extends DatabaseRankProvider implements Monitored
         raise(Error, 'no mode')
       }
 
+      // user.id[]
       const rank = await this.getPPv2LiveLeaderboard(bPyMode, 0, start + pageSize * 2).then(res => res.map(Number))
 
-      const [users, stats] = await this.prisma.$transaction([
-        /* optimized */
-        this.prisma.user.findMany({
-          where: {
-            id: {
-              in: rank,
-            },
-          },
-          ...userCompacts,
-        }),
-        /* optimized */
-        this.prisma.stat.findMany({
-          where: {
-            id: {
-              in: rank,
-            },
-            mode: bPyMode,
-          },
-          select: leaderboardFields,
-        }),
-      ])
-
-      const result: ComponentLeaderboard<Id>[] = []
-
-      for (const index in rank) {
-        if (result.length >= start + pageSize) {
-          break
-        }
-
-        const id = rank[index]
-        const user = users.find(u => u.id === id)
-        const stat = stats.find(s => s.id === id)
-
-        if (!user || !stat || user.priv <= 2) {
-          continue
-        }
-
-        result.push({
-          user: {
-            id: user.id,
-            stableClientId: user.id,
-            name: user.name,
-            safeName: user.safeName,
-            flag: user.country.toUpperCase() as CountryCode,
-            avatarSrc: (this.config.avatar.domain && `https://${this.config.avatar.domain}/${user.id}`) || undefined,
-            roles: toRoles(user.priv),
-          },
-          inThisLeaderboard: {
-            [Rank.PPv2]: stat.pp,
-            [Rank.TotalScore]: stat[Rank.TotalScore],
-            [Rank.RankedScore]: stat[Rank.RankedScore],
-            accuracy: stat.accuracy,
-            playCount: stat.plays,
-            // rank: item._rank,
-            // order is correct but rank contains banned user, since we didn't check user priv before when selecting count.
-            // calculate rank based on page size * index of this page.
-            rank: BigInt(start + Number.parseInt(index) + 1),
-          },
-        })
+      if (!rank.length) {
+        return super.leaderboard({ mode, ruleset, rankingSystem, page, pageSize })
       }
+
+      const uStats = await this.drizzle.select()
+        .from(schema.users)
+        .innerJoin(schema.stats, and(
+          eq(schema.users.id, schema.stats.id)),
+        )
+        .where(and(
+          eq(schema.stats.mode, bPyMode),
+          userPriv(schema.users),
+          inArray(schema.users.id, rank)
+        ))
+        .orderBy(sql`FIELD(${schema.users.id}, ${sql.raw(rank.join(', '))})` /* MySQL / MariaDB */)
+        .offset(start)
+        .limit(pageSize)
+
+      const result: ComponentLeaderboard<Id>[] = uStats.map(({ stats: stat, users: user }, index) => ({
+        user: toUserCompact(user, this.config),
+        inThisLeaderboard: {
+          [Rank.PPv2]: stat.pp,
+          [Rank.TotalScore]: stat[Rank.TotalScore],
+          [Rank.RankedScore]: stat[Rank.RankedScore],
+          accuracy: stat.accuracy,
+          playCount: stat.plays,
+          // rank: item._rank,
+          // order is correct but rank contains banned user, since we didn't check user priv before when selecting count.
+          // calculate rank based on page size * index of this page.
+          rank: start + index + 1,
+        },
+      }))
 
       if (!result.length) {
         return super.leaderboard({ mode, ruleset, rankingSystem, page, pageSize })
       }
 
-      return result.slice(start, start + pageSize)
+      return result
     }
     catch (e) {
       logger.error(e)

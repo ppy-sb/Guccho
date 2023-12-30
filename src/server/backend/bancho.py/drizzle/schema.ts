@@ -270,7 +270,7 @@ export const scores = mysqlTable('scores', {
   pp: decimal('pp', { scale: 7, precision: 3 }).notNull(),
   // Warning: Can't parse float(6,3) from database
   // float(6,3)Type: float(6,3)("acc").notNull(),
-  acc: decimal('acc', { scale: 6, precision: 3 }).notNull(),
+  accuracy: decimal('acc', { scale: 6, precision: 3 }).notNull(),
   maxCombo: int('max_combo').notNull(),
   mods: int('mods').notNull(),
   n300: int('n300').notNull(),
@@ -318,7 +318,7 @@ export const stats = mysqlTable('stats', {
   pp: int('pp', { unsigned: true }).default(0).notNull(),
   plays: int('plays', { unsigned: true }).default(0).notNull(),
   playTime: int('playtime', { unsigned: true }).default(0).notNull(),
-  acc: decimal('acc', { scale: 6, precision: 3 }).notNull(),
+  accuracy: decimal('acc', { scale: 6, precision: 3 }).notNull(),
   maxCombo: int('max_combo', { unsigned: true }).default(0).notNull(),
   totalHits: int('total_hits', { unsigned: true }).default(0).notNull(),
   replayViews: int('replay_views', { unsigned: true }).default(0).notNull(),
