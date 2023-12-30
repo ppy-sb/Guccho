@@ -15,7 +15,7 @@ const props = defineProps<{
 
 <template>
   <VTooltip delay="{ show: 500, hide: 100 }" placement="right">
-    <nuxt-link-locale :to="to">
+    <nuxt-link-locale :to="to as any">
       {{ props.user.name }}
     </nuxt-link-locale>
 

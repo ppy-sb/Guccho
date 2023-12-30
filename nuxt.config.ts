@@ -113,7 +113,6 @@ export default defineNuxtConfig({
     headNext: true,
     inlineRouteRules: true,
     typedPages: true,
-    typescriptBundlerResolution: true,
   },
 
   devtools: {

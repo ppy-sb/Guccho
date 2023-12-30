@@ -107,7 +107,7 @@ async function requestLeave() {
               Owner
             </dt>
             <dd class="striped-text">
-              <nuxt-link-locale :to="{ name: 'user-handle', param: { handle: clan.owner.safeName } }" class="flex items-center gap-1">
+              <nuxt-link-locale :to="{ name: 'user-handle', params: { handle: clan.owner.safeName } }" class="flex items-center gap-1">
                 <div class="w-8 h-8 mask mask-squircle">
                   <img :src="clan.owner.avatarSrc" alt="avatar">
                 </div>

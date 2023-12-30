@@ -147,7 +147,7 @@ const {
               :key="`searchResult-page-${index}`"
             >
               <nuxt-link-locale
-                :to="page.route"
+                :to="(page.route as typeof page.route | undefined)"
                 @click="closeModal()"
               >
                 <div class="flex items-center gap-2">
