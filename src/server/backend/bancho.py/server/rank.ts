@@ -13,6 +13,7 @@ import {
   toUserCompact,
 } from '../transforms'
 import * as schema from '../drizzle/schema'
+import { BanchoPyScoreStatus } from '../enums'
 import { RedisNotReadyError, client as redisClient } from './source/redis'
 import { useDrizzle, userPriv } from './source/drizzle'
 import { prismaClient } from './source/prisma'
@@ -26,7 +27,7 @@ const logger = Logger.child({ label: 'leaderboard', backend: 'bancho.py' })
 
 const config = _config()
 // eslint-disable-next-line n/prefer-global/process
-const drizzle = await useDrizzle(schema, { logger: !!process.env.DEV })
+const drizzle = useDrizzle(schema, { logger: !!process.env.DEV })
 
 const leaderboardFields = {
   id: true,
@@ -163,7 +164,7 @@ export class DatabaseRankProvider implements Base<Id> {
         eq(s.mapMd5, md5),
         userPriv(u),
         eq(s.mode, toBanchoPyMode(mode, ruleset)),
-        inArray(s.status, [2, 3])
+        eq(s.status, BanchoPyScoreStatus.Pick)
       ))
 
     let q
@@ -216,7 +217,7 @@ export class DatabaseRankProvider implements Base<Id> {
           eq(schema.beatmaps.md5, md5),
           userPriv(schema.users),
           eq(schema.scores.mode, toBanchoPyMode(mode, ruleset)),
-          inArray(schema.scores.status, [2, 3]),
+          eq(schema.scores.status, BanchoPyScoreStatus.Pick),
         ].filter(TSFilter)
       ))
 
