@@ -96,7 +96,7 @@ fr-FR:
               :src="beatmap.beatmapset.assets.list"
               :alt="autoLocale(beatmap.beatmapset.meta).title"
               :onerror="placeholder"
-              class="object-cover w-20 h-16 rounded-xl shadow-md"
+              class="object-cover w-20 h-16 shadow-md rounded-xl"
             >
           </picture>
           <icon v-else class="w-20 h-16" name="clarity:unknown-status-line" size="100%" />
@@ -129,16 +129,19 @@ fr-FR:
               :name="rankingStatusIconMapping[beatmap.status]!"
               :aria-label="beatmap.status"
             />
-            <span v-if="meta" class="text-sm truncate md:text-md xl:text-lg font-bold">
+            <span v-if="meta" class="text-sm font-bold truncate md:text-md xl:text-lg">
               {{ meta.artist }} - {{ meta.title }}
             </span>
-            <div class="flex gap-2 text-xs md:text-sm lg:text-md flex-wrap">
+            <div class="absolute flex flex-wrap gap-2 text-xs md:text-sm lg:text-md">
               <span v-if="beatmap" class="font-semibold">
                 {{ beatmap.version }}
               </span>
               <span v-if="score.mods.length" class="flex justify-end gap-1 tooltip tooltip-primary lg:tooltip-right" :data-tip="score.mods.map(m => StableMod[m]).join(', ')">
                 <app-mod v-for="mod in score.mods" :key="mod" :mod="mod" class="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6" />
               </span>
+            </div>
+            <div class="text-xs md:text-sm lg:text-md opacity-0 pointer-events-none">
+              IM HERE TO TAKE HEIGHT
             </div>
           </router-link>
           <div v-else>
@@ -151,22 +154,22 @@ fr-FR:
           </div>
         </div>
       </div>
-      <div class="flex relative">
+      <div class="relative flex">
         <div class="flex flex-col">
           <div class="flex items-center justify-end flex-grow text-lg sm:text-xl lg:text-2xl">
             <template v-if="(ppRankingSystems).includes(props.rankingSystem as LeaderboardPPRankingSystem)">
-              <div class="font-bold font-mono">
+              <div class="font-mono font-bold">
                 {{ score.pp.toFixed(2) }}
               </div>
               <span class="font-light">{{ $t('global.pp') }}</span>
             </template>
             <template v-else-if="(leaderboardScoreRankingSystems).includes(props.rankingSystem as LeaderboardScoreRankingSystem)">
-              <div class="font-bold font-mono">
+              <div class="font-mono font-bold">
                 {{ numberFmt(score.score) }}
               </div>
             </template>
           </div>
-          <div class="mt-auto text-sm md:text-md lg:text-md whitespace-nowrap justify-end">
+          <div class="justify-end mt-auto text-sm md:text-md lg:text-md whitespace-nowrap">
             <div class="text-right">
               <template v-if="beatmap">
                 <span class="font-semibold align-middle">
@@ -193,7 +196,7 @@ fr-FR:
             </span>
           </div>
         </div>
-        <div class="text-4xl md:text-5xl font-mono w-14 md:w-20 text-center">
+        <div class="font-mono text-4xl text-center md:text-5xl w-14 md:w-20">
           {{ score.grade }}
         </div>
       </div>
