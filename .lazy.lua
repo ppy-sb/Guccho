@@ -1,12 +1,11 @@
 return {
   {
     "stevearc/conform.nvim",
-    event = { "BufWritePre" },
-    cmd = { "ConformInfo" },
     opts = {
       -- Define your formatters
       formatters_by_ft = {
-        vue = { "eslint_d" },
+        vue = { "volar", "eslint_d" },
+        typescript = { "typescript", "eslint_d" },
       },
     },
   },

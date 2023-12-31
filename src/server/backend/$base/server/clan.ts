@@ -1,10 +1,13 @@
+import { type ScoreId } from '..'
 import type { Composition } from './@common'
 import { IdTransformable } from './@extends'
 import type { UserProvider } from './user'
 import type { Mode, Rank, Ruleset } from '~/def'
+import type { AbnormalStatus, BeatmapSource, NormalBeatmapWithMeta, RankingStatus } from '~/def/beatmap'
 import type { ClanRelation } from '~/def/clan'
 import type { LeaderboardRankingSystem } from '~/def/common'
 import type { PaginatedResult } from '~/def/pagination'
+import type { RankingSystemScore } from '~/def/score'
 
 export abstract class ClanProvider<Id> extends IdTransformable {
   abstract search(opt: ClanProvider.SearchParam): PromiseLike<ClanProvider.SearchResult<Id>>
@@ -55,4 +58,17 @@ export namespace ClanProvider {
   export type SearchResult<Id> = PaginatedResult<ClanList<Id>>
   export type DetailResult<Id> = ClanProvider.ClanDetail<Id>
   export type UsersResult<Id> = PaginatedResult<UserProvider.UserCompact<Id>>
+  export type BestsResult<Id> = PaginatedResult<{
+    user: UserProvider.UserCompact<Id>
+    score: RankingSystemScore<
+        ScoreId,
+        Id,
+        Mode,
+        LeaderboardRankingSystem,
+        BeatmapSource.Bancho,
+        Exclude<RankingStatus, AbnormalStatus | RankingStatus.Unknown>
+      > & {
+      beatmap: NormalBeatmapWithMeta<BeatmapSource.Bancho, Exclude<RankingStatus, AbnormalStatus | RankingStatus.Unknown>, Id, Id>
+    }
+  }>
 }
