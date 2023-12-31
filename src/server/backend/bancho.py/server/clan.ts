@@ -1,24 +1,28 @@
-import { aliasedTable, and, eq, like, not, or, sql } from 'drizzle-orm'
+import { aliasedTable, and, desc, eq, inArray, like, not, or, sql } from 'drizzle-orm'
 import { zip } from 'lodash-es'
 import { $enum } from 'ts-enum-util'
-import type { Id } from '..'
+import type { Id, ScoreId } from '..'
 import * as schema from '../drizzle/schema'
 import { config } from '../env'
-import { assertIsBanchoPyMode, idToString, stringToId, toBanchoPyMode, toUserAvatarSrc, toUserCompact } from '../transforms'
 import { Logger } from '../log'
-import { ClanPrivilege as BanchopyClanPrivilege } from './../enums'
+import { assertIsBanchoPyMode, fromBanchoPyMode, idToString, stringToId, toBanchoPyMode, toRankingSystemScore, toUserAvatarSrc, toUserCompact } from '../transforms'
+import { type NormalBeatmapWithMeta } from './../../../../def/beatmap'
+import { BanchoPyScoreStatus, ClanPrivilege as BanchopyClanPrivilege } from './../enums'
 import { useDrizzle, userPriv } from './source/drizzle'
-import { userNotFound } from '~/server/trpc/messages'
-import { users } from '~/server/singleton/service'
-import { ClanRelation } from '~/def/clan'
-import { Rank } from '~/def'
 import { ClanProvider as Base } from '$base/server'
+import { type Mode, Rank } from '~/def'
+import { type AbnormalStatus, type BeatmapSource, type RankingStatus } from '~/def/beatmap'
+import { ClanRelation } from '~/def/clan'
+import { type LeaderboardRankingSystem } from '~/def/common'
+import { type RankingSystemScore } from '~/def/score'
+import { users } from '~/server/singleton/service'
+import { userNotFound } from '~/server/trpc/messages'
 
 const logger = Logger.child({ label: 'clan' })
 
 const iBanchoPyClanPrivilege = $enum(BanchopyClanPrivilege)
 
-const drizzle = await useDrizzle(schema)
+const drizzle = useDrizzle(schema)
 export class ClanProvider extends Base<Id> {
   static stringToId = stringToId
   static idToString = idToString
@@ -178,14 +182,14 @@ export class ClanProvider extends Base<Id> {
     }) ?? raise(Error, userNotFound)
 
     switch (true) {
-      case result.clan === null :
-      case result.clan.id === 0 : return ClanRelation.Free
+      case result.clan === null:
+      case result.clan.id === 0: return ClanRelation.Free
 
-      case result.clan.id === clanId :
+      case result.clan.id === clanId:
         switch (result.clanPriv) {
-          case BanchopyClanPrivilege.Member : return ClanRelation.Member
-          case BanchopyClanPrivilege.Officer : return ClanRelation.Moderator
-          case BanchopyClanPrivilege.Owner : return ClanRelation.Owner
+          case BanchopyClanPrivilege.Member: return ClanRelation.Member
+          case BanchopyClanPrivilege.Officer: return ClanRelation.Moderator
+          case BanchopyClanPrivilege.Owner: return ClanRelation.Owner
 
           default:
             logger.error({ message: `unknown clan priv: ${result.clanPriv}` })
@@ -243,12 +247,83 @@ export class ClanProvider extends Base<Id> {
 
   async users(opt: Base.UsersParam<Id>): Promise<Base.UsersResult<Id>> {
     const start = opt.page * opt.perPage
-    const users = await this.drizzle.query.users.findMany({
-      where: eq(schema.users.clanId, opt.id),
-      offset: start,
-      limit: opt.perPage,
+    const u = await this.drizzle.select({
+      user: schema.users,
+      count: sql`COUNT(*) OVER ()`.mapWith(Number),
     })
+      .from(schema.users)
+      .groupBy(schema.users.id)
+      .where(and(
+        eq(schema.users.clanId, opt.id),
+        userPriv(schema.users)
+      ))
+      .orderBy(desc(schema.users.clanPriv))
+      .offset(start)
+      .limit(opt.perPage)
 
-    return users.map(v => toUserCompact(v, this.config))
+    return [u[0]?.count ?? 0, u.map(i => toUserCompact(i.user, this.config))] as const
+  }
+
+  async bests(opt: Base.BestsParam<Id>): Promise<Base.BestsResult<Id>> {
+    const start = opt.page * opt.perPage
+    const res = await this.drizzle.select({
+      score: schema.scores,
+      user: schema.users,
+      beatmap: schema.beatmaps,
+      source: schema.sources,
+      count: sql`COUNT(*) OVER ()`.mapWith(Number),
+    })
+      .from(schema.scores)
+      .innerJoin(schema.users, eq(schema.scores.userId, schema.users.id))
+      .innerJoin(schema.beatmaps, eq(schema.scores.mapMd5, schema.beatmaps.md5))
+      .innerJoin(schema.sources, and(
+        eq(schema.beatmaps.setId, schema.sources.id),
+        eq(schema.beatmaps.server, schema.sources.server)
+      ))
+      .where(and(
+        eq(schema.users.clanId, opt.id),
+        eq(schema.scores.mode, toBanchoPyMode(opt.mode, opt.ruleset)),
+        userPriv(schema.users),
+        eq(schema.scores.status, BanchoPyScoreStatus.Pick),
+        inArray(schema.beatmaps.status, [2, 3])
+      ))
+      .orderBy(
+        ...[
+          opt.rankingSystem === Rank.PPv2 ? desc(schema.scores.pp) : undefined,
+          opt.rankingSystem === Rank.TotalScore || opt.rankingSystem === Rank.RankedScore ? desc(schema.scores.score) : undefined,
+        ].filter(TSFilter)
+      )
+      .offset(start)
+      .limit(opt.perPage)
+
+      type ReturnScoreType = RankingSystemScore<
+        ScoreId,
+        Id,
+        Mode,
+        LeaderboardRankingSystem,
+        BeatmapSource.Bancho,
+        Exclude<RankingStatus, AbnormalStatus | RankingStatus.Unknown>
+      > & {
+        beatmap: NormalBeatmapWithMeta<BeatmapSource.Bancho, Exclude<RankingStatus, AbnormalStatus | RankingStatus.Unknown>, Id, Id>
+      }
+      return [res[0]?.count ?? 0, res.map((item, index) => {
+        const [mode] = fromBanchoPyMode(item.score.mode)
+
+        return {
+          user: toUserCompact(item.user, this.config),
+          score: toRankingSystemScore({
+            score: {
+              ...item.score,
+              beatmap: {
+                ...item.beatmap,
+                source: item.source,
+              },
+            },
+            rankingSystem: Rank.PPv2,
+            mode,
+            rank: index + 1,
+          }) as ReturnScoreType,
+        }
+      })]
   }
 }

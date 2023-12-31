@@ -1,10 +1,9 @@
 <script lang="ts" async setup>
-import { useSession } from '../../store/session'
+import { useSession } from '~/store/session'
+import { CountryCode } from '~/def/country-code'
 import type { ActiveMode, ActiveRuleset, LeaderboardRankingSystem } from '~/def/common'
 import { ClanRelation } from '~/def/clan'
 
-// const pp = createPPFormatter()
-// const score = createScoreFormatter()
 const fmt = createNumberFormatter()
 
 const session = useSession()
@@ -12,6 +11,7 @@ const { locale } = useI18n()
 const app = useNuxtApp()
 const config = useRuntimeConfig()
 const { supportedModes, supportedRulesets } = useAdapterConfig()
+const { t } = useI18n()
 
 const availableRankingSystems = Object.keys(config.public.leaderboardRankingSystem)
 const route = useRoute('clan-id')
@@ -51,6 +51,18 @@ const relation = ref(
     : null
 )
 
+const usersQuery = reactive<{ page: number; perPage: number }>({ page: 0, perPage: 20 })
+const { data: players, pending: pendingUsers } = app.$client.clan.joinedUsers.useQuery(computed(() => ({ ...usersQuery, id })))
+
+const bestsQuery = reactive<{ page: number; perPage: number }>({ page: 0, perPage: 10 })
+const _v = computed(() => ({ ...bestsQuery, ...selected.value, id }))
+const { data: bests, pending: pendingBests } = useAsyncData('best', async () => {
+  return {
+    res: await app.$client.clan.bests.query(_v.value),
+    ...selected.value,
+  }
+}, { watch: [_v] })
+
 const allowToJoin = [
   ClanRelation.Free,
   ClanRelation.Left,
@@ -87,55 +99,207 @@ async function requestLeave() {
               {{ clan.badge }}
             </span>
           </div>
-          <p class="md:self-end flex flex-col md:flex-row grow">
-            <span class="text-3xl md:text-4xl">{{ clan.name }}</span>
-            <template v-if="session.loggedIn">
-              <button v-if="includes(relation, allowToJoin)" class="mx-auto md:ms-auto md:me-0 btn btn-primary btn-circle" @click="requestJoin">
-                <icon name="material-symbols:group-add-outline-rounded" class="w-5 h-5" />
-              </button>
-              <button v-else-if="includes(relation, allowToLeave)" class="mx-auto md:ms-auto md:me-0 btn btn-primary btn-circle" @click="requestLeave">
-                <icon name="material-symbols:group-remove-outline-rounded" class="w-5 h-5" />
-              </button>
-            </template>
-          </p>
+          <div class="flex flex-col w-full md:self-end md:flex-row grow">
+            <span class="self-center text-3xl md:text-4xl md:self-end">{{ clan.name }}</span>
+            <div class="md:ms-auto">
+              <dl class="rounded-lg overflow-clip">
+                <div class="striped">
+                  <dt class="py-1 text-sm font-medium text-gbase-500">
+                    Owner
+                  </dt>
+                  <dd class="striped-text">
+                    <nuxt-link-locale :to="{ name: 'user-handle', params: { handle: clan.owner.safeName } }" class="flex items-center gap-1">
+                      <div class="w-8 h-8 mask mask-squircle">
+                        <img :src="clan.owner.avatarSrc" alt="avatar">
+                      </div>
+                      <span class="font-bold whitespace-nowrap" :class="useUserRoleColor(clan.owner)">{{ clan.owner.name }}</span>
+                    </nuxt-link-locale>
+                  </dd>
+                </div>
+                <div class="striped">
+                  <dt class="text-sm font-medium text-gbase-500">
+                    Created at
+                  </dt>
+                  <dd class="flex items-center gap-1 striped-text">
+                    {{ clan.createdAt.toLocaleString(locale) }}
+                  </dd>
+                </div>
+                <div class="striped">
+                  <dt class="text-sm font-medium text-gbase-500">
+                    Member
+                  </dt>
+                  <dd class="flex items-center gap-1 striped-text">
+                    {{ fmt(clan.countUser) }}
+                  </dd>
+                </div>
+              </dl>
+              <template v-if="session.loggedIn">
+                <button v-if="includes(relation, allowToJoin)" class="mx-auto md:ms-auto md:me-0 btn btn-primary btn-circle" @click="requestJoin">
+                  <icon name="material-symbols:group-add-outline-rounded" class="w-5 h-5" />
+                </button>
+                <button v-else-if="includes(relation, allowToLeave)" class="mx-auto md:ms-auto md:me-0 btn btn-primary btn-circle" @click="requestLeave">
+                  <icon name="material-symbols:group-remove-outline-rounded" class="w-5 h-5" />
+                </button>
+              </template>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="pt-8 md:pt-12">
-        <dl>
-          <div class="striped rounded-tl-xl">
-            <dt class="text-sm font-medium text-gbase-500">
-              Owner
-            </dt>
-            <dd class="striped-text">
-              <nuxt-link-locale :to="{ name: 'user-handle', params: { handle: clan.owner.safeName } }" class="flex items-center gap-1">
-                <div class="w-8 h-8 mask mask-squircle">
-                  <img :src="clan.owner.avatarSrc" alt="avatar">
+      <div class="pt-6 pb-2 text-3xl font-semibold md:pt-8">
+        Members
+      </div>
+      <div class="relative overflow-x-auto border rounded-lg bg-base-100 border-base-300">
+        <table
+          description="users"
+          class="table table-sm table-zebra"
+        >
+          <thead>
+            <tr>
+              <th>{{ t('user') }}</th>
+            </tr>
+          </thead>
+          <tbody
+            class="transition-opacity origin-center transition-filter"
+            :class="{
+              'opacity-30 saturate-50 blur-md': pendingUsers,
+            }"
+          >
+            <tr v-for="user in players?.[1]" :key="user.id">
+              <td>
+                <div class="flex items-center space-x-3">
+                  <div class="avatar">
+                    <div class="w-12 h-12 mask mask-squircle">
+                      <img :src="user.avatarSrc" alt="avatar">
+                    </div>
+                  </div>
+                  <div>
+                    <nuxt-link-locale
+                      class="font-bold whitespace-nowrap"
+                      :to="{ name: 'user-handle', params: { handle: `@${user.safeName}` } }"
+                    >
+                      {{ user.name }}
+                    </nuxt-link-locale>
+                    <div class="text-sm opacity-50 whitespace-nowrap">
+                      {{ $t(localeKey.country(user.flag || CountryCode.Unknown)) }}
+                    </div>
+                  </div>
                 </div>
-                <span class="font-bold whitespace-nowrap" :class="useUserRoleColor(clan.owner)">{{ clan.owner.name }}</span>
-              </nuxt-link-locale>
-            </dd>
-          </div>
-          <div class="striped">
-            <dt class="text-sm font-medium text-gbase-500">
-              Created at
-            </dt>
-            <dd class="flex items-center gap-1 striped-text">
-              {{ clan.createdAt.toLocaleString(locale) }}
-            </dd>
-          </div>
-          <div class="striped">
-            <dt class="text-sm font-medium text-gbase-500">
-              Joined user
-            </dt>
-            <dd class="flex items-center gap-1 striped-text">
-              {{ fmt(clan.countUser) }}
-            </dd>
-          </div>
-          <!-- <span v-if="selected.rankingSystem === Rank.PPv2">Average: <b>{{ pp(clan.sum[Rank.PPv2] / clan.countUser) }}</b>pp</span>
-          <span v-else-if="selected.rankingSystem === Rank.PPv1">Average: <b>{{ pp(clan.sum[Rank.PPv1] / clan.countUser) }}</b>pp</span>
-          <span v-else-if="selected.rankingSystem === Rank.RankedScore">Total Score: <b>{{ score(clan.sum[Rank.RankedScore]) }}</b></span>
-          <span v-else-if="selected.rankingSystem === Rank.TotalScore">Total Score: <b>{{ score(clan.sum[Rank.TotalScore]) }}</b></span> -->
-        </dl>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div
+          class="absolute inset-0 flex transition-opacity opacity-0 pointer-events-none transition-filter blur-sm" :class="{
+            'opacity-100 !blur-none': pendingUsers,
+          }"
+        >
+          <div class="m-auto loading loading-lg" />
+        </div>
+      </div>
+      <div class="flex pt-4">
+        <div class="mx-auto join">
+          <template v-for="(i, n) in Math.ceil((players?.[0] ?? 0) / usersQuery.perPage)" :key="`sw${i}`">
+            <button
+              v-if="n === 0" class="join-item btn"
+              :class="{
+                'btn-active': n === usersQuery.page,
+              }"
+              @click="(usersQuery.page = n)"
+            >
+              {{ Math.abs(n - usersQuery.page) > 3 && '|&lt;' || '' }} {{ i }}
+            </button>
+            <button
+              v-else-if="Math.abs(n - usersQuery.page) <= 3"
+              class="join-item btn"
+              :class="{
+                'btn-active': n === usersQuery.page,
+              }"
+              @click="(usersQuery.page = n)"
+            >
+              {{ i }}
+            </button>
+            <button
+              v-else-if="i === Math.ceil((players?.[0] ?? 0) / usersQuery.perPage)" class="join-item btn"
+              :class="{
+                'btn-active': n === usersQuery.page,
+              }"
+              @click="(usersQuery.page = n)"
+            >
+              {{ i }} &gt;|
+            </button>
+          </template>
+        </div>
+      </div>
+      <div class="divider" />
+      <div class="md:flex">
+        <app-mode-switcher
+          v-model="selected"
+          :show-sort="true"
+          class="md:ms-auto md:order-2"
+        />
+        <div class="pt-6 pb-2 text-3xl font-semibold md:pt-8 md:order-1">
+          Clan best scores
+        </div>
+      </div>
+
+      <div class="relative" :class="[pendingBests && 'pointer-events-none']">
+        <div
+          v-if="bests?.res[1]?.length"
+          class="transition-[filter] transition-opacity duration-200 relative" :class="{
+            'saturate-50 opacity-30': pendingBests,
+          }"
+        >
+          <ul>
+            <li v-for="i in bests.res[1]" :key="`bests-${i.score.id}`" class="score">
+              <div>
+                <img :src="i.user.avatarSrc" :alt="i.user.name" class="inline object-cover w-5 h-5 align-middle mask mask-squircle">
+                <span class="inline font-semibold align-middle ps-1" :class="useUserRoleColor(i.user)">{{ i.user.name }}</span>
+              </div>
+              <app-score-list-item :score="i.score" :mode="bests.mode" :ruleset="bests.ruleset" :ranking-system="bests.rankingSystem" />
+            </li>
+          </ul>
+        </div>
+        <div
+          class="absolute inset-0 flex transition-opacity opacity-0 pointer-events-none transition-filter blur-sm" :class="{
+            'opacity-100 !blur-none': pendingBests,
+          }"
+        >
+          <div class="m-auto loading loading-lg" />
+        </div>
+      </div>
+      <div class="flex pt-4">
+        <div class="mx-auto join">
+          <template v-for="(i, n) in Math.ceil((bests?.res[0] ?? 0) / bestsQuery.perPage)" :key="`sw${i}`">
+            <button
+              v-if="n === 0" class="join-item btn"
+              :class="{
+                'btn-active': n === bestsQuery.page,
+              }"
+              @click="(bestsQuery.page = n)"
+            >
+              {{ Math.abs(n - bestsQuery.page) > 3 && '|&lt;' || '' }} {{ i }}
+            </button>
+            <button
+              v-else-if="Math.abs(n - bestsQuery.page) <= 3"
+              class="join-item btn"
+              :class="{
+                'btn-active': n === bestsQuery.page,
+              }"
+              @click="(bestsQuery.page = n)"
+            >
+              {{ i }}
+            </button>
+            <button
+              v-else-if="i === Math.ceil((bests?.res[0] ?? 0) / bestsQuery.perPage)" class="join-item btn"
+              :class="{
+                'btn-active': n === bestsQuery.page,
+              }"
+              @click="(bestsQuery.page = n)"
+            >
+              {{ i }} &gt;|
+            </button>
+          </template>
+        </div>
       </div>
     </template>
     <template v-else>

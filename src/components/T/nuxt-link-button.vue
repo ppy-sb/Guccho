@@ -10,7 +10,7 @@ const props = defineProps<{
 
 <template>
   <nuxt-link-locale
-    :to="props.to"
+    :to="props.to as any"
     class="btn"
     :class="[
       props.variant && `btn-${props.variant}`,
