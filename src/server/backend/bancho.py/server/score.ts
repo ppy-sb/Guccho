@@ -26,7 +26,7 @@ import type {
 
 const config = _config()
 // eslint-disable-next-line n/prefer-global/process
-const drizzle = await useDrizzle(schema, { logger: !!process.env.DEV })
+const drizzle = useDrizzle(schema, { logger: !!process.env.DEV })
 export class ScoreProvider implements Base<bigint, Id> {
   static idToString = idToString
   static stringToId = stringToId

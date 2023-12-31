@@ -18,7 +18,7 @@ import type { Tag } from '~/def/search'
 import { type BeatmapSource, type Beatmapset, RankingStatus } from '~/def/beatmap'
 import type { MapProvider as Base } from '$base/server'
 
-const drizzle = await useDrizzle(schema)
+const drizzle = useDrizzle(schema)
 
 export class MapProvider implements Base<Id> {
   static idToString = idToString

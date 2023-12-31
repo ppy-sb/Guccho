@@ -14,7 +14,7 @@ import { fromBanchoPyMode, toFullUser, toUserClan } from '~/server/backend/banch
 
 const logger = Logger.child({ label: 'user' })
 
-const drizzle = await useDrizzle(schema)
+const drizzle = useDrizzle(schema)
 
 export class UserProvider extends BanchoPyUser implements Base<Id> {
   drizzle = drizzle

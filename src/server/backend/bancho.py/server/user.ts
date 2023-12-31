@@ -87,7 +87,7 @@ function ensureDirectorySync(targetDir: string, { isRelativeToScript = false } =
 }
 
 const bpyNumModes = Object.keys(BPyMode)
-const drizzle = await useDrizzle(schema)
+const drizzle = useDrizzle(schema)
 
 class DBUserProvider extends Base<Id> implements Base<Id> {
   static stringToId = stringToId
@@ -333,11 +333,7 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
         ...score,
         beatmap: {
           ...beatmap,
-          source: {
-            server: beatmapset.server,
-            id: beatmapset.id,
-            lastOsuApiCheck: beatmapset.lastOsuApiCheck,
-          },
+          source: beatmapset,
         },
       } satisfies AbleToTransformToScores
     })
