@@ -1,10 +1,10 @@
-import { type Composition } from './@common.d'
+import type { Composition } from './@common'
 import { IdTransformable } from './@extends'
 import type { UserProvider } from './user'
 import type { Mode, Rank, Ruleset } from '~/def'
-import { type ClanRelation } from '~/def/clan'
-import { type LeaderboardRankingSystem } from '~/def/common'
-import { type PaginatedResult } from '~/def/pagination'
+import type { ClanRelation } from '~/def/clan'
+import type { LeaderboardRankingSystem } from '~/def/common'
+import type { PaginatedResult } from '~/def/pagination'
 
 export abstract class ClanProvider<Id> extends IdTransformable {
   abstract search(opt: ClanProvider.SearchParam): PromiseLike<ClanProvider.SearchResult<Id>>
@@ -32,15 +32,20 @@ export namespace ClanProvider {
   }
   export interface ClanDetail<Id> extends ClanCompact<Id> { }
 
-  export interface SearchParam extends Composition.Pagination {
+  export interface MR {
     mode: Mode
     ruleset: Ruleset
     rankingSystem: LeaderboardRankingSystem
+  }
+
+  export interface SearchParam extends Composition.Pagination, MR {
     keyword: string
   }
   export interface DetailParam<Id> {
     id: Id
   }
+  export interface BestsParam<Id> extends DetailParam<Id>, Composition.Pagination, MR { }
+
   export interface UsersParam<Id> extends DetailParam<Id>, Composition.Pagination { }
   export interface ChangeRelationRequestParam<Id> {
     userId: Id
@@ -49,5 +54,5 @@ export namespace ClanProvider {
 
   export type SearchResult<Id> = PaginatedResult<ClanList<Id>>
   export type DetailResult<Id> = ClanProvider.ClanDetail<Id>
-  export type UsersResult<Id> = UserProvider.UserCompact<Id>[]
+  export type UsersResult<Id> = PaginatedResult<UserProvider.UserCompact<Id>>
 }

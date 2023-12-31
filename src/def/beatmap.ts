@@ -87,7 +87,7 @@ export type BeatmapWithMeta<
   ForeignId,
 > =
   | {
-    status: Status & AbnormalStatus
+    status: AbnormalStatus
   }
   | NormalBeatmapWithMeta<Source, Status, LocalId, ForeignId>
 
