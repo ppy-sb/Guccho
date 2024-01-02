@@ -12,3 +12,4 @@ export const youNeedToLogin = 'you need to login.'
 export const unknownError
   = 'something went wrong on our side. Please report this problem to us.'
 export const sessionNotFound = 'session not found.'
+export const conflictEmail = 'email already used in other account.'

@@ -7,6 +7,7 @@ import imageType from 'image-type'
 import { glob } from 'glob'
 import { TRPCError } from '@trpc/server'
 import { Prisma } from 'prisma-client-bancho-py'
+import { type QueryError } from 'mysql2'
 import type { Id } from '..'
 import { getLiveUserStatus } from '../api-client'
 import { normal } from '../constants'
@@ -46,7 +47,7 @@ import { prismaClient } from './source/prisma'
 import { client as redisClient } from './source/redis'
 import { UserRelationProvider } from './user-relations'
 import { useDrizzle, userPriv } from './source/drizzle'
-import { oldPasswordMismatch, userNotFound } from '~/server/trpc/messages'
+import { conflictEmail, oldPasswordMismatch, userNotFound } from '~/server/trpc/messages'
 import { type DynamicSettingStore, Scope, type UserCompact, type UserStatistic, UserStatus } from '~/def/user'
 import type { CountryCode } from '~/def/country-code'
 import type { ActiveMode, ActiveRuleset, LeaderboardRankingSystem } from '~/def/common'
@@ -448,7 +449,7 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
 
     if (excludes.profile !== true) {
       returnValue.profile = {
-        html: user.userpageContent || '',
+        html: user.userpageContent ?? '',
       }
     }
 
@@ -475,11 +476,8 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
   ) {
     input.name && this.assertUsernameAllowed(input.name)
 
-    const result = await this.prisma.user.update({
-      where: {
-        id: user.id,
-      },
-      data: {
+    await this.drizzle.update(schema.users)
+      .set({
         email: input.email,
 
         name: input.name,
@@ -491,15 +489,28 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
         preferredMode: input.preferredMode
           ? toBanchoPyMode(input.preferredMode.mode, input.preferredMode.ruleset)
           : undefined,
+      })
+      .where(eq(schema.users.id, user.id))
+      .catch((e: QueryError) => {
+        if (e.code === 'ER_DUP_ENTRY') {
+          raise(TRPCError, { code: 'CONFLICT', message: conflictEmail })
+        }
+        throw e
+      })
+
+    const returning = await this.drizzle.query.users.findFirst({
+      where(eq, op) {
+        return op.eq(eq.id, user.id)
       },
-      include: {
+      with: {
         clan: true,
       },
-    })
+    }) ?? raise(Error, userNotFound)
+
     return {
-      ...toUserCompact(result, this.config),
-      ...toUserClan(result),
-      ...toUserOptional(result),
+      ...toUserCompact(returning, this.config),
+      ...toUserClan(returning),
+      ...toUserOptional(returning),
     }
   }
 
