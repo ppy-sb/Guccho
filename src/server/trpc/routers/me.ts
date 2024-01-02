@@ -63,7 +63,7 @@ export const router = _router({
       }).partial(),
     )
     .mutation(async ({ ctx, input }) => {
-      const update: typeof input = pick(input, ['flag', 'preferredMode'])
+      const update: typeof input = pick(input, ['flag', 'preferredMode', 'email'])
       // TODO: check email(should verified by frontend with another request (not impl'd yet ))
       if (input.name) {
         const existingUser = await users.getCompact({

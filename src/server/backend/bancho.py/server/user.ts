@@ -37,6 +37,7 @@ import {
   toSafeName,
   toUserClan,
   toUserCompact,
+  toUserOptional,
 } from '../transforms'
 import * as schema from '../drizzle/schema'
 import { ArticleProvider } from './article'
@@ -498,6 +499,7 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
     return {
       ...toUserCompact(result, this.config),
       ...toUserClan(result),
+      ...toUserOptional(result),
     }
   }
 
