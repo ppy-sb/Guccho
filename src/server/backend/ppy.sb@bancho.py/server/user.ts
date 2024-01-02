@@ -51,7 +51,7 @@ export class UserProvider extends BanchoPyUser implements Base<Id> {
       columns: {
         id: true,
       },
-    }) ?? raise(TRPCError, { code: 'NOT_FOUND', message: userNotFound })
+    }) ?? {}
 
     const data = {
       userId: user.id,
