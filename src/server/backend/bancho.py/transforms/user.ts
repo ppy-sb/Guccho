@@ -128,7 +128,7 @@ export function toUserClan(user: Pick<DatabaseUser & { clan: Pick<Clan, 'id' | '
 export type DatabaseUserCompactFields = 'id' | 'name' | 'safeName' | 'country' | 'priv'
 export function toUserCompact(user: Pick<DatabaseUser, DatabaseUserCompactFields>, { avatar }: {
   avatar: {
-    domain?: string
+    domain: string
   }
 }): UserCompact<Id> {
   return {
@@ -139,7 +139,6 @@ export function toUserCompact(user: Pick<DatabaseUser, DatabaseUserCompactFields
     flag: user.country.toUpperCase() as CountryCode,
     avatarSrc: avatar.domain && toUserAvatarSrc(
       user,
-      // @ts-expect-error you are dumb
       { avatar }
     ),
     roles: toRoles(user.priv),
