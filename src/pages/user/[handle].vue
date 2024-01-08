@@ -6,6 +6,7 @@ definePageMeta({
   alias: [
     // compatible with osu stable client
     '/u/:handle',
+    '/users/:handle',
   ],
 })
 

@@ -3,13 +3,11 @@ import { useSession } from '~/store/session'
 export default defineNuxtRouteMiddleware(() => {
   const { $state } = useSession()
   if (!$state.role.staff) {
-    const returnValue = {
+    return navigateTo({
       name: 'article-id',
-      param: {
-        slug: '403',
+      params: {
+        id: ['403'],
       },
-    }
-
-    return returnValue
+    })
   }
 })
