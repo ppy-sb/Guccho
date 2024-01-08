@@ -7,7 +7,7 @@ import { fromCountryCode, toBanchoPyPriv, toSafeName, toUserCompact, toUserOptio
 import { Logger } from '../log'
 import { useDrizzle } from './source/drizzle'
 import { userNotFound } from './../../../trpc/messages/index'
-import { type UserClan, type UserCompact, type UserOptional, type UserSecrets } from '~/def/user'
+import { type UserClan, type UserCompact, type UserOptional, UserRole, type UserSecrets } from '~/def/user'
 import { AdminProvider as Base } from '$base/server'
 
 const logger = Logger.child({ label: 'user' })
@@ -28,8 +28,10 @@ export class AdminProvider extends Base<Id> implements Base<Id> {
       query.safeName ? eq(schema.users.safeName, query.safeName) : undefined,
       query.email ? eq(schema.users.email, query.email) : undefined,
       query.flag ? eq(schema.users.country, query.flag) : undefined,
-      query.roles?.length ? eq(schema.users.priv, toBanchoPyPriv(query.roles)) : undefined,
-    ].filter(TSFilter)
+      query.roles?.length ? sql`${schema.users.priv} & ${toBanchoPyPriv(query.roles)} = ${toBanchoPyPriv(query.roles)}` : undefined,
+      query.roles?.includes(UserRole.Restricted) ? sql`${schema.users.priv} & 1 = 0` : undefined,
+    ]
+
     const baseQuery = this.drizzle.select({
       user: pick(schema.users, ['id', 'name', 'safeName', 'priv', 'country', 'email', 'preferredMode', 'lastActivity', 'creationTime']),
       clan: pick(schema.clans, ['id', 'name', 'badge']),
