@@ -23,6 +23,7 @@ export default defineNuxtConfig({
     '@pinia-plugin-persistedstate/nuxt',
     '@nuxtjs/i18n',
     'nuxt-icon',
+    'floating-vue/nuxt',
   ],
 
   alias: {

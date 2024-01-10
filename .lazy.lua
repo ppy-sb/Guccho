@@ -7,6 +7,7 @@ return {
         vue = { "volar", "eslint_d" },
         typescript = { "typescript", "eslint_d" },
         javascript = { "typescript", "eslint_d" },
+        typescriptreact = { "typescript", "eslint_d" },
       },
     },
   },

@@ -304,12 +304,6 @@ async function requestLeave() {
     </template>
     <template v-else>
       Clan Not Found.
-      <!-- <div class="flex mt-2 -space-x-4 rtl:space-x-reverse">
-        <div v-for="user in clan.users" :key="clan.id + user.name" class="tooltip" :data-tip="user.name">
-            <img class="object-cover w-12 h-12 mask mask-squircle " :src="user.avatarSrc" :alt="user.name">
-          </div>
-        <a v-if="clan.countUser - clan.users.length" class="flex items-center justify-center w-12 h-12 text-xs font-medium text-white bg-gray-700 mask mask-squircle tooltip hover:bg-gray-600" href="#">+{{ (clan.countUser - clan.users.length).toLocaleString() }}</a>
-      </div> -->
     </template>
   </section>
 </template>
