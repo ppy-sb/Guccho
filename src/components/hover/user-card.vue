@@ -7,7 +7,7 @@ type RouterOutput = inferRouterOutputs<AppRouter>
 
 type User = RouterOutput['user']['userpage']
 
-const props = defineProps<{
+defineProps<{
   user: User
   to: RouterLinkProps['to']
 }>()
@@ -16,7 +16,7 @@ const props = defineProps<{
 <template>
   <VTooltip delay="{ show: 500, hide: 100 }" placement="right">
     <nuxt-link-locale :to="to as any">
-      {{ props.user.name }}
+      {{ user.name }}
     </nuxt-link-locale>
 
     <template #popper>
@@ -25,13 +25,13 @@ const props = defineProps<{
       >
         <div v-if="user">
           <div class="flex items-center gap-2">
-            <img :src="`https://a.${$config.public.baseUrl}/${props.user.id}`" alt="" class="w-16 h-16 rounded-lg">
+            <img :src="user.avatarSrc" alt="" class="w-16 h-16 rounded-lg">
             <div>
               <h1 class="text-xl">
-                {{ props.user.name }}
+                {{ user.name }}
               </h1>
               <h1>
-                <img class="w-auto h-6" :src="getFlagURL(props.user.flag)">
+                <img class="w-auto h-6" :src="getFlagURL(user.flag)">
               </h1>
             </div>
           </div>
