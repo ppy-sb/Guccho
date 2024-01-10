@@ -135,7 +135,7 @@ fr-FR:
       </div>
     </div>
     <!-- info -->
-    <div class="flex flex-col w-full p-2 lg:p-0 md:p-0 bg-gbase-200 dark:bg-gbase-700 md:bg-transparent md:grow">
+    <div class="flex flex-col w-full p-2 lg:p-0 md:p-0 bg-gbase-200 dark:bg-gbase-700 md:bg-transparent dark:md:bg-transparent md:grow">
       <div
         v-if="session.$state.userId !== page.user.id"
         class="container flex items-center justify-center order-3 gap-3 pb-2 mx-auto lg:justify-between md:order-1 md:justify-end md:pb-0"
