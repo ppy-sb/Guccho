@@ -1,69 +1,65 @@
 # Guccho
 
-## What is Guccho?
+## Overview
 
-Guccho is a client interface to interact with osu private servers with compatibility in mind.
+Guccho is a web-based service designed for interacting with private osu! servers, focusing on compatibility and ease of use.
 
-## Requirements
+## System Requirements
 
-- Nodejs >= 18
-- at least one supported platform (see supporting platforms down below)
+- Node.js version 18 or higher.
+- A compatible platform (details on supported platforms provided below).
 
-## Setup
+## Installation and Setup
 
-- configs *important*
-  - create guccho.ui.ts from guccho.ui.example.ts
-  - create guccho.backend.ts from guccho.backend.example.ts
-  - edit guccho.*.ts follow the comment
-  - optionally create .env from .env.example if you are using env() or safeEnv() as example showed
+- Configuration preparation is crucial:
 
-- Run `pnpm install`
+  - Generate `guccho.ui.ts` based on `guccho.ui.example.ts`.
+  - Create `guccho.backend.ts` using `guccho.backend.example.ts` as a template.
+  - Edit the newly created configuration files as guided by the included comments.
+  - If using `env()` or `safeEnv()`, set up a `.env` file using `.env.example` as a reference.
 
-## tooling
+- Install dependencies:
+  ```bash
+  pnpm install
+  ```
 
-`bancho.py` or `ppy.sb@bancho.py` requires DB_DSN to be set in env in order to use prisma tooling.
+## Tooling
 
-## backends
+For use with `bancho.py` or `ppy.sb@bancho.py`, ensure `DB_DSN` is set in your environment variables to enable Prisma/Drizzle tooling.
 
-- ### bancho.py (aka gulag)
+## Supported Backends
 
-- ### ppy.sb
+- **bancho.py (also known as gulag)**
+- **ppy.sb**
 
-## Production
+## Production Deployment
 
-Build the application for production:
+- To build the application for production:
 
-```bash
-pnpm run build
-```
+  ```bash
+  pnpm build
+  ```
 
-Locally preview production build:
+- To start the production server:
 
-```bash
-pnpm run preview:dev # or preview:prod
-```
+  ```bash
+  pnpm start:prod
+  ```
 
-Start Production server
+- Further details on deployment can be found in the [Nuxt.js deployment documentation](https://v3.nuxtjs.org/guide/deploy/presets).
 
-```bash
-pnpm run start:prod
-```
+## Development Environment
 
-Checkout the [deployment documentation](https://v3.nuxtjs.org/guide/deploy/presets) for more information.
+- Launch the development server at <http://localhost:3000>:
+  ```bash
+  pnpm dev
+  ```
 
-## Development
+### Upcoming Features (To-Dos)
 
-Start development server on <http://localhost:3000>
+- Implement functionality to grant owner privileges to the first registered user.
 
-```bash
-pnpm run dev
-```
-
-### todo(s)
-
-TODO Give first registered user owner privilege
-
-## Diagram
+## Architecture Diagram
 
 ```mermaid
 flowchart TB
@@ -113,18 +109,18 @@ flowchart TB
       client-session(Client Session) --- trpc-client
     end
     A[Gamer] --> |Browser| pages
-    
-    trpc-client --> |superjson| trpc-server --> |devalue| trpc-client 
+
+    trpc-client --> |superjson| trpc-server --> |devalue| trpc-client
 
     trpc-server === providers
-    
+
     session --- user
-    
+
     extendable ===== |$def| $base
     abstracted ===== |$active| impl
 
     ppy.sb --- |additional tables| mysql
-    
+
     bancho.py --- |"gulag api(v1)"| gulag
     bancho.py --- |leaderboard| redis
     bancho.py --- mysql
@@ -138,4 +134,4 @@ flowchart TB
 ## The team (Guccho)
 
 - [ppy.sb](https://github.com/ppy-sb)
-- [Varkaria](https://github.com/Varkaria)
+- Guccho
