@@ -79,7 +79,6 @@ export const router = _router({
 
   delete: adminProcedure.input(object({
     slug: string().trim(),
-  // eslint-disable-next-line drizzle/enforce-delete-with-where
   })).mutation(({ input, ctx }) => articles.delete(Object.assign(input, { user: ctx.user }))),
 
   localSlugs: adminProcedure.input(string().trim().optional()).query(({ input }) => ArticleProvider.getLocalSlugs(input)),

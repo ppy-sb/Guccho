@@ -61,7 +61,6 @@ export class MemorySessionStore<TSession extends Session<any>, TSessionId extend
   }
 
   async destroy(key: TSessionId): Promise<boolean> {
-    // eslint-disable-next-line drizzle/enforce-delete-with-where
     return this.store.delete(key)
   }
 

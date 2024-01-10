@@ -121,8 +121,6 @@ export class UserRelationProvider implements Base<Id> {
       throw new Error('not-found')
     }
 
-    // it's prisma, don't worry about it
-    // eslint-disable-next-line drizzle/enforce-delete-with-where
     await this.prisma.relationship.delete({
       where: {
         fromUserId_toUserId: {
