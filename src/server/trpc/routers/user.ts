@@ -42,9 +42,10 @@ export const router = _router({
       })
 
       const isSelf = user.id === ctx.user?.id
-      if (!user.roles.includes(UserRole.Normal) && !isSelf) {
+      if (!user.roles.includes(UserRole.Normal) && !isSelf && ctx.user?.roles.includes(UserRole.Staff)) {
         throw new TRPCError({ code: 'NOT_FOUND', message: userNotFound })
       }
+      delete (user as any).secrets
       return mapId(user, UserProvider.idToString)
     }),
   best: optionalUserProcedure
