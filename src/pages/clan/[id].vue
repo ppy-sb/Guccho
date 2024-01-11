@@ -52,11 +52,11 @@ const relation = ref(
 )
 
 const usersQuery = reactive<{ page: number; perPage: number }>({ page: 0, perPage: 20 })
-const { data: players, pending: pendingUsers } = app.$client.clan.joinedUsers.useQuery(computed(() => ({ ...usersQuery, id })))
+const { data: players, pending: pendingUsers, refresh: refreshUsers } = app.$client.clan.joinedUsers.useQuery(computed(() => ({ ...usersQuery, id })))
 
 const bestsQuery = reactive<{ page: number; perPage: number }>({ page: 0, perPage: 10 })
 const _v = computed(() => ({ ...bestsQuery, ...selected.value, id }))
-const { data: bests, pending: pendingBests } = useAsyncData('best', async () => {
+const { data: bests, pending: pendingBests, refresh: refreshBP } = useAsyncData('best', async () => {
   return {
     res: await app.$client.clan.bests.query(_v.value),
     ...selected.value,
@@ -72,19 +72,24 @@ const allowToLeave = [
   ClanRelation.Member,
   ClanRelation.JoinPendingVerification,
 ]
+
 async function requestJoin() {
   if (!clan.value) {
     return
   }
   relation.value = await app.$client.clan.join.mutate({ id: clan.value.id })
-  return refreshClan()
+  await refresh()
 }
 async function requestLeave() {
   if (!clan.value) {
     return
   }
   relation.value = await app.$client.clan.leave.mutate({ id: clan.value.id })
-  return refreshClan()
+  await refresh()
+}
+
+function refresh() {
+  return Promise.all([refreshClan(), refreshBP(), refreshUsers()])
 }
 </script>
 
@@ -101,7 +106,15 @@ async function requestLeave() {
           </div>
           <div class="flex flex-col w-full md:self-end md:flex-row grow">
             <span class="self-center text-3xl md:text-4xl md:self-end">{{ clan.name }}</span>
-            <div class="md:ms-auto">
+            <div class="md:ms-auto flex gap-2 items-end">
+              <template v-if="session.loggedIn">
+                <button v-if="includes(relation, allowToJoin)" class="mx-auto md:ms-auto md:me-0 btn btn-primary btn-circle" @click="requestJoin">
+                  <icon name="material-symbols:group-add-outline-rounded" class="w-5 h-5" />
+                </button>
+                <button v-else-if="includes(relation, allowToLeave)" class="mx-auto md:ms-auto md:me-0 btn btn-primary btn-circle" @click="requestLeave">
+                  <icon name="material-symbols:group-remove-outline-rounded" class="w-5 h-5" />
+                </button>
+              </template>
               <dl class="rounded-lg overflow-clip">
                 <div class="striped">
                   <dt class="py-1 text-sm font-medium text-gbase-500">
@@ -133,14 +146,6 @@ async function requestLeave() {
                   </dd>
                 </div>
               </dl>
-              <template v-if="session.loggedIn">
-                <button v-if="includes(relation, allowToJoin)" class="mx-auto md:ms-auto md:me-0 btn btn-primary btn-circle" @click="requestJoin">
-                  <icon name="material-symbols:group-add-outline-rounded" class="w-5 h-5" />
-                </button>
-                <button v-else-if="includes(relation, allowToLeave)" class="mx-auto md:ms-auto md:me-0 btn btn-primary btn-circle" @click="requestLeave">
-                  <icon name="material-symbols:group-remove-outline-rounded" class="w-5 h-5" />
-                </button>
-              </template>
             </div>
           </div>
         </div>
@@ -196,7 +201,7 @@ async function requestLeave() {
           <div class="m-auto loading loading-lg" />
         </div>
       </div>
-      <div class="flex pt-4">
+      <div v-if="Math.ceil((players?.[0] ?? 0) / usersQuery.perPage) > 1" class="flex pt-4">
         <div class="mx-auto join">
           <template v-for="(i, n) in Math.ceil((players?.[0] ?? 0) / usersQuery.perPage)" :key="`sw${i}`">
             <button

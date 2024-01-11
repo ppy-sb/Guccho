@@ -12,14 +12,14 @@ import { type AbnormalStatus, type BeatmapSource, type NormalBeatmapWithMeta, ty
 import { ClanProvider as Base } from '$base/server'
 import { type Mode, Rank } from '~/def'
 import { ClanRelation } from '~/def/clan'
-import { type LeaderboardRankingSystem } from '~/def/common'
-import { type RankingSystemScore } from '~/def/score'
-import { users } from '~/server/singleton/service'
+import type { LeaderboardRankingSystem } from '~/def/common'
+import type { RankingSystemScore } from '~/def/score'
 import { userNotFound } from '~/server/trpc/messages'
 
 const logger = Logger.child({ label: 'clan' })
 
 const iBanchoPyClanPrivilege = $enum(BanchopyClanPrivilege)
+const keyofBanchoPyChanPriv = iBanchoPyClanPrivilege.map(i => i)
 
 const drizzle = useDrizzle(schema)
 export class ClanProvider extends Base<Id> {
@@ -29,91 +29,139 @@ export class ClanProvider extends Base<Id> {
   config = config()
 
   drizzle = drizzle
-  clanLegalPrivFilter = or(
-    ...iBanchoPyClanPrivilege.map(priv => eq(schema.users.clanPriv, priv))
-  )
+
+  clanLegalPrivFilter = <TCol extends typeof schema['users']>(column: TCol) => inArray(column.clanPriv, keyofBanchoPyChanPriv)
+
+  // clan list prepared stmts
+  // aliased tables
+  #aClan = aliasedTable(schema.clans, 'c')
+  #aListOwner = aliasedTable(schema.users, 'owners')
+
+  // queries
+  #pListSubQuery = this.drizzle
+    .select({
+      pp: schema.stats.pp,
+      rankedScore: schema.stats.rankedScore,
+      totalScore: schema.stats.totalScore,
+      ownerId: this.#aClan.ownerId,
+      id: this.#aClan.id,
+      name: this.#aClan.name,
+      badge: this.#aClan.badge,
+      createdAt: this.#aClan.createdAt,
+      userId: sql`${schema.users.id}`.as('userId'),
+      userName: sql`${schema.users.name}`.as('userName'),
+      userClanPriv: schema.users.clanPriv,
+    }).from(this.#aClan)
+    .innerJoin(schema.users, and(
+      eq(schema.users.clanId, this.#aClan.id),
+      this.clanLegalPrivFilter(schema.users),
+      userPriv(schema.users),
+    ))
+    .innerJoin(schema.stats, and(
+      eq(schema.stats.id, schema.users.id),
+      eq(schema.stats.mode, sql.placeholder('mode')))
+    )
+    .where(
+      or(
+        like(this.#aClan.name, sql.placeholder('clanKeyword')),
+        like(this.#aClan.badge, sql.placeholder('clanKeyword')),
+        eq(this.#aClan.id, sql.placeholder('clanId'))
+      ),
+    ).as('sq')
+
+  #pListQuery = this.drizzle
+    .select({
+      owner: this.#aListOwner,
+      clan: {
+        id: sql<number>`${this.#pListSubQuery.id}`.as('sq_id'),
+        name: sql<string>`${this.#pListSubQuery.name}`.as('sq_name'),
+        badge: sql<string>`${this.#pListSubQuery.badge}`.as('sq_badge'),
+        createdAt: sql<Date>`${this.#pListSubQuery.createdAt}`.as('sq_created'),
+      },
+
+      countUser: sql`count(*)`.mapWith(Number).as('countUser'),
+      sumPP: sql`sum(${this.#pListSubQuery.pp})`.mapWith(Number).as('sumPP'),
+      sumRankedScore: sql`sum(${this.#pListSubQuery.rankedScore})`.mapWith(BigInt).as('sumRankedScore'),
+      sumTotalScore: sql`sum(${this.#pListSubQuery.totalScore})`.mapWith(BigInt).as('sumTotalScore'),
+
+      userNameList: sql<string>`
+        GROUP_CONCAT(
+          REPLACE(${this.#pListSubQuery.userName}, ',', '&#44;')
+          ORDER BY
+            ${this.#pListSubQuery.userClanPriv} DESC,
+            ${this.#pListSubQuery.pp} DESC
+        )
+      `,
+      userIdList: sql<string>`
+        GROUP_CONCAT(
+          ${this.#pListSubQuery.userId}
+          ORDER BY
+            ${this.#pListSubQuery.userClanPriv} DESC,
+            ${this.#pListSubQuery.pp} DESC
+        )`,
+    })
+    .from(this.#pListSubQuery)
+    .innerJoin(this.#aListOwner, eq(this.#pListSubQuery.ownerId, this.#aListOwner.id))
+    .groupBy(this.#pListSubQuery.id, this.#pListSubQuery.name, this.#pListSubQuery.badge, this.#pListSubQuery.createdAt)
+
+  #plistQueryCountPrepared = this.drizzle
+    .select({ count: sql`count(*)`.mapWith(Number) })
+    .from(this.#pListQuery.as('selected'))
+    .limit(100)
+    .prepare()
+
+  #plistQueryPrepared = this.#pListQuery
+    .offset(sql.placeholder('start') as unknown as number)
+    .limit(sql.placeholder('perPage') as unknown as number)
+    .orderBy(desc(sql`(CASE ${sql.placeholder('orderBy')}
+      WHEN 'sumPP' THEN sumPP
+      WHEN 'sumRankedScore' THEN sumRankedScore
+      WHEN 'sumTotalScore' THEN sumTotalScore
+      ELSE countUser
+      END)`))
+    .prepare()
 
   async search(opt: Base.SearchParam): Promise<Base.SearchResult<Id>> {
-    const { keyword, page, perPage, mode, ruleset } = opt
+    const { keyword, page, perPage, mode, ruleset, rankingSystem } = opt
 
     const bMode = toBanchoPyMode(mode, ruleset)
     assertIsBanchoPyMode(bMode)
 
     const start = page * perPage
     const iNumber = ClanProvider.stringToId(keyword)
+    const kwLike = `%${keyword}%`
 
-    const subQuery = this.drizzle.select({
-      pp: schema.stats.pp,
-      rankedScore: schema.stats.rankedScore,
-      totalScore: schema.stats.totalScore,
-      ownerId: schema.clans.ownerId,
-      id: schema.clans.id,
-      name: schema.clans.name,
-      badge: schema.clans.badge,
-      createdAt: schema.clans.createdAt,
-      userId: sql`${schema.users.id}`.as('userId'),
-      userName: sql`${schema.users.name}`.as('userName'),
-      userClanPriv: schema.users.clanPriv,
-    }).from(schema.clans)
-      .innerJoin(schema.users, and(
-        eq(schema.users.clanId, schema.clans.id),
-        this.clanLegalPrivFilter,
-        userPriv(schema.users),
+    const preparedParams = {
+      clanKeyword: kwLike,
+      clanId: Number.isNaN(iNumber) ? -1 : iNumber,
+      mode: bMode,
+    }
 
-      ))
-      .innerJoin(schema.stats, and(eq(schema.stats.id, schema.users.id), eq(schema.stats.mode, bMode)))
-      .where(
-        or(
-          like(schema.clans.name, `%${keyword}%`),
-          like(schema.clans.badge, `%${keyword}%`),
-          Number.isNaN(iNumber) ? undefined : eq(schema.clans.id, iNumber)
-        ),
-      ).as('sq')
+    const pagination = {
+      start,
+      perPage,
+      orderBy: rankingSystem === Rank.PPv2
+        ? ('sumPP')
+        : rankingSystem === Rank.TotalScore
+          ? ('sumTotalScore')
+          : rankingSystem === Rank.RankedScore
+            ? ('sumRankedScore')
+            : 1,
+    }
 
-    const query = this.drizzle.select({
-      ownerId: subQuery.ownerId,
-      countUser: sql`count(*)`.mapWith(Number),
-      sumPP: sql`sum(${subQuery.pp})`.mapWith(Number),
-      sumRankedScore: sql`sum(${subQuery.rankedScore})`.mapWith(BigInt),
-      sumTotalScore: sql`sum(${subQuery.totalScore})`.mapWith(BigInt),
-      id: subQuery.id,
-      name: subQuery.name,
-      badge: subQuery.badge,
-      createdAt: subQuery.createdAt,
-      userNameList: sql<string>`
-        GROUP_CONCAT(
-          REPLACE(${subQuery.userName}, ',', '&#44;')
-          ORDER BY
-          ${subQuery.userClanPriv} DESC,
-          ${subQuery.pp} DESC
-        )
-      `,
-      userIdList: sql<string>`
-        GROUP_CONCAT(
-          ${subQuery.userId}
-          ORDER BY
-            ${subQuery.userClanPriv} DESC,
-            ${subQuery.pp} DESC
-        )`,
-    })
-      .from(subQuery)
-      .groupBy(schema.clans.id, schema.clans.name, schema.clans.badge, schema.clans.createdAt)
-
-    const [{ count }] = await this.drizzle.select({ count: sql`count(*)`.mapWith(Number) }).from(query.as('selected'))
-
-    const result = await query
-      .offset(start)
-      .limit(perPage)
-      .execute()
+    const [[{ count }], result] = await Promise.all([
+      this.#plistQueryCountPrepared.execute(preparedParams),
+      this.#plistQueryPrepared.execute({ ...preparedParams, ...pagination }),
+    ])
 
     return [
-      Math.min(count, 100),
-      await Promise.all(result.map(async (a) => {
+      count,
+      result.map((a) => {
         const idList = a.userIdList.split(',').slice(0, 20).map(v => Number.parseInt(v))
         const nameList = a.userNameList.split(',').slice(0, 20)
-        const owner = await users.getCompactById({ id: a.ownerId }).catch(() => users.getCompactById({ id: 999 }))
+        const owner = toUserCompact(a.owner, this.config)
         return {
-          ...pick(a, ['id', 'name', 'badge', 'createdAt']),
+          ...pick(a.clan, ['id', 'name', 'badge', 'createdAt']),
           users: zip(idList, nameList).filter((cur): cur is [Id, string] => !!(cur[0] && cur[1])).slice(0, 5).map(([id, name]) => ({
             name,
             avatarSrc: toUserAvatarSrc({ id }, this.config),
@@ -128,35 +176,36 @@ export class ClanProvider extends Base<Id> {
           countUser: a.countUser,
           owner,
         }
-      })),
+      }),
     ]
   }
 
-  async detail(opt: Base.DetailParam<Id>): Promise<Base.DetailResult<Id>> {
-    const owners = aliasedTable(schema.users, 'owners')
-    const query = this.drizzle.select({
-      countUser: sql`count(${schema.users.id})`.mapWith(Number),
-      owner: {
-        id: schema.clans.ownerId,
-        name: owners.name,
-        safeName: owners.safeName,
-        priv: owners.priv,
-        country: owners.country,
-      },
-      clan: {
-        id: schema.clans.id,
-        name: schema.clans.name,
-        badge: schema.clans.badge,
-        createdAt: schema.clans.createdAt,
-      },
-    })
-      .from(schema.clans)
-      .innerJoin(schema.users, and(eq(schema.users.clanId, schema.clans.id), userPriv(schema.users)))
-      .innerJoin(owners, and(eq(schema.clans.ownerId, owners.id), userPriv(owners)))
-      .where(eq(schema.clans.id, opt.id))
-      .groupBy(schema.clans.id, schema.clans.name, schema.clans.badge, schema.clans.createdAt)
+  _aDetailOwner = aliasedTable(schema.users, 'owners')
+  _pDetailQuery = this.drizzle.select({
+    countUser: sql`count(${schema.users.id})`.mapWith(Number),
+    owner: {
+      id: schema.clans.ownerId,
+      name: this._aDetailOwner.name,
+      safeName: this._aDetailOwner.safeName,
+      priv: this._aDetailOwner.priv,
+      country: this._aDetailOwner.country,
+    },
+    clan: {
+      id: schema.clans.id,
+      name: schema.clans.name,
+      badge: schema.clans.badge,
+      createdAt: schema.clans.createdAt,
+    },
+  })
+    .from(schema.clans)
+    .innerJoin(schema.users, and(eq(schema.users.clanId, schema.clans.id), userPriv(schema.users)))
+    .innerJoin(this._aDetailOwner, and(eq(schema.clans.ownerId, this._aDetailOwner.id), userPriv(this._aDetailOwner)))
+    .where(eq(schema.clans.id, sql.placeholder('clanId')))
+    .groupBy(schema.clans.id, schema.clans.name, schema.clans.badge, schema.clans.createdAt)
+    .prepare()
 
-    const [result] = await query.execute()
+  async detail(opt: Base.DetailParam<Id>): Promise<Base.DetailResult<Id>> {
+    const [result] = await this._pDetailQuery.execute({ clanId: opt.id })
 
     const uc = toUserCompact(result.owner, this.config)
 
@@ -168,17 +217,20 @@ export class ClanProvider extends Base<Id> {
     }
   }
 
+  _pRelatioin = this.drizzle.query.users.findFirst({
+    columns: {
+      clanPriv: true,
+    },
+    with: {
+      clan: true,
+    },
+    where: eq(schema.users.id, sql.placeholder('userId')),
+  })
+    .prepare()
+
   async getClanRelation(opt: Base.ChangeRelationRequestParam<Id>) {
     const { userId, clanId } = opt
-    const result = await this.drizzle.query.users.findFirst({
-      columns: {
-        clanPriv: true,
-      },
-      with: {
-        clan: true,
-      },
-      where: eq(schema.users.id, userId),
-    }) ?? raise(Error, userNotFound)
+    const result = await this._pRelatioin.execute({ userId }) ?? raise(Error, userNotFound)
 
     switch (true) {
       case result.clan === null:

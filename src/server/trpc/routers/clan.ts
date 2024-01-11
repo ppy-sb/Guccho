@@ -5,7 +5,7 @@ import { userProcedure } from './../middleware/user'
 import type { AbnormalStatus, BeatmapSource, Beatmapset, NormalBeatmapWithMeta, RankingStatus } from '~/def/beatmap'
 import { type LeaderboardRankingSystem } from '~/def/common'
 import { Mode, Ruleset } from '~/def'
-import type { PaginatedResult } from '~/def/pagination'
+import { Paginated, type PaginatedResult } from '~/def/pagination'
 import type { UserCompact } from '~/def/user'
 import { ClanProvider, MapProvider, ScoreProvider, UserProvider, clanProvider } from '~/server/singleton/service'
 import type { RankingSystemScore } from '~/def/score'
@@ -40,8 +40,8 @@ export const router = _router({
       perPage: input.perPage,
     })
     return [
-      res[0],
-      res[1].map(item => mapId(item, ClanProvider.idToString)),
+      res[Paginated.Count],
+      res[Paginated.Data].map(item => mapId(item, ClanProvider.idToString)),
     ] as const satisfies PaginatedResult<UserCompact<string>>
   }),
 
@@ -62,8 +62,8 @@ export const router = _router({
       rankingSystem: input.rankingSystem,
     })
     return [
-      res[0],
-      res[1].map((item) => {
+      res[Paginated.Count],
+      res[Paginated.Data].map((item) => {
         const bm = item.score.beatmap satisfies NormalBeatmapWithMeta<BeatmapSource, Exclude<RankingStatus, AbnormalStatus>, any, any> as NormalBeatmapWithMeta<BeatmapSource, Exclude<RankingStatus, AbnormalStatus>, any, any>
         return {
           user: mapId(item.user, UserProvider.idToString),
