@@ -13,8 +13,8 @@ Guccho is a web-based service designed for interacting with private osu! servers
 
 - Configuration preparation is crucial:
 
-  - Generate `guccho.ui.ts` based on `guccho.ui.example.ts`.
-  - Create `guccho.backend.ts` using `guccho.backend.example.ts` as a template.
+  - Generate `guccho.ui.config.ts` based on `guccho.ui.config.example.ts`.
+  - Create `guccho.backend.config.ts` using `guccho.backend.config.example.ts` as a template.
   - Edit the newly created configuration files as guided by the included comments.
   - If using `env()` or `safeEnv()`, set up a `.env` file using `.env.example` as a reference.
 
