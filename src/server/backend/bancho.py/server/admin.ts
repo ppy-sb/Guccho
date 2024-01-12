@@ -12,8 +12,7 @@ import { AdminProvider as Base } from '$base/server'
 
 const logger = Logger.child({ label: 'user' })
 
-// eslint-disable-next-line n/prefer-global/process
-const drizzle = useDrizzle(schema, { logger: !!process.env.DEV })
+const drizzle = useDrizzle(schema)
 export class AdminProvider extends Base<Id> implements Base<Id> {
   config = config()
   drizzle = drizzle
