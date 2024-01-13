@@ -4,13 +4,12 @@ import { Monitored } from '$base/server/@extends'
 import { SessionProvider as Base, MemorySessionProvider, type Session } from '$base/server/session'
 
 export class RedisSessionProvider extends Base<Session> implements Base<Session> {
-  static redisStore = new RedisSessionStore<Session>()
   get [Monitored.status]() {
     return this.store[Monitored.status]
   }
 
   prepare() {
-    return RedisSessionProvider.redisStore
+    return new RedisSessionStore<Session>()
   }
 }
 export type SessionProvider = RedisSessionProvider | MemorySessionProvider<Session>
