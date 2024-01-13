@@ -1,10 +1,13 @@
 import { fileURLToPath } from 'node:url'
+import { pick } from 'lodash-es'
 import PackageJSON from './package.json'
 import backend from './guccho.backend.config'
 import ui from './guccho.ui.config'
 import './scripts/ensure-env'
 import { Lang } from './src/def'
 import { CountryCode } from './src/def/country-code'
+
+const uiConf = pick(ui, ['baseUrl', 'brand', 'footerLink', 'iconLinks', 'leaderboardRankingSystem'])
 
 export default defineNuxtConfig({
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
@@ -71,7 +74,7 @@ export default defineNuxtConfig({
     },
   },
   runtimeConfig: {
-    public: { version: PackageJSON.version, ...ui },
+    public: { version: PackageJSON.version, ...uiConf },
   },
   watch: [
     /\.\/guccho.(ui|backend).config.ts/,

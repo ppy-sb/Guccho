@@ -1,4 +1,3 @@
-import type { VueMessageType } from '@nuxtjs/i18n/dist/runtime/composables'
 import type { KFooter } from '../locales/@types'
 import type {
   LeaderboardRankingSystem,
@@ -44,7 +43,7 @@ export interface UIConfig {
   iconLinks?: IconLink[]
   footerLink?: Partial<Record<KFooter, FooterLink[]>>
   i18n?: {
-    messages: Partial<Lang, VueMessageType>
+    messages: Partial<Record<Lang, Record<string, any>>>
   }
 }
 
