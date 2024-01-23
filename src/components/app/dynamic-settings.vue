@@ -43,16 +43,16 @@ fr-FR:
           :id="setting.label"
           v-model="model[key]"
           :placeholder="setting.label"
-          :disabled="setting.disabled"
+          :disabled="setting.readonly"
           class="input input-shadow input-sm grow blur-sm hover:blur-none"
           :class="{
             'input-bordered input-primary':
               props.unchanged[key] !== model[key],
             '!input-ghost border-none':
-              props.unchanged[key] === model[key] || setting.disabled,
+              props.unchanged[key] === model[key] || setting.readonly,
           }"
         >
-        <select v-else-if="setting.type === 'select'" id="" v-model="model[key]" :disabled="setting.disabled" class="select select-ghost w-full select-sm" :name="setting.label">
+        <select v-else-if="setting.type === 'select'" id="" v-model="model[key]" :disabled="setting.readonly" class="select select-ghost w-full select-sm" :name="setting.label">
           <option v-for="option in setting.options" :key="setting.label + option.label" :disabled="option.disabled" :value="option.value" :selected="model[key] === option.value">
             {{ t(option.label) }}
           </option>

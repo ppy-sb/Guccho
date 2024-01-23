@@ -759,10 +759,22 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
   }
 
   async setDynamicSettings(user: { id: number }, args: ServerSetting): Promise<ServerSetting> {
-    const result = await this.prisma.user.update({ where: { id: user.id }, data: { apiKey: args.apiKey } })
+    const returnValue = await this.drizzle.query.users.findFirst({
+      where(table, op) {
+        return op.eq(table.id, user.id)
+      },
+      columns: {
+        apiKey: true,
+      },
+    })
     return {
-      apiKey: result.apiKey || undefined,
-    } satisfies ServerSetting
+      apiKey: returnValue?.apiKey || undefined,
+    }
+
+    // const result = await this.prisma.user.update({ where: { id: user.id }, data: { apiKey: args.apiKey } })
+    // return {
+    //   apiKey: result.apiKey || undefined,
+    // } satisfies ServerSetting
   }
 
   ensureUsernameIsAllowed(input: string) {

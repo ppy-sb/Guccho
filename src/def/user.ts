@@ -119,7 +119,7 @@ export type DynamicUserSetting<T, TLoc extends DynamicSettingStore, TLang> = {
   validator: ZodType<T>
   label: string
   actions?: Action<T>[]
-  disabled?: boolean
+  readonly?: boolean
   locale?: Partial<Record<Lang, TLang>>
 } & ({
   type: 'input'
