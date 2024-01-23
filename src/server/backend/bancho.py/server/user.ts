@@ -90,6 +90,10 @@ function ensureDirectorySync(targetDir: string, { isRelativeToScript = false } =
 
 const bpyNumModes = Object.keys(BPyMode)
 const drizzle = useDrizzle(schema)
+export const enum FilterType {
+  BlockIfNotMatched,
+  BlockIfMatched,
+}
 
 class DBUserProvider extends Base<Id> implements Base<Id> {
   static stringToId = stringToId
@@ -102,7 +106,13 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
   relationships = new UserRelationProvider()
   config = config()
 
-  usernamePattern = /^[\w [\]-]{2,15}$/
+  usernamePatterns: Array<{ match: string | RegExp; reason: string; type: FilterType }> = [
+    {
+      type: FilterType.BlockIfNotMatched,
+      match: /^[\w [\]-]{2,15}$/gu,
+      reason: 'Username should between 2 - 14 chars long, allows a-z, 0-9, [] and -, _',
+    },
+  ]
 
   constructor() {
     super()
@@ -474,7 +484,7 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
       }
     },
   ) {
-    input.name && this.assertUsernameAllowed(input.name)
+    input.name && this.ensureUsernameIsAllowed(input.name)
 
     await this.drizzle.update(schema.users)
       .set({
@@ -644,7 +654,7 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
 
   async register(opt: { name: string; email: string; passwordMd5: string }) {
     const { name, email, passwordMd5 } = opt
-    this.assertUsernameAllowed(name)
+    this.ensureUsernameIsAllowed(name)
 
     const user = await this.prisma.$transaction(async (tx) => {
       const user = await tx.user.create({
@@ -755,10 +765,20 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
     } satisfies ServerSetting
   }
 
-  assertUsernameAllowed(input: string) {
-    const result = input.match(this.usernamePattern)
-    if (!result) {
-      throw new Error('Invalid username, please try something different.')
+  ensureUsernameIsAllowed(input: string) {
+    // eslint-disable-next-line array-callback-return
+    const failedPattern = this.usernamePatterns.find((pattern) => {
+      switch (pattern.type) {
+        case FilterType.BlockIfNotMatched:
+          return !input.match(pattern.match)
+        case FilterType.BlockIfMatched:
+          return input.match(pattern.match)
+        default:
+          assertNotReachable(pattern.type)
+      }
+    })
+    if (failedPattern) {
+      raise(Error, failedPattern.reason)
     }
   }
 }

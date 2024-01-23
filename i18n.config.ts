@@ -1,5 +1,3 @@
-// import type { DeepPartial } from '@trpc/server'
-// import type { GlobalI18n } from './src/locales/@types'
 import ui from './guccho.ui.config'
 import { locales as serverMessages } from '$active/locales'
 import { Layer } from '~/common/utils'

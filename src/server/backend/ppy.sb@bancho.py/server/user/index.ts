@@ -1,16 +1,18 @@
-import { and, eq, or, sql } from 'drizzle-orm'
 import { TRPCError } from '@trpc/server'
-import type { Id } from '..'
-import { useDrizzle, userPriv } from '../../bancho.py/server/source/drizzle'
-import * as schema from '../drizzle/schema'
-import { Logger } from '../log'
-import { userNotFound } from '~/server/trpc/messages'
-import type { UserProvider as Base } from '$base/server'
+import { and, eq, or, sql } from 'drizzle-orm'
+import type { Id } from '../..'
+import { useDrizzle, userPriv } from '../../../bancho.py/server/source/drizzle'
+import { FilterType } from '../../../bancho.py/server/user'
+import * as schema from '../../drizzle/schema'
+import { Logger } from '../../log'
+import { controlChars } from './reg-exps'
 import type { Mode, Ruleset } from '~/def'
 import type { CountryCode } from '~/def/country-code'
 import { Scope, type UserCompact, UserRole, UserStatus } from '~/def/user'
 import { ArticleProvider, UserProvider as BanchoPyUser } from '~/server/backend/bancho.py/server'
 import { fromBanchoPyMode, toFullUser, toUserClan } from '~/server/backend/bancho.py/transforms'
+import { userNotFound } from '~/server/trpc/messages'
+import type { UserProvider as Base } from '$base/server'
 
 const logger = Logger.child({ label: 'user' })
 
@@ -19,7 +21,18 @@ const drizzle = useDrizzle(schema)
 export class UserProvider extends BanchoPyUser implements Base<Id> {
   drizzle = drizzle
   logger = logger
-  usernamePattern = /^.{2,15}[^.]$/
+  usernamePatterns = [
+    {
+      type: FilterType.BlockIfNotMatched,
+      match: /^.{2,15}[^.]$/,
+      reason: 'required length between 3 and 14',
+    },
+    {
+      type: FilterType.BlockIfMatched,
+      match: controlChars,
+      reason: 'disallow Unicode Control characters',
+    },
+  ]
 
   async changeSettings(
     user: { id: Id },
