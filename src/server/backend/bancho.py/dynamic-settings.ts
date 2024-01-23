@@ -9,7 +9,7 @@ export const settings = {
     store: DynamicSettingStore.Server,
     label: 'api-key',
     type: 'input',
-    disabled: true,
+    readonly: true,
     validator: string().optional(),
     locale: {
       [Lang.enGB]: {
