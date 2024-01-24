@@ -1,4 +1,4 @@
-import type { BeatmapSource, BeatmapWithMeta, RankingStatus } from './beatmap'
+import type { BeatmapWithMeta, RankingStatus } from './beatmap'
 import type {
   ActiveMode,
   ActiveRuleset,
@@ -83,12 +83,11 @@ export type RulesetScore<
   M extends ActiveMode,
   Ruleset extends ActiveRuleset,
   PPRank extends PPRankingSystem = never,
-  BMSrc extends BeatmapSource = BeatmapSource,
   Status extends RankingStatus = RankingStatus,
 > = ScoreCompact<ScoreId, M> & {
   mode: M
   ruleset: Ruleset
-  beatmap: BeatmapWithMeta<BMSrc, Status, BeatmapId, unknown>
+  beatmap: BeatmapWithMeta<Status, BeatmapId, unknown>
   scoreRank?: number
 } & Record<
     PPRankingSystem & PPRank,
@@ -100,13 +99,12 @@ export type RulesetScore<
 
 export interface RankingSystemScore<
   ScoreId,
-  BeatmapId,
-  M extends ActiveMode,
+  Id,
+ M extends ActiveMode,
   PPRank extends LeaderboardRankingSystem = never,
-  BMSrc extends BeatmapSource = BeatmapSource,
   BMStatus extends RankingStatus = RankingStatus,
 > extends ScoreCompact<ScoreId, M> {
   pp: PPRank extends PPRankingSystem ? number : never
   rank?: number
-  beatmap: BeatmapWithMeta<BMSrc, BMStatus, BeatmapId, unknown>
+  beatmap: BeatmapWithMeta<BMStatus, Id, Id>
 }

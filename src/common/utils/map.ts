@@ -1,14 +1,12 @@
 import {
-  type BeatmapSource,
   type BeatmapWithMeta,
   type NormalBeatmapWithMeta,
   RankingStatus,
 } from '~/def/beatmap'
 
-export function beatmapIsVisible<T extends RankingStatus, K extends BeatmapWithMeta<BeatmapSource, T, any, any>>(
+export function beatmapIsVisible<T extends RankingStatus, K extends BeatmapWithMeta<T, any, any>>(
   beatmap: K,
 ): beatmap is K & NormalBeatmapWithMeta<
-  BeatmapSource,
   Exclude<T, RankingStatus.NotFound | RankingStatus.Deleted>,
   any,
   any

@@ -1,17 +1,20 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
 import {
+  type Mode,
   leaderboardRankingSystems,
   leaderboardScoreRankingSystems,
   modes,
   rulesets,
 } from '~/def'
+import type { RankingStatus } from '~/def/beatmap'
 import type {
   LeaderboardRankingSystem,
   LeaderboardScoreRankingSystem,
   PPRankingSystem,
   ScoreRankingSystem,
 } from '~/def/common'
+import type { RankingSystemScore } from '~/def/score'
 import userpageStore from '~/store/userpage'
 
 const app = useNuxtApp()
@@ -60,14 +63,18 @@ const {
       },
     }
   }
+  const val = await app.$client.user.tops.query({
+    handle: page.user.id,
+    mode: page.switcher.mode,
+    ruleset: page.switcher.ruleset,
+    rankingSystem: page.switcher.rankingSystem as PPRankingSystem,
+    page: topPage.value,
+  }) as {
+    count: number
+    scores: RankingSystemScore<string, string, Mode, LeaderboardRankingSystem, RankingStatus>[]
+  }
   return {
-    ...(await app.$client.user.tops.query({
-      handle: page.user.id,
-      mode: page.switcher.mode,
-      ruleset: page.switcher.ruleset,
-      rankingSystem: page.switcher.rankingSystem as PPRankingSystem,
-      page: topPage.value,
-    })),
+    ...val,
 
     page: topPage.value,
     handle: page.user.id,

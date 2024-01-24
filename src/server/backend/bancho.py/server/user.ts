@@ -8,7 +8,7 @@ import { glob } from 'glob'
 import { TRPCError } from '@trpc/server'
 import { Prisma } from 'prisma-client-bancho-py'
 import { type QueryError } from 'mysql2'
-import type { Id } from '..'
+import type { Id, ScoreId } from '..'
 import { getLiveUserStatus } from '../api-client'
 import { normal } from '../constants'
 import { compareBanchoPassword, encryptBanchoPassword } from '../crypto'
@@ -42,7 +42,6 @@ import {
 } from '../transforms'
 import * as schema from '../drizzle/schema'
 import { ArticleProvider } from './article'
-import { ScoreProvider } from './score'
 import { prismaClient } from './source/prisma'
 import { client as redisClient } from './source/redis'
 import { UserRelationProvider } from './user-relations'
@@ -54,6 +53,7 @@ import type { ActiveMode, ActiveRuleset, LeaderboardRankingSystem } from '~/def/
 import { Mode, Rank, Ruleset } from '~/def'
 import { UserProvider as Base } from '$base/server'
 import type { ExtractLocationSettings, ExtractSettingType } from '$base/@define-setting'
+import { type RankingSystemScore } from '~/def/score'
 
 type ServerSetting = ExtractSettingType<ExtractLocationSettings<DynamicSettingStore.Server, typeof settings>>
 
@@ -95,7 +95,7 @@ export const enum FilterType {
   BlockIfMatched,
 }
 
-class DBUserProvider extends Base<Id> implements Base<Id> {
+class DBUserProvider extends Base<Id, ScoreId> implements Base<Id, ScoreId> {
   static stringToId = stringToId
   static idToString = idToString
   /**
@@ -215,7 +215,7 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
     page,
     perPage,
     rankingStatus,
-  }: Base.BaseQuery<Id, M, ActiveRuleset, RS>) {
+  }: Base.BaseQuery<Id, M, ActiveRuleset, RS>): Promise<RankingSystemScore<ScoreId, Id, Mode, RS>[]> {
     const start = page * perPage
     const _mode = toBanchoPyMode(mode, ruleset)
     if (_mode === undefined) {
@@ -352,9 +352,7 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
 
     return {
       count,
-      scores: toRankingSystemScores({ scores, rankingSystem, mode }).map(
-        score => mapId(score, ScoreProvider.scoreIdToString),
-      ),
+      scores: toRankingSystemScores({ scores, rankingSystem, mode }),
     }
   }
 
@@ -426,7 +424,7 @@ class DBUserProvider extends Base<Id> implements Base<Id> {
       },
     })
 
-    const returnValue = toFullUser(user, this.config) as NonNullable<Awaited<ReturnType<Base<Id>['getFull']>>>
+    const returnValue = toFullUser(user, this.config) as NonNullable<Awaited<ReturnType<Base<Id, ScoreId>['getFull']>>>
     const [mode, ruleset] = fromBanchoPyMode(user.preferredMode)
     returnValue.preferredMode = {
       mode, ruleset,

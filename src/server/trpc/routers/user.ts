@@ -13,9 +13,12 @@ import {
   zodRuleset,
 } from '../shapes'
 import { router as _router, publicProcedure as p } from '../trpc'
-import { MapProvider, UserProvider, sessions, userRelations, users } from '~/server/singleton/service'
+import { MapProvider, ScoreProvider, UserProvider, sessions, userRelations, users } from '~/server/singleton/service'
 import { Scope, UserRole } from '~/def/user'
 import { RankingStatus } from '~/def/beatmap'
+import { type RankingSystemScore } from '~/def/score'
+import { type Mode } from '~/def'
+import { type LeaderboardRankingSystem } from '~/def/common'
 
 export const router = _router({
   exists: p
@@ -45,7 +48,7 @@ export const router = _router({
       if (!user.roles.includes(UserRole.Normal) && !isSelf && ctx.user?.roles.includes(UserRole.Staff)) {
         throw new TRPCError({ code: 'NOT_FOUND', message: userNotFound })
       }
-      delete (user as any).secrets
+      delete (user as any).secrets // make sure nothing will be sent to client
       return mapId(user, UserProvider.idToString)
     }),
   best: optionalUserProcedure
@@ -93,14 +96,18 @@ export const router = _router({
       }
       // return mapId(returnValue, ScoreProvider.scoreIdToString)
       return returnValue.map(v => ({
-        ...v,
+        ...mapId(v, ScoreProvider.scoreIdToString),
         beatmap: beatmapIsVisible(v.beatmap)
           ? {
-              ...mapId(v.beatmap, MapProvider.idToString),
-              beatmapset: mapId(v.beatmap.beatmapset, MapProvider.idToString),
+              ...isLocalMapOrMapset(v.beatmap)
+                ? mapId(v.beatmap, MapProvider.idToString)
+                : mapId(v.beatmap, MapProvider.idToString, ['id', 'foreignId']),
+              beatmapset: isLocalMapOrMapset(v.beatmap.beatmapset)
+                ? mapId(v.beatmap.beatmapset, MapProvider.idToString)
+                : mapId(v.beatmap.beatmapset, MapProvider.idToString, ['id', 'foreignId']),
             }
           : v.beatmap,
-      }))
+      })) as RankingSystemScore<string, string, Mode, LeaderboardRankingSystem, RankingStatus>[]
     }),
   tops: optionalUserProcedure
     .input(
@@ -147,16 +154,20 @@ export const router = _router({
         throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' })
       }
       return {
-        ...returnValue,
+        count: returnValue.count,
         scores: returnValue.scores.map(v => ({
-          ...v,
+          ...mapId(v, ScoreProvider.scoreIdToString),
           beatmap: beatmapIsVisible(v.beatmap)
             ? {
-                ...mapId(v.beatmap, MapProvider.idToString),
-                beatmapset: mapId(v.beatmap.beatmapset, MapProvider.idToString),
+                ...isLocalMapOrMapset(v.beatmap)
+                  ? mapId(v.beatmap, MapProvider.idToString)
+                  : mapId(v.beatmap, MapProvider.idToString, ['id', 'foreignId']),
+                beatmapset: isLocalMapOrMapset(v.beatmap.beatmapset)
+                  ? mapId(v.beatmap.beatmapset, MapProvider.idToString)
+                  : mapId(v.beatmap.beatmapset, MapProvider.idToString, ['id', 'foreignId']),
               }
             : v.beatmap,
-        })),
+        })) as RankingSystemScore<string, string, Mode, LeaderboardRankingSystem, RankingStatus>[],
       }
     }),
   essential: p

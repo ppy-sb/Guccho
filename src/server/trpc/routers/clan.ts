@@ -2,7 +2,7 @@ import { nativeEnum, number, object, string } from 'zod'
 import { zodLeaderboardRankingSystem } from '../shapes'
 import { router as _router, publicProcedure as p } from '../trpc'
 import { userProcedure } from './../middleware/user'
-import type { AbnormalStatus, BeatmapSource, Beatmapset, NormalBeatmapWithMeta, RankingStatus } from '~/def/beatmap'
+import { type AbnormalStatus, type LocalBeatmapset, type NormalBeatmapWithMeta, type RankingStatus, type ReferencedBeatmapset } from '~/def/beatmap'
 import { type LeaderboardRankingSystem } from '~/def/common'
 import { Mode, Ruleset } from '~/def'
 import { Paginated, type PaginatedResult } from '~/def/pagination'
@@ -64,16 +64,18 @@ export const router = _router({
     return [
       res[Paginated.Count],
       res[Paginated.Data].map((item) => {
-        const bm = item.score.beatmap satisfies NormalBeatmapWithMeta<BeatmapSource, Exclude<RankingStatus, AbnormalStatus>, any, any> as NormalBeatmapWithMeta<BeatmapSource, Exclude<RankingStatus, AbnormalStatus>, any, any>
+        const bm = item.score.beatmap satisfies NormalBeatmapWithMeta<Exclude<RankingStatus, AbnormalStatus>, any, any> as NormalBeatmapWithMeta<Exclude<RankingStatus, AbnormalStatus>, any, any>
         return {
           user: mapId(item.user, UserProvider.idToString),
           score: {
             ...mapId(item.score, ScoreProvider.scoreIdToString),
             beatmap: {
               ...bm,
-              beatmapset: mapId(bm.beatmapset, MapProvider.idToString, ['id', 'foreignId']) satisfies Beatmapset<BeatmapSource, string, string>,
+              beatmapset: (isLocalMapOrMapset(bm)
+                ? (mapId(bm.beatmapset, MapProvider.idToString, ['id']) satisfies LocalBeatmapset<string> as LocalBeatmapset<string>)
+                : (mapId(bm.beatmapset, MapProvider.idToString, ['id', 'foreignId']) satisfies ReferencedBeatmapset<string, string> as ReferencedBeatmapset<string, string>)),
               status: bm.status,
-            } satisfies NormalBeatmapWithMeta<BeatmapSource, Exclude<RankingStatus, AbnormalStatus>, string, string> as NormalBeatmapWithMeta<BeatmapSource, Exclude<RankingStatus, AbnormalStatus>, string, string>,
+            } as NormalBeatmapWithMeta<Exclude<RankingStatus, AbnormalStatus>, string, string>,
           },
         }
       }),

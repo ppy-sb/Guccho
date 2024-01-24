@@ -1,17 +1,20 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
 import {
+  type Mode,
   leaderboardRankingSystems,
   leaderboardScoreRankingSystems,
   modes,
   rulesets,
 } from '~/def'
+import type { RankingStatus } from '~/def/beatmap'
 import type {
   LeaderboardRankingSystem,
   LeaderboardScoreRankingSystem,
   PPRankingSystem,
   ScoreRankingSystem,
 } from '~/def/common'
+import type { RankingSystemScore } from '~/def/score'
 import userpageStore from '~/store/userpage'
 
 const app = useNuxtApp()
@@ -64,7 +67,7 @@ const {
       ruleset: page.switcher.ruleset,
       rankingSystem: page.switcher.rankingSystem,
       page: bpPage.value,
-    }),
+    }) as RankingSystemScore<string, string, Mode, LeaderboardRankingSystem, RankingStatus>[],
     page: bpPage.value,
     handle: page.user.id,
     lastSwitcherStatus: {

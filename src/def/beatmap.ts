@@ -29,7 +29,15 @@ export type AbnormalStatus =
   | RankingStatus.Deleted
   | RankingStatus.NotFound
 
-export interface Beatmapset<Source extends BeatmapSource, LocalId, ForeignId> {
+export interface haveLocalId<LocalId> {
+  id: LocalId
+}
+export interface haveForeignId<ForeignId> {
+  foreignId: ForeignId
+}
+
+export interface BaseBeatmapset<LocalId> extends haveLocalId<LocalId> {
+  source: BeatmapSource
   meta: {
     // unicode
     artist?: string
@@ -41,9 +49,6 @@ export interface Beatmapset<Source extends BeatmapSource, LocalId, ForeignId> {
       title: string
     }
   }
-  id: LocalId
-  source: Source
-  foreignId: Source extends Foreign ? ForeignId : never
   assets: {
     cover?: string
     'cover@2x'?: string
@@ -51,9 +56,20 @@ export interface Beatmapset<Source extends BeatmapSource, LocalId, ForeignId> {
     'list@2x'?: string
   }
 }
-export interface BeatmapCompact<Id, ForeignId = never> {
-  id: Id
+export interface LocalBeatmapset<LocalId> extends BaseBeatmapset<LocalId> {
+  source: Local
+}
+
+export interface ReferencedBeatmapset<LocalId, ForeignId> extends BaseBeatmapset<LocalId> {
+  source: Foreign
   foreignId: ForeignId
+}
+
+export type Beatmapset<LocalId, ForeignId> =
+  | ReferencedBeatmapset<LocalId, ForeignId>
+  | LocalBeatmapset<LocalId>
+
+export interface BaseBeatmapCompact {
   properties: {
     bpm: number
     // CS
@@ -80,8 +96,17 @@ export interface BeatmapCompact<Id, ForeignId = never> {
   creator: string
   lastUpdate: Date
 }
+export interface LocalBeatmapCompact<Id> extends haveLocalId<Id>, BaseBeatmapCompact {
+  source: Local
+}
+export interface ReferencedBeatmapCompact<Id, ForeignId> extends BaseBeatmapCompact, haveLocalId<Id>, haveForeignId<ForeignId> {
+  source: Foreign
+}
+export type BeatmapCompact<Id, ForeignId> =
+| LocalBeatmapCompact<Id>
+| ReferencedBeatmapCompact<Id, ForeignId>
+
 export type BeatmapWithMeta<
-  Source extends BeatmapSource,
   Status extends RankingStatus,
   LocalId,
   ForeignId,
@@ -89,18 +114,20 @@ export type BeatmapWithMeta<
   | {
     status: AbnormalStatus
   }
-  | NormalBeatmapWithMeta<Source, Status, LocalId, ForeignId>
+  | NormalBeatmapWithMeta<Exclude<Status, AbnormalStatus>, LocalId, ForeignId>
 
 export type NormalBeatmapWithMeta<
-  Source extends BeatmapSource,
-  Status extends RankingStatus,
+  Status extends Exclude<RankingStatus, AbnormalStatus>,
   LocalId,
   ForeignId,
-> = BeatmapCompact<
-  LocalId,
-  Source extends Unknown ? never : ForeignId
-> & {
-  status: Exclude<Status, AbnormalStatus>
-  source?: Source
-  beatmapset: Beatmapset<Source, LocalId, ForeignId>
-}
+> =
+  | (ReferencedBeatmapCompact<LocalId, ForeignId> & {
+    beatmapset: ReferencedBeatmapset<LocalId, ForeignId>
+    source: Foreign
+    status: Status
+  })
+  | (LocalBeatmapCompact<LocalId> & {
+    beatmapset: LocalBeatmapset<LocalId>
+    source: Local | Unknown
+    status: Status
+  })

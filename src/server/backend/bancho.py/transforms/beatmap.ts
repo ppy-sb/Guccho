@@ -11,7 +11,7 @@ import type { Id } from '..'
 import { BanchoPyRankedStatus } from '../enums'
 import type * as schema from '../drizzle/schema'
 import { fromBanchoMode } from '.'
-import { type BeatmapCompact, BeatmapSource, type Beatmapset, RankingStatus } from '~/def/beatmap'
+import { type BaseBeatmapCompact, type BaseBeatmapset, BeatmapSource, type BeatmapWithMeta, type Foreign, type Local, type LocalBeatmapCompact, type LocalBeatmapset, RankingStatus, type ReferencedBeatmapCompact, type ReferencedBeatmapset, type Unknown } from '~/def/beatmap'
 import { StableMod } from '~/def/score'
 
 function createBanchoAssets(beatmapset: { id: unknown }) {
@@ -33,16 +33,27 @@ function createMeta(beatmap: { artist: string; title: string }) {
     },
   }
 }
-function toBeatmapsetReal<T>(beatmapset: { id: T }, luckyOneBeatmapInBeatmapset: { artist: string; title: string }, source: BeatmapSource) {
+function toBeatmapsetReal<IdType, Source extends BeatmapSource>(beatmapset: { id: IdType }, luckyOneBeatmapInBeatmapset: { artist: string; title: string }, source: Source) {
   const isBancho = source === BeatmapSource.Bancho
-  const rest: Beatmapset<BeatmapSource, typeof beatmapset['id'], typeof beatmapset['id']> = {
+  const base: BaseBeatmapset<IdType> = {
     id: beatmapset.id,
-    foreignId: beatmapset.id,
     source,
     meta: createMeta(luckyOneBeatmapInBeatmapset),
     assets: isBancho ? createBanchoAssets(beatmapset) : {},
   }
-  return rest
+  if (source === BeatmapSource.Bancho || source === BeatmapSource.PrivateServer) {
+    (base as ReferencedBeatmapset<IdType, IdType>).foreignId = beatmapset.id
+    return (base as ReferencedBeatmapset<IdType, IdType>)
+  }
+  return base as LocalBeatmapset<IdType>
+}
+
+export function toBeatmapSourcePrisma(source: Source['server']) {
+  return source === 'bancho'
+    ? BeatmapSource.Bancho
+    : source === 'privateServer'
+      ? BeatmapSource.PrivateServer
+      : BeatmapSource.Unknown
 }
 /**
  * @deprecated Prisma will be replaced by drizzle
@@ -51,26 +62,27 @@ export function toBeatmapsetPrisma(beatmapset: Source, luckyOneBeatmapInBeatmaps
   return toBeatmapsetReal(
     beatmapset,
     luckyOneBeatmapInBeatmapset,
-    beatmapset.server === 'bancho'
-      ? BeatmapSource.Bancho
-      : beatmapset.server === 'privateServer'
-        ? BeatmapSource.PrivateServer
-        : BeatmapSource.Unknown
+    toBeatmapSourcePrisma(beatmapset.server)
   )
+}
+export function toBeatmapSource(source: 'osu!' | 'private') {
+  return source === 'osu!'
+    ? BeatmapSource.Bancho
+    : source === 'private'
+      ? BeatmapSource.PrivateServer
+      : BeatmapSource.Unknown
 }
 export function toBeatmapset<T>(beatmapset: { id: T; server: 'osu!' | 'private' }, luckyOneBeatmapInBeatmapset: { artist: string; title: string }) {
   return toBeatmapsetReal(
     beatmapset,
     luckyOneBeatmapInBeatmapset,
-    beatmapset.server === 'osu!'
-      ? BeatmapSource.Bancho
-      : beatmapset.server === 'private'
-        ? BeatmapSource.PrivateServer
-        : BeatmapSource.Unknown
+    toBeatmapSource(beatmapset.server)
   )
 }
-
-export function toBeatmapCompact(beatmap: {
+function isForeign(source: BeatmapSource): source is Foreign {
+  return (source === BeatmapSource.PrivateServer || source === BeatmapSource.Bancho)
+}
+export function toBeatmapCompact<Source extends BeatmapSource>(beatmap: {
   id: number
   // setId: number
   // status: number
@@ -93,10 +105,8 @@ export function toBeatmapCompact(beatmap: {
   od: number
   hp: number
   diff: number
-}): BeatmapCompact<Id, Id> {
-  return {
-    id: beatmap.id,
-    foreignId: beatmap.id,
+}, source: Source) {
+  const baseBeatmap: BaseBeatmapCompact = {
     version: beatmap.version,
     md5: beatmap.md5,
     creator: beatmap.creator,
@@ -120,7 +130,21 @@ export function toBeatmapCompact(beatmap: {
       },
     },
   }
+  return isForeign(source)
+    ? <ReferencedBeatmapCompact<Id, Id>>{
+      ...baseBeatmap,
+      id: beatmap.id,
+      foreignId: beatmap.id,
+      source: source as Foreign,
+    }
+    : <LocalBeatmapCompact<Id>>{
+      ...baseBeatmap,
+      source: source as Local | Unknown,
+      id: beatmap.id,
+    }
 }
+
+// toGucchoBeatmapSource(input: )
 
 /**
  * @deprecated Prisma will be replaced by drizzle
@@ -132,7 +156,7 @@ export function toBeatmapWithBeatmapsetPrisma(
 ) {
   const status = toRankingStatus(beatmap.status) || RankingStatus.WIP
   const beatmapset = toBeatmapsetPrisma(beatmap.source, beatmap)
-  return Object.assign(toBeatmapCompact(beatmap), {
+  return Object.assign(toBeatmapCompact(beatmap, BeatmapSource.Bancho), {
     status,
     beatmapset,
   })
@@ -142,13 +166,23 @@ export function toBeatmapWithBeatmapset(
   beatmap: typeof schema['beatmaps']['$inferSelect'] & {
     source: typeof schema['sources']['$inferSelect']
   },
-) {
+): BeatmapWithMeta<RankingStatus, typeof schema['beatmaps']['$inferSelect']['id'], typeof schema['beatmaps']['$inferSelect']['id']> {
   const status = toRankingStatus(beatmap.status) || RankingStatus.WIP
+  if (status === RankingStatus.Deleted || status === RankingStatus.NotFound) {
+    return {
+      status,
+    }
+  }
   const beatmapset = toBeatmapset(beatmap.source, beatmap)
-  return Object.assign(toBeatmapCompact(beatmap), {
-    status,
-    beatmapset,
-  })
+  return Object.assign(
+    toBeatmapCompact(beatmap, toBeatmapSource(beatmap.source.server)),
+    {
+      status,
+      beatmapset,
+    }
+  ) as
+    | (ReferencedBeatmapCompact<Id, Id> & { status: typeof status; beatmapset: ReferencedBeatmapset<Id, Id> })
+    | (LocalBeatmapCompact<Id> & { status: typeof status; beatmapset: LocalBeatmapset<Id> })
 }
 export type AbleToTransformToScores = InferSelectModel<typeof schema['scores']> & {
   beatmap: InferSelectModel<typeof schema['beatmaps']> & {

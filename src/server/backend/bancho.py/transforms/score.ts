@@ -9,7 +9,7 @@ import {
   toMods,
 } from '.'
 import { Rank } from '~/def'
-import { type BeatmapSource, RankingStatus } from '~/def/beatmap'
+import { RankingStatus } from '~/def/beatmap'
 import type {
   ActiveMode,
   ActiveRuleset,
@@ -53,9 +53,6 @@ export function toPrismaScore<M extends ActiveMode, RS extends PPRankingSystem>(
     ActiveMode,
     ActiveRuleset,
     RS,
-    (typeof score)['beatmap'] extends null
-      ? BeatmapSource.Unknown
-      : BeatmapSource.Bancho | BeatmapSource.PrivateServer | BeatmapSource.Unknown,
     (typeof score)['beatmap'] extends null ? RankingStatus.NotFound : RankingStatus
   >
   return rtn1
@@ -95,9 +92,6 @@ export function toScore<M extends ActiveMode, RS extends PPRankingSystem>({
     ActiveMode,
     ActiveRuleset,
     RS,
-    (typeof score)['beatmap'] extends null
-      ? BeatmapSource.Unknown
-      : BeatmapSource.Bancho | BeatmapSource.PrivateServer | BeatmapSource.Unknown,
     (typeof score)['beatmap'] extends null ? RankingStatus.NotFound : RankingStatus
   >
   return rtn1
@@ -147,7 +141,6 @@ export function prismaToRankingSystemScore<
     Id,
     M,
     RS,
-    HasBeatmap extends null ? BeatmapSource.Unknown : BeatmapSource.Bancho | BeatmapSource.PrivateServer,
     HasBeatmap extends null ? RankingStatus.NotFound : Exclude<RankingStatus, RankingStatus.NotFound>
   >
   return result
@@ -196,7 +189,6 @@ export function toRankingSystemScore<
     Id,
     M,
     RS,
-    HasBeatmap extends null ? BeatmapSource.Unknown : BeatmapSource.Bancho | BeatmapSource.PrivateServer,
     HasBeatmap extends null ? RankingStatus.NotFound : Exclude<RankingStatus, RankingStatus.NotFound>
   >
   return result

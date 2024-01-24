@@ -3,7 +3,7 @@ import type { Composition } from './@common'
 import { IdTransformable } from './@extends'
 import type { UserProvider } from './user'
 import type { Mode, Rank, Ruleset } from '~/def'
-import type { AbnormalStatus, BeatmapSource, NormalBeatmapWithMeta, RankingStatus } from '~/def/beatmap'
+import type { AbnormalStatus, NormalBeatmapWithMeta, RankingStatus } from '~/def/beatmap'
 import type { ClanRelation } from '~/def/clan'
 import type { LeaderboardRankingSystem } from '~/def/common'
 import type { PaginatedResult } from '~/def/pagination'
@@ -65,10 +65,9 @@ export namespace ClanProvider {
         Id,
         Mode,
         LeaderboardRankingSystem,
-        BeatmapSource.Bancho,
         Exclude<RankingStatus, AbnormalStatus | RankingStatus.Unknown>
       > & {
-      beatmap: NormalBeatmapWithMeta<BeatmapSource.Bancho, Exclude<RankingStatus, AbnormalStatus | RankingStatus.Unknown>, Id, Id>
+      beatmap: NormalBeatmapWithMeta<Exclude<RankingStatus, AbnormalStatus | RankingStatus.Unknown>, Id, Id>
     }
   }>
 }

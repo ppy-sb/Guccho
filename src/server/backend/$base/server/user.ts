@@ -46,7 +46,7 @@ export namespace UserProvider {
 
   export type UserCompact<Id> = UserCompact$2<Id>
 }
-export abstract class UserProvider<Id> extends IdTransformable {
+export abstract class UserProvider<Id, ScoreId> extends IdTransformable {
   abstract exists({ handle, keys }: UserProvider.OptType): PromiseLike<boolean>
 
   abstract getCompact(
@@ -55,7 +55,7 @@ export abstract class UserProvider<Id> extends IdTransformable {
 
   abstract testPassword(
     opt: UserProvider.OptType & { scope: Scope },
-    hashedPassowrd: string,
+    hashedPassword: string,
   ): Promise<[boolean, UserCompact<Id> | undefined]>
 
   abstract getCompactById(opt: {
@@ -187,7 +187,7 @@ export abstract class UserProvider<Id> extends IdTransformable {
     Mode extends ActiveMode,
     Ruleset extends ActiveRuleset,
     RankingSystem extends LeaderboardRankingSystem,
-  >(query: UserProvider.BaseQuery<Id, Mode, Ruleset, RankingSystem>): PromiseLike<RankingSystemScore<string, Id, Mode, RankingSystem>[]>
+  >(query: UserProvider.BaseQuery<Id, Mode, Ruleset, RankingSystem>): PromiseLike<RankingSystemScore<ScoreId, Id, Mode, RankingSystem>[]>
 
   abstract getTops<
     Mode extends ActiveMode,
@@ -195,6 +195,6 @@ export abstract class UserProvider<Id> extends IdTransformable {
     RankingSystem extends LeaderboardRankingSystem,
   >(query: UserProvider.BaseQuery<Id, Mode, Ruleset, RankingSystem>): PromiseLike<{
     count: number
-    scores: RankingSystemScore<string, Id, Mode, RankingSystem>[]
+    scores: RankingSystemScore<ScoreId, Id, Mode, RankingSystem>[]
   }>
 }

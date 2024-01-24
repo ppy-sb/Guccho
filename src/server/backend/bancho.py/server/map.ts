@@ -9,18 +9,19 @@ import {
   idToString,
   stringToId,
   toBeatmapCompact,
+  toBeatmapSource,
   toBeatmapWithBeatmapset, toBeatmapset, toRankingStatus,
 } from '../transforms'
 import * as schema from '../drizzle/schema'
 import { useDrizzle } from './source/drizzle'
 import { toBanchoMode } from '~/server/backend/bancho.py/transforms'
 import type { Tag } from '~/def/search'
-import { type BeatmapSource, type Beatmapset, RankingStatus } from '~/def/beatmap'
+import { type AbnormalStatus, type Beatmapset, RankingStatus } from '~/def/beatmap'
 import type { MapProvider as Base } from '$base/server'
 
 const drizzle = useDrizzle(schema)
 
-export class MapProvider implements Base<Id> {
+export class MapProvider implements Base<Id, Id> {
   static idToString = idToString
   static stringToId = stringToId
 
@@ -58,10 +59,10 @@ export class MapProvider implements Base<Id> {
 
     return Object.assign(beatmapset, {
       beatmaps: source.beatmaps.map(bm => ({
-        ...toBeatmapCompact(bm),
+        ...toBeatmapCompact(bm, toBeatmapSource(source.server)),
         status: toRankingStatus(bm.status) || RankingStatus.NotFound,
-      })),
-    })
+      })) as Base.BeatmapsetWithMaps<Id, Id>['beatmaps'],
+    }) as Base.BeatmapsetWithMaps<Id, Id>
   }
 
   private MAP = {
@@ -122,7 +123,13 @@ export class MapProvider implements Base<Id> {
       limit,
     })
 
-    return (await sql).map(toBeatmapWithBeatmapset).filter(TSFilter)
+    const result = (await sql)
+      .map(toBeatmapWithBeatmapset)
+      .filter(
+        (item): item is typeof item & { status: Exclude<RankingStatus, AbnormalStatus> } =>
+          item.status !== RankingStatus.NotFound && item.status !== RankingStatus.Deleted
+      )
+    return result
   }
 
   async searchBeatmapset({
@@ -133,7 +140,7 @@ export class MapProvider implements Base<Id> {
     keyword: string
     limit: number
     filters?: Tag[]
-  }): Promise<Beatmapset<BeatmapSource, number, unknown>[]> {
+  }): Promise<Beatmapset<number, unknown>[]> {
     const idKw = stringToId(keyword)
     const sql = this.drizzle.select({
       id: schema.sources.id,

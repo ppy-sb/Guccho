@@ -1,6 +1,6 @@
-import type { BeatmapSource, Beatmapset } from '~/def/beatmap'
+import type { Beatmapset } from '~/def/beatmap'
 
-type AnyBeatmapset = Beatmapset<BeatmapSource, any, any>
+type AnyBeatmapset = Beatmapset<any, any>
 // type BanchoBeatmapset = Beatmapset<'bancho', any, any>
 export interface Label {
   label: string

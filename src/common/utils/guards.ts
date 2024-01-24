@@ -1,12 +1,12 @@
-import { BeatmapSource, type Beatmapset } from '~/def/beatmap'
+import { BeatmapSource, type Beatmapset, type ReferencedBeatmapset } from '~/def/beatmap'
 
 export function isString(input: unknown): input is string {
   return typeof input === 'string'
 }
 
 export function isBanchoBeatmapset(
-  test: Beatmapset<BeatmapSource, any, unknown>,
-): test is Beatmapset<BeatmapSource.Bancho, any, string | number> {
+  test: Beatmapset<any, unknown>,
+): test is ReferencedBeatmapset<any, string | number> & { source: BeatmapSource.Bancho } {
   return test.source === BeatmapSource.Bancho
 }
 

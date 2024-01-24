@@ -1,6 +1,6 @@
 import { TRPCError } from '@trpc/server'
 import { and, eq, or, sql } from 'drizzle-orm'
-import type { Id } from '../..'
+import type { Id, ScoreId } from '../..'
 import { useDrizzle, userPriv } from '../../../bancho.py/server/source/drizzle'
 import { FilterType } from '../../../bancho.py/server/user'
 import * as schema from '../../drizzle/schema'
@@ -18,7 +18,7 @@ const logger = Logger.child({ label: 'user' })
 
 const drizzle = useDrizzle(schema)
 
-export class UserProvider extends BanchoPyUser implements Base<Id> {
+export class UserProvider extends BanchoPyUser implements Base<Id, ScoreId> {
   drizzle = drizzle
   logger = logger
   usernamePatterns = [

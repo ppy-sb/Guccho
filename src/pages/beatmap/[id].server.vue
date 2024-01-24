@@ -3,10 +3,13 @@
 const { id } = useRoute().params as { id: string | string[] }
 const { t } = useI18n()
 if (!id || Array.isArray(id)) {
-  createError(t('err-id-invalid'))
+  throw createError(t('err-id-invalid'))
 }
 const client = useNuxtApp()
-const bm = await client.$client.map.beatmap.query(id as string)
+const bm = await client.$client.map.beatmap.query(id)
+if (!beatmapIsVisible(bm)) {
+  throw createError('beatmap not found')
+}
 navigateTo({
   name: 'beatmapset-id',
   params: {

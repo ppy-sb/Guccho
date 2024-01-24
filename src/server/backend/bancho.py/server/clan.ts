@@ -8,7 +8,7 @@ import { Logger } from '../log'
 import { assertIsBanchoPyMode, fromBanchoPyMode, idToString, stringToId, toBanchoPyMode, toRankingSystemScore, toUserAvatarSrc, toUserCompact } from '../transforms'
 import { BanchoPyScoreStatus, ClanPrivilege as BanchopyClanPrivilege } from './../enums'
 import { useDrizzle, userPriv } from './source/drizzle'
-import { type AbnormalStatus, type BeatmapSource, type NormalBeatmapWithMeta, type RankingStatus } from '~/def/beatmap'
+import { type AbnormalStatus, type NormalBeatmapWithMeta, type RankingStatus } from '~/def/beatmap'
 import { ClanProvider as Base } from '$base/server'
 import { type Mode, Rank } from '~/def'
 import { ClanRelation } from '~/def/clan'
@@ -352,10 +352,9 @@ export class ClanProvider extends Base<Id> {
         Id,
         Mode,
         LeaderboardRankingSystem,
-        BeatmapSource.Bancho,
         Exclude<RankingStatus, AbnormalStatus | RankingStatus.Unknown>
       > & {
-        beatmap: NormalBeatmapWithMeta<BeatmapSource.Bancho, Exclude<RankingStatus, AbnormalStatus | RankingStatus.Unknown>, Id, Id>
+        beatmap: NormalBeatmapWithMeta<Exclude<RankingStatus, AbnormalStatus | RankingStatus.Unknown>, Id, Id>
       }
       return [res[0]?.count ?? 0, res.map((item, index) => {
         const [mode] = fromBanchoPyMode(item.score.mode)

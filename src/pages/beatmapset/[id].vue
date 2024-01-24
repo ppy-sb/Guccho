@@ -335,7 +335,10 @@ fr-FR:
                   {{ t('beatmapset.source-id') }}
                 </dt>
                 <dd class="flex items-center gap-1 striped-text">
-                  {{ BeatmapSource[beatmapset.source] }} | {{ selectedMap.foreignId }}
+                  {{ BeatmapSource[beatmapset.source] }}
+                  <template v-if="'foreignId' in selectedMap">
+                    | {{ selectedMap.foreignId }}
+                  </template>
                 </dd>
               </div>
               <div class="striped">
