@@ -111,7 +111,7 @@ fr-FR:
     idle: Connecté.
     afk: AFK
   edit: Changer
-  add-as-friend: Ajouter en amis
+  add-as-friend: Ajouter en ami(e)
   supporter: A généreusement supporté {server}!
   staff: 'Veille sur {server}'
 </i18n>
