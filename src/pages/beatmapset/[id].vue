@@ -192,8 +192,8 @@ zh-CN:
 fr-FR:
   beatmapset:
     placement: '{title} par {artist}'
-    external-links: Lien Externe
-    direct-downloads: Téléchargement Direct
+    external-links: Lien externe
+    direct-downloads: Téléchargement direct
     creator: Créateur
     status: Statut
     beatmap-id: Beatmap ID
