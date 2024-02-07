@@ -37,7 +37,7 @@ zh-CN:
   to-userpage: 用户页面
 
 fr-FR:
-  to-userpage: Vers le profil
+  to-userpage: Mon profil
 </i18n>
 
 <template>
