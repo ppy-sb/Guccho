@@ -8,7 +8,7 @@ en-GB:
 zh-CN:
   user-management: 用户管理
 fr-FR:
-  user-management: User Management
+  user-management: Gestion d'utilisateur
 </i18n>
 
 <template>
