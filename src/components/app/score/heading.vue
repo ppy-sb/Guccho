@@ -47,7 +47,7 @@ fr-FR:
   title: '{title} par {artist}'
   map: '{version} créé par {creator}'
   play: '{player} joué le {time}'
-  download-replay: Download replay
+  download-replay: Télécharger le replay
 </i18n>
 
 <template>
