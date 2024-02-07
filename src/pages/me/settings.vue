@@ -321,10 +321,10 @@ zh-CN:
     kick: 强制登出
 
 fr-FR:
-  reset: Retour Arrière
+  reset: Réinitialiser
 
   preferences: Préférences
-  username: Nom d'Utilisateur
+  username: Nom d'utilisateur
   safe-name: Lien
   email: Email
   flag: Drapeau
