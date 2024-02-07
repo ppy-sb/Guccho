@@ -200,22 +200,22 @@ zh-CN:
 fr-FR:
   beatmapset:
     placement: '{title} par {artist}'
-    external-links: External Links
-    direct-downloads: Direct downloads
-    creator: Creator
-    status: Status
+    external-links: Lien Externe
+    direct-downloads: Téléchargement Direct
+    creator: Créateur
+    status: Statut
     beatmap-id: Beatmap ID
     source-id: Source | ID
-    last-update: Last Update
-    star-rating: Star Rating
-    circle-size: Circle Size
-    approach-rate: Approach Rate
-    od: OD
-    hp-drain: HP Drain
-    duration: Duration
+    last-update: Dernière mise à jour
+    star-rating: Difficulté en étoiles
+    circle-size: Taille des cercles
+    approach-rate: Taux d'approche
+    od: Précision
+    hp-drain: Drain de santé
+    duration: Durée
     hit-objects: Hit Objects
     hit-object:
-      circles: circles
+      circles: cercles
       sliders: sliders
       spinners: spinners
 </i18n>
