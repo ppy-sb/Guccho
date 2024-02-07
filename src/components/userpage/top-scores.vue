@@ -177,7 +177,7 @@ zh-CN:
   loading: 正在加载排行榜
 
 fr-FR:
-  top: Meilleures Performances
+  top: Premières places
   loading: Chargement des Scores...
 </i18n>
 
