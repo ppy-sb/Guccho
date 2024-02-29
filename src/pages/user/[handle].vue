@@ -1,6 +1,8 @@
 <script setup async lang="ts">
 import { useIntersectionObserver } from '@vueuse/core'
+import { UserRole } from '~/def/user'
 import userpageStore from '~/store/userpage'
+import { useSession } from '~/store/session'
 
 definePageMeta({
   alias: [
@@ -15,6 +17,7 @@ const { t } = useI18n()
 const page = userpageStore()
 const h = useRequestURL()
 await page.init()
+const session = useSession()
 
 const switcherState = computed(() => `${page.switcher.mode} - ${page.switcher.ruleset} - ${page.switcher.rankingSystem}`)
 const userWithAppName = computed(() => `${page.user?.name} - ${app.$i18n.t('server.name')}`)
@@ -80,29 +83,36 @@ onMounted(() => {
 
 <i18n lang="yaml">
 en-GB:
-  error-occured: Oops...
+  error-occurred: Oops...
   unknown-error: something went wrong.
   back: bring me back
   retry: try again
+  banned: This account has been restricted.
+  self-banned: Your account has been restricted. Visibility of your profile is limited to you and {server}'s staff.
 
 zh-CN:
-  error-occured: 抱歉
+  error-occurred: 抱歉
   unknown-error: 出现了一些小问题。
   back: 返回之前的页面
   retry: 重新加载
+  banned: 该账号处于封禁状态。
+  self-banned: 你的账号处于封禁状态。你的个人资料只能由你和{server}的工作人员查看。
 
 fr-FR:
-  error-occured: Oups...
+  error-occurred: Oups...
   unknown-error: Une erreur est survenue.
   back: Revenir en arrière
   retry: Réessayez
+  # TODO: translated by gpt.
+  banned: Ce compte a été restreint.
+  self-banned: Votre compte a été restreint. La visibilité de votre profil est limitée à vous-même et au personnel de {server}.
 </i18n>
 
 <template>
   <section v-if="page.error" class="flex grow">
     <div class="flex flex-col items-center justify-center gap-3 m-auto">
       <h1 class="text-3xl">
-        {{ t('error-occured') }}
+        {{ t('error-occurred') }}
       </h1>
       <h2 v-if="page.error.message !== ''" class="text-2xl">
         {{ page.error.message }}
@@ -122,6 +132,13 @@ fr-FR:
   </section>
 
   <div v-else-if="page.user" ref="handle" class="flex flex-col justify-stretch">
+    <div v-if="page.user.roles.includes(UserRole.Restricted)" class="container mx-auto custom-container">
+      <div role="alert" class="alert alert-error">
+        <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+        <span v-if="page.user.id === session.user?.id">{{ t('self-banned', { server: t('server.name') }) }}</span>
+        <span v-else>{{ t('banned') }}</span>
+      </div>
+    </div>
     <userpage-heading id="heading" ref="heading" />
     <userpage-profile />
     <userpage-ranking-system-switcher class="z-10" />

@@ -184,15 +184,19 @@ export const router = _router({
 
       return mapId(user, UserProvider.idToString)
     }),
-  countRelations: p
+  countRelations: optionalUserProcedure
     .input(
       object({
         handle: zodHandle,
         type: zodRelationType,
       }),
     )
-    .query(async ({ input: { handle, type } }) => {
-      const user = await users.getCompact({ handle })
+    .query(async ({ input: { handle, type }, ctx }) => {
+      const user = await users.getCompact({ handle, scope: Scope.Self })
+
+      if (!visible(user, ctx.user)) {
+        raise(Error, 'user not found')
+      }
 
       const count = await userRelations.count({ user, type })
       return count

@@ -25,7 +25,8 @@ function createStyleObject(count: number) {
 </script>
 
 <template>
-  <VDropdown v-if="composition" :triggers="['hover', 'focus', 'click']">
+  <!-- https://github.com/Akryum/floating-vue/issues/1006#issuecomment-1882647191 -->
+  <VDropdown v-if="composition" :triggers="['hover', 'focus', 'click']" aria-id="score-composition">
     <div v-if="totalCount" class="relative">
       <div class="multi-progress-bar-container bg-emerald-200">
         <div
