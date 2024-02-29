@@ -12,7 +12,6 @@ import {
   type UserCompact,
   type UserOptional,
   UserRole,
-  type UserSecrets,
   UserStatus,
 } from '~/def/user'
 import type { ArticleProvider } from '$base/server'
@@ -162,12 +161,12 @@ export function toUserOptional(user: Pick<DatabaseUser, DatabaseUserOptionalFiel
   } satisfies UserOptional
 }
 
-export type DatabaseUserSecretsFields = 'pwBcrypt'
-export function toUserSecrets(user: Pick<DatabaseUser, DatabaseUserSecretsFields>): UserSecrets {
-  return {
-    password: user.pwBcrypt,
-  }
-}
+// export type DatabaseUserSecretsFields = 'pwBcrypt'
+// export function toUserSecrets(user: Pick<DatabaseUser, DatabaseUserSecretsFields>): UserSecrets {
+//   return {
+//     password: user.pwBcrypt,
+//   }
+// }
 
 export function dedupeUserRelationship(
   relations: Array<{
