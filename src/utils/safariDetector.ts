@@ -3,13 +3,13 @@ function detectClient() {
   return UA.includes('safari') && !UA.includes('chrome')
 }
 function detectServer() {
-  const UA = useRequestHeaders(['user-agent'])['user-agent']?.toLowerCase()
-  return UA?.includes('safari')
+  const UA = useRequestHeader('user-agent')?.toLowerCase() || ''
+  return UA.includes('safari') && !UA.includes('chrome')
 }
 
-export default (def = false) =>
+export function safariDetector() {
   // eslint-disable-next-line n/prefer-global/process
-  (process.server
+  return (process.server
     ? detectServer()
     : detectClient())
-  || def
+}
