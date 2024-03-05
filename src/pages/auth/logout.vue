@@ -1,12 +1,12 @@
 <script lang="ts" setup>
 import { useSession } from '~/store/session'
 
-const $router = useRouter()
+const router = useRouter()
 const session = useSession()
 const { t } = useI18n()
 onMounted(async () => {
   await session.destroy()
-  setTimeout(() => $router.push('/'), 1000)
+  setTimeout(() => router.push(router.currentRoute.value.query.redirect?.toString() || '/'), 1000)
 })
 </script>
 

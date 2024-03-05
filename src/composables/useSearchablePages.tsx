@@ -18,7 +18,7 @@ function admin() {
 
 export const pages: {
   render: () => JSX.Element
-  route: RouteLocationRaw
+  route: (() => RouteLocationRaw)
   keyword?: string[]
   show?(keyword: string): boolean
 }[] = [
@@ -33,9 +33,9 @@ export const pages: {
         {useI18n({ useScope: 'global' }).t('global.login')}
       </>
     ),
-    route: {
+    route: () => ({
       name: 'auth-login',
-    },
+    }),
     keyword: ['login', 'sign in'],
     show: notLoggedIn,
   },
@@ -46,9 +46,9 @@ export const pages: {
         {useI18n({ useScope: 'global' }).t('global.register')}
       </>
     ),
-    route: {
+    route: () => ({
       name: 'auth-register',
-    },
+    }),
     keyword: ['register', 'sign up'],
     show: notLoggedIn,
   },
@@ -64,9 +64,9 @@ export const pages: {
         {useI18n({ useScope: 'global' }).t('titles.admin-panel')}
       </>
     ),
-    route: {
+    route: () => ({
       name: 'admin',
-    },
+    }),
     keyword: ['settings', 'admin'],
     show: admin,
   },
@@ -85,9 +85,9 @@ export const pages: {
         {useI18n({ useScope: 'global' }).t('titles.relations')}
       </>
     ),
-    route: {
+    route: () => ({
       name: 'me-relations',
-    },
+    }),
     keyword: ['settings', 'friends', 'blocks', 'relationship', 'revoke'],
     show: loggedIn,
   },
@@ -98,9 +98,9 @@ export const pages: {
         {useI18n({ useScope: 'global' }).t('titles.settings')}
       </>
     ),
-    route: {
+    route: () => ({
       name: 'me-settings',
-    },
+    }),
     keyword: ['settings', 'preference', 'profile', 'edit', 'change'],
     show: loggedIn,
   },
@@ -115,9 +115,13 @@ export const pages: {
         {useI18n({ useScope: 'global' }).t('global.logout')}
       </>
     ),
-    route: {
+    route: () => ({
       name: 'auth-logout',
-    },
+      query: {
+        redirect: useRoute().fullPath,
+        ignoreAction: '',
+      },
+    }),
     keyword: ['logout', 'sign out'],
     show: loggedIn,
   },

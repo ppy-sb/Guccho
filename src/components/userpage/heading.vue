@@ -6,6 +6,7 @@ import { useSession } from '~/store/session'
 import userpageStore from '~/store/userpage'
 
 const page = userpageStore()
+const route = useRoute()
 const { t, locale } = useI18n()
 const app$ = useNuxtApp()
 const session = useSession()
@@ -38,9 +39,6 @@ const { data: live, refresh: reloadLiveData } = useAsyncData(async () =>
       ? await app$.$client.user.status.query({ id: page.user.id })
       : null,
 )
-onMounted(() => {
-  onBeforeUnmount(() => clearInterval(setInterval(reloadLiveData, 5000)))
-})
 const isMutualFriend = computed(
   () => data.value?.relationWithMe?.mutual?.includes(MutualRelationship.MutualFriend) || false,
 )
@@ -55,10 +53,20 @@ const friendButtonContent = computed(
   () => data.value?.friendCount || t('add-as-friend'),
 )
 const pendingRelation = ref(false)
+
+onMounted(() => {
+  onBeforeUnmount(() => clearInterval(setInterval(reloadLiveData, 5000)))
+})
+
 async function toggleFriend() {
   pendingRelation.value = true
   if (!session.loggedIn) {
-    return
+    return navigateTo({
+      name: 'auth-login',
+      query: {
+        redirect: route.fullPath,
+      },
+    })
   }
   if (!page.user) {
     return

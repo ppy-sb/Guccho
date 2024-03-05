@@ -4,6 +4,7 @@ import { useSession } from '~/store/session'
 const scrollY = useScrollYObserver()
 const { t } = useI18n()
 const session = useSession()
+const route = useRoute()
 
 const searchModalWrapper = shallowRef<{
   searchModal: {
@@ -135,7 +136,7 @@ function clearFocus() {
               </li>
               <div class="divider my-0" />
               <li>
-                <nuxt-link-locale :to="{ name: 'auth-logout' }" @click="clearFocus">
+                <nuxt-link-locale :to="{ name: 'auth-logout', query: { redirect: route.fullPath } }" @click="clearFocus">
                   <icon name="majesticons:logout-half-circle-line" class="w-5 h-5" size="100%" />
                   {{ $t('global.logout') }}
                 </nuxt-link-locale>
@@ -143,7 +144,7 @@ function clearFocus() {
             </template>
             <template v-else>
               <li>
-                <nuxt-link-locale :to="{ name: 'auth-login' }" @click="clearFocus">
+                <nuxt-link-locale :to="{ name: 'auth-login', query: { redirect: route.fullPath } }" @click="clearFocus">
                   <icon name="majesticons:login-half-circle-line" class="w-5 h-5" size="100%" />
                   {{ $t('global.login') }}
                 </nuxt-link-locale>
