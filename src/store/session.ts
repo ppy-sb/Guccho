@@ -14,6 +14,7 @@ export const useSession = defineStore('session', {
   } => ({
     loggedIn: false,
     user: undefined,
+    userId: undefined,
     role: {
       staff: false,
     },
@@ -56,8 +57,8 @@ export const useSession = defineStore('session', {
     async retrieve() {
       try {
         const app$ = useNuxtApp()
-        const result = await app$.$client.session.retrieve.query().catch(noop)
-        if (!result?.user) {
+        const result = await app$.$client.session.retrieve.query()
+        if (!result.user) {
           this.$reset()
           return false
         }
@@ -70,7 +71,8 @@ export const useSession = defineStore('session', {
         return true
       }
       catch (err) {
-        if ((err as TRPCError)?.code === 'NOT_FOUND') {
+        if (((err as any).data as TRPCError)?.code === 'NOT_FOUND') {
+          console.error('not-found')
           this.$reset()
         }
 
