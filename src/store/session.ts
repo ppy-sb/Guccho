@@ -1,4 +1,3 @@
-import type { TRPCError } from '@trpc/server'
 import md5 from 'md5'
 import { defineStore } from 'pinia'
 import type { UserFull } from '~/def/user'
@@ -71,11 +70,8 @@ export const useSession = defineStore('session', {
         return true
       }
       catch (err) {
-        if (((err as any).data as TRPCError)?.code === 'NOT_FOUND') {
-          console.error('not-found')
-          this.$reset()
-        }
-
+        // TODO: fix err is empty
+        this.$reset()
         return false
       }
     },

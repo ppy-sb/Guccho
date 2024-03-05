@@ -45,6 +45,7 @@ export abstract class SessionProvider<TSession extends Session<string>> {
       ...data,
       lastSeen: new Date(),
     } as TSession
+
     await this.store.set(sessionId, _session)
     return sessionId
   }
