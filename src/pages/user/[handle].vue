@@ -89,6 +89,7 @@ en-GB:
   retry: try again
   banned: This account has been restricted.
   self-banned: Your account has been restricted. Visibility of your profile is limited to you and {server}'s staff.
+  mode-no-data: Player hasn't played this mode yet.
 
 zh-CN:
   error-occurred: 抱歉
@@ -97,6 +98,7 @@ zh-CN:
   retry: 重新加载
   banned: 该账号处于封禁状态。
   self-banned: 你的账号处于封禁状态。你的个人资料只能由你和{server}的工作人员查看。
+  mode-no-data: Ta 还没有玩过这个模式。
 
 fr-FR:
   error-occurred: Oups...
@@ -106,6 +108,7 @@ fr-FR:
   # TODO: translated by gpt.
   banned: Ce compte a été restreint.
   self-banned: Votre compte a été restreint. La visibilité de votre profil est limitée à vous-même et au personnel de {server}.
+  mode-no-data: Le joueur n'a pas encore joué à ce mode.
 </i18n>
 
 <template>
@@ -139,50 +142,63 @@ fr-FR:
         <span v-else>{{ t('banned') }}</span>
       </div>
     </div>
+
     <userpage-heading id="heading" ref="heading" />
     <userpage-profile />
-    <userpage-ranking-system-switcher class="z-10" />
-    <div class="container mx-auto custom-container">
-      <userpage-statistics id="statistics" ref="statistics" />
-      <userpage-score-rank-composition />
-    </div>
-    <div id="bestScores" ref="bestScores" class="container py-2 mx-auto custom-container">
-      <userpage-best-scores v-if="page.currentRankingSystem" />
-    </div>
-    <div id="topScores" ref="topScores" class="container py-4 mx-auto custom-container">
-      <userpage-top-scores v-if="page.currentRankingSystem" />
-    </div>
-    <client-only>
-      <teleport to="body">
-        <div class="sticky btm-nav fuck">
-          <template v-for="(isVisible, el) of visible" :key="el">
-            <a
-              v-if="icons[el]" :class="{
-                active: isVisible,
-              }" :href="`#${el}`"
-            >
-              <icon :name="icons[el]" size="2em" />
-            </a>
-            <a
-              v-else :class="{
-                active: isVisible,
-              }" :href="`#${el}`"
-            >
-              {{ el }}
-            </a>
-          </template>
+
+    <template v-if="page.currentStatistic?.level === 0">
+      <div class="container custom-container py-20 mx-auto">
+        <h1 class="text-center text-3xl text-gbase-400 dark:text-gbase-600">
+          {{ t('mode-no-data') }}
+        </h1>
+      </div>
+    </template>
+    <template v-else>
+      <userpage-ranking-system-switcher class="z-10" />
+      <div class="container mx-auto custom-container">
+        <userpage-statistics id="statistics" ref="statistics" />
+        <userpage-score-rank-composition />
+      </div>
+      <template v-if="page.currentRankingSystem">
+        <div id="bestScores" ref="bestScores" class="container py-2 mx-auto custom-container">
+          <userpage-best-scores />
         </div>
-      </teleport>
-    </client-only>
+        <div id="topScores" ref="topScores" class="container py-4 mx-auto custom-container">
+          <userpage-top-scores />
+        </div>
+      </template>
+      <client-only>
+        <teleport to="body">
+          <div class="sticky btm-nav up-nav-item">
+            <template v-for="(isVisible, el) of visible" :key="el">
+              <a
+                v-if="icons[el]" :class="{
+                  active: isVisible,
+                }" :href="`#${el}`"
+              >
+                <icon :name="icons[el]" size="2em" />
+              </a>
+              <a
+                v-else :class="{
+                  active: isVisible,
+                }" :href="`#${el}`"
+              >
+                {{ el }}
+              </a>
+            </template>
+          </div>
+        </teleport>
+      </client-only>
+    </template>
   </div>
 </template>
 
 <style lang="postcss" scoped>
-.fuck {
+.up-nav-item {
   justify-content: center;
 }
 
-.fuck>* {
+.up-nav-item>* {
   @apply md:basis-32
 }
 </style>
