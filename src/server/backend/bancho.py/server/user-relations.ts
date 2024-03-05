@@ -140,6 +140,9 @@ export class UserRelationProvider implements Base<Id> {
     targetUser: UserCompact<Id>
     type: Relationship
   }) {
+    if (fromUser.id === targetUser.id) {
+      throw new Error('disallow-add-self')
+    }
     // bancho.py only allows one relationshipType per direction per one user pair
     // so cannot delete with where condition due to prisma not allowing it.
     // So to make sure that we are removing right relationship, we have to compare

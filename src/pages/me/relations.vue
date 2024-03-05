@@ -167,10 +167,6 @@ fr-FR:
                       </template>
                       <span v-if="pendingUser.has(user.id)" class="loading loading-spinner loading-xs md:loading-md" />
                     </button>
-
-                    <!-- <t-button class="btn-shadow" :loading="pendingUser.has(user.id)" variant="warning" size="xs" class="md:btn-sm" @click="toggleBlock(user)">
-                      {{ pendingUser.has(user.id) ? '' : isBlocked(user) ? 'remove block' : 'regret' }}
-                    </t-button> -->
                   </div>
                 </div>
               </div>
