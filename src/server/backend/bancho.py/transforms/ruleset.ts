@@ -9,9 +9,15 @@ export function createRulesetData<RankingSystem extends LeaderboardRankingSystem
 }: {
   databaseResult?: {
     stat: typeof schema.stats.$inferSelect
+
     ppv2Rank: number
+    ppv2CountryRank: number
+
     totalScoreRank: number
+    totalScoreCountryRank: number
+
     rankedScoreRank: number
+    rankedScoreCountryRank: number
   }
   livePPRank?: {
     rank: number | null
@@ -56,15 +62,17 @@ export function createRulesetData<RankingSystem extends LeaderboardRankingSystem
   return {
     [Rank.PPv2]: {
       rank: livePPRank?.rank || dbResult.ppv2Rank || undefined,
-      countryRank: livePPRank?.countryRank || undefined,
+      countryRank: livePPRank?.countryRank || dbResult.ppv2CountryRank || undefined,
       performance: dbResult.stat.pp,
     },
     [Rank.RankedScore]: {
       rank: dbResult.rankedScoreRank || undefined,
+      countryRank: dbResult.rankedScoreCountryRank || undefined,
       score: dbResult.stat.rankedScore,
     },
     [Rank.TotalScore]: {
       rank: dbResult.totalScoreRank || undefined,
+      countryRank: dbResult.totalScoreCountryRank || undefined,
       score: dbResult.stat.totalScore,
     },
     playCount: dbResult.stat.plays,
