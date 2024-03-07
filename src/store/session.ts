@@ -1,3 +1,5 @@
+// import { TRPCClientError } from '@trpc/client'
+// import { TRPC_ERROR_CODES_BY_KEY } from '@trpc/server/rpc'
 import md5 from 'md5'
 import { defineStore } from 'pinia'
 import type { UserFull } from '~/def/user'
@@ -70,7 +72,9 @@ export const useSession = defineStore('session', {
         return true
       }
       catch (err) {
-        // TODO: fix err is empty
+        // if (err instanceof TRPCClientError) {
+        //   console.log(err.shape.code === TRPC_ERROR_CODES_BY_KEY.NOT_FOUND)
+        // }
         this.$reset()
         return false
       }

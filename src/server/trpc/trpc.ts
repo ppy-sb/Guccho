@@ -24,7 +24,8 @@ export const t = initTRPC.context<Context>().create({
     }
 
     return {
-      ...pick(shape, ['code', 'message']),
+      ...shape,
+      // ...pick(shape, ['code', 'message']),
       data: eData,
     }
   },

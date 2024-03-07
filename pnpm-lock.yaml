@@ -189,8 +189,8 @@ dependencies:
     specifier: ^5.21.12
     version: 5.22.0
   trpc-nuxt:
-    specifier: ^0.10.12
-    version: 0.10.19(@trpc/client@10.45.1)(@trpc/server@10.45.1)
+    specifier: 0.10.20
+    version: 0.10.20(@trpc/client@10.45.1)(@trpc/server@10.45.1)
   ts-enum-util:
     specifier: ^4.0.2
     version: 4.0.2
@@ -2472,6 +2472,7 @@ packages:
     dependencies:
       is-glob: 4.0.3
       micromatch: 4.0.5
+      napi-wasm: 1.1.0
     bundledDependencies:
       - napi-wasm
 
@@ -8132,6 +8133,9 @@ packages:
     dev: false
     optional: true
 
+  /napi-wasm@1.1.0:
+    resolution: {integrity: sha512-lHwIAJbmLSjF9VDRm9GoVOy9AGp3aIvkjv+Kvz9h16QR3uSVYH78PNQUnT2U4X53mhlnV2M7wrhibQ3GHicDmg==}
+
   /natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
     dev: true
@@ -10669,8 +10673,8 @@ packages:
     engines: {node: '>= 14.0.0'}
     dev: false
 
-  /trpc-nuxt@0.10.19(@trpc/client@10.45.1)(@trpc/server@10.45.1):
-    resolution: {integrity: sha512-CRCDJLflpN8bUq2gOyOZs6jJMGtxakQQlPxrYd0a3u6VyATYGJ22KchIDisBSur+aaR4oL4PpjqR54H0IPcs6A==}
+  /trpc-nuxt@0.10.20(@trpc/client@10.45.1)(@trpc/server@10.45.1):
+    resolution: {integrity: sha512-OSehO1f/nmJ5osmhmyAf0UxhmR5Dy7IU3d52e1ZC3G9i3sOh3mhvN75msoeNCeOzl8ESN73JRQ7gDt0kwkAhZA==}
     peerDependencies:
       '@trpc/client': ^10.38.1 <11
       '@trpc/server': ^10.38.1 <11

@@ -85,7 +85,7 @@
     "superjson": "^2.0.0",
     "switch-pattern": "^0.2.1",
     "systeminformation": "^5.21.12",
-    "trpc-nuxt": "^0.10.12",
+    "trpc-nuxt": "0.10.20",
     "ts-enum-util": "^4.0.2",
     "ts-mixer": "^6.0.3",
     "ua-parser-js": "^1.0.36",
