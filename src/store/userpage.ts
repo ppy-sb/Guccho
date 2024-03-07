@@ -28,25 +28,32 @@ export default defineStore('userpage', () => {
 
   const currentRankingSystem = shallowRef<ReturnType<typeof _computeRankingSystem> | null>(null)
 
-  let dispose: WatchStopHandle = () => {}
+  let dispose: WatchStopHandle[] = []
 
   async function init() {
+    dispose.forEach(cb => cb())
+
     const route = useRoute('user-handle')
     try {
       const u = await app.$client.user.userpage.query({
         handle: `${route.params.handle}`,
       })
       user.value = u
-      dispose()
+
       setSwitcher(u.preferredMode)
       currentStatistic.value = _computeStatistic()
       currentRankingSystem.value = _computeRankingSystem()
       error.value = null
 
-      dispose = watch([
-        () => switcher.mode,
-        () => switcher.ruleset,
-      ], refresh)
+      dispose = [
+        watch([
+          () => switcher.mode,
+          () => switcher.ruleset,
+        ], refresh),
+        watch(() => switcher.rankingSystem, () => {
+          currentRankingSystem.value = _computeRankingSystem()
+        }),
+      ]
     }
     catch (e) {
       console.error(e)
