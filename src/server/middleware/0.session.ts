@@ -9,14 +9,21 @@ export default defineEventHandler(async (event) => {
 
 export async function sideEffect(event: H3Event) {
   const cookie = getCookie(event, Constant.SessionLabel)
+  const persist = !!getCookie(event, Constant.Persist)
 
   if (!cookie) {
     return
   }
-
+  const opts = {
+    httpOnly: true,
+    maxAge: persist ? Constant.PersistDuration as number : undefined,
+  }
   const refreshed = await sessions.refresh(cookie)
-  if (refreshed && refreshed !== cookie) {
-    setCookie(event, Constant.SessionLabel, refreshed, { httpOnly: true })
+  if (refreshed) {
+    setCookie(event, Constant.SessionLabel, refreshed, opts)
+  }
+  if (persist) {
+    setCookie(event, Constant.Persist, 'yes', opts)
   }
   event.context.session = await sessions.get(cookie)
 }

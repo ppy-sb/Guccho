@@ -27,17 +27,18 @@ export const useSession = defineStore('session', {
       }
       this.role = computeUserRoles(this.user)
     },
-    async login(handle: string, passwordText: string) {
+    async login(handle: string, passwordText: string, options: { persist: boolean }) {
       const md5HashedPassword = md5(passwordText)
-      const result = await this.loginHashed(handle, md5HashedPassword)
+      const result = await this.loginHashed(handle, md5HashedPassword, options)
       await this.gotSession()
       return result
     },
-    async loginHashed(handle: string, md5HashedPassword: string) {
+    async loginHashed(handle: string, md5HashedPassword: string, options: { persist: boolean }) {
       const app$ = useNuxtApp()
       const result = await app$.$client.session.login.query({
         handle,
         md5HashedPassword,
+        persist: options.persist,
       })
       if (!result) {
         return false
