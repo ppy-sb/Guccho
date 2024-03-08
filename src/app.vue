@@ -16,15 +16,21 @@ const { status } = useZoomModal()
       class="drawer-content zoom-modal-container overflow-x-clip"
       :data-l1-status="status"
       data-l2-status="hidden"
-      :style="status !== 'closed' && {
-        'transform-origin': `center calc(${scrollY} * 1px + 50dvh)`,
-      }"
+      :style="
+        status !== 'closed' && {
+          'transform-origin': `center calc(${scrollY} * 1px + 50dvh)`,
+        }
+      "
     >
       <NuxtPage />
     </NuxtLayout>
     <app-footer class="mt-auto" />
     <div class="drawer-side z-40">
-      <label for="app-drawer-toggle" aria-label="Close sidebar" class="drawer-overlay" />
+      <label
+        for="app-drawer-toggle"
+        aria-label="Close sidebar"
+        class="drawer-overlay"
+      />
       <ul class="menu p-4 w-80 min-h-full bg-base-200">
         <app-nav-items>
           <template #start>

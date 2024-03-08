@@ -105,14 +105,14 @@ fr-FR:
 </i18n>
 
 <template>
-  <div class="flex flex-col gap-2">
+  <div class="space-y-2">
     <div class="border rounded-lg collapse collapse-arrow border-base-300 bg-base-200">
       <input type="checkbox" class="peer">
       <div class="font-medium collapse-title text-md">
         <span class="align-middle">{{ t('search-parameters') }}</span>
         <icon name="ion:search-outline" class="w-6 h-6 align-middle" />
       </div>
-      <div class="flex flex-col gap-2 collapse-content">
+      <div class="space-y-6 collapse-content">
         <div class="gap-2 sm:grid sm:grid-cols-2 md:grid-cols-4">
           <div class="form-control">
             <label class="label">
@@ -334,7 +334,7 @@ fr-FR:
         <div class="m-auto loading loading-lg" />
       </div>
     </div>
-    <div class="mx-auto join">
+    <div class="text-center w-full justify-center join">
       <template v-for="(i, n) in pages" :key="`sw${i}`">
         <button
           v-if="n === 0" class="join-item btn"

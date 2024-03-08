@@ -194,15 +194,15 @@ export const beatmaps = mysqlTable('maps', {
   }
 })
 
-export const mapsLack = mysqlTable('maps_lack', {
-  md5: varchar('md5', { length: 255 }).notNull(),
-  lackType: varchar('lack_type', { length: 255 }).notNull(),
-},
-(table) => {
-  return {
-    mapsLackMd5Pk: primaryKey({ columns: [table.md5], name: 'maps_lack_md5_pk' }),
-  }
-})
+// export const mapsLack = mysqlTable('maps_lack', {
+//   md5: varchar('md5', { length: 255 }).notNull(),
+//   lackType: varchar('lack_type', { length: 255 }).notNull(),
+// },
+// (table) => {
+//   return {
+//     mapsLackMd5Pk: primaryKey({ columns: [table.md5], name: 'maps_lack_md5_pk' }),
+//   }
+// })
 
 export const sources = mysqlTable('mapsets', {
   server: bpyServerEnum.default('osu!').notNull(),

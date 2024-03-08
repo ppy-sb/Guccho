@@ -361,15 +361,27 @@ class DBUserProvider extends Base<Id, ScoreId> implements Base<Id, ScoreId> {
     const sq = this.drizzle.select({
       id: schema.stats.id,
       mode: schema.stats.mode,
+
       ppv2Rank: sql`RANK() OVER(PARTITION BY ${schema.stats.mode} ORDER BY ${schema.stats.pp} DESC)`
         .mapWith(Number)
         .as('ppRank'),
+      ppv2CountryRank: sql`RANK() OVER(PARTITION BY ${schema.stats.mode}, ${schema.users.country} ORDER BY ${schema.stats.pp} DESC)`
+        .mapWith(Number)
+        .as('ppCountryRank'),
+
       totalScoreRank: sql`RANK() OVER(PARTITION BY ${schema.stats.mode} ORDER BY ${schema.stats.totalScore} DESC)`
         .mapWith(Number)
         .as('tscoreRank'),
+      totalScoreCountryRank: sql`RANK() OVER(PARTITION BY ${schema.stats.mode}, ${schema.users.country} ORDER BY ${schema.stats.totalScore} DESC)`
+        .mapWith(Number)
+        .as('tscoreCountryRank'),
+
       rankedScoreRank: sql`RANK() OVER(PARTITION BY ${schema.stats.mode} ORDER BY ${schema.stats.rankedScore} DESC)`
         .mapWith(Number)
         .as('rscoreRank'),
+      rankedScoreCountryRank: sql`RANK() OVER(PARTITION BY ${schema.stats.mode}, ${schema.users.country} ORDER BY ${schema.stats.rankedScore} DESC)`
+        .mapWith(Number)
+        .as('rscoreCountryRank'),
     })
       .from(schema.stats)
       .innerJoin(schema.users, and(
@@ -380,8 +392,13 @@ class DBUserProvider extends Base<Id, ScoreId> implements Base<Id, ScoreId> {
     const s2 = aliasedTable(schema.stats, 's2')
     const mq = this.drizzle.select({
       ppv2Rank: sq.ppv2Rank,
+      ppv2CountryRank: sq.ppv2CountryRank,
+
       totalScoreRank: sq.totalScoreRank,
+      totalScoreCountryRank: sq.totalScoreCountryRank,
+
       rankedScoreRank: sq.rankedScoreRank,
+      rankedScoreCountryRank: sq.rankedScoreCountryRank,
       stat: s2,
     }).from(sq)
       .innerJoin(s2,
@@ -680,8 +697,14 @@ class DBUserProvider extends Base<Id, ScoreId> implements Base<Id, ScoreId> {
   async _toStatistics(
     results: ({
       stat: typeof schema.stats.$inferSelect
+
       ppv2Rank: number
+      ppv2CountryRank: number
+
+      totalScoreCountryRank: number
       totalScoreRank: number
+
+      rankedScoreCountryRank: number
       rankedScoreRank: number
     })[],
     livePPRank?: Awaited<ReturnType<RedisUserProvider['getRedisRanks']>>,
@@ -794,14 +817,14 @@ class DBUserProvider extends Base<Id, ScoreId> implements Base<Id, ScoreId> {
 }
 
 export class RedisUserProvider extends DBUserProvider {
-  redisClient?: ReturnType<typeof redisClient>
+  redisClient: ReturnType<typeof redisClient>
   constructor() {
     super()
     this.redisClient = redisClient()
   }
 
   async getLiveRank(id: number, mode: number, country: string) {
-    if (this.redisClient?.isReady) {
+    if (this.redisClient.isReady) {
       return {
         rank: await this.redisClient.zRevRank(
           `bancho:leaderboard:${mode}`,
