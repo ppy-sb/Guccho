@@ -59,10 +59,17 @@ export default {
 </script>
 
 <template>
-  <ul class="menu bg-base-100 w-max rounded-box">
-    <li v-for="(option, index) in availableOptions" :key="index" class="whitespace-nowrap" :class="{ 'bg-base-200': selectedIndex === index }" @click="selectItem(index)">
-      <div class="flex flex-col items-start">
-        <div class="flex gap-2">
+  <ul class="menu bg-base-100 w-max rounded-box space-y-1">
+    <li
+      v-for="(option, index) in availableOptions" :key="index"
+      class="whitespace-nowrap"
+      @click="selectItem(index)"
+    >
+      <div
+        class="inline-block"
+        :class="{ 'bg-base-200': selectedIndex === index }"
+      >
+        <div class="space-x-2">
           <strong>{{ option.name }}</strong>
           <span v-if="option.t" class="text-muted">{{ $t(option.name) }}</span>
           <span v-else class="text-muted">{{ option.value }} | {{ option.fallback }}</span>

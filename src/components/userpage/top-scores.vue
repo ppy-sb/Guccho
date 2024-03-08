@@ -186,7 +186,7 @@ fr-FR:
     {{ errorTop }}
   </div>
   <template v-else-if="page.user">
-    <div class="flex flex-col gap-6">
+    <div class="space-y-6">
       <section v-if="top?.count">
         <div class="card" :class="[pendingTop && 'pointer-events-none']">
           <!-- <div

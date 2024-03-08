@@ -85,28 +85,26 @@ fr-FR:
           {{ $t('global.login') }}
         </h2>
       </div>
-      <form class="mt-8 space-y-12" autocomplete="off" method="post" @submit.prevent="userLogin">
-        <div class="flex flex-col gap-2">
-          <div>
-            <label for="user" class="sr-only">{{ t('user-or-email') }}</label>
-            <input
-              id="user" v-model="login.user" name="user" type="user" autocomplete="off" required
-              class="w-full shadow-sm input input-shadow input-ghost" :class="{ 'input-error': error }"
-              :placeholder="t('user-id-email')"
-            >
-          </div>
-          <div>
-            <label for="password" class="sr-only">{{ t('password') }}</label>
-            <input
-              id="password" v-model="login.password" name="password" type="password" autocomplete="off" required
-              class="w-full shadow-sm input input-shadow input-ghost" :class="{ 'input-error': error }"
-              :placeholder="t('password')"
-            >
-          </div>
-          <h1 v-if="error" class="auth-error-text">
-            {{ error }}
-          </h1>
+      <form class="mt-8 space-y-4" autocomplete="off" method="post" action="#" @submit.prevent="userLogin">
+        <div class="form-control">
+          <label for="user" class="sr-only">{{ t('user-or-email') }}</label>
+          <input
+            id="user" v-model="login.user" name="user" type="user" autocomplete="off" required
+            class="w-full shadow-sm input input-shadow input-ghost" :class="{ 'input-error': error }"
+            :placeholder="t('user-id-email')"
+          >
         </div>
+        <div class="form-control">
+          <label for="password" class="sr-only">{{ t('password') }}</label>
+          <input
+            id="password" v-model="login.password" name="password" type="password" autocomplete="off" required
+            class="w-full shadow-sm input input-shadow input-ghost" :class="{ 'input-error': error }"
+            :placeholder="t('password')"
+          >
+        </div>
+        <h1 v-if="error" class="auth-error-text">
+          {{ error }}
+        </h1>
         <div class="grid grid-cols-2 gap-2">
           <t-nuxt-link-button
             class="btn-shadow" to="/auth/register" variant="accent"

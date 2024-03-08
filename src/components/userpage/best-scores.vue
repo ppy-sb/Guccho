@@ -175,7 +175,7 @@ fr-FR:
     {{ bpError }}
   </div>
   <template v-else-if="page.user">
-    <div class="flex flex-col gap-6">
+    <div class="space-y-6">
       <section v-if="bp?.scores?.length">
         <div class="card" :class="[pendingBP && 'pointer-events-none']">
           <div class="p-1 two-tone flex items-center w-100">
