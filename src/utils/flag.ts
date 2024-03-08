@@ -19,13 +19,8 @@ export function getFlagURL(flag?: CountryCode) {
   return `${url}.svg`
 }
 
-export function countryCodeToEmoji(code: CountryCode) {
-  let emojiStr = ''
-  // loop all characters
-  for (let i = 0; i < code.length; i++) {
-    emojiStr += (code.charAt(i) + OFFSET)
-  }
-
-  // return emoji
-  return emojiStr
+export function getFlagEmoji(countryCode: CountryCode) {
+  return countryCode.toUpperCase().replace(/./g, char =>
+    String.fromCodePoint(127397 + char.charCodeAt(0))
+  )
 }
