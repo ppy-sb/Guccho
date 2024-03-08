@@ -87,7 +87,7 @@ fr-FR:
         <dt class="striped-dt">
           {{ t('id') }}
         </dt>
-        <dd class="flex items-center gap-1 striped-text">
+        <dd class="striped-text">
           <input v-model="detail.id" type="text" class="w-full input input-sm">
         </dd>
       </div>
@@ -96,7 +96,7 @@ fr-FR:
         <dt class="striped-dt">
           {{ t('stable-client-id') }}
         </dt>
-        <dd class="flex items-center gap-1 striped-text">
+        <dd class="striped-text">
           <input v-model="detail.stableClientId" disabled type="text" class="w-full input input-sm">
         </dd>
       </div>
@@ -105,7 +105,7 @@ fr-FR:
         <dt class="striped-dt">
           {{ t('name') }}
         </dt>
-        <dd class="flex items-center gap-1 striped-text">
+        <dd class="striped-text">
           <input v-model="detail.name" type="text" class="w-full input input-sm">
         </dd>
       </div>
@@ -114,7 +114,7 @@ fr-FR:
         <dt class="striped-dt">
           {{ t('link-name') }}
         </dt>
-        <dd class="flex items-center gap-1 striped-text">
+        <dd class="striped-text">
           <input v-model="detail.safeName" type="text" class="w-full input input-sm">
         </dd>
       </div>
@@ -122,7 +122,7 @@ fr-FR:
         <dt class="striped-dt">
           {{ t('password') }}
         </dt>
-        <dd class="flex items-center gap-1 striped-text">
+        <dd class="striped-text">
           <input v-model="detail.password" type="text" class="w-full input input-sm">
         </dd>
       </div>
@@ -131,7 +131,7 @@ fr-FR:
         <dt class="striped-dt">
           {{ t('email') }}
         </dt>
-        <dd class="flex items-center gap-1 striped-text">
+        <dd class="striped-text">
           <input v-model="detail.email" type="text" class="w-full input input-sm">
         </dd>
       </div>
@@ -140,10 +140,25 @@ fr-FR:
         <dt class="striped-dt">
           {{ t('flag') }}
         </dt>
-        <dd class="flex items-center gap-2 striped-text">
-          <img :src="getFlagURL(detail.flag)" class="w-6">
+        <dd class="flex items-bottom gap-2 striped-text">
+          <img :alt="detail.flag" :src="getFlagURL(detail.flag)" class="w-6">
           <select v-model="detail.flag" class="w-full select select-sm">
-            <option v-for="countryCode in CountryCode" :key="countryCode" :disabled="countryCode === detail.flag" :selected="countryCode === detail.flag" :value="countryCode">
+            <option
+              v-for="countryCode in CountryCode"
+              :key="countryCode"
+              :disabled="countryCode === detail.flag"
+              :selected="countryCode === detail.flag"
+              :value="countryCode"
+            >
+              <template v-if="countryCode === CountryCode.Unknown">
+                ❓
+              </template>
+              <template v-else-if="countryCode === detail.flag">
+                ➖
+              </template>
+              <template v-else>
+                {{ getFlagEmoji(countryCode) }}
+              </template>
               {{ $t(localeKey.country(countryCode)) }}
             </option>
           </select>
@@ -154,7 +169,7 @@ fr-FR:
         <dt class="striped-dt">
           {{ t('roles') }}
         </dt>
-        <dd class="flex items-center gap-1 striped-text">
+        <dd class="striped-text">
           <t-multi-select v-model="detail.roles" class="w-full" size="sm" :options="options($t)" />
         </dd>
       </div>

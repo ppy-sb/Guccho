@@ -857,20 +857,23 @@ fr-FR:
           </label>
           <div class="flex gap-2 pl-3">
             <img :src="getFlagURL(user.flag)" class="w-6" alt="flag">
-            <select
-              v-model="user.flag"
-              class="w-full select select-ghost select-sm"
-            >
+            <select v-model="user.flag" class="w-full select select-sm">
               <option
                 v-for="countryCode in CountryCode"
                 :key="countryCode"
-                :disabled="
-                  countryCode === user.flag
-                    || countryCode === CountryCode.Unknown
-                "
+                :disabled="countryCode === user.flag || countryCode === CountryCode.Unknown"
                 :selected="countryCode === user.flag"
                 :value="countryCode"
               >
+                <template v-if="countryCode === CountryCode.Unknown">
+                  ❓
+                </template>
+                <template v-else-if="countryCode === user.flag">
+                  ➖
+                </template>
+                <template v-else>
+                  {{ getFlagEmoji(countryCode) }}
+                </template>
                 {{ $t(localeKey.country(countryCode)) }}
               </option>
             </select>
