@@ -24,9 +24,11 @@ const registerButton = shallowRef<string>(t('have-no-account'))
 const login = shallowReactive<{
   user: string
   password: string
+  persist: boolean
 }>({
   user: '',
   password: '',
+  persist: false,
 })
 
 const fetching = shallowRef(false)
@@ -35,7 +37,7 @@ async function userLogin() {
   fetching.value = true
   error.value = ''
   try {
-    const result = await session.login(login.user, login.password)
+    const result = await session.login(login.user, login.password, { persist: login.persist })
     if (result) {
       if (route.query.redirect) {
         await navigateTo(route.query.redirect.toString())
@@ -63,18 +65,21 @@ en-GB:
   user-or-email: User / Email
   user-id-email: User / ID / Email
   password: Password
+  persist-login: Remember me
 
 zh-CN:
   have-no-account: 没有账号?
   user-or-email: 用户名 或者 邮箱地址
   user-id-email: 用户名 或者 用户ID 或者 邮箱地址
   password: 密码
+  persist-login: 保持登录状态
 
 fr-FR:
   have-no-account: Vous n'avez pas de compte?
   user-or-email: Utilisateur / Email
   user-id-email: Utilisateur / ID / Email
   password: Mot de passe
+  persist-login: Se souvenir de moi
 </i18n>
 
 <template>
@@ -102,6 +107,12 @@ fr-FR:
             class="w-full shadow-sm input input-shadow input-ghost" :class="{ 'input-error': error }"
             :placeholder="t('password')"
           >
+        </div>
+        <div class="form-control">
+          <label class="label cursor-pointer">
+            <span class="label-text">{{ t('persist-login') }}</span>
+            <input v-model="login.persist" type="checkbox" class="toggle">
+          </label>
         </div>
         <h1 v-if="error" class="auth-error-text">
           {{ error }}

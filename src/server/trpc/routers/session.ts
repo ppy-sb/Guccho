@@ -1,5 +1,5 @@
 import { TRPCError } from '@trpc/server'
-import { object, string } from 'zod'
+import { boolean, object, string } from 'zod'
 import {
   GucchoError,
 } from '../messages'
@@ -18,9 +18,10 @@ export const router = _router({
       object({
         handle: zodHandle,
         md5HashedPassword: string(),
+        persist: boolean(),
       }),
     )
-    .query(async ({ input: { handle, md5HashedPassword }, ctx }) => {
+    .query(async ({ input: { handle, md5HashedPassword, persist }, ctx }) => {
       try {
         const session = await ctx.session.getBinding()
         if (!session) {
@@ -30,9 +31,16 @@ export const router = _router({
         if (!ok) {
           throwGucchoError(GucchoError.PasswordMismatch)
         }
+        const opt = {
+          httpOnly: true,
+          maxAge: persist ? Constant.PersistDuration as number : undefined,
+        }
         const newSessionId = await sessions.update(ctx.session.id, { userId: UserProvider.idToString(user.id) })
-        if (newSessionId && newSessionId !== ctx.session.id) {
-          setCookie(ctx.h3Event, Constant.SessionLabel, newSessionId, { httpOnly: true })
+        if (newSessionId && (newSessionId !== ctx.session.id || persist)) {
+          setCookie(ctx.h3Event, Constant.SessionLabel, newSessionId, opt)
+        }
+        if (persist) {
+          setCookie(ctx.h3Event, Constant.Persist, 'yes', opt)
         }
         return {
           user: mapId(user, UserProvider.idToString),
@@ -79,6 +87,7 @@ export const router = _router({
     }),
   destroy: pSession.mutation(({ ctx }) => {
     deleteCookie(ctx.h3Event, Constant.SessionLabel)
+    deleteCookie(ctx.h3Event, Constant.Persist)
     return sessions.destroy(ctx.session.id)
   }),
 })
