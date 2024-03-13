@@ -1,4 +1,5 @@
 <script setup lang="ts">
+/* eslint-disable no-irregular-whitespace */
 import type { inferRouterOutputs } from '@trpc/server'
 import { Mode, Rank } from '~/def'
 import type { RankingSystem } from '~/def/common'
@@ -38,8 +39,8 @@ en-GB:
   download-replay: Download replay
 
 zh-CN:
-  title: "曲名\t\t\t{title}\n艺术家\t\t{artist}"
-  map: "难度\t\t\t{version}\n谱师\t\t\t{creator}"
+  title: "曲名　\t\t{title}\n艺术家\t\t{artist}"
+  map: "难度　\t\t{version}\n谱师　\t\t{creator}"
   play: '{player} 于 {time} 留下了此成绩'
   download-replay: 下载回放
 
