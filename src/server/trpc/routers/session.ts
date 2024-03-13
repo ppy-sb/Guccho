@@ -13,7 +13,7 @@ import { Logger } from '$base/logger'
 const logger = Logger.child({ label: 'session', backend: 'transport', transport: 'trpc' })
 
 export const router = _router({
-  login: pSession
+  login: publicProcedure
     .input(
       object({
         handle: zodHandle,
@@ -31,11 +31,16 @@ export const router = _router({
         if (!ok) {
           throwGucchoError(GucchoError.PasswordMismatch)
         }
+
         const opt = {
           httpOnly: true,
           maxAge: persist ? Constant.PersistDuration as number : undefined,
         }
-        const newSessionId = await sessions.update(ctx.session.id, { userId: UserProvider.idToString(user.id) })
+        const partialSession = { userId: UserProvider.idToString(user.id) }
+        const newSessionId = ctx.session.id
+          ? await sessions.update(ctx.session.id, partialSession)
+          : await sessions.create(Object.assign(partialSession, detectDevice(ctx.h3Event)))
+
         if (newSessionId && (newSessionId !== ctx.session.id || persist)) {
           setCookie(ctx.h3Event, Constant.SessionLabel, newSessionId, opt)
         }
