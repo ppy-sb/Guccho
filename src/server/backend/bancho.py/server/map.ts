@@ -22,8 +22,8 @@ import type { MapProvider as Base } from '$base/server'
 const drizzle = useDrizzle(schema)
 
 export class MapProvider implements Base<Id, Id> {
-  static idToString = idToString
-  static stringToId = stringToId
+  static readonly idToString = idToString
+  static readonly stringToId = stringToId
 
   drizzle = drizzle
 

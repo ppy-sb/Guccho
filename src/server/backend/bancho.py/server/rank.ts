@@ -38,8 +38,8 @@ const leaderboardFields = {
 } as const
 
 export class DatabaseRankProvider implements Base<Id> {
-  static stringToId = stringToId
-  static idToString = idToString
+  static readonly stringToId = stringToId
+  static readonly idToString = idToString
 
   /**
    * @deprecated prisma will be replaced by drizzle

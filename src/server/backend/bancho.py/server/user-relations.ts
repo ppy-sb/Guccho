@@ -11,8 +11,8 @@ import type { UserCompact } from '~/def/user'
 const config = _config()
 
 export class UserRelationProvider implements Base<Id> {
-  static stringToId = stringToId
-  static idToString = idToString
+  static readonly stringToId = stringToId
+  static readonly idToString = idToString
   /**
    * @deprecated prisma will be replaced by drizzle
    */

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { LocaleObject } from 'vue-i18n-routing'
 import { useSession } from '~/store/session'
 import { UserRole } from '~/def/user'
 
@@ -40,7 +39,7 @@ function clearFocus() {
       <summary><icon name="tabler:world" class="w-5 h-5" />{{ localeProperties.name }}</summary>
       <ul class="p-2 w-64">
         <li
-          v-for="l in (locales as LocaleObject[])"
+          v-for="l in locales"
           :key="l.code"
           :class="{
             disabled: l.code === locale,

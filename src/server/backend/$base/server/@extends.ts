@@ -1,13 +1,13 @@
 import type { idToString, scoreIdToString, stringToId, stringToScoreId } from '$base'
 
 export abstract class IdTransformable {
-  static idToString: typeof idToString
-  static stringToId: typeof stringToId
+  static readonly idToString: typeof idToString
+  static readonly stringToId: typeof stringToId
 }
 
 export abstract class ScoreIdTransformable {
-  static scoreIdToString: typeof scoreIdToString
-  static stringToScoreId: typeof stringToScoreId
+  static readonly scoreIdToString: typeof scoreIdToString
+  static readonly stringToScoreId: typeof stringToScoreId
 }
 
 export namespace Monitored {

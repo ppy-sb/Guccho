@@ -27,11 +27,11 @@ import type {
 const config = _config()
 const drizzle = useDrizzle(schema)
 export class ScoreProvider implements Base<bigint, Id> {
-  static idToString = idToString
-  static stringToId = stringToId
+  static readonly idToString = idToString
+  static readonly stringToId = stringToId
 
-  static stringToScoreId = stringToScoreId
-  static scoreIdToString = scoreIdToString
+  static readonly stringToScoreId = stringToScoreId
+  static readonly scoreIdToString = scoreIdToString
 
   /**
    * @deprecated prisma will be replaced by drizzle
