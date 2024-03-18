@@ -2,7 +2,7 @@ import { ScoreProvider, files } from '~/server/singleton/service'
 import { haveSession } from '~/server/middleware/0.session'
 
 export default defineEventHandler(async (event) => {
-  haveSession(event) || throwError(createError({
+  haveSession(event) || raiseError(createError({
     statusCode: 400,
     statusMessage: 'Require session.',
   }))

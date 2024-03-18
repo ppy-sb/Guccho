@@ -25,6 +25,8 @@ function visible(user: Pick<UserCompact<any>, 'id' | 'roles'>, viewer?: Pick<Use
   return user.roles.includes(UserRole.Normal) || isSelf || viewer?.roles.includes(UserRole.Staff)
 }
 
+const userNotFoundError = new TRPCError({ code: 'NOT_FOUND', message: userNotFound })
+
 export const router = _router({
   exists: p
     .input(
@@ -50,7 +52,7 @@ export const router = _router({
       })
 
       if (!visible(user, ctx.user)) {
-        throw new TRPCError({ code: 'NOT_FOUND', message: userNotFound })
+        throw userNotFoundError
       }
       return mapId(user, UserProvider.idToString)
     }),
@@ -82,7 +84,7 @@ export const router = _router({
       const user = await users.getCompact({ handle: input.handle, scope: Scope.Self })
 
       if (!visible(user, ctx.user)) {
-        throw new TRPCError({ code: 'NOT_FOUND', message: userNotFound })
+        throw userNotFoundError
       }
 
       const returnValue = await users.getBests({
@@ -141,7 +143,7 @@ export const router = _router({
       const user = await users.getCompact({ handle: input.handle, scope: Scope.Self })
 
       if (!visible(user, ctx.user)) {
-        throw new TRPCError({ code: 'NOT_FOUND', message: userNotFound })
+        throw userNotFoundError
       }
 
       const returnValue = await users.getTops({
@@ -195,7 +197,7 @@ export const router = _router({
       const user = await users.getCompact({ handle, scope: Scope.Self })
 
       if (!visible(user, ctx.user)) {
-        raise(Error, 'user not found')
+        raiseError(userNotFoundError)
       }
 
       const count = await userRelations.count({ user, type })

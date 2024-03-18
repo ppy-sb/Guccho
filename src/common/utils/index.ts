@@ -42,7 +42,7 @@ export function raise<E extends new(...con: any[]) => Error>(Constructor: E, ...
   throw new Constructor(...params)
 }
 
-export function throwError<E>(e: E): never {
+export function raiseError<E>(e: E): never {
   throw e
 }
 
