@@ -118,7 +118,7 @@ fr-FR:
         {{ t('error-occurred') }}
       </h1>
       <h2 v-if="page.error.message !== ''" class="text-2xl">
-        {{ page.error.message }}
+        {{ formatGucchoErrorWithT(t, page.error) }}
       </h2>
       <h2 v-else class="text-2xl">
         {{ t('unknown-error') }}

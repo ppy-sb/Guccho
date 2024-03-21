@@ -6,6 +6,7 @@ import * as schema from '../drizzle/schema'
 import { config } from '../env'
 import { Logger } from '../log'
 import { assertIsBanchoPyMode, fromBanchoPyMode, idToString, stringToId, toBanchoPyMode, toRankingSystemScore, toUserAvatarSrc, toUserCompact } from '../transforms'
+import { GucchoError } from '../../../trpc/messages'
 import { BanchoPyScoreStatus, ClanPrivilege as BanchopyClanPrivilege } from './../enums'
 import { useDrizzle, userPriv } from './source/drizzle'
 import { type AbnormalStatus, type NormalBeatmapWithMeta, type RankingStatus } from '~/def/beatmap'
@@ -14,7 +15,6 @@ import { type Mode, Rank } from '~/def'
 import { ClanRelation } from '~/def/clan'
 import type { LeaderboardRankingSystem } from '~/def/common'
 import type { RankingSystemScore } from '~/def/score'
-import { userNotFound } from '~/server/trpc/messages'
 
 const logger = Logger.child({ label: 'clan' })
 
@@ -217,7 +217,7 @@ export class ClanProvider extends Base<Id> {
     }
   }
 
-  _pRelatioin = this.drizzle.query.users.findFirst({
+  _pRelation = this.drizzle.query.users.findFirst({
     columns: {
       clanPriv: true,
     },
@@ -230,7 +230,7 @@ export class ClanProvider extends Base<Id> {
 
   async getClanRelation(opt: Base.ChangeRelationRequestParam<Id>) {
     const { userId, clanId } = opt
-    const result = await this._pRelatioin.execute({ userId }) ?? raise(Error, userNotFound)
+    const result = await this._pRelation.execute({ userId }) ?? throwGucchoError(GucchoError.UserNotFound)
 
     switch (true) {
       case result.clan === null:
@@ -259,7 +259,7 @@ export class ClanProvider extends Base<Id> {
       with: {
         clan: true,
       },
-    }) ?? raise(Error, userNotFound)
+    }) ?? throwGucchoError(GucchoError.UserNotFound)
 
     switch (true) {
       case result.clan === null:

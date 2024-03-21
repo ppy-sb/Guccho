@@ -41,12 +41,12 @@ import {
   toUserOptional,
 } from '../transforms'
 import * as schema from '../drizzle/schema'
+import { GucchoError } from '../../../trpc/messages'
 import { ArticleProvider } from './article'
 import { prismaClient } from './source/prisma'
 import { client as redisClient } from './source/redis'
 import { UserRelationProvider } from './user-relations'
 import { useDrizzle, userPriv } from './source/drizzle'
-import { conflictEmail, oldPasswordMismatch, userNotFound } from '~/server/trpc/messages'
 import { type DynamicSettingStore, Scope, type UserCompact, type UserStatistic, UserStatus } from '~/def/user'
 import type { CountryCode } from '~/def/country-code'
 import type { ActiveMode, ActiveRuleset, LeaderboardRankingSystem } from '~/def/common'
@@ -179,7 +179,7 @@ class DBUserProvider extends Base<Id, ScoreId> implements Base<Id, ScoreId> {
       ...userCompacts,
     })
       .catch(() => {
-        throw new TRPCError({ code: 'NOT_FOUND', message: userNotFound })
+        throwGucchoError(GucchoError.UserNotFound)
       })
     return toUserCompact(user, this.config)
   }
@@ -199,7 +199,7 @@ class DBUserProvider extends Base<Id, ScoreId> implements Base<Id, ScoreId> {
     catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
         if (e.name === 'NotFoundError') {
-          throw new TRPCError({ code: 'NOT_FOUND', message: userNotFound })
+          throwGucchoError(GucchoError.UserNotFound)
         }
       }
       throw e
@@ -219,10 +219,7 @@ class DBUserProvider extends Base<Id, ScoreId> implements Base<Id, ScoreId> {
     const start = page * perPage
     const _mode = toBanchoPyMode(mode, ruleset)
     if (_mode === undefined) {
-      throw new TRPCError({
-        code: 'PRECONDITION_FAILED',
-        message: 'unsupported mode',
-      })
+      throwGucchoError(GucchoError.ModeNotSupported)
     }
     const banchoPyRankingStatus = rankingStatus.map(i => fromRankingStatus(i))
 
@@ -518,7 +515,7 @@ class DBUserProvider extends Base<Id, ScoreId> implements Base<Id, ScoreId> {
       .where(eq(schema.users.id, user.id))
       .catch((e: QueryError) => {
         if (e.code === 'ER_DUP_ENTRY') {
-          raise(TRPCError, { code: 'CONFLICT', message: conflictEmail })
+          throwGucchoError(GucchoError.ConflictEmail)
         }
         throw e
       })
@@ -530,7 +527,7 @@ class DBUserProvider extends Base<Id, ScoreId> implements Base<Id, ScoreId> {
       with: {
         clan: true,
       },
-    }) ?? raise(Error, userNotFound)
+    }) ?? throwGucchoError(GucchoError.UserNotFound)
 
     return {
       ...toUserCompact(returning, this.config),
@@ -562,10 +559,7 @@ class DBUserProvider extends Base<Id, ScoreId> implements Base<Id, ScoreId> {
     }
     catch (err) {
       logger.error(err)
-      throw new TRPCError({
-        code: 'PARSE_ERROR',
-        message: 'unable to process your request at this moment.',
-      })
+      throwGucchoError(GucchoError.UpdateUserpageFailed)
     }
   }
 
@@ -577,10 +571,7 @@ class DBUserProvider extends Base<Id, ScoreId> implements Base<Id, ScoreId> {
     })
 
     if (!await compareBanchoPassword(oldPasswordMD5, u.pwBcrypt)) {
-      throw new TRPCError({
-        code: 'UNAUTHORIZED',
-        message: oldPasswordMismatch,
-      })
+      throwGucchoError(GucchoError.OldPasswordMismatch)
     }
 
     const pwBcrypt = await encryptBanchoPassword(newPasswordMD5)
@@ -597,27 +588,18 @@ class DBUserProvider extends Base<Id, ScoreId> implements Base<Id, ScoreId> {
 
   async changeAvatar(user: { id: Id }, avatar: Uint8Array) {
     if (!this.config.avatar.location) {
-      throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'server is not configured correctly, missing avatar location',
-      })
+      throwGucchoError(GucchoError.MissingServerAvatarConfig)
     }
     const mime = await imageType(avatar)
 
     if (!mime?.mime.includes('image')) {
-      throw new TRPCError({
-        code: 'PRECONDITION_FAILED',
-        message: 'Not an image',
-      })
+      throwGucchoError(GucchoError.MimeNotImage)
     }
 
     const oldFilesPath = `${user.id}.*`
 
     if (oldFilesPath.startsWith('.')) {
-      throw new TRPCError({
-        message: 'SOMEONE IS TRYING TO DELETE ALL AVATARS',
-        code: 'BAD_REQUEST',
-      })
+      throwGucchoError(GucchoError.HackerTryingToDeleteAllAvatars)
     }
     const existFilesPath = join(this.config.avatar.location, oldFilesPath)
     const loc = join(this.config.avatar.location, `${user.id}.${mime.ext}`)
@@ -625,10 +607,7 @@ class DBUserProvider extends Base<Id, ScoreId> implements Base<Id, ScoreId> {
     const oldFiles = await glob(existFilesPath)
 
     if (oldFiles.length > 2) {
-      throw new TRPCError({
-        message: 'trying to delete more than 2 files, please contact support to clean your old avatars',
-        code: 'INTERNAL_SERVER_ERROR',
-      })
+      throwGucchoError(GucchoError.DeletingMoreThanOneAvatars)
     }
 
     await Promise.all(oldFiles.map(file => unlink(file)))

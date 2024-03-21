@@ -1,10 +1,7 @@
 import { TRPCError } from '@trpc/server'
 import { object, string } from 'zod'
 import {
-  passwordMismatch,
-  sessionNotFound,
-  unableToRetrieveSession,
-  unknownError,
+  GucchoError,
 } from '../messages'
 import { sessionProcedure as pSession } from '../middleware/session'
 import { zodHandle } from '../shapes'
@@ -27,17 +24,11 @@ export const router = _router({
       try {
         const session = await ctx.session.getBinding()
         if (!session) {
-          throw new TRPCError({
-            code: 'INTERNAL_SERVER_ERROR',
-            message: unableToRetrieveSession,
-          })
+          throwGucchoError(GucchoError.UnableToRetrieveSession)
         }
         const [ok, user] = await users.testPassword({ handle }, md5HashedPassword)
         if (!ok) {
-          throw new TRPCError({
-            code: 'UNAUTHORIZED',
-            message: passwordMismatch,
-          })
+          throwGucchoError(GucchoError.PasswordMismatch)
         }
         const newSessionId = await sessions.update(ctx.session.id, { userId: UserProvider.idToString(user.id) })
         if (newSessionId && newSessionId !== ctx.session.id) {
@@ -54,27 +45,18 @@ export const router = _router({
 
         // unknown error
         logger.error(err)
-        throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: unknownError,
-        })
+        throwGucchoError(GucchoError.UnknownError)
       }
     }),
   retrieve: publicProcedure
     .query(async ({ ctx }) => {
       if (!ctx.session.id) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: sessionNotFound,
-        })
+        throwGucchoError(GucchoError.SessionNotFound)
       }
       const session = await sessions.get(ctx.session.id)
 
       if (!session) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: sessionNotFound,
-        })
+        throwGucchoError(GucchoError.SessionNotFound)
       }
       if (session.userId) {
         try {

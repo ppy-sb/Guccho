@@ -1,7 +1,7 @@
 import { TRPCError } from '@trpc/server'
 import { array, number, object, string } from 'zod'
 import { hasLeaderboardRankingSystem, hasRuleset } from '../config'
-import { userNotFound } from '../messages'
+import { GucchoError } from '../messages'
 import { optionalUserProcedure } from '../middleware/optional-user'
 import { sessionProcedure } from '../middleware/session'
 import {
@@ -25,7 +25,7 @@ function visible(user: Pick<UserCompact<any>, 'id' | 'roles'>, viewer?: Pick<Use
   return user.roles.includes(UserRole.Normal) || isSelf || viewer?.roles.includes(UserRole.Staff)
 }
 
-const userNotFoundError = new TRPCError({ code: 'NOT_FOUND', message: userNotFound })
+const userNotFoundError = createGucchoError(GucchoError.UserNotFound)
 
 export const router = _router({
   exists: p

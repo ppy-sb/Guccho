@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { TRPCError } from '@trpc/server'
+import { formatGucchoErrorWithT } from '../../common/utils'
 import { useSession } from '~/store/session'
 
 const session = useSession()
@@ -48,7 +49,7 @@ async function userLogin() {
     }
   }
   catch (_error) {
-    error.value = (_error as TRPCError).message
+    error.value = formatGucchoErrorWithT(t, (_error as TRPCError))
   }
   finally {
     fetching.value = false

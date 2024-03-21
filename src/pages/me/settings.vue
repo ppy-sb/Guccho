@@ -132,14 +132,20 @@ async function updateUserSettings() {
 
   const [result, profileResult] = await Promise.all([
     app$.$client.me.changeSettings.mutate(updateData).catch((error) => {
-      errorMessage.value.push(error.message)
+      if (!error.data.zodError) {
+        errorMessage.value.push(formatGucchoErrorWithT(t, error))
+      }
+      for (const key in error.data.zodError.fieldErrors) {
+        const v: string[] = error.data.zodError.fieldErrors[key]
+        errorMessage.value.push(`${key}: ${v.join(';')}`)
+      }
     }),
     profile.value
       && profileEdited.value
       && app$.$client.me.changeUserpage
         .mutate({ profile: profile.value })
         .catch((error) => {
-          errorMessage.value.push(error.message)
+          errorMessage.value.push(formatGucchoErrorWithT(t, error))
         }),
   ])
   updateResult.value = true
@@ -217,7 +223,7 @@ async function updatePassword(closeModal: () => void) {
     closeModal()
   }
   catch (error: any) {
-    changePasswordError.value = error.message
+    changePasswordError.value = formatGucchoErrorWithT(t, error)
   }
   updatingPassword.value = false
 }

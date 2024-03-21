@@ -1,12 +1,7 @@
-import { TRPCError } from '@trpc/server'
 import { instanceof as instanceof_, nativeEnum, object, string } from 'zod'
-import {
-  atLeastOneUserNotExists,
-  relationTypeNotFound,
-  userExists,
-} from '../messages'
 import { zodHandle, zodRelationType, zodTipTapJSONContent } from '../shapes'
 import { router as _router } from '../trpc'
+import { GucchoError } from '../messages'
 import { UserProvider, UserRelationProvider, sessions, userRelations, users } from '~/server/singleton/service'
 import { extractLocationSettings, extractSettingValidators } from '$base/@define-setting'
 import { settings } from '$active/dynamic-settings'
@@ -71,19 +66,14 @@ export const router = _router({
           keys: ['id', 'name', 'safeName'],
         }).catch(noop<undefined>)
         if (existingUser?.name === input.name) {
-          throw new TRPCError({
-            code: 'PRECONDITION_FAILED',
-            message: userExists,
-          })
+          throwGucchoError(GucchoError.UserExists)
         }
 
         update.name = input.name
       }
 
-      const result = await users.changeSettings(ctx.user, update)
-      if (!result) {
-        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' })
-      }
+      const result = await users.changeSettings(ctx.user, update) ?? throwGucchoError(GucchoError.UpdateUserSettingsFailed)
+
       ctx.user = result
       return mapId(ctx.user, UserProvider.idToString)
     }),
@@ -163,10 +153,7 @@ export const router = _router({
       const targetUser = await users.getCompact({ handle: input.target })
 
       if (!fromUser || targetUser == null) {
-        throw new TRPCError({
-          code: 'PRECONDITION_FAILED',
-          message: atLeastOneUserNotExists,
-        })
+        throwGucchoError(GucchoError.AtLeastOneUserNotExists)
       }
       try {
         await userRelations.removeOne({
@@ -178,10 +165,7 @@ export const router = _router({
       }
       catch (err: any) {
         if (err.message === 'not-found') {
-          throw new TRPCError({
-            code: 'NOT_FOUND',
-            message: relationTypeNotFound,
-          })
+          throwGucchoError(GucchoError.RelationTypeNotFound)
         }
         throw err
       }
@@ -198,10 +182,7 @@ export const router = _router({
       const fromUser = ctx.user
       const targetUser = await users.getCompact({ handle: input.target })
       if (!fromUser || targetUser == null) {
-        throw new TRPCError({
-          code: 'PRECONDITION_FAILED',
-          message: atLeastOneUserNotExists,
-        })
+        throwGucchoError(GucchoError.AtLeastOneUserNotExists)
       }
       try {
         await userRelations.createOneRelationship({
@@ -213,10 +194,7 @@ export const router = _router({
       }
       catch (err: any) {
         if (err.message === 'has-relationship') {
-          throw new TRPCError({
-            code: 'CONFLICT',
-            message: 'you have existing relations, delete old one first.',
-          })
+          throwGucchoError(GucchoError.ConflictRelation)
         }
       }
     }),

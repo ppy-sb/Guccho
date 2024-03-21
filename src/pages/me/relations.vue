@@ -37,7 +37,7 @@ if (!relations.value) {
 const errorMessage = shallowRef('')
 
 onErrorCaptured((err) => {
-  errorMessage.value = err.message || t('err-message')
+  errorMessage.value = formatGucchoErrorWithT(t, err) || t('err-message')
 })
 function haveRelation(relation: Relationship, user: UserCompact<string> & UserRelationship) {
   return user.relationship.includes(relation)

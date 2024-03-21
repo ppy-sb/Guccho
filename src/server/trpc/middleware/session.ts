@@ -1,5 +1,4 @@
-import { TRPCError } from '@trpc/server'
-import { unableToRefreshToken } from '../messages'
+import { GucchoError } from '../messages'
 import { publicProcedure } from '../trpc'
 import { Constant } from '~/server/common/constants'
 import { haveSession } from '~/server/middleware/0.session'
@@ -48,10 +47,7 @@ export const sessionProcedure = publicProcedure
       else {
         const refreshed = await sessions.refresh(ctx.session.id)
         if (!refreshed) {
-          throw new TRPCError({
-            code: 'INTERNAL_SERVER_ERROR',
-            message: unableToRefreshToken,
-          })
+          throwGucchoError(GucchoError.UnableToRefreshToken)
         }
         if (refreshed !== ctx.session.id) {
           setCookie(ctx.h3Event, Constant.SessionLabel, refreshed, config)

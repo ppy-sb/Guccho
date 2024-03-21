@@ -1,6 +1,7 @@
 import type { LocaleMessageValue, VueMessageType } from '@nuxtjs/i18n/dist/runtime/composables'
 import type { DeepPartial } from '@trpc/server'
 import type { CountryCode } from '../def/country-code'
+import type { GucchoError } from '../server/trpc/messages'
 import type { Scope, UserRole } from '~/def/user'
 import { Lang, type Rank } from '~/def'
 import type { ActiveMode, ActiveRuleset } from '~/def/common'
@@ -56,6 +57,8 @@ export interface GlobalI18n extends Record<string, LocaleMessageValue<VueMessage
   global: Record<KGlobal, string>
 
   service: Record<string, string>
+
+  error: Record<GucchoError, string>
 
   country: Record<CountryCode, string>
 }

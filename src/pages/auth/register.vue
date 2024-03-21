@@ -168,7 +168,7 @@ fr-FR:
         @submit.prevent="userRegisterAction"
       >
         <div v-if="unknownError" class="text-error ">
-          {{ unknownError.message }}
+          {{ formatGucchoErrorWithT(t, unknownError) }}
         </div>
         <div class="space-y-2">
           <div>
