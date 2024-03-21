@@ -1,4 +1,4 @@
-import { TRPCError } from '@trpc/server'
+import { GucchoError } from '../messages'
 import { userProcedure } from './user'
 
 export const roleProcedure = userProcedure.use(async ({ ctx, next }) => {
@@ -17,11 +17,7 @@ export const roleProcedure = userProcedure.use(async ({ ctx, next }) => {
 
 export const adminProcedure = roleProcedure.use(({ ctx, next }) => {
   if (!ctx.user.role.staff) {
-    throw new TRPCError({
-      code: 'FORBIDDEN',
-      message:
-        'you do not have sufficient privilege to interact with this page.',
-    })
+    throwGucchoError(GucchoError.RequireAdminPrivilege)
   }
   return next()
 })

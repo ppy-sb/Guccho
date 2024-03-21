@@ -5,13 +5,13 @@ import { useDrizzle, userPriv } from '../../../bancho.py/server/source/drizzle'
 import { FilterType } from '../../../bancho.py/server/user'
 import * as schema from '../../drizzle/schema'
 import { Logger } from '../../log'
+import { GucchoError } from '../../../../trpc/messages'
 import { controlChars } from './reg-exps'
 import type { Mode, Ruleset } from '~/def'
 import type { CountryCode } from '~/def/country-code'
 import { Scope, type UserCompact, UserRole, UserStatus } from '~/def/user'
 import { ArticleProvider, UserProvider as BanchoPyUser } from '~/server/backend/bancho.py/server'
 import { fromBanchoPyMode, toFullUser, toUserClan } from '~/server/backend/bancho.py/transforms'
-import { userNotFound } from '~/server/trpc/messages'
 import type { UserProvider as Base } from '$base/server'
 
 const logger = Logger.child({ label: 'user' })
@@ -103,7 +103,7 @@ export class UserProvider extends BanchoPyUser implements Base<Id, ScoreId> {
       with: {
         clan: true,
       },
-    }) ?? raise(Error, userNotFound)
+    }) ?? throwGucchoError(GucchoError.UserNotFound)
 
     const fullUser = toFullUser(user, this.config)
     const profile = await this.drizzle.query.userpages.findFirst({

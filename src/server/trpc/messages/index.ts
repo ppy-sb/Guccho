@@ -1,15 +1,32 @@
-export const userNotFound = 'user not found.'
-export const passwordMismatch = 'wrong password.'
-export const oldPasswordMismatch = 'old password is wrong.'
-export const userExists = 'user exists.'
-export const atLeastOneUserNotExists = 'at least one of user is not exist.'
-export const relationTypeNotFound = 'relation not found.'
-export const unableToRefreshToken
-  = 'something went wrong on our side. Please login again.'
-export const unableToRetrieveSession
-  = 'something went wrong on our side. Please login again.'
-export const youNeedToLogin = 'you need to login.'
-export const unknownError
-  = 'something went wrong on our side. Please report this problem to us.'
-export const sessionNotFound = 'session not found.'
-export const conflictEmail = 'email already used in other account.'
+export enum GucchoError {
+  UnknownError = 1,
+  MissingServerAvatarConfig,
+
+  ModeNotSupported = 1000,
+
+  // user
+  UserNotFound = 2000,
+  UserExists,
+  ConflictEmail,
+  UpdateUserSettingsFailed,
+  UpdateUserpageFailed,
+  MimeNotImage,
+  HackerTryingToDeleteAllAvatars,
+  DeletingMoreThanOneAvatars,
+
+  // auth
+  PasswordMismatch = 3000,
+  OldPasswordMismatch,
+
+  RelationTypeNotFound = 4000,
+
+  ConflictRelation,
+  AtLeastOneUserNotExists,
+
+  UnableToRetrieveSession = 5000,
+  UnableToRefreshToken,
+  YouNeedToLogin,
+  SessionNotFound,
+
+  RequireAdminPrivilege = 6000,
+}

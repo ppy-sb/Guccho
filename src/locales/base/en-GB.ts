@@ -2,6 +2,7 @@ import type { GlobalI18n } from '../@types'
 import { CountryCode } from '~/def/country-code'
 import { Scope, UserRole } from '~/def/user'
 import { Mode, Rank, Ruleset } from '~/def'
+import { GucchoError } from '~/server/trpc/messages'
 
 export default {
   server: {
@@ -87,6 +88,29 @@ export default {
     logs: 'Logs',
     ranks: 'Leaderboard',
     sessions: 'Web Login',
+  },
+  error: {
+    [GucchoError.UnknownError]: 'Unknown Error',
+    [GucchoError.UserNotFound]: 'User not found',
+    [GucchoError.UserExists]: 'User already exists',
+    [GucchoError.ConflictEmail]: 'This email address is already used',
+    [GucchoError.PasswordMismatch]: 'Password is not matching',
+    [GucchoError.OldPasswordMismatch]: 'Old password is not matched',
+    [GucchoError.RelationTypeNotFound]: 'Unknown relation type',
+    [GucchoError.AtLeastOneUserNotExists]: 'At least one user not exists',
+    [GucchoError.UnableToRetrieveSession]: 'Unable to retrieve session',
+    [GucchoError.UnableToRefreshToken]: 'Unable to update your session',
+    [GucchoError.YouNeedToLogin]: 'You need to login.',
+    [GucchoError.SessionNotFound]: 'Session Not Found',
+    [GucchoError.UpdateUserSettingsFailed]: 'Failed to update user settings',
+    [GucchoError.ConflictRelation]: 'You had relation with this player',
+    [GucchoError.MissingServerAvatarConfig]: 'server is not configured correctly, missing avatar location',
+    [GucchoError.ModeNotSupported]: 'Mode not supported',
+    [GucchoError.UpdateUserpageFailed]: 'Failed to update userpage',
+    [GucchoError.MimeNotImage]: 'Not an image',
+    [GucchoError.HackerTryingToDeleteAllAvatars]: 'SOMEONE IS TRYING TO DELETE ALL AVATARS',
+    [GucchoError.DeletingMoreThanOneAvatars]: 'trying to delete more than 2 files, please contact support to clean your old avatars',
+    [GucchoError.RequireAdminPrivilege]: 'Require Staff roles',
   },
   country: {
     [CountryCode.Unknown]: 'Unknown',

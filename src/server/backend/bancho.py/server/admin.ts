@@ -6,7 +6,7 @@ import { config } from '../env'
 import { Logger } from '../log'
 import { fromCountryCode, toBanchoPyPriv, toSafeName, toUserCompact, toUserOptional } from '../transforms'
 import { useDrizzle } from './source/drizzle'
-import { userNotFound } from '~/server/trpc/messages/index'
+import { GucchoError } from '~/server/trpc/messages'
 import { type UserClan, type UserCompact, type UserOptional, UserRole, type UserSecrets } from '~/def/user'
 import { AdminProvider as Base } from '$base/server'
 
@@ -82,7 +82,7 @@ export class AdminProvider extends Base<Id> implements Base<Id> {
   async userDetail(query: { id: Id }): Promise<UserCompact<Id> & UserOptional> {
     const user = await this.drizzle.query.users.findFirst({
       where: eq(schema.users.id, query.id),
-    }) ?? raise(Error, userNotFound)
+    }) ?? throwGucchoError(GucchoError.UserNotFound)
 
     return {
       ...toUserCompact(user, this.config),

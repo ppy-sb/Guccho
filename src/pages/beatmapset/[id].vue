@@ -223,7 +223,7 @@ fr-FR:
 <template>
   <section v-if="error" class="mx-auto section custom-container">
     <div>
-      {{ error?.message }}
+      {{ formatGucchoErrorWithT(t, error) }}
     </div>
   </section>
   <div
