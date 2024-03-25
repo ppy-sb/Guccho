@@ -21,10 +21,17 @@ type RetrievablePath<T, Delimiter extends string, Path extends string = ''> =
 function getPathWithDelimiter<Shape extends PathAccessibleObject, Delimiter extends string>(delimiter: Delimiter, segments: string[] = []): RetrievablePath<Shape, Delimiter> {
   const recursiveHandler = {
     get(target: Shape, prop: string): unknown {
-      if (prop === 'toString') {
-        return () => segments.join(delimiter)
+      switch (prop) {
+        case '__path__': {
+          return segments.join(delimiter)
+        }
+        case 'toString': {
+          return () => segments.join(delimiter)
+        }
+        default: {
+          return getPathWithDelimiter<any, Delimiter>(delimiter, [...segments, prop])
+        }
       }
-      return getPathWithDelimiter<any, Delimiter>(delimiter, [...segments, prop])
     },
   }
   return new Proxy({} as any, recursiveHandler)
