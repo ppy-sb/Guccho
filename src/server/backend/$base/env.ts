@@ -14,6 +14,12 @@ export const validator = discriminatedUnion('sessionStore', [
   article: object({
     location: zodPath.default(resolve('articles')),
   }),
+  mail: object({
+    type: literal('smtp'),
+    // https://nodemailer.com/smtp/
+    auth: string().url(),
+    sender: string().email(),
+  }),
 }))
 
 export const config = lazySingleton(() => validator.parse(env))

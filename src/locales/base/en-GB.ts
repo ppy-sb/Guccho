@@ -1,6 +1,7 @@
 import type { GlobalI18n } from '../@types'
 import { CountryCode } from '~/def/country-code'
 import { Scope, UserRole } from '~/def/user'
+import { Mail } from '~/def/mail'
 import { Mode, Rank, Ruleset } from '~/def'
 import { GucchoError } from '~/server/trpc/messages'
 
@@ -363,5 +364,20 @@ export default {
     [CountryCode.Yemen]: 'Yemen',
     [CountryCode.Zambia]: 'Zambia',
     [CountryCode.Zimbabwe]: 'Zimbabwe',
+  },
+  mail: {
+    [Mail.Variant.Verify]: `
+Hi {name},
+
+to verify your email for {serverName},
+please continue with the following link:
+{link}
+`,
+    [Mail.Variant.AccountRecovery]: `
+Hi {name},
+
+You can reset your password from the following link:
+{link}
+    `,
   },
 } satisfies GlobalI18n as GlobalI18n

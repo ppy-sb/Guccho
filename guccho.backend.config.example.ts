@@ -49,4 +49,10 @@ export default {
     v1: 'http://api.dev.ppy.sb/v1',
   },
 
+  mail: {
+    type: 'smtp',
+    auth: '',
+    sender: '',
+  },
+
 } satisfies UserBackendConfig

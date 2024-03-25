@@ -4,6 +4,7 @@ import {
   ClanProvider,
   FileProvider,
   LogProvider,
+  MailProvider,
   MapProvider,
   MonitorProvider,
   RankProvider,
@@ -25,6 +26,7 @@ export const sessions = new SessionProvider()
 export const users = new UserProvider()
 export const userRelations = new UserRelationProvider()
 export const clanProvider = new ClanProvider()
+export const mail = new MailProvider()
 
 export {
   AdminProvider,

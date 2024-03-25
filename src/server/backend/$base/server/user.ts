@@ -1,7 +1,8 @@
 import type { JSONContent } from '@tiptap/core'
+import { v4 } from 'uuid'
 import type { ExtractLocationSettings, ExtractSettingType } from '../@define-setting'
-import { IdTransformable } from './@extends'
 import type { Composition } from './@common'
+import { IdTransformable } from './@extends'
 import type { settings } from '$active/dynamic-settings'
 import type { Mode, Ruleset } from '~/def'
 import type { BeatmapSource, RankingStatus } from '~/def/beatmap'
@@ -23,6 +24,7 @@ import type {
   UserStatistic,
   UserStatus,
 } from '~/def/user'
+import type { Tag } from '~/def/internal-utils'
 
 export namespace UserProvider {
   export type ComposableProperties<Id> = UserExtra<Id> & UserOptional & { clan: UserClan<Id> | null }
@@ -45,8 +47,12 @@ export namespace UserProvider {
   }
 
   export type UserCompact<Id> = UserCompact$2<Id>
+  export type Email = Tag<string, 'email'>
+  export type Token = Tag<string, 'token'>
 }
+
 export abstract class UserProvider<Id, ScoreId> extends IdTransformable {
+  tokens = new Map<UserProvider.Token, UserProvider.Email>()
   abstract uniqueIdent(input: string): PromiseLike<boolean>
 
   abstract getCompact(
@@ -197,4 +203,42 @@ export abstract class UserProvider<Id, ScoreId> extends IdTransformable {
     count: number
     scores: RankingSystemScore<ScoreId, Id, Mode, RankingSystem>[]
   }>
+
+  async getOrCreateEmailValidationToken(email: UserProvider.Email): Promise<UserProvider.Token> {
+    return await this.getEmailToken(email)
+      ?? (
+        await this.createEmailToken(email)
+        ?? raise(Error, 'could not create token')
+      )
+  }
+
+  async validateEmailAndDeleteTokenIfSucceed(email: UserProvider.Email, token: UserProvider.Token) {
+    const ns = this.tokens.get(token)
+
+    if (!ns || !token) {
+      return false
+    }
+
+    const ok = ns === email
+    if (!ok) {
+      return false
+    }
+
+    await this.deleteEmailToken(token)
+    return true
+  }
+
+  async createEmailToken(email: UserProvider.Email): Promise<UserProvider.Token> {
+    const tok = v4() as UserProvider.Token
+    this.tokens.set(tok, email)
+    return tok
+  }
+
+  async getEmailToken(email: UserProvider.Email): Promise<UserProvider.Token | undefined> {
+    return [...this.tokens.entries()].find(([_, e]) => e === email)?.[0]
+  }
+
+  async deleteEmailToken(token: UserProvider.Token) {
+    this.tokens.delete(token)
+  }
 }

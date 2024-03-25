@@ -2,6 +2,7 @@ import type { VueMessageType } from '@nuxtjs/i18n/dist/runtime/composables'
 import type { DeepPartial } from '@trpc/server'
 import type { CountryCode } from '../def/country-code'
 import type { GucchoError } from '../server/trpc/messages'
+import type { Mail } from '../def/mail'
 import type { Scope, UserRole } from '~/def/user'
 import { Lang, type Rank } from '~/def'
 import type { ActiveMode, ActiveRuleset } from '~/def/common'
@@ -61,6 +62,8 @@ export interface GlobalI18n extends PathAccessibleObject {
   error: Record<GucchoError, string>
 
   country: Record<CountryCode, string>
+
+  mail: Record<Mail.Variant, string>
 }
 
 interface T { [x: string]: localeMessages<VueMessageType> }

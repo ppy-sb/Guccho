@@ -13,12 +13,18 @@ import {
   zodRuleset,
 } from '../shapes'
 import { router as _router, publicProcedure as p } from '../trpc'
-import { MapProvider, ScoreProvider, UserProvider, sessions, userRelations, users } from '~/server/singleton/service'
+import { MapProvider, ScoreProvider, UserProvider, mail, sessions, userRelations, users } from '~/server/singleton/service'
 import { Scope, type UserCompact, UserRole } from '~/def/user'
 import { RankingStatus } from '~/def/beatmap'
 import { type RankingSystemScore } from '~/def/score'
 import { type Mode } from '~/def'
 import { type LeaderboardRankingSystem } from '~/def/common'
+import { type UserProvider as UBase } from '$base/server'
+import { Mail } from '~/def/mail'
+import ui from '~~/guccho.ui.config'
+import type { GlobalI18n } from '~/locales/@types'
+
+export const map = getPath<GlobalI18n>()()
 
 function visible(user: Pick<UserCompact<any>, 'id' | 'roles'>, viewer?: Pick<UserCompact<any>, 'id' | 'roles'>) {
   const isSelf = user.id === viewer?.id
@@ -205,6 +211,34 @@ export const router = _router({
     })).query(async ({ input: { id } }) => {
       return await users.status({ id: UserProvider.stringToId(id) })
     }),
+
+  requestEmailVerificationToken: sessionProcedure
+    .input(object({
+      email: string().email(),
+    })).mutation(async ({ ctx, input }) => {
+      await ctx.session.getBinding() ?? throwGucchoError(GucchoError.SessionNotFound)
+      const token = await users.getEmailToken(input.email as UBase.Email)
+      ctx.session.update({ emailToken: token })
+      type Param = ReturnType<Mail.Param[Mail.Variant.Verify]>
+      const t = await useTranslation(ctx.h3Event)
+      const serverName = t(localeKey.root.server.name.__path__)
+      const baseURL = ui.baseUrl
+
+      const param: Param = {
+        name: '',
+        serverName,
+        link: `${baseURL}/mail/verify?token=${token}`,
+      }
+
+      const content = t(localeKey.mail(Mail.Variant.Verify), param)
+
+      mail.send({
+        to: input.email,
+        subject: `${serverName} - verification`,
+        content,
+      })
+    }),
+
   register: sessionProcedure
     .input(object({
       name: string().trim(),

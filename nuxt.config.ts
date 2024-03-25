@@ -6,6 +6,7 @@ import ui from './guccho.ui.config'
 import './scripts/ensure-env'
 import { Lang } from './src/def'
 import { CountryCode } from './src/def/country-code'
+import { Constant } from './src/server/common/constants'
 
 const uiConf = pick(ui, ['baseUrl', 'brand', 'footerLink', 'iconLinks', 'leaderboardRankingSystem'])
 
@@ -94,7 +95,7 @@ export default defineNuxtConfig({
     defaultLocale: Lang.enGB,
     detectBrowserLanguage: {
       useCookie: true,
-      cookieKey: 'g-lang',
+      cookieKey: Constant.CookieLangKey,
       redirectOn: 'root', // recommended
     },
     locales: [
@@ -114,6 +115,9 @@ export default defineNuxtConfig({
         name: '简体中文 (中国)',
       },
     ],
+    experimental: {
+      localeDetector: './src/server/localeDetector.ts',
+    },
   },
 
   experimental: {

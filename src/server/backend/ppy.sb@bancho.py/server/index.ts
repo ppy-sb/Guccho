@@ -2,6 +2,7 @@ import {
   AdminProvider as BAdminProvider,
   ArticleProvider as BArticleProvider,
   ClanProvider as BClanProvider,
+  MailProvider as BEmailProvider,
   FileProvider as BFileProvider,
   LogProvider as BLogProvider,
   MapProvider as BMapProvider,
@@ -25,3 +26,4 @@ export class RankProvider extends BRankProvider {}
 export class ScoreProvider extends BScoreProvider {}
 export class SessionProvider extends BSessionProvider {}
 export class UserRelationProvider extends BUserRelationProvider {}
+export class MailProvider extends BEmailProvider {}

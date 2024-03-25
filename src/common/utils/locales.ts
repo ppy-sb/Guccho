@@ -1,7 +1,8 @@
 import type { GlobalI18n } from '../../locales/@types'
-import { type CountryCode } from '~/def/country-code'
 import type { Mode, Rank, Ruleset } from '~/def'
+import { type CountryCode } from '~/def/country-code'
 import type { Scope, UserRole } from '~/def/user'
+import type { Mail } from '~/def/mail'
 
 export const root = getPath<GlobalI18n>()()
 
@@ -12,6 +13,7 @@ const _ruleset = root.ruleset
 const _rank = root.rank
 const _service = root.service
 const _country = root.country
+const _mail = root.mail
 
 export function role<T extends UserRole>(priv: T) {
   // return `role.${priv}`
@@ -45,4 +47,9 @@ export function service<T extends keyof GlobalI18n['service']>(srv: T) {
 export function country(cd: CountryCode) {
   // return `country.${cd}`
   return _country[cd].toString()
+}
+
+export function mail(variant: Mail.Variant) {
+  // return `mail.${variant}`
+  return _mail[variant].toString()
 }
