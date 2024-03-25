@@ -19,6 +19,15 @@ export default defineNuxtConfig({
     transpile: ['trpc-nuxt'],
   },
 
+  routeRules: {
+    '/_nuxt/**': {
+      headers: {
+        // number here chosen for its recognisability not for use
+        'cache-control': 'public, max-age=86400, immutable',
+      },
+    },
+  },
+
   modules: [
     '@nuxtjs/tailwindcss',
     '@pinia/nuxt',
