@@ -1,4 +1,4 @@
-import type { LocaleMessageValue, VueMessageType } from '@nuxtjs/i18n/dist/runtime/composables'
+import type { VueMessageType } from '@nuxtjs/i18n/dist/runtime/composables'
 import type { DeepPartial } from '@trpc/server'
 import type { CountryCode } from '../def/country-code'
 import type { GucchoError } from '../server/trpc/messages'
@@ -39,7 +39,7 @@ type KFooter =
 | 'about'
 | 'resources'
 
-export interface GlobalI18n extends Record<string, LocaleMessageValue<VueMessageType>> {
+export interface GlobalI18n extends PathAccessibleObject {
   server: {
     name: string
   }

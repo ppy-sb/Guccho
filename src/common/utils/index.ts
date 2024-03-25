@@ -5,6 +5,7 @@ export * from './layer'
 export * from './level'
 export * from './error'
 export * as localeKey from './locales'
+export * from './locale-path'
 export * from './map'
 export * from './roles'
 
