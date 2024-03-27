@@ -839,23 +839,23 @@ export class RedisUserProvider extends DBUserProvider {
       [Mode.Taiko]: {
         [Ruleset.Standard]: await this.getLiveRank(
           id,
-          BanchoPyMode.OsuStandard,
+          BanchoPyMode.TaikoStandard,
           country,
         ),
-        [Ruleset.Relax]: await this.getLiveRank(id, BanchoPyMode.OsuRelax, country),
+        [Ruleset.Relax]: await this.getLiveRank(id, BanchoPyMode.TaikoRelax, country),
       },
       [Mode.Fruits]: {
         [Ruleset.Standard]: await this.getLiveRank(
           id,
-          BanchoPyMode.OsuStandard,
+          BanchoPyMode.FruitsStandard,
           country,
         ),
-        [Ruleset.Relax]: await this.getLiveRank(id, BanchoPyMode.OsuRelax, country),
+        [Ruleset.Relax]: await this.getLiveRank(id, BanchoPyMode.FruitsRelax, country),
       },
       [Mode.Mania]: {
         [Ruleset.Standard]: await this.getLiveRank(
           id,
-          BanchoPyMode.OsuStandard,
+          BanchoPyMode.ManiaStandard,
           country,
         ),
       },
