@@ -28,14 +28,10 @@ function visible(user: Pick<UserCompact<any>, 'id' | 'roles'>, viewer?: Pick<Use
 const userNotFoundError = createGucchoError(GucchoError.UserNotFound)
 
 export const router = _router({
-  exists: p
-    .input(
-      object({
-        handle: zodHandle,
-      }),
-    )
-    .query(({ input: { handle } }) => {
-      return users.exists({ handle })
+  uniqueIdent: p
+    .input(zodHandle)
+    .query(({ input: handle }) => {
+      return users.uniqueIdent(handle)
     }),
   userpage: optionalUserProcedure
     .input(

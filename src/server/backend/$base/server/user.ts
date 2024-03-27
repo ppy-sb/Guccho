@@ -47,7 +47,7 @@ export namespace UserProvider {
   export type UserCompact<Id> = UserCompact$2<Id>
 }
 export abstract class UserProvider<Id, ScoreId> extends IdTransformable {
-  abstract exists({ handle, keys }: UserProvider.OptType): PromiseLike<boolean>
+  abstract uniqueIdent(input: string): PromiseLike<boolean>
 
   abstract getCompact(
     opt: UserProvider.OptType & { scope: Scope }

@@ -29,11 +29,13 @@ const fetching = shallowRef(false)
 
 function unique(key: keyof Shape) {
   return async () => {
-    if (!reg[key]) {
+    const content = reg[key]
+
+    if (content === undefined) {
       error[key] = t('key-required', { key })
       return false
     }
-    const exists = await app.$client.user.exists.query({ handle: reg[key] as string })
+    const exists = await app.$client.user.uniqueIdent.query(content)
     if (!exists) {
       return true
     }

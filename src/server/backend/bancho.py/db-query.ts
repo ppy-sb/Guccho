@@ -3,7 +3,7 @@ import type { DatabaseUserCompactFields } from './transforms/user'
 import { stringToId, toBanchoMode } from './transforms'
 import type { OP, Tag } from '~/def/search'
 
-export const userCompacts: Prisma.UserFindManyArgs = {
+export const prismaUserCompactFields: Prisma.UserFindManyArgs = {
   select: {
     id: true,
     name: true,

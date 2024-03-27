@@ -15,7 +15,7 @@ import { compareBanchoPassword, encryptBanchoPassword } from '../crypto'
 import {
   createUserHandleWhereQuery,
   createUserLikeQuery,
-  userCompacts,
+  prismaUserCompactFields,
 } from '../db-query'
 import type { settings } from '../dynamic-settings'
 import { BanchoPyMode, BanchoPyScoreStatus } from '../enums'
@@ -122,25 +122,13 @@ class DBUserProvider extends Base<Id, ScoreId> implements Base<Id, ScoreId> {
     }
   }
 
-  async exists({
-    handle,
-    keys = ['id', 'name', 'safeName', 'email'],
-  }: Base.OptType) {
+  async uniqueIdent(input: string) {
     return (
       await this.prisma.user.count({
-        where: {
-          AND: [
-            createUserHandleWhereQuery({
-              handle,
-              selectAgainst: keys,
-            }),
-            {
-              priv: {
-                in: normal,
-              },
-            },
-          ],
-        },
+        where: createUserHandleWhereQuery({
+          handle: input,
+          selectAgainst: ['email', 'id', 'name', 'safeName'],
+        }),
       })
     ) > 0
   }
@@ -151,7 +139,7 @@ class DBUserProvider extends Base<Id, ScoreId> implements Base<Id, ScoreId> {
       where: {
         id,
       },
-      ...userCompacts,
+      ...prismaUserCompactFields,
     })
 
     return toUserCompact(user, this.config)
@@ -176,7 +164,7 @@ class DBUserProvider extends Base<Id, ScoreId> implements Base<Id, ScoreId> {
                 },
               }],
       },
-      ...userCompacts,
+      ...prismaUserCompactFields,
     })
       .catch(() => {
         throwGucchoError(GucchoError.UserNotFound)
@@ -619,7 +607,19 @@ class DBUserProvider extends Base<Id, ScoreId> implements Base<Id, ScoreId> {
   async search({ keyword, limit }: { keyword: string; limit: number }) {
     const userLike = createUserLikeQuery(keyword)
     /* optimized */
-    const result = await this.prisma.user.findMany(merge(structuredClone(userCompacts), merge(userLike, { where: { priv: { in: normal } }, select: { clan: true }, take: limit })))
+    const result = await this.prisma.user.findMany(
+      merge(
+        structuredClone(prismaUserCompactFields),
+        merge(
+          userLike,
+          {
+            where: { priv: { in: normal } },
+            select: { clan: true },
+            take: limit,
+          }
+        )
+      )
+    )
 
     return result.map(user => ({
       ...toUserCompact(user, this.config),
