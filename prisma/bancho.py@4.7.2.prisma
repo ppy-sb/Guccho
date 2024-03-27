@@ -1,7 +1,8 @@
 generator client {
-  provider      = "prisma-client-js"
-  output        = "../node_modules/prisma-client-bancho-py"
-  binaryTargets = ["native"]
+  provider        = "prisma-client-js"
+  output          = "../node_modules/prisma-client-bancho-py"
+  binaryTargets   = ["native"]
+  previewFeatures = ["relationJoins"]
 }
 
 datasource db {
