@@ -1,4 +1,5 @@
 import type { GlobalI18n } from '../@types'
+import { OP, Requirement } from '../../def/dan'
 import { CountryCode } from '~/def/country-code'
 import { Scope, UserRole } from '~/def/user'
 import { Mail } from '~/def/mail'
@@ -154,6 +155,26 @@ export default {
     [GucchoError.TryingToDeleteFallbackContents]: 'Trying to delete fallback contents.',
     [GucchoError.ArticleNotFound]: 'Article not found.',
     [GucchoError.FeatureNotSupported]: 'This feature is not supported.',
+  },
+  dan: {
+    requirement: {
+      [Requirement.Pass]: 'Pass',
+      [Requirement.NoPause]: 'No Pause',
+    },
+    cond: {
+      [OP.AccGte]: 'Accuracy ≥ {val}',
+      [OP.ScoreGte]: 'Score ≥ {val}',
+      [OP.ModeEq]: 'Mode = {val}',
+      [OP.BanchoBeatmapIdEq]: 'Beatmap ID = {val}',
+      [OP.BeatmapMd5Eq]: 'Beatmap MD5 = {val} on Bancho',
+      [OP.WithStableMod]: 'Played With {val}',
+      [OP.Extends]: 'satisfies all requirements in {val}',
+      [OP.OR]: 'or',
+      [OP.AND]: 'AND',
+      [OP.NOT]: 'Not',
+      [OP.Remark]: 'Remark: {remark} {val}',
+      [OP.NoPause]: 'No Pause',
+    },
   },
   country: {
     [CountryCode.Unknown]: 'Unknown',
