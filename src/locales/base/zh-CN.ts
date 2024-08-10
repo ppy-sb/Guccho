@@ -37,6 +37,7 @@ export default {
     'clans': '家人们',
     'account-recovery': '找回账号',
     'user-management': '用户管理',
+    'dans': '段位',
   },
 
   global: {
@@ -148,6 +149,8 @@ export default {
     [GucchoError.TryingToDeleteFallbackContents]: '正在尝试删除缺省的内容。',
     [GucchoError.ArticleNotFound]: '找不到文章。',
     [GucchoError.FeatureNotSupported]: '不支持此功能。',
+    [GucchoError.DanNotFound]: '找不到Dan。',
+    [GucchoError.CannotSaveDan]: '无法保存Dan。',
   },
   dan: {
     requirement: {
