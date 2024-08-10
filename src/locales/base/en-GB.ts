@@ -48,6 +48,7 @@ export default {
     'clans': 'Clans',
     'account-recovery': 'Account Recovery',
     'user-management': 'User Management',
+    'dans': 'Dans',
   },
   global: {
     'logout': 'Sign out',
@@ -155,6 +156,8 @@ export default {
     [GucchoError.TryingToDeleteFallbackContents]: 'Trying to delete fallback contents.',
     [GucchoError.ArticleNotFound]: 'Article not found.',
     [GucchoError.FeatureNotSupported]: 'This feature is not supported.',
+    [GucchoError.DanNotFound]: 'Dan not found.',
+    [GucchoError.CannotSaveDan]: 'Cannot save Dan',
   },
   dan: {
     requirement: {
