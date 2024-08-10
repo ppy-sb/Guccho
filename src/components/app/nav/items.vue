@@ -28,6 +28,12 @@ function clearFocus() {
       {{ t('title.clans') }}
     </nuxt-link-locale>
   </li>
+  <li>
+    <nuxt-link-locale :to="{ name: 'dans' }" @click="clearFocus">
+      <icon name="ic:outline-group-work" class="w-5 h-5" size="100%" />
+      [{{ t('global.wip') }}] {{ t('title.dans') }}
+    </nuxt-link-locale>
+  </li>
   <li v-if="session.user && showAdminPanel(session.user.roles)">
     <nuxt-link-locale :to="{ name: 'status' }" @click="clearFocus">
       <icon name="material-symbols:signal-cellular-alt-rounded" class="w-5 h-5" size="100%" />
@@ -37,7 +43,7 @@ function clearFocus() {
   <li tabindex="0">
     <details ref="langSw">
       <summary><icon name="tabler:world" class="w-5 h-5" />{{ localeProperties.name }}</summary>
-      <ul class="mt-0 right-0 w-64">
+      <ul class="right-0 w-64 mt-0">
         <li
           v-for="l in locales"
           :key="l.code"
@@ -63,10 +69,10 @@ function clearFocus() {
   <!-- <li tabindex="0">
     <a class="justify-between lg:justify-start">
       Parent
-      <svg class="fill-current hidden lg:block" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z" /></svg>
+      <svg class="hidden fill-current lg:block" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z" /></svg>
       <svg class="fill-current lg:hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
     </a>
-    <ul class="p-2 menu m-4 bg-base-100">
+    <ul class="p-2 m-4 menu bg-base-100">
       <li><a>Submenu 1</a></li>
       <li><a>Submenu 2</a></li>
     </ul>
