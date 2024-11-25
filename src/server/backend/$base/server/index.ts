@@ -1,6 +1,7 @@
 export { AdminUserProvider } from './admin/user'
 export { AdminMapProvider } from './admin/map'
 export { ArticleProvider } from './article'
+export { ChatProvider } from './chat'
 export { ClanProvider } from './clan'
 export { FileProvider } from './file'
 export { MailProvider } from './mail'
