@@ -61,6 +61,7 @@ export {
   AdminUserProvider,
   AdminMapProvider,
   ArticleProvider,
+  ChatProvider,
   ClanProvider,
   FileProvider,
   LogProvider,
