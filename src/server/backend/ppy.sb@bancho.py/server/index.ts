@@ -2,7 +2,6 @@ import {
   AdminScoreProvider as BAdminScoreProvider,
   AdminUserProvider as BAdminUserProvider,
   ArticleProvider as BArticleProvider,
-  ChatProvider as BChatProvider,
   ClanProvider as BClanProvider,
   MailProvider as BEmailProvider,
   FileProvider as BFileProvider,
@@ -16,13 +15,13 @@ import {
   UserRelationProvider as BUserRelationProvider,
 } from '~/server/backend/bancho.py/server'
 
+export { ChatProvider } from './chat'
 export { UserProvider } from './user'
 export { AdminMapProvider } from './admin/map'
 
 export class AdminUserProvider extends BAdminUserProvider {}
 export class AdminScoreProvider extends BAdminScoreProvider {}
 export class ArticleProvider extends BArticleProvider {}
-export class ChatProvider extends BChatProvider {}
 export class ClanProvider extends BClanProvider {}
 export class FileProvider extends BFileProvider {}
 export class LogProvider extends BLogProvider {}
