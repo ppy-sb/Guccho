@@ -156,6 +156,8 @@ export default {
     // [GucchoError.TryingToDeleteFallbackContents]: ''
     // [GucchoError.ArticleNotFound]: '',
   },
+  // TODO DE translation
+  // dan: {},
   country: {
     [CountryCode.Unknown]: 'Unbekannt',
     [CountryCode.Afghanistan]: 'Afghanistan',
