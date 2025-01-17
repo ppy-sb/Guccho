@@ -189,7 +189,7 @@ function formatDate(dateString: Date) {
               :alt="autoLocale(item.score.beatmap.beatmapset.meta).title"
               class="hidden object-cover h-32 aspect-square border rounded dark:border-base-300 md:block"
               loading="lazy"
-              :onerror="placeholder"
+              :onerror="onLazyImageError"
             >
             <!-- :srcset="`${item.score.beatmap.beatmapset.assets.cover} 1x, ${item.score.beatmap.beatmapset.assets['cover@2x']} 2x`" -->
             <img
