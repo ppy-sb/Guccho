@@ -26,6 +26,12 @@ export default defineStore('userpage', () => {
   const statisticLoadingState = shallowRef(false)
   const currentRankingSystem = shallowRef<ReturnType<typeof computeRankingSystem>>()
 
+  const dan = reactive({
+    visible: true,
+    count: 0,
+    neverShow: useCookie('experimental:dan-ad-no-show', { default: () => false }),
+  })
+
   let dispose: WatchStopHandle[] = []
 
   async function getStatistic() {
@@ -57,6 +63,8 @@ export default defineStore('userpage', () => {
         handle: `${route.params.handle}`,
       })
       user.value = u
+
+      dan.count = await app.$client.dan.userClearedScores.count.query({ id: user.value!.id })
 
       if (initSwitcher?.mode || initSwitcher?.ruleset || initSwitcher?.rankingSystem) {
         setSwitcher(initSwitcher)
@@ -147,6 +155,7 @@ export default defineStore('userpage', () => {
     currentStatistic,
     statisticLoadingState,
     currentRankingSystem,
+    dan,
   }
 })
 
