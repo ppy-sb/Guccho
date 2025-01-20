@@ -34,20 +34,11 @@ export const zodScoreRankingSystem = nativeEnum(LeaderboardScoreRank)
 export const zodLeaderboardRankingSystem = zodPPRankingSystem.or(zodScoreRankingSystem)
 export const zodRankingSystem = zodPPRankingSystem.or(nativeEnum(ScoreRank))
 
-export const zodSafeModeRulesetBase = object({
+export const zodSafeModeRuleset = object({
   mode: zodMode,
   ruleset: zodRuleset,
 })
-
-export function validateModeRuleset({
-  mode,
-  ruleset,
-}: {
-  mode: ActiveMode
-  ruleset: ActiveRuleset
-}) {
-  return hasRuleset(mode, ruleset)
-}
+  .refine((v): v is UnionModeRuleset => hasRuleset(v.mode, v.ruleset))
 
 export const zodTipTapJSONContent = record(string(), any())
   .superRefine((input, ctx): input is ArticleProvider.JSONContent => {
