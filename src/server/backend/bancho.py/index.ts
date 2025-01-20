@@ -20,6 +20,7 @@ export type {
   LeaderboardPPRankingSystem,
   LeaderboardScoreRankingSystem,
   LeaderboardRankingSystem,
+  ModeRulesetRankingSystemDef,
 } from '$base'
 
 export const userRoles = [

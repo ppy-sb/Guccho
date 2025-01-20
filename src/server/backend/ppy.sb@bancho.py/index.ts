@@ -26,6 +26,7 @@ export type {
   LeaderboardPPRankingSystem,
   LeaderboardScoreRankingSystem,
   LeaderboardRankingSystem,
+  ModeRulesetRankingSystemDef,
 } from '../bancho.py'
 
 export const features = new Set<Feature>([...banchoPyFeatures, Feature.Dan])
