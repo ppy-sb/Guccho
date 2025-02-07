@@ -1,11 +1,8 @@
 <script setup lang="ts">
-import { TModal } from '#components'
+const e = useTemplateRef('e')
 
-type I = InstanceType<typeof TModal>
-const e = shallowRef<I>()
-
-const showModal: I['showModal'] = _ => e.value?.showModal(_)
-const closeModal: I['closeModal'] = _ => e.value?.closeModal(_)
+const showModal: NonNullable<typeof e.value>['showModal'] = _ => e.value?.showModal(_)
+const closeModal: NonNullable<typeof e.value>['showModal'] = _ => e.value?.closeModal(_)
 
 defineExpose({
   showModal,

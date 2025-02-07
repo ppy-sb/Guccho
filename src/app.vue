@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 const scrollY = useScrollYObserver()
-const { status } = useZoomModal()
+const { l1Status, l2Status } = useZoomModal()
 </script>
 
 <template>
@@ -14,10 +14,10 @@ const { status } = useZoomModal()
       viewport
       :class="safariDetector() ? 'safari' : 'not-safari'"
       class="drawer-content zoom-modal-container overflow-x-clip"
-      :data-l1-status="status"
-      data-l2-status="hidden"
+      :data-l1-status="l1Status"
+      :data-l2-status="l2Status"
       :style="
-        status !== 'closed' && {
+        l1Status !== 'closed' && {
           'transform-origin': `center calc(${scrollY} * 1px + 50dvh)`,
         }
       "
@@ -46,84 +46,33 @@ const { status } = useZoomModal()
 
 <style lang="scss">
 @use "~/assets/styles/modal.scss" as m;
-
-$zoom-content-stage1: saturate(0.4) opacity(0.8);
-$zoom-content-stage2: saturate(0.4) opacity(0.2);
+// $zoom-content-stage1: saturate(0.4) opacity(0.5);
+// $zoom-content-stage2: saturate(0.4) opacity(0.2);
 
 $scale: scale(0.98);
 $scale2: scale(0.96);
 
 .zoom-modal-container {
+  transition-property: transform, filter;
+  transition-duration: m.$duration;
+  transition-timing-function: m.$animate-function;
 
   &[data-l1-status="show"] {
 
-    &[data-l2-status="hidden"] {
-      animation: zoomOutModalContent m.$duration m.$animate-function forwards;
+    &[data-l2-status="closed"] {
+      transform: $scale;
+      // filter: $zoom-content-stage1;
     }
 
     &[data-l2-status="show"] {
-      animation: zoomOutModalContentL2 m.$duration m.$animate-function forwards !important;
-    }
-
-    &[data-l2-status="closing"] {
-      animation: zoomInModalContentL2 m.$duration m.$animate-function forwards;
+      transform: $scale2;
+      // filter: $zoom-content-stage2;
     }
 
   }
 
-  &[data-l1-status="closing"] {
-    animation: zoomInModalContent m.$duration m.$animate-function forwards;
-  }
 }
 
-@keyframes zoomOutModalContent {
-  0% {
-    transform: scale(1);
-  }
-
-  100% {
-    transform: $scale;
-    filter: $zoom-content-stage1;
-  }
-}
-
-@keyframes zoomInModalContent {
-  0% {
-    transform: $scale;
-    filter: $zoom-content-stage1;
-  }
-
-  100% {
-    transform: scale(1);
-  }
-}
-
-@keyframes zoomOutModalContentL2 {
-  0% {
-    transform: $scale;
-    filter: $zoom-content-stage1;
-  }
-
-  100% {
-    transform: $scale2;
-    filter: $zoom-content-stage2;
-  }
-}
-
-@keyframes zoomInModalContentL2 {
-  0% {
-    transform: $scale2;
-    filter: $zoom-content-stage2;
-  }
-
-  100% {
-    transform: $scale;
-    filter: $zoom-content-stage1;
-  }
-}
-</style>
-
-<style lang="postcss">
 .zoom-modal-container[data-l2-status="show"] > dialog::backdrop {
   z-index: 1000 !important;
 }
@@ -148,9 +97,7 @@ $scale2: scale(0.96);
   transition-delay: 50ms;
   filter: saturate(0.5);
 }
-</style>
 
-<style>
 #layout.safari {
   -webkit-overflow-scrolling: touch;
 

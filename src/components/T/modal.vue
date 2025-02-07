@@ -10,7 +10,7 @@ const emits = defineEmits<{
 
 const { status, close, show, onNativeCancel: onNativeClose } = useZoomModal()
 
-const wrapper = shallowRef<HTMLDialogElement>()
+const wrapper = useTemplateRef('wrapper')
 
 function showModal(cb?: Callback) {
   if (!wrapper.value) {
@@ -65,27 +65,27 @@ $in: blur(0.5em) opacity(0) saturate(0.5);
 
     &::backdrop {
 
-      animation: backdrop-fade-in calc(m.$duration/ 1.4)  m.$animate-function forwards;
+      animation: backdrop-fade-in calc(m.$duration / 1.4)  m.$animate-function forwards;
     }
 
     animation: zoomIn m.$duration m.$animate-function forwards;
     > [response-modal] {
-      animation: slideFromBottom calc(m.$duration/ 1.4)  m.$animate-function forwards;
+      animation: slideFromBottom calc(m.$duration / 1.4)  m.$animate-function forwards;
       @screen md {
         animation: zoomIn m.$duration m.$animate-function forwards;
       }
     }
   }
 
-  &[status="closing"] {
+  &[status="closed"] {
 
      &::backdrop {
-      animation: backdrop-fade-out calc(m.$duration/ 1.2)  m.$animate-function forwards;
+      animation: backdrop-fade-out calc(m.$duration / 1.2)  m.$animate-function forwards;
     }
 
     animation: zoomOut m.$duration m.$animate-function forwards;
     > [response-modal] {
-      animation: slideToBottom calc(m.$duration/ 1.2)  m.$animate-function forwards;
+      animation: slideToBottom calc(m.$duration / 1.2)  m.$animate-function forwards;
       @screen md {
         animation: zoomOut m.$duration m.$animate-function forwards;
       }
