@@ -8,8 +8,9 @@ export default defineNuxtRouteMiddleware(async () => {
   }
 
   try {
-    await session.retrieve()
-    pushService()
+    if (await session.retrieve()) {
+      pushService()
+    }
   }
   catch (error) {
     session.$reset()
