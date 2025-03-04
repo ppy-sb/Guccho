@@ -1,4 +1,5 @@
-import { request } from 'node:http'
+import { request as httpRequest } from 'node:http'
+import { request as httpsRequest } from 'node:https'
 import { type H3Event } from 'h3'
 import { type Id, type ScoreId } from '..'
 import { config } from '../env'
@@ -11,6 +12,8 @@ export class FileProvider extends Base<Id, ScoreId> {
 
     const url = new URL(`${this.config.api?.v1}/get_replay`)
     url.searchParams.set('id', id.toString())
+
+    const request = url.protocol === 'https:' ? httpsRequest : httpRequest
 
     return new Promise((resolve, reject) => {
       const req = request(url, (im) => {
