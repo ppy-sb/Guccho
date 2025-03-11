@@ -51,7 +51,7 @@ const readPrivileges: Record<ArticleProvider.TReadAccess, string> = {
 
 useHead({
   title: () => t(localeKey.title.articles.__path__),
-  titleTemplate: title => `${title} - ${localeKey.server.name}`,
+  titleTemplate: title => `${title} - ${t(localeKey.server.name.__path__)}`,
 })
 
 // Helper function to convert privilege object to select options
@@ -205,7 +205,7 @@ de-DE:
   <section v-if="articles" class="container pb-8 mx-auto custom-container">
     <input ref="importArticleFile" type="file" hidden @change="importArticle">
     <div class="flex flex-col lg:flex-row">
-      <ul class="menu menu-xs bg-base-100 rounded-lg min-w-max">
+      <ul class="rounded-lg menu menu-xs bg-base-100 min-w-max">
         <tree
           v-bind="articles" @select="(entry) => {
             article.slug = entry.path
@@ -214,13 +214,13 @@ de-DE:
           }"
         />
       </ul>
-      <div class="divider divider-horizontal mx-2" />
+      <div class="mx-2 divider divider-horizontal" />
       <div class="w-full">
         <div class="flex flex-wrap gap-2">
-          <span class="whitespace-nowrap align-middle">{{ t('editing') }}:</span>
-          <div class="join align-middle">
+          <span class="align-middle whitespace-nowrap">{{ t('editing') }}:</span>
+          <div class="align-middle join">
             <input
-              v-model="article.slug" type="text" class="join-item input input-shadow input-sm shadow-lg" :class="{
+              v-model="article.slug" type="text" class="shadow-lg join-item input input-shadow input-sm" :class="{
                 'input-error': !article.slug,
               }"
             >
@@ -231,7 +231,7 @@ de-DE:
               {{ t('new') }}
             </button>
           </div>
-          <div class="join align-middle">
+          <div class="align-middle join">
             <button class="join-item btn btn-shadow btn-sm btn-primary" @click="importArticleFile?.click">
               {{ t('import') }}
             </button>
@@ -257,16 +257,16 @@ de-DE:
           </div>
         </div>
         <div class="divider" />
-        <div class="flex flex-col md:flex-row gap-3 flex-wrap">
-          <div class="form-control flex-row items-center gap-2">
+        <div class="flex flex-col flex-wrap gap-3 md:flex-row">
+          <div class="flex-row items-center gap-2 form-control">
             <input v-model="article.dynamic" class="checkbox" type="checkbox">
             <label class="label whitespace-nowrap">{{ t('dynamic-content') }}</label>
           </div>
-          <div class="form-control flex flex-row items-center gap-2">
+          <div class="flex flex-row items-center gap-2 form-control">
             <label class="label whitespace-nowrap">{{ t('read-access') }}</label>
             <t-multi-select v-model="article.privilege.read" size="sm" :options="options(readPrivileges)" />
           </div>
-          <div class="form-control flex flex-row items-center gap-2">
+          <div class="flex flex-row items-center gap-2 form-control">
             <label class="label whitespace-nowrap">{{ t('write-access') }}</label>
             <t-multi-select v-model="article.privilege.write" size="sm" :options="options(privileges)" />
           </div>
@@ -274,7 +274,7 @@ de-DE:
       </div>
     </div>
     <client-only>
-      <ContentEditor v-if="article.json" ref="editor" v-model="article.json" class="safari-performance-boost mt-2" />
+      <ContentEditor v-if="article.json" ref="editor" v-model="article.json" class="mt-2 safari-performance-boost" />
     </client-only>
   </section>
 </template>
