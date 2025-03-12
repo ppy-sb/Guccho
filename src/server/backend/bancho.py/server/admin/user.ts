@@ -1,15 +1,15 @@
 import { type Query, and, count, desc, eq, max, sql, sum } from 'drizzle-orm'
-import type { Id } from '..'
-import { encryptBanchoPassword } from '../crypto'
-import * as schema from '../drizzle/schema'
-import { config } from '../env'
-import { Logger } from '../log'
-import { type DatabaseUserCompactFields, type DatabaseUserOptionalFields, fromCountryCode, toBanchoMode, toBanchoPyMode, toBanchoPyPriv, toRoles, toSafeName, toUserCompact, toUserOptional } from '../transforms'
-import { BanchoPyPrivilege, BanchoPyScoreStatus } from '../enums'
-import { useDrizzle } from './source/drizzle'
+import type { Id } from '../..'
+import { encryptBanchoPassword } from '../../crypto'
+import * as schema from '../../drizzle/schema'
+import { config } from '../../env'
+import { Logger } from '../../log'
+import { type DatabaseUserCompactFields, type DatabaseUserOptionalFields, fromCountryCode, toBanchoPyMode, toBanchoPyPriv, toRoles, toSafeName, toUserCompact, toUserOptional } from '../../transforms'
+import { BanchoPyPrivilege, BanchoPyScoreStatus } from '../../enums'
+import { useDrizzle } from '../source/drizzle'
 import { GucchoError } from '~/def/messages'
 import { type UserClan, type UserCompact, type UserOptional, UserRole, type UserSecrets } from '~/def/user'
-import { AdminProvider as Base } from '$base/server'
+import { AdminUserProvider as Base } from '$base/server'
 import { type ComputedUserRole } from '~/utils/common'
 import { type Mode, type Ruleset } from '~/def'
 import { Grade } from '~/def/score'
@@ -21,7 +21,7 @@ const logger = Logger.child({ label: 'user' })
 const drizzle = useDrizzle(schema)
 
 type DatabaseAdminUserFields = 'lastActivity' | 'creationTime'
-export class AdminProvider extends Base<Id> implements Base<Id> {
+export class AdminUserProvider extends Base<Id> implements Base<Id> {
   config = config()
   drizzle = drizzle
   logger = logger

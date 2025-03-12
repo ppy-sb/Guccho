@@ -1,18 +1,20 @@
 import { any, array, nativeEnum, number, object, string, tuple } from 'zod'
 import { zodHandle, zodMode, zodRuleset } from '../../shapes'
+import { type AdminMapProvider as BaseAdminMapProvider } from '../../../backend/$base/server'
 import { router as log } from './log'
 import { Logger } from '$base/logger'
-import { UserProvider, admin } from '~/server/singleton/service'
-import { staffProcedure } from '~/server/trpc/middleware/role'
+import { AdminMapProvider, UserProvider, adminMap, adminUser } from '~/server/singleton/service'
+import { bNProcedure, staffProcedure } from '~/server/trpc/middleware/role'
 import { router as _router } from '~/server/trpc/trpc'
 import { UserRole } from '~/def/user'
 import { CountryCode } from '~/def/country-code'
 import { type ModeRulesetScoreStatistic } from '~/def/statistics'
 import { isUserFieldEditable } from '~/common/utils/admin'
+import { BeatmapSource, RankingStatus } from '~/def/beatmap'
 
 const logger = Logger.child({ label: 'admin' })
 
-const searchParam = object({
+const searchUserParam = object({
   id: string().trim(),
   name: string().trim(),
   safeName: string().trim(),
@@ -36,16 +38,16 @@ export const router = _router({
   log,
   userManagement: _router({
     search: staffProcedure
-      .input(searchParam)
+      .input(searchUserParam)
       .query(({ input }) => {
-        return admin.userList({
+        return adminUser.userList({
           ...input,
           flag: input.flag === CountryCode.Unknown ? undefined : input.flag,
           id: input.id ? UserProvider.stringToId(input.id) : undefined,
         })
       }),
     detail: staffProcedure.input(string()).query(({ input }) => {
-      return admin.userDetail({ id: UserProvider.stringToId(input) }).then(detail => mapId(detail, UserProvider.idToString))
+      return adminUser.userDetail({ id: UserProvider.stringToId(input) }).then(detail => mapId(detail, UserProvider.idToString))
     }),
     saveDetail: staffProcedure
       .input(
@@ -70,7 +72,7 @@ export const router = _router({
           const keys = Object.keys(newVal).filter(i => isUserFieldEditable(i as keyof typeof newVal, ctx.user.role)) as Array<keyof typeof newVal>
           newVal = pick(newVal, keys)
         }
-        const res = await admin.updateUserDetail(
+        const res = await adminUser.updateUserDetail(
           ctx.user,
           {
             id: UserProvider.stringToId(id),
@@ -93,7 +95,7 @@ export const router = _router({
         ruleset: zodRuleset,
       }))
       .query(async ({ input }) => {
-        return admin.calcUserStatistics({ id: UserProvider.stringToId(input.id), mode: input.mode, ruleset: input.ruleset })
+        return adminUser.calcUserStatistics({ id: UserProvider.stringToId(input.id), mode: input.mode, ruleset: input.ruleset })
       }),
 
     userModeStat: staffProcedure
@@ -103,7 +105,7 @@ export const router = _router({
         ruleset: zodRuleset,
       }))
       .query(async ({ input }) => {
-        return admin.getStoredUserStatistics({ id: UserProvider.stringToId(input.id), mode: input.mode, ruleset: input.ruleset })
+        return adminUser.getStoredUserStatistics({ id: UserProvider.stringToId(input.id), mode: input.mode, ruleset: input.ruleset })
       }),
 
     temp_userUpdateStatGenSQL: staffProcedure
@@ -114,8 +116,68 @@ export const router = _router({
         stat: any().refine((e): e is ModeRulesetScoreStatistic => !!e),
       }))
       .query(async ({ input }) => {
-        return admin.temp_userUpdateStatGenSQL({ id: UserProvider.stringToId(input.id), mode: input.mode, ruleset: input.ruleset }, input.stat)
+        return adminUser.temp_userUpdateStatGenSQL({ id: UserProvider.stringToId(input.id), mode: input.mode, ruleset: input.ruleset }, input.stat)
       }),
 
+  }),
+  map: _router({
+    search: bNProcedure
+      .input(
+        object({
+          keyword: string(),
+          mode: zodMode.optional(),
+          page: number().min(0).default(0),
+          perPage: number().min(1).default(10),
+        })
+      )
+      .query(async ({ input }) => {
+        const result = await adminMap.search(input)
+        const rData = result.data.map((item) => {
+          return {
+            ...item,
+            id: AdminMapProvider.idToString(item.id),
+            foreignId: 'foreignId' in item ? AdminMapProvider.idToString(item.foreignId) : undefined,
+            maps: item.maps.map(m => ({
+              ...m,
+              id: AdminMapProvider.idToString(m.id),
+              foreignId: 'foreignId' in m ? AdminMapProvider.idToString(m.foreignId) : undefined,
+            })),
+          } as BaseAdminMapProvider.SearchResultData<string, string>
+        })
+        return {
+          data: rData,
+          total: result.total,
+        }
+      }),
+    updateBeatmap: bNProcedure
+      .input(
+        object({
+          id: string(),
+        }).and(
+          object({
+            version: string(),
+            md5: string(),
+            status: nativeEnum(RankingStatus).optional(),
+            source: nativeEnum(BeatmapSource).optional(),
+            foreignId: string().optional(),
+          })
+            .partial()
+        )
+      )
+      .mutation(async ({ input }) => {
+        const res = await adminMap.update({
+          id: AdminMapProvider.stringToId(input.id),
+          version: input.version,
+          md5: input.md5,
+          status: input.status,
+          // source: input.source,
+          // foreignId: input.foreignId ? AdminMapProvider.stringToId(input.foreignId) : undefined,
+        })
+        return {
+          ...res,
+          id: AdminMapProvider.idToString(res.id),
+          foreignId: 'foreignId' in res ? AdminMapProvider.idToString(res.foreignId) : undefined,
+        }
+      }),
   }),
 })

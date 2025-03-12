@@ -1,14 +1,13 @@
 import { type Mode } from 'node:fs'
 import { type Query } from 'drizzle-orm'
-import { IdTransformable } from './@extends'
-import type { Composition } from './@common'
+import { IdTransformable } from '../@extends'
+import type { Composition } from '../@common'
 import { type ComputedUserRole } from '~/utils/common'
-import type { UserClan, UserCompact, UserOptional, UserSecrets, UserStatistic } from '~/def/user'
-import { type ModeRulesetScoreStatistic, type UserModeRulesetStatistics } from '~/def/statistics'
-import { Rank, type Ruleset } from '~/def'
-import { type LeaderboardRankingSystem } from '~/def/common'
+import type { UserClan, UserCompact, UserOptional, UserSecrets } from '~/def/user'
+import { type ModeRulesetScoreStatistic } from '~/def/statistics'
+import { type Ruleset } from '~/def'
 
-export abstract class AdminProvider<Id> extends IdTransformable {
+export abstract class AdminUserProvider<Id> extends IdTransformable {
   abstract userList(
     query: Partial<UserCompact<Id> & Pick<UserOptional, 'email' | 'status'>> &
     Partial<UserSecrets> &

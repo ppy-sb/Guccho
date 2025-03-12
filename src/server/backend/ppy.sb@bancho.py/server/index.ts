@@ -1,5 +1,6 @@
 import {
-  AdminProvider as BAdminProvider,
+  AdminMapProvider as BAdminMapProvider,
+  AdminUserProvider as BAdminUserProvider,
   ArticleProvider as BArticleProvider,
   ClanProvider as BClanProvider,
   MailProvider as BEmailProvider,
@@ -16,7 +17,8 @@ import {
 
 export { UserProvider } from './user'
 
-export class AdminProvider extends BAdminProvider {}
+export class AdminUserProvider extends BAdminUserProvider {}
+export class AdminMapProvider extends BAdminMapProvider {}
 export class ArticleProvider extends BArticleProvider {}
 export class ClanProvider extends BClanProvider {}
 export class FileProvider extends BFileProvider {}

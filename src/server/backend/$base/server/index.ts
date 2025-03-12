@@ -1,4 +1,5 @@
-export { AdminProvider } from './admin'
+export { AdminUserProvider } from './admin/user'
+export { AdminMapProvider } from './admin/map'
 export { ArticleProvider } from './article'
 export { ClanProvider } from './clan'
 export { FileProvider } from './file'

@@ -55,6 +55,17 @@ const session = useSession()
           {{ $t(localeKey.title['user-management'].__path__) }}
         </nuxt-link-locale>
       </li>
+      <li>
+        <nuxt-link-locale
+          v-if="session.role.admin || session.role.owner"
+          class="whitespace-nowrap"
+          :to="{
+            name: 'admin-beatmaps',
+          }"
+        >
+          BN
+        </nuxt-link-locale>
+      </li>
     </ul>
     <div class="w-full">
       <nuxt-page />

@@ -1,5 +1,6 @@
 import {
-  AdminProvider,
+  AdminMapProvider,
+  AdminUserProvider,
   ArticleProvider,
   ClanProvider,
   FileProvider,
@@ -18,7 +19,8 @@ import {
 import { type Id, type ScoreId } from '$active'
 
 import {
-  type AdminProvider as BaseAdminProvider,
+  type AdminMapProvider as BaseAdminMapProvider,
+  type AdminUserProvider as BaseAdminUserProvider,
   type ArticleProvider as BaseArticleProvider,
   type ClanProvider as BaseClanProvider,
   type FileProvider as BaseFileProvider,
@@ -33,7 +35,8 @@ import {
 } from '$base/server'
 
 export const articles: BaseArticleProvider = new ArticleProvider()
-export const admin: BaseAdminProvider<Id> = new AdminProvider()
+export const adminMap: BaseAdminMapProvider<Id, any> = new AdminMapProvider()
+export const adminUser: BaseAdminUserProvider<Id> = new AdminUserProvider()
 export const files: BaseFileProvider<Id, ScoreId> = new FileProvider()
 export const logs = new LogProvider()
 export const maps: BaseMapProvider<Id, Id> = new MapProvider()
@@ -48,7 +51,8 @@ export const mail: BaseMailProvider = new MailProvider()
 export const mailToken: BaseMailTokenProvider = new MailTokenProvider()
 
 export {
-  AdminProvider,
+  AdminUserProvider,
+  AdminMapProvider,
   ArticleProvider,
   ClanProvider,
   FileProvider,

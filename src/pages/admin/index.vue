@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { useSession } from '~/store/session'
-
 const app = useNuxtApp()
 
 useHead({
