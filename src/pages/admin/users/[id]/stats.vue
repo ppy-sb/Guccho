@@ -147,22 +147,27 @@ async function save() {
 </script>
 
 <template>
-  <div class="container mx-auto max-w-screen-xl flex flex-col">
-    <app-mode-switcher :model-value="sw as any" class="mx-auto" @update:model-value="switchMode as any" />
+  <div class="flex flex-col">
+    <app-mode-switcher
+      class="mx-auto"
+      :model-value="sw as any"
+      @update:model-value="switchMode as any"
+    />
     <div class="relative mx-auto">
-      <div v-if="error" class="alert alert-error my-2">
+      <div v-if="error" class="my-2 alert alert-error">
         <span>{{ error.message }}</span>
         <button class="btn btn-sm btn-ghost ms-auto" @click="error = undefined">
           x
         </button>
       </div>
       <div
-        class="flex gap-4 transition-[filter] transition-opacity" :class="{
+        class="flex gap-4 transition-[filter] transition-opacity"
+        :class="{
           'opacity-30 saturate-50 blur': pending,
         }"
       >
         <div>
-          <button class="btn btn-sm btn-info w-full" @click="transaction(loadIntegrity)">
+          <button class="w-full btn btn-sm btn-info" @click="transaction(loadIntegrity)">
             compute
           </button>
           <div v-if="calculated" class="mt-2">
@@ -226,7 +231,7 @@ async function save() {
           </button>
         </div>
         <div>
-          <button class="btn btn-sm btn-info w-full" @click="transaction(loadStored)">
+          <button class="w-full btn btn-sm btn-info" @click="transaction(loadStored)">
             load db
           </button>
           <div class="mt-2">
@@ -306,28 +311,28 @@ async function save() {
         <div class="m-auto loading loading-lg" />
       </div>
     </div>
-  </div>
-  <t-modal v-slot="{ closeModal }" ref="modal" class="m-auto">
-    <div class="card bg-base-200 p-2">
-      <span class="card-title">save</span>
-      <div class="card-body">
-        <span>Under evaluation. Execute the following SQL:</span>
-        <pre>
+    <t-modal v-slot="{ closeModal }" ref="modal" class="m-auto">
+      <div class="p-2 card bg-base-200">
+        <span class="card-title">save</span>
+        <div class="card-body">
+          <span>Under evaluation. Execute the following SQL:</span>
+          <pre>
         <code class="whitespace-pre-wrap">
 {{ injectSql }}
         </code>
       </pre>
+        </div>
+        <div class="grid grid-cols-2 p-4 card-actions">
+          <button class="btn btn-success" @click="() => closeModal()">
+            ok
+          </button>
+          <button class="btn btn-success" @click="() => closeModal()">
+            confirm
+          </button>
+        </div>
       </div>
-      <div class="card-actions grid grid-cols-2 p-4">
-        <button class="btn btn-success" @click="() => closeModal()">
-          ok
-        </button>
-        <button class="btn btn-success" @click="() => closeModal()">
-          confirm
-        </button>
-      </div>
-    </div>
-  </t-modal>
+    </t-modal>
+  </div>
 </template>
 
 <style scoped>

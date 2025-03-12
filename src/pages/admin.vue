@@ -1,15 +1,72 @@
 <script setup lang="ts">
+import { useSession } from '../store/session'
+import { showAdminPanel } from '~/common/utils/admin'
+
 definePageMeta({
-  middleware: ['auth', 'staff'],
+  middleware: ['auth'],
 })
+
+const user = useSession()
+
+if (!showAdminPanel(user.user!.roles)) {
+  await navigateTo({
+    name: 'article-id',
+    params: {
+      id: ['403'],
+    },
+  })
+}
+const session = useSession()
 </script>
 
 <template>
-  <section class="container custom-container mx-auto">
-    <nuxt-page />
-  </section>
+  <div class="relative flex flex-col items-start gap-2 ps-2 lg:ps-0 pe-2 lg:flex-row ">
+    <ul class="sticky lg:top-[4em] overflow-x-auto lg:overflow-visible menu lg:ps-0 menu-horizontal lg:menu-vertical bg-base-100 lg:rounded-r-xl">
+      <li>
+        <nuxt-link-locale
+          v-if="session.role.admin || session.role.owner || session.role.staff"
+          class="whitespace-nowrap"
+          :to="{
+            name: 'article-edit',
+          }"
+        >
+          {{ $t(localeKey.title.articles.__path__) }}
+        </nuxt-link-locale>
+      </li>
+      <li>
+        <nuxt-link-locale
+          v-if="session.role.admin"
+          class="whitespace-nowrap"
+          :to="{
+            name: 'admin-logs',
+          }"
+        >
+          {{ $t(localeKey.title.logs.__path__) }}
+        </nuxt-link-locale>
+      </li>
+      <li>
+        <nuxt-link-locale
+          v-if="session.role.admin || session.role.owner"
+          class="whitespace-nowrap"
+          :to="{
+            name: 'admin-users',
+          }"
+        >
+          {{ $t(localeKey.title['user-management'].__path__) }}
+        </nuxt-link-locale>
+      </li>
+    </ul>
+    <div class="w-full">
+      <nuxt-page />
+    </div>
+  </div>
 </template>
 
-<style scoped>
-
+<style scoped lang="postcss">
+.router-link-exact-active {
+  @apply active
+}
+.menu > li > a {
+  @apply lg:rounded-l-none
+}
 </style>

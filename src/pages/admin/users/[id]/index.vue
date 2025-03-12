@@ -130,7 +130,7 @@ de-DE:
 </i18n>
 
 <template>
-  <div v-if="detail" class="container custom-container">
+  <div class="max-w-screen-xl mx-auto">
     <div v-if="error" class="overflow-x-auto text-left alert alert-error">
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -147,7 +147,7 @@ de-DE:
       </svg>
       <pre>{{ formatGucchoError(error) }}</pre>
     </div>
-    <dl>
+    <dl v-if="detail">
       <div class="striped">
         <dt class="striped-dt">
           {{ t("id") }}
