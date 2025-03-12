@@ -30,3 +30,13 @@ export function isUserFieldEditable(field: keyof (UserFull<any> & UserSecrets), 
       return computedRole.admin
   }
 }
+
+export function showAdminPanel(role: UserRole[]) {
+  return role.includes(UserRole.Admin)
+   || role.includes(UserRole.Owner)
+   || role.includes(UserRole.Staff)
+   || role.includes(UserRole.Moderator)
+   || role.includes(UserRole.BeatmapNominator)
+   || role.includes(UserRole.ChannelModerator)
+   || role.includes(UserRole.TournamentStaff)
+}

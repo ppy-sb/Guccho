@@ -8,6 +8,7 @@ import { router as _router } from '~/server/trpc/trpc'
 import { UserRole } from '~/def/user'
 import { CountryCode } from '~/def/country-code'
 import { type ModeRulesetScoreStatistic } from '~/def/statistics'
+import { isUserFieldEditable } from '~/common/utils/admin'
 
 const logger = Logger.child({ label: 'admin' })
 

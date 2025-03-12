@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useSession } from '~/store/session'
+import { showAdminPanel } from '~/common/utils/admin'
 
 const scrollY = useScrollYObserver()
 const { t } = useI18n()
@@ -125,7 +126,7 @@ function clearFocus() {
                   {{ t('title.userpage') }}
                 </nuxt-link-locale>
               </li>
-              <li v-if="session.$state.role.staff">
+              <li v-if="session.$state.user && showAdminPanel(session.$state.user.roles)">
                 <nuxt-link-locale
                   :to="{
                     name: 'admin',

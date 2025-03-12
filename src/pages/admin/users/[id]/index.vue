@@ -4,6 +4,7 @@ import type { HTMLAttributes, InputHTMLAttributes } from 'vue'
 import { CountryCode } from '~/def/country-code'
 import { UserRole } from '~/def/user'
 import { useSession } from '~/store/session'
+import { isRoleEditable, isUserFieldEditable } from '~/common/utils/admin'
 
 const DISALLOW_USER_EDIT_ITSELF_ROLE: readonly UserRole[] = [
   UserRole.Owner,

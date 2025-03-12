@@ -14,6 +14,7 @@ import { type ComputedUserRole } from '~/utils/common'
 import { type Mode, type Ruleset } from '~/def'
 import { Grade } from '~/def/score'
 import { type ModeRulesetScoreStatistic } from '~/def/statistics'
+import { isRoleEditable } from '~/common/utils/admin'
 
 const logger = Logger.child({ label: 'user' })
 
