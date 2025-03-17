@@ -64,8 +64,8 @@ const {
 </script>
 
 <template>
-  <t-modal ref="searchModal" v-slot="{ closeModal }" class="m-0 w-full max-h-[100dvh] my-8 max-w-screen-md mx-auto overflow-visible text-base-content ">
-    <div class="card-actions">
+  <t-modal ref="searchModal" v-slot="{ closeModal }" class="flex flex-col m-0 w-full max-h-[100dvh] max-w-screen-md mx-auto text-base-content">
+    <div class="py-2 card-actions">
       <div class="flex flex-col items-baseline gap-4 pl-3 sm:flex-row">
         <div class="form-control">
           <label class="flex gap-2 p-0 cursor-pointer label">
@@ -130,19 +130,19 @@ const {
         </svg>
       </button>
     </div>
-    <div class="bg-gbase-50 dark:bg-gbase-800 shadow-2xl md:rounded-2xl relative max-h-[calc(100dvh-32px-4rem)] flex flex-col overflow-hidden">
+    <div class="flex flex-col overflow-hidden shadow-2xl bg-gbase-50 dark:bg-gbase-800 md:rounded-2xl">
       <form action="#" method="post" class="w-full space-y-2" @submit.prevent="raw(true)">
         <input
           v-model="keyword"
           type="text"
           :placeholder="t('search')"
-          class="input input-shadow w-full border-label-0 focus:input-primary bg-transparent !outline-0"
+          class="input input-shadow w-full border-label-0 focus:input-primary rounded-none md:rounded-2xl bg-transparent !outline-0"
           autofocus
           @input="onInput"
         >
         <div
           v-if="mode === 'beatmap' && tags.length"
-          class="bg-transparent space-x-1"
+          class="space-x-1 bg-transparent"
         >
           <span v-for="tag, index in tags" :key="index" class="gap-1 cursor-pointer badge badge-md badge-primary whitespace-nowrap" @click="tags.splice(index, 1)">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-4 h-4 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>

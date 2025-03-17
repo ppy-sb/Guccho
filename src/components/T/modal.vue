@@ -44,7 +44,7 @@ onMounted(() => {
 <template>
   <dialog
     ref="wrapper"
-    class="t-modal overflow-visible"
+    class="flex flex-col overflow-visible t-modal"
     :status="status"
     @cancel="(e: Event) => {
       emits('cancel', e)
@@ -60,34 +60,40 @@ onMounted(() => {
 
 $in: blur(0.5em) opacity(0) saturate(0.5);
 .t-modal {
+  transition-property: all;
+  transition-duration: m.$duration;
+  transition-timing-function: m.$animate-function;
 
   &[status="show"] {
-
     &::backdrop {
-
       animation: backdrop-fade-in calc(m.$duration / 1.4)  m.$animate-function forwards;
     }
 
-    animation: zoomIn m.$duration m.$animate-function forwards;
-    > [response-modal] {
-      animation: slideFromBottom calc(m.$duration / 1.4)  m.$animate-function forwards;
-      @screen md {
-        animation: zoomIn m.$duration m.$animate-function forwards;
-      }
+    @apply scale-100 filter-none;
+
+    &[response-modal] {
+      transform: none;
+      @apply filter-none;
     }
   }
 
   &[status="closed"] {
+    transform: scale(0.96);
+    filter: $in;
+
+    @apply pointer-events-none;
 
      &::backdrop {
-      animation: backdrop-fade-out calc(m.$duration / 1.2)  m.$animate-function forwards;
+      animation: backdrop-fade-out calc(m.$duration)  m.$animate-function forwards;
     }
 
-    animation: zoomOut m.$duration m.$animate-function forwards;
-    > [response-modal] {
-      animation: slideToBottom calc(m.$duration / 1.2)  m.$animate-function forwards;
+    &[response-modal] {
+      transform: translateY(5%) scale(0.98);
+      filter: $in;
+
       @screen md {
-        animation: zoomOut m.$duration m.$animate-function forwards;
+        transform: scale(0.96);
+        filter: $in;
       }
     }
   }

@@ -11,8 +11,8 @@ defineExpose({
 </script>
 
 <template>
-  <TModal ref="e" v-slot="props">
-    <div response-modal class="h-[100dvh] md:h-auto flex items-end pb-8">
+  <TModal ref="e" v-slot="props" response-modal>
+    <div class="h-[100dvh] md:h-auto flex items-end pb-8">
       <slot v-bind="props" />
     </div>
   </TModal>

@@ -4,23 +4,14 @@ const l2Status = shallowRef<Status>('closed')
 
 export type Callback = undefined | (() => void)
 export default function () {
-  const l2 = ref(false)
-  const _status = computed({
-    get() {
-      return l2.value ? l2Status.value : status.value
-    },
-    set(v) {
-      if (l2.value) {
-        l2Status.value = v
-      }
-      else {
-        status.value = v
-      }
-    },
-  })
+  const _status = ref<Status>('closed')
+
   async function show(wrapper: HTMLDialogElement, cb?: Callback) {
-    if (status.value === 'show') {
-      l2.value = true
+    if (status.value === 'closed') {
+      status.value = 'show'
+    }
+    else if (l2Status.value === 'closed') {
+      l2Status.value = 'show'
     }
     _status.value = 'show'
     cb?.()
@@ -31,6 +22,12 @@ export default function () {
     wrapper.showModal()
   }
   async function close(wrapper: HTMLDialogElement, cb?: Callback) {
+    if (l2Status.value === 'show') {
+      l2Status.value = 'closed'
+    }
+    else if (status.value === 'show') {
+      status.value = 'closed'
+    }
     _status.value = 'closed'
 
     // give other things 1 tick to prepare
@@ -40,13 +37,13 @@ export default function () {
       cb?.()
     }
 
-    const to = setTimeout(() => {
-      wrapper.onanimationend = null
-    }, 1500)
+    // const to = setTimeout(() => {
+    //   wrapper.ontransitionend = null
+    // }, 500)
 
-    wrapper.onanimationend = () => {
-      clearTimeout(to)
-      wrapper.onanimationend = null
+    wrapper.ontransitionend = () => {
+      // clearTimeout(to)
+      wrapper.ontransitionend = null
       wrapper.close()
       cb?.()
     }

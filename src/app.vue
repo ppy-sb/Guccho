@@ -25,13 +25,13 @@ const { l1Status, l2Status } = useZoomModal()
       <NuxtPage />
     </NuxtLayout>
     <app-footer class="mt-auto" />
-    <div class="drawer-side z-40">
+    <div class="z-40 drawer-side">
       <label
         for="app-drawer-toggle"
         aria-label="Close sidebar"
         class="drawer-overlay"
       />
-      <ul class="menu p-4 w-80 min-h-full bg-base-200">
+      <ul class="min-h-full p-4 menu w-80 bg-base-200">
         <app-nav-items>
           <template #start>
             <li>
