@@ -57,7 +57,7 @@ export enum StableMod {
   '3K' = 1 << 27,
   '2K' = 1 << 28,
   'ScoreV2' = 1 << 29,
-  'LastMod' = 1 << 30,
+  'Mirror' = 1 << 30,
   // KeyMod= Key1 | Key2 | Key3 | Key4 | Key5 | Key6 | Key7 | Key8 | Key9 | KeyCoop,
   // FreeModAllowed= NoFail | Easy | Hidden | HardRock | SuddenDeath | Flashlight | FadeIn | Relax | Autopilot | SpunOut | KeyMod,
   // ScoreIncreaseMods= Hidden | HardRock | DoubleTime | Flashlight | FadeIn,

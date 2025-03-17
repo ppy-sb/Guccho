@@ -37,7 +37,7 @@ const icons: Record<typeof StableMod[keyof typeof StableMod], string> = {
   [StableMod.Target]: 'ph:target-bold',
   [StableMod.KeyCoop]: '',
   [StableMod.ScoreV2]: 'material-symbols:filter-2-outline',
-  [StableMod.LastMod]: '',
+  [StableMod.Mirror]: 'mdi:mirror-rectangle',
 }
 </script>
 
