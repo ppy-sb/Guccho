@@ -17,16 +17,16 @@ export const router = _router({
     .input(
       object({
         handle: zodHandle,
-        md5HashedPassword: string(),
+        password: string(),
         persist: boolean(),
       }),
     )
-    .mutation(async ({ input: { handle, md5HashedPassword, persist }, ctx }) => {
+    .mutation(async ({ input: { handle, password, persist }, ctx }) => {
       try {
         const ip = getRequestIP(ctx.h3Event, { xForwardedFor: true }) ?? '0.0.0.0'
         const UA = getHeader(ctx.h3Event, 'User-Agent')
 
-        const [ok, user] = await users.testPassword({ handle }, md5HashedPassword)
+        const [ok, user] = await users.testPassword({ handle }, password)
         if (!ok) {
           logger.info(`user ${user.safeName}<${user.id}> attempted to login with incorrect password from ${ip}, UA: ${UA}.`, { user: pick(user, ['id', 'name']), ip })
           throwGucchoError(GucchoError.IncorrectPassword)

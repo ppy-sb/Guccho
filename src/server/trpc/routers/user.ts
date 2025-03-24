@@ -261,16 +261,16 @@ export const router = _router({
         safeName: string().trim().optional(),
         emailToken: string().uuid(),
         // email: string().trim().email(),
-        passwordMd5: string().trim(),
+        password: string().trim(),
       }))
       .mutation(async ({ input, ctx }) => {
         const rec = await mailToken.get({ token: input.emailToken as MBase.Token }) ?? throwGucchoError(GucchoError.EmailTokenNotFound)
-        const { name, safeName, passwordMd5 } = input
+        const { name, safeName, password } = input
 
         const user = await users.register({
           name,
           safeName,
-          passwordMd5,
+          password,
           email: rec.email,
         })
 

@@ -58,7 +58,7 @@ export abstract class UserProvider<Id, ScoreId> extends IdTransformable {
 
   abstract testPassword(
     opt: UserProvider.OptType,
-    hashedPassword: string,
+    password: string,
   ): Promise<[boolean, UserCompact<Id>]>
 
   abstract getCompactById(id: Id): Promise<UserCompact<Id>>
@@ -157,8 +157,8 @@ export abstract class UserProvider<Id, ScoreId> extends IdTransformable {
 
   abstract changePassword(
     user: { id: Id },
-    oldPasswordMD5: string,
-    newPasswordMD5: string
+    oldPassword: string,
+    newPassword: string
   ): Promise<UserCompact<Id>>
 
   abstract changeAvatar(user: { id: Id }, avatar: Uint8Array): Promise<string>
@@ -204,7 +204,7 @@ export abstract class UserProvider<Id, ScoreId> extends IdTransformable {
     name: string
     safeName?: string
     email: string
-    passwordMd5: string
+    password: string
   }): Promise<UserCompact<Id>>
 
   abstract getDynamicSettings(user: { id: Id }): Promise<ExtractSettingType<ExtractLocationSettings<DynamicSettingStore.Server, typeof settings>>>

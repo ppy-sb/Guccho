@@ -1,17 +1,18 @@
 import { mkdirSync } from 'node:fs'
 import { unlink, writeFile } from 'node:fs/promises'
 import { isAbsolute, join, resolve, sep } from 'node:path'
-import { aliasedTable, and, desc, eq, gt, inArray, like, or, sql } from 'drizzle-orm'
+import { type QueryError } from 'mysql2'
 import imageType from 'image-type'
 import { glob } from 'glob'
+import { aliasedTable, and, desc, eq, gt, inArray, like, or, sql } from 'drizzle-orm'
 import { TRPCError } from '@trpc/server'
-import { type QueryError } from 'mysql2'
 import type { Id, ScoreId } from '..'
 import { getLiveUserStatus } from '../api-client'
 import { compareBanchoPassword, encryptBanchoPassword } from '../crypto'
 import {
   userCompactFields,
 } from '../db-query'
+import * as schema from '../drizzle/schema'
 import type { settings } from '../dynamic-settings'
 import { BanchoPyScoreStatus } from '../enums'
 import { config } from '../env'
@@ -37,20 +38,19 @@ import {
   toUserCompact,
   toUserOptional,
 } from '../transforms'
-import * as schema from '../drizzle/schema'
 import { ArticleProvider } from './article'
+import { useDrizzle, userPriv } from './source/drizzle'
 import { client as redisClient } from './source/redis'
 import { UserRelationProvider } from './user-relations'
-import { useDrizzle, userPriv } from './source/drizzle'
-import { GucchoError } from '~/def/messages'
 import { type DynamicSettingStore, Scope, type UserCompact, type UserOptional, UserRole, type UserStatistic, UserStatus } from '~/def/user'
+import { type RankingSystemScore } from '~/def/score'
+import { GucchoError } from '~/def/messages'
 import type { CountryCode } from '~/def/country-code'
 import type { ActiveMode, ActiveRuleset, AvailableRuleset, LeaderboardRankingSystem } from '~/def/common'
 import { Mode, Rank, Ruleset } from '~/def'
+import { RankingStatus } from '~/def/beatmap'
 import { UserProvider as Base, type MailTokenProvider } from '$base/server'
 import type { ExtractLocationSettings, ExtractSettingType } from '$base/@define-setting'
-import { type RankingSystemScore } from '~/def/score'
-import { RankingStatus } from '~/def/beatmap'
 
 type ServerSetting = ExtractSettingType<ExtractLocationSettings<DynamicSettingStore.Server, typeof settings>>
 
@@ -194,7 +194,7 @@ class DBUserProvider extends Base<Id, ScoreId> implements Base<Id, ScoreId> {
     return toUserCompact(user, this.config)
   }
 
-  async testPassword(opt: Base.OptType, hashedPassword: string): Promise<[boolean, UserCompact<Id>]> {
+  async testPassword(opt: Base.OptType, password: string): Promise<[boolean, UserCompact<Id>]> {
     const handleNum = +opt.handle
 
     const user = await this.drizzle.query.users.findFirst({
@@ -222,7 +222,7 @@ class DBUserProvider extends Base<Id, ScoreId> implements Base<Id, ScoreId> {
       ),
     }) ?? throwGucchoError(GucchoError.UserNotFound)
 
-    return [await compareBanchoPassword(hashedPassword, user.pwBcrypt), toUserCompact(user, this.config)]
+    return [await compareBanchoPassword(password, user.pwBcrypt), toUserCompact(user, this.config)]
   }
 
   private _s = aliasedTable(schema.scores, 's')
@@ -652,7 +652,7 @@ class DBUserProvider extends Base<Id, ScoreId> implements Base<Id, ScoreId> {
     }
   }
 
-  async changePassword(user: Pick<UserCompact<Id>, 'id'>, oldPasswordMD5: string, newPasswordMD5: string) {
+  async changePassword(user: Pick<UserCompact<Id>, 'id'>, oldPassword: string, newPassword: string) {
     const u = await this.drizzle.query.users.findFirst({
       where: eq(schema.users.id, user.id),
       columns: {
@@ -661,11 +661,11 @@ class DBUserProvider extends Base<Id, ScoreId> implements Base<Id, ScoreId> {
       },
     }) ?? throwGucchoError(GucchoError.UserNotFound)
 
-    if (!await compareBanchoPassword(oldPasswordMD5, u.pwBcrypt)) {
+    if (!await compareBanchoPassword(oldPassword, u.pwBcrypt)) {
       throwGucchoError(GucchoError.OldPasswordMismatch)
     }
 
-    const pwBcrypt = await encryptBanchoPassword(newPasswordMD5)
+    const pwBcrypt = await encryptBanchoPassword(newPassword)
     await this.drizzle.update(schema.users)
       .set({
         pwBcrypt,
@@ -768,8 +768,8 @@ class DBUserProvider extends Base<Id, ScoreId> implements Base<Id, ScoreId> {
     return getLiveUserStatus(opt, this.config as { api: { v1: string } })
   }
 
-  async register(opt: { name: string; email: string; safeName?: string; passwordMd5: string }) {
-    const { name, email, passwordMd5 } = opt
+  async register(opt: { name: string; email: string; safeName?: string; password: string }) {
+    const { name, email, password } = opt
     this.ensureUsernameIsAllowed(name)
 
     try {
@@ -781,7 +781,7 @@ class DBUserProvider extends Base<Id, ScoreId> implements Base<Id, ScoreId> {
               name,
               safeName: toSafeName(name),
               email,
-              pwBcrypt: await encryptBanchoPassword(passwordMd5),
+              pwBcrypt: await encryptBanchoPassword(password),
               creationTime: Math.floor(Date.now() / 1000),
             })
 

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import md5 from 'md5'
 import type { TRPCClientError } from '@trpc/client'
 import { Feature } from '~/def/features'
 import type { AppRouter } from '~/server/trpc/routers'
@@ -114,7 +113,7 @@ async function userRegisterAction() {
       safeName: reg.safeName,
       // email: reg.email,
       emailToken,
-      passwordMd5: md5(reg.password),
+      password: reg.password,
     })
     .catch((ex: E) => {
       const e = ex.data?.zodError?.fieldErrors
@@ -129,7 +128,7 @@ async function userRegisterAction() {
             //   error.email = e[f]?.join(', ') || ''
             //   break
             // }
-            case 'passwordMd5': {
+            case 'password': {
               error.password = e[f]?.join(', ') || ''
               break
             }

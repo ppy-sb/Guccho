@@ -1,4 +1,3 @@
-import md5 from 'md5'
 import { defineStore } from 'pinia'
 import type { UserFull } from '~/def/user'
 
@@ -29,15 +28,11 @@ export const useSession = defineStore('session', {
       }
       this.role = computeUserRoles(this.user)
     },
-    async login(handle: string, passwordText: string, options: { persist: boolean }) {
-      const md5HashedPassword = md5(passwordText)
-      return await this.loginHashed(handle, md5HashedPassword, options)
-    },
-    async loginHashed(handle: string, md5HashedPassword: string, options: { persist: boolean }) {
+    async login(handle: string, password: string, options: { persist: boolean }) {
       const app$ = useNuxtApp()
       const result = await app$.$client.session.login.mutate({
         handle,
-        md5HashedPassword,
+        password,
         persist: options.persist,
       })
       if (!result) {

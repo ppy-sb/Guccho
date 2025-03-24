@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import md5 from 'md5'
 import { Cropper } from 'vue-advanced-cropper'
 import { type ContentEditor, TResponsiveModal } from '#components'
 import type { MailTokenProvider } from '$base/server'
@@ -276,15 +275,15 @@ async function updatePassword(closeModal: () => void) {
 
   changePasswordState.value = ChangePasswordState.Posting
 
-  const md5HashedPassword = {
-    newPassword: md5(changePasswordForm.newPassword),
-    oldPassword: md5(changePasswordForm.oldPassword ?? ''),
+  const password = {
+    newPassword: changePasswordForm.newPassword,
+    oldPassword: changePasswordForm.oldPassword ?? '',
   }
 
   try {
     changePasswordState.value = ChangePasswordState.Posting
     const result = await app$.$client.me.updatePassword.mutate(
-      md5HashedPassword
+      password
     )
     unchanged.value = {
       ...unchanged.value,
