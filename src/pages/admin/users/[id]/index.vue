@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import md5 from 'md5'
 import type { HTMLAttributes, InputHTMLAttributes } from 'vue'
 import { CountryCode } from '~/def/country-code'
 import { UserRole } from '~/def/user'
@@ -63,14 +62,9 @@ async function save() {
   error.value = undefined
   status.value = Status.Pending
   try {
-    const send = {
-      ...detail.value,
-      password: detail.value.password ? md5(detail.value.password) : undefined,
-    }
-
     const newValue = await app.$client.admin.userManagement.saveDetail.mutate([
       route.params.id,
-      send,
+      detail.value,
     ])
 
     status.value = Status.Succeed

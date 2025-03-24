@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import md5 from 'md5'
 import { GucchoError } from '~/def/messages'
 import type { MailTokenProvider } from '$base/server'
 import { useSession } from '~/store/session'
@@ -115,8 +114,8 @@ async function step3() {
   try {
     state.value = State.Posting
     await app.$client.user.accountRecovery.changePassword.mutate({
-      password: md5(password.value),
-      repeatPassword: md5(repeatPassword.value),
+      password: password.value,
+      repeatPassword: repeatPassword.value,
       token: {
         email: email.value,
         otp: otp.value,
