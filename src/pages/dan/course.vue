@@ -175,15 +175,15 @@ zh-CN:
                     :rowspan="course.dans.length * 2"
                     class="whitespace-pre align-top border-r border-base-300/50 is-collection"
                   >
-                    <!-- <nuxt-link-locale
+                    <nuxt-link-locale
                       :to="{
-                        name: 'dan-detail-id',
-                        params: { id: dan.id },
+                        name: 'dan-detail-course-id',
+                        params: { id: course.id },
                       }"
                       class="font-bold link"
                     >
-                    </nuxt-link-locale> -->
-                    {{ course.name }}
+                      {{ course.name }}
+                    </nuxt-link-locale>
                   </th>
                   <td
                     class="w-0"
@@ -244,7 +244,7 @@ zh-CN:
                     <div class="whitespace-pre">
                       <nuxt-link-locale
                         :to="{
-                          name: 'dan-detail-id',
+                          name: 'dan-detail-dan-id',
                           params: { id: dan.id },
                         }"
                         class="font-bold link"
