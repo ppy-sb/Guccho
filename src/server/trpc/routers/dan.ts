@@ -4,7 +4,7 @@ import { staffProcedure } from '../middleware/role'
 import { router as _router, publicProcedure } from '../trpc'
 import { zodMode, zodRuleset } from '../shapes'
 import { validateUsecase } from '~/common/utils/dan'
-import { type Cond, type Dan, type DatabaseDan, type DatabaseRequirementCondBinding, Requirement } from '~/def/dan'
+import { type Cond, type Dan, type DatabaseDan, type DatabaseDanCollection, type DatabaseRequirementCondBinding, Requirement } from '~/def/dan'
 import { Feature } from '~/def/features'
 import { DanProvider, ScoreProvider, UserProvider, dans } from '~/server/singleton/service'
 import { type PaginatedResult } from '~/def/pagination'
@@ -38,6 +38,42 @@ export const router = _router({
           })) satisfies DatabaseRequirementCondBinding<string, Requirement, Cond>[],
         })) satisfies DatabaseDan<string>[],
       } as PaginatedResult<DatabaseDan<string>>
+    }),
+
+  searchCollection: publicProcedure
+    .input(
+      object({
+        keyword: string(),
+        rulesetDefaultsToStandard: boolean().optional().default(false),
+        mode: zodMode.optional(),
+        ruleset: zodRuleset.optional(),
+        page: number().int().min(0).default(0),
+        perPage: number().int().min(1).max(10).default(10),
+        mania: object({
+          keyCount: number().int().min(2).max(10).optional(),
+        }).default(() => ({})),
+      })
+    )
+    .query(async ({ input }) => {
+      const searchResult = await dans.searchCollections(input)
+      return {
+        total: searchResult.total,
+        data: searchResult.data?.map(i => ({
+          ...i,
+          id: DanProvider.idToString(i.id),
+          creator: i.creator ? UserProvider.idToString(i.creator) : undefined,
+          updater: i.updater ? UserProvider.idToString(i.updater) : undefined,
+          dans: i.dans.map(i => ({
+            ...i,
+            id: DanProvider.idToString(i.id),
+            creator: i.creator ? UserProvider.idToString(i.creator) : undefined,
+            updater: i.updater ? UserProvider.idToString(i.updater) : undefined,
+            requirements: i.requirements.map(i => ({
+              ...i,
+            })) satisfies DatabaseRequirementCondBinding<string, Requirement, Cond>[],
+          })) satisfies DatabaseDan<string>[],
+        })) satisfies DatabaseDanCollection<string>[],
+      } as PaginatedResult<DatabaseDanCollection<string>>
     }),
 
   get: withFeature(Feature.Dan, publicProcedure)

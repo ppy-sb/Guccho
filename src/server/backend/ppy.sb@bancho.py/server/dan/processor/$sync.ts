@@ -1,5 +1,5 @@
 import MySQLEvents, { type DeleteEvent, type InsertEvent, type UpdateEvent } from '@rodrigogs/mysql-events'
-import { type InferSelectModel, eq, inArray } from 'drizzle-orm'
+import { type InferSelectModel, eq, getTableName, inArray, sql } from 'drizzle-orm'
 import { BaseDanProcessor } from './$base'
 import { type Cond, type DatabaseDan, type DatabaseRequirementCondBinding, type Requirement } from '~/def/dan'
 import { type Id } from '~/server/backend/bancho.py'
@@ -35,10 +35,55 @@ export class CacheSyncedDanProcessor extends BaseDanProcessor {
     this.logger.debug(`initialized ${this.dans.size} dan cache(s)`)
   }
 
+  #danTreeFullSimple = /* sql */`
+  WITH RECURSIVE conds AS (
+    SELECT
+        dc.id,
+        dc.id AS root,
+        dc.type,
+        dc.value,
+        dc.parent
+    FROM
+        ${getTableName(schema.danConds)} dc
+    WHERE
+        dc.parent IS NULL
+    UNION ALL
+    SELECT
+        child.id,
+        conds.root,
+        child.type,
+        child.value,
+        child.parent
+    FROM
+        conds
+        JOIN ${getTableName(schema.danConds)} child
+        ON child.parent = conds.id
+)
+SELECT
+    *
+FROM
+    conds
+  `
+
+  // TODO deprecate after drizzle supports withRecursive
+  virtualTableDanTreeSimpleAlias<T extends string>(name: T) {
+    return {
+      column: {
+        id: sql.raw(`${name}.id`).mapWith(Number),
+        root: sql.raw(`${name}.root`).mapWith(Number),
+        parent: sql.raw(`${name}.parent`).mapWith(Number),
+        type: sql.raw(`${name}.type`),
+        value: sql.raw(`${name}.value`),
+      },
+      aliasedTable: sql.raw(`(${this.#danTreeFullSimple}) ${name}`),
+      name,
+    } as const
+  }
+
   async onCondUpdated(row: UpdateEvent<InferSelectModel<typeof schema.danConds>>) {
     this.logger.debug('detected dan cond update, syncing')
     await this.dp.drizzle.transaction(async (tx) => {
-      const condsRoot = this.dp.virtualTableDanTreeSimpleAlias('r')
+      const condsRoot = this.virtualTableDanTreeSimpleAlias('r')
       const condsAfter = row.affectedRows.map(item => item.after)
 
       const newDanIds = await tx.selectDistinct({

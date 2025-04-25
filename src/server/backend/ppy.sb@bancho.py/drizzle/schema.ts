@@ -89,6 +89,25 @@ export const dans = mysqlTable('sb_dans', {
   updatedAt: timestamp('updated_at', { mode: 'date' }).notNull().defaultNow().onUpdateNow(),
 })
 
+export const danCollections = mysqlTable('sb_dan_collections', {
+  id: int('id').autoincrement().notNull().primaryKey(),
+  name: varchar('name', { length: 128 }).notNull(),
+  description: text('description').notNull().default(''),
+  creator: int('creator').references(() => users.id, { onDelete: 'set null', onUpdate: 'cascade' }),
+  updater: int('updater').references(() => users.id, { onDelete: 'set null', onUpdate: 'cascade' }),
+  createdAt: timestamp('created_at', { mode: 'date' }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { mode: 'date' }).notNull().defaultNow().onUpdateNow(),
+})
+
+export const danCollectionDans = mysqlTable('sb_dan_collection_dans', {
+  collectionId: int('collection').notNull().references(() => danCollections.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
+  danId: int('dan').notNull().references(() => dans.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
+  order: int('order').notNull(),
+  shortName: varchar('short_name', { length: 128 }).notNull(),
+}, table => [
+  primaryKey({ columns: [table.collectionId, table.danId], name: 'dan_collection_dans_pk' }),
+])
+
 export const danConds = mysqlTable('sb_dan_conds', {
   id: int('id').autoincrement().notNull().primaryKey(),
   type: mysqlEnum('type', Object.values(OP) as OPTuple).notNull(),
