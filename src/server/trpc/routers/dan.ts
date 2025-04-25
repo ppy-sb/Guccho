@@ -83,6 +83,27 @@ export const router = _router({
       return transformDan(res)
     }),
 
+  getCourse: withFeature(Feature.Dan, publicProcedure)
+    .input(string())
+    .query(async ({ input }) => {
+      const res = await dans.getCourse(DanProvider.stringToId(input))
+      return {
+        ...res,
+        id: DanProvider.idToString(res.id),
+        creator: res.creator ? UserProvider.idToString(res.creator) : undefined,
+        updater: res.updater ? UserProvider.idToString(res.updater) : undefined,
+        dans: res.dans.map(i => ({
+          ...i,
+          id: DanProvider.idToString(i.id),
+          creator: i.creator ? UserProvider.idToString(i.creator) : undefined,
+          updater: i.updater ? UserProvider.idToString(i.updater) : undefined,
+          requirements: i.requirements.map(i => ({
+            ...i,
+          })) satisfies DatabaseRequirementCondBinding<string, Requirement, Cond>[],
+        })) satisfies DatabaseDan<string>[],
+      }
+    }),
+
   delete: withFeature(Feature.Dan, staffProcedure)
     .input(string())
     .mutation(async ({ input }) => await dans.delete(DanProvider.stringToId(input))),
