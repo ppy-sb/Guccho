@@ -101,7 +101,7 @@ export interface DatabaseDan<I, RCBinding extends DatabaseRequirementCondBinding
   updatedAt: Date
 }
 
-export interface DatabaseDanCollection<I, RCBinding extends DatabaseRequirementCondBinding<I, Requirement, Cond> = DatabaseRequirementCondBinding<I, Requirement, Cond>> extends WithId<I> {
+export interface DatabaseDanCourse<I, RCBinding extends DatabaseRequirementCondBinding<I, Requirement, Cond> = DatabaseRequirementCondBinding<I, Requirement, Cond>> extends WithId<I> {
   name: string
   description: string
   creator?: I
