@@ -24,7 +24,7 @@ import { NoopDanProcessor } from './processor/noop'
 import { type BaseDanProcessor } from './processor/$base'
 import { type UserCompact } from '~/def/user'
 import { GucchoError } from '~/def/messages'
-import { type Cond, type Dan, type DatabaseDan, type DatabaseDanCollection, type DatabaseRequirementCondBinding, OP, Requirement } from '~/def/dan'
+import { type Cond, type Dan, type DatabaseDan, type DatabaseDanCourse, type DatabaseRequirementCondBinding, OP, Requirement } from '~/def/dan'
 import { DanProvider as Base } from '$base/server'
 import { validateCond } from '~/common/utils/dan'
 import { Mode, Ruleset } from '~/def'
@@ -58,8 +58,8 @@ export class DanProvider extends Base<Id, ScoreId> {
     requirementClearedScores: schema.requirementClearedScores,
 
     dans: schema.dans,
-    danCollections: schema.danCollections,
-    danCollectionDans: schema.danCollectionDans,
+    danCollections: schema.danCourse,
+    danCollectionDans: schema.danCourseDans,
     danConds: schema.danConds,
     requirementCondBindings: schema.requirementCondBindings,
   }
@@ -396,10 +396,10 @@ export class DanProvider extends Base<Id, ScoreId> {
     })
   }
 
-  async searchCollections(a: Base.SearchParam): Promise<PaginatedResult<DatabaseDanCollection<Id>>> {
-    return this.drizzle.transaction<PaginatedResult<DatabaseDanCollection<Id>>>(async (tx) => {
-      const collections = aliasedTable(schema.danCollections, 'c')
-      const collectionDans = aliasedTable(schema.danCollectionDans, 'cd')
+  async searchCourses(a: Base.SearchParam): Promise<PaginatedResult<DatabaseDanCourse<Id>>> {
+    return this.drizzle.transaction<PaginatedResult<DatabaseDanCourse<Id>>>(async (tx) => {
+      const collections = aliasedTable(schema.danCourse, 'c')
+      const collectionDans = aliasedTable(schema.danCourseDans, 'cd')
       const dans = aliasedTable(schema.dans, 'd')
       const condTree = this.#virtualTableDanTreeAlias('cond_tree')
       const danCondBinding = aliasedTable(schema.requirementCondBindings, 'dc')
@@ -420,7 +420,7 @@ export class DanProvider extends Base<Id, ScoreId> {
           dans: sql<Array<{ id: Id; s: string }>>`CAST( CONCAT( '[', GROUP_CONCAT(DISTINCT JSON_OBJECT('id', ${dans.id}, 's', ${collectionDans.shortName})), ']' ) AS JSON)`.as('dan_ids'),
         })
         .from(collections)
-        .innerJoin(collectionDans, eq(collections.id, collectionDans.collectionId))
+        .innerJoin(collectionDans, eq(collections.id, collectionDans.courseId))
         .innerJoin(dans, eq(collectionDans.danId, dans.id))
         .innerJoin(danCondBinding, eq(dans.id, danCondBinding.danId))
         .innerJoin(condTree.aliasedTable, eq(danCondBinding.condId, condTree.column.root))
@@ -541,7 +541,7 @@ export class DanProvider extends Base<Id, ScoreId> {
           return {
             total: 0,
             data: [],
-          } as PaginatedResult<DatabaseDanCollection<Id>>
+          } as PaginatedResult<DatabaseDanCourse<Id>>
         }
 
         // Get all unique dan IDs from the results
@@ -617,7 +617,7 @@ export class DanProvider extends Base<Id, ScoreId> {
               dans: collectionDans,
             }
           }),
-        } as PaginatedResult<DatabaseDanCollection<Id>>
+        } as PaginatedResult<DatabaseDanCourse<Id>>
       }
       catch (e) {
         console.error(e)

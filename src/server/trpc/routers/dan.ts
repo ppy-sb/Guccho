@@ -4,7 +4,7 @@ import { staffProcedure } from '../middleware/role'
 import { router as _router, publicProcedure } from '../trpc'
 import { zodMode, zodRuleset } from '../shapes'
 import { validateUsecase } from '~/common/utils/dan'
-import { type Cond, type Dan, type DatabaseDan, type DatabaseDanCollection, type DatabaseRequirementCondBinding, Requirement } from '~/def/dan'
+import { type Cond, type Dan, type DatabaseDan, type DatabaseDanCourse, type DatabaseRequirementCondBinding, Requirement } from '~/def/dan'
 import { Feature } from '~/def/features'
 import { DanProvider, ScoreProvider, UserProvider, dans } from '~/server/singleton/service'
 import { type PaginatedResult } from '~/def/pagination'
@@ -40,7 +40,7 @@ export const router = _router({
       } as PaginatedResult<DatabaseDan<string>>
     }),
 
-  searchCollection: publicProcedure
+  searchCourse: publicProcedure
     .input(
       object({
         keyword: string(),
@@ -55,7 +55,7 @@ export const router = _router({
       })
     )
     .query(async ({ input }) => {
-      const searchResult = await dans.searchCollections(input)
+      const searchResult = await dans.searchCourses(input)
       return {
         total: searchResult.total,
         data: searchResult.data?.map(i => ({
@@ -72,8 +72,8 @@ export const router = _router({
               ...i,
             })) satisfies DatabaseRequirementCondBinding<string, Requirement, Cond>[],
           })) satisfies DatabaseDan<string>[],
-        })) satisfies DatabaseDanCollection<string>[],
-      } as PaginatedResult<DatabaseDanCollection<string>>
+        })) satisfies DatabaseDanCourse<string>[],
+      } as PaginatedResult<DatabaseDanCourse<string>>
     }),
 
   get: withFeature(Feature.Dan, publicProcedure)
