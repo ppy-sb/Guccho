@@ -27,7 +27,7 @@ export function danSQLChunks<C extends Cond, AB extends RequirementCondBinding<R
     }
     case OP.BanchoBeatmapIdEq: {
       return and(
-        eq(table.beatmaps.server, 'osu!'),
+        eq(table.beatmaps.server, sql.raw('\'osu!\'')),
         eq(table.beatmaps.id, cond.val)
       )!
     }
