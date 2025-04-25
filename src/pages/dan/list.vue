@@ -54,8 +54,6 @@ en-GB:
   search-text: Search Dans...
   search: Search
   detail: Detail
-  qf-scores: Qualified Scores (best 10)
-  load-qualified-scores: load qualified scores
   mode: Mode...
   ruleset: Rule...
   unset: Unset
@@ -66,8 +64,6 @@ zh-CN:
   search-text: 搜索段位成就...
   search: 搜索
   detail: 详细
-  qf-scores: 满足条件的成绩 (前 10)
-  load-qualified-scores: 加载满足条件的成绩
   mode: 模式
   ruleset: 玩法
   unset: 未指定
@@ -143,7 +139,7 @@ zh-CN:
     </form>
 
     <div v-if="data" class="relative pt-4 space-y-4">
-      <span class="text-gbase-500 text-sm">found {{ data.total }} results.</span>
+      <span class="text-sm text-gbase-500">found {{ data.total }} results.</span>
       <div
         v-for="item in data.data" :key="item.id" class="relative w-full transition-all rounded-lg bg-base-100 ps-3"
         :class="{
@@ -157,7 +153,7 @@ zh-CN:
           </div>
 
           <div class="p-0 m-0 space-y-4 overflow-auto leading-relaxed collapse-content">
-            <p class="whitespace-pre-wrap text-sm">
+            <p class="text-sm whitespace-pre-wrap">
               {{ item.description }}
             </p>
             <dan-explain-requirement v-for="requirement in item.requirements" :key="requirement.type" :requirement="requirement" />
