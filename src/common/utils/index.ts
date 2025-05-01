@@ -1,3 +1,5 @@
+import { StableMod } from '~/def/score'
+
 export * from './asserts'
 export * from './enum'
 export * from './guards'
@@ -50,4 +52,13 @@ export function raiseError<E>(e: E): never {
 
 export function createOptions<T extends Record<string, string>, TTr extends (key: keyof T, value: T[keyof T]) => string>(priv: T, createLabel: TTr = ((a: keyof T) => a) as unknown as TTr) {
   return Object.entries(priv).map(([label, value]) => ({ label: createLabel(label, value as T[keyof T]), value: value as unknown as T[keyof T] }))
+}
+
+export function modControl(mods: StableMod[]): StableMod[] {
+  mods = [...mods]
+
+  if (mods.includes(StableMod.DoubleTime) && mods.includes(StableMod.Nightcore)) {
+    mods.splice(mods.findIndex(mod => mod === StableMod.DoubleTime), 1)
+  }
+  return mods
 }

@@ -98,9 +98,9 @@ de-DE:
             :class="{
               'tooltip tooltip-primary lg:tooltip-right': item.score.mods.length,
             }"
-            :data-tip="item.score.mods.map(m => StableMod[m]).join(', ')"
+            :data-tip="modControl(item.score.mods).map(m => StableMod[m]).join(', ')"
           >
-            <app-mod v-for="mod in item.score.mods" :key="mod" :mod="mod" class="w-6 h-6" />
+            <app-mod v-for="mod in modControl(item.score.mods)" :key="mod" :mod="mod" class="w-6 h-6" />
           </td>
           <td class="font-mono text-right">
             {{ comma(item.score.score) }}

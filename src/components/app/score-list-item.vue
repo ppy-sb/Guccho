@@ -65,6 +65,13 @@ const meta = computed(
 )
 
 const { t, locale } = useI18n()
+
+const mods = computed(() => {
+  if (!props.score) {
+    return []
+  }
+  return modControl(props.score.mods)
+})
 </script>
 
 <i18n lang="yaml">
@@ -152,8 +159,8 @@ de-DE:
         {{ score.playedAt.toLocaleString(locale, { dateStyle: 'medium', timeStyle: 'medium' }) }}
       </time>
     </div>
-    <span v-if="score.mods.length" class="hidden p-1 mt-auto space-x-4 rounded-lg lg:block bg-neutral/40 tooltip tooltip-primary" :data-tip="score.mods.map(m => StableMod[m]).join(', ')">
-      <app-mod v-for="mod in score.mods" :key="mod" :mod="mod" class="w-8 h-8 opacity-80" />
+    <span v-if="score.mods.length" class="hidden p-1 mt-auto space-x-4 rounded-lg lg:block bg-neutral/40 tooltip tooltip-primary" :data-tip="mods.map(m => StableMod[m]).join(', ')">
+      <app-mod v-for="mod in mods" :key="mod" :mod="mod" class="w-8 h-8 opacity-80" />
     </span>
     <div class="flex flex-col justify-between">
       <div class="flex justify-end text-lg lg:text-2xl transition-[font-size]">
@@ -193,8 +200,8 @@ de-DE:
         <span><b class="font-mono">{{ score.accuracy.toFixed(2) }}</b></span>
         <span class="text-light">% {{ $t('global.acc') }}</span>
       </div>
-      <span v-if="score.mods.length" class="block px-2 mt-auto space-x-1 rounded-lg lg:hidden bg-neutral/40 tooltip tooltip-primary" :data-tip="score.mods.map(m => StableMod[m]).join(', ')">
-        <app-mod v-for="mod in score.mods" :key="mod" :mod="mod" class="w-5 h-5" />
+      <span v-if="score.mods.length" class="block px-2 mt-auto space-x-1 rounded-lg lg:hidden bg-neutral/40 tooltip tooltip-primary" :data-tip="mods.map(m => StableMod[m]).join(', ')">
+        <app-mod v-for="mod in mods" :key="mod" :mod="mod" class="w-5 h-5" />
       </span>
     </div>
     <div class="self-center font-mono text-4xl text-center md:text-5xl w-14 md:w-20 transition-[font-size]">

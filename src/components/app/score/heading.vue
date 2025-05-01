@@ -10,7 +10,7 @@ type RouterOutput = inferRouterOutputs<AppRouter>
 
 type Score = NonNullable<RouterOutput['score']['id']>
 
-defineProps<{
+const props = defineProps<{
   score: Score
   rankingSystem: RankingSystem
 }>()
@@ -30,6 +30,10 @@ function haveManiaHitCounts(input: Score): input is typeof input & { hit: ManiaH
 }
 
 const { locale } = useI18n()
+
+const mods = computed(() => {
+  return modControl(props.score.mods)
+})
 </script>
 
 <i18n lang="yaml">
@@ -134,8 +138,8 @@ de-DE:
         <div class="mx-auto text-8xl">
           {{ score.grade }}
         </div>
-        <span v-if="score.mods.length" class="block mt-2 space-x-4 lg:mt-8 tooltip tooltip-primary" :data-tip="score.mods.map(m => StableMod[m]).join(', ')">
-          <app-mod v-for="mod in score.mods" :key="mod" :mod="mod" class="w-8 h-8 opacity-80" />
+        <span v-if="score.mods.length" class="block mt-2 space-x-4 lg:mt-8 tooltip tooltip-primary" :data-tip="mods.map(m => StableMod[m]).join(', ')">
+          <app-mod v-for="mod in mods" :key="mod" :mod="mod" class="w-8 h-8 opacity-80" />
         </span>
         <div class="mb-auto" />
       </div>
