@@ -162,11 +162,14 @@ zh-CN:
             </tr>
           </thead>
           <tbody v-if="data" class="relative">
-            <template v-for="course in data.data" :key="course.id">
+            <template v-for="(course, courseIdx) in data.data" :key="course.id">
               <template v-for="(dan, index) in course.dans" :key="dan.id">
                 <!-- Main dan row -->
                 <tr
                   class="hover:bg-base-200 css-expand"
+                  :class="{
+                    '[&>*]:bg-base-200/50': ((courseIdx + index) % 2) === 0,
+                  }"
                 >
                   <th
                     v-if="index === 0"
@@ -185,9 +188,6 @@ zh-CN:
                   </th>
                   <td
                     class="w-0"
-                    :class="{
-                      'bg-base-200/50': (index % 2) === 0,
-                    }"
                   >
                     <label class="swap swap-rotate">
                       <!-- this hidden checkbox controls the state -->
@@ -220,17 +220,11 @@ zh-CN:
                   </td>
                   <th
                     class="align-top"
-                    :class="{
-                      'bg-base-200/50': (index % 2) === 0,
-                    }"
                   >
                     {{ dan.shortName }}
                   </th>
                   <td
                     class="align-top"
-                    :class="{
-                      'bg-base-200/50': (index % 2) === 0,
-                    }"
                   >
                     <div class="whitespace-pre">
                       <nuxt-link-locale
@@ -250,7 +244,7 @@ zh-CN:
                 <tr
                   class="css-expand-content"
                   :class="{
-                    'bg-base-200/50': (index % 2) === 0,
+                    '[&>*]:bg-base-200/50': ((courseIdx + index) % 2) === 0,
                   }"
                 >
                   <td colspan="99">
