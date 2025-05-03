@@ -1,4 +1,4 @@
-import { type InferInsertModel, aliasedTable, and, asc, count, desc, eq, exists, getTableName, gt, inArray, like, not, or, sql } from 'drizzle-orm'
+import { type InferInsertModel, aliasedTable, and, asc, count, desc, eq, exists, getTableName, gt, inArray, isNotNull, like, ne, not, notExists, notInArray, or, sql } from 'drizzle-orm'
 import { type MySql2Database } from 'drizzle-orm/mysql2'
 import { danSQLChunks } from '../../utils/sql-dan'
 import { type Id, type ScoreId, hasRuleset } from '../..'
@@ -58,7 +58,7 @@ export class DanProvider extends Base<Id, ScoreId> {
     requirementClearedScores: schema.requirementClearedScores,
 
     dans: schema.dans,
-    danCollections: schema.danCourse,
+    danCollections: schema.danCourses,
     danCollectionDans: schema.danCourseDans,
     danConds: schema.danConds,
     requirementCondBindings: schema.requirementCondBindings,
@@ -91,108 +91,6 @@ export class DanProvider extends Base<Id, ScoreId> {
     }
 
     return await this.getDanWithRequirements(dan, tx)
-  }
-
-  async getCourse(id: Id, tx: Database = this.drizzle): Promise<DatabaseDanCourse<Id, DatabaseRequirementCondBinding<Id, Requirement, Cond>>> {
-    return this.drizzle.transaction(async (tx) => {
-      const course = await tx.query.danCourse.findFirst({
-        where: eq(schema.danCourse.id, id),
-      })
-
-      if (!course) {
-        throwGucchoError(GucchoError.DanNotFound)
-      }
-
-      const dans = aliasedTable(schema.dans, 'd')
-      const condTree = this.#virtualTableDanTreeAlias('cond_tree')
-      const danCondBinding = aliasedTable(schema.requirementCondBindings, 'dc')
-
-      const _sql = tx
-        .select({
-          shortName: schema.danCourseDans.shortName,
-          id: dans.id,
-          name: dans.name,
-          description: dans.description,
-          creator: dans.creator,
-          createdAt: dans.createdAt,
-          updater: dans.updater,
-          updatedAt: dans.updatedAt,
-
-          requirements: sql<Array<[Requirement, Id]>>`
-            CAST(
-              CONCAT(
-                '[',
-                GROUP_CONCAT(
-                  DISTINCT JSON_ARRAY(
-                    ${danCondBinding.type},
-                    ${danCondBinding.condId}
-                  )
-                ),
-                ']'
-              ) AS JSON
-            )`.as('requirements'),
-
-          fullTree: sql<Array<[Id, OP, string, Id]>>`JSON_ARRAYAGG(
-              JSON_ARRAY(
-                ${condTree.column.id},
-                ${condTree.column.type},
-                ${condTree.column.value},
-                ${condTree.column.parent}
-              )
-            )`.as('full_tree'),
-        })
-        .from(dans)
-        .innerJoin(schema.danCourseDans, eq(dans.id, schema.danCourseDans.danId))
-        .innerJoin(schema.danCourse, eq(schema.danCourseDans.courseId, schema.danCourse.id))
-        .innerJoin(danCondBinding, eq(dans.id, danCondBinding.danId))
-        .innerJoin(condTree.aliasedTable, eq(danCondBinding.condId, condTree.column.root))
-        .groupBy(dans.id)
-        .where(eq(schema.danCourse.id, id))
-        .orderBy(
-          asc(schema.danCourseDans.order),
-        )
-
-      try {
-        const result = await _sql
-
-        const dans = result.map((i) => {
-          const conds = this.#buildCondTreeMem(
-            i.requirements
-              .map(([_, id]) => id),
-            i.fullTree
-              .map(([id, type, value, parent]) => ({ id, type, value, parent }))
-              .toSorted((a, b) => a.id - b.id)
-          )
-
-          return {
-            ...pick(i, ['id', 'name', 'description', 'shortName']),
-            creator: i.creator ?? undefined,
-            updater: i.updater ?? undefined,
-            createdAt: i.createdAt,
-            updatedAt: i.updatedAt,
-            requirements: i.requirements.map(([type, rootCond]) => {
-              return {
-                type,
-                cond: conds[rootCond],
-              }
-            }),
-          }
-        })
-
-        return {
-          id: course.id,
-          name: course.name,
-          description: course.description,
-          createdAt: course.createdAt,
-          updatedAt: course.updatedAt,
-          dans,
-        } satisfies DatabaseDanCourse<Id>
-      }
-      catch (e) {
-        console.error(e)
-        throw e
-      }
-    })
   }
 
   async getDanWithRequirements(dan: {
@@ -238,6 +136,9 @@ export class DanProvider extends Base<Id, ScoreId> {
   }
 
   async #fetchAndBuildCondTree(ids: Id[], tx: Database): Promise<Record<Id, Cond>> {
+    if (!ids.length) {
+      return {}
+    }
     // Fetch all conditions starting from rootCondIds using a recursive CTE
     const [conditionsResult] = await tx.execute(
       sql`
@@ -290,7 +191,7 @@ export class DanProvider extends Base<Id, ScoreId> {
     })
   }
 
-  async search(a: Base.SearchParam): Promise<PaginatedResult<DatabaseDan<Id>>> {
+  async search(a: Base.SearchDanParam<Id>): Promise<PaginatedResult<DatabaseDan<Id>>> {
     return this.drizzle.transaction<PaginatedResult<DatabaseDan<Id>>>(async (tx) => {
       const dans = aliasedTable(schema.dans, 'd')
       const condTree = this.#virtualTableDanTreeAlias('cond_tree')
@@ -348,6 +249,8 @@ export class DanProvider extends Base<Id, ScoreId> {
             )`.as('full_tree'),
         })
         .from(dans)
+        .leftJoin(schema.danCourseDans, eq(dans.id, schema.danCourseDans.danId))
+        .leftJoin(schema.danCourses, eq(schema.danCourseDans.courseId, schema.danCourses.id))
         .innerJoin(danCondBinding, eq(dans.id, danCondBinding.danId))
         .innerJoin(condTree.aliasedTable, eq(danCondBinding.condId, condTree.column.root))
         .leftJoin(bmId, and(eq(condTree.column.type, sql.raw(`'${OP.BanchoBeatmapIdEq}'`)), eq(bmId.id, condTree.column.value), eq(bmId.server, sql.raw('\'osu!\''))))
@@ -426,6 +329,8 @@ export class DanProvider extends Base<Id, ScoreId> {
                   ),
                 )
             )
+              // Mania only supports standard ruleset so ruleset is not required
+              ?.if(a.mode !== Mode.Mania)
               ?.if(a.ruleset)
               ?.if(!((a.rulesetDefaultsToStandard && a.ruleset === Ruleset.Standard)))
               // validate ruleset and server support status
@@ -433,17 +338,18 @@ export class DanProvider extends Base<Id, ScoreId> {
                 (a.mode && a.ruleset)
                   ? hasRuleset(a.mode, a.ruleset)
                   : true
-              )
-              // Mania only supports standard ruleset so ruleset is not required
-              ?.if(a.mode !== Mode.Mania),
+              ),
 
             // filter key count
-            (a.mode === Mode.Mania && a.mania?.keyCount)
-              ? or(
-                eq(bmId.cs, a.mania?.keyCount),
-                eq(bmMd5.cs, a.mania?.keyCount)
-              )
-              : undefined
+            or(
+              eq(bmId.cs, a.mania!.keyCount!),
+              eq(bmMd5.cs, a.mania!.keyCount!)
+            )
+              ?.if(a.mode === Mode.Mania)
+              ?.if(a.mania?.keyCount),
+
+            ne(schema.danCourses.id, a.excludeDanCourse!)?.if(a.excludeDanCourse !== undefined),
+            notInArray(dans.id, a.excludeDans!)?.if(a.excludeDans?.length),
           )
         )
         .groupBy(dans.id)
@@ -490,236 +396,6 @@ export class DanProvider extends Base<Id, ScoreId> {
             }
           }),
         } satisfies PaginatedResult<DatabaseDan<Id>>
-      }
-      catch (e) {
-        console.error(e)
-        throw e
-      }
-    })
-  }
-
-  async searchCourses(a: Base.SearchParam): Promise<PaginatedResult<DatabaseDanCourse<Id>>> {
-    return this.drizzle.transaction<PaginatedResult<DatabaseDanCourse<Id>>>(async (tx) => {
-      const collections = aliasedTable(schema.danCourse, 'c')
-      const collectionDans = aliasedTable(schema.danCourseDans, 'cd')
-      const dans = aliasedTable(schema.dans, 'd')
-      const condTree = this.#virtualTableDanTreeAlias('cond_tree')
-      const danCondBinding = aliasedTable(schema.requirementCondBindings, 'dc')
-      const bmId = aliasedTable(schema.beatmaps, 'b_id')
-      const bmMd5 = aliasedTable(schema.beatmaps, 'b_md5')
-
-      // First, get the filtered collections with their dans
-      const _sql = tx
-        .select({
-          id: collections.id,
-          name: collections.name,
-          description: collections.description,
-          creator: collections.creator,
-          createdAt: collections.createdAt,
-          updater: collections.updater,
-          updatedAt: collections.updatedAt,
-          total: sql<number>`count(*) over()`.as('total'),
-          dans: sql<Array<{ id: Id; s: string }>>`CAST( CONCAT( '[', GROUP_CONCAT(DISTINCT JSON_OBJECT('id', ${dans.id}, 's', ${collectionDans.shortName})), ']' ) AS JSON)`.as('dan_ids'),
-        })
-        .from(collections)
-        .innerJoin(collectionDans, eq(collections.id, collectionDans.courseId))
-        .innerJoin(dans, eq(collectionDans.danId, dans.id))
-        .innerJoin(danCondBinding, eq(dans.id, danCondBinding.danId))
-        .innerJoin(condTree.aliasedTable, eq(danCondBinding.condId, condTree.column.root))
-        .leftJoin(bmId, and(eq(condTree.column.type, sql.raw(`'${OP.BanchoBeatmapIdEq}'`)), eq(bmId.id, condTree.column.value), eq(bmId.server, sql.raw('\'osu!\''))))
-        .leftJoin(bmMd5, and(eq(condTree.column.type, sql.raw(`'${OP.BeatmapMd5Eq}'`)), eq(bmMd5.md5, condTree.column.value)))
-        .where(
-          and(
-            // keyword
-            or(
-              // search collection name
-              like(collections.name, `%${a.keyword}%`),
-
-              // search collection description
-              like(collections.description, `%${a.keyword}%`),
-
-              // search dan names
-              like(dans.name, `%${a.keyword}%`),
-
-              // search dan descriptions
-              like(dans.description, `%${a.keyword}%`),
-
-              // search conditions
-              and(
-                // must be truthy conditions
-                eq(condTree.column.truthy, sql.raw('1')),
-
-                or(
-                  // mode eq 'mania'
-                  // bancho beatmap id eq
-                  // beatmap md5 eq
-                  and(
-                    inArray(condTree.column.type, [
-                      sql.raw(`'${OP.ModeEq}'`),
-                      sql.raw(`'${OP.BanchoBeatmapIdEq}'`),
-                      sql.raw(`'${OP.BeatmapMd5Eq}'`),
-                    ]),
-                    eq(condTree.column.value, a.keyword),
-                  ),
-
-                  // further search matched beatmaps
-                  or(
-                    like(bmId.artist, `%${a.keyword}%`),
-                    like(bmId.title, `%${a.keyword}%`),
-                    like(bmId.creator, `%${a.keyword}%`),
-                    like(bmId.diff, `%${a.keyword}%`),
-                    like(bmId.filename, `%${a.keyword}%`),
-                    like(bmMd5.artist, `%${a.keyword}%`),
-                    like(bmMd5.title, `%${a.keyword}%`),
-                    like(bmMd5.creator, `%${a.keyword}%`),
-                    like(bmMd5.diff, `%${a.keyword}%`),
-                    like(bmMd5.filename, `%${a.keyword}%`),
-                  ),
-                )
-              ),
-            )
-              ?.if(a.keyword),
-
-            // filter mode
-            exists(
-              tx.select({ 1: sql`1` })
-                .from(condTree.aliasedTable)
-                .where(
-                  and(
-                    eq(condTree.column.root, danCondBinding.condId),
-                    eq(condTree.column.type, sql.raw(`'${OP.ModeEq}'`)),
-                    eq(condTree.column.value, a.mode),
-                    eq(condTree.column.truthy, sql.raw('1')),
-                  ),
-                )
-            )
-              ?.if(a.mode),
-
-            // filter ruleset
-            exists(
-              tx.select({ 1: sql`1` })
-                .from(condTree.aliasedTable)
-                .where(
-                  and(
-                    eq(condTree.column.root, danCondBinding.condId),
-                    eq(condTree.column.truthy, sql.raw('1')),
-                    eq(condTree.column.type, sql.raw(`'${OP.RulesetEq}'`)),
-                    eq(condTree.column.value, a.ruleset),
-                  ),
-                )
-            )
-              ?.if(a.ruleset)
-              ?.if(!((a.rulesetDefaultsToStandard && a.ruleset === Ruleset.Standard)))
-              // validate ruleset and server support status
-              ?.if(
-                (a.mode && a.ruleset)
-                  ? hasRuleset(a.mode, a.ruleset)
-                  : true
-              )
-              // Mania only supports standard ruleset so ruleset is not required
-              ?.if(a.mode !== Mode.Mania),
-
-            // filter key count
-            (a.mode === Mode.Mania && a.mania?.keyCount)
-              ? or(
-                eq(bmId.cs, a.mania?.keyCount),
-                eq(bmMd5.cs, a.mania?.keyCount)
-              )
-              : undefined
-          )
-        )
-        .groupBy(collections.id)
-        .orderBy(
-          desc(collections.updatedAt),
-          desc(collections.id),
-        )
-        .limit(a.perPage)
-        .offset(a.page * a.perPage)
-
-      try {
-        const result = await _sql
-
-        if (!result.length) {
-          return {
-            total: 0,
-            data: [],
-          } as PaginatedResult<DatabaseDanCourse<Id>>
-        }
-
-        // Get all unique dan IDs from the results
-        const allDanIds = new Set<Id>(result.flatMap(v => v.dans.map(d => d.id)))
-
-        // Fetch all dans with their requirements
-        const dansWithRequirements = await tx
-          .select({
-            id: dans.id,
-            name: dans.name,
-            description: dans.description,
-            creator: dans.creator,
-            createdAt: dans.createdAt,
-            updater: dans.updater,
-            updatedAt: dans.updatedAt,
-            requirements: sql<Array<{ type: Requirement; rootCond: Id }>>`
-              CAST(
-                CONCAT(
-                  '[',
-                  GROUP_CONCAT(
-                    DISTINCT JSON_OBJECT(
-                      'type', ${danCondBinding.type},
-                      'rootCond', ${danCondBinding.condId}
-                    )
-                  ),
-                  ']'
-                ) AS JSON
-              )`.as('requirements'),
-          })
-          .from(dans)
-          .innerJoin(danCondBinding, eq(dans.id, danCondBinding.danId))
-          .where(inArray(dans.id, Array.from(allDanIds)))
-          .groupBy(dans.id)
-
-        // Create a map of dans by ID
-        const dansMap = new Map<Id, typeof dansWithRequirements[number]>(dansWithRequirements.map(dan => [dan.id, dan]))
-
-        // Fetch the condition tree for all requirements
-        const allCondIds = dansWithRequirements.flatMap(d => d.requirements.map(r => r.rootCond))
-        const condTree = await this.#fetchAndBuildCondTree(allCondIds, tx)
-
-        // Build the final result
-        return {
-          total: result[0].total,
-          data: result.map((i) => {
-            const collectionDans = i.dans.map(({ id, s }) => {
-              const dan = dansMap.get(id)
-              if (!dan) {
-                throw new Error(`Dan with id ${id} not found`)
-              }
-              return {
-                ...pick(dan, ['id', 'name', 'description']),
-                creator: dan.creator ?? undefined,
-                updater: dan.updater ?? undefined,
-                createdAt: dan.createdAt,
-                updatedAt: dan.updatedAt,
-                shortName: s,
-                requirements: dan.requirements.map((req) => {
-                  return {
-                    type: req.type,
-                    cond: condTree[req.rootCond],
-                  }
-                }),
-              }
-            })
-
-            return {
-              ...pick(i, ['id', 'name', 'description']),
-              creator: i.creator ?? undefined,
-              updater: i.updater ?? undefined,
-              createdAt: i.createdAt,
-              updatedAt: i.updatedAt,
-              dans: collectionDans,
-            }
-          }),
-        } as PaginatedResult<DatabaseDanCourse<Id>>
       }
       catch (e) {
         console.error(e)
@@ -1400,6 +1076,443 @@ FROM
     })
 
     return Promise.all(dans.map(item => this.getDanWithRequirements(item, this.drizzle)))
+  }
+
+  async searchCourses(a: Base.SearchDanCourseParam): Promise<PaginatedResult<DatabaseDanCourse<Id>>> {
+    return this.drizzle.transaction<PaginatedResult<DatabaseDanCourse<Id>>>(async (tx) => {
+      const courses = aliasedTable(schema.danCourses, 'c')
+      const courseDans = aliasedTable(schema.danCourseDans, 'cd')
+      const dans = aliasedTable(schema.dans, 'd')
+      const condTree = this.#virtualTableDanTreeAlias('cond_tree')
+      const danCondBinding = aliasedTable(schema.requirementCondBindings, 'dc')
+      const bmId = aliasedTable(schema.beatmaps, 'b_id')
+      const bmMd5 = aliasedTable(schema.beatmaps, 'b_md5')
+
+      // First, get the filtered collections with their dans
+      const _sql = tx
+        .select({
+          id: courses.id,
+          name: courses.name,
+          description: courses.description,
+          creator: courses.creator,
+          createdAt: courses.createdAt,
+          updater: courses.updater,
+          updatedAt: courses.updatedAt,
+          total: sql<number>`count(*) over()`.as('total'),
+          dans: sql<Array<{ id: Id; s: string }>>`CAST( CONCAT( '[', GROUP_CONCAT(DISTINCT JSON_OBJECT('id', ${courseDans.danId}, 's', ${courseDans.shortName}) ORDER BY ${courseDans.order} ASC), ']' ) AS JSON)`.as('dan_ids'),
+        })
+        .from(courses)
+        .leftJoin(courseDans, eq(courses.id, courseDans.courseId))
+        .leftJoin(dans, eq(courseDans.danId, dans.id))
+        .leftJoin(danCondBinding, eq(dans.id, danCondBinding.danId))
+        .leftJoin(condTree.aliasedTable, eq(danCondBinding.condId, condTree.column.root))
+        .leftJoin(bmId, and(eq(condTree.column.type, sql.raw(`'${OP.BanchoBeatmapIdEq}'`)), eq(bmId.id, condTree.column.value), eq(bmId.server, sql.raw('\'osu!\''))))
+        .leftJoin(bmMd5, and(eq(condTree.column.type, sql.raw(`'${OP.BeatmapMd5Eq}'`)), eq(bmMd5.md5, condTree.column.value)))
+        .where(
+          and(
+            // show empty?
+            isNotNull(dans.id)?.if(!a.allowEmpty),
+
+            // keyword
+            or(
+              // search collection name
+              like(courses.name, `%${a.keyword}%`),
+
+              // search collection description
+              like(courses.description, `%${a.keyword}%`),
+
+              // search dan names
+              like(dans.name, `%${a.keyword}%`),
+
+              // search dan descriptions
+              like(dans.description, `%${a.keyword}%`),
+
+              // search conditions
+              and(
+                // must be truthy conditions
+                eq(condTree.column.truthy, sql.raw('1')),
+
+                or(
+                  // mode eq 'mania'
+                  // bancho beatmap id eq
+                  // beatmap md5 eq
+                  and(
+                    inArray(condTree.column.type, [
+                      sql.raw(`'${OP.ModeEq}'`),
+                      sql.raw(`'${OP.BanchoBeatmapIdEq}'`),
+                      sql.raw(`'${OP.BeatmapMd5Eq}'`),
+                    ]),
+                    eq(condTree.column.value, a.keyword),
+                  ),
+
+                  // further search matched beatmaps
+                  or(
+                    like(bmId.artist, `%${a.keyword}%`),
+                    like(bmId.title, `%${a.keyword}%`),
+                    like(bmId.creator, `%${a.keyword}%`),
+                    like(bmId.diff, `%${a.keyword}%`),
+                    like(bmId.filename, `%${a.keyword}%`),
+                    like(bmMd5.artist, `%${a.keyword}%`),
+                    like(bmMd5.title, `%${a.keyword}%`),
+                    like(bmMd5.creator, `%${a.keyword}%`),
+                    like(bmMd5.diff, `%${a.keyword}%`),
+                    like(bmMd5.filename, `%${a.keyword}%`),
+                  ),
+                )
+              ),
+            )
+              ?.if(a.keyword),
+
+            // filter mode
+            exists(
+              tx.select({ 1: sql`1` })
+                .from(condTree.aliasedTable)
+                .where(
+                  and(
+                    eq(condTree.column.root, danCondBinding.condId),
+                    eq(condTree.column.type, sql.raw(`'${OP.ModeEq}'`)),
+                    eq(condTree.column.value, a.mode),
+                    eq(condTree.column.truthy, sql.raw('1')),
+                  ),
+                )
+            )
+              ?.if(a.mode),
+
+            // filter ruleset
+            exists(
+              tx.select({ 1: sql`1` })
+                .from(condTree.aliasedTable)
+                .where(
+                  and(
+                    eq(condTree.column.root, danCondBinding.condId),
+                    eq(condTree.column.truthy, sql.raw('1')),
+                    eq(condTree.column.type, sql.raw(`'${OP.RulesetEq}'`)),
+                    eq(condTree.column.value, a.ruleset),
+                  ),
+                )
+            )
+              ?.if(a.ruleset)
+              ?.if(!((a.rulesetDefaultsToStandard && a.ruleset === Ruleset.Standard)))
+              // validate ruleset and server support status
+              ?.if(
+                (a.mode && a.ruleset)
+                  ? hasRuleset(a.mode, a.ruleset)
+                  : true
+              )
+              // Mania only supports standard ruleset so ruleset is not required
+              ?.if(a.mode !== Mode.Mania),
+
+            // filter key count
+            (a.mode === Mode.Mania && a.mania?.keyCount)
+              ? or(
+                eq(bmId.cs, a.mania?.keyCount),
+                eq(bmMd5.cs, a.mania?.keyCount)
+              )
+              : undefined
+          )
+        )
+        .groupBy(courses.id)
+        .orderBy(
+          desc(courses.updatedAt),
+          desc(courses.id),
+        )
+        .limit(a.perPage)
+        .offset(a.page * a.perPage)
+
+      try {
+        const result = await _sql
+
+        if (!result.length) {
+          return {
+            total: 0,
+            data: [],
+          } as PaginatedResult<DatabaseDanCourse<Id>>
+        }
+
+        // Get all unique dan IDs from the results
+        const allDanIds = new Set<Id>(result.flatMap(v => v.dans.map(d => d.id)))
+
+        // Fetch all dans with their requirements
+        const dansWithRequirements = await tx
+          .select({
+            id: dans.id,
+            name: dans.name,
+            description: dans.description,
+            creator: dans.creator,
+            createdAt: dans.createdAt,
+            updater: dans.updater,
+            updatedAt: dans.updatedAt,
+            requirements: sql<Array<{ type: Requirement; rootCond: Id }>>`
+              CAST(
+                CONCAT(
+                  '[',
+                  GROUP_CONCAT(
+                    DISTINCT JSON_OBJECT(
+                      'type', ${danCondBinding.type},
+                      'rootCond', ${danCondBinding.condId}
+                    )
+                  ),
+                  ']'
+                ) AS JSON
+              )`.as('requirements'),
+          })
+          .from(dans)
+          .innerJoin(danCondBinding, eq(dans.id, danCondBinding.danId))
+          .where(inArray(dans.id, Array.from(allDanIds)))
+          .groupBy(dans.id)
+
+        // Create a map of dans by ID
+        const dansMap = new Map<Id, typeof dansWithRequirements[number]>(dansWithRequirements.map(dan => [dan.id, dan]))
+
+        // Fetch the condition tree for all requirements
+        const allCondIds = dansWithRequirements.flatMap(d => d.requirements.map(r => r.rootCond))
+        const condTree = await this.#fetchAndBuildCondTree(allCondIds, tx)
+
+        // Build the final result
+        return {
+          total: result[0].total,
+          data: result.map((i) => {
+            const collectionDans = i.dans.filter(({ id }) => id !== null).map(({ id, s }) => {
+              const dan = dansMap.get(id)
+              if (!dan) {
+                throw new Error(`Dan with id ${id} not found`)
+              }
+              return {
+                ...pick(dan, ['id', 'name', 'description']),
+                creator: dan.creator ?? undefined,
+                updater: dan.updater ?? undefined,
+                createdAt: dan.createdAt,
+                updatedAt: dan.updatedAt,
+                shortName: s,
+                requirements: dan.requirements.map((req) => {
+                  return {
+                    type: req.type,
+                    cond: condTree[req.rootCond],
+                  }
+                }),
+              }
+            })
+
+            return {
+              ...pick(i, ['id', 'name', 'description']),
+              creator: i.creator ?? undefined,
+              updater: i.updater ?? undefined,
+              createdAt: i.createdAt,
+              updatedAt: i.updatedAt,
+              dans: collectionDans,
+            }
+          }),
+        } as PaginatedResult<DatabaseDanCourse<Id>>
+      }
+      catch (e) {
+        console.error(e)
+        throw e
+      }
+    })
+  }
+
+  async getCourse(id: Id, tx: Database = this.drizzle): Promise<DatabaseDanCourse<Id, DatabaseRequirementCondBinding<Id, Requirement, Cond>>> {
+    const course = await tx.query.danCourses.findFirst({
+      where: eq(schema.danCourses.id, id),
+    })
+
+    if (!course) {
+      throwGucchoError(GucchoError.DanCourseNotFound)
+    }
+
+    const dans = aliasedTable(schema.dans, 'd')
+    const condTree = this.#virtualTableDanTreeAlias('cond_tree')
+    const danCondBinding = aliasedTable(schema.requirementCondBindings, 'dc')
+
+    const _sql = tx
+      .select({
+        shortName: schema.danCourseDans.shortName,
+        id: dans.id,
+        name: dans.name,
+        description: dans.description,
+        creator: dans.creator,
+        createdAt: dans.createdAt,
+        updater: dans.updater,
+        updatedAt: dans.updatedAt,
+
+        requirements: sql<Array<[Requirement, Id]>>`
+          CAST(
+            CONCAT(
+              '[',
+              GROUP_CONCAT(
+                DISTINCT JSON_ARRAY(
+                  ${danCondBinding.type},
+                  ${danCondBinding.condId}
+                )
+              ),
+              ']'
+            ) AS JSON
+          )`.as('requirements'),
+
+        fullTree: sql<Array<[Id, OP, string, Id]>>`JSON_ARRAYAGG(
+            JSON_ARRAY(
+              ${condTree.column.id},
+              ${condTree.column.type},
+              ${condTree.column.value},
+              ${condTree.column.parent}
+            )
+          )`.as('full_tree'),
+      })
+      .from(dans)
+      .leftJoin(schema.danCourseDans, eq(dans.id, schema.danCourseDans.danId))
+      .leftJoin(schema.danCourses, eq(schema.danCourseDans.courseId, schema.danCourses.id))
+      .leftJoin(danCondBinding, eq(dans.id, danCondBinding.danId))
+      .leftJoin(condTree.aliasedTable, eq(danCondBinding.condId, condTree.column.root))
+      .groupBy(dans.id)
+      .orderBy(
+        asc(schema.danCourseDans.order),
+      )
+      .where(eq(schema.danCourses.id, id))
+
+    try {
+      const result = await _sql
+
+      const dans = result.map((i) => {
+        const conds = this.#buildCondTreeMem(
+          i.requirements
+            .map(([_, id]) => id),
+          i.fullTree
+            .map(([id, type, value, parent]) => ({ id, type, value, parent }))
+            .toSorted((a, b) => a.id - b.id)
+        )
+
+        return {
+          ...pick(i, ['id', 'name', 'description']),
+          shortName: i.shortName ?? '',
+          creator: i.creator ?? undefined,
+          updater: i.updater ?? undefined,
+          createdAt: i.createdAt,
+          updatedAt: i.updatedAt,
+          requirements: i.requirements.map(([type, rootCond]) => {
+            return {
+              type,
+              cond: conds[rootCond],
+            }
+          }),
+        }
+      })
+
+      return {
+        id: course.id,
+        name: course.name,
+        description: course.description,
+        createdAt: course.createdAt,
+        updatedAt: course.updatedAt,
+        dans,
+      } satisfies DatabaseDanCourse<Id>
+    }
+    catch (e) {
+      console.error(e)
+      throw e
+    }
+  }
+
+  async deleteCourse(opt: Base.DeleteDanCourseParam<Id>): Promise<void> {
+    const danCourseDans = aliasedTable(schema.danCourseDans, 'dcd2')
+    await this.drizzle.transaction(async (tx) => {
+      const deleting = opt.deleteDans
+        ? await tx.selectDistinct({ id: schema.danCourseDans.danId })
+          .from(schema.danCourseDans)
+          .where(
+            and(
+              eq(schema.danCourseDans.courseId, opt.id),
+              notExists(
+                tx.select()
+                  .from(danCourseDans)
+                  .where(
+                    and(
+                      eq(schema.danCourseDans.danId, danCourseDans.danId),
+                      ne(danCourseDans.courseId, opt.id)
+                    )
+                  )
+              )
+            )
+          )
+        : undefined
+
+      await tx
+        .delete(schema.danCourses)
+        .where(eq(schema.danCourses.id, opt.id))
+
+      if (!opt.deleteDans) {
+        return
+      }
+
+      console.warn('deleting dan', deleting)
+
+      await tx
+        .delete(schema.dans)
+        .where(
+          inArray(schema.dans.id, deleting!.map(i => i.id))
+        )
+    }).catch((e) => {
+      console.error(e)
+      throw e
+    })
+  }
+
+  async createCourse(
+    input: Base.CreateDanCourseParam,
+    user: Pick<UserCompact<Id>, 'id'>
+  ): Promise<Id> {
+    return this.drizzle.transaction(async (tx) => {
+      // 1. Insert the course
+      const [result] = await tx
+        .insert(schema.danCourses)
+        .values({
+          name: input.name,
+          description: input.description,
+          creator: user.id,
+          updater: user.id,
+        })
+
+      const id = result.insertId
+      if (!id) {
+        throwGucchoError(GucchoError.CannotSaveDanCourse)
+      }
+
+      return id
+    })
+  }
+
+  async updateCourse(
+    input: Base.UpdateDanCourseParam<Id>,
+    user: Pick<UserCompact<Id>, 'id'>
+  ): Promise<DatabaseDanCourse<Id>> {
+    return this.drizzle.transaction(async (tx) => {
+      // 1. Update course name/description/updater
+      await tx.update(schema.danCourses)
+        .set({
+          name: input.name,
+          description: input.description,
+          updater: user.id,
+        })
+        .where(eq(schema.danCourses.id, input.id))
+
+      // 2. Remove all existing dans from the course
+      await tx.delete(schema.danCourseDans)
+        .where(eq(schema.danCourseDans.courseId, input.id))
+
+      // 3. Insert new dans with shortNames
+      if (input.dans?.length) {
+        await tx.insert(schema.danCourseDans).values(
+          input.dans.map((d, idx) => ({
+            courseId: input.id,
+            danId: d.id,
+            order: idx,
+            shortName: d.shortName,
+          }))
+        )
+      }
+
+      // 4. Return the updated course
+      return this.getCourse(input.id, tx)
+    })
   }
 }
 

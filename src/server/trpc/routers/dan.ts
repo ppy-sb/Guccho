@@ -1,4 +1,4 @@
-import { type ZodSchema, any, boolean, nativeEnum, number, object, string } from 'zod'
+import { type ZodSchema, any, array, boolean, nativeEnum, number, object, string } from 'zod'
 import { type DanProvider as BaseDanProvider } from '../../backend/$base/server'
 import { staffProcedure } from '../middleware/role'
 import { router as _router, publicProcedure } from '../trpc'
@@ -40,68 +40,11 @@ export const router = _router({
       } as PaginatedResult<DatabaseDan<string>>
     }),
 
-  searchCourse: publicProcedure
-    .input(
-      object({
-        keyword: string(),
-        rulesetDefaultsToStandard: boolean().optional().default(false),
-        mode: zodMode.optional(),
-        ruleset: zodRuleset.optional(),
-        page: number().int().min(0).default(0),
-        perPage: number().int().min(1).max(10).default(10),
-        mania: object({
-          keyCount: number().int().min(2).max(10).optional(),
-        }).default(() => ({})),
-      })
-    )
-    .query(async ({ input }) => {
-      const searchResult = await dans.searchCourses(input)
-      return {
-        total: searchResult.total,
-        data: searchResult.data?.map(i => ({
-          ...i,
-          id: DanProvider.idToString(i.id),
-          creator: i.creator ? UserProvider.idToString(i.creator) : undefined,
-          updater: i.updater ? UserProvider.idToString(i.updater) : undefined,
-          dans: i.dans.map(i => ({
-            ...i,
-            id: DanProvider.idToString(i.id),
-            creator: i.creator ? UserProvider.idToString(i.creator) : undefined,
-            updater: i.updater ? UserProvider.idToString(i.updater) : undefined,
-            requirements: i.requirements.map(i => ({
-              ...i,
-            })) satisfies DatabaseRequirementCondBinding<string, Requirement, Cond>[],
-          })) satisfies DatabaseDan<string>[],
-        })) satisfies DatabaseDanCourse<string>[],
-      } as PaginatedResult<DatabaseDanCourse<string>>
-    }),
-
   get: withFeature(Feature.Dan, publicProcedure)
     .input(string())
     .query(async ({ input }) => {
       const res = await dans.get(DanProvider.stringToId(input))
       return transformDan(res)
-    }),
-
-  getCourse: withFeature(Feature.Dan, publicProcedure)
-    .input(string())
-    .query(async ({ input }) => {
-      const res = await dans.getCourse(DanProvider.stringToId(input))
-      return {
-        ...res,
-        id: DanProvider.idToString(res.id),
-        creator: res.creator ? UserProvider.idToString(res.creator) : undefined,
-        updater: res.updater ? UserProvider.idToString(res.updater) : undefined,
-        dans: res.dans.map(i => ({
-          ...i,
-          id: DanProvider.idToString(i.id),
-          creator: i.creator ? UserProvider.idToString(i.creator) : undefined,
-          updater: i.updater ? UserProvider.idToString(i.updater) : undefined,
-          requirements: i.requirements.map(i => ({
-            ...i,
-          })) satisfies DatabaseRequirementCondBinding<string, Requirement, Cond>[],
-        })) satisfies DatabaseDan<string>[],
-      }
     }),
 
   delete: withFeature(Feature.Dan, staffProcedure)
@@ -228,6 +171,158 @@ export const router = _router({
     .query(async () => {
       return (await dans.exportAll()).map(transformDan)
     }),
+
+  course: _router({
+    search: publicProcedure
+      .input(
+        object({
+          keyword: string(),
+          rulesetDefaultsToStandard: boolean().optional().default(false),
+          mode: zodMode.optional(),
+          ruleset: zodRuleset.optional(),
+          page: number().int().min(0).default(0),
+          perPage: number().int().min(1).max(10).default(10),
+          allowEmpty: boolean().default(false),
+          mania: object({
+            keyCount: number().int().min(2).max(10).optional(),
+          }).default(() => ({})),
+        })
+      )
+      .query(async ({ input }) => {
+        const searchResult = await dans.searchCourses(input)
+        return {
+          total: searchResult.total,
+          data: searchResult.data?.map(i => ({
+            ...i,
+            id: DanProvider.idToString(i.id),
+            creator: i.creator ? UserProvider.idToString(i.creator) : undefined,
+            updater: i.updater ? UserProvider.idToString(i.updater) : undefined,
+            dans: i.dans.map(i => ({
+              ...i,
+              id: DanProvider.idToString(i.id),
+              creator: i.creator ? UserProvider.idToString(i.creator) : undefined,
+              updater: i.updater ? UserProvider.idToString(i.updater) : undefined,
+              requirements: i.requirements.map(i => ({
+                ...i,
+              })) satisfies DatabaseRequirementCondBinding<string, Requirement, Cond>[],
+            })) satisfies DatabaseDan<string>[],
+          })) satisfies DatabaseDanCourse<string>[],
+        } as PaginatedResult<DatabaseDanCourse<string>>
+      }),
+
+    get: withFeature(Feature.Dan, publicProcedure)
+      .input(string())
+      .query(async ({ input }) => {
+        const res = await dans.getCourse(DanProvider.stringToId(input))
+        return {
+          ...res,
+          id: DanProvider.idToString(res.id),
+          creator: res.creator ? UserProvider.idToString(res.creator) : undefined,
+          updater: res.updater ? UserProvider.idToString(res.updater) : undefined,
+          dans: res.dans.map(i => ({
+            ...i,
+            id: DanProvider.idToString(i.id),
+            creator: i.creator ? UserProvider.idToString(i.creator) : undefined,
+            updater: i.updater ? UserProvider.idToString(i.updater) : undefined,
+            requirements: i.requirements.map(i => ({
+              ...i,
+            })) satisfies DatabaseRequirementCondBinding<string, Requirement, Cond>[],
+          })) satisfies DatabaseDan<string>[],
+        }
+      }),
+
+    create: withFeature(Feature.Dan, staffProcedure)
+      .input(object({
+        name: string().min(4),
+        description: string(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const course = await dans.createCourse({
+          name: input.name,
+          description: input.description,
+        }, ctx.user)
+        return DanProvider.idToString(course)
+      }),
+
+    update: withFeature(Feature.Dan, staffProcedure)
+      .input(object({
+        id: string(),
+        name: string(),
+        description: string(),
+        dans: array(object({
+          id: string(),
+          shortName: string(),
+        })),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const course = await dans.updateCourse({
+          id: DanProvider.stringToId(input.id),
+          name: input.name,
+          description: input.description,
+          dans: input.dans.map(d => ({ id: DanProvider.stringToId(d.id), shortName: d.shortName })),
+        }, ctx.user)
+        return {
+          ...course,
+          id: DanProvider.idToString(course.id),
+          creator: course.creator ? UserProvider.idToString(course.creator) : undefined,
+          updater: course.updater ? UserProvider.idToString(course.updater) : undefined,
+          dans: course.dans.map(d => ({
+            ...d,
+            id: DanProvider.idToString(d.id),
+            creator: d.creator ? UserProvider.idToString(d.creator) : undefined,
+            updater: d.updater ? UserProvider.idToString(d.updater) : undefined,
+            requirements: d.requirements.map(r => ({ ...r })),
+          })),
+        }
+      }),
+
+    delete: withFeature(Feature.Dan, staffProcedure)
+      .input(object({
+        id: string(),
+        deleteDans: boolean().default(false),
+      }))
+      .mutation(async ({ input }) => await dans.deleteCourse({
+        id: DanProvider.stringToId(input.id),
+        deleteDans: input.deleteDans,
+      })),
+
+    searchDan: staffProcedure
+      .input(
+        object({
+          keyword: string(),
+          rulesetDefaultsToStandard: boolean().optional().default(false),
+          mode: zodMode.optional(),
+          ruleset: zodRuleset.optional(),
+          page: number().int().min(0).default(0),
+          perPage: number().int().min(1).max(100).default(20),
+          mania: object({
+            keyCount: number().int().min(2).max(10).optional(),
+          }).default(() => ({})),
+          excludeDanCourse: string().optional(),
+          excludeDans: array(string()).optional(),
+        })
+      )
+      .query(async ({ input }) => {
+        const searchResult = await dans.search({
+          ...input,
+          excludeDanCourse: input.excludeDanCourse ? DanProvider.stringToId(input.excludeDanCourse) : undefined,
+          excludeDans: input.excludeDans ? input.excludeDans.map(DanProvider.stringToId) : undefined,
+        })
+        return {
+          total: searchResult.total,
+          data: searchResult.data?.map(i => ({
+            ...i,
+            id: DanProvider.idToString(i.id),
+            creator: i.creator ? UserProvider.idToString(i.creator) : undefined,
+            updater: i.updater ? UserProvider.idToString(i.updater) : undefined,
+            requirements: i.requirements.map(i => ({
+              ...i,
+            })) satisfies DatabaseRequirementCondBinding<string, Requirement, Cond>[],
+          })) satisfies DatabaseDan<string>[],
+        } as PaginatedResult<DatabaseDan<string>>
+      }),
+  }),
+
 })
 
 function transformDan(res: DatabaseDan<any>): DatabaseDan<string> {

@@ -34,7 +34,7 @@ export namespace DanProvider {
   }
 
   export interface UserDanClearedScore<Id, ScoreId> {
-    score: Pick<ScoreCompact<ScoreId, Mode>, 'id' | 'score' | 'accuracy' | 'maxCombo' | 'grade' | 'mods' | 'playedAt' > & {
+    score: Pick<ScoreCompact<ScoreId, Mode>, 'id' | 'score' | 'accuracy' | 'maxCombo' | 'grade' | 'mods' | 'playedAt'> & {
       mode: Mode
       ruleset: Ruleset
       beatmap: Pick<BeatmapCompact<Id, Id>, 'id' | 'creator' | 'mode' | 'version' | 'md5'> & {
@@ -53,6 +53,29 @@ export namespace DanProvider {
     mode?: Mode
     ruleset?: Ruleset
     mania?: { keyCount?: number }
+
+  }
+
+  export interface SearchDanParam<Id> extends SearchParam {
+    excludeDanCourse?: Id
+    excludeDans?: Id[]
+  }
+  export interface SearchDanCourseParam extends SearchParam {
+    allowEmpty?: boolean
+  }
+
+  export interface CreateDanCourseParam {
+    name: string
+    description: string
+  }
+  export interface UpdateDanCourseParam<Id> extends CreateDanCourseParam {
+    id: Id
+    dans?: Array<{ id: Id; shortName: string }>
+  }
+
+  export interface DeleteDanCourseParam<Id> {
+    id: Id
+    deleteDans: boolean
   }
 
   export interface ModeRulesetSelector {
@@ -64,10 +87,8 @@ export namespace DanProvider {
 }
 
 export abstract class DanProvider<Id, ScoreId> extends Mixin(IdTransformable, ScoreIdTransformable) {
-  abstract search(opt: DanProvider.SearchParam): Promise<PaginatedResult<DatabaseDan<Id>>>
-  abstract searchCourses(opt: DanProvider.SearchParam): Promise<PaginatedResult<DatabaseDanCourse<Id>>>
+  abstract search(opt: DanProvider.SearchDanParam<Id>): Promise<PaginatedResult<DatabaseDan<Id>>>
   abstract get(id: Id): Promise<DatabaseDan<Id>>
-  abstract getCourse(id: Id): Promise<DatabaseDanCourse<Id>>
   abstract delete(id: Id): Promise<void>
   abstract getQualifiedScores(id: Id, requirement: Requirement, page: number, perPage: number): Promise<DanProvider.RequirementQualifiedScore<Id, ScoreId>>
   abstract runCustomDan(opt: Dan): Promise<Array<DanProvider.RequirementQualifiedScore<Id, ScoreId>>>
@@ -75,4 +96,11 @@ export abstract class DanProvider<Id, ScoreId> extends Mixin(IdTransformable, Sc
   abstract countUserClearedDans(opt: { user: Pick<UserCompact<Id>, 'id'> } & DanProvider.ModeRulesetSelector): Promise<number>
   abstract getUserClearedDans(opt: { user: Pick<UserCompact<Id>, 'id'>; page: number; perPage: number } & DanProvider.ModeRulesetSelector): Promise<Array<DanProvider.UserDanClearedScore<Id, ScoreId>>>
   abstract exportAll(): Promise<DatabaseDan<Id>[]>
+
+  // courses
+  abstract searchCourses(opt: DanProvider.SearchDanCourseParam): Promise<PaginatedResult<DatabaseDanCourse<Id>>>
+  abstract getCourse(id: Id): Promise<DatabaseDanCourse<Id>>
+  abstract deleteCourse(opt: DanProvider.DeleteDanCourseParam<Id>): Promise<void>
+  abstract createCourse(input: DanProvider.CreateDanCourseParam, user: Pick<UserCompact<Id>, 'id'>): Promise<Id>
+  abstract updateCourse(input: DanProvider.UpdateDanCourseParam<Id>, user: Pick<UserCompact<Id>, 'id'>): Promise<DatabaseDanCourse<Id>>
 }

@@ -1,18 +1,21 @@
 <script setup lang="ts">
+import { Icon } from '@iconify/vue'
 import { Mode, Ruleset } from '~/def'
-import { useSession } from '~/store/session'
 
 const tMode = localeKey.root.mode
 const tRule = localeKey.root.ruleset
+
+definePageMeta({
+  middleware: ['auth', 'staff'],
+})
 
 const app = useNuxtApp()
 const server = useAdapterConfig()
 const { t } = useI18n()
 const r = useRoute()
-const session = useSession()
 
 useHead({
-  title: app.$i18n.t(localeKey.title.dans.__path__),
+  title: app.$i18n.t(localeKey.title.dan.courses.__path__),
   titleTemplate: title => `${title} - ${app.$i18n.t(localeKey.server.name.__path__)}`,
 })
 
@@ -23,23 +26,25 @@ const query = ref({
   mode: undefined as Mode | undefined,
   ruleset: undefined as Ruleset | undefined,
   rulesetDefaultsToStandard: false,
+  allowEmpty: true,
   mania: {
     keyCount: undefined as number | undefined,
   },
 })
 
-const { data, refresh, status } = await app.$client.dan.searchCourse.useQuery(query)
+const { data, refresh, status } = await app.$client.dan.course.search.useQuery(query)
 
 const pages = computed(() => Math.ceil((data.value?.total || 0) / (query.value.perPage)))
 
+const selectedCourse = ref<any>(null)
+const deleteModal = useTemplateRef('deleteModal')
+
 async function validateAndRefresh() {
-  // check ruleset
   if (query.value.mode && query.value.ruleset && !server.hasRuleset(query.value.mode, query.value.ruleset)) {
     query.value.ruleset = undefined
   }
 
   query.value.page = 0
-
   await refresh()
 }
 
@@ -47,44 +52,55 @@ function toPage(n: number) {
   query.value.page = n
   return refresh()
 }
+
+function openDeleteModal(course: any) {
+  selectedCourse.value = course
+  deleteModal.value?.showModal()
+}
+
+async function handleDelete(o: { deleteDans: boolean }) {
+  await app.$client.dan.course.delete.mutate({
+    id: selectedCourse.value.id,
+    deleteDans: o.deleteDans,
+  })
+  await refresh()
+}
 </script>
 
 <i18n lang="yaml">
 en-GB:
   search-text: Search courses...
   search: Search
-  detail: Detail
-  mode: Mode
-  ruleset: Rule
-  unset: Unset
-  treat-no-ruleset-cond-as-standard: treat dans with no ruleset requirement as standard
-  key: Key count
   collection: Course
-  full-name: FQDN (fully qualified dan name)
-  description: Description
-  requirements: Requirements
-  dan: Dan
+  edit: Edit
+  mode: Mode
+  ruleset: Ruleset
+  key: Key
+  treat-no-ruleset-cond-as-standard: Treat no ruleset condition as standard
+  unset: Unset
+  create: Create
 
 zh-CN:
   search-text: 搜索段位...
   search: 搜索
-  detail: 详细
-  mode: 模式
-  ruleset: 玩法
-  unset: 未指定
-  treat-no-ruleset-cond-as-standard: 将无玩法要求的段位视为std端位
-  key: 键数
   collection: 组别
-  full-name: 全名
-  description: 描述
-  requirements: 要求
-  dan: 段位
+  edit: 编辑
+  mode: 模式
+  ruleset: 规则集
+  key: 键数
+  treat-no-ruleset-cond-as-standard: 将无规则集条件视为标准
+  unset: 未设置
+  create: 创建
 
 # TODO fr, DE
 </i18n>
 
 <template>
   <section class="container px-2 mx-auto custom-container">
+    <h1 class="text-2xl font-bold mb-4">
+      {{ t('collection') }}
+    </h1>
+
     <form :action="useRequestURL().href" method="get" @submit.prevent="validateAndRefresh()">
       <div class="grid grid-cols-4 pb-2 space-x-2 gap-y-2 lg:grid-cols-12">
         <div class="col-span-2 form-control">
@@ -143,144 +159,68 @@ zh-CN:
         <input id="keyword" v-model="query.keyword" name="keyword" type="search" class="block w-full p-4 text-sm text-gray-900 border border-gray-300 rounded-lg ps-10 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" :placeholder="t('search-text')">
         <button type="submit" class="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
           {{ t('search') }}
-          <icon name="ion:search-outline" class="w-4 h-4" />
+          <Icon icon="ion:search-outline" class="w-4 h-4" />
         </button>
       </div>
     </form>
 
     <div v-if="data" class="relative pt-4 space-y-4">
-      <span class="text-sm text-gbase-500">found {{ data.total }} results.</span>
+      <div class="flex justify-between items-center">
+        <span class="text-sm text-gbase-500">found {{ data.total }} results.</span>
+        <nuxt-link-locale
+          to="/dan/course/new"
+          class="btn btn-sm btn-primary"
+        >
+          <Icon icon="mdi:plus" class="w-4 h-4 mr-1" />
+          {{ t('create') }}
+        </nuxt-link-locale>
+      </div>
 
       <div class="overflow-x-auto border rounded-lg border-base-300 bg-base-100">
         <table class="table table-sm">
           <thead>
             <tr>
-              <th class="w-0">
-                {{ t('collection') }}
-              </th>
-              <th />
-              <th>{{ t('dan') }}</th>
-              <th>{{ t('full-name') }}</th>
+              <th>{{ t('collection') }}</th>
+              <th>{{ t('actions') }}</th>
             </tr>
           </thead>
-          <tbody v-if="data" class="relative">
+          <tbody>
             <template v-for="course in data.data" :key="course.id">
-              <template v-for="(dan, index) in course.dans" :key="dan.id">
-                <!-- Main dan row -->
-                <tr
-                  class="hover:bg-base-200 css-expand"
-                >
-                  <th
-                    v-if="index === 0"
-                    :rowspan="course.dans.length * 2"
-                    class="whitespace-pre align-top border-r border-base-300/50 is-collection"
-                  >
+              <tr class="hover:bg-base-200">
+                <th class="align-top">
+                  <div class="flex flex-col gap-1">
                     <nuxt-link-locale
                       :to="{
-                        name: 'dan-detail-course-id',
+                        name: 'dan-course-detail-id',
                         params: { id: course.id },
                       }"
                       class="font-bold link"
                     >
                       {{ course.name }}
                     </nuxt-link-locale>
-                  </th>
-                  <td
-                    class="w-0"
-                    :class="{
-                      'bg-base-200/50': (index % 2) === 0,
-                    }"
-                  >
-                    <label class="swap swap-rotate">
-                      <!-- this hidden checkbox controls the state -->
-                      <input type="checkbox">
-
-                      <!-- hamburger icon -->
-                      <svg
-                        class="fill-current swap-off"
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        viewBox="0 0 512 512"
-                      >
-                        <path d="M64,384H448V341.33H64Zm0-106.67H448V234.67H64ZM64,128v42.67H448V128Z" />
-                      </svg>
-
-                      <!-- close icon -->
-                      <svg
-                        class="fill-current swap-on"
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        viewBox="0 0 512 512"
-                      >
-                        <polygon
-                          points="400 145.49 366.51 112 256 222.51 145.49 112 112 145.49 222.51 256 112 366.51 145.49 400 256 289.49 366.51 400 400 366.51 289.49 256 400 145.49"
-                        />
-                      </svg>
-                    </label>
+                    <div class="text-sm text-base-content/50">
+                      {{ course.description }}
+                    </div>
+                  </div>
+                </th>
+                <td class="align-top">
+                  <div class="flex gap-2">
                     <nuxt-link-locale
-                      v-if="session.role.staff"
-                      class="btn btn-sm"
-                      :to="{ name: 'dan-compose', query: { id: dan.id } }"
+                      class="btn btn-sm btn-primary" :to="{
+                        name: 'dan-course-detail-id-edit',
+                        params: {
+                          id: course.id,
+                        },
+                      }"
                     >
-                      Edit
+                      <Icon icon="mdi:pencil" class="w-4 h-4" />
                     </nuxt-link-locale>
-                  </td>
-                  <th
-                    class="align-top"
-                    :class="{
-                      'bg-base-200/50': (index % 2) === 0,
-                    }"
-                  >
-                    {{ dan.shortName }}
-                  </th>
-                  <td
-                    class="align-top"
-                    :class="{
-                      'bg-base-200/50': (index % 2) === 0,
-                    }"
-                  >
-                    <div class="whitespace-pre">
-                      <nuxt-link-locale
-                        :to="{
-                          name: 'dan-detail-dan-id',
-                          params: { id: dan.id },
-                        }"
-                        class="font-bold link"
-                      >
-                        {{ dan.name }}
-                      </nuxt-link-locale>
-                    </div>
-                  </td>
-                </tr>
-
-                <!-- Expanded content -->
-                <tr
-                  class="hidden css-expand-content"
-                  :class="{
-                    'bg-base-200/50': (index % 2) === 0,
-                  }"
-                >
-                  <td colspan="99">
-                    <div class="whitespace-pre">
-                      {{ dan.description }}
-                    </div>
-                    <div class="mt-2">
-                      <div class="mb-2 font-medium">
-                        {{ t('requirements') }}
-                      </div>
-                      <div class="space-y-2">
-                        <dan-explain-requirement
-                          v-for="requirement in dan.requirements"
-                          :key="requirement.type"
-                          :requirement="requirement"
-                        />
-                      </div>
-                    </div>
-                  </td>
-                </tr>
-              </template>
+                    <button class="btn btn-sm btn-error" @click="openDeleteModal(course)">
+                      <Icon icon="mdi:delete" class="w-4 h-4" />
+                    </button>
+                  </div>
+                </td>
+              </tr>
             </template>
           </tbody>
         </table>
@@ -295,49 +235,21 @@ zh-CN:
       </div>
       <div class="flex pt-4">
         <div class="mx-auto join">
-          <template v-for="(i, n) in pages" :key="`sw${i}`">
+          <template v-for="(i, n) in pages" :key="`sw-${i}`">
             <button
-              v-if="n === 0" class="join-item btn"
+              class="join-item btn btn-sm"
               :class="{
                 'btn-active': n === query.page,
               }"
               @click="toPage(n)"
             >
-              {{ Math.abs(n - query.page) > 3 && '|&lt;' || '' }} {{ i }}
-            </button>
-            <button
-              v-else-if="Math.abs(n - query.page) <= 3"
-              class="join-item btn"
-              :class="{
-                'btn-active': n === query.page,
-              }"
-              @click="toPage(n)"
-            >
-              {{ i }}
-            </button>
-            <button
-              v-else-if="i === pages" class="join-item btn"
-              :class="{
-                'btn-active': n === query.page,
-              }"
-              @click="toPage(n)"
-            >
-              {{ i }} &gt;|
+              {{ n + 1 }}
             </button>
           </template>
         </div>
       </div>
     </div>
+
+    <dan-course-delete-confirm ref="deleteModal" @confirm="handleDelete" />
   </section>
 </template>
-
-<style lang="postcss">
-.css-expand {
-  &:has(td input:checked) > :not(.is-collection) {
-    /* @apply bg-error/10 */
-  }
-  &:has(td input:checked) + .css-expand-content {
-    @apply table-row
-  }
-}
-</style>

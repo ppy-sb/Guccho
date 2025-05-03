@@ -7,14 +7,14 @@ import { useSession } from '~/store/session'
 
 const app = useNuxtApp()
 const { t } = useI18n()
-const r = useRoute('dan-detail-course-id')
+const r = useRoute('dan-course-detail-id-edit')
 const session = useSession()
 
-const course = await app.$client.dan.getCourse.query(r.params.id as string)
+const course = await app.$client.dan.course.get.query(r.params.id as string)
 
 useHead({
-  title: course?.name ?? app.$i18n.t(localeKey.title.dans.__path__),
   titleTemplate: title => `${title} - ${app.$i18n.t(localeKey.server.name.__path__)}`,
+  title: course?.name ?? app.$i18n.t(localeKey.title.dan.dans.__path__),
 })
 </script>
 
@@ -43,7 +43,7 @@ zh-CN:
   updated-at: 更新于
   creator: 创建者
   updater: 更新者
-  back-to-courses: 返回课程列表
+  back-to-courses: 返回段位池列表
 
 # TODO fr, DE
 </i18n>
@@ -80,7 +80,7 @@ zh-CN:
             <nuxt-link-locale
               v-if="session.role.staff"
               class="btn btn-primary btn-sm btn-shadow"
-              :to="{ name: 'dan-compose', query: { id: course.id } }"
+              :to="{ name: 'dan-course-detail-id-edit', params: { id: course.id } }"
             >
               <Icon icon="mdi:pencil" class="w-4 h-4 mr-1" />
               {{ t('edit') }}
@@ -179,7 +179,7 @@ zh-CN:
                     <td>
                       <nuxt-link-locale
                         :to="{
-                          name: 'dan-detail-dan-id',
+                          name: 'dan-detail-id',
                           params: { id: dan.id },
                         }"
                         class="font-bold link"
