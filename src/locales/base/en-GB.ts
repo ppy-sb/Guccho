@@ -48,7 +48,13 @@ export default {
     'clans': 'Clans',
     'account-recovery': 'Account Recovery',
     'user-management': 'User Management',
-    'dans': 'Dans',
+    'dan': {
+      'dan': 'Dan',
+      'dans': 'Dans',
+      'courses': 'Courses',
+      'compose': 'Compose',
+      'create-course': 'Create Course',
+    },
   },
   global: {
     'logout': 'Sign out',
@@ -157,6 +163,8 @@ export default {
     [GucchoError.FeatureNotSupported]: 'This feature is not supported.',
     [GucchoError.DanNotFound]: 'Dan not found.',
     [GucchoError.CannotSaveDan]: 'Cannot save Dan',
+    [GucchoError.DanCourseNotFound]: 'Dan course not found.',
+    [GucchoError.CannotSaveDanCourse]: 'Cannot save Dan course',
   },
   dan: {
     requirement: {

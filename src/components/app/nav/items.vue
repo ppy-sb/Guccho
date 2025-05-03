@@ -6,6 +6,7 @@ const session = useSession()
 const { t, locale, locales, setLocale, localeProperties } = useI18n()
 
 const langSw = ref<HTMLDetailsElement>()
+const dans = useTemplateRef('dans')
 
 function clearFocus() {
   if (document.activeElement instanceof HTMLElement) {
@@ -28,11 +29,41 @@ function clearFocus() {
       {{ t('title.clans') }}
     </nuxt-link-locale>
   </li>
-  <li>
-    <nuxt-link-locale :to="{ name: 'dan-list' }" @click="clearFocus">
-      <icon name="ic:outline-group-work" class="w-5 h-5" size="100%" />
-      [{{ t('global.wip') }}] {{ t('title.dans') }}
-    </nuxt-link-locale>
+  <li tabindex="0">
+    <details ref="dans">
+      <summary>
+        <icon name="lucide:goal" class="w-5 h-5" size="100%" />
+        [{{ t('global.wip') }}] {{ t('title.dan.dan') }}
+      </summary>
+      <ul class="right-0 w-64 mt-0">
+        <li>
+          <nuxt-link-locale :to="{ name: 'dan-list' }" @click="dans?.toggleAttribute('open', false)">
+            <icon name="lucide:goal" class="w-5 h-5" size="100%" />
+            {{ t('title.dan.dans') }}
+          </nuxt-link-locale>
+        </li>
+        <li>
+          <nuxt-link-locale :to="{ name: 'dan-course' }" @click="dans?.toggleAttribute('open', false)">
+            <icon name="solar:book-bookmark-broken" class="w-5 h-5" size="100%" />
+            {{ t('title.dan.courses') }}
+          </nuxt-link-locale>
+        </li>
+        <template v-if="session.user && showAdminPanel(session.user.roles)">
+          <li>
+            <nuxt-link-locale :to="{ name: 'dan-course-new' }" @click="dans?.toggleAttribute('open', false)">
+              <icon name="tabler:book-upload" class="w-5 h-5" size="100%" />
+              {{ t('title.dan.create-course') }}
+            </nuxt-link-locale>
+          </li>
+          <li>
+            <nuxt-link-locale :to="{ name: 'dan-compose' }" @click="dans?.toggleAttribute('open', false)">
+              <icon name="tabler:book-upload" class="w-5 h-5" size="100%" />
+              {{ t('title.dan.compose') }}
+            </nuxt-link-locale>
+          </li>
+        </template>
+      </ul>
+    </details>
   </li>
   <li v-if="session.user && showAdminPanel(session.user.roles)">
     <nuxt-link-locale :to="{ name: 'status' }" @click="clearFocus">
@@ -55,7 +86,8 @@ function clearFocus() {
             class="whitespace-nowrap"
             :class="{
               active: l.code === locale,
-            }" @click="setLocale(l.code), langSw?.toggleAttribute('open', false)"
+            }"
+            @click="setLocale(l.code), langSw?.toggleAttribute('open', false)"
           >
             <img
               :alt="l.name" class="h-6"

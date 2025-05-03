@@ -63,7 +63,7 @@ watch(userId, () => {
 const selectedUser = computed(() => qUser.data.value?.find(u => u.id === userId.value))
 
 useHead({
-  title: () => `${selectedUser.value?.name ? `${selectedUser.value.name} | ` : ''}${app.$i18n.t(localeKey.title.dans.__path__)}`,
+  title: () => `${selectedUser.value?.name ? `${selectedUser.value.name} | ` : ''}${app.$i18n.t(localeKey.title.dan.dans.__path__)}`,
   titleTemplate: title => `${title} - ${app.$i18n.t(localeKey.server.name.__path__)}`,
 })
 
@@ -235,7 +235,7 @@ zh-CN:
         <div class="flex-1">
           <!-- Dan Name and Requirements -->
           <div>
-            <nuxt-link-locale :to="{ name: 'dan-detail-dan-id', params: { id: item.dan.id } }">
+            <nuxt-link-locale :to="{ name: 'dan-detail-id', params: { id: item.dan.id } }">
               <h2 class="mb-2 text-xl font-semibold text-gray-800 dark:text-gray-200 link">
                 {{ item.dan.name }}
               </h2>

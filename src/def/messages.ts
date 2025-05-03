@@ -60,4 +60,7 @@ export enum GucchoError {
   // Dan
   DanNotFound = 11000,
   CannotSaveDan,
+  // DanCourse
+  DanCourseNotFound = 12000,
+  CannotSaveDanCourse,
 }
