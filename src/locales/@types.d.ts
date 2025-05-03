@@ -10,44 +10,43 @@ import type { ActiveMode, ActiveRuleset } from '~/def/common'
 import type { OP, Requirement } from '~/def/dan'
 
 type Title =
-| 'leaderboard'
-| 'status'
-| 'settings'
-| 'relations'
-| 'userpage'
-| 'admin-panel'
-| 'user-management'
-| 'logs'
-| 'articles'
-| 'clans'
-| 'account-recovery'
-| 'dans'
+  | 'leaderboard'
+  | 'status'
+  | 'settings'
+  | 'relations'
+  | 'userpage'
+  | 'admin-panel'
+  | 'user-management'
+  | 'logs'
+  | 'articles'
+  | 'clans'
+  | 'account-recovery'
 
 type KGlobal =
-| 'logout'
-| 'login'
-| 'register'
-| 'pp'
-| 'player'
-| 'rank'
-| 'mods'
-| 'played-at'
-| 'acc'
-| 'accuracy'
-| 'max-combo'
-| 'play-count'
-| 'beatmapsets'
-| 'beatmaps'
-| 'users'
-| 'session'
-| 'wip'
-| 'password'
-| 'email'
-| 'otp'
-| 'verify'
+  | 'logout'
+  | 'login'
+  | 'register'
+  | 'pp'
+  | 'player'
+  | 'rank'
+  | 'mods'
+  | 'played-at'
+  | 'acc'
+  | 'accuracy'
+  | 'max-combo'
+  | 'play-count'
+  | 'beatmapsets'
+  | 'beatmaps'
+  | 'users'
+  | 'session'
+  | 'wip'
+  | 'password'
+  | 'email'
+  | 'otp'
+  | 'verify'
 type KFooter =
-| 'about'
-| 'resources'
+  | 'about'
+  | 'resources'
 
 export interface GlobalI18n extends PathAccessibleObject {
   server: {
@@ -64,10 +63,15 @@ export interface GlobalI18n extends PathAccessibleObject {
   }
   role: Record<UserRole, string>
   scope: Record<Scope, string>
-  title: Record<
-    Title,
-    string
-  >
+  title: Record<Title, string> & {
+    dan: {
+      'dan': string
+      'dans': string
+      'courses': string
+      'compose': string
+      'create-course': string
+    }
+  }
   global: Record<KGlobal, string>
 
   service: Record<string, string>

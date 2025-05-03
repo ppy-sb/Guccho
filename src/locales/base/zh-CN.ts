@@ -37,7 +37,13 @@ export default {
     'clans': '家人们',
     'account-recovery': '找回账号',
     'user-management': '用户管理',
-    'dans': '段位',
+    'dan': {
+      'dan': '段位',
+      'dans': '段位',
+      'courses': '段位池',
+      'compose': '创建段位',
+      'create-course': '创建段位池',
+    },
   },
 
   global: {
@@ -151,6 +157,8 @@ export default {
     [GucchoError.FeatureNotSupported]: '不支持此功能。',
     [GucchoError.DanNotFound]: '找不到Dan。',
     [GucchoError.CannotSaveDan]: '无法保存Dan。',
+    [GucchoError.DanCourseNotFound]: '找不到段位池。',
+    [GucchoError.CannotSaveDanCourse]: '无法保存段位池。',
   },
   dan: {
     requirement: {
