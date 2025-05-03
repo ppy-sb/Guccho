@@ -89,7 +89,7 @@ export const dans = mysqlTable('sb_dans', {
   updatedAt: timestamp('updated_at', { mode: 'date' }).notNull().defaultNow().onUpdateNow(),
 })
 
-export const danCourse = mysqlTable('sb_dan_courses', {
+export const danCourses = mysqlTable('sb_dan_courses', {
   id: int('id').autoincrement().notNull().primaryKey(),
   name: varchar('name', { length: 128 }).notNull(),
   description: text('description').notNull().default(''),
@@ -100,7 +100,7 @@ export const danCourse = mysqlTable('sb_dan_courses', {
 })
 
 export const danCourseDans = mysqlTable('sb_dan_course_dans', {
-  courseId: int('course').notNull().references(() => danCourse.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
+  courseId: int('course').notNull().references(() => danCourses.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
   danId: int('dan').notNull().references(() => dans.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
   order: int('order').notNull(),
   shortName: varchar('short_name', { length: 128 }).notNull(),

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Mode, Ruleset } from '~/def'
-import { useSession } from '~/store/session'
 
 const tMode = localeKey.root.mode
 const tRule = localeKey.root.ruleset
@@ -9,10 +8,9 @@ const app = useNuxtApp()
 const server = useAdapterConfig()
 const { t } = useI18n()
 const r = useRoute()
-const session = useSession()
 
 useHead({
-  title: app.$i18n.t(localeKey.title.dan.dans.__path__),
+  title: app.$i18n.t(localeKey.title.dan.courses.__path__),
   titleTemplate: title => `${title} - ${app.$i18n.t(localeKey.server.name.__path__)}`,
 })
 
@@ -28,7 +26,7 @@ const query = ref({
   },
 })
 
-const { data, refresh, status } = await app.$client.dan.search.useQuery(query)
+const { data, refresh, status } = await app.$client.dan.course.search.useQuery(query)
 
 const pages = computed(() => Math.ceil((data.value?.total || 0) / (query.value.perPage)))
 
@@ -51,17 +49,22 @@ function toPage(n: number) {
 
 <i18n lang="yaml">
 en-GB:
-  search-text: Search Dans...
+  search-text: Search courses...
   search: Search
   detail: Detail
-  mode: Mode...
-  ruleset: Rule...
+  mode: Mode
+  ruleset: Rule
   unset: Unset
   treat-no-ruleset-cond-as-standard: treat dans with no ruleset requirement as standard
   key: Key count
+  collection: Course
+  full-name: FQDN (fully qualified dan name)
+  description: Description
+  requirements: Requirements
+  dan: Dan
 
 zh-CN:
-  search-text: 搜索段位成就...
+  search-text: 搜索段位...
   search: 搜索
   detail: 详细
   mode: 模式
@@ -69,6 +72,11 @@ zh-CN:
   unset: 未指定
   treat-no-ruleset-cond-as-standard: 将无玩法要求的段位视为std端位
   key: 键数
+  collection: 组别
+  full-name: 全名
+  description: 描述
+  requirements: 要求
+  dan: 段位
 
 # TODO fr, DE
 </i18n>
@@ -140,40 +148,140 @@ zh-CN:
 
     <div v-if="data" class="relative pt-4 space-y-4">
       <span class="text-sm text-gbase-500">found {{ data.total }} results.</span>
-      <div
-        v-for="item in data.data" :key="item.id" class="relative w-full transition-all rounded-lg bg-base-100 ps-3"
-        :class="{
-          'blur opacity-30': status === 'pending',
-        }"
-      >
-        <div class="p-0 collapse collapse-plus">
-          <input type="checkbox">
-          <div class="text-xl font-medium collapse-title ps-0">
-            {{ item.name }}
-          </div>
 
-          <div class="p-0 m-0 space-y-4 overflow-auto leading-relaxed collapse-content">
-            <p class="text-sm whitespace-pre-wrap">
-              {{ item.description }}
-            </p>
-            <dan-explain-requirement v-for="requirement in item.requirements" :key="requirement.type" :requirement="requirement" />
-            <div class="space-x-2">
-              <nuxt-link-locale
-                :to="{
-                  name: 'dan-detail-id',
-                  params: {
-                    id: item.id,
-                  },
-                }"
-                class="btn btn-primary btn-sm"
-              >
-                {{ t('detail') }}
-              </nuxt-link-locale>
-              <nuxt-link-locale v-if="session.role.staff" class="btn btn-sm" :to="{ name: 'dan-compose', query: { id: item.id } }">
-                Edit
-              </nuxt-link-locale>
-            </div>
-          </div>
+      <div class="overflow-x-auto border rounded-lg border-base-300 bg-base-100">
+        <table class="table table-sm">
+          <thead>
+            <tr>
+              <th class="w-0">
+                {{ t('collection') }}
+              </th>
+              <th />
+              <th>{{ t('dan') }}</th>
+              <th>{{ t('full-name') }}</th>
+            </tr>
+          </thead>
+          <tbody v-if="data" class="relative">
+            <template v-for="course in data.data" :key="course.id">
+              <template v-for="(dan, index) in course.dans" :key="dan.id">
+                <!-- Main dan row -->
+                <tr
+                  class="hover:bg-base-200 css-expand"
+                >
+                  <th
+                    v-if="index === 0"
+                    :rowspan="course.dans.length * 2"
+                    class="whitespace-pre align-top border-r border-base-300/50 is-collection"
+                  >
+                    <nuxt-link-locale
+                      :to="{
+                        name: 'dan-course-detail-id',
+                        params: { id: course.id },
+                      }"
+                      class="font-bold link"
+                    >
+                      {{ course.name }}
+                    </nuxt-link-locale>
+                  </th>
+                  <td
+                    class="w-0"
+                    :class="{
+                      'bg-base-200/50': (index % 2) === 0,
+                    }"
+                  >
+                    <label class="swap swap-rotate">
+                      <!-- this hidden checkbox controls the state -->
+                      <input type="checkbox">
+
+                      <!-- hamburger icon -->
+                      <svg
+                        class="fill-current swap-off"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 512 512"
+                      >
+                        <path d="M64,384H448V341.33H64Zm0-106.67H448V234.67H64ZM64,128v42.67H448V128Z" />
+                      </svg>
+
+                      <!-- close icon -->
+                      <svg
+                        class="fill-current swap-on"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 512 512"
+                      >
+                        <polygon
+                          points="400 145.49 366.51 112 256 222.51 145.49 112 112 145.49 222.51 256 112 366.51 145.49 400 256 289.49 366.51 400 400 366.51 289.49 256 400 145.49"
+                        />
+                      </svg>
+                    </label>
+                  </td>
+                  <th
+                    class="align-top"
+                    :class="{
+                      'bg-base-200/50': (index % 2) === 0,
+                    }"
+                  >
+                    {{ dan.shortName }}
+                  </th>
+                  <td
+                    class="align-top"
+                    :class="{
+                      'bg-base-200/50': (index % 2) === 0,
+                    }"
+                  >
+                    <div class="whitespace-pre">
+                      <nuxt-link-locale
+                        :to="{
+                          name: 'dan-detail-id',
+                          params: { id: dan.id },
+                        }"
+                        class="font-bold link"
+                      >
+                        {{ dan.name }}
+                      </nuxt-link-locale>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- Expanded content -->
+                <tr
+                  class="css-expand-content"
+                  :class="{
+                    'bg-base-200/50': (index % 2) === 0,
+                  }"
+                >
+                  <td colspan="99">
+                    <div class="whitespace-pre">
+                      {{ dan.description }}
+                    </div>
+                    <div class="mt-2">
+                      <div class="mb-2 font-medium">
+                        {{ t('requirements') }}
+                      </div>
+                      <div class="space-y-2">
+                        <dan-explain-requirement
+                          v-for="requirement in dan.requirements"
+                          :key="requirement.type"
+                          :requirement="requirement"
+                        />
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </template>
+            </template>
+          </tbody>
+        </table>
+        <div
+          class="absolute inset-0 flex transition-opacity opacity-0 pointer-events-none transition-filter blur-sm"
+          :class="{
+            'opacity-100 !blur-none': status === 'pending',
+          }"
+        >
+          <div class="m-auto loading loading-lg" />
         </div>
       </div>
       <div class="flex pt-4">
@@ -210,14 +318,21 @@ zh-CN:
           </template>
         </div>
       </div>
-      <div
-        class="absolute transition-opacity -translate-x-1/2 -translate-y-1/2 opacity-0 pointer-events-none left-1/2 top-1/2"
-        :class="{
-          'opacity-100': status === 'pending',
-        }"
-      >
-        <div class="loading" />
-      </div>
     </div>
   </section>
 </template>
+
+<style lang="postcss">
+.css-expand-content {
+  visibility: collapse;
+}
+
+.css-expand {
+  &:has(td input:checked) > :not(.is-collection) {
+    /* @apply bg-error/10 */
+  }
+  &:has(td input:checked) + .css-expand-content {
+    visibility: visible;
+  }
+}
+</style>

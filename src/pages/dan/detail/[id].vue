@@ -7,13 +7,13 @@ const tRequirement = localeKey.root.dan.requirement
 
 const app = useNuxtApp()
 const { t } = useI18n()
-const route = useRoute('dan-detail-dan-id')
+const route = useRoute('dan-detail-id')
 const session = useSession()
 
 const item = await app.$client.dan.get.query(route.params.id)
 
 useHead({
-  title: `${item.name} - ${app.$i18n.t(localeKey.title.dans.__path__)}`,
+  title: `${item.name} - ${app.$i18n.t(localeKey.title.dan.dans.__path__)}`,
   titleTemplate: title => `${title} - ${app.$i18n.t(localeKey.server.name.__path__)}`,
 })
 
