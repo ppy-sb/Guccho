@@ -9,6 +9,8 @@ const server = useAdapterConfig()
 const { t } = useI18n()
 const r = useRoute()
 
+const isSafari = safariDetector()
+
 useHead({
   title: app.$i18n.t(localeKey.title.dan.courses.__path__),
   titleTemplate: title => `${title} - ${app.$i18n.t(localeKey.server.name.__path__)}`,
@@ -82,7 +84,12 @@ zh-CN:
 </i18n>
 
 <template>
-  <section class="container px-2 mx-auto custom-container">
+  <section
+    class="container px-2 mx-auto custom-container"
+    :class="{
+      'is-safari': isSafari,
+    }"
+  >
     <form :action="useRequestURL().href" method="get" @submit.prevent="validateAndRefresh()">
       <div class="grid grid-cols-4 pb-2 space-x-2 gap-y-2 lg:grid-cols-12">
         <div class="col-span-2 form-control">
@@ -149,8 +156,8 @@ zh-CN:
     <div v-if="data" class="relative pt-4 space-y-4">
       <span class="text-sm text-gbase-500">found {{ data.total }} results.</span>
 
-      <div class="overflow-x-auto border rounded-lg border-base-300 bg-base-100">
-        <table class="table table-sm">
+      <div class="relative overflow-x-auto border rounded-lg border-base-300 bg-base-100">
+        <table class="table w-full table-sm">
           <thead>
             <tr>
               <th class="w-0">
@@ -319,6 +326,21 @@ zh-CN:
 <style lang="postcss">
 .css-expand-content {
   visibility: collapse;
+}
+
+.is-safari {
+  .css-expand-content {
+    position: absolute;
+    visibility: hidden;
+  }
+
+  .css-expand {
+
+    &:has(td input:checked) + .css-expand-content {
+      visibility: visible;
+      position: relative;
+    }
+  }
 }
 
 .css-expand {
