@@ -3,6 +3,7 @@ import {
   hasLeaderboardRankingSystem,
   hasRankingSystem,
   hasRuleset,
+  features as supportedFeatures,
   leaderboardRankingSystems as supportedLeaderboardRankingSystems,
   modes as supportedModes,
   rankingSystems as supportedRankingSystems,
@@ -21,5 +22,6 @@ export default () => {
     hasLeaderboardRankingSystem,
     hasRankingSystem,
     supportedRoles,
+    supportedFeatures,
   }
 }

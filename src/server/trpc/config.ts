@@ -7,4 +7,5 @@ export {
   rankingSystems,
   leaderboardRankingSystems,
   userRoles,
+  features,
 } from '$active'

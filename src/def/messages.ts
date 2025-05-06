@@ -2,6 +2,7 @@ export enum GucchoError {
   UnknownError = -1,
   AssertionError,
   MissingServerAvatarConfig,
+  FeatureNotSupported,
 
   // basic
   ModeNotSupported = 1000,
