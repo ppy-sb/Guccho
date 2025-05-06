@@ -57,7 +57,7 @@ export const router = _router({
   save: staffDan
     .input(
       any()
-        .refine((i): i is DatabaseDan<string> => !!validateUsecase(i as DatabaseDan<string>)) as ZodSchema<DatabaseDan<string>>
+        .refine((i): i is DatabaseDan<string> => !!validateUsecase(i as DatabaseDan<string>)) as ZodSchema<Omit<DatabaseDan<string>, 'createdAt' | 'updatedAt'>>
     )
     .mutation(async ({ input, ctx }) => {
       const i = await dans.saveComposed({

@@ -17,7 +17,7 @@ const { t } = useI18n()
 
 const qId = route.query.id?.toString()
 
-const defaultValue: DatabaseDan<string> & { _db: boolean } = {
+const defaultValue: Omit<DatabaseDan<string>, 'createdAt' | 'updatedAt'> & Partial<Pick<DatabaseDan<string>, 'createdAt' | 'updatedAt'>> & { _db: boolean } = {
   id: '',
   name: '',
   description: '',
@@ -104,7 +104,7 @@ async function duplicate() {
   compose.value = unDB(compose.value)
 }
 
-function unDB<T extends DatabaseDan<string>>(val: T): T {
+function unDB<T extends Omit<DatabaseDan<string>, 'createdAt' | 'updatedAt'> & Partial<Pick<DatabaseDan<string>, 'createdAt' | 'updatedAt'>>>(val: T): T {
   val = validateUsecase(val)
   ;(val as any)._db = false
   val.id = ''
