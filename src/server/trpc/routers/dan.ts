@@ -9,6 +9,9 @@ import { Feature } from '~/def/features'
 import { DanProvider, ScoreProvider, UserProvider, dans } from '~/server/singleton/service'
 import { type PaginatedResult } from '~/def/pagination'
 
+const publicDan = withFeature(Feature.Dan, publicProcedure)
+const staffDan = withFeature(Feature.Dan, staffProcedure)
+
 export const router = _router({
   search: publicProcedure
     .input(
@@ -40,18 +43,18 @@ export const router = _router({
       } as PaginatedResult<DatabaseDan<string>>
     }),
 
-  get: withFeature(Feature.Dan, publicProcedure)
+  get: publicDan
     .input(string())
     .query(async ({ input }) => {
       const res = await dans.get(DanProvider.stringToId(input))
       return transformDan(res)
     }),
 
-  delete: withFeature(Feature.Dan, staffProcedure)
+  delete: staffDan
     .input(string())
     .mutation(async ({ input }) => await dans.delete(DanProvider.stringToId(input))),
 
-  save: withFeature(Feature.Dan, staffProcedure)
+  save: staffDan
     .input(
       any()
         .refine((i): i is DatabaseDan<string> => !!validateUsecase(i as DatabaseDan<string>)) as ZodSchema<DatabaseDan<string>>
@@ -81,7 +84,7 @@ export const router = _router({
   //     return dans.scores(input)
   //   }),
 
-  userRule: withFeature(Feature.Dan, publicProcedure)
+  userRule: publicDan
     .input(any().refine((i): i is Dan => validateUsecase(i))).query(async ({ input }) => {
       const result = await dans.runCustomDan(input)
       return result.map(i => ({
@@ -96,7 +99,7 @@ export const router = _router({
       }))
     }),
 
-  getQualifiedScores: withFeature(Feature.Dan, publicProcedure)
+  getQualifiedScores: publicDan
     .input(object({
       id: string(),
       requirement: nativeEnum(Requirement),
@@ -117,7 +120,7 @@ export const router = _router({
     }),
 
   userClearedScores: _router({
-    count: withFeature(Feature.Dan, publicProcedure)
+    count: publicDan
       .input(object({
         id: string(),
         mode: zodMode.optional(),
@@ -133,7 +136,7 @@ export const router = _router({
 
         return data
       }),
-    list: withFeature(Feature.Dan, publicProcedure)
+    list: publicDan
       .input(object({
         id: string(),
         page: number().min(0).max(5).default(0),
@@ -167,7 +170,7 @@ export const router = _router({
       }),
   }),
 
-  exportAll: withFeature(Feature.Dan, staffProcedure)
+  exportAll: staffDan
     .query(async () => {
       return (await dans.exportAll()).map(transformDan)
     }),
@@ -210,7 +213,7 @@ export const router = _router({
         } as PaginatedResult<DatabaseDanCourse<string>>
       }),
 
-    get: withFeature(Feature.Dan, publicProcedure)
+    get: publicDan
       .input(string())
       .query(async ({ input }) => {
         const res = await dans.getCourse(DanProvider.stringToId(input))
@@ -231,7 +234,7 @@ export const router = _router({
         }
       }),
 
-    create: withFeature(Feature.Dan, staffProcedure)
+    create: staffDan
       .input(object({
         name: string().min(4),
         description: string(),
@@ -244,7 +247,7 @@ export const router = _router({
         return DanProvider.idToString(course)
       }),
 
-    update: withFeature(Feature.Dan, staffProcedure)
+    update: staffDan
       .input(object({
         id: string(),
         name: string(),
@@ -276,7 +279,7 @@ export const router = _router({
         }
       }),
 
-    delete: withFeature(Feature.Dan, staffProcedure)
+    delete: staffDan
       .input(object({
         id: string(),
         deleteDans: boolean().default(false),
