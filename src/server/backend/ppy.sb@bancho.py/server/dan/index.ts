@@ -1,4 +1,4 @@
-import { type InferInsertModel, aliasedTable, and, asc, count, desc, eq, exists, getTableName, gt, inArray, isNotNull, like, ne, not, notExists, notInArray, or, sql } from 'drizzle-orm'
+import { type InferInsertModel, aliasedTable, and, asc, count, desc, eq, exists, getTableName, gt, inArray, isNotNull, isNull, like, ne, not, notExists, notInArray, or, sql } from 'drizzle-orm'
 import { type MySql2Database } from 'drizzle-orm/mysql2'
 import { danSQLChunks } from '../../utils/sql-dan'
 import { type Id, type ScoreId, hasRuleset } from '../..'
@@ -348,8 +348,21 @@ export class DanProvider extends Base<Id, ScoreId> {
               ?.if(a.mode === Mode.Mania)
               ?.if(a.mania?.keyCount),
 
-            ne(schema.danCourses.id, a.excludeDanCourse!)?.if(a.excludeDanCourse !== undefined),
-            notInArray(dans.id, a.excludeDans!)?.if(a.excludeDans?.length),
+            // management options
+
+            // exclude dan course
+            ne(schema.danCourses.id, a.excludeDanCourse!)
+              ?.if(!a.danglingOnly)
+              ?.if(a.excludeDanCourse !== undefined),
+
+            // exclude dans
+            notInArray(dans.id, a.excludeDans!)
+              ?.if(!a.danglingOnly)
+              ?.if(a.excludeDans?.length),
+
+            // dangling only
+            isNull(schema.danCourseDans.courseId)
+              ?.if(a.danglingOnly),
           )
         )
         .groupBy(dans.id)
