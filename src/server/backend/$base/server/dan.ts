@@ -59,6 +59,7 @@ export namespace DanProvider {
   export interface SearchDanParam<Id> extends SearchParam {
     excludeDanCourse?: Id
     excludeDans?: Id[]
+    danglingOnly?: boolean
   }
   export interface SearchDanCourseParam extends SearchParam {
     allowEmpty?: boolean

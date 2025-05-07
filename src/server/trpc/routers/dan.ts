@@ -303,6 +303,7 @@ export const router = _router({
           }).default(() => ({})),
           excludeDanCourse: string().optional(),
           excludeDans: array(string()).optional(),
+          danglingOnly: boolean().optional(),
         })
       )
       .query(async ({ input }) => {
@@ -310,6 +311,7 @@ export const router = _router({
           ...input,
           excludeDanCourse: input.excludeDanCourse ? DanProvider.stringToId(input.excludeDanCourse) : undefined,
           excludeDans: input.excludeDans ? input.excludeDans.map(DanProvider.stringToId) : undefined,
+          danglingOnly: input.danglingOnly,
         })
         return {
           total: searchResult.total,
