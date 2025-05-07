@@ -27,6 +27,7 @@ const danQuery = ref({
     keyCount: undefined as number | undefined,
   },
   excludeDans: undefined as string[] | undefined,
+  danglingOnly: undefined as boolean | undefined,
 })
 const { data: danSearchResults, refresh: _refreshDanSearch, status: danSearchStatus } = await app.$client.dan.course.searchDan.useQuery(danQuery)
 
@@ -91,7 +92,7 @@ function handleDanSearchControlChange() {
 
 function toDanPage(n: number) {
   danQuery.value.page = n
-  refreshDanSearch()
+  _refreshDanSearch()
 }
 
 function isDanInCourse(dan: any) {
@@ -121,6 +122,7 @@ en-GB:
   mode: Mode
   unset: Unset
   treat-no-ruleset-cond-as-standard: Treat No Ruleset Condition as Standard
+  dangling-only: Only Dangling
   delete-dans: Delete dans in course
 
 zh-CN:
@@ -144,6 +146,7 @@ zh-CN:
   mode: 模式
   unset: 未设置
   treat-no-ruleset-cond-as-standard: 将无规则条件视为标准
+  dangling-only: 仅显示未入池
   delete-dans: 删除池中的段位
 
 # TODO fr, DE
@@ -221,6 +224,12 @@ zh-CN:
               <label class="justify-start gap-2 cursor-pointer label">
                 <span class="label-text">{{ t('treat-no-ruleset-cond-as-standard') }}</span>
                 <input v-model="danQuery.rulesetDefaultsToStandard" type="checkbox" class="toggle" @change="handleDanSearchControlChange">
+              </label>
+            </div>
+            <div class="justify-end col-span-6 md:col-span-4 form-control">
+              <label class="justify-start gap-2 cursor-pointer label">
+                <span class="label-text">{{ t('dangling-only') }}</span>
+                <input v-model="danQuery.danglingOnly" type="checkbox" class="toggle" @change="() => handleDanSearchControlChange()">
               </label>
             </div>
           </div>
