@@ -1,5 +1,5 @@
 import { features as bF } from '../bancho.py'
-import type { Feature } from '~/def/features'
+import { Feature } from '~/def/features'
 
 export {
   hasLeaderboardRankingSystem,
@@ -13,4 +13,7 @@ export {
 } from '../bancho.py'
 export type { Id, ScoreId } from '../bancho.py'
 
-export const features = new Set<Feature>([...bF])
+export const features = new Set<Feature>([
+  ...bF,
+  Feature.Chat,
+])

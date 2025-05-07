@@ -14,8 +14,12 @@ import { UserProvider, UserRelationProvider, chats, mail, mailToken, sessions, u
 import { userProcedure as pUser } from '~/server/trpc/middleware/user'
 import ui from '~~/guccho.ui.config'
 import { Logger } from '$base/logger'
+import { Feature } from '~/def/features'
+import { withFeature } from '~/server/utils/trpc'
 
 const logger = Logger.child({ label: 'me' })
+
+const chatUser = withFeature(Feature.Chat, pUser)
 
 export const router = _router({
   settings: pUser.query(async ({ ctx }) => {
@@ -294,7 +298,7 @@ export const router = _router({
     }),
 
   chat: _router({
-    recent: pUser
+    recent: chatUser
       .input(
         object({
           page: number().min(0).default(0),
@@ -305,7 +309,7 @@ export const router = _router({
         const messages = await chats.getMessagesBetween(ctx.user, to, { page: input.page, perPage: 50 })
         return messages.map<BChat.IPrivateMessage<string>>(i => chats.serialize(i))
       }),
-    send: pUser
+    send: chatUser
       .input(
         object({
           to: string(),
