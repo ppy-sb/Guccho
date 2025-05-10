@@ -79,6 +79,7 @@ export class IntervalDanProcessor extends CacheSyncedDanProcessor implements Cac
               scoreId: this.dp.tbl.scores.id,
             })
               .from(this.dp.tbl.scores)
+              .leftJoin(this.dp.tbl.patcherScoresMeta, eq(this.dp.tbl.scores.id, this.dp.tbl.patcherScoresMeta.id))
               .innerJoin(this.dp.tbl.beatmaps, eq(this.dp.tbl.scores.mapMd5, this.dp.tbl.beatmaps.md5))
               .innerJoin(this.dp.tbl.users, eq(this.dp.tbl.scores.userId, this.dp.tbl.users.id))
               .where(

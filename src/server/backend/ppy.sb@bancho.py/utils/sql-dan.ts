@@ -2,7 +2,7 @@ import { type SQL, and, eq, gte, inArray, not, or, sql } from 'drizzle-orm'
 import { toBanchoPyMode } from '../../bancho.py/transforms'
 import { hasRuleset } from '../'
 import { Mode, Ruleset } from '~/def'
-import type * as schema from '~/server/backend/bancho.py/drizzle/schema'
+import type * as schema from '~/server/backend/ppy.sb@bancho.py/drizzle/schema'
 import {
   type Cond,
   OP,
@@ -15,6 +15,7 @@ export function danSQLChunks<C extends Cond, AB extends RequirementCondBinding<R
   achievements: readonly AB[],
   table: {
     scores: typeof schema.scores
+    patcherScoresMeta: typeof schema.patcherScoresMeta
     beatmaps: typeof schema.beatmaps
     sources: typeof schema.sources
   }
@@ -40,7 +41,7 @@ export function danSQLChunks<C extends Cond, AB extends RequirementCondBinding<R
       return gte(table.scores.score, val)
     }
     case OP.NoPause: {
-      return sql`false`
+      return eq(table.patcherScoresMeta.noPause, true)
     }
     case OP.StableModIncludeAny: {
       const { val } = cond
