@@ -54,6 +54,7 @@ export class DanProvider extends Base<Id, ScoreId> {
     scores: schema.scores,
     beatmaps: schema.beatmaps,
     sources: schema.sources,
+    patcherScoresMeta: schema.patcherScoresMeta,
 
     requirementClearedScores: schema.requirementClearedScores,
 
@@ -610,12 +611,14 @@ export class DanProvider extends Base<Id, ScoreId> {
       },
     })
       .from(this.tbl.scores)
+      .leftJoin(this.tbl.patcherScoresMeta, eq(this.tbl.scores.id, this.tbl.patcherScoresMeta.id))
       .innerJoin(this.tbl.beatmaps, eq(this.tbl.scores.mapMd5, this.tbl.beatmaps.md5))
       .innerJoin(this.tbl.users, eq(this.tbl.scores.userId, this.tbl.users.id))
 
     const _count = await this.drizzle
       .select({ count: count() })
       .from(this.tbl.scores)
+      .leftJoin(this.tbl.patcherScoresMeta, eq(this.tbl.scores.id, this.tbl.patcherScoresMeta.id))
       .innerJoin(this.tbl.beatmaps, eq(this.tbl.scores.mapMd5, this.tbl.beatmaps.md5))
       .innerJoin(this.tbl.users, eq(this.tbl.scores.userId, this.tbl.users.id))
       .where(
@@ -667,6 +670,7 @@ export class DanProvider extends Base<Id, ScoreId> {
         },
       })
         .from(this.tbl.scores)
+        .leftJoin(this.tbl.patcherScoresMeta, eq(this.tbl.scores.id, this.tbl.patcherScoresMeta.id))
         .innerJoin(this.tbl.beatmaps, eq(this.tbl.scores.mapMd5, this.tbl.beatmaps.md5))
         .innerJoin(this.tbl.users, eq(this.tbl.scores.userId, this.tbl.users.id))
 
@@ -677,6 +681,7 @@ export class DanProvider extends Base<Id, ScoreId> {
           const _count = await tx
             .select({ count: count() })
             .from(this.tbl.scores)
+            .leftJoin(this.tbl.patcherScoresMeta, eq(this.tbl.scores.id, this.tbl.patcherScoresMeta.id))
             .innerJoin(this.tbl.beatmaps, eq(this.tbl.scores.mapMd5, this.tbl.beatmaps.md5))
             .innerJoin(this.tbl.users, eq(this.tbl.scores.userId, this.tbl.users.id))
             .where(
@@ -817,6 +822,7 @@ export class DanProvider extends Base<Id, ScoreId> {
         scoreId: this.tbl.scores.id,
       })
         .from(this.tbl.scores)
+        .leftJoin(this.tbl.patcherScoresMeta, eq(this.tbl.scores.id, this.tbl.patcherScoresMeta.id))
         .innerJoin(this.tbl.beatmaps, eq(this.tbl.scores.mapMd5, this.tbl.beatmaps.md5))
         .innerJoin(this.tbl.users, eq(this.tbl.scores.userId, this.tbl.users.id))
         .where(

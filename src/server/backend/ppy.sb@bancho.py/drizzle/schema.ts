@@ -147,6 +147,13 @@ export const requirementClearedScores = mysqlTable('sb_requirement_cleared_score
   }).onDelete('cascade').onUpdate('cascade'),
 ])
 
+export const patcherScoresMeta = mysqlTable('sb_patcher_scores_meta', {
+  id: bigint('id', { mode: 'bigint' }).references(() => scores.id, { onDelete: 'cascade', onUpdate: 'cascade' }).primaryKey(),
+  noPause: boolean('no_pause').notNull().default(false),
+  strictNoPause: boolean('strict_no_pause').notNull().default(false),
+  raw: json('raw').$defaultFn(() => ({})),
+})
+
 export const userpagesRelations = relations(userpages, ({ one }) => ({
   user: one(users, { fields: [userpages.userId], references: [users.id] }),
 }))
