@@ -584,6 +584,57 @@ export class DanProvider extends Base<Id, ScoreId> {
     })
   }
 
+  async recalcQualifiedScores(opt: Base.RecalcQualifiedScoresParam<Id, ScoreId>): Promise<void> {
+    try {
+      const dan = await this.get(opt.dan.id)
+
+      for (const requirement of dan.requirements) {
+        if (opt.dan.requirement) {
+          if (requirement.type !== opt.dan.requirement) {
+            continue
+          }
+        }
+
+        const newScores = await this.drizzle
+          .select({
+            scoreId: this.tbl.scores.id,
+          })
+          .from(this.tbl.scores)
+          .leftJoin(this.tbl.patcherScoresMeta, eq(this.tbl.scores.id, this.tbl.patcherScoresMeta.id))
+          .innerJoin(this.tbl.beatmaps, eq(this.tbl.scores.mapMd5, this.tbl.beatmaps.md5))
+          .leftJoin(this.tbl.requirementClearedScores, and(
+            eq(this.tbl.scores.id, this.tbl.requirementClearedScores.scoreId),
+            eq(this.tbl.requirementClearedScores.requirement, requirement.type)
+          ))
+          .where(
+            and(
+              gt(this.tbl.scores.status, BanchoPyScoreStatus.DNF),
+              danSQLChunks(requirement.cond, dan.requirements, this.tbl),
+              eq(this.tbl.scores.id, opt.score!.id!)?.if(opt.score?.id),
+              isNull(this.tbl.requirementClearedScores.scoreId),
+            )
+          )
+
+        if (!newScores.length) {
+          return
+        }
+
+        await this.drizzle
+          .insert(this.tbl.requirementClearedScores)
+          .values(
+            newScores.map(i => ({
+              dan: dan.id,
+              requirement: requirement.type,
+              scoreId: i.scoreId,
+            }))
+          )
+      }
+    }
+    catch (e) {
+      console.error(e)
+      throw e
+    }
+  }
 
   async getQualifiedScores(opt: Base.GetQualifiedScoresParam<Id>): Promise<Base.RequirementQualifiedScore<Id, ScoreId>> {
     const { id, requirement, page, perPage } = opt
