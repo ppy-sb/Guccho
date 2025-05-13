@@ -82,6 +82,15 @@ function Swap(props: { ctx: { orderBy?: [DanProvider.PickType, 'asc' | 'desc'] }
     </div>
   </label>
 }
+
+const admin = {
+  async recalc() {
+    await app.$client.dan.userClearedScores.recalc.mutate({ dan: { id: item.id } })
+    for (const v of Object.values(qualifiedScores.value)) {
+      v.refresh()
+    }
+  },
+}
 </script>
 
 <i18n lang="yaml">
@@ -272,6 +281,17 @@ zh-CN:
           </a>
         </div>
       </div>
+    </div>
+    <div v-if="session.role.staff" class="p-2 bg-base-100 rounded-md mt-4">
+      <h3 class="text-lg">
+        Admin Zone
+      </h3>
+      <button
+        class="btn btn-primary"
+        @click="admin.recalc"
+      >
+        recalc scores
+      </button>
     </div>
   </div>
 </template>
