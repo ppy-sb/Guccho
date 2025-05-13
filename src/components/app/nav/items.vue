@@ -50,6 +50,12 @@ function clearFocus() {
         </li>
         <template v-if="session.user && showAdminPanel(session.user.roles)">
           <li>
+            <nuxt-link-locale :to="{ name: 'dan-course-manage' }" @click="dans?.toggleAttribute('open', false)">
+              <icon name="tabler:bookmark-edit" class="w-5 h-5" size="100%" />
+              {{ t('title.dan.manage') }}
+            </nuxt-link-locale>
+          </li>
+          <li>
             <nuxt-link-locale :to="{ name: 'dan-course-new' }" @click="dans?.toggleAttribute('open', false)">
               <icon name="tabler:book-upload" class="w-5 h-5" size="100%" />
               {{ t('title.dan.create-course') }}
