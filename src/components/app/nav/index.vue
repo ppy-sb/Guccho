@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useSession } from '~/store/session'
 import { showAdminPanel } from '~/common/utils/admin'
+import { Feature } from '~/def/features'
 
 const scrollY = useScrollYObserver()
 const { t } = useI18n()
@@ -12,6 +13,7 @@ const searchModalWrapper = shallowRef<{
     showModal: () => void
   }
 }>()
+const chatModal = useTemplateRef('chatModal')
 
 const detached = shallowRef(false)
 watch(scrollY, () => (detached.value = scrollY.value > 0))
@@ -32,6 +34,14 @@ function clearFocus() {
 
 <template>
   <app-search-modal ref="searchModalWrapper" />
+  <app-depends-feature :feature="Feature.Chat">
+    <t-modal ref="chatModal" v-slot="{ closeModal }" class="w-full h-full max-h-[100dvh] max-w-screen-xl m-0 mx-auto overflow-visible text-base-content">
+      <button class="self-end btn btn-ghost btn-circle btn-sm" @click="() => closeModal()">
+        <icon name="material-symbols:close-rounded" class="w-5 h-5" size="100%" />
+      </button>
+      <app-chat class="overflow-hidden border grow auto-border-color xl:rounded-lg bg-base-100" />
+    </t-modal>
+  </app-depends-feature>
   <div
     ref="root" class="w-full transition-[padding] sticky p-0 top-0 navbar-container z-40 h-16"
     :class="[detached && 'detached']"
@@ -63,13 +73,31 @@ function clearFocus() {
             />
           </svg>
         </button>
+        <app-depends-feature :feature="Feature.Chat">
+          <button
+            v-if="session.loggedIn"
+            class="btn btn-ghost btn-circle lg:hidden"
+            @click.prevent="() => chatModal?.showModal()"
+          >
+            <icon name="cil:chat-bubble" class="w-5 h-5" size="100%" />
+          </button>
+        </app-depends-feature>
       </div>
-      <div class="-navbar-end self-end items-baseline !gap-2">
+      <div class="items-baseline self-end -navbar-end">
         <ul class="hidden menu nav-menu menu-horizontal lg:inline-flex flex-nowrap">
           <app-nav-items />
         </ul>
+        <app-depends-feature :feature="Feature.Chat">
+          <button
+            v-if="session.loggedIn"
+            class="invisible btn btn-ghost btn-circle lg:visible"
+            @click.prevent="() => chatModal?.showModal()"
+          >
+            <icon name="cil:chat-bubble" class="w-5 h-5" size="100%" />
+          </button>
+        </app-depends-feature>
         <button
-          class="invisible btn btn-ghost btn-circle flex lg:visible"
+          class="invisible btn btn-ghost btn-circle lg:visible me-2"
           @click.prevent="() => searchModalWrapper?.searchModal?.showModal()"
         >
           <svg

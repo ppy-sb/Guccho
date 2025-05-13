@@ -11,6 +11,7 @@ export const useSession = defineStore('session', {
       owner: boolean
       staff: boolean
     }
+    events?: EventSource
   } => ({
     loggedIn: false,
     user: undefined,
@@ -20,6 +21,7 @@ export const useSession = defineStore('session', {
       owner: false,
       staff: false,
     },
+    events: undefined,
   }),
   actions: {
     gotSession() {
@@ -50,6 +52,7 @@ export const useSession = defineStore('session', {
     async destroy() {
       const app = useNuxtApp()
       await app.$client.session.destroy.mutate()
+      this.closeEventBus()
       await this.retrieve()
     },
     async retrieve() {
@@ -79,6 +82,24 @@ export const useSession = defineStore('session', {
       }
 
       this.user.avatarSrc = `${this.user.avatarSrc}?${Date.now()}`
+    },
+
+    connectEventBus(): EventSource {
+      if (!this.events) {
+        const { push, clear } = useToast()
+        this.events = new EventSource('/api/event/push', { withCredentials: true })
+        push('info', {
+          id: 'i',
+          message: 'connected to chat server.',
+        })
+
+        setTimeout(() => clear('info', 'i'), 4500)
+      }
+      return this.events
+    },
+
+    closeEventBus() {
+      this.events?.close()
     },
   },
 

@@ -3,6 +3,7 @@ import {
   AdminScoreProvider,
   AdminUserProvider,
   ArticleProvider,
+  ChatProvider,
   ClanProvider,
   FileProvider,
   LogProvider,
@@ -23,6 +24,7 @@ import {
   type AdminMapProvider as BaseAdminMapProvider,
   type AdminUserProvider as BaseAdminUserProvider,
   type ArticleProvider as BaseArticleProvider,
+  type ChatProvider as BaseChatProvider,
   type ClanProvider as BaseClanProvider,
   type FileProvider as BaseFileProvider,
   type MailProvider as BaseMailProvider,
@@ -41,6 +43,7 @@ export const articles: BaseArticleProvider = new ArticleProvider()
 export const adminMap: BaseAdminMapProvider<Id, any> = new AdminMapProvider()
 export const adminUser: BaseAdminUserProvider<Id> = new AdminUserProvider()
 export const adminScore: BaseAdminScoreProvider<Id> = new AdminScoreProvider()
+export const chats: BaseChatProvider<Id> = new ChatProvider()
 export const files: BaseFileProvider<Id, ScoreId> = new FileProvider()
 export const logs = new LogProvider()
 export const maps: BaseMapProvider<Id, Id> = new MapProvider()
@@ -58,6 +61,7 @@ export {
   AdminUserProvider,
   AdminMapProvider,
   ArticleProvider,
+  ChatProvider,
   ClanProvider,
   FileProvider,
   LogProvider,

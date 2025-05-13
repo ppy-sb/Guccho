@@ -15,6 +15,7 @@ import {
   UserRelationProvider as BUserRelationProvider,
 } from '~/server/backend/bancho.py/server'
 
+export { ChatProvider } from './chat'
 export { UserProvider } from './user'
 export { AdminMapProvider } from './admin/map'
 

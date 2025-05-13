@@ -8,4 +8,5 @@ export enum Feature {
   RankHistory,
   OldNames,
   Donation,
+  Chat,
 }
