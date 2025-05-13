@@ -42,6 +42,7 @@ export default {
       'dans': '段位',
       'courses': '段位池',
       'compose': '创建段位',
+      'manage': '管理段位池',
       'create-course': '创建段位池',
     },
   },

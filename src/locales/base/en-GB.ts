@@ -53,6 +53,7 @@ export default {
       'dans': 'Dans',
       'courses': 'Courses',
       'compose': 'Compose',
+      'manage': 'Manage Course',
       'create-course': 'Create Course',
     },
   },
