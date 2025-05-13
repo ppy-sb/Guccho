@@ -85,6 +85,16 @@ export namespace DanProvider {
     mania?: { keyCount?: number }
   }
 
+  export interface RecalcQualifiedScoresParam<Id, ScoreId> {
+    dan: {
+      id: Id
+      requirement?: Requirement
+    }
+    score?: {
+      id?: ScoreId
+    }
+  }
+
   export type PickType = 'id' | 'pp' | 'score' | 'accuracy'
   export interface GetQualifiedScoresParam<Id> {
     id: Id
@@ -102,6 +112,7 @@ export abstract class DanProvider<Id, ScoreId> extends Mixin(IdTransformable, Sc
   abstract get(id: Id): Promise<DatabaseDan<Id>>
   abstract delete(id: Id): Promise<void>
   abstract getQualifiedScores(opt: DanProvider.GetQualifiedScoresParam<Id>): Promise<DanProvider.RequirementQualifiedScore<Id, ScoreId>>
+  abstract recalcQualifiedScores(opt: DanProvider.RecalcQualifiedScoresParam<Id, ScoreId>): Promise<void>
   abstract runCustomDan(opt: Dan): Promise<Array<DanProvider.RequirementQualifiedScore<Id, ScoreId>>>
   abstract saveComposed(i: Dan | DatabaseDan<Id>, user: Pick<UserCompact<Id>, 'id'>): Promise<DatabaseDan<Id>>
   abstract countUserClearedDans(opt: { user: Pick<UserCompact<Id>, 'id'> } & DanProvider.ModeRulesetSelector): Promise<number>

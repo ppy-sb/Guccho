@@ -180,6 +180,31 @@ export const router = _router({
           }
         }) satisfies BaseDanProvider.UserDanClearedScore<string, string>[]
       }),
+
+    recalc: staffDan
+      .input(
+        object({
+          dan: object({
+            id: string(),
+            requirement: nativeEnum(Requirement).optional(),
+          }),
+          score: object({
+            id: string(),
+          }).optional(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        const dan = await dans.get(DanProvider.stringToId(input.dan.id))
+        if (!dan) {
+          throwGucchoError(GucchoError.DanNotFound)
+        }
+        await dans.recalcQualifiedScores({
+          dan: mapId(input.dan, DanProvider.stringToId),
+          score: {
+            id: input.score?.id ? DanProvider.stringToScoreId(input.score.id) : undefined,
+          },
+        })
+      }),
   }),
 
   exportAll: staffDan
