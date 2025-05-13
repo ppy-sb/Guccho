@@ -1,5 +1,4 @@
 // keep relative imports for drizzle-kit
-// keep relative imports for drizzle-kit
 import { relations } from 'drizzle-orm'
 import { bigint, boolean, date, datetime, foreignKey, index, int, json, mysqlEnum, mysqlTable, primaryKey, text, timestamp, varchar } from 'drizzle-orm/mysql-core'
 import { clans, scores, users } from '../../bancho.py/drizzle/schema'

@@ -588,6 +588,17 @@ export class DanProvider extends Base<Id, ScoreId> {
     try {
       const dan = await this.get(opt.dan.id)
 
+      return await this.#recalcQualifiedScoresForDan(dan, opt)
+    }
+    catch (e) {
+      console.error(e)
+      throw e
+    }
+  }
+
+  async #recalcQualifiedScoresForDan(dan: DatabaseDan<Id>, opt: Base.RecalcQualifiedScoresParam<Id, ScoreId>) {
+    await this.drizzle.transaction(async (tx) => {
+      const clearedScores: { scoreId: ScoreId; dan: number; requirement: Requirement }[] = []
       for (const requirement of dan.requirements) {
         if (opt.dan.requirement) {
           if (requirement.type !== opt.dan.requirement) {
@@ -595,7 +606,7 @@ export class DanProvider extends Base<Id, ScoreId> {
           }
         }
 
-        const newScores = await this.drizzle
+        const newScores = await tx
           .select({
             scoreId: this.tbl.scores.id,
           })
@@ -616,27 +627,26 @@ export class DanProvider extends Base<Id, ScoreId> {
           )
 
         if (!newScores.length) {
-          return
+          continue
         }
 
-        await this.drizzle
-          .insert(this.tbl.requirementClearedScores)
-          .values(
-            newScores.map(i => ({
-              dan: dan.id,
-              requirement: requirement.type,
-              scoreId: i.scoreId,
-            }))
-          )
-          .onDuplicateKeyUpdate({
-            set: {},
-          })
+        clearedScores.push(
+          ...newScores.map(i => ({
+            scoreId: i.scoreId,
+            dan: dan.id,
+            requirement: requirement.type,
+          }))
+        )
       }
-    }
-    catch (e) {
-      console.error(e)
-      throw e
-    }
+
+      if (!clearedScores.length) {
+        return
+      }
+
+      await tx
+        .insert(this.tbl.requirementClearedScores)
+        .values(clearedScores)
+    })
   }
 
   async getQualifiedScores(opt: Base.GetQualifiedScoresParam<Id>): Promise<Base.RequirementQualifiedScore<Id, ScoreId>> {
@@ -937,27 +947,29 @@ export class DanProvider extends Base<Id, ScoreId> {
   async runCondAndSaveScores(newDan: DatabaseDan<Id, DatabaseRequirementCondBinding<Id, Requirement, Cond>>, tx: Database = this.drizzle) {
     const clearedScores: { scoreId: ScoreId; dan: number; requirement: Requirement }[] = []
     for (const requirement of newDan.requirements) {
-      const res = await tx.select({
-        scoreId: this.tbl.scores.id,
-      })
+      const res = await this.drizzle
+        .select({
+          scoreId: this.tbl.scores.id,
+        })
         .from(this.tbl.scores)
         .leftJoin(this.tbl.patcherScoresMeta, eq(this.tbl.scores.id, this.tbl.patcherScoresMeta.id))
         .innerJoin(this.tbl.beatmaps, eq(this.tbl.scores.mapMd5, this.tbl.beatmaps.md5))
-        .innerJoin(this.tbl.users, eq(this.tbl.scores.userId, this.tbl.users.id))
+        .leftJoin(this.tbl.requirementClearedScores, and(
+          eq(this.tbl.scores.id, this.tbl.requirementClearedScores.scoreId),
+          eq(this.tbl.requirementClearedScores.requirement, requirement.type)
+        ))
         .where(
           and(
             gt(this.tbl.scores.status, BanchoPyScoreStatus.DNF),
             danSQLChunks(requirement.cond, newDan.requirements, this.tbl),
-            not(
-              inArray(
-                this.tbl.scores.id,
-                this.drizzle
-                  .select({ id: schema.requirementClearedScores.scoreId })
-                  .from(schema.requirementClearedScores)
-              )
-            )
+            isNull(this.tbl.requirementClearedScores.scoreId),
           )
         )
+
+      if (!res.length) {
+        continue
+      }
+
       clearedScores.push(...res.map(item => ({
         scoreId: item.scoreId,
         dan: newDan.id,
