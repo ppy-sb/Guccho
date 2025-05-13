@@ -1,7 +1,12 @@
+// keep relative imports for drizzle-kit
 import { relations } from 'drizzle-orm'
-import { bigint, boolean, date, datetime, index, int, json, mysqlEnum, mysqlTable, primaryKey, text, tinyint, varchar } from 'drizzle-orm/mysql-core'
-import { clans, users } from '../../bancho.py/drizzle/schema'
+import { bigint, boolean, date, datetime, foreignKey, index, int, json, mysqlEnum, mysqlTable, primaryKey, text, timestamp, varchar } from 'drizzle-orm/mysql-core'
+import { clans, scores, users } from '../../bancho.py/drizzle/schema'
+import { OP, Requirement } from '../../../../def/dan'
+import { type ObjValueTuple } from '../../../../def/good-to-have'
 
+type OPTuple = ObjValueTuple<typeof OP>
+type RequirementTuple = ObjValueTuple<typeof Requirement>
 export {
   achievements, beatmaps, channels,
   clans, clansRelations, clientHashes, clientHashesRelations, comments, commentsRelations, emailTokens, favourites, favouritesRelations,
@@ -48,7 +53,7 @@ export const scoresForeign = mysqlTable('scores_foreign', {
   originalScoreId: bigint('original_score_id', { mode: 'number' }).notNull(),
   originalPlayerId: int('original_player_id').notNull(),
   recipientId: int('recipient_id').notNull(),
-  hasReplay: tinyint('has_replay').notNull(),
+  hasReplay: boolean('has_replay').notNull(),
   receiptTime: datetime('receipt_time', { mode: 'string' }).notNull(),
 },
 (table) => {
@@ -59,6 +64,7 @@ export const scoresForeign = mysqlTable('scores_foreign', {
     scoresForeignId: primaryKey({ columns: [table.id], name: 'scores_foreign_id' }),
   }
 })
+
 export const scoresSuspicion = mysqlTable('scores_suspicion', {
   scoreId: bigint('score_id', { mode: 'number' }).autoincrement().notNull(),
   kind: mysqlEnum('kind', ['hash', 'replay', 'report', 'ppcap']).default('replay'),
@@ -73,6 +79,81 @@ export const scoresSuspicion = mysqlTable('scores_suspicion', {
   }
 })
 
+export const dans = mysqlTable('sb_dans', {
+  id: int('id').autoincrement().notNull().primaryKey(),
+  name: varchar('name', { length: 128 }).notNull(),
+  description: text('description').notNull().default(''),
+  creator: int('creator').references(() => users.id, { onDelete: 'set null', onUpdate: 'cascade' }),
+  updater: int('updater').references(() => users.id, { onDelete: 'set null', onUpdate: 'cascade' }),
+  createdAt: timestamp('created_at', { mode: 'date' }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { mode: 'date' }).notNull().defaultNow().onUpdateNow(),
+})
+
+export const danCourses = mysqlTable('sb_dan_courses', {
+  id: int('id').autoincrement().notNull().primaryKey(),
+  name: varchar('name', { length: 128 }).notNull(),
+  description: text('description').notNull().default(''),
+  creator: int('creator').references(() => users.id, { onDelete: 'set null', onUpdate: 'cascade' }),
+  updater: int('updater').references(() => users.id, { onDelete: 'set null', onUpdate: 'cascade' }),
+  createdAt: timestamp('created_at', { mode: 'date' }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { mode: 'date' }).notNull().defaultNow().onUpdateNow(),
+})
+
+export const danCourseDans = mysqlTable('sb_dan_course_dans', {
+  courseId: int('course').notNull().references(() => danCourses.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
+  danId: int('dan').notNull().references(() => dans.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
+  order: int('order').notNull(),
+  shortName: varchar('short_name', { length: 128 }).notNull(),
+}, table => [
+  primaryKey({ columns: [table.courseId, table.danId], name: 'dan_course_dans_pk' }),
+])
+
+export const danConds = mysqlTable('sb_dan_conds', {
+  id: int('id').autoincrement().notNull().primaryKey(),
+  type: mysqlEnum('type', Object.values(OP) as OPTuple).notNull(),
+  value: varchar('value', { length: 128 }).notNull(),
+  parent: int('parent'),
+}, tbl => [
+  foreignKey({
+    columns: [tbl.parent],
+    foreignColumns: [tbl.id],
+  })
+    .onUpdate('cascade')
+    .onDelete('cascade'),
+])
+
+export const requirementCondBindings = mysqlTable('sb_requirement_cond_bindings', {
+  danId: int('dan').notNull().references(() => dans.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
+  type: mysqlEnum('requirement', Object.values(Requirement) as RequirementTuple).notNull(),
+  condId: int('cond').notNull().references(() => danConds.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
+}, table => [
+  primaryKey({ columns: [table.danId, table.type], name: 'requirement_cond_binding_pk' }),
+])
+
+export const requirementClearedScores = mysqlTable('sb_requirement_cleared_scores', {
+  dan: int('dan').notNull().references(() => dans.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
+  requirement: mysqlEnum('requirement', Object.values(Requirement) as RequirementTuple).notNull(),
+  scoreId: bigint('score_id', { mode: 'bigint', unsigned: true }).notNull(),
+}, tbl => [
+  foreignKey({
+    columns: [tbl.dan, tbl.requirement],
+    foreignColumns: [requirementCondBindings.danId, requirementCondBindings.type],
+    name: 'requirement_cleared_score_dan_id',
+  }).onDelete('cascade').onUpdate('cascade'),
+  foreignKey({
+    columns: [tbl.scoreId],
+    foreignColumns: [scores.id],
+    name: 'requirement_cleared_score_id',
+  }).onDelete('cascade').onUpdate('cascade'),
+])
+
+export const patcherScoresMeta = mysqlTable('sb_patcher_scores_meta', {
+  id: int('id').references(() => scores.id, { onDelete: 'cascade', onUpdate: 'cascade' }).primaryKey(),
+  noPause: boolean('no_pause').notNull().default(false),
+  strictNoPause: boolean('strict_no_pause').notNull().default(false),
+  raw: json('raw').$defaultFn(() => ({})),
+})
+
 export const userpagesRelations = relations(userpages, ({ one }) => ({
   user: one(users, { fields: [userpages.userId], references: [users.id] }),
 }))
@@ -80,4 +161,22 @@ export const userpagesRelations = relations(userpages, ({ one }) => ({
 export const usersRelations = relations(users, ({ one }) => ({
   clan: one(clans, { fields: [users.clanId], references: [clans.id] }),
   userpages: one(userpages, { fields: [users.id], references: [userpages.userId] }),
+}))
+
+export const danRelations = relations(dans, ({ many }) => ({
+  requirements: many(requirementCondBindings),
+}))
+
+export const danCondsRelations = relations(danConds, ({ one }) => ({
+  parent: one(danConds, { fields: [danConds.parent], references: [danConds.id] }),
+}))
+
+export const requirementCondBindingRelations = relations(requirementCondBindings, ({ one }) => ({
+  dan: one(dans, { fields: [requirementCondBindings.danId], references: [dans.id] }),
+  cond: one(danConds, { fields: [requirementCondBindings.condId], references: [danConds.id] }),
+}))
+
+export const requirementClearedScoreRelations = relations(requirementClearedScores, ({ one }) => ({
+  score: one(scores, { fields: [requirementClearedScores.scoreId], references: [scores.id] }),
+  requirement: one(requirementCondBindings, { fields: [requirementClearedScores.dan, requirementClearedScores.requirement], references: [requirementCondBindings.danId, requirementCondBindings.type] }),
 }))

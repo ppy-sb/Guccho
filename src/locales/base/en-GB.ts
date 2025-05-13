@@ -1,4 +1,5 @@
 import type { GlobalI18n } from '../@types'
+import { Requirement } from '../../def/dan'
 import { CountryCode } from '~/def/country-code'
 import { Scope, UserRole } from '~/def/user'
 import { Mail } from '~/def/mail'
@@ -47,6 +48,14 @@ export default {
     'clans': 'Clans',
     'account-recovery': 'Account Recovery',
     'user-management': 'User Management',
+    'dan': {
+      'dan': 'Dan',
+      'dans': 'Dans',
+      'courses': 'Courses',
+      'compose': 'Compose',
+      'manage': 'Manage Course',
+      'create-course': 'Create Course',
+    },
   },
   global: {
     'logout': 'Sign out',
@@ -153,6 +162,16 @@ export default {
     [GucchoError.TryingToDeleteFallbackContents]: 'Trying to delete fallback contents.',
     [GucchoError.ArticleNotFound]: 'Article not found.',
     [GucchoError.FeatureNotSupported]: 'This feature is not supported.',
+    [GucchoError.DanNotFound]: 'Dan not found.',
+    [GucchoError.CannotSaveDan]: 'Cannot save Dan',
+    [GucchoError.DanCourseNotFound]: 'Dan course not found.',
+    [GucchoError.CannotSaveDanCourse]: 'Cannot save Dan course',
+  },
+  dan: {
+    requirement: {
+      [Requirement.Pass]: 'Pass',
+      [Requirement.NoPause]: 'No Pause',
+    },
   },
   country: {
     [CountryCode.Unknown]: 'Unknown',

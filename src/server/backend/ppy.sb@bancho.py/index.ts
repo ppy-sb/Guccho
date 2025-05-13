@@ -1,4 +1,4 @@
-import { features as bF } from '../bancho.py'
+import { features as banchoPyFeatures } from '../bancho.py'
 import { Feature } from '~/def/features'
 
 export {
@@ -14,6 +14,7 @@ export {
 export type { Id, ScoreId } from '../bancho.py'
 
 export const features = new Set<Feature>([
-  ...bF,
+  ...banchoPyFeatures,
+  Feature.Dan,
   Feature.Chat,
 ])

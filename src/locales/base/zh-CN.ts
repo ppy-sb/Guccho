@@ -2,9 +2,10 @@ import type { GlobalI18n } from '../@types'
 import { Rank } from '~/def'
 import { RankingStatus } from '~/def/beatmap'
 import { CountryCode } from '~/def/country-code'
+import { Requirement } from '~/def/dan'
 import { Mail } from '~/def/mail'
-import { Scope, UserRole } from '~/def/user'
 import { GucchoError } from '~/def/messages'
+import { Scope, UserRole } from '~/def/user'
 
 export default {
   // reuse en-GB
@@ -36,6 +37,14 @@ export default {
     'clans': '家人们',
     'account-recovery': '找回账号',
     'user-management': '用户管理',
+    'dan': {
+      'dan': '段位',
+      'dans': '段位',
+      'courses': '段位池',
+      'compose': '创建段位',
+      'manage': '管理段位池',
+      'create-course': '创建段位池',
+    },
   },
 
   global: {
@@ -147,8 +156,17 @@ export default {
     [GucchoError.TryingToDeleteFallbackContents]: '正在尝试删除缺省的内容。',
     [GucchoError.ArticleNotFound]: '找不到文章。',
     [GucchoError.FeatureNotSupported]: '不支持此功能。',
+    [GucchoError.DanNotFound]: '找不到Dan。',
+    [GucchoError.CannotSaveDan]: '无法保存Dan。',
+    [GucchoError.DanCourseNotFound]: '找不到段位池。',
+    [GucchoError.CannotSaveDanCourse]: '无法保存段位池。',
   },
-
+  dan: {
+    requirement: {
+      [Requirement.Pass]: '通过',
+      [Requirement.NoPause]: '无暂停',
+    },
+  },
   country: {
     [CountryCode.Unknown]: '未知',
     [CountryCode.Afghanistan]: '阿富汗',

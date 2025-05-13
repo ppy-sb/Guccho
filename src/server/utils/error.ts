@@ -64,6 +64,8 @@ export function createGucchoError(code: GucchoError): TRPCError {
     case GucchoError.ScoreNotFound:
     case GucchoError.ClanNotFound:
     case GucchoError.ArticleNotFound:
+    case GucchoError.DanNotFound:
+    case GucchoError.DanCourseNotFound:
     {
       return new TRPCError(merge({ code: 'NOT_FOUND' }))
     }
@@ -75,6 +77,8 @@ export function createGucchoError(code: GucchoError): TRPCError {
     case GucchoError.UpdateUserSettingsFailed:
     case GucchoError.UpdateUserpageFailed:
     case GucchoError.RegistrationFailed:
+    case GucchoError.CannotSaveDan:
+    case GucchoError.CannotSaveDanCourse:
     {
       return new TRPCError(merge({ code: 'INTERNAL_SERVER_ERROR' }))
     }

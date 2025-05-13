@@ -18,6 +18,7 @@ import {
 export { ChatProvider } from './chat'
 export { UserProvider } from './user'
 export { AdminMapProvider } from './admin/map'
+export { DanProvider } from './dan'
 
 export class AdminUserProvider extends BAdminUserProvider {}
 export class AdminScoreProvider extends BAdminScoreProvider {}

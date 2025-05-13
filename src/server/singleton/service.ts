@@ -5,6 +5,7 @@ import {
   ArticleProvider,
   ChatProvider,
   ClanProvider,
+  DanProvider,
   FileProvider,
   LogProvider,
   MailProvider,
@@ -26,6 +27,7 @@ import {
   type ArticleProvider as BaseArticleProvider,
   type ChatProvider as BaseChatProvider,
   type ClanProvider as BaseClanProvider,
+  type DanProvider as BaseDanProvider,
   type FileProvider as BaseFileProvider,
   type MailProvider as BaseMailProvider,
   type MailTokenProvider as BaseMailTokenProvider,
@@ -56,6 +58,7 @@ export const userRelations: BaseUserRelationProvider<Id> = new UserRelationProvi
 export const clanProvider: BaseClanProvider<Id> = new ClanProvider()
 export const mail: BaseMailProvider = new MailProvider()
 export const mailToken: BaseMailTokenProvider = new MailTokenProvider()
+export const dans: BaseDanProvider<Id, ScoreId> = new DanProvider()
 
 export {
   AdminUserProvider,
@@ -63,6 +66,7 @@ export {
   ArticleProvider,
   ChatProvider,
   ClanProvider,
+  DanProvider,
   FileProvider,
   LogProvider,
   MailTokenProvider,

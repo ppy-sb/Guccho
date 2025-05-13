@@ -6,6 +6,7 @@ const session = useSession()
 const { t, locale, locales, setLocale, localeProperties } = useI18n()
 
 const langSw = ref<HTMLDetailsElement>()
+const dans = useTemplateRef('dans')
 
 function clearFocus() {
   if (document.activeElement instanceof HTMLElement) {
@@ -28,6 +29,48 @@ function clearFocus() {
       {{ t('title.clans') }}
     </nuxt-link-locale>
   </li>
+  <li tabindex="0">
+    <details ref="dans">
+      <summary>
+        <icon name="lucide:goal" class="w-5 h-5" size="100%" />
+        [{{ t('global.wip') }}] {{ t('title.dan.dan') }}
+      </summary>
+      <ul class="right-0 w-64 mt-0">
+        <li>
+          <nuxt-link-locale :to="{ name: 'dan-list' }" @click="dans?.toggleAttribute('open', false)">
+            <icon name="lucide:goal" class="w-5 h-5" size="100%" />
+            {{ t('title.dan.dans') }}
+          </nuxt-link-locale>
+        </li>
+        <li>
+          <nuxt-link-locale :to="{ name: 'dan-course' }" @click="dans?.toggleAttribute('open', false)">
+            <icon name="solar:book-bookmark-broken" class="w-5 h-5" size="100%" />
+            {{ t('title.dan.courses') }}
+          </nuxt-link-locale>
+        </li>
+        <template v-if="session.user && showAdminPanel(session.user.roles)">
+          <li>
+            <nuxt-link-locale :to="{ name: 'dan-course-manage' }" @click="dans?.toggleAttribute('open', false)">
+              <icon name="tabler:bookmark-edit" class="w-5 h-5" size="100%" />
+              {{ t('title.dan.manage') }}
+            </nuxt-link-locale>
+          </li>
+          <li>
+            <nuxt-link-locale :to="{ name: 'dan-course-new' }" @click="dans?.toggleAttribute('open', false)">
+              <icon name="tabler:book-upload" class="w-5 h-5" size="100%" />
+              {{ t('title.dan.create-course') }}
+            </nuxt-link-locale>
+          </li>
+          <li>
+            <nuxt-link-locale :to="{ name: 'dan-compose' }" @click="dans?.toggleAttribute('open', false)">
+              <icon name="tabler:book-upload" class="w-5 h-5" size="100%" />
+              {{ t('title.dan.compose') }}
+            </nuxt-link-locale>
+          </li>
+        </template>
+      </ul>
+    </details>
+  </li>
   <li v-if="session.user && showAdminPanel(session.user.roles)">
     <nuxt-link-locale :to="{ name: 'status' }" @click="clearFocus">
       <icon name="material-symbols:signal-cellular-alt-rounded" class="w-5 h-5" size="100%" />
@@ -37,7 +80,7 @@ function clearFocus() {
   <li tabindex="0">
     <details ref="langSw">
       <summary><icon name="tabler:world" class="w-5 h-5" />{{ localeProperties.name }}</summary>
-      <ul class="mt-0 right-0 w-64">
+      <ul class="right-0 w-64 mt-0">
         <li
           v-for="l in locales"
           :key="l.code"
@@ -49,7 +92,8 @@ function clearFocus() {
             class="whitespace-nowrap"
             :class="{
               active: l.code === locale,
-            }" @click="setLocale(l.code), langSw?.toggleAttribute('open', false)"
+            }"
+            @click="setLocale(l.code), langSw?.toggleAttribute('open', false)"
           >
             <img
               :alt="l.name" class="h-6"
@@ -63,10 +107,10 @@ function clearFocus() {
   <!-- <li tabindex="0">
     <a class="justify-between lg:justify-start">
       Parent
-      <svg class="fill-current hidden lg:block" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z" /></svg>
+      <svg class="hidden fill-current lg:block" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z" /></svg>
       <svg class="fill-current lg:hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
     </a>
-    <ul class="p-2 menu m-4 bg-base-100">
+    <ul class="p-2 m-4 menu bg-base-100">
       <li><a>Submenu 1</a></li>
       <li><a>Submenu 2</a></li>
     </ul>
