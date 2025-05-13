@@ -1,4 +1,5 @@
 // keep relative imports for drizzle-kit
+// keep relative imports for drizzle-kit
 import { relations } from 'drizzle-orm'
 import { bigint, boolean, date, datetime, foreignKey, index, int, json, mysqlEnum, mysqlTable, primaryKey, text, timestamp, varchar } from 'drizzle-orm/mysql-core'
 import { clans, scores, users } from '../../bancho.py/drizzle/schema'
@@ -80,7 +81,7 @@ export const scoresSuspicion = mysqlTable('scores_suspicion', {
 })
 
 export const dans = mysqlTable('sb_dans', {
-  id: int('id').autoincrement().notNull().primaryKey(),
+  id: int('id', { unsigned: true }).autoincrement().notNull().primaryKey(),
   name: varchar('name', { length: 128 }).notNull(),
   description: text('description').notNull().default(''),
   creator: int('creator').references(() => users.id, { onDelete: 'set null', onUpdate: 'cascade' }),
@@ -90,7 +91,7 @@ export const dans = mysqlTable('sb_dans', {
 })
 
 export const danCourses = mysqlTable('sb_dan_courses', {
-  id: int('id').autoincrement().notNull().primaryKey(),
+  id: int('id', { unsigned: true }).autoincrement().notNull().primaryKey(),
   name: varchar('name', { length: 128 }).notNull(),
   description: text('description').notNull().default(''),
   creator: int('creator').references(() => users.id, { onDelete: 'set null', onUpdate: 'cascade' }),
@@ -100,8 +101,8 @@ export const danCourses = mysqlTable('sb_dan_courses', {
 })
 
 export const danCourseDans = mysqlTable('sb_dan_course_dans', {
-  courseId: int('course').notNull().references(() => danCourses.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
-  danId: int('dan').notNull().references(() => dans.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
+  courseId: int('course', { unsigned: true }).notNull().references(() => danCourses.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
+  danId: int('dan', { unsigned: true }).notNull().references(() => dans.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
   order: int('order').notNull(),
   shortName: varchar('short_name', { length: 128 }).notNull(),
 }, table => [
@@ -109,10 +110,10 @@ export const danCourseDans = mysqlTable('sb_dan_course_dans', {
 ])
 
 export const danConds = mysqlTable('sb_dan_conds', {
-  id: int('id').autoincrement().notNull().primaryKey(),
+  id: int('id', { unsigned: true }).autoincrement().notNull().primaryKey(),
   type: mysqlEnum('type', Object.values(OP) as OPTuple).notNull(),
   value: varchar('value', { length: 128 }).notNull(),
-  parent: int('parent'),
+  parent: int('parent', { unsigned: true }),
 }, tbl => [
   foreignKey({
     columns: [tbl.parent],
@@ -123,15 +124,15 @@ export const danConds = mysqlTable('sb_dan_conds', {
 ])
 
 export const requirementCondBindings = mysqlTable('sb_requirement_cond_bindings', {
-  danId: int('dan').notNull().references(() => dans.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
+  danId: int('dan', { unsigned: true }).notNull().references(() => dans.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
   type: mysqlEnum('requirement', Object.values(Requirement) as RequirementTuple).notNull(),
-  condId: int('cond').notNull().references(() => danConds.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
+  condId: int('cond', { unsigned: true }).notNull().references(() => danConds.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
 }, table => [
   primaryKey({ columns: [table.danId, table.type], name: 'requirement_cond_binding_pk' }),
 ])
 
 export const requirementClearedScores = mysqlTable('sb_requirement_cleared_scores', {
-  dan: int('dan').notNull().references(() => dans.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
+  dan: int('dan', { unsigned: true }).notNull().references(() => dans.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
   requirement: mysqlEnum('requirement', Object.values(Requirement) as RequirementTuple).notNull(),
   scoreId: bigint('score_id', { mode: 'bigint', unsigned: true }).notNull(),
 }, tbl => [
@@ -148,7 +149,7 @@ export const requirementClearedScores = mysqlTable('sb_requirement_cleared_score
 ])
 
 export const patcherScoresMeta = mysqlTable('sb_patcher_scores_meta', {
-  id: int('id').references(() => scores.id, { onDelete: 'cascade', onUpdate: 'cascade' }).primaryKey(),
+  id: bigint('id', { mode: 'bigint', unsigned: true }).references(() => scores.id, { onDelete: 'cascade', onUpdate: 'cascade' }).primaryKey(),
   noPause: boolean('no_pause').notNull().default(false),
   strictNoPause: boolean('strict_no_pause').notNull().default(false),
   raw: json('raw').$defaultFn(() => ({})),
