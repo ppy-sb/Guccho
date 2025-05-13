@@ -584,67 +584,132 @@ export class DanProvider extends Base<Id, ScoreId> {
     })
   }
 
-  async getQualifiedScores(id: Id, requirement: Requirement, page: number, perPage: number): Promise<Base.RequirementQualifiedScore<Id, ScoreId>> {
-    const dan = await this.get(id)
 
-    const req = dan.requirements.find(a => a.type === requirement)?.cond
-    if (!req) {
-      return { count: 0, scores: [] }
+  async getQualifiedScores(opt: Base.GetQualifiedScoresParam<Id>): Promise<Base.RequirementQualifiedScore<Id, ScoreId>> {
+    const { id, requirement, page, perPage } = opt
+
+    let pickColumn
+    switch (opt.pick) {
+      case 'pp':
+        pickColumn = this.tbl.scores.pp
+        break
+      case 'score':
+        pickColumn = this.tbl.scores.score
+        break
+      case 'accuracy':
+        pickColumn = this.tbl.scores.accuracy
+        break
+      case 'id':
+      case undefined:
+        pickColumn = this.tbl.scores.id
+        break
+      default:
+        assertNotReachable(opt.pick)
     }
 
     const _sql = this.drizzle.select({
       player: {
-        id: this.tbl.users.id,
+        id: sql`${this.tbl.users.id}`.mapWith(Number).as('userId'),
         name: this.tbl.users.name,
       },
       score: {
-        id: this.tbl.scores.id,
+        id: sql`${this.tbl.scores.id}`.mapWith(BigInt).as('scoreId'),
         accuracy: this.tbl.scores.accuracy,
         score: this.tbl.scores.score,
+        pp: this.tbl.scores.pp,
       },
       beatmap: {
-        id: this.tbl.beatmaps.id,
+        id: sql`${this.tbl.beatmaps.id}`.mapWith(Number).as('bid'),
         md5: this.tbl.beatmaps.md5,
         title: this.tbl.beatmaps.title,
         artist: this.tbl.beatmaps.artist,
         version: this.tbl.beatmaps.version,
       },
+      pickRn: (
+        opt.pick
+          ? sql`ROW_NUMBER() OVER (
+            PARTITION BY ${this.tbl.scores.userId}, ${this.tbl.scores.mapMd5}, ${this.tbl.scores.mode}
+            ORDER BY ${pickColumn} DESC, ${this.tbl.scores.id} ASC
+          )`
+          : sql.raw('1')
+      ).as('pick'),
     })
-      .from(this.tbl.scores)
-      .leftJoin(this.tbl.patcherScoresMeta, eq(this.tbl.scores.id, this.tbl.patcherScoresMeta.id))
-      .innerJoin(this.tbl.beatmaps, eq(this.tbl.scores.mapMd5, this.tbl.beatmaps.md5))
-      .innerJoin(this.tbl.users, eq(this.tbl.scores.userId, this.tbl.users.id))
-
-    const _count = await this.drizzle
-      .select({ count: count() })
-      .from(this.tbl.scores)
-      .leftJoin(this.tbl.patcherScoresMeta, eq(this.tbl.scores.id, this.tbl.patcherScoresMeta.id))
+      .from(this.tbl.requirementClearedScores)
+      .innerJoin(this.tbl.scores, eq(this.tbl.requirementClearedScores.scoreId, this.tbl.scores.id))
       .innerJoin(this.tbl.beatmaps, eq(this.tbl.scores.mapMd5, this.tbl.beatmaps.md5))
       .innerJoin(this.tbl.users, eq(this.tbl.scores.userId, this.tbl.users.id))
       .where(
         and(
-          eq(this.tbl.scores.status, BanchoPyScoreStatus.Pick),
-          danSQLChunks(req, dan.requirements, this.tbl),
+          eq(this.tbl.requirementClearedScores.dan, id),
+          eq(this.tbl.requirementClearedScores.requirement, requirement),
         )
       )
-      .limit(1).then(res => res[0].count)
 
-    if (!_count) {
-      return { count: 0, scores: [] }
+    const count = await this.drizzle.$count(_sql.as('c'))
+
+    if (count === 0) {
+      return {
+        count: 0,
+        scores: [],
+      }
     }
 
-    const res = await _sql
+    const _sq = this.drizzle.$with('sq').as(_sql)
+
+    let orderColumn
+    switch (opt.orderBy?.[0]) {
+      case 'pp':
+        orderColumn = _sq.score.pp
+        break
+      case 'score':
+        orderColumn = _sq.score.score
+        break
+      case 'accuracy':
+        orderColumn = _sq.score.accuracy
+        break
+      case 'id':
+      case undefined:
+        orderColumn = _sq.score.id
+        break
+      default:
+        assertNotReachable(opt.orderBy![0])
+    }
+
+    const res = await this.drizzle
+      .with(_sq)
+      .select({
+        player: {
+          id: _sq.player.id,
+          name: _sq.player.name,
+        },
+        score: {
+          id: _sq.score.id,
+          accuracy: _sq.score.accuracy,
+          score: _sq.score.score,
+        },
+        beatmap: {
+          id: _sq.beatmap.id,
+          md5: _sq.beatmap.md5,
+          title: _sq.beatmap.title,
+          artist: _sq.beatmap.artist,
+          version: _sq.beatmap.version,
+        },
+      }).from(_sq)
       .where(
-        and(
-          eq(this.tbl.scores.status, BanchoPyScoreStatus.Pick),
-          danSQLChunks(req, dan.requirements, this.tbl),
-        )
+        eq(_sq.pickRn, sql`1`)
+      )
+      .orderBy(
+        opt.orderBy
+          ? opt.orderBy[1] === 'asc'
+            ? asc(orderColumn)
+            : desc(orderColumn)
+          : asc(orderColumn)
       )
       .offset(perPage * page)
       .limit(perPage)
 
     return {
-      count: _count,
+      count,
       scores: res,
     }
   }
@@ -686,7 +751,7 @@ export class DanProvider extends Base<Id, ScoreId> {
             .innerJoin(this.tbl.users, eq(this.tbl.scores.userId, this.tbl.users.id))
             .where(
               and(
-                eq(this.tbl.scores.status, BanchoPyScoreStatus.Pick),
+                gt(this.tbl.scores.status, BanchoPyScoreStatus.DNF),
                 danSQLChunks(a.cond, opt.requirements, this.tbl),
               )
             )
@@ -700,7 +765,7 @@ export class DanProvider extends Base<Id, ScoreId> {
           const _sql = q
             .where(
               and(
-                eq(this.tbl.scores.status, BanchoPyScoreStatus.Pick),
+                gt(this.tbl.scores.status, BanchoPyScoreStatus.DNF),
                 danSQLChunks(a.cond, opt.requirements, this.tbl),
               )
             )

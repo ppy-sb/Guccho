@@ -85,13 +85,23 @@ export namespace DanProvider {
     mania?: { keyCount?: number }
   }
 
+  export type PickType = 'id' | 'pp' | 'score' | 'accuracy'
+  export interface GetQualifiedScoresParam<Id> {
+    id: Id
+    requirement: Requirement
+    pick?: PickType
+    orderBy?: [PickType, 'asc' | 'desc']
+    page: number
+    perPage: number
+  }
+
 }
 
 export abstract class DanProvider<Id, ScoreId> extends Mixin(IdTransformable, ScoreIdTransformable) {
   abstract search(opt: DanProvider.SearchDanParam<Id>): Promise<PaginatedResult<DatabaseDan<Id>>>
   abstract get(id: Id): Promise<DatabaseDan<Id>>
   abstract delete(id: Id): Promise<void>
-  abstract getQualifiedScores(id: Id, requirement: Requirement, page: number, perPage: number): Promise<DanProvider.RequirementQualifiedScore<Id, ScoreId>>
+  abstract getQualifiedScores(opt: DanProvider.GetQualifiedScoresParam<Id>): Promise<DanProvider.RequirementQualifiedScore<Id, ScoreId>>
   abstract runCustomDan(opt: Dan): Promise<Array<DanProvider.RequirementQualifiedScore<Id, ScoreId>>>
   abstract saveComposed(i: Dan | DatabaseDan<Id>, user: Pick<UserCompact<Id>, 'id'>): Promise<DatabaseDan<Id>>
   abstract countUserClearedDans(opt: { user: Pick<UserCompact<Id>, 'id'> } & DanProvider.ModeRulesetSelector): Promise<number>
