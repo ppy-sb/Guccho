@@ -1120,11 +1120,11 @@ FROM
           total: sql<number>`count(*) over()`.as('total'),
           dans: sql<Array<{ id: Id; s: string }>>`CAST( CONCAT( '[', GROUP_CONCAT(DISTINCT JSON_OBJECT('id', ${courseDans.danId}, 's', ${courseDans.shortName}) ORDER BY ${courseDans.order} ASC), ']' ) AS JSON)`.as('dan_ids'),
         })
-        .from(courses)
-        .leftJoin(courseDans, eq(courses.id, courseDans.courseId))
-        .leftJoin(dans, eq(courseDans.danId, dans.id))
-        .leftJoin(danCondBinding, eq(dans.id, danCondBinding.danId))
-        .leftJoin(condTree.aliasedTable, eq(danCondBinding.condId, condTree.column.root))
+        .from(courseDans)
+        .innerJoin(dans, eq(courseDans.danId, dans.id))
+        .innerJoin(courses, eq(courses.id, courseDans.courseId))
+        .innerJoin(danCondBinding, eq(dans.id, danCondBinding.danId))
+        .innerJoin(condTree.aliasedTable, eq(danCondBinding.condId, condTree.column.root))
         .leftJoin(bmId, and(eq(condTree.column.type, sql.raw(`'${OP.BanchoBeatmapIdEq}'`)), eq(bmId.id, condTree.column.value), eq(bmId.server, sql.raw('\'osu!\''))))
         .leftJoin(bmMd5, and(eq(condTree.column.type, sql.raw(`'${OP.BeatmapMd5Eq}'`)), eq(bmMd5.md5, condTree.column.value)))
         .where(
@@ -1378,10 +1378,10 @@ FROM
           )`.as('full_tree'),
       })
       .from(dans)
-      .leftJoin(schema.danCourseDans, eq(dans.id, schema.danCourseDans.danId))
-      .leftJoin(schema.danCourses, eq(schema.danCourseDans.courseId, schema.danCourses.id))
-      .leftJoin(danCondBinding, eq(dans.id, danCondBinding.danId))
-      .leftJoin(condTree.aliasedTable, eq(danCondBinding.condId, condTree.column.root))
+      .innerJoin(schema.danCourseDans, eq(dans.id, schema.danCourseDans.danId))
+      .innerJoin(schema.danCourses, eq(schema.danCourseDans.courseId, schema.danCourses.id))
+      .innerJoin(danCondBinding, eq(dans.id, danCondBinding.danId))
+      .innerJoin(condTree.aliasedTable, eq(danCondBinding.condId, condTree.column.root))
       .groupBy(dans.id)
       .orderBy(
         asc(schema.danCourseDans.order),
