@@ -1,4 +1,4 @@
-import { type ZodSchema, any, array, boolean, nativeEnum, number, object, string } from 'zod'
+import { type ZodSchema, any, array, boolean, literal, nativeEnum, number, object, string, tuple, union } from 'zod'
 import { type DanProvider as BaseDanProvider } from '../../backend/$base/server'
 import { staffProcedure } from '../middleware/role'
 import { router as _router, publicProcedure } from '../trpc'
@@ -8,10 +8,12 @@ import { type Cond, type Dan, type DatabaseDan, type DatabaseDanCourse, type Dat
 import { Feature } from '~/def/features'
 import { DanProvider, ScoreProvider, UserProvider, dans } from '~/server/singleton/service'
 import { type PaginatedResult } from '~/def/pagination'
+import { GucchoError } from '~/def/messages'
 
 const publicDan = withFeature(Feature.Dan, publicProcedure)
 const staffDan = withFeature(Feature.Dan, staffProcedure)
 
+const qualifiedScorePickType = union([literal('id'), literal('pp'), literal('score'), literal('accuracy')])
 export const router = _router({
   search: publicProcedure
     .input(
@@ -105,8 +107,17 @@ export const router = _router({
       requirement: nativeEnum(Requirement),
       page: number().min(0).default(0),
       perPage: number().min(1).max(10).default(10),
+      pick: qualifiedScorePickType.optional(),
+      orderBy: tuple([qualifiedScorePickType, union([literal('asc'), literal('desc')])]).optional(),
     })).query(async ({ input }) => {
-      const result = await dans.getQualifiedScores(DanProvider.stringToId(input.id), input.requirement, input.page, input.perPage)
+      const result = await dans.getQualifiedScores({
+        id: DanProvider.stringToId(input.id),
+        requirement: input.requirement,
+        page: input.page,
+        perPage: input.perPage,
+        pick: input.pick,
+        orderBy: input.orderBy,
+      })
 
       return ({
         count: result.count,
@@ -136,6 +147,7 @@ export const router = _router({
 
         return data
       }),
+
     list: publicDan
       .input(object({
         id: string(),
