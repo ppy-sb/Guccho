@@ -69,6 +69,7 @@ export interface GlobalI18n extends PathAccessibleObject {
       'dans': string
       'courses': string
       'compose': string
+      'manage': string
       'create-course': string
     }
   }
