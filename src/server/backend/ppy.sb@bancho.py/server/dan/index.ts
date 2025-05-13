@@ -3,7 +3,7 @@ import { type MySql2Database } from 'drizzle-orm/mysql2'
 import { danSQLChunks } from '../../utils/sql-dan'
 import { type Id, type ScoreId, hasRuleset } from '../..'
 import { BanchoPyScoreStatus } from '../../../bancho.py/enums'
-import { useDrizzle } from '../../../bancho.py/server/source/drizzle'
+import { useDrizzle, userPriv } from '../../../bancho.py/server/source/drizzle'
 import {
   fromBanchoMode,
   fromBanchoPyMode,
@@ -706,6 +706,7 @@ export class DanProvider extends Base<Id, ScoreId> {
         and(
           eq(this.tbl.requirementClearedScores.dan, id),
           eq(this.tbl.requirementClearedScores.requirement, requirement),
+          userPriv(this.tbl.users)
         )
       )
 
@@ -817,6 +818,7 @@ export class DanProvider extends Base<Id, ScoreId> {
               and(
                 gt(this.tbl.scores.status, BanchoPyScoreStatus.DNF),
                 danSQLChunks(a.cond, opt.requirements, this.tbl),
+                userPriv(this.tbl.users)
               )
             )
             .limit(1)
@@ -831,6 +833,7 @@ export class DanProvider extends Base<Id, ScoreId> {
               and(
                 gt(this.tbl.scores.status, BanchoPyScoreStatus.DNF),
                 danSQLChunks(a.cond, opt.requirements, this.tbl),
+                userPriv(this.tbl.users),
               )
             )
             .orderBy(desc(this.tbl.scores.score))
