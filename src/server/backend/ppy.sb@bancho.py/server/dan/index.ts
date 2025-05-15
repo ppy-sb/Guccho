@@ -1758,8 +1758,6 @@ function transformCond(condNode: CondNode): Cond {
       } as Cond
 
     case OP.AccGte:
-    case OP.BanchoBeatmapIdEq:
-    case OP.ScoreGte:
     case OP.StableModIncludeAny:
     case OP.StableModIncludeAll:
       // Leaf condition
@@ -1786,7 +1784,14 @@ function transformCond(condNode: CondNode): Cond {
         val: value as Requirement,
       }
 
+    case OP.ScoreGte:
+      return {
+        type,
+        val: BigInt(value),
+      }
+
     case OP.BeatmapMd5Eq:
+    case OP.BanchoBeatmapIdEq:
       return {
         type,
         val: value,
