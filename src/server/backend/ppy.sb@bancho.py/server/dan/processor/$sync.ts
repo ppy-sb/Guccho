@@ -14,23 +14,10 @@ export class CacheSyncedDanProcessor extends BaseDanProcessor {
   dans = new Map<Id, DatabaseDan<Id, DatabaseRequirementCondBinding<Id, Requirement, Cond>>>()
 
   async init() {
-    this.logger.debug('initializing dan cache')
-    await this.dp.drizzle.transaction(async (tx) => {
-      const dans = await tx.query.dans.findMany({
-        with: {
-          requirements: {
-            columns: {
-              type: true,
-              condId: true,
-            },
-          },
-        },
-      })
-
-      for (const dan of dans) {
-        this.dans.set(dan.id, await this.dp.getDanWithRequirements(dan, tx))
-      }
-    })
+    const dans = await this.dp.exportAll()
+    for (const dan of dans) {
+      this.dans.set(dan.id, dan)
+    }
 
     this.logger.debug(`initialized ${this.dans.size} dan cache(s)`)
   }
