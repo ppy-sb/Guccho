@@ -1,132 +1,20 @@
 import { $enum } from 'ts-enum-util'
 import { BeatmapSource } from '~/def/beatmap'
 import {
-  type ConcreteCond,
   type Cond,
-  type CondBase,
   type Dan,
 
   type DetailResult,
   OP,
-  type Remarked,
   Requirement,
   type RequirementCondBinding,
   type RequirementResult,
   type ValidatingScore,
-  type WrappedCond,
 } from '~/def/dan'
 import { StableMod } from '~/def/score'
-import type { Mode } from '~/def'
 
 const $op = $enum(OP)
 const $req = $enum(Requirement)
-
-export function pretty_result(
-  res: RequirementResult[],
-  usecase: Dan,
-  score: ValidatingScore
-) {
-  const msg: string[] = []
-
-  msg.push(`usecase: ${usecase.name}`)
-  msg.push(`description: ${usecase.name}`)
-  msg.push(
-    `score: Score(player=${score.player.name}(${score.player.id}), score=${score.score}, accuracy=${score.accuracy}, nonstop=${score.nonstop})`
-  )
-  msg.push(
-    `beatmap: Beatmap(creator=${score.beatmap.creator}, version=${score.beatmap.version}, mode=${score.beatmap.mode}, md5=${score.beatmap.md5})`
-  )
-
-  return msg.concat(...res.map(res => fmtDanResult(res, 1).flat()))
-}
-
-export function fmtDanResult(
-  detail: RequirementResult | DetailResult<Cond>,
-  indent: number = 0
-) {
-  let msg: string[] = []
-
-  if ('type' in detail) {
-    msg.push(`${sp(indent)}Achievement(${$req.getKeyOrDefault(detail.type)}):`)
-    indent += 1
-  }
-  if ('cond' in detail) {
-    msg.push(
-      `${sp(indent)}${b(detail.result)} ${fmt_cond(detail, 'value' in detail ? detail.value : undefined)}`
-    )
-    if (detail.cond.type === OP.Extends) {
-      return msg
-    }
-    indent += 1
-  }
-
-  if ('detail' in detail) {
-    if (Array.isArray(detail.detail)) {
-      msg = msg.concat(...detail.detail.map(d => fmtDanResult(d, indent + 1)))
-    }
-    else if (typeof detail.detail === 'object') {
-      msg = msg.concat(fmtDanResult(detail.detail as DetailResult<Cond>, indent + 1))
-    }
-  }
-
-  return msg
-}
-
-export function fmt_cond<D extends DetailResult>(detail: D, value: D extends { value: infer V } ? V : undefined) {
-  const { cond } = detail
-  const { type } = cond
-
-  switch (type) {
-    case OP.BanchoBeatmapIdEq:
-    case OP.BeatmapMd5Eq:
-    case OP.AccGte:
-    case OP.ScoreGte:
-    case OP.ModeEq:
-    {
-      const { val } = cond
-      return `${$op.getKeyOrDefault(type)} ${val}, ${value}`
-    }
-
-    case OP.RulesetEq: {
-      const { val } = cond
-      return `${$req.getKeyOrDefault(type)} ${val}, ${value}`
-    }
-
-    case OP.Remark:
-    {
-      const { remark } = cond
-      return `Plug(${remark})`
-    }
-
-    case OP.StableModIncludeAny:
-    case OP.StableModIncludeAll:
-    {
-      const { val } = cond
-      return `${$op.getKeyOrDefault(type)} ${StableMod[val]}`
-    }
-
-    // op without attribute
-    case OP.NoPause:
-      return `${$op.getKeyOrDefault(type)}`
-
-    // referenced op
-    case OP.Extends:
-    {
-      const { val } = cond
-      return `${$op.getKeyOrDefault(type)} Achievement(${$req.getKeyOrDefault(val)})`
-    }
-
-    // deep op
-    case OP.AND:
-    case OP.OR:
-    case OP.NOT:
-      return `${$op.getKeyOrDefault(type)}`
-
-    default:
-      // return '???'
-      assertNotReachable(type)
-  }
-}
 
 export function run_usecase<AB extends RequirementCondBinding<Requirement, Cond>>(
   usecase: Dan<AB>,
@@ -306,61 +194,6 @@ export function run_cond<C extends Cond, AB extends RequirementCondBinding<Requi
       assertNotReachable(type)
   }
 }
-
-export function $dan<AB extends RequirementCondBinding<Requirement, Cond>>(name: string, opts: { id: number; description: string; requirements: readonly AB[] }): Dan<AB> {
-  return { name, ...opts }
-}
-export function $requirement<A extends Requirement, C extends Cond>(achievement: A, cond: C): RequirementCondBinding<A, C> {
-  return { type: achievement, cond }
-}
-
-export function $remark<C>(value: string, cond: C): Remarked<OP.Remark, C> {
-  return { type: OP.Remark, remark: value, cond }
-}
-
-export function $or<C extends Cond[]>(...cond: C): WrappedCond<OP.OR, C> {
-  return { type: OP.OR, cond }
-}
-
-export function $and<C extends Cond[]>(...cond: C): WrappedCond<OP.AND, C> {
-  return { type: OP.AND, cond }
-}
-
-export function $not<C extends Cond>(cond: C): WrappedCond<OP.NOT, C> {
-  return { type: OP.NOT, cond }
-}
-export function $modeEq<C extends Mode>(val: C): ConcreteCond<OP.ModeEq, C> {
-  return { type: OP.ModeEq, val }
-}
-
-export function $extendsAchievement<C extends Requirement>(val: C): ConcreteCond<OP.Extends, C> {
-  return { type: OP.Extends, val }
-}
-
-export function $banchoBeatmapIdEq<C>(val: C): ConcreteCond<OP.BanchoBeatmapIdEq, C> {
-  return { type: OP.BanchoBeatmapIdEq, val }
-}
-
-export function $beatmapMd5Eq<C>(val: C): ConcreteCond<OP.BeatmapMd5Eq, C> {
-  return { type: OP.BeatmapMd5Eq, val }
-}
-
-export function $noPause(): CondBase<OP.NoPause> {
-  return { type: OP.NoPause }
-}
-
-export function $accGte<C>(val: C): ConcreteCond<OP.AccGte, C> {
-  return { type: OP.AccGte, val }
-}
-
-export function $scoreGte<C>(val: C): ConcreteCond<OP.ScoreGte, C> {
-  return { type: OP.ScoreGte, val }
-}
-
-export function $withStableMod<C extends StableMod>(mod: C): ConcreteCond<OP.StableModIncludeAny, C> {
-  return { type: OP.StableModIncludeAny, val: mod }
-}
-
 export function validateCond<T extends Cond>(cond: T): T {
   switch (cond.type) {
     case OP.BanchoBeatmapIdEq:
@@ -400,12 +233,120 @@ export function validateUsecase<U extends Dan>(compose: U): U {
   }
 }
 
+function mergeStableMods(mods: StableMod[]): StableMod {
+  return mods.reduce((a, b) => a | b, 0 as StableMod)
+}
+
 function sp(n: number) {
   return '  '.repeat(n)
 }
 function b(_b: boolean) {
   return _b ? '✓' : '✗'
 }
-function mergeStableMods(mods: StableMod[]): StableMod {
-  return mods.reduce((a, b) => a | b, 0 as StableMod)
+
+export function pretty_result(
+  res: RequirementResult[],
+  usecase: Dan,
+  score: ValidatingScore
+) {
+  const msg: string[] = []
+
+  msg.push(`usecase: ${usecase.name}`)
+  msg.push(`description: ${usecase.name}`)
+  msg.push(
+    `score: Score(player=${score.player.name}(${score.player.id}), score=${score.score}, accuracy=${score.accuracy}, nonstop=${score.nonstop})`
+  )
+  msg.push(
+    `beatmap: Beatmap(creator=${score.beatmap.creator}, version=${score.beatmap.version}, mode=${score.beatmap.mode}, md5=${score.beatmap.md5})`
+  )
+
+  return msg.concat(...res.map(res => fmtDanResult(res, 1).flat()))
+}
+
+export function fmtDanResult(
+  detail: RequirementResult | DetailResult<Cond>,
+  indent: number = 0
+) {
+  let msg: string[] = []
+
+  if ('type' in detail) {
+    msg.push(`${sp(indent)}Achievement(${$req.getKeyOrDefault(detail.type)}):`)
+    indent += 1
+  }
+  if ('cond' in detail) {
+    msg.push(
+      `${sp(indent)}${b(detail.result)} ${fmt_cond(detail, 'value' in detail ? detail.value : undefined)}`
+    )
+    if (detail.cond.type === OP.Extends) {
+      return msg
+    }
+    indent += 1
+  }
+
+  if ('detail' in detail) {
+    if (Array.isArray(detail.detail)) {
+      msg = msg.concat(...detail.detail.map(d => fmtDanResult(d, indent + 1)))
+    }
+    else if (typeof detail.detail === 'object') {
+      msg = msg.concat(fmtDanResult(detail.detail as DetailResult<Cond>, indent + 1))
+    }
+  }
+
+  return msg
+}
+
+export function fmt_cond<D extends DetailResult>(detail: D, value: D extends { value: infer V } ? V : undefined) {
+  const { cond } = detail
+  const { type } = cond
+
+  switch (type) {
+    case OP.BanchoBeatmapIdEq:
+    case OP.BeatmapMd5Eq:
+    case OP.AccGte:
+    case OP.ScoreGte:
+    case OP.ModeEq:
+    {
+      const { val } = cond
+      return `${$op.getKeyOrDefault(type)} ${val}, ${value}`
+    }
+
+    case OP.RulesetEq: {
+      const { val } = cond
+      return `${$req.getKeyOrDefault(type)} ${val}, ${value}`
+    }
+
+    case OP.Remark:
+    {
+      const { remark } = cond
+      return `Plug(${remark})`
+    }
+
+    case OP.StableModIncludeAny:
+    case OP.StableModIncludeAll:
+    {
+      const { val } = cond
+      return `${$op.getKeyOrDefault(type)} ${StableMod[val]}`
+    }
+
+    // op without attribute
+    case OP.NoPause:
+      return `${$op.getKeyOrDefault(type)}`
+
+    // referenced op
+    case OP.Extends:
+    {
+      const { val } = cond
+      return `${$op.getKeyOrDefault(type)} Achievement(${$req.getKeyOrDefault(val)})`
+    }
+
+    // deep op
+    case OP.AND:
+    case OP.OR:
+    case OP.NOT:
+      return `${$op.getKeyOrDefault(type)}`
+
+    default:
+      // return '???'
+      assertNotReachable(type)
+  }
 }
