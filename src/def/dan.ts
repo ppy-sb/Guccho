@@ -44,10 +44,10 @@ export interface Remarked<O, V> extends WrappedCond<O, V> {
 }
 
 export type UConcreteCond =
-  | ConcreteCond<OP.BanchoBeatmapIdEq, number>
+  | ConcreteCond<OP.BanchoBeatmapIdEq, string>
   | ConcreteCond<OP.BeatmapMd5Eq, string>
   | ConcreteCond<OP.AccGte, number>
-  | ConcreteCond<OP.ScoreGte, number>
+  | ConcreteCond<OP.ScoreGte, bigint>
   | ConcreteCond<OP.StableModIncludeAny, StableMod>
   | ConcreteCond<OP.StableModIncludeAll, StableMod>
   | ConcreteCond<OP.ModeEq, Mode>
