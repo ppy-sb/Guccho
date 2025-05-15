@@ -72,26 +72,86 @@ export class DanProvider extends Base<Id, ScoreId> {
 
   drizzle = useDrizzle(schema)
   async get(id: Id, tx: Database = this.drizzle): Promise<DatabaseDan<Id, DatabaseRequirementCondBinding<Id, Requirement, Cond>>> {
-    const dan = await tx.query.dans.findFirst({
-      where(fields, operators) {
-        return operators.eq(fields.id, id)
-      },
-      orderBy: dan => asc(dan.id),
-      with: {
-        requirements: {
-          columns: {
-            condId: true,
-            type: true,
-          },
-        },
-      },
-    })
+    const dans = aliasedTable(schema.dans, 'd')
+    const condTree = this.#virtualTableDanTreeAlias('cond_tree')
+    const danCondBinding = aliasedTable(schema.requirementCondBindings, 'dc')
 
-    if (!dan) {
-      throw new Error(GucchoError[GucchoError.DanNotFound])
+    const _sql = tx
+      .select({
+        id: dans.id,
+        name: dans.name,
+        description: dans.description,
+        creator: dans.creator,
+        createdAt: dans.createdAt,
+        updater: dans.updater,
+        updatedAt: dans.updatedAt,
+
+        requirements: sql<Array<[Requirement, Id]>>`
+            CAST(
+              CONCAT(
+                '[',
+                GROUP_CONCAT(
+                  DISTINCT JSON_ARRAY(
+                    ${danCondBinding.type},
+                    ${danCondBinding.condId}
+                  )
+                ),
+                ']'
+              ) AS JSON
+            )`.as('requirements'),
+
+        fullTree: sql<Array<[Id, OP, string, Id]>>`JSON_ARRAYAGG(
+              JSON_ARRAY(
+                ${condTree.column.id},
+                ${condTree.column.type},
+                ${condTree.column.value},
+                ${condTree.column.parent}
+              )
+            )`.as('full_tree'),
+      })
+      .from(dans)
+      .innerJoin(danCondBinding, eq(dans.id, danCondBinding.danId))
+      .innerJoin(condTree.aliasedTable, eq(danCondBinding.condId, condTree.column.root))
+      .where(eq(dans.id, id))
+      .groupBy(dans.id)
+      .orderBy(
+        desc(dans.updatedAt),
+        desc(dans.id),
+      )
+      .limit(1)
+
+    try {
+      const result = await _sql.then(res => res[0])
+      if (!result) {
+        throwGucchoError(GucchoError.DanNotFound)
+      }
+
+      const conds = this.#buildCondTreeMem(
+        result.requirements
+          .map(([_, id]) => id),
+        result.fullTree
+          .map(([id, type, value, parent]) => ({ id, type, value, parent }))
+          .toSorted((a, b) => a.id - b.id)
+      )
+
+      return {
+        ...pick(result, ['id', 'name', 'description']),
+        creator: result.creator ?? undefined,
+        updater: result.updater ?? undefined,
+        createdAt: result.createdAt,
+        updatedAt: result.updatedAt,
+        requirements: result.requirements.map(([type, rootCond]) => {
+          return {
+            type,
+            cond: conds[rootCond],
+          }
+        }),
+      }
     }
-
-    return await this.getDanWithRequirements(dan, tx)
+    catch (e) {
+      console.error(e)
+      throw e
+    }
   }
 
   async getDanWithRequirements(dan: {
