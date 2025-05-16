@@ -930,8 +930,8 @@ export class DanProvider extends Base<Id, ScoreId> {
       // 5. Return the updated dan object
       const newDan = await this.get(id, tx)
 
-      // 5.1 background job run cond and save scores
-      this.runCondAndSaveScores(newDan, tx)
+      // 5.1 run cond and save scores
+      await this.runCondAndSaveScores(newDan, tx)
 
       return newDan
     }).catch((e) => {
