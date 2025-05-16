@@ -44,10 +44,10 @@ export interface Remarked<O, V> extends WrappedCond<O, V> {
 }
 
 export type UConcreteCond =
-  | ConcreteCond<OP.BanchoBeatmapIdEq, number>
+  | ConcreteCond<OP.BanchoBeatmapIdEq, string>
   | ConcreteCond<OP.BeatmapMd5Eq, string>
   | ConcreteCond<OP.AccGte, number>
-  | ConcreteCond<OP.ScoreGte, number>
+  | ConcreteCond<OP.ScoreGte, bigint>
   | ConcreteCond<OP.StableModIncludeAny, StableMod>
   | ConcreteCond<OP.StableModIncludeAll, StableMod>
   | ConcreteCond<OP.ModeEq, Mode>
@@ -160,7 +160,7 @@ export type DatabaseRequirementResult<I, RCBinding extends DatabaseRequirementCo
 
 export type ValidatingScore = ScoreCompact<any, Mode> & {
   beatmap: BeatmapCompact<any, any>
-  nonstop: boolean
+  noPause: boolean
   player: Pick<UserCompact<any>, 'id' | 'name' | 'safeName'>
   mode: Mode
   ruleset: Ruleset

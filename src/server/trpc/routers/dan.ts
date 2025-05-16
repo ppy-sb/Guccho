@@ -194,10 +194,6 @@ export const router = _router({
         })
       )
       .mutation(async ({ input }) => {
-        const dan = await dans.get(DanProvider.stringToId(input.dan.id))
-        if (!dan) {
-          throwGucchoError(GucchoError.DanNotFound)
-        }
         await dans.recalcQualifiedScores({
           dan: mapId(input.dan, DanProvider.stringToId),
           score: {

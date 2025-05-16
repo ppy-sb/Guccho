@@ -3,160 +3,218 @@ import { BeatmapSource } from '~/def/beatmap'
 import {
   type ConcreteCond,
   type Cond,
-  type CondBase,
   type Dan,
 
   type DetailResult,
   OP,
-  type Remarked,
   Requirement,
   type RequirementCondBinding,
   type RequirementResult,
   type ValidatingScore,
-  type WrappedCond,
 } from '~/def/dan'
-import { StableMod } from '~/def/score'
-import type { Mode } from '~/def'
+import { type StableMod } from '~/def/score'
 
-const $op = $enum(OP)
 const $req = $enum(Requirement)
 
-export function pretty_result(
-  res: RequirementResult[],
-  usecase: Dan,
-  score: ValidatingScore
-) {
-  const msg: string[] = []
+export type TransformedUsecase<AB extends RequirementCondBinding<Requirement, Cond>> = (score: ValidatingScore, runtimeCtx?: TransformedRuntimeContext<AB>) => RequirementResult<AB>[]
 
-  msg.push(`usecase: ${usecase.name}`)
-  msg.push(`description: ${usecase.name}`)
-  msg.push(
-    `score: Score(player=${score.player.name}(${score.player.id}), score=${score.score}, accuracy=${score.accuracy}, nonstop=${score.nonstop})`
-  )
-  msg.push(
-    `beatmap: Beatmap(creator=${score.beatmap.creator}, version=${score.beatmap.version}, mode=${score.beatmap.mode}, md5=${score.beatmap.md5})`
-  )
+type CondHash = ReturnType<typeof getHash>
 
-  return msg.concat(...res.map(res => fmtDanResult(res, 1).flat()))
+interface TransformContext<AB extends RequirementCondBinding<Requirement, Cond>> {
+  transformed: Map<CondHash, TransformedCond<AB>>
+  achievements: readonly AB[]
 }
 
-export function fmtDanResult(
-  detail: RequirementResult | DetailResult<Cond>,
-  indent: number = 0
-) {
-  let msg: string[] = []
-
-  if ('type' in detail) {
-    msg.push(`${sp(indent)}Achievement(${$req.getKeyOrDefault(detail.type)}):`)
-    indent += 1
-  }
-  if ('cond' in detail) {
-    msg.push(
-      `${sp(indent)}${b(detail.result)} ${fmt_cond(detail, 'value' in detail ? detail.value : undefined)}`
-    )
-    if (detail.cond.type === OP.Extends) {
-      return msg
-    }
-    indent += 1
-  }
-
-  if ('detail' in detail) {
-    if (Array.isArray(detail.detail)) {
-      msg = msg.concat(...detail.detail.map(d => fmtDanResult(d, indent + 1)))
-    }
-    else if (typeof detail.detail === 'object') {
-      msg = msg.concat(fmtDanResult(detail.detail as DetailResult<Cond>, indent + 1))
-    }
-  }
-
-  return msg
+interface TransformedRuntimeContext<AB extends RequirementCondBinding<Requirement, Cond>> {
+  results: Map<CondHash, DetailResult<Cond, AB>>
 }
 
-export function fmt_cond<D extends DetailResult>(detail: D, value: D extends { value: infer V } ? V : undefined) {
-  const { cond } = detail
-  const { type } = cond
+interface JITContext<AB extends RequirementCondBinding<Requirement, Cond>> extends TransformedRuntimeContext<AB> {
+  achievements: readonly AB[]
+}
 
-  switch (type) {
-    case OP.BanchoBeatmapIdEq:
-    case OP.BeatmapMd5Eq:
-    case OP.AccGte:
-    case OP.ScoreGte:
-    case OP.ModeEq:
-    {
-      const { val } = cond
-      return `${$op.getKeyOrDefault(type)} ${val}, ${value}`
+export type TransformedCond<AB extends RequirementCondBinding<Requirement, Cond>> = (
+  score: ValidatingScore,
+  runtimeCtx: TransformedRuntimeContext<AB>
+) => DetailResult<Cond, AB>
+
+export function transformUsecase<AB extends RequirementCondBinding<Requirement, Cond>>(
+  usecase: Dan<AB>,
+): TransformedUsecase<AB> {
+  const transformCtx: TransformContext<AB> = {
+    transformed: new Map(),
+    achievements: usecase.requirements,
+  }
+  const transformed: Array<{
+    ach: Requirement
+    run: TransformedCond<AB>
+  }> = []
+  for (const { type: achievement, cond: check_cond } of usecase.requirements) {
+    const r = transformCond(check_cond, transformCtx)
+    transformCtx.transformed.set(getHash(check_cond), r)
+    transformed.push({
+      ach: achievement,
+      run: r,
+    })
+  }
+
+  return (score, runtimeCtx = { results: new Map() }) => {
+    const check_result: RequirementResult<AB>[] = []
+    for (const { ach, run } of transformed) {
+      const r = run(score, runtimeCtx)
+      check_result.push({
+        achievement: ach,
+        result: r.result,
+        detail: r,
+      } as unknown as RequirementResult<AB>)
     }
 
-    case OP.RulesetEq: {
-      const { val } = cond
-      return `${$req.getKeyOrDefault(type)} ${val}, ${value}`
-    }
-
-    case OP.Remark:
-    {
-      const { remark } = cond
-      return `Plug(${remark})`
-    }
-
-    case OP.StableModIncludeAny:
-    case OP.StableModIncludeAll:
-    {
-      const { val } = cond
-      return `${$op.getKeyOrDefault(type)} ${StableMod[val]}`
-    }
-
-    // op without attribute
-    case OP.NoPause:
-      return `${$op.getKeyOrDefault(type)}`
-
-    // referenced op
-    case OP.Extends:
-    {
-      const { val } = cond
-      return `${$op.getKeyOrDefault(type)} Achievement(${$req.getKeyOrDefault(val)})`
-    }
-
-    // deep op
-    case OP.AND:
-    case OP.OR:
-    case OP.NOT:
-      return `${$op.getKeyOrDefault(type)}`
-
-    default:
-      // return '???'
-      assertNotReachable(type)
+    return check_result
   }
 }
 
-export function run_usecase<AB extends RequirementCondBinding<Requirement, Cond>>(
+export function transformCond<AB extends RequirementCondBinding<Requirement, Cond>>(
+  cond: Cond,
+  transformCtx: TransformContext<AB>
+): TransformedCond<AB> {
+  const hashed = getHash(cond)
+  const cached = transformCtx.transformed.get(hashed)
+  if (cached) {
+    return cached
+  }
+  const result = transformCondNoCache(cond, transformCtx)
+  transformCtx.transformed.set(hashed, result)
+  return cacheResult(result)
+}
+
+export function runUsecase<AB extends RequirementCondBinding<Requirement, Cond>>(
   usecase: Dan<AB>,
   score: ValidatingScore
 ): RequirementResult<AB>[] {
-  const check_result: RequirementResult<AB>[] = []
-  const caches: DetailResult<AB['cond'], AB>[] = []
-  for (const { type: achievement, cond: check_cond } of usecase.requirements) {
-    const r = run_cond<AB['cond'], AB>(
-      check_cond,
-      usecase.requirements,
-      score,
-      caches
-    )
-    caches.push(r)
-    check_result.push({
+  const checkResult: RequirementResult<AB>[] = []
+  const results: Map<ReturnType<typeof getHash>, DetailResult<Cond, AB>> = new Map()
+  for (const { type: achievement, cond: checkingCond } of usecase.requirements) {
+    const r = runCond(checkingCond, score, { achievements: usecase.requirements, results })
+    checkResult.push({
       achievement,
       result: r.result,
       detail: r,
-    } as any)
+    } as unknown as RequirementResult<AB>)
   }
-  return check_result
+  return checkResult
 }
 
-export function run_cond<C extends Cond, AB extends RequirementCondBinding<Requirement, Cond>>(
-  cond: C,
-  achievements: readonly AB[],
+export function runCond<AB extends RequirementCondBinding<Requirement, Cond>>(
+  cond: Cond,
   score: ValidatingScore,
-  results: DetailResult<AB['cond'], AB>[] = []
-): DetailResult<C, AB> {
+  ctx: JITContext<AB>
+): DetailResult<Cond, AB> {
+  const hashed = getHash(cond)
+  const cached = ctx.results.get(hashed)
+  if (cached) {
+    return cached
+  }
+
+  const res = runCondNoCache(cond, score, ctx)
+  ctx.results.set(hashed, res)
+  return res
+}
+
+function transformCondNoCache<AB extends RequirementCondBinding<Requirement, Cond>>(
+  cond: Cond,
+  transformCtx: TransformContext<AB>
+): TransformedCond<AB> {
+  switch (cond.type) {
+    case OP.Remark: {
+      const { remark, cond: _cond } = cond
+      const _deep = transformCond<AB>(_cond, transformCtx)
+      return (score, runtimeCtx) => {
+        const result = _deep(score, runtimeCtx)
+        return {
+          cond,
+          remark,
+          result: result.result,
+          detail: result,
+        } as DetailResult<Cond, AB>
+      }
+    }
+    case OP.NOT: {
+      const { cond: not } = cond
+      const _deep = transformCond<AB>(not, transformCtx)
+      return (score, runtimeCtx) => {
+        const result = _deep(score, runtimeCtx)
+        return {
+          cond,
+          result: !result.result,
+          detail: result,
+        } as DetailResult<Cond, AB>
+      }
+    }
+    case OP.AND: {
+      const _deep = cond.cond.map(c => transformCond<AB>(c, transformCtx))
+      return (score, runtimeCtx) => {
+        const _results = _deep.map(p => p(score, runtimeCtx))
+        return {
+          cond,
+          result: _results.every(r => r.result),
+          detail: _results,
+        } as DetailResult<Cond, AB>
+      }
+    }
+    case OP.OR: {
+      const _deep = cond.cond.map(c => transformCond<AB>(c, transformCtx))
+      return (score, runtimeCtx) => {
+        const _results = _deep.map(p => p(score, runtimeCtx))
+        return {
+          cond,
+          result: _results.some(r => r.result),
+          detail: _results,
+        } as DetailResult<Cond, AB>
+      }
+    }
+    case OP.Extends: {
+      const { val } = cond
+      const compileTimeFoundCond = transformCtx.achievements.find(({ type: achievement }) => achievement === val)?.cond
+
+      if (!compileTimeFoundCond) {
+        console.warn(`extending achievement (${$req.getKeyOrDefault(val)}) not found during compile time.`)
+      }
+
+      // pre-compile the extending achievement
+      if (compileTimeFoundCond) {
+        transformCond<AB>(compileTimeFoundCond, transformCtx)
+      }
+
+      return (score, runtimeCtx) => {
+        let extendingCond: Cond
+        if (compileTimeFoundCond) {
+          extendingCond = compileTimeFoundCond
+        }
+        else {
+          extendingCond = transformCtx.achievements.find(({ type: achievement }) => achievement === val)?.cond
+            ?? raiseError(`extending achievement (${$req.getKeyOrDefault(val)}) not found`)
+        }
+
+        const result = transformCond<AB>(extendingCond, transformCtx)(score, runtimeCtx)
+        return {
+          cond,
+          result: result.result,
+          detail: result,
+        } as unknown as DetailResult<ConcreteCond<OP.Extends, Requirement>, AB>
+      }
+    }
+    default: {
+      const jit = { achievements: transformCtx.achievements }
+      return (score, ctx) => runCondNoCache(cond, score, Object.assign(jit, ctx))
+    }
+  }
+}
+
+function runCondNoCache<AB extends RequirementCondBinding<Requirement, Cond>>(
+  cond: Cond,
+  score: ValidatingScore,
+  ctx: JITContext<AB>
+): DetailResult<Cond, AB> {
   const { type } = cond
   switch (type) {
     case OP.BeatmapMd5Eq: {
@@ -165,22 +223,21 @@ export function run_cond<C extends Cond, AB extends RequirementCondBinding<Requi
         cond,
         result: score.beatmap.md5 === val,
         value: score.beatmap.md5,
-      } as DetailResult<C, AB>
+      } as DetailResult<Cond, AB>
     }
     case OP.BanchoBeatmapIdEq: {
       if (score.beatmap.source !== BeatmapSource.Bancho) {
         return {
           cond,
           result: false,
-          value: null,
-        } as DetailResult<C, AB>
+        } as DetailResult<Cond, AB>
       }
       const { val } = cond
       return {
         cond,
         result: score.beatmap.foreignId === val,
         value: score.beatmap.foreignId,
-      } as DetailResult<C, AB>
+      } as DetailResult<Cond, AB>
     }
     case OP.AccGte: {
       const { val } = cond
@@ -188,7 +245,7 @@ export function run_cond<C extends Cond, AB extends RequirementCondBinding<Requi
         cond,
         result: score.accuracy >= val,
         value: score.accuracy,
-      } as DetailResult<C, AB>
+      } as DetailResult<Cond, AB>
     }
     case OP.ScoreGte: {
       const { val } = cond
@@ -196,14 +253,14 @@ export function run_cond<C extends Cond, AB extends RequirementCondBinding<Requi
         cond,
         result: score.score >= val,
         value: score.score,
-      } as DetailResult<C, AB>
+      } as DetailResult<Cond, AB>
     }
     case OP.NoPause: {
       return {
         cond,
-        result: score.nonstop,
-        value: score.nonstop,
-      } as DetailResult<C, AB>
+        result: score.noPause,
+        value: score.noPause,
+      } as DetailResult<Cond, AB>
     }
     case OP.StableModIncludeAny: {
       const { val } = cond
@@ -212,7 +269,7 @@ export function run_cond<C extends Cond, AB extends RequirementCondBinding<Requi
         cond,
         result: (stbMod & val) !== 0,
         value: val,
-      } as DetailResult<C, AB>
+      } as DetailResult<Cond, AB>
     }
     case OP.StableModIncludeAll: {
       const { val } = cond
@@ -221,7 +278,7 @@ export function run_cond<C extends Cond, AB extends RequirementCondBinding<Requi
         cond,
         result: (stbMod & val) === val,
         value: val,
-      } as DetailResult<C, AB>
+      } as DetailResult<Cond, AB>
     }
     case OP.ModeEq: {
       const { val } = cond
@@ -229,7 +286,7 @@ export function run_cond<C extends Cond, AB extends RequirementCondBinding<Requi
         cond,
         result: score.mode === val,
         value: val,
-      } as DetailResult<C, AB>
+      } as DetailResult<Cond, AB>
     }
     case OP.RulesetEq: {
       const { val } = cond
@@ -237,128 +294,66 @@ export function run_cond<C extends Cond, AB extends RequirementCondBinding<Requi
         cond,
         result: score.ruleset === val,
         value: val,
-      } as DetailResult<C, AB>
+      } as DetailResult<Cond, AB>
     }
     case OP.Remark: {
       const { remark, cond: _cond } = cond
-      const result = run_cond(_cond, achievements, score, results)
+      const _result = runCond(_cond, score, ctx)
       return {
         cond,
         remark,
-        result: result.result,
-        detail: result,
-      } as unknown as DetailResult<C, AB>
+        result: _result.result,
+        detail: _result,
+      } as unknown as DetailResult<Cond, AB>
     }
     case OP.NOT: {
       const { cond: not } = cond
-      const result = run_cond(not, achievements, score, results)
+      const _result = runCond(not, score, ctx)
       return {
         cond,
-        result: !result.result,
-        detail: result,
-      } as unknown as DetailResult<C, AB>
+        result: !_result.result,
+        detail: _result,
+      } as DetailResult<Cond, AB>
     }
     case OP.AND: {
       const _results = cond.cond.map(c =>
-        run_cond(c, achievements, score, results)
+        runCond(c, score, ctx)
       )
       return {
         cond,
         result: _results.every(r => r.result),
         detail: _results,
-      } as unknown as DetailResult<C, AB>
+      } as unknown as DetailResult<Cond, AB>
     }
     case OP.OR: {
       const _results = cond.cond.map(c =>
-        run_cond(c, achievements, score, results)
+        runCond(c, score, ctx)
       )
       return {
         cond,
         result: _results.some(r => r.result),
         detail: _results,
-      } as unknown as DetailResult<C, AB>
+      } as unknown as DetailResult<Cond, AB>
     }
     case OP.Extends: {
       const { val } = cond
-      const _cond
-        = achievements.find(
+      const extendingCond
+        = ctx.achievements.find(
           ({ type: achievement }) => achievement === val
         )?.cond
         ?? raiseError(
           `extending achievement (${$req.getKeyOrDefault(val)}) not found`
         )
-      const cached = results.find(i => i.cond === _cond)
-      if (cached) {
-        return {
-          cond,
-          result: cached.result,
-          detail: cached,
-        } as unknown as DetailResult<C, AB>
-      }
-      const result = run_cond(_cond, achievements, score, results)
+      const extendingCondResult = runCond(extendingCond, score, ctx)
       return {
         cond,
-        result: result.result,
-        detail: result,
-      } as unknown as DetailResult<C, AB>
+        result: extendingCondResult.result,
+        detail: extendingCondResult,
+      } as unknown as DetailResult<Cond, AB>
     }
     default:
       assertNotReachable(type)
   }
-}
-
-export function $dan<AB extends RequirementCondBinding<Requirement, Cond>>(name: string, opts: { id: number; description: string; requirements: readonly AB[] }): Dan<AB> {
-  return { name, ...opts }
-}
-export function $requirement<A extends Requirement, C extends Cond>(achievement: A, cond: C): RequirementCondBinding<A, C> {
-  return { type: achievement, cond }
-}
-
-export function $remark<C>(value: string, cond: C): Remarked<OP.Remark, C> {
-  return { type: OP.Remark, remark: value, cond }
-}
-
-export function $or<C extends Cond[]>(...cond: C): WrappedCond<OP.OR, C> {
-  return { type: OP.OR, cond }
-}
-
-export function $and<C extends Cond[]>(...cond: C): WrappedCond<OP.AND, C> {
-  return { type: OP.AND, cond }
-}
-
-export function $not<C extends Cond>(cond: C): WrappedCond<OP.NOT, C> {
-  return { type: OP.NOT, cond }
-}
-export function $modeEq<C extends Mode>(val: C): ConcreteCond<OP.ModeEq, C> {
-  return { type: OP.ModeEq, val }
-}
-
-export function $extendsAchievement<C extends Requirement>(val: C): ConcreteCond<OP.Extends, C> {
-  return { type: OP.Extends, val }
-}
-
-export function $banchoBeatmapIdEq<C>(val: C): ConcreteCond<OP.BanchoBeatmapIdEq, C> {
-  return { type: OP.BanchoBeatmapIdEq, val }
-}
-
-export function $beatmapMd5Eq<C>(val: C): ConcreteCond<OP.BeatmapMd5Eq, C> {
-  return { type: OP.BeatmapMd5Eq, val }
-}
-
-export function $noPause(): CondBase<OP.NoPause> {
-  return { type: OP.NoPause }
-}
-
-export function $accGte<C>(val: C): ConcreteCond<OP.AccGte, C> {
-  return { type: OP.AccGte, val }
-}
-
-export function $scoreGte<C>(val: C): ConcreteCond<OP.ScoreGte, C> {
-  return { type: OP.ScoreGte, val }
-}
-
-export function $withStableMod<C extends StableMod>(mod: C): ConcreteCond<OP.StableModIncludeAny, C> {
-  return { type: OP.StableModIncludeAny, val: mod }
 }
 
 export function validateCond<T extends Cond>(cond: T): T {
@@ -400,12 +395,41 @@ export function validateUsecase<U extends Dan>(compose: U): U {
   }
 }
 
-function sp(n: number) {
-  return '  '.repeat(n)
-}
-function b(_b: boolean) {
-  return _b ? '✓' : '✗'
-}
 function mergeStableMods(mods: StableMod[]): StableMod {
   return mods.reduce((a, b) => a | b, 0 as StableMod)
+}
+
+function getHash(cond: Cond): string {
+  switch (cond.type) {
+    case OP.BanchoBeatmapIdEq:
+    case OP.BeatmapMd5Eq:
+    case OP.AccGte:
+    case OP.ScoreGte:
+    case OP.ModeEq:
+    case OP.StableModIncludeAny:
+    case OP.StableModIncludeAll:
+    case OP.RulesetEq:
+    case OP.Extends:
+      return `${cond.type}:${cond.val}`
+    case OP.NoPause:
+      return cond.type
+    case OP.NOT:
+      return `${cond.type}:${getHash(cond.cond)}`
+    case OP.Remark:
+      return `${cond.type}:${cond.remark}:${getHash(cond.cond)}`
+    case OP.AND:
+    case OP.OR:
+      // Sort to ensure order-independence
+      return `${cond.type}:${cond.cond.map(getHash).sort().join('&')}`
+    default:
+      return assertNotReachable(cond)
+  }
+}
+
+function cacheResult<T extends TransformedCond<RequirementCondBinding<Requirement, Cond>>>(cb: T): T {
+  return ((score: ValidatingScore, runtimeCtx) => {
+    const result = cb(score, runtimeCtx)
+    runtimeCtx.results.set(getHash(result.cond), result)
+    return result
+  }) as T
 }

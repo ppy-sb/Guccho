@@ -35,6 +35,8 @@ import { assertNotReachable, pick } from '~/common/utils'
 
 type Database = MySql2Database<typeof schema>
 
+type InternalQueryDanRow = Awaited<ReturnType<DanProvider['_internal_queryDan']>['sql']>[number]
+
 export class DanProvider extends Base<Id, ScoreId> {
   static readonly idToString = idToString
   static readonly stringToId = stringToId
@@ -72,26 +74,17 @@ export class DanProvider extends Base<Id, ScoreId> {
 
   drizzle = useDrizzle(schema)
   async get(id: Id, tx: Database = this.drizzle): Promise<DatabaseDan<Id, DatabaseRequirementCondBinding<Id, Requirement, Cond>>> {
-    const dan = await tx.query.dans.findFirst({
-      where(fields, operators) {
-        return operators.eq(fields.id, id)
-      },
-      orderBy: dan => asc(dan.id),
-      with: {
-        requirements: {
-          columns: {
-            condId: true,
-            type: true,
-          },
-        },
-      },
-    })
+    const { sql, table: { dans } } = this._internal_queryDan(tx)
 
-    if (!dan) {
-      throw new Error(GucchoError[GucchoError.DanNotFound])
+    const result = await sql
+      .where(eq(dans.id, id))
+      .then(res => res[0])
+
+    if (!result) {
+      throwGucchoError(GucchoError.DanNotFound)
     }
 
-    return await this.getDanWithRequirements(dan, tx)
+    return this._internal_fromRowToDan(result)
   }
 
   async getDanWithRequirements(dan: {
@@ -937,8 +930,8 @@ export class DanProvider extends Base<Id, ScoreId> {
       // 5. Return the updated dan object
       const newDan = await this.get(id, tx)
 
-      // 5.1 background job run cond and save scores
-      this.runCondAndSaveScores(newDan, tx)
+      // 5.1 run cond and save scores
+      await this.runCondAndSaveScores(newDan, tx)
 
       return newDan
     }).catch((e) => {
@@ -1216,19 +1209,90 @@ FROM
     } as const
   }
 
-  async exportAll(): Promise<DatabaseDan<number, DatabaseRequirementCondBinding<number, Requirement, Cond>>[]> {
-    const dans = await this.drizzle.query.dans.findMany({
-      with: {
-        requirements: {
-          columns: {
-            condId: true,
-            type: true,
-          },
-        },
-      },
-    })
+  async exportAll(): Promise<DatabaseDan<Id, DatabaseRequirementCondBinding<number, Requirement, Cond>>[]> {
+    const { sql } = this._internal_queryDan()
 
-    return Promise.all(dans.map(item => this.getDanWithRequirements(item, this.drizzle)))
+    const res = await sql
+    return res.map((result) => {
+      return this._internal_fromRowToDan(result)
+    })
+  }
+
+  _internal_fromRowToDan(row: InternalQueryDanRow, optionalBuiltConds?: Record<string, Cond>): DatabaseDan<Id, DatabaseRequirementCondBinding<Id, Requirement, Cond>> {
+    const conds = optionalBuiltConds || this.#buildCondTreeMem(
+      row.requirements
+        .map(([_, id]) => id),
+      row.fullTree
+        .map(([id, type, value, parent]) => ({ id, type, value, parent }))
+        .toSorted((a, b) => a.id - b.id)
+    )
+
+    return {
+      ...pick(row, ['id', 'name', 'description']),
+      creator: row.creator ?? undefined,
+      updater: row.updater ?? undefined,
+      createdAt: row.createdAt,
+      updatedAt: row.updatedAt,
+      requirements: row.requirements.map(([type, rootCond]) => {
+        return {
+          type,
+          cond: conds[rootCond],
+        }
+      }),
+    }
+  }
+
+  _internal_queryDan(tx: Database = this.drizzle) {
+    const dans = aliasedTable(schema.dans, 'd')
+    const condTree = this.#virtualTableDanTreeAlias('cond_tree')
+    const danCondBinding = aliasedTable(schema.requirementCondBindings, 'dc')
+
+    const _sql = tx
+      .select({
+        id: dans.id,
+        name: dans.name,
+        description: dans.description,
+        creator: dans.creator,
+        createdAt: dans.createdAt,
+        updater: dans.updater,
+        updatedAt: dans.updatedAt,
+
+        requirements: sql<Array<[Requirement, Id]>>`
+            CAST(
+              CONCAT(
+                '[',
+                GROUP_CONCAT(
+                  DISTINCT JSON_ARRAY(
+                    ${danCondBinding.type},
+                    ${danCondBinding.condId}
+                  )
+                ),
+                ']'
+              ) AS JSON
+            )`.as('requirements'),
+
+        fullTree: sql<Array<[Id, OP, string, Id]>>`JSON_ARRAYAGG(
+              JSON_ARRAY(
+                ${condTree.column.id},
+                ${condTree.column.type},
+                ${condTree.column.value},
+                ${condTree.column.parent}
+              )
+            )`.as('full_tree'),
+      })
+      .from(dans)
+      .innerJoin(danCondBinding, eq(dans.id, danCondBinding.danId))
+      .innerJoin(condTree.aliasedTable, eq(danCondBinding.condId, condTree.column.root))
+      .groupBy(dans.id)
+
+    return {
+      sql: _sql,
+      table: {
+        dans,
+        condTree,
+        danCondBinding,
+      },
+    }
   }
 
   async searchCourses(a: Base.SearchDanCourseParam): Promise<PaginatedResult<DatabaseDanCourse<Id>>> {
@@ -1698,8 +1762,6 @@ function transformCond(condNode: CondNode): Cond {
       } as Cond
 
     case OP.AccGte:
-    case OP.BanchoBeatmapIdEq:
-    case OP.ScoreGte:
     case OP.StableModIncludeAny:
     case OP.StableModIncludeAll:
       // Leaf condition
@@ -1726,7 +1788,14 @@ function transformCond(condNode: CondNode): Cond {
         val: value as Requirement,
       }
 
+    case OP.ScoreGte:
+      return {
+        type,
+        val: BigInt(value),
+      }
+
     case OP.BeatmapMd5Eq:
+    case OP.BanchoBeatmapIdEq:
       return {
         type,
         val: value,

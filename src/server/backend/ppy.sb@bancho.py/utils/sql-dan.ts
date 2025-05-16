@@ -29,7 +29,7 @@ export function danSQLChunks<C extends Cond, AB extends RequirementCondBinding<R
     case OP.BanchoBeatmapIdEq: {
       return and(
         eq(table.beatmaps.server, sql.raw('\'osu!\'')),
-        eq(table.beatmaps.id, cond.val)
+        eq(table.beatmaps.id, sql`${cond.val}`)
       )!
     }
     case OP.AccGte: {
@@ -38,7 +38,7 @@ export function danSQLChunks<C extends Cond, AB extends RequirementCondBinding<R
     }
     case OP.ScoreGte: {
       const { val } = cond
-      return gte(table.scores.score, val)
+      return gte(table.scores.score, sql`${val}`)
     }
     case OP.NoPause: {
       return eq(table.patcherScoresMeta.noPause, true)
