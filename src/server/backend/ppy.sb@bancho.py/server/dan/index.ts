@@ -24,7 +24,19 @@ import { NoopDanProcessor } from './processor/noop'
 import { type BaseDanProcessor } from './processor/$base'
 import { type UserCompact } from '~/def/user'
 import { GucchoError } from '~/def/messages'
-import { type Cond, type Dan, type DatabaseDan, type DatabaseDanCourse, type DatabaseRequirementCondBinding, OP, Requirement } from '~/def/dan'
+import {
+  type ComparableNumericalScoreItem,
+  CompareOP,
+  type ComparisonCondition,
+  type Cond,
+  type Dan,
+  type DatabaseDan,
+  type DatabaseDanCourse,
+  type DatabaseRequirementCondBinding,
+  type EqualityCheck,
+  OP,
+  Requirement,
+} from '~/def/dan'
 import { DanProvider as Base } from '$base/server'
 import { validateCond } from '~/common/utils/dan'
 import { Mode, Ruleset } from '~/def'
@@ -1072,13 +1084,32 @@ export class DanProvider extends Base<Id, ScoreId> {
 
         return currentId
       }
+      case OP.Expect: {
+        // Leaf condition with no value
+        const [res] = await tx
+          .insert(schema.danConds)
+          .values({
+            type: cond.type,
+            value: cond.key,
+            parent: parentId,
+          })
+
+        const currentId = res.insertId
+        if (!currentId) {
+          throw new Error(`Failed to insert condition of type ${cond.type}`)
+        }
+        await this.saveComparison(cond.input, tx, currentId)
+        return currentId
+      }
+      case OP.AccGte:
+        return this.saveCondTree({ type: OP.Expect, key: 'accuracy', input: { type: CompareOP.Gte, val: cond.val } }, tx, parentId)
+      case OP.ScoreGte:
+        return this.saveCondTree({ type: OP.Expect, key: 'score', input: { type: CompareOP.Gte, val: cond.val } }, tx, parentId)
+
       default: {
-        // Leaf conditions with a value
         let valueStr: string
         switch (cond.type) {
-          case OP.AccGte:
           case OP.BanchoBeatmapIdEq:
-          case OP.ScoreGte:
           case OP.StableModIncludeAny:
           case OP.StableModIncludeAll:
           case OP.Extends:
@@ -1112,6 +1143,17 @@ export class DanProvider extends Base<Id, ScoreId> {
         return currentId
       }
     }
+  }
+
+  private async saveComparison(input: ComparisonCondition['input'], tx: Database, parentId: number): Promise<Id> {
+    const [id] = await tx
+      .insert(schema.danConds)
+      .values({
+        type: input.type,
+        value: input.val.toString(),
+        parent: parentId,
+      })
+    return id.insertId
   }
 
   private async deleteCondNodeWithChildren(condId: number, tx: Database): Promise<void> {
@@ -1805,6 +1847,79 @@ function transformCond(condNode: CondNode): Cond {
         type,
       }
 
+    case OP.Expect: {
+      const child = transformComparison(children[0] as unknown as CondNodeCompare) as unknown as EqualityCheck<any>
+      const _for_ts = value as ComparisonCondition['key']
+      switch (_for_ts) {
+        case 'mode':
+          return {
+            type,
+            key: 'mode',
+            input: child,
+          }
+
+        case 'ruleset':
+          return {
+            type,
+            key: 'ruleset',
+            input: child,
+          }
+
+        case 'score':
+          return {
+            type,
+            key: 'score',
+            input: {
+              type: child.type,
+              val: BigInt(child.val),
+            },
+          }
+
+        case 'maxCombo':
+        case 'accuracy':
+        case 'count.miss':
+        case 'count.50':
+        case 'count.100':
+        case 'count.300':
+        case 'count.geki':
+        case 'count.katu':
+        case 'count.200':
+        case 'count.max':
+          return {
+            type,
+            key: value as ComparableNumericalScoreItem,
+            input: {
+              type: child.type,
+              val: Number(child.val),
+            },
+          }
+
+        default:
+          assertNotReachable(_for_ts)
+      }
+
+      break
+    }
+
+    default:
+      assertNotReachable(type)
+  }
+}
+
+function transformComparison(condNode: CondNodeCompare): { type: ComparisonCondition['input']['type']; val: unknown } {
+  const { type, value } = condNode
+  switch (type) {
+    case CompareOP.Gt:
+    case CompareOP.Gte:
+    case CompareOP.Lt:
+    case CompareOP.Lte:
+    case CompareOP.Eq:
+    case CompareOP.Ne:
+      return {
+        type,
+        val: value,
+      }
+
     default:
       assertNotReachable(type)
   }
@@ -1816,6 +1931,12 @@ interface CondNode {
   value: string
   parent: number
   children: CondNode[]
+}
+interface CondNodeCompare {
+  id: number
+  type: CompareOP
+  value: string
+  parent: number
 }
 
 interface DanCondRow {

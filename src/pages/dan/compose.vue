@@ -87,6 +87,7 @@ function reset() {
 }
 
 async function saveDB() {
+  loading.value = true
   compose.value = {
     ...await app.$client.dan.save.mutate(compose.value, {
       context: {
@@ -95,6 +96,7 @@ async function saveDB() {
     }),
     _db: true,
   }
+  loading.value = false
 }
 async function deleteDB() {
   await app.$client.dan.delete.mutate(compose.value.id)
