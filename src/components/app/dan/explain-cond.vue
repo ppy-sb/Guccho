@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { $enum } from 'ts-enum-util'
 import {
+  CompareOP,
   type ConcreteCondOP,
   type Cond,
   OP,
@@ -13,6 +14,24 @@ withDefaults(defineProps<{ listMode?: boolean; cond: Cond; parent?: Cond }>(), {
 interface Loc extends Record<string, PathAccessibleObject> {
   dan: {
     cond: Record<OP, string>
+    cmp: Record<CompareOP, string>
+    key: {
+      mode: string
+      ruleset: string
+      accuracy: string
+      maxCombo: string
+      score: string
+      count: {
+        miss: string
+        50: string
+        100: string
+        300: string
+        geki: string
+        katu: string
+        200: string
+        max: string
+      }
+    }
   }
 }
 const messages = Object.freeze({
@@ -33,6 +52,32 @@ const messages = Object.freeze({
         [OP.NOT]: 'Not',
         [OP.Remark]: 'Remark: {remark} {val}',
         [OP.NoPause]: 'No Pause',
+        [OP.Expect]: 'Should',
+      },
+      cmp: {
+        [CompareOP.Gt]: '>',
+        [CompareOP.Gte]: '≥',
+        [CompareOP.Lt]: '<',
+        [CompareOP.Lte]: '≤',
+        [CompareOP.Eq]: '=',
+        [CompareOP.Ne]: '≠',
+      },
+      key: {
+        mode: '@:global.mode',
+        ruleset: '@:global.ruleset',
+        accuracy: '@:global.accuracy',
+        maxCombo: '@:global.max-combo',
+        score: 'Score',
+        count: {
+          miss: 'Miss',
+          50: '50',
+          100: '100',
+          300: '300',
+          geki: 'Geki',
+          katu: 'Katu',
+          200: '200',
+          max: 'Max',
+        },
       },
     },
   },
@@ -53,6 +98,32 @@ const messages = Object.freeze({
         [OP.NOT]: '不可以',
         [OP.Remark]: 'Remark: {remark} {val}',
         [OP.NoPause]: '无暂停',
+        [OP.Expect]: '应当',
+      },
+      cmp: {
+        [CompareOP.Gt]: '>',
+        [CompareOP.Gte]: '≥',
+        [CompareOP.Lt]: '<',
+        [CompareOP.Lte]: '≤',
+        [CompareOP.Eq]: '=',
+        [CompareOP.Ne]: '≠',
+      },
+      key: {
+        mode: '@:global.mode',
+        ruleset: '@:global.ruleset',
+        accuracy: '@:global.accuracy',
+        maxCombo: '@:global.max-combo',
+        score: 'Score',
+        count: {
+          miss: 'Miss',
+          50: '50',
+          100: '100',
+          300: '300',
+          geki: 'Geki',
+          katu: 'Katu',
+          200: '200',
+          max: 'Max',
+        },
       },
     },
   },
@@ -71,6 +142,7 @@ const tDan = tRoot.dan
 const tRequirement = tDan.requirement
 
 const tExp = getPath<Loc>()()
+const tLocalDan = tExp.dan
 const tCond = tExp.dan.cond
 
 const inline = [
@@ -102,7 +174,15 @@ zh-CN:
 </i18n>
 
 <template>
-  <template v-if="isConcreteCond(cond.type)">
+  <template v-if="cond.type === OP.Expect">
+    <span class="px-1 rounded bg-secondary/20 dark:bg-secondary/80text-secondary-content">
+      <span class="font-bold">{{ t(`dan.key.${cond.key}`) }}</span>
+      <!-- {{ t(tCond[cond.type].__path__) }} -->
+      {{ t(tLocalDan.cmp[cond.input.type].__path__) }}
+      <span class="font-bold">{{ cond.input.val }}<small v-if="cond.key === 'accuracy'">%</small></span>
+    </span>
+  </template>
+  <template v-else-if="isConcreteCond(cond.type)">
     <span v-if="cond.type === OP.NoPause" class="px-1 rounded bg-secondary/20 dark:bg-secondary/80text-secondary-content">
       {{ t(tCond[cond.type].__path__) }}
     </span>
@@ -182,42 +262,43 @@ zh-CN:
       </template>
     </i18n-t>
   </template>
-  <template v-else>
-    <i18n-t v-if="cond.type === OP.Remark" :keypath="tCond[cond.type].__path__">
-      <template #remark>
-        <span class="font-semibold">{{ cond.remark }}</span>
-      </template>
-      <template #val>
-        <app-dan-explain-cond :cond="cond.cond" :parent="cond" />
-      </template>
-    </i18n-t>
-    <span v-else-if="cond.type === OP.NOT">
-      <span class="badge badge-accent bg-accent/40 dark:bg-accent">{{ t(tCond[cond.type].__path__) }}</span>
-      <span>&nbsp;</span>
-      <app-dan-explain-cond :cond="cond.cond" :parent="cond" />
-    </span>
-    <template
-      v-else-if="cond.type === OP.AND || cond.type === OP.OR"
-    >
-      <div
-        class="inline-block mt-1 border-l-4" :class="{
-          'border-neutral ps-3': cond.type === OP.AND,
-          'border-accent/30 bg-accent/5 rounded-r px-3 py-2': cond.type === OP.OR,
-        }"
-      >
-        <template v-for="_cond, i in cond.cond" :key="i">
-          <app-dan-explain-cond :cond="_cond" :list-mode="true" />
-          <template v-if="i < cond.cond.length - 1">
-            <br v-if="cond.type === OP.OR" class="lg:hidden">
-            <span
-              :class="{
-                'badge badge-accent bg-accent/40 dark:bg-accent me-1 lg:mx-1': cond.type === OP.OR,
-              }"
-            >{{ cond.type === OP.AND ? ',' : `${t(tCond[cond.type].__path__)}` }}</span>
-            <br v-if="cond.type === OP.AND">
-          </template>
-        </template>
-      </div>
+  <i18n-t v-else-if="cond.type === OP.Remark" :keypath="tCond[cond.type].__path__">
+    <template #remark>
+      <span class="font-semibold">{{ cond.remark }}</span>
     </template>
+    <template #val>
+      <app-dan-explain-cond :cond="cond.cond" :parent="cond" />
+    </template>
+  </i18n-t>
+  <span v-else-if="cond.type === OP.NOT">
+    <span class="badge badge-accent bg-accent/40 dark:bg-accent">{{ t(tCond[cond.type].__path__) }}</span>
+    <span>&nbsp;</span>
+    <app-dan-explain-cond :cond="cond.cond" :parent="cond" />
+  </span>
+  <template
+    v-else-if="cond.type === OP.AND || cond.type === OP.OR"
+  >
+    <div
+      class="inline-block mt-1 border-l-4" :class="{
+        'border-neutral ps-3': cond.type === OP.AND,
+        'border-accent/30 bg-accent/5 rounded-r px-3 py-2': cond.type === OP.OR,
+      }"
+    >
+      <template v-for="_cond, i in cond.cond" :key="i">
+        <app-dan-explain-cond :cond="_cond" :list-mode="true" />
+        <template v-if="i < cond.cond.length - 1">
+          <br v-if="cond.type === OP.OR" class="lg:hidden">
+          <span
+            :class="{
+              'badge badge-accent bg-accent/40 dark:bg-accent me-1 lg:mx-1': cond.type === OP.OR,
+            }"
+          >{{ cond.type === OP.AND ? ',' : `${t(tCond[cond.type].__path__)}` }}</span>
+          <br v-if="cond.type === OP.AND">
+        </template>
+      </template>
+    </div>
+  </template>
+  <template v-else>
+    {{ assertNotReachable(cond) }}
   </template>
 </template>

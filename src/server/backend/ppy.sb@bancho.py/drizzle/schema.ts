@@ -2,10 +2,9 @@
 import { relations } from 'drizzle-orm'
 import { bigint, boolean, date, datetime, foreignKey, index, int, json, mysqlEnum, mysqlTable, primaryKey, text, timestamp, varchar } from 'drizzle-orm/mysql-core'
 import { clans, scores, users } from '../../bancho.py/drizzle/schema'
-import { OP, Requirement } from '../../../../def/dan'
+import { Requirement } from '../../../../def/dan'
 import { type ObjValueTuple } from '../../../../def/good-to-have'
 
-type OPTuple = ObjValueTuple<typeof OP>
 type RequirementTuple = ObjValueTuple<typeof Requirement>
 export {
   achievements, beatmaps, channels,
@@ -110,7 +109,7 @@ export const danCourseDans = mysqlTable('sb_dan_course_dans', {
 
 export const danConds = mysqlTable('sb_dan_conds', {
   id: int('id', { unsigned: true }).autoincrement().notNull().primaryKey(),
-  type: mysqlEnum('type', Object.values(OP) as OPTuple).notNull(),
+  type: varchar('type', { length: 32 }).notNull(),
   value: varchar('value', { length: 128 }).notNull(),
   parent: int('parent', { unsigned: true }),
 }, tbl => [
