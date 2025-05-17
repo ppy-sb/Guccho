@@ -1,23 +1,39 @@
 import { type ScoreCompact, type StableMod } from './score'
-import {
-  type BeatmapCompact,
-} from './beatmap'
+import { type BeatmapCompact } from './beatmap'
 import type { UserCompact } from './user'
 import { type Mode, type Ruleset } from '.'
+
+// =============================
+// Core Types
+// =============================
+
+interface WithId<I> {
+  id: I
+}
 
 export enum Requirement {
   Pass = 'pass',
   NoPause = 'no-pause',
 }
 
+// =============================
+// Operators & Conditions
+// =============================
+
 export enum OP {
-  Remark = 'rem',
-  OR = 'or',
+  // Logical operators
   AND = 'and',
+  OR = 'or',
   NOT = 'not',
+
+  // Special operators
+  Remark = 'rem',
+  Expect = 'expect',
+  Extends = 'extends',
+
+  // Game-specific operators
   ModeEq = 'mode-eq',
   RulesetEq = 'ruleset-eq',
-  Extends = 'extends',
   BanchoBeatmapIdEq = 'bancho/bm-id-eq',
   BeatmapMd5Eq = 'bm-md5-eq',
   NoPause = 'no-pause',
@@ -27,6 +43,17 @@ export enum OP {
   StableModIncludeAll = 'stable/mod-contains-all',
 }
 
+export enum CompareOP {
+  // Comparison operators
+  Gt = 'gt',
+  Gte = 'gte',
+  Lt = 'lt',
+  Lte = 'lte',
+  Eq = 'eq',
+  Ne = 'ne',
+}
+
+// Base condition types
 export interface CondBase<O> {
   type: O
 }
@@ -43,7 +70,41 @@ export interface Remarked<O, V> extends WrappedCond<O, V> {
   remark: string
 }
 
-export type UConcreteCond =
+export interface Compare<VKey, VInput> extends CondBase<OP> {
+  type: OP.Expect
+  key: VKey
+  input: VInput
+}
+
+// Operator type extractions
+export type ConcreteCondOP = ConcreteCondition['type']
+type DeepCondOP = LogicalCondition['type']
+type WrappingCondOP = WrappedCondition['type']
+type ExtendingCondOP = ExtendingCond['type']
+
+// =============================
+// Comparable Score Items
+// =============================
+
+export type ComparableNumericalScoreItem =
+  | 'accuracy'
+  | 'maxCombo'
+  | 'count.miss'
+  | 'count.50'
+  | 'count.100'
+  | 'count.300'
+  | 'count.geki'
+  | 'count.katu'
+  | 'count.200'
+  | 'count.max'
+
+export type ComparableBigintScoreItem = 'score'
+
+// =============================
+// Condition Combinations
+// =============================
+
+export type ConcreteCondition =
   | ConcreteCond<OP.BanchoBeatmapIdEq, string>
   | ConcreteCond<OP.BeatmapMd5Eq, string>
   | ConcreteCond<OP.AccGte, number>
@@ -54,43 +115,95 @@ export type UConcreteCond =
   | ConcreteCond<OP.RulesetEq, Ruleset>
   | CondBase<OP.NoPause>
 
-type UWrappedCond =
+type WrappedCondition =
   | WrappedCond<OP.NOT, Cond>
   | Remarked<OP.Remark, Cond>
 
-type UDeepCond =
+type LogicalCondition =
   | WrappedCond<OP.AND, readonly Cond[]>
   | WrappedCond<OP.OR, readonly Cond[]>
 
 type ExtendingCond = ConcreteCond<OP.Extends, Requirement>
-export type UComputedCond = UDeepCond | ExtendingCond
+
+export type CompareCheck<T> =
+  | ConcreteCond<CompareOP.Gt, T>
+  | ConcreteCond<CompareOP.Gte, T>
+  | ConcreteCond<CompareOP.Lt, T>
+  | ConcreteCond<CompareOP.Lte, T>
+  | ConcreteCond<CompareOP.Eq, T>
+  | ConcreteCond<CompareOP.Ne, T>
+
+export type EqualityCheck<V> =
+  | ConcreteCond<CompareOP.Eq, V>
+  | ConcreteCond<CompareOP.Ne, V>
+
+export type ComparisonCondition =
+  | Compare<ComparableNumericalScoreItem, CompareCheck<number>>
+  | Compare<ComparableBigintScoreItem, CompareCheck<bigint>>
+  | Compare<'mode', EqualityCheck<Mode>>
+  | Compare<'ruleset', EqualityCheck<Ruleset>>
+
+export type ComputedCondition =
+  | LogicalCondition
+  | ExtendingCond
+  | ComparisonCondition
+
 export type Cond =
-  | UConcreteCond
-  | UComputedCond
-  | UWrappedCond
+  | ConcreteCondition
+  | WrappedCondition
+  | ComputedCondition
 
-export type ConcreteCondOP = UConcreteCond['type']
-type DeepCondOP = UDeepCond['type']
-type WrappingCondOP = UWrappedCond['type']
-type ExtendingCondOP = ExtendingCond['type']
-
-interface WithId<I> {
-  id: I
-}
+// =============================
+// Dan Requirements & Results
+// =============================
 
 export interface RequirementCondBinding<R, C> {
   type: R
   cond: C
 }
 
-export interface DatabaseRequirementCondBinding<I, R, C> extends RequirementCondBinding<R, C> {
-  // dan: I
+export interface DatabaseRequirementCondBinding<_I, R, C> extends RequirementCondBinding<R, C> {
+  // dan: _I - unused but kept for consistency with other database types
 }
+
+export type DetailResult<
+  C extends Cond = Cond,
+  AB extends RequirementCondBinding<Requirement, Cond> = RequirementCondBinding<Requirement, Cond>,
+> = C extends ConcreteCond<infer _R extends ExtendingCondOP, infer _T extends Requirement>
+  ? {
+      cond: C
+      result: boolean
+      detail: DetailResult<Cond, AB>
+    }
+  : C extends ConcreteCondition
+    ? {
+        cond: C
+        result: boolean
+        value: C extends ConcreteCond<infer _O, infer _V> ? _V : never
+      }
+    : C extends WrappedCond<infer _R extends WrappingCondOP, infer T extends Cond>
+      ? {
+          cond: C
+          result: boolean
+          detail: DetailResult<T, AB>
+        }
+      : C extends WrappedCond<infer R extends DeepCondOP, infer T extends readonly Cond[]>
+        ? {
+            cond: WrappedCond<R, T>
+            result: boolean
+            detail: {
+              [k in keyof T]: DetailResult<T[k], AB>
+            }
+          }
+        : never
+
+// =============================
+// Domain Models
+// =============================
 
 export interface Dan<RCBinding extends RequirementCondBinding<Requirement, Cond> = RequirementCondBinding<Requirement, Cond>> {
   name: string
   description: string
-
   requirements: readonly RCBinding[]
 }
 
@@ -108,44 +221,20 @@ export interface DatabaseDanCourse<I, RCBinding extends DatabaseRequirementCondB
   updater?: I
   createdAt: Date
   updatedAt: Date
-
   dans: Array<DatabaseDan<I, RCBinding> & { shortName: string }>
-
 }
 
-export type DetailResult<
-  C extends Cond = Cond,
-  AB extends RequirementCondBinding<Requirement, Cond> = RequirementCondBinding<Requirement, Cond>,
-> =
-C extends ConcreteCond<infer R extends ExtendingCondOP, infer T extends Requirement>
-  ? {
-      cond: C
-      result: boolean
-      detail: RequirementResult<AB>
-    }
-  : C extends UConcreteCond
-    ? {
-        cond: C
-        result: boolean
-        value: C extends ConcreteCond<infer _O, infer _V> ? _V : never
-      }
-    : C extends WrappedCond<infer R extends WrappingCondOP, infer T extends Cond>
-      ? {
-          cond: C
-          result: boolean
-          detail: DetailResult<T, AB>
-        }
-      : C extends WrappedCond<infer R extends DeepCondOP, infer T extends readonly Cond[]>
-        ? {
-            cond: WrappedCond<R, T>
-            result: boolean
-            detail: {
-              [k in keyof T]: DetailResult<T[k], AB>;
-            }
-          }
-        : never
+// =============================
+// Score Validation
+// =============================
 
-// export type DatabaseDetailResult<I, C extends Cond = Cond, RCBinding extends DatabaseRequirementCondBinding<I, Requirement, Cond> = DatabaseRequirementCondBinding<I, Requirement, Cond>> = DetailResult<C, RCBinding> & WithId<I>
+export type ValidatingScore = ScoreCompact<any, Mode> & {
+  beatmap: BeatmapCompact<any, any>
+  noPause: boolean
+  player: Pick<UserCompact<any>, 'id' | 'name' | 'safeName'>
+  mode: Mode
+  ruleset: Ruleset
+}
 
 export type RequirementResult<AB extends RequirementCondBinding<Requirement, Cond> = RequirementCondBinding<Requirement, Cond>> =
   AB extends RequirementCondBinding<infer A extends Requirement, infer C extends Cond>
@@ -156,12 +245,7 @@ export type RequirementResult<AB extends RequirementCondBinding<Requirement, Con
       }
     : never
 
-export type DatabaseRequirementResult<I, RCBinding extends DatabaseRequirementCondBinding<I, Requirement, Cond> = DatabaseRequirementCondBinding<I, Requirement, Cond>> = RequirementResult<RCBinding> & WithId<I>
-
-export type ValidatingScore = ScoreCompact<any, Mode> & {
-  beatmap: BeatmapCompact<any, any>
-  noPause: boolean
-  player: Pick<UserCompact<any>, 'id' | 'name' | 'safeName'>
-  mode: Mode
-  ruleset: Ruleset
-}
+export type DatabaseRequirementResult<
+  I,
+  RCBinding extends DatabaseRequirementCondBinding<I, Requirement, Cond> = DatabaseRequirementCondBinding<I, Requirement, Cond>,
+> = RequirementResult<RCBinding> & WithId<I>
