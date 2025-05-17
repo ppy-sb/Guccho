@@ -1,10 +1,13 @@
 import { $enum } from 'ts-enum-util'
+import { Mode } from '../../def'
 import { BeatmapSource } from '~/def/beatmap'
 import {
+  CompareOP,
+  type ComparisonCondition,
   type ConcreteCond,
   type Cond,
-  type Dan,
 
+  type Dan,
   type DetailResult,
   OP,
   Requirement,
@@ -12,7 +15,7 @@ import {
   type RequirementResult,
   type ValidatingScore,
 } from '~/def/dan'
-import { type StableMod } from '~/def/score'
+import { type ManiaHitCount, type StableMod, type StandardHitCount } from '~/def/score'
 
 const $req = $enum(Requirement)
 
@@ -217,6 +220,9 @@ function runCondNoCache<AB extends RequirementCondBinding<Requirement, Cond>>(
 ): DetailResult<Cond, AB> {
   const { type } = cond
   switch (type) {
+    case OP.Expect: {
+      return compareCond(cond, score, ctx)
+    }
     case OP.BeatmapMd5Eq: {
       const { val } = cond
       return {
@@ -356,6 +362,85 @@ function runCondNoCache<AB extends RequirementCondBinding<Requirement, Cond>>(
   }
 }
 
+function compareCond<C extends ComparisonCondition, AB extends RequirementCondBinding<Requirement, Cond>>(
+  cond: C,
+  score: ValidatingScore,
+  ctx: JITContext<AB>
+): DetailResult<C, AB> {
+  const { input } = cond
+  const value = getCompareValue(cond, score)
+  switch (cond.input.type) {
+    case CompareOP.Eq:
+      return {
+        cond,
+        result: value === input.val,
+        value,
+      } as DetailResult<C, AB>
+    case CompareOP.Ne:
+      return {
+        cond,
+        result: value !== input.val,
+        value,
+      } as DetailResult<C, AB>
+    case CompareOP.Gt:
+      return {
+        cond,
+        result: value > input.val,
+        value,
+      } as DetailResult<C, AB>
+    case CompareOP.Lt:
+      return {
+        cond,
+        result: value < input.val,
+        value,
+      } as DetailResult<C, AB>
+    case CompareOP.Gte:
+      return {
+        cond,
+        result: value >= input.val,
+        value,
+      } as DetailResult<C, AB>
+    case CompareOP.Lte:
+      return {
+        cond,
+        result: value <= input.val,
+        value,
+      } as DetailResult<C, AB>
+    default: {
+      assertNotReachable(cond.input)
+    }
+  }
+}
+
+function getCompareValue<C extends ComparisonCondition>(cond: C, score: ValidatingScore) {
+  switch (cond.key) {
+    case 'score':
+    case 'accuracy':
+    case 'maxCombo':
+    case 'mode':
+    case 'ruleset':
+      return score[cond.key]
+    case 'count.miss':
+      return score.hit.miss
+    case 'count.50':
+      return score.hit[50]
+    case 'count.100':
+      return score.hit[100]
+    case 'count.300':
+      return score.hit[300]
+    case 'count.geki':
+      return score.mode === Mode.Mania ? 0 : (score.hit as StandardHitCount).geki
+    case 'count.katu':
+      return score.mode === Mode.Mania ? 0 : (score.hit as StandardHitCount).katu
+    case 'count.200':
+      return score.mode === Mode.Mania ? (score.hit as ManiaHitCount)[200] : 0
+    case 'count.max':
+      return score.mode === Mode.Mania ? (score.hit as ManiaHitCount).max : 0
+    default:
+      assertNotReachable(cond)
+  }
+}
+
 export function validateCond<T extends Cond>(cond: T): T {
   switch (cond.type) {
     case OP.BanchoBeatmapIdEq:
@@ -381,7 +466,23 @@ export function validateCond<T extends Cond>(cond: T): T {
     case OP.AND:
       return { type: cond.type, cond: cond.cond.filter(Boolean).map(validateCond) } as unknown as T
 
+    case OP.Expect:
+      return { type: cond.type, key: cond.key, input: validateCompareInput(cond.input) } as T
+
     default: assertNotReachable(cond)
+  }
+}
+
+export function validateCompareInput<T extends ComparisonCondition['input']>(input: T): T {
+  switch (input.type) {
+    case CompareOP.Eq:
+    case CompareOP.Ne:
+    case CompareOP.Gt:
+    case CompareOP.Lt:
+    case CompareOP.Gte:
+    case CompareOP.Lte:
+      return { type: input.type, val: input.val } as T
+    default: assertNotReachable(input)
   }
 }
 
@@ -421,6 +522,8 @@ function getHash(cond: Cond): string {
     case OP.OR:
       // Sort to ensure order-independence
       return `${cond.type}:${cond.cond.map(getHash).sort().join('&')}`
+    case OP.Expect:
+      return `${cond.type}:${cond.key}:${cond.input.type}:${cond.input.val}`
     default:
       return assertNotReachable(cond)
   }

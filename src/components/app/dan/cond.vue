@@ -3,6 +3,8 @@ import { $enum } from 'ts-enum-util'
 import draggable from 'vuedraggable'
 import { StableMod } from '~/def/score'
 import {
+  CompareOP,
+  type ComparisonCondition,
   type Cond,
   OP,
   Requirement,
@@ -29,7 +31,25 @@ const cond = defineModel<Cond>()
 interface Translation {
   dan: {
     cond: Record<OP, string>
+    cmp: Record<CompareOP, string>
     requirement: Record<Requirement, string>
+    key: {
+      mode: string
+      ruleset: string
+      accuracy: string
+      maxCombo: string
+      score: string
+      count: {
+        miss: string
+        50: string
+        100: string
+        300: string
+        geki: string
+        katu: string
+        200: string
+        max: string
+      }
+    }
   }
 }
 
@@ -58,6 +78,32 @@ const { t } = useI18n({
           [OP.NOT]: 'not',
           [OP.Remark]: 'Remark',
           [OP.NoPause]: 'No Pause',
+          [OP.Expect]: 'Should',
+        },
+        cmp: {
+          [CompareOP.Gt]: '>',
+          [CompareOP.Gte]: '≥',
+          [CompareOP.Lt]: '<',
+          [CompareOP.Lte]: '≤',
+          [CompareOP.Eq]: '=',
+          [CompareOP.Ne]: '≠',
+        },
+        key: {
+          mode: '@:global.mode',
+          ruleset: '@:global.ruleset',
+          accuracy: '@:global.accuracy',
+          maxCombo: '@:global.max-combo',
+          score: 'Score',
+          count: {
+            miss: 'Miss',
+            50: '50',
+            100: '100',
+            300: '300',
+            geki: 'Geki',
+            katu: 'Katu',
+            200: '200',
+            max: 'Max',
+          },
         },
       },
     },
@@ -66,6 +112,14 @@ const { t } = useI18n({
         requirement: {
           [Requirement.Pass]: 'Pass',
           [Requirement.NoPause]: '无暂停',
+        },
+        cmp: {
+          [CompareOP.Gt]: '>',
+          [CompareOP.Gte]: '≥',
+          [CompareOP.Lt]: '<',
+          [CompareOP.Lte]: '≤',
+          [CompareOP.Eq]: '=',
+          [CompareOP.Ne]: '≠',
         },
         cond: {
           [OP.AccGte]: 'ACC ≥',
@@ -82,11 +136,35 @@ const { t } = useI18n({
           [OP.NOT]: '不是',
           [OP.Remark]: '备注',
           [OP.NoPause]: '无暂停',
+          [OP.Expect]: '判断',
+        },
+        key: {
+          mode: '@:global.mode',
+          ruleset: '@:global.ruleset',
+          accuracy: '@:global.accuracy',
+          maxCombo: '@:global.max-combo',
+          score: '分数',
+          count: {
+            miss: 'Miss 的数量',
+            50: '50 的数量',
+            100: '100 的数量',
+            300: '300 的数量',
+            geki: 'Geki 的数量',
+            katu: 'Katu 的数量',
+            200: '200 的数量',
+            max: 'Max 的数量',
+          },
         },
       },
     },
   } satisfies Record<string, Translation>,
 })
+
+const comparisonKeys = ['mode', 'ruleset', 'accuracy', 'maxCombo', 'count.miss', 'count.50', 'count.100', 'count.300', 'count.geki', 'count.katu', 'count.200', 'count.max', 'score'] as ComparisonCondition['key'][]
+const numericalKeys = ['score', 'accuracy', 'maxCombo', 'count.miss', 'count.50', 'count.100', 'count.300', 'count.geki', 'count.katu', 'count.200', 'count.max'] as ComparisonCondition['key'][]
+const nonNumericalKeys = ['mode', 'ruleset']
+const nonNumericalComparionOPs = [CompareOP.Eq, CompareOP.Ne]
+const numericalComparisonOPs = [CompareOP.Gt, CompareOP.Gte, CompareOP.Lt, CompareOP.Lte, ...nonNumericalComparionOPs]
 
 const drag = ref(false)
 
@@ -105,6 +183,12 @@ const concrete = [
   OP.NoPause,
 ] as const
 
+function onSelectKey() {
+  // if (cond.value?.type !== OP.Compare) {
+
+  // }
+}
+
 function isConcreteCond(op: OP): op is typeof concrete[number] {
   return concrete.includes(op as any)
 }
@@ -116,14 +200,16 @@ function selectCond() {
   if (cond.value.type === OP.AND || cond.value.type === OP.OR) {
     cond.value.cond = []
   }
-
-  if (cond.value.type === OP.NOT) {
+  else if (cond.value.type === OP.NOT) {
     if (Array.isArray(cond.value.cond)) {
       cond.value.cond = {
         type: OP.AND,
         cond: cond.value.cond,
       }
     }
+  }
+  else if (cond.value.type === OP.Expect) {
+    cond.value.input = {} as any
   }
 }
 function resetCond() {
@@ -158,7 +244,12 @@ zh-CN:
     class="grid grid-cols-12 col-span-12 gap-2 p-2 border-l-4 rounded-r shadow-inner bg-base-200 shadow-gbase-500/35 ms-2 border-gbase-500/40"
   >
     <template v-if="cond?.type">
-      <div class="col-span-12 sm:col-span-6 md:col-span-3">
+      <div
+        :class="{
+          'col-span-12 sm:col-span-6 md:col-span-3': cond.type !== OP.Expect,
+          'col-span-3 sm:col-span-2': cond.type === OP.Expect,
+        }"
+      >
         <div class="form-control">
           <select
             v-model="cond.type"
@@ -186,7 +277,7 @@ zh-CN:
         </button>
       </template>
       <template v-else-if="isConcreteCond(cond.type)">
-        <template v-if="[OP.ModeEq, OP.RulesetEq, OP.Extends].includes(cond.type)">
+        <template v-if=" cond.type === OP.ModeEq || cond.type === OP.RulesetEq || cond.type === OP.Extends">
           <div v-if="cond.type === OP.ModeEq" class="col-span-6 md:col-span-3 form-control">
             <select
               v-model="cond.val"
@@ -289,7 +380,70 @@ zh-CN:
           </button>
         </template>
       </template>
-      <template v-else-if="cond.type !== undefined">
+      <template v-else-if="cond.type === OP.Expect">
+        <div class="col-span-4 md:col-span-2 lg:col-span-3 form-control">
+          <select
+            v-model="cond.key"
+            :disabled="disabled"
+            name="key"
+            class="select select-sm"
+            @change="onSelectKey"
+          >
+            <option disabled value="">
+              {{ t('select') }}
+            </option>
+            <option
+              v-for="key in numericalKeys"
+              :key="key"
+              :value="key"
+            >
+              {{ t(`dan.key.${key}`) }}
+            </option>
+          </select>
+        </div>
+        <template v-if="cond.input">
+          <div class="col-span-2 form-control">
+            <select
+              v-model="cond.input.type"
+              :disabled="disabled"
+              name="key"
+              class="select select-sm"
+              @change="onSelectKey"
+            >
+              <option disabled value="">
+                {{ t('select') }}
+              </option>
+              <template v-if="numericalKeys.includes(cond.key)">
+                <option
+                  v-for="op in numericalComparisonOPs"
+                  :key="op"
+                  :value="op"
+                >
+                  {{ t(`dan.cmp.${op}`) }}
+                </option>
+              </template>
+              <template v-else>
+                <option
+                  v-for="op in nonNumericalComparionOPs"
+                  :key="op"
+                  :value="op"
+                >
+                  {{ t(`dan.cond.${op}`) }}
+                </option>
+              </template>
+            </select>
+          </div>
+          <div class="col-span-5 sm:col-span-5 form-control">
+            <input
+              v-model="cond.input.val"
+              class="input input-sm"
+              :disabled="disabled"
+              :type="numericalKeys.includes(cond.key) ? 'number' : 'text'"
+            >
+          </div>
+        </template>
+      </template>
+      <template v-else-if="cond.type === OP.AND || cond.type === OP.OR || cond.type === OP.NOT || cond.type === OP.Remark">
         <div class="hidden sm:block sm:col-span-4 md:col-span-7" />
         <button v-if="listMode" :disabled="disabled" class="col-span-6 sm:col-span-2 btn btn-sm btn-error btn-outline" @click="emit('delete')">
           {{ t('delete') }} <icon name="material-symbols:delete" />
@@ -335,6 +489,9 @@ zh-CN:
             </template>
           </draggable>
         </div>
+      </template>
+      <template v-else>
+        {{ assertNotReachable(cond) }}
       </template>
     </template>
     <template v-else>
