@@ -147,7 +147,7 @@ zh-CN:
       <div
         v-for="ach, i in compose.requirements"
         :key="i"
-        class="grid grid-cols-12 col-span-12 gap-0 p-2 border border-base-300 rounded-2xl bg-base-100 "
+        class="grid grid-cols-12 col-span-12 gap-0 p-2 border border-base-300 rounded-xl bg-base-100 "
       >
         <div class="col-span-12 md:col-span-6 form-control">
           <label for="ach-type" class="label">requirement</label>
