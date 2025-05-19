@@ -187,7 +187,7 @@ export const router = _router({
             id: string(),
             requirement: nativeEnum(Requirement).optional(),
           }),
-          score: object({
+          user: object({
             id: string(),
           }).optional(),
         })
@@ -195,9 +195,11 @@ export const router = _router({
       .mutation(async ({ input }) => {
         await dans.recalcQualifiedScores({
           dan: mapId(input.dan, DanProvider.stringToId),
-          score: {
-            id: input.score?.id ? DanProvider.stringToScoreId(input.score.id) : undefined,
-          },
+          user: input.user
+            ? {
+                id: DanProvider.stringToId(input.user.id),
+              }
+            : undefined,
         })
       }),
   }),
