@@ -79,24 +79,15 @@ FROM
         .from(schema.dans)
         .innerJoin(schema.requirementCondBindings, eq(schema.requirementCondBindings.danId, schema.dans.id))
         .innerJoin(condsRoot.aliasedTable, eq(condsRoot.column.root, schema.requirementCondBindings.condId))
-        .where(
-          inArray(condsRoot.column.id, condsAfter.map(item => item.id))
-        )
+        .where(inArray(condsRoot.column.id, condsAfter.map(item => item.id)))
 
-      const dans = await tx.query.dans.findMany({
-        where: inArray(schema.dans.id, newDanIds.map(item => item.id)),
-        with: {
-          requirements: {
-            columns: {
-              type: true,
-              condId: true,
-            },
-          },
-        },
-      })
+      const q = this.dp._internal_queryDan()
+      const { sql, table } = q
+
+      const dans = await sql.where(inArray(table.dans.id, newDanIds.map(item => item.id)))
 
       for (const dan of dans) {
-        this.dans.set(dan.id, await this.dp.getDanWithRequirements(dan, tx))
+        this.dans.set(dan.id, this.dp._internal_fromRowToDan(dan))
       }
       this.logger.debug(`synced dans: ${dans.map(item => item.id).join(', ')}`)
     })
