@@ -10,20 +10,22 @@ import { type Id } from '~/server/backend/ppy.sb@bancho.py'
 import * as schema from '~/server/backend/ppy.sb@bancho.py/drizzle/schema'
 
 export class RealtimeDanProcessor extends CacheSyncedDanProcessor implements CacheSyncedDanProcessor {
-  watchers = [
-    watchTable(schema.scores, MySQLEvents.STATEMENTS.INSERT, this.onScoreSubmitted.bind(this)),
-    watchTable(schema.scores, MySQLEvents.STATEMENTS.UPDATE, this.onScoreSubmitted.bind(this)),
-  ]
+  watchers: Array<ReturnType<typeof watchTable>> = []
 
   pipelines = new Map<Dan, TransformedUsecase<RequirementCondBinding<Requirement, Cond>>>()
 
   async init() {
     await super.init()
     this.rebuildDanPipelines()
+
+    this.watchers = [
+      watchTable(schema.scores, MySQLEvents.STATEMENTS.INSERT, this.onScoreSubmitted.bind(this)),
+      watchTable(schema.scores, MySQLEvents.STATEMENTS.UPDATE, this.onScoreSubmitted.bind(this)),
+    ]
   }
 
   async onScoreSubmitted(row: RowEvent<InferSelectModel<typeof schema.scores>>) {
-    await wait(1000) // PRAY for patcher meta saved, since bpy submitModular is NOT USING A TRANSACTION !!!
+    await wait(5000) // PRAY for patcher meta saved, since bpy submitModular is NOT USING A TRANSACTION !!!
     const scores = row.affectedRows.map(item => item.after).filter(item => item !== undefined)
 
     const beatmaps = await this.dp.drizzle.query.beatmaps.findMany({
