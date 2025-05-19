@@ -1,4 +1,4 @@
-import { type InferInsertModel, aliasedTable, and, asc, count, desc, eq, exists, getTableName, gt, inArray, isNotNull, isNull, like, ne, not, notExists, notInArray, or, sql } from 'drizzle-orm'
+import { type InferInsertModel, aliasedTable, and, asc, count, desc, eq, exists, getTableName, gt, inArray, isNotNull, isNull, like, ne, notExists, notInArray, or, sql } from 'drizzle-orm'
 import { type MySql2Database } from 'drizzle-orm/mysql2'
 import { danSQLChunks } from '../../utils/sql-dan'
 import { type Id, type ScoreId, hasRuleset } from '../..'
@@ -1098,13 +1098,13 @@ export class DanProvider extends Base<Id, ScoreId> {
         if (!currentId) {
           throw new Error(`Failed to insert condition of type ${cond.type}`)
         }
-        await this.saveComparison(cond.input, tx, currentId)
+        await this.saveComparison(cond.val, tx, currentId)
         return currentId
       }
       case OP.AccGte:
-        return this.saveCondTree({ type: OP.Expect, key: 'accuracy', input: { type: CompareOP.Gte, val: cond.val } }, tx, parentId)
+        return this.saveCondTree({ type: OP.Expect, key: 'accuracy', val: { type: CompareOP.Gte, val: cond.val } }, tx, parentId)
       case OP.ScoreGte:
-        return this.saveCondTree({ type: OP.Expect, key: 'score', input: { type: CompareOP.Gte, val: cond.val } }, tx, parentId)
+        return this.saveCondTree({ type: OP.Expect, key: 'score', val: { type: CompareOP.Gte, val: cond.val } }, tx, parentId)
 
       default: {
         let valueStr: string
@@ -1145,7 +1145,7 @@ export class DanProvider extends Base<Id, ScoreId> {
     }
   }
 
-  private async saveComparison(input: ComparisonCondition['input'], tx: Database, parentId: number): Promise<Id> {
+  private async saveComparison(input: ComparisonCondition['val'], tx: Database, parentId: number): Promise<Id> {
     const [id] = await tx
       .insert(schema.danConds)
       .values({
@@ -1855,21 +1855,21 @@ function transformCond(condNode: CondNode): Cond {
           return {
             type,
             key: 'mode',
-            input: child,
+            val: child,
           }
 
         case 'ruleset':
           return {
             type,
             key: 'ruleset',
-            input: child,
+            val: child,
           }
 
         case 'score':
           return {
             type,
             key: 'score',
-            input: {
+            val: {
               type: child.type,
               val: BigInt(child.val),
             },
@@ -1888,7 +1888,7 @@ function transformCond(condNode: CondNode): Cond {
           return {
             type,
             key: value as ComparableNumericalScoreItem,
-            input: {
+            val: {
               type: child.type,
               val: Number(child.val),
             },
@@ -1906,7 +1906,7 @@ function transformCond(condNode: CondNode): Cond {
   }
 }
 
-function transformComparison(condNode: CondNodeCompare): { type: ComparisonCondition['input']['type']; val: unknown } {
+function transformComparison(condNode: CondNodeCompare): { type: ComparisonCondition['val']['type']; val: unknown } {
   const { type, value } = condNode
   switch (type) {
     case CompareOP.Gt:

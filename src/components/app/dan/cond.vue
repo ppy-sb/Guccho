@@ -193,7 +193,7 @@ function selectCond() {
     }
   }
   else if (cond.value.type === OP.Expect) {
-    cond.value.input = {} as any
+    cond.value.val = {} as any
   }
 }
 function resetCond() {
@@ -273,10 +273,10 @@ zh-CN:
             </option>
           </select>
         </div>
-        <template v-if="cond.input">
+        <template v-if="cond.val">
           <div class="col-span-3 sm:col-span-2 form-control">
             <select
-              v-model="cond.input.type"
+              v-model="cond.val.type"
               :disabled="disabled"
               name="key"
               class="select select-sm"
@@ -307,7 +307,7 @@ zh-CN:
           </div>
           <div class="col-span-11 sm:col-span-4 md:col-span-5 form-control">
             <input
-              v-model.lazy="cond.input.val"
+              v-model.lazy="cond.val.val"
               class="input input-sm"
               :disabled="disabled"
               :type="numericalKeys.includes(cond.key) ? 'number' : 'text'"

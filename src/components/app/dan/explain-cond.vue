@@ -178,8 +178,8 @@ zh-CN:
     <span class="px-1 rounded bg-secondary/20 dark:bg-secondary/80text-secondary-content">
       <span class="font-bold">{{ t(`dan.key.${cond.key}`) }}</span>
       <!-- {{ t(tCond[cond.type].__path__) }} -->
-      {{ t(tLocalDan.cmp[cond.input.type].__path__) }}
-      <span class="font-bold">{{ cond.input.val }}<small v-if="cond.key === 'accuracy'">%</small></span>
+      {{ t(tLocalDan.cmp[cond.val.type].__path__) }}
+      <span class="font-bold">{{ cond.val.val }}<small v-if="cond.key === 'accuracy'">%</small></span>
     </span>
   </template>
   <template v-else-if="isConcreteCond(cond.type)">
