@@ -1,5 +1,7 @@
-import MySQLEvents, { type DeleteEvent, type InsertEvent, type RowEvent, type UpdateEvent } from '@rodrigogs/mysql-events'
+import MySQLEvents, { type DeleteEvent, type InsertEvent, type UpdateEvent } from '@rodrigogs/mysql-events'
 import { type InferSelectModel, inArray } from 'drizzle-orm'
+import { UserProvider } from '../../user'
+import { MapProvider, ScoreProvider } from '../..'
 import { CacheSyncedDanProcessor } from './$sync'
 import { type TransformedUsecase, transformUsecase as compileDan } from '~/common/utils/dan'
 import { type AbnormalStatus, type NormalBeatmapWithMeta, RankingStatus } from '~/def/beatmap'
@@ -20,13 +22,13 @@ export class RealtimeDanProcessor extends CacheSyncedDanProcessor implements Cac
 
     this.watchers = [
       watchTable(schema.scores, MySQLEvents.STATEMENTS.INSERT, this.onScoreSubmitted.bind(this)),
-      watchTable(schema.scores, MySQLEvents.STATEMENTS.UPDATE, this.onScoreSubmitted.bind(this)),
+      // watchTable(schema.scores, MySQLEvents.STATEMENTS.UPDATE, this.onScoreSubmitted.bind(this)),
     ]
   }
 
-  async onScoreSubmitted(row: RowEvent<InferSelectModel<typeof schema.scores>>) {
-    await wait(5000) // PRAY for patcher meta saved, since bpy submitModular is NOT USING A TRANSACTION !!!
-    const scores = row.affectedRows.map(item => item.after).filter(item => item !== undefined)
+  async onScoreSubmitted(row: InsertEvent<InferSelectModel<typeof schema.scores>>) {
+    await wait(2000) // PRAY for patcher meta saved, since bpy submitModular is NOT USING A TRANSACTION !!!
+    const scores = row.affectedRows.map(item => item.after)
 
     const beatmaps = await this.dp.drizzle.query.beatmaps.findMany({
       where: inArray(schema.beatmaps.md5, scores.map(item => item.mapMd5)),
@@ -39,6 +41,10 @@ export class RealtimeDanProcessor extends CacheSyncedDanProcessor implements Cac
     })
     const patcherScoresMeta = await this.dp.drizzle.query.patcherScoresMeta.findMany({
       where: inArray(schema.patcherScoresMeta.id, scores.map(item => item.id)),
+      columns: {
+        id: true,
+        noPause: true,
+      },
     })
 
     const inserting: {
@@ -58,17 +64,23 @@ export class RealtimeDanProcessor extends CacheSyncedDanProcessor implements Cac
         }
 
         const tScore = toScore({ score, beatmap: bm, mode, ruleset, source: bm.source })
-        const beatmap = tScore.beatmap
+        const _beatmap = tScore.beatmap
 
-        if (beatmap.status === RankingStatus.Deleted || beatmap.status === RankingStatus.NotFound) {
+        if (_beatmap.status === RankingStatus.Deleted || _beatmap.status === RankingStatus.NotFound) {
           continue
         }
+        const beatmap = _beatmap as NormalBeatmapWithMeta<Exclude<RankingStatus, AbnormalStatus>, Id, Id>
 
         const result = pipeline({
           ...tScore,
-          beatmap: beatmap as NormalBeatmapWithMeta<Exclude<RankingStatus, AbnormalStatus>, Id, Id>,
+          id: ScoreProvider.scoreIdToString(score.id),
+          beatmap: {
+            ...beatmap,
+            id: MapProvider.idToString(beatmap.id),
+            foreignId: 'foreignId' in beatmap ? MapProvider.idToString(beatmap.foreignId) : undefined,
+          } as unknown as NormalBeatmapWithMeta<Exclude<RankingStatus, AbnormalStatus>, string, string>,
           noPause: meta?.noPause ?? false,
-          player: users.find(item => item.id === score.userId)!,
+          player: mapId(users.find(item => item.id === score.userId)!, UserProvider.idToString),
         })
 
         const passed = result.map((item, idx) => [item, dan.requirements[idx]] as const).filter(([item]) => item.result)
