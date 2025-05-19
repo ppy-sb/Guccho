@@ -1,5 +1,5 @@
 <script setup lang="tsx">
-import { Requirement } from '~/def/dan'
+import { type DatabaseDan, Requirement } from '~/def/dan'
 import { useSession } from '~/store/session'
 import type { DanProvider } from '$base/server'
 
@@ -11,10 +11,20 @@ const { t } = useI18n()
 const route = useRoute('dan-detail-id')
 const session = useSession()
 
-const item = await app.$client.dan.get.query(route.params.id)
+const defaultValue: Omit<DatabaseDan<string>, 'createdAt' | 'updatedAt'> & Partial<Pick<DatabaseDan<string>, 'createdAt' | 'updatedAt'>> & { _db: boolean } = {
+  id: '',
+  name: '',
+  description: '',
+  requirements: [],
+  _db: false,
+}
+
+const { data: item } = await useAsyncData(() => app.$client.dan.get.query(route.params.id), {
+  default: () => structuredClone(defaultValue),
+})
 
 useHead({
-  title: `${item.name} - ${app.$i18n.t(localeKey.title.dan.dans.__path__)}`,
+  title: `${item.value.name} - ${app.$i18n.t(localeKey.title.dan.dans.__path__)}`,
   titleTemplate: title => `${title} - ${app.$i18n.t(localeKey.server.name.__path__)}`,
 })
 
@@ -85,7 +95,7 @@ function Swap(props: { ctx: { orderBy?: [DanProvider.PickType, 'asc' | 'desc'] }
 
 const admin = {
   async recalc() {
-    await app.$client.dan.userClearedScores.recalc.mutate({ dan: { id: item.id } })
+    await app.$client.dan.userClearedScores.recalc.mutate({ dan: { id: item.value.id } })
     for (const v of Object.values(qualifiedScores.value)) {
       v.refresh()
     }
@@ -136,7 +146,7 @@ zh-CN:
       {{ item.description }}
     </p>
     <dan-explain-requirement v-for="requirement in item.requirements" :key="requirement.type" :requirement="requirement" />
-    <div class="space-x-2 mt-2 text-right">
+    <div class="mt-2 space-x-2 text-right">
       <nuxt-link-locale v-if="session.role.staff" class="btn btn-sm" :to="{ name: 'dan-compose', query: { id: item.id } }">
         Edit
       </nuxt-link-locale>
@@ -149,8 +159,8 @@ zh-CN:
         {{ t(tRequirement[requirement.type].__path__) }}
       </h3>
       <div class="relative mb-2 overflow-x-auto border rounded-md border-base-300 bg-base-100">
-        <div class="px-2 pt-2 grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-12">
-          <div class="form-control col-span-2">
+        <div class="grid grid-cols-4 px-2 pt-2 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-12">
+          <div class="col-span-2 form-control">
             <label for="s" class="label label-text">{{ t('dedupe-with') }}</label>
             <select id="s" v-model="tableCtx[requirement.type].pick" class="select select-sm">
               <option :value="undefined">
@@ -231,7 +241,7 @@ zh-CN:
                   {{ result.beatmap.artist }} - {{ result.beatmap.title }} [{{ result.beatmap.version }}]
                 </a>
               </td>
-              <td class="whitespace-nowrap font-mono text-end">
+              <td class="font-mono whitespace-nowrap text-end">
                 <nuxt-link-locale
                   class="link text-sky-500"
                   :to="{
@@ -244,10 +254,10 @@ zh-CN:
                   {{ result.score.id }}
                 </nuxt-link-locale>
               </td>
-              <td class="whitespace-nowrap font-mono text-end">
+              <td class="font-mono whitespace-nowrap text-end">
                 {{ result.score.accuracy }}<small>%</small>
               </td>
-              <td class="whitespace-nowrap font-mono text-end">
+              <td class="font-mono whitespace-nowrap text-end">
                 {{ fmtScore(result.score.score) }}
               </td>
             </tr>
@@ -282,7 +292,7 @@ zh-CN:
         </div>
       </div>
     </div>
-    <div v-if="session.role.staff" class="p-2 bg-base-100 rounded-md mt-4">
+    <div v-if="session.role.staff" class="p-2 mt-4 rounded-md bg-base-100">
       <h3 class="text-lg">
         Admin Zone
       </h3>
