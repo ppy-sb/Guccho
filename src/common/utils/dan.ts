@@ -227,7 +227,7 @@ function runCondNoCache<AB extends RequirementCondBinding<Requirement, Cond>>(
       const { val } = cond
       return {
         cond,
-        result: score.beatmap.md5 === val,
+        result: score.beatmap.md5.toLowerCase() === val.toLowerCase(),
         value: score.beatmap.md5,
       } as DetailResult<Cond, AB>
     }
@@ -241,7 +241,8 @@ function runCondNoCache<AB extends RequirementCondBinding<Requirement, Cond>>(
       const { val } = cond
       return {
         cond,
-        result: score.beatmap.foreignId === val,
+        // eslint-disable-next-line eqeqeq
+        result: score.beatmap.foreignId == val,
         value: score.beatmap.foreignId,
       } as DetailResult<Cond, AB>
     }
