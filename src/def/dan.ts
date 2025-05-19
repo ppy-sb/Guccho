@@ -70,10 +70,9 @@ export interface Remarked<O, V> extends WrappedCond<O, V> {
   remark: string
 }
 
-export interface Compare<VKey, VInput> extends CondBase<OP> {
-  type: OP.Expect
+export interface Compare<VKey, VInput> extends ConcreteCond<OP.Expect, VInput> {
   key: VKey
-  input: VInput
+  val: VInput
 }
 
 // Operator type extractions

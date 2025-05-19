@@ -367,47 +367,47 @@ function compareCond<C extends ComparisonCondition, AB extends RequirementCondBi
   score: ValidatingScore,
   ctx: JITContext<AB>
 ): DetailResult<C, AB> {
-  const { input } = cond
+  const { val } = cond
   const value = getCompareValue(cond, score)
-  switch (cond.input.type) {
+  switch (cond.val.type) {
     case CompareOP.Eq:
       return {
         cond,
-        result: value === input.val,
+        result: value === val.val,
         value,
       } as DetailResult<C, AB>
     case CompareOP.Ne:
       return {
         cond,
-        result: value !== input.val,
+        result: value !== val.val,
         value,
       } as DetailResult<C, AB>
     case CompareOP.Gt:
       return {
         cond,
-        result: value > input.val,
+        result: value > val.val,
         value,
       } as DetailResult<C, AB>
     case CompareOP.Lt:
       return {
         cond,
-        result: value < input.val,
+        result: value < val.val,
         value,
       } as DetailResult<C, AB>
     case CompareOP.Gte:
       return {
         cond,
-        result: value >= input.val,
+        result: value >= val.val,
         value,
       } as DetailResult<C, AB>
     case CompareOP.Lte:
       return {
         cond,
-        result: value <= input.val,
+        result: value <= val.val,
         value,
       } as DetailResult<C, AB>
     default: {
-      assertNotReachable(cond.input)
+      assertNotReachable(cond.val)
     }
   }
 }
@@ -467,13 +467,13 @@ export function validateCond<T extends Cond>(cond: T): T {
       return { type: cond.type, cond: cond.cond.filter(Boolean).map(validateCond) } as unknown as T
 
     case OP.Expect:
-      return { type: cond.type, key: cond.key, input: validateCompareInput(cond.input) } as T
+      return { type: cond.type, key: cond.key, val: validateCompareInput(cond.val) } as T
 
     default: assertNotReachable(cond)
   }
 }
 
-export function validateCompareInput<T extends ComparisonCondition['input']>(input: T): T {
+export function validateCompareInput<T extends ComparisonCondition['val']>(input: T): T {
   switch (input.type) {
     case CompareOP.Eq:
     case CompareOP.Ne:
@@ -523,7 +523,7 @@ function getHash(cond: Cond): string {
       // Sort to ensure order-independence
       return `${cond.type}:${cond.cond.map(getHash).sort().join('&')}`
     case OP.Expect:
-      return `${cond.type}:${cond.key}:${cond.input.type}:${cond.input.val}`
+      return `${cond.type}:${cond.key}:${cond.val.type}:${cond.val.val}`
     default:
       return assertNotReachable(cond)
   }
