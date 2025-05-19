@@ -1,12 +1,18 @@
 import MySQLEvents, { type DeleteEvent, type InsertEvent, type UpdateEvent } from '@rodrigogs/mysql-events'
-import { type InferSelectModel, eq, getTableName, inArray, sql } from 'drizzle-orm'
+import { type InferSelectModel, and, eq, getTableName, gt, inArray, isNull, sql } from 'drizzle-orm'
+import { type MySql2Database } from 'drizzle-orm/mysql2'
+import { type DanProvider } from '../../../../$base/server'
+import { danSQLChunks } from '../../../utils/sql-dan'
 import { BaseDanProcessor } from './$base'
 import { type Cond, type DatabaseDan, type DatabaseRequirementCondBinding, type Requirement } from '~/def/dan'
-import { type Id } from '~/server/backend/bancho.py'
-import * as schema from '~/server/backend/ppy.sb@bancho.py/drizzle/schema'
+import { type Id, type ScoreId } from '~/server/backend/bancho.py'
+import { BanchoPyScoreStatus } from '~/server/backend/bancho.py/enums'
 import { watchTable } from '~/server/backend/bancho.py/server/event-sources/db'
+import * as schema from '~/server/backend/ppy.sb@bancho.py/drizzle/schema'
 
-export class CacheSyncedDanProcessor extends BaseDanProcessor {
+type Database = MySql2Database<typeof schema>
+
+export class CacheSyncedDanProcessor extends BaseDanProcessor<Id, ScoreId> {
   watchBindingsDeletion = watchTable(schema.requirementCondBindings, MySQLEvents.STATEMENTS.DELETE, this.onCondBindingDeleted.bind(this))
   watchBindingsInserted = watchTable(schema.requirementCondBindings, MySQLEvents.STATEMENTS.INSERT, this.onCondBindingUpserted.bind(this))
   watchBindingsUpdated = watchTable(schema.requirementCondBindings, MySQLEvents.STATEMENTS.UPDATE, this.onCondBindingUpserted.bind(this))
@@ -128,8 +134,117 @@ FROM
     })
   }
 
+  async dbRunAll() {
+    this.logger.debug({ message: 'calculating missed scores...' })
+    await this.declarativeRecalc({})
+  }
+
+  async recalcDan(opt: DanProvider.RecalcQualifiedScoresParam<Id, ScoreId>, tx?: Database): Promise<void> {
+    return this.declarativeRecalc({
+      dans: opt.dan?.id ? [await this.getAndCache(opt.dan.id, tx)] : undefined,
+      shouldRun: opt.dan
+        ? (requirement, dan) => {
+            const _dan = opt.dan!
+            return dan.id === _dan.id && _dan.requirement ? _dan.requirement === requirement.type : true
+          }
+        : undefined,
+    })
+  }
+
+  async recalcProvidedDan(opt: BaseDanProcessor.RecalcProvidedDanParam<Id, ScoreId>, tx?: Database): Promise<void> {
+    return this.declarativeRecalc({
+      dans: [opt.dan],
+      qb: (q) => {
+        if (opt.user) {
+          q = q.where(eq(this.dp.tbl.scores.userId, opt.user.id))
+        }
+        return q
+      },
+    }, tx)
+  }
+
+  async declarativeRecalc(
+    {
+      dans = this.dans.values(),
+      shouldRun,
+      qb,
+    }: {
+      dans?: Iterable<DatabaseDan<Id, DatabaseRequirementCondBinding<Id, Requirement, Cond>>>
+      shouldRun?: ShouldRun
+      qb?: (q: QB) => QB
+    },
+    tx?: Database
+  ): Promise<void> {
+    const clearedScores: { scoreId: ScoreId; dan: number; requirement: Requirement }[] = []
+    tx = tx || await this.getTx(this.dp.drizzle)
+    for (const dan of dans) {
+      for (const requirement of dan.requirements) {
+        if (shouldRun && !shouldRun(requirement, dan)) {
+          continue
+        }
+        const newScores = await (qb ? qb(this.recalcQB(requirement, dan, tx)) : this.recalcQB(requirement, dan, tx))
+
+        if (!newScores.length) {
+          continue
+        }
+
+        clearedScores.push(
+          ...newScores.map(i => ({
+            scoreId: i.scoreId,
+            dan: dan.id,
+            requirement: requirement.type,
+          }))
+        )
+      }
+    }
+
+    if (!clearedScores.length) {
+      return
+    }
+
+    await tx
+      .insert(this.dp.tbl.requirementClearedScores)
+      .values(clearedScores)
+  }
+
+  recalcQB(requirement: DatabaseRequirementCondBinding<Id, Requirement, Cond>, dan: DatabaseDan<Id, DatabaseRequirementCondBinding<Id, Requirement, Cond>>, tx: Database) {
+    return tx
+      .select({
+        scoreId: this.dp.tbl.scores.id,
+      })
+      .from(this.dp.tbl.scores)
+      .leftJoin(this.dp.tbl.patcherScoresMeta, eq(this.dp.tbl.scores.id, this.dp.tbl.patcherScoresMeta.id))
+      .innerJoin(this.dp.tbl.beatmaps, eq(this.dp.tbl.scores.mapMd5, this.dp.tbl.beatmaps.md5))
+      .leftJoin(this.dp.tbl.requirementClearedScores, and(
+        eq(this.dp.tbl.requirementClearedScores.dan, dan.id),
+        eq(this.dp.tbl.requirementClearedScores.requirement, requirement.type),
+        eq(this.dp.tbl.scores.id, this.dp.tbl.requirementClearedScores.scoreId),
+      ))
+      .$dynamic()
+      .where(
+        and(
+          gt(this.dp.tbl.scores.status, BanchoPyScoreStatus.DNF),
+          danSQLChunks(requirement.cond, dan.requirements, this.dp.tbl),
+          isNull(this.dp.tbl.requirementClearedScores.scoreId),
+        )
+      )
+  }
+
+  async getAndCache(id: Id, tx?: Database) {
+    const dan = await this.dp.get(id, tx)
+    this.dans.set(dan.id, dan)
+    return dan
+  }
+
   async dispose() {
     this.watchBindingsDeletion.dispose()
     this.watchDanCondChanges.dispose()
   }
+
+  getTx(db: typeof this.dp.drizzle) {
+    return new Promise<Database>(resolve => db.transaction(async tx => resolve(tx)))
+  }
 }
+
+type QB = ReturnType<InstanceType<typeof CacheSyncedDanProcessor>['recalcQB']>
+type ShouldRun = (requirement: DatabaseRequirementCondBinding<Id, Requirement, Cond>, dan: DatabaseDan<Id, DatabaseRequirementCondBinding<Id, Requirement, Cond>>) => boolean
