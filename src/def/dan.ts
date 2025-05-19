@@ -227,10 +227,10 @@ export interface DatabaseDanCourse<I, RCBinding extends DatabaseRequirementCondB
 // Score Validation
 // =============================
 
-export type ValidatingScore = ScoreCompact<any, Mode> & {
-  beatmap: BeatmapCompact<any, any>
+export type ValidatingScore = ScoreCompact<string, Mode> & {
+  beatmap: BeatmapCompact<string, string>
   noPause: boolean
-  player: Pick<UserCompact<any>, 'id' | 'name' | 'safeName'>
+  player: Pick<UserCompact<string>, 'id' | 'name' | 'safeName'>
   mode: Mode
   ruleset: Ruleset
 }
