@@ -22,6 +22,7 @@ import { RealtimeDanProcessor } from './processor/realtime'
 import { IntervalDanProcessor } from './processor/interval'
 import { NoopDanProcessor } from './processor/noop'
 import { type BaseDanProcessor } from './processor/$base'
+import { CacheSyncedDanProcessor } from './processor/$sync'
 import { type UserCompact } from '~/def/user'
 import { GucchoError } from '~/def/messages'
 import {
@@ -57,7 +58,7 @@ export class DanProvider extends Base<Id, ScoreId> {
   static readonly scoreIdToString = scoreIdToString
   config = config()
 
-  processor: BaseDanProcessor = this.config.dan
+  processor: BaseDanProcessor<Id, ScoreId> = this.config.dan
     ? this.config.dan.processor === 'realtime'
       ? new RealtimeDanProcessor(this)
       : new IntervalDanProcessor(this as DanProvider & { config: { dan: { interval: number } } } as DanProvider)
@@ -593,69 +594,13 @@ export class DanProvider extends Base<Id, ScoreId> {
     })
   }
 
-  async recalcQualifiedScores(opt: Base.RecalcQualifiedScoresParam<Id, ScoreId>): Promise<void> {
-    try {
-      const dan = await this.get(opt.dan.id)
-
-      return await this.#recalcQualifiedScoresForDan(dan, opt)
+  async recalcQualifiedScores(opt: Base.RecalcQualifiedScoresParam<Id, ScoreId>, tx?: Database): Promise<void> {
+    if (this.processor instanceof CacheSyncedDanProcessor) {
+      return this.processor.recalcDan(opt, tx)
     }
-    catch (e) {
-      console.error(e)
-      throw e
+    else {
+      return this.processor.recalcDan(opt)
     }
-  }
-
-  async #recalcQualifiedScoresForDan(dan: DatabaseDan<Id>, opt: Base.RecalcQualifiedScoresParam<Id, ScoreId>) {
-    await this.drizzle.transaction(async (tx) => {
-      const clearedScores: { scoreId: ScoreId; dan: number; requirement: Requirement }[] = []
-      for (const requirement of dan.requirements) {
-        if (opt.dan.requirement) {
-          if (requirement.type !== opt.dan.requirement) {
-            continue
-          }
-        }
-
-        const newScores = await tx
-          .select({
-            scoreId: this.tbl.scores.id,
-          })
-          .from(this.tbl.scores)
-          .leftJoin(this.tbl.patcherScoresMeta, eq(this.tbl.scores.id, this.tbl.patcherScoresMeta.id))
-          .innerJoin(this.tbl.beatmaps, eq(this.tbl.scores.mapMd5, this.tbl.beatmaps.md5))
-          .leftJoin(this.tbl.requirementClearedScores, and(
-            eq(this.tbl.scores.id, this.tbl.requirementClearedScores.scoreId),
-            eq(this.tbl.requirementClearedScores.requirement, requirement.type)
-          ))
-          .where(
-            and(
-              gt(this.tbl.scores.status, BanchoPyScoreStatus.DNF),
-              danSQLChunks(requirement.cond, dan.requirements, this.tbl),
-              eq(this.tbl.scores.id, opt.score!.id!)?.if(opt.score?.id),
-              isNull(this.tbl.requirementClearedScores.scoreId),
-            )
-          )
-
-        if (!newScores.length) {
-          continue
-        }
-
-        clearedScores.push(
-          ...newScores.map(i => ({
-            scoreId: i.scoreId,
-            dan: dan.id,
-            requirement: requirement.type,
-          }))
-        )
-      }
-
-      if (!clearedScores.length) {
-        return
-      }
-
-      await tx
-        .insert(this.tbl.requirementClearedScores)
-        .values(clearedScores)
-    })
   }
 
   async getQualifiedScores(opt: Base.GetQualifiedScoresParam<Id>): Promise<Base.RequirementQualifiedScore<Id, ScoreId>> {
@@ -947,53 +892,18 @@ export class DanProvider extends Base<Id, ScoreId> {
       const newDan = await this.get(id, tx)
 
       // 5.1 run cond and save scores
-      await this.runCondAndSaveScores(newDan, tx)
+      if (this.processor instanceof CacheSyncedDanProcessor) {
+        await this.processor.recalcProvidedDan({ dan: newDan }, tx)
+      }
+      else {
+        setTimeout(() => this.processor.recalcProvidedDan({ dan: newDan }), 100)
+      }
 
       return newDan
     }).catch((e) => {
       console.error(e)
       throw e
     })
-  }
-
-  async runCondAndSaveScores(newDan: DatabaseDan<Id, DatabaseRequirementCondBinding<Id, Requirement, Cond>>, tx: Database = this.drizzle) {
-    const clearedScores: { scoreId: ScoreId; dan: number; requirement: Requirement }[] = []
-    for (const requirement of newDan.requirements) {
-      const res = await this.drizzle
-        .select({
-          scoreId: this.tbl.scores.id,
-        })
-        .from(this.tbl.scores)
-        .leftJoin(this.tbl.patcherScoresMeta, eq(this.tbl.scores.id, this.tbl.patcherScoresMeta.id))
-        .innerJoin(this.tbl.beatmaps, eq(this.tbl.scores.mapMd5, this.tbl.beatmaps.md5))
-        .leftJoin(this.tbl.requirementClearedScores, and(
-          eq(this.tbl.scores.id, this.tbl.requirementClearedScores.scoreId),
-          eq(this.tbl.requirementClearedScores.requirement, requirement.type)
-        ))
-        .where(
-          and(
-            gt(this.tbl.scores.status, BanchoPyScoreStatus.DNF),
-            danSQLChunks(requirement.cond, newDan.requirements, this.tbl),
-            isNull(this.tbl.requirementClearedScores.scoreId),
-          )
-        )
-
-      if (!res.length) {
-        continue
-      }
-
-      clearedScores.push(...res.map(item => ({
-        scoreId: item.scoreId,
-        dan: newDan.id,
-        requirement: requirement.type,
-      })))
-    }
-
-    if (!clearedScores.length) {
-      return
-    }
-
-    await tx.insert(schema.requirementClearedScores).values(clearedScores)
   }
 
   private async saveCondTree(

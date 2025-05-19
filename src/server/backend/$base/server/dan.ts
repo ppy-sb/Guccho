@@ -86,12 +86,12 @@ export namespace DanProvider {
   }
 
   export interface RecalcQualifiedScoresParam<Id, ScoreId> {
-    dan: {
+    dan?: {
       id: Id
       requirement?: Requirement
     }
-    score?: {
-      id?: ScoreId
+    user?: {
+      id: Id
     }
   }
 
