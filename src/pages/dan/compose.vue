@@ -25,7 +25,9 @@ const defaultValue: Omit<DatabaseDan<string>, 'createdAt' | 'updatedAt'> & Parti
   _db: false,
 }
 
-const compose = ref<typeof defaultValue>(qId ? await _getDB(qId) : structuredClone(defaultValue))
+const { data: compose } = await useAsyncData('compose', async () => {
+  return qId ? await _getDB(qId) : structuredClone(defaultValue)
+})
 
 const data = ref<RouterOutput['dan']['userRule']>()
 const loading = ref(false)
@@ -57,6 +59,9 @@ async function readClipboard() {
 }
 
 async function getDB() {
+  if (!compose.value) {
+    return
+  }
   loading.value = true
   try {
     compose.value = await _getDB(compose.value.id)
@@ -74,6 +79,9 @@ async function _getDB(id: string) {
 }
 
 async function runDB() {
+  if (!compose.value) {
+    return
+  }
   loading.value = true
   try {
     data.value = await app.$client.dan.userRule.query(validateUsecase(compose.value))
@@ -87,6 +95,9 @@ function reset() {
 }
 
 async function saveDB() {
+  if (!compose.value) {
+    return
+  }
   loading.value = true
   compose.value = {
     ...await app.$client.dan.save.mutate(compose.value, {
@@ -99,10 +110,16 @@ async function saveDB() {
   loading.value = false
 }
 async function deleteDB() {
+  if (!compose.value) {
+    return
+  }
   await app.$client.dan.delete.mutate(compose.value.id)
   reset()
 }
 async function duplicate() {
+  if (!compose.value) {
+    return
+  }
   compose.value = unDB(compose.value)
 }
 
@@ -131,7 +148,7 @@ zh-CN:
     <h1 class="text-2xl">
       Compose requirements
     </h1>
-    <div class="grid grid-flow-row grid-cols-12 gap-4">
+    <div v-if="compose" class="grid grid-flow-row grid-cols-12 gap-4">
       <div class="col-span-12 md:col-span-9 form-control">
         <label for="name" class="label">Name</label>
         <input id="name" v-model="compose.name" class="input" type="text" name="name">
@@ -147,7 +164,7 @@ zh-CN:
       <div
         v-for="ach, i in compose.requirements"
         :key="i"
-        class="grid grid-cols-12 col-span-12 gap-0 p-2 border border-base-300 rounded-2xl bg-base-100 "
+        class="grid grid-cols-12 col-span-12 gap-0 p-2 border border-base-300 rounded-xl bg-base-100 "
       >
         <div class="col-span-12 md:col-span-6 form-control">
           <label for="ach-type" class="label">requirement</label>
@@ -179,7 +196,7 @@ zh-CN:
       </div>
       <button
         class="col-span-12 btn"
-        :disabled="requirements.every(ach => !!compose.requirements.find(i => i.type === ach)) || compose.requirements.length >= requirements.length"
+        :disabled="requirements.every(ach => !!compose!.requirements.find(i => i.type === ach)) || compose.requirements.length >= requirements.length"
         @click="
           (compose.requirements as unknown as RequirementCondBinding<any, any>[])
             .push({

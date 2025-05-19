@@ -169,8 +169,8 @@ zh-CN:
 
     <dan-course-form-header
       :id="route.params.id"
-      v-model:title="localCourse.name"
-      v-model:description="localCourse.description"
+      v-model:title.lazy="localCourse.name"
+      v-model:description.lazy="localCourse.description"
       :created-at="localCourse.createdAt"
       :creator="localCourse.creator"
       :updated-at="localCourse.updatedAt"
@@ -223,20 +223,20 @@ zh-CN:
             <div class="justify-end col-span-6 md:col-span-4 form-control">
               <label class="justify-start gap-2 cursor-pointer label">
                 <span class="label-text">{{ t('treat-no-ruleset-cond-as-standard') }}</span>
-                <input v-model="danQuery.rulesetDefaultsToStandard" type="checkbox" class="toggle" @change="handleDanSearchControlChange">
+                <input v-model.lazy="danQuery.rulesetDefaultsToStandard" type="checkbox" class="toggle" @change="handleDanSearchControlChange">
               </label>
             </div>
             <div class="justify-end col-span-6 md:col-span-4 form-control">
               <label class="justify-start gap-2 cursor-pointer label">
                 <span class="label-text">{{ t('dangling-only') }}</span>
-                <input v-model="danQuery.danglingOnly" type="checkbox" class="toggle" @change="() => handleDanSearchControlChange()">
+                <input v-model.lazy="danQuery.danglingOnly" type="checkbox" class="toggle" @change="() => handleDanSearchControlChange()">
               </label>
             </div>
           </div>
           <label for="keyword" class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">{{ t('search') }}</label>
           <div class="flex gap-2">
             <div class="form-control grow">
-              <input id="keyword" v-model="danQuery.keyword" name="keyword" type="search" class="input input-sm input-bordered" :placeholder="t('search-text')">
+              <input id="keyword" v-model.lazy="danQuery.keyword" name="keyword" type="search" class="input input-sm input-bordered" :placeholder="t('search-text')">
             </div>
             <button class="btn btn-sm btn-primary">
               <Icon icon="ion:search-outline" class="w-4 h-4" />
@@ -393,7 +393,7 @@ zh-CN:
                 </td>
                 <th class="align-top">
                   <input
-                    v-model="dan.shortName"
+                    v-model.lazy="dan.shortName"
                     type="text"
                     class="input input-bordered input-sm w-24"
                   >

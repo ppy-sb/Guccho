@@ -43,12 +43,12 @@ export function danSQLChunks<C extends Cond, AB extends RequirementCondBinding<R
     case OP.AccGte: {
       // const { val } = cond
       // return gte(table.scores.accuracy, val)
-      return danSQLChunks({ type: OP.Expect, key: 'accuracy', input: { type: CompareOP.Gte, val: cond.val } }, achievements, table)
+      return danSQLChunks({ type: OP.Expect, key: 'accuracy', val: { type: CompareOP.Gte, val: cond.val } }, achievements, table)
     }
     case OP.ScoreGte: {
       // const { val } = cond
       // return gte(table.scores.score, sql`${val}`)
-      return danSQLChunks({ type: OP.Expect, key: 'score', input: { type: CompareOP.Gte, val: cond.val } }, achievements, table)
+      return danSQLChunks({ type: OP.Expect, key: 'score', val: { type: CompareOP.Gte, val: cond.val } }, achievements, table)
     }
     case OP.NoPause: {
       return eq(table.patcherScoresMeta.noPause, true)
@@ -69,7 +69,7 @@ export function danSQLChunks<C extends Cond, AB extends RequirementCondBinding<R
       //   hasRuleset(val, Ruleset.Relax) ? eq(table.scores.mode, toBanchoPyMode(val, Ruleset.Relax)) : undefined,
       //   hasRuleset(val, Ruleset.Autopilot) ? eq(table.scores.mode, toBanchoPyMode(val, Ruleset.Autopilot)) : undefined,
       // )
-      return danSQLChunks({ type: OP.Expect, key: 'mode', input: { type: CompareOP.Eq, val: cond.val } }, achievements, table)
+      return danSQLChunks({ type: OP.Expect, key: 'mode', val: { type: CompareOP.Eq, val: cond.val } }, achievements, table)
     }
     case OP.RulesetEq: {
       // const { val } = cond
@@ -82,7 +82,7 @@ export function danSQLChunks<C extends Cond, AB extends RequirementCondBinding<R
       //     toBanchoPyMode(Mode.Mania, val),
       //   ]
       // )
-      return danSQLChunks({ type: OP.Expect, key: 'ruleset', input: { type: CompareOP.Eq, val: cond.val } }, achievements, table)
+      return danSQLChunks({ type: OP.Expect, key: 'ruleset', val: { type: CompareOP.Eq, val: cond.val } }, achievements, table)
     }
     case OP.Remark: {
       return danSQLChunks(cond.cond, achievements, table)
@@ -126,7 +126,7 @@ export function danSQLChunks<C extends Cond, AB extends RequirementCondBinding<R
 function getCompareSQL<C extends ComparisonCondition>(cond: C, table: Tables): SQL | undefined {
   switch (cond.key) {
     case 'mode': {
-      const val = cond.input.val
+      const val = cond.val.val
       return or(
         eq(table.scores.mode, toBanchoPyMode(val, Ruleset.Standard)),
         // cannot use .if() due to toBanchoPyMode will throw Error first
@@ -136,7 +136,7 @@ function getCompareSQL<C extends ComparisonCondition>(cond: C, table: Tables): S
     }
 
     case 'ruleset':{
-      const val = cond.input.val
+      const val = cond.val.val
       return inArray(
         table.scores.mode,
         [
@@ -179,20 +179,20 @@ function getCompareValueSQL<C extends UN>(cond: C, tables: Tables) {
   }
 }
 function getCompareFunctionSQL(cond: UN, value: MySqlColumn): SQL<unknown> | undefined {
-  switch (cond.input.type) {
+  switch (cond.val.type) {
     case CompareOP.Gt:
-      return gt(value, cond.input.val)
+      return gt(value, cond.val.val)
     case CompareOP.Lt:
-      return lt(value, cond.input.val)
+      return lt(value, cond.val.val)
     case CompareOP.Eq:
-      return eq(value, cond.input.val)
+      return eq(value, cond.val.val)
     case CompareOP.Ne:
-      return ne(value, cond.input.val)
+      return ne(value, cond.val.val)
     case CompareOP.Gte:
-      return gte(value, cond.input.val)
+      return gte(value, cond.val.val)
     case CompareOP.Lte:
-      return lte(value, cond.input.val)
+      return lte(value, cond.val.val)
     default:
-      assertNotReachable(cond.input)
+      assertNotReachable(cond.val)
   }
 }

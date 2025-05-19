@@ -160,9 +160,9 @@ const { t } = useI18n({
   } satisfies Record<string, Translation>,
 })
 
-const comparisonKeys = ['mode', 'ruleset', 'accuracy', 'maxCombo', 'count.miss', 'count.50', 'count.100', 'count.300', 'count.geki', 'count.katu', 'count.200', 'count.max', 'score'] as ComparisonCondition['key'][]
+// const comparisonKeys = ['mode', 'ruleset', 'accuracy', 'maxCombo', 'count.miss', 'count.50', 'count.100', 'count.300', 'count.geki', 'count.katu', 'count.200', 'count.max', 'score'] as ComparisonCondition['key'][]
 const numericalKeys = ['score', 'accuracy', 'maxCombo', 'count.miss', 'count.50', 'count.100', 'count.300', 'count.geki', 'count.katu', 'count.200', 'count.max'] as ComparisonCondition['key'][]
-const nonNumericalKeys = ['mode', 'ruleset']
+// const nonNumericalKeys = ['mode', 'ruleset']
 const nonNumericalComparionOPs = [CompareOP.Eq, CompareOP.Ne]
 const numericalComparisonOPs = [CompareOP.Gt, CompareOP.Gte, CompareOP.Lt, CompareOP.Lte, ...nonNumericalComparionOPs]
 
@@ -170,28 +170,12 @@ const drag = ref(false)
 
 const ops = Object.values(OP)
 
-const concrete = [
-  OP.AccGte,
-  OP.ScoreGte,
-  OP.ModeEq,
-  OP.RulesetEq,
-  OP.BanchoBeatmapIdEq,
-  OP.BeatmapMd5Eq,
-  OP.StableModIncludeAny,
-  OP.StableModIncludeAll,
-  OP.Extends,
-  OP.NoPause,
-] as const
-
 function onSelectKey() {
   // if (cond.value?.type !== OP.Compare) {
 
   // }
 }
 
-function isConcreteCond(op: OP): op is typeof concrete[number] {
-  return concrete.includes(op as any)
-}
 function selectCond() {
   if (!cond.value) {
     return
@@ -209,7 +193,7 @@ function selectCond() {
     }
   }
   else if (cond.value.type === OP.Expect) {
-    cond.value.input = {} as any
+    cond.value.val = {} as any
   }
 }
 function resetCond() {
@@ -241,13 +225,14 @@ zh-CN:
 
 <template>
   <div
-    class="grid grid-cols-12 col-span-12 gap-2 p-2 border-l-4 rounded-r shadow-inner bg-base-200 shadow-gbase-500/35 ms-2 border-gbase-500/40"
+    class="grid grid-cols-12 col-span-12 gap-2 p-1 border rounded-r bg-base-200 border-base-300"
   >
     <template v-if="cond?.type">
       <div
         :class="{
-          'col-span-12 sm:col-span-6 md:col-span-3': cond.type !== OP.Expect,
-          'col-span-3 sm:col-span-2': cond.type === OP.Expect,
+          'col-span-6 md:col-span-3': cond.type !== OP.Expect,
+          'col-span-4 sm:col-span-2': cond.type === OP.Expect,
+          // 'col-span-6 md:col-span-3': cond.type === OP.StableModIncludeAny || cond.type === OP.StableModIncludeAll,
         }"
       >
         <div class="form-control">
@@ -267,121 +252,8 @@ zh-CN:
           </select>
         </div>
       </div>
-      <template v-if="cond.type === OP.NoPause">
-        <div class="hidden sm:block sm:col-span-4 md:col-span-7" />
-        <button v-if="listMode" :disabled="disabled" class="col-span-6 sm:col-span-2 btn btn-sm btn-error btn-outline" @click="emit('delete')">
-          {{ t('delete') }} <icon name="material-symbols:delete" />
-        </button>
-        <button v-else :disabled="disabled" class="col-span-6 sm:col-span-2 btn btn-sm btn-neutral btn-outline" @click="resetCond()">
-          {{ t('reset') }} <icon name="lsicon:clear-filled" />
-        </button>
-      </template>
-      <template v-else-if="isConcreteCond(cond.type)">
-        <template v-if=" cond.type === OP.ModeEq || cond.type === OP.RulesetEq || cond.type === OP.Extends">
-          <div v-if="cond.type === OP.ModeEq" class="col-span-6 md:col-span-3 form-control">
-            <select
-              v-model="cond.val"
-              :disabled="disabled"
-              name="mode"
-              class="select select-sm"
-              @change="selectCond"
-            >
-              <option disabled value="">
-                {{ t('select') }}
-              </option>
-              <option v-for="m in modes" :key="m" :value="m">
-                {{ m }}
-              </option>
-            </select>
-          </div>
-          <div v-else-if="cond.type === OP.RulesetEq" class="col-span-6 md:col-span-3 form-control">
-            <select
-              v-model="cond.val"
-              :disabled="disabled"
-              name="mode"
-              class="select select-sm"
-              @change="selectCond"
-            >
-              <option disabled value="">
-                {{ t('select') }}
-              </option>
-              <option v-for="r in rulesets" :key="r" :value="r">
-                {{ r }}
-              </option>
-            </select>
-          </div>
-
-          <div v-else-if="cond.type === OP.Extends" class="col-span-12 sm:col-span-6 md:col-span-3 form-control">
-            <select
-              v-model="cond.val"
-              :disabled="disabled"
-              name="mode"
-              class="select select-sm"
-              @change="selectCond"
-            >
-              <option disabled value="">
-                {{ t('select') }}
-              </option>
-              <option
-                v-for="ach in Object.values(Requirement).filter(ach => requirements.some(r => r.type === ach) && ach !== current.type)"
-                :key="ach"
-                :value="ach"
-              >
-                {{ t(tRequirement[ach].__path__) }}
-              </option>
-            </select>
-          </div>
-
-          <div class="hidden md:block md:col-span-4" />
-
-          <button v-if="listMode" :disabled="disabled" class="col-span-6 sm:col-span-2 btn btn-sm btn-error btn-outline" @click="emit('delete')">
-            {{ t('delete') }} <icon name="material-symbols:delete" />
-          </button>
-          <button v-else :disabled="disabled" class="col-span-6 sm:col-span-2 btn btn-sm btn-neutral btn-outline" @click="resetCond()">
-            {{ t('reset') }} <icon name="lsicon:clear-filled" />
-          </button>
-        </template>
-        <template v-else-if="cond.type === OP.StableModIncludeAny || cond.type === OP.StableModIncludeAll">
-          <div class="hidden sm:block sm:col-span-4 md:col-span-7" />
-          <button v-if="listMode" :disabled="disabled" class="col-span-6 sm:col-span-2 btn btn-sm btn-error btn-outline" @click="emit('delete')">
-            {{ t('delete') }} <icon name="material-symbols:delete" />
-          </button>
-          <button v-else :disabled="disabled" class="col-span-6 sm:col-span-2 btn btn-sm btn-neutral btn-outline" @click="resetCond()">
-            {{ t('reset') }} <icon name="lsicon:clear-filled" />
-          </button>
-          <div class="grid grid-cols-12 col-span-12 gap-0 gap-x-6">
-            <div v-for="mod in $enum(StableMod).getValues()" :key="mod" class="col-span-12 sm:col-span-6 md:col-span-3 form-control">
-              <label class="cursor-pointer label">
-                <span class="label-text">{{ StableMod[mod] }}</span>
-                <input :disabled="disabled" type="checkbox" :checked="!!((cond.val as number) & mod)" class="checkbox" @change="(cond.val = (cond.val as number) ^ mod)">
-              </label>
-            </div>
-          </div>
-        </template>
-        <template v-else>
-          <input
-            v-model="cond.val"
-            class="input input-sm"
-            :disabled="disabled"
-            :class="cond.type === OP.AccGte || cond.type === OP.ScoreGte ? 'col-span-6 md:col-span-3' : 'col-span-12 md:col-span-7'"
-            :type="cond.type === OP.AccGte || cond.type === OP.ScoreGte ? 'number' : 'text'"
-          >
-          <div
-            class="hidden"
-            :class="{
-              'md:block md:col-span-4': cond.type === OP.AccGte || cond.type === OP.ScoreGte,
-            }"
-          />
-          <button v-if="listMode" :disabled="disabled" class="col-span-6 sm:col-span-2 btn btn-sm btn-error btn-outline" @click="emit('delete')">
-            {{ t('delete') }} <icon name="material-symbols:delete" />
-          </button>
-          <button v-else :disabled="disabled" class="col-span-6 sm:col-span-2 btn btn-sm btn-neutral btn-outline" @click="resetCond()">
-            {{ t('reset') }} <icon name="lsicon:clear-filled" />
-          </button>
-        </template>
-      </template>
-      <template v-else-if="cond.type === OP.Expect">
-        <div class="col-span-4 md:col-span-2 lg:col-span-3 form-control">
+      <template v-if="cond.type === OP.Expect">
+        <div class="col-span-5 sm:col-span-3 md:col-span-2 form-control">
           <select
             v-model="cond.key"
             :disabled="disabled"
@@ -401,10 +273,10 @@ zh-CN:
             </option>
           </select>
         </div>
-        <template v-if="cond.input">
-          <div class="col-span-2 form-control">
+        <template v-if="cond.val">
+          <div class="col-span-3 sm:col-span-2 form-control">
             <select
-              v-model="cond.input.type"
+              v-model="cond.val.type"
               :disabled="disabled"
               name="key"
               class="select select-sm"
@@ -433,34 +305,150 @@ zh-CN:
               </template>
             </select>
           </div>
-          <div class="col-span-5 sm:col-span-5 form-control">
+          <div class="col-span-11 sm:col-span-4 md:col-span-5 form-control">
             <input
-              v-model="cond.input.val"
+              v-model.lazy="cond.val.val"
               class="input input-sm"
               :disabled="disabled"
               :type="numericalKeys.includes(cond.key) ? 'number' : 'text'"
             >
           </div>
+          <div v-if="listMode" class="flex justify-end col-span-1">
+            <button :disabled="disabled" class="btn btn-sm btn-circle btn-error btn-outline" @click="emit('delete')">
+              <icon name="material-symbols:delete" />
+            </button>
+          </div>
+          <div v-else class="flex justify-end col-span-1">
+            <button :disabled="disabled" class="btn btn-sm btn-circle btn-neutral btn-outline" @click="resetCond()">
+              <icon name="lsicon:clear-filled" />
+            </button>
+          </div>
         </template>
       </template>
+      <template v-else-if="cond.type === OP.NoPause">
+        <div class="col-span-5 md:col-span-8" />
+        <div v-if="listMode" class="flex justify-end col-span-1">
+          <button :disabled="disabled" class="btn btn-sm btn-circle btn-error btn-outline" @click="emit('delete')">
+            <icon name="material-symbols:delete" />
+          </button>
+        </div>
+        <div v-else class="flex justify-end col-span-1">
+          <button :disabled="disabled" class="btn btn-sm btn-circle btn-neutral btn-outline" @click="resetCond()">
+            <icon name="lsicon:clear-filled" />
+          </button>
+        </div>
+      </template>
+      <template v-else-if=" cond.type === OP.ModeEq || cond.type === OP.RulesetEq || cond.type === OP.Extends">
+        <div v-if="cond.type === OP.ModeEq" class="col-span-5 md:col-span-3 form-control">
+          <select
+            v-model="cond.val"
+            :disabled="disabled"
+            name="mode"
+            class="select select-sm"
+            @change="selectCond"
+          >
+            <option disabled value="">
+              {{ t('select') }}
+            </option>
+            <option v-for="m in modes" :key="m" :value="m">
+              {{ m }}
+            </option>
+          </select>
+        </div>
+        <div v-else-if="cond.type === OP.RulesetEq" class="col-span-5 md:col-span-3 form-control">
+          <select
+            v-model="cond.val"
+            :disabled="disabled"
+            name="mode"
+            class="select select-sm"
+            @change="selectCond"
+          >
+            <option disabled value="">
+              {{ t('select') }}
+            </option>
+            <option v-for="r in rulesets" :key="r" :value="r">
+              {{ r }}
+            </option>
+          </select>
+        </div>
+
+        <div v-else-if="cond.type === OP.Extends" class="col-span-5 md:col-span-3 form-control">
+          <select
+            v-model="cond.val"
+            :disabled="disabled"
+            name="mode"
+            class="select select-sm"
+            @change="selectCond"
+          >
+            <option disabled value="">
+              {{ t('select') }}
+            </option>
+            <option
+              v-for="ach in Object.values(Requirement).filter(ach => requirements.some(r => r.type === ach) && ach !== current.type)"
+              :key="ach"
+              :value="ach"
+            >
+              {{ t(tRequirement[ach].__path__) }}
+            </option>
+          </select>
+        </div>
+
+        <div class="hidden md:block md:col-span-5" />
+
+        <div v-if="listMode" class="flex justify-end col-span-1">
+          <button :disabled="disabled" class="btn btn-sm btn-circle btn-error btn-outline" @click="emit('delete')">
+            <icon name="material-symbols:delete" />
+          </button>
+        </div>
+        <div v-else class="flex justify-end col-span-1">
+          <button :disabled="disabled" class="btn btn-sm btn-circle btn-neutral btn-outline" @click="resetCond()">
+            <icon name="lsicon:clear-filled" />
+          </button>
+        </div>
+      </template>
+      <template v-else-if="cond.type === OP.StableModIncludeAny || cond.type === OP.StableModIncludeAll">
+        <div class="col-span-5 md:col-span-8" />
+        <div v-if="listMode" class="flex justify-end col-span-1">
+          <button :disabled="disabled" class="btn btn-sm btn-circle btn-error btn-outline" @click="emit('delete')">
+            <icon name="material-symbols:delete" />
+          </button>
+        </div>
+        <div v-else class="flex justify-end col-span-1">
+          <button :disabled="disabled" class="btn btn-sm btn-circle btn-neutral btn-outline" @click="resetCond()">
+            <icon name="lsicon:clear-filled" />
+          </button>
+        </div>
+        <div class="grid grid-cols-12 col-span-12 gap-0 gap-x-6">
+          <div v-for="mod in $enum(StableMod).getValues()" :key="mod" class="col-span-6 md:col-span-3 form-control">
+            <label class="cursor-pointer label">
+              <span class="label-text">{{ StableMod[mod] }}</span>
+              <input :disabled="disabled" type="checkbox" :checked="!!((cond.val as number) & mod)" class="checkbox" @change="(cond.val = (cond.val as number) ^ mod)">
+            </label>
+          </div>
+        </div>
+      </template>
       <template v-else-if="cond.type === OP.AND || cond.type === OP.OR || cond.type === OP.NOT || cond.type === OP.Remark">
-        <div class="hidden sm:block sm:col-span-4 md:col-span-7" />
-        <button v-if="listMode" :disabled="disabled" class="col-span-6 sm:col-span-2 btn btn-sm btn-error btn-outline" @click="emit('delete')">
-          {{ t('delete') }} <icon name="material-symbols:delete" />
-        </button>
-        <button v-else :disabled="disabled" class="col-span-6 sm:col-span-2 btn btn-sm btn-neutral btn-outline" @click="resetCond()">
-          {{ t('reset') }} <icon name="lsicon:clear-filled" />
-        </button>
+        <div class="col-span-5 md:col-span-8" />
+        <div v-if="listMode" class="flex justify-end col-span-1">
+          <button :disabled="disabled" class="self-end btn btn-sm btn-circle btn-error btn-outline" @click="emit('delete')">
+            <icon name="material-symbols:delete" />
+          </button>
+        </div>
+        <div v-else class="flex justify-end col-span-1">
+          <button :disabled="disabled" class="self-end btn btn-sm btn-circle btn-neutral btn-outline" @click="resetCond()">
+            <icon name="lsicon:clear-filled" />
+          </button>
+        </div>
         <div class="grid grid-cols-12 col-span-12 gap-2">
           <app-dan-cond
             v-if="cond.type === OP.Remark || cond.type === OP.NOT"
-            v-model="cond.cond"
+            v-model.lazy="cond.cond"
             :requirements
             :current
             @delete="cond = undefined"
           />
           <draggable
-            v-else-if="cond.type === OP.AND || cond.type === OP.OR" v-model="cond.cond as unknown[]"
+            v-else-if="cond.type === OP.AND || cond.type === OP.OR" v-model.lazy="cond.cond as unknown[]"
             class="grid grid-cols-12 col-span-12 space-y-2"
             v-bind="{
               animation: 200,
@@ -474,7 +462,7 @@ zh-CN:
           >
             <template #item="{ index }">
               <app-dan-cond
-                v-model="cond.cond[index]"
+                v-model.lazy="cond.cond[index]"
                 :list-mode="true"
                 :requirements
                 :current
@@ -490,12 +478,37 @@ zh-CN:
           </draggable>
         </div>
       </template>
+      <template v-else-if="cond.type === OP.AccGte || cond.type === OP.ScoreGte || cond.type === OP.BanchoBeatmapIdEq || cond.type === OP.BeatmapMd5Eq">
+        <input
+          v-model.lazy="cond.val"
+          class="input input-sm"
+          :disabled="disabled"
+          :class="cond.type === OP.AccGte || cond.type === OP.ScoreGte ? 'col-span-6 md:col-span-3' : 'col-span-11 md:col-span-8'"
+          :type="cond.type === OP.AccGte || cond.type === OP.ScoreGte ? 'number' : 'text'"
+        >
+        <div
+          class="hidden"
+          :class="{
+            'md:block md:col-span-4': cond.type === OP.AccGte || cond.type === OP.ScoreGte,
+          }"
+        />
+        <div v-if="listMode" class="flex justify-end col-span-1">
+          <button :disabled="disabled" class="btn btn-sm btn-circle btn-error btn-outline" @click="emit('delete')">
+            <icon name="material-symbols:delete" />
+          </button>
+        </div>
+        <div v-else class="flex justify-end col-span-1">
+          <button :disabled="disabled" class="btn btn-sm btn-circle btn-neutral btn-outline" @click="resetCond()">
+            <icon name="lsicon:clear-filled" />
+          </button>
+        </div>
+      </template>
       <template v-else>
         {{ assertNotReachable(cond) }}
       </template>
     </template>
     <template v-else>
-      <div class="col-span-12 sm:col-span-6 md:col-span-3">
+      <div class="col-span-6 md:col-span-3">
         <div class="form-control">
           <select
             value=""
@@ -513,13 +526,17 @@ zh-CN:
           </select>
         </div>
       </div>
-      <div class="hidden sm:block sm:col-span-4 md:col-span-7" />
-      <button v-if="listMode" :disabled="disabled" class="col-span-6 sm:col-span-2 btn btn-sm btn-error btn-outline" @click="emit('delete')">
-        {{ t('delete') }} <icon name="material-symbols:delete" />
-      </button>
-      <button v-else :disabled="disabled" class="col-span-6 sm:col-span-2 btn btn-sm btn-neutral btn-outline" @click="resetCond()">
-        {{ t('reset') }} <icon name="lsicon:clear-filled" />
-      </button>
+      <div class="col-span-5 md:col-span-8" />
+      <div v-if="listMode" class="flex justify-end col-span-1">
+        <button :disabled="disabled" class="col-span-2 btn btn-sm btn-circle btn-error btn-outline" @click="emit('delete')">
+          <icon name="material-symbols:delete" />
+        </button>
+      </div>
+      <div v-else class="flex justify-end col-span-1">
+        <button :disabled="disabled" class="btn btn-sm btn-circle btn-neutral btn-outline" @click="resetCond()">
+          <icon name="lsicon:clear-filled" />
+        </button>
+      </div>
     </template>
   </div>
 </template>
