@@ -85,7 +85,7 @@ export class DanProvider extends Base<Id, ScoreId> {
   }
 
   drizzle = useDrizzle(schema)
-  async get(id: Id, tx: Database = this.drizzle): Promise<DatabaseDan<Id, DatabaseRequirementCondBinding<Id, Requirement, Cond>>> {
+  async get(id: Id, tx?: Database): Promise<DatabaseDan<Id, DatabaseRequirementCondBinding<Id, Requirement, Cond>>> {
     const { sql, table: { dans } } = this._internal_queryDan(tx)
 
     const result = await sql
@@ -112,10 +112,14 @@ export class DanProvider extends Base<Id, ScoreId> {
       condId: Id
     }[]
   },
-    tx: Database = this.drizzle
+  tx?: Database
   ): Promise<DatabaseDan<Id>> {
     // Extract root condition IDs from requirements
     const rootCondIds = dan.requirements.map(r => r.condId)
+
+    if (!tx) {
+      tx = await this.getTx(this.drizzle)
+    }
 
     const built = await this.#fetchAndBuildCondTree(rootCondIds, tx)
 
@@ -1284,10 +1288,14 @@ FROM
     }
   }
 
-  _internal_queryDan(tx: Database = this.drizzle) {
+  _internal_queryDan(tx?: Database) {
     const dans = aliasedTable(schema.dans, 'd')
     const condTree = this.#virtualTableDanTreeAlias('cond_tree')
     const danCondBinding = aliasedTable(schema.requirementCondBindings, 'dc')
+
+    if (!tx) {
+      tx = this.drizzle
+    }
 
     const _sql = tx
       .select({
@@ -1570,7 +1578,10 @@ FROM
     })
   }
 
-  async getCourse(id: Id, tx: Database = this.drizzle): Promise<DatabaseDanCourse<Id, DatabaseRequirementCondBinding<Id, Requirement, Cond>>> {
+  async getCourse(id: Id, tx?: Database): Promise<DatabaseDanCourse<Id, DatabaseRequirementCondBinding<Id, Requirement, Cond>>> {
+    if (!tx) {
+      tx = await this.getTx(this.drizzle)
+    }
     const course = await tx.query.danCourses.findFirst({
       where: eq(schema.danCourses.id, id),
     })
@@ -1772,6 +1783,10 @@ FROM
       // 4. Return the updated course
       return this.getCourse(input.id, tx)
     })
+  }
+
+  getTx(db: typeof this.drizzle) {
+    return new Promise<Database>(resolve => db.transaction(async tx => resolve(tx)))
   }
 }
 
