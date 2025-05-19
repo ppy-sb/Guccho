@@ -160,9 +160,9 @@ const { t } = useI18n({
   } satisfies Record<string, Translation>,
 })
 
-const comparisonKeys = ['mode', 'ruleset', 'accuracy', 'maxCombo', 'count.miss', 'count.50', 'count.100', 'count.300', 'count.geki', 'count.katu', 'count.200', 'count.max', 'score'] as ComparisonCondition['key'][]
+// const comparisonKeys = ['mode', 'ruleset', 'accuracy', 'maxCombo', 'count.miss', 'count.50', 'count.100', 'count.300', 'count.geki', 'count.katu', 'count.200', 'count.max', 'score'] as ComparisonCondition['key'][]
 const numericalKeys = ['score', 'accuracy', 'maxCombo', 'count.miss', 'count.50', 'count.100', 'count.300', 'count.geki', 'count.katu', 'count.200', 'count.max'] as ComparisonCondition['key'][]
-const nonNumericalKeys = ['mode', 'ruleset']
+// const nonNumericalKeys = ['mode', 'ruleset']
 const nonNumericalComparionOPs = [CompareOP.Eq, CompareOP.Ne]
 const numericalComparisonOPs = [CompareOP.Gt, CompareOP.Gte, CompareOP.Lt, CompareOP.Lte, ...nonNumericalComparionOPs]
 

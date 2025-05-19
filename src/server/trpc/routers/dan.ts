@@ -8,7 +8,6 @@ import { type Cond, type Dan, type DatabaseDan, type DatabaseDanCourse, type Dat
 import { Feature } from '~/def/features'
 import { DanProvider, ScoreProvider, UserProvider, dans } from '~/server/singleton/service'
 import { type PaginatedResult } from '~/def/pagination'
-import { GucchoError } from '~/def/messages'
 
 const publicDan = withFeature(Feature.Dan, publicProcedure)
 const staffDan = withFeature(Feature.Dan, staffProcedure)
