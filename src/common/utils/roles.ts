@@ -1,16 +1,18 @@
 import { UserRole } from '~/def/user'
 
-export type ComputedUserRole = Record<'admin' | 'owner' | 'staff', boolean>
+export type ComputedUserRole = Record<'admin' | 'owner' | 'staff' | 'beatmapNominator', boolean>
 
 export function computeUserRoles(user: { roles: UserRole[] }): ComputedUserRole {
   const admin = isAdmin(user)
   const staff = isStaff(user)
   const owner = user.roles.includes(UserRole.Owner)
+  const beatmapNominator = user.roles.includes(UserRole.BeatmapNominator)
 
   return {
     admin,
     owner,
     staff,
+    beatmapNominator,
   }
 }
 

@@ -6,11 +6,7 @@ export const useSession = defineStore('session', {
     loggedIn: boolean
     userId?: string
     user?: Omit<UserFull<string>, 'statistics'>
-    role: {
-      admin: boolean
-      owner: boolean
-      staff: boolean
-    }
+    role: ComputedUserRole
     events?: EventSource
   } => ({
     loggedIn: false,
@@ -20,6 +16,7 @@ export const useSession = defineStore('session', {
       admin: false,
       owner: false,
       staff: false,
+      beatmapNominator: false,
     },
     events: undefined,
   }),
