@@ -2,7 +2,7 @@
 import { Icon } from '@iconify/vue'
 
 definePageMeta({
-  middleware: ['auth', 'staff'],
+  middleware: ['auth', 'bn'],
 })
 
 const app = useNuxtApp()

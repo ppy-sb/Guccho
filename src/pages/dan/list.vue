@@ -169,7 +169,7 @@ zh-CN:
               >
                 {{ t('detail') }}
               </nuxt-link-locale>
-              <nuxt-link-locale v-if="session.role.staff" class="btn btn-sm" :to="{ name: 'dan-compose', query: { id: item.id } }">
+              <nuxt-link-locale v-if="session.role.beatmapNominator" class="btn btn-sm" :to="{ name: 'dan-compose', query: { id: item.id } }">
                 Edit
               </nuxt-link-locale>
             </div>

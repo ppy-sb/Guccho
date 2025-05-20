@@ -1,6 +1,7 @@
 import { type ZodSchema, any, array, boolean, literal, nativeEnum, number, object, string, tuple, union } from 'zod'
+import { TRPCError } from '@trpc/server'
 import { type DanProvider as BaseDanProvider } from '../../backend/$base/server'
-import { staffProcedure } from '../middleware/role'
+import { bNProcedure, roleProcedure } from '../middleware/role'
 import { router as _router, publicProcedure } from '../trpc'
 import { zodMode, zodRuleset } from '../shapes'
 import { validateUsecase } from '~/common/utils/dan'
@@ -8,9 +9,17 @@ import { type Cond, type Dan, type DatabaseDan, type DatabaseDanCourse, type Dat
 import { Feature } from '~/def/features'
 import { DanProvider, ScoreProvider, UserProvider, dans } from '~/server/singleton/service'
 import { type PaginatedResult } from '~/def/pagination'
+import { GucchoError } from '~/def/messages'
 
 const publicDan = withFeature(Feature.Dan, publicProcedure)
-const staffDan = withFeature(Feature.Dan, staffProcedure)
+const bnDan = withFeature(Feature.Dan, bNProcedure)
+
+const bnOrStaffDan = withFeature(Feature.Dan, roleProcedure.use(({ ctx, next }) => {
+  if (ctx.user.role.admin || ctx.user.role.staff) {
+    return next()
+  }
+  throw new TRPCError({ code: 'UNAUTHORIZED', message: fromGucchoErrorCode(GucchoError.RequireAdminPrivilege) })
+}))
 
 const qualifiedScorePickType = union([literal('id'), literal('pp'), literal('score'), literal('accuracy')])
 export const router = _router({
@@ -51,11 +60,11 @@ export const router = _router({
       return transformDan(res)
     }),
 
-  delete: staffDan
+  delete: bnDan
     .input(string())
     .mutation(async ({ input }) => await dans.delete(DanProvider.stringToId(input))),
 
-  save: staffDan
+  save: bnDan
     .input(
       any()
         .refine((i): i is DatabaseDan<string> => !!validateUsecase(i as DatabaseDan<string>)) as ZodSchema<Omit<DatabaseDan<string>, 'createdAt' | 'updatedAt'>>
@@ -180,7 +189,7 @@ export const router = _router({
         }) satisfies BaseDanProvider.UserDanClearedScore<string, string>[]
       }),
 
-    recalc: staffDan
+    recalc: bnOrStaffDan
       .input(
         object({
           dan: object({
@@ -204,7 +213,7 @@ export const router = _router({
       }),
   }),
 
-  exportAll: staffDan
+  exportAll: bnDan
     .query(async () => {
       return (await dans.exportAll()).map(transformDan)
     }),
@@ -268,7 +277,7 @@ export const router = _router({
         }
       }),
 
-    create: staffDan
+    create: bnDan
       .input(object({
         name: string().min(4),
         description: string(),
@@ -281,7 +290,7 @@ export const router = _router({
         return DanProvider.idToString(course)
       }),
 
-    update: staffDan
+    update: bnDan
       .input(object({
         id: string(),
         name: string(),
@@ -313,7 +322,7 @@ export const router = _router({
         }
       }),
 
-    delete: staffDan
+    delete: bnDan
       .input(object({
         id: string(),
         deleteDans: boolean().default(false),
@@ -323,7 +332,7 @@ export const router = _router({
         deleteDans: input.deleteDans,
       })),
 
-    searchDan: staffProcedure
+    searchDan: bnDan
       .input(
         object({
           keyword: string(),
