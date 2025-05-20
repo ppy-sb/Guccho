@@ -4,7 +4,7 @@ import { Mode, Ruleset } from '~/def'
 import useAdapterConfig from '~/composables/useAdapterConfig'
 
 definePageMeta({
-  middleware: ['auth', 'staff'],
+  middleware: ['auth', 'bn'],
 })
 
 const { t } = useI18n()

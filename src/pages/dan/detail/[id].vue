@@ -147,7 +147,7 @@ zh-CN:
     </p>
     <dan-explain-requirement v-for="requirement in item.requirements" :key="requirement.type" :requirement="requirement" />
     <div class="mt-2 space-x-2 text-right">
-      <nuxt-link-locale v-if="session.role.staff" class="btn btn-sm" :to="{ name: 'dan-compose', query: { id: item.id } }">
+      <nuxt-link-locale v-if="session.role.beatmapNominator" class="btn btn-sm" :to="{ name: 'dan-compose', query: { id: item.id } }">
         Edit
       </nuxt-link-locale>
     </div>
@@ -292,7 +292,7 @@ zh-CN:
         </div>
       </div>
     </div>
-    <div v-if="session.role.staff" class="p-2 mt-4 rounded-md bg-base-100">
+    <div v-if="session.role.beatmapNominator || session.role.admin" class="p-2 mt-4 rounded-md bg-base-100">
       <h3 class="text-lg">
         Admin Zone
       </h3>

@@ -243,7 +243,7 @@ zh-CN:
       <div class="hidden md:block md:col-span-3" />
       <button
         class="col-span-12 sm:col-span-6 md:col-span-3 btn btn-primary"
-        :disabled="!session.role.admin"
+        :disabled="!session.role.beatmapNominator"
         @click="saveDB"
       >
         save to db
@@ -251,7 +251,7 @@ zh-CN:
       </button>
       <button
         class="col-span-12 sm:col-span-6 md:col-span-3 btn btn-warning"
-        :disabled="!compose._db || !session.role.admin"
+        :disabled="!compose._db || !session.role.beatmapNominator"
         @click="confirm(t('delete-confirm')) && deleteDB()"
       >
         delete

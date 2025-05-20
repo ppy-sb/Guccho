@@ -48,7 +48,7 @@ function clearFocus() {
             {{ t('title.dan.courses') }}
           </nuxt-link-locale>
         </li>
-        <template v-if="session.user && showAdminPanel(session.user.roles)">
+        <template v-if="session.user && session.role.beatmapNominator">
           <li>
             <nuxt-link-locale :to="{ name: 'dan-course-manage' }" @click="dans?.toggleAttribute('open', false)">
               <icon name="tabler:bookmark-edit" class="w-5 h-5" size="100%" />
