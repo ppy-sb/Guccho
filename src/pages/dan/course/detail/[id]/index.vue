@@ -78,7 +78,7 @@ zh-CN:
           </div>
           <div class="flex gap-2">
             <nuxt-link-locale
-              v-if="session.role.staff"
+              v-if="session.role.beatmapNominator"
               class="btn btn-primary btn-sm btn-shadow"
               :to="{ name: 'dan-course-detail-id-edit', params: { id: course.id } }"
             >

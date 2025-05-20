@@ -6,7 +6,7 @@ const tMode = localeKey.root.mode
 const tRule = localeKey.root.ruleset
 
 definePageMeta({
-  middleware: ['auth', 'staff'],
+  middleware: ['auth', 'bn'],
 })
 
 const app = useNuxtApp()
