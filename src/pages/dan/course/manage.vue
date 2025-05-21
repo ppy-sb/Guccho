@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
+import { useI18n } from 'vue-i18n'
 import { Mode, Ruleset } from '~/def'
 
 const tMode = localeKey.root.mode
@@ -11,7 +12,7 @@ definePageMeta({
 
 const app = useNuxtApp()
 const server = useAdapterConfig()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const r = useRoute()
 
 useHead({
@@ -32,7 +33,7 @@ const query = ref({
   },
 })
 
-const { data, refresh, status } = await app.$client.dan.course.search.useQuery(query)
+const { data, refresh, status } = await app.$client.dan.course.managementSearch.useQuery(query)
 
 const pages = computed(() => Math.ceil((data.value?.total || 0) / (query.value.perPage)))
 
@@ -72,26 +73,37 @@ en-GB:
   search-text: Search courses...
   search: Search
   collection: Course
+  dan-count: Dan Count
   edit: Edit
-  mode: Mode
-  ruleset: Ruleset
+  mode: '@:global.mode'
+  ruleset: '@:global.ruleset'
   key: Key
   treat-no-ruleset-cond-as-standard: Treat no ruleset condition as standard
   unset: Unset
   create: Create
+  creator: Creator
+  updater: Updater
+  created-at: Created At
+  updated-at: Updated At
+  actions: Actions
 
 zh-CN:
-  search-text: 搜索段位...
+  search-text: 搜索段位池...
   search: 搜索
-  collection: 组别
+  collection: 段位池
+  dan-count: 段位数
   edit: 编辑
-  mode: 模式
-  ruleset: 规则集
+  mode: '@:global.mode'
+  ruleset: '@:global.ruleset'
   key: 键数
   treat-no-ruleset-cond-as-standard: 将无规则集条件视为标准
   unset: 未设置
   create: 创建
-
+  creator: 创建者
+  updater: 更新者
+  created-at: 创建时间
+  updated-at: 更新时间
+  actions: 操作
 # TODO fr, DE
 </i18n>
 
@@ -177,11 +189,30 @@ zh-CN:
       </div>
 
       <div class="overflow-x-auto border rounded-lg border-base-300 bg-base-100">
-        <table class="table table-sm">
+        <table class="table table-sm table-vertical-borders">
           <thead>
             <tr>
-              <th>{{ t('collection') }}</th>
-              <th>{{ t('actions') }}</th>
+              <th class="">
+                {{ t('collection') }}
+              </th>
+              <th class="text-center">
+                {{ t('dan-count') }}
+              </th>
+              <th class="text-center">
+                {{ t('creator') }}
+              </th>
+              <th class="text-center">
+                {{ t('updater') }}
+              </th>
+              <th class="text-center">
+                {{ t('created-at') }}
+              </th>
+              <th class="text-center">
+                {{ t('updated-at') }}
+              </th>
+              <th class="text-center w-0">
+                {{ t('actions') }}
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -203,10 +234,49 @@ zh-CN:
                     </div>
                   </div>
                 </th>
+                <td class="align-top font-mono text-end">
+                  {{ course.danCount }}
+                </td>
+                <td class="align-top text-center">
+                  <template v-if="course.creator">
+                    <nuxt-link-locale
+                      :to="{ name: 'user-handle', params: { handle: `@${course.creator.safeName}` } }"
+                      class="link link-primary"
+                    >
+                      {{ course.creator.name }}
+                    </nuxt-link-locale>
+                  </template>
+                  <template v-else>
+                    &mdash;
+                  </template>
+                </td>
+                <td class="align-top text-center">
+                  <template v-if="course.updater">
+                    <nuxt-link-locale
+                      :to="{ name: 'user-handle', params: { handle: `@${course.updater.safeName}` } }"
+                      class="link link-primary"
+                    >
+                      {{ course.updater.name }}
+                    </nuxt-link-locale>
+                  </template>
+                  <template v-else>
+                    &mdash;
+                  </template>
+                </td>
+                <td class="align-top text-center">
+                  <span class="tooltip" :data-tip="formatDate(course.createdAt, locale)">
+                    {{ formatTimeAgo(course.createdAt, locale) }}
+                  </span>
+                </td>
+                <td class="align-top text-center">
+                  <span class="tooltip" :data-tip="formatDate(course.updatedAt, locale)">
+                    {{ formatTimeAgo(course.updatedAt, locale) }}
+                  </span>
+                </td>
                 <td class="align-top">
                   <div class="flex gap-2">
                     <nuxt-link-locale
-                      class="btn btn-sm btn-primary" :to="{
+                      class="btn btn-xs btn-primary" :to="{
                         name: 'dan-course-detail-id-edit',
                         params: {
                           id: course.id,
@@ -215,7 +285,7 @@ zh-CN:
                     >
                       <Icon icon="mdi:pencil" class="w-4 h-4" />
                     </nuxt-link-locale>
-                    <button class="btn btn-sm btn-error" @click="openDeleteModal(course)">
+                    <button class="btn btn-xs btn-error" @click="openDeleteModal(course)">
                       <Icon icon="mdi:delete" class="w-4 h-4" />
                     </button>
                   </div>
@@ -235,7 +305,7 @@ zh-CN:
       </div>
       <div class="flex pt-4">
         <div class="mx-auto join">
-          <template v-for="(i, n) in pages" :key="`sw-${i}`">
+          <template v-for="(_i, n) in pages" :key="`sw-${_i}`">
             <button
               class="join-item btn btn-sm"
               :class="{
