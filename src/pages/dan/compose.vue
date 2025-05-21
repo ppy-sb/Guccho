@@ -158,7 +158,7 @@ zh-CN:
       <h1 class="flex-1 text-2xl font-bold">
         Compose
       </h1>
-      <span v-if="compose?._db" class="badge badge-info">DB</span>
+      <span v-if="compose?._db" class="badge badge-info">Live</span>
       <span v-else class="badge badge-neutral">Unsaved</span>
       <span class="text-xs text-base-content/60">ID: {{ compose?.id || '-' }}</span>
       <button class="btn btn-primary btn-sm" :disabled="!session.role.beatmapNominator" @click="saveDB">
@@ -248,12 +248,12 @@ zh-CN:
         </div>
         <!-- Requirement Editor (Right) -->
         <app-dan-cond
-          v-if="selectedRequirement"
+          v-if="selectedIdx !== null && selectedRequirement"
           v-model="selectedRequirement.cond"
           class="md:w-4/5"
           :list-mode="false"
           :requirements="compose.requirements"
-          :current="selectedRequirement"
+          :current-idx="selectedIdx"
           :parent="null"
         />
         <div v-else class="flex items-center justify-center h-full text-base-content/60">
