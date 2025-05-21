@@ -30,3 +30,10 @@ $variants: primary, secondary, accent, neutral, base-100, info, success, warning
 .dv-tab.tab-active {
   @apply [--tab-bg:theme('colors.gbase.700')];
 }
+
+.table-vertical-borders th:not(:last-child),
+.table-vertical-borders td:not(:last-child) {
+  border-right-width: 1px;
+  --tw-border-opacity: 1;
+  border-right-color: var(--fallback-b2, oklch(var(--b2) / var(--tw-border-opacity)));
+}
