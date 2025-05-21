@@ -66,3 +66,21 @@ export function formatTimeAgo(date: Date, lang: string) {
     duration /= division.amount
   }
 }
+
+/**
+ * Formats a date as 'MMM d, yyyy, HH:mm' in the given locale.
+ * Example: Jan 1, 2024, 13:45
+ */
+export function formatDate(date: Date | string | undefined | null, locale: string = 'en-US') {
+  if (!date) {
+    return ''
+  }
+  const options: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  }
+  return new Date(date).toLocaleDateString(locale, options)
+}
