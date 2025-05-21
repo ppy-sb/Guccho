@@ -105,6 +105,17 @@ export namespace DanProvider {
     perPage: number
   }
 
+  // Result type for management search (id, name, description, createdAt, updatedAt, danCount)
+  export interface ManagementSearchCourseResult<Id> {
+    id: Id
+    name: string
+    description: string
+    createdAt: Date
+    updatedAt: Date
+    danCount: number
+    creator?: { name: string; safeName: string }
+    updater?: { name: string; safeName: string }
+  }
 }
 
 export abstract class DanProvider<Id, ScoreId> extends Mixin(IdTransformable, ScoreIdTransformable) {
@@ -125,4 +136,7 @@ export abstract class DanProvider<Id, ScoreId> extends Mixin(IdTransformable, Sc
   abstract deleteCourse(opt: DanProvider.DeleteDanCourseParam<Id>): Promise<void>
   abstract createCourse(input: DanProvider.CreateDanCourseParam, user: Pick<UserCompact<Id>, 'id'>): Promise<Id>
   abstract updateCourse(input: DanProvider.UpdateDanCourseParam<Id>, user: Pick<UserCompact<Id>, 'id'>): Promise<DatabaseDanCourse<Id>>
+
+  // Management search for courses: returns only essential data for management UI (id, name, description, createdAt, updatedAt, danCount)
+  abstract managementSearchCourses(opt: DanProvider.SearchDanCourseParam): Promise<PaginatedResult<DanProvider.ManagementSearchCourseResult<Id>>>
 }

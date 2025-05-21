@@ -1276,7 +1276,7 @@ FROM
           updater: courses.updater,
           updatedAt: courses.updatedAt,
           total: sql<number>`count(*) over()`.as('total'),
-          dans: sql<Array<{ id: Id; s: string }>>`CAST( CONCAT( '[', GROUP_CONCAT(DISTINCT JSON_OBJECT('id', ${courseDans.danId}, 's', ${courseDans.shortName}) ORDER BY ${courseDans.order} ASC), ']' ) AS JSON)`.as('dan_ids'),
+          dans: sql<Array<{ id: Id; s: string }>>`CAST( CONCAT( '[', GROUP_CONCAT(DISTINCT JSON_OBJECT('id', ${courseDans.danId}, 's', ${courseDans.shortName}) ORDER BY ${courseDans.order} ASC), ']' ) AS JSON)`.as('dans'),
         })
         .from(courseDans)
         .innerJoin(dans, eq(courseDans.danId, dans.id))
@@ -1697,6 +1697,81 @@ FROM
 
   getTx(db: typeof this.drizzle) {
     return new Promise<Database>(resolve => db.transaction(async tx => resolve(tx)))
+  }
+
+  /**
+   * Management search for courses: returns only essential data for management UI.
+   * Returns danCount (number of dans in each course), not the dans list.
+   */
+  async managementSearchCourses(a: Base.SearchDanCourseParam): Promise<PaginatedResult<Base.ManagementSearchCourseResult<Id>>> {
+    return this.drizzle.transaction(async (tx) => {
+      const courses = aliasedTable(schema.danCourses, 'c')
+      const courseDans = aliasedTable(schema.danCourseDans, 'cd')
+      const dans = aliasedTable(schema.dans, 'd')
+      const users = aliasedTable(schema.users, 'u')
+      const updaters = aliasedTable(schema.users, 'uu')
+      const _sql = tx
+        .select({
+          id: courses.id,
+          name: courses.name,
+          description: sql<string>`CASE WHEN CHAR_LENGTH(${courses.description}) > 64 THEN CONCAT(LEFT(${courses.description}, 64), '…') ELSE ${courses.description} END`.as('description'),
+          createdAt: courses.createdAt,
+          updatedAt: courses.updatedAt,
+          danCount: count(courseDans.danId).as('danCount'),
+          creator: {
+            name: users.name,
+            safeName: users.safeName,
+          },
+          updater: {
+            name: updaters.name,
+            safeName: updaters.safeName,
+          },
+          total: sql<number>`count(*) over()`.as('total'),
+        })
+        .from(courses)
+        .leftJoin(courseDans, eq(courses.id, courseDans.courseId))
+        .leftJoin(dans, eq(courseDans.danId, dans.id))
+        .leftJoin(users, eq(courses.creator, users.id))
+        .leftJoin(updaters, eq(courses.updater, updaters.id))
+        .where(
+          and(
+            or(
+              like(courses.name, `%${a.keyword}%`),
+              like(courses.description, `%${a.keyword}%`),
+              like(dans.name, `%${a.keyword}%`),
+              like(dans.description, `%${a.keyword}%`),
+            )?.if(a.keyword),
+          )
+        )
+        .groupBy(courses.id)
+        .orderBy(
+          desc(courses.updatedAt),
+          desc(courses.id),
+        )
+        .limit(a.perPage)
+        .offset(a.page * a.perPage)
+
+      const result = await _sql
+      if (!result.length) {
+        return {
+          total: 0,
+          data: [],
+        }
+      }
+      return {
+        total: result[0].total,
+        data: result.map(i => ({
+          id: i.id,
+          name: i.name,
+          description: i.description,
+          createdAt: i.createdAt,
+          updatedAt: i.updatedAt,
+          danCount: i.danCount,
+          creator: i.creator?.name ? i.creator : undefined,
+          updater: i.updater?.name ? i.updater : undefined,
+        })),
+      }
+    })
   }
 }
 
