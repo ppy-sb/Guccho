@@ -12,11 +12,11 @@ import {
 } from '~/def/dan'
 import { modes, rulesets } from '~/def'
 
-withDefaults(defineProps<{
+const props = withDefaults(defineProps<{
   listMode?: boolean
   disabled?: boolean
   requirements: readonly RequirementCondBinding<Requirement, Cond>[]
-  current: RequirementCondBinding<Requirement, Cond>
+  currentIdx: number
   parent: Cond | null
 }>(), { listMode: false, disabled: false })
 
@@ -191,6 +191,7 @@ const nonNumericalComparionOPs = [CompareOP.Eq, CompareOP.Ne]
 const numericalComparisonOPs = [CompareOP.Gt, CompareOP.Gte, CompareOP.Lt, CompareOP.Lte, ...nonNumericalComparionOPs]
 
 const drag = ref(false)
+const current = computed(() => props.requirements[props.currentIdx])
 
 const ops = Object.values(OP)
 
@@ -253,7 +254,7 @@ zh-CN:
       class="relative flex gap-1 dan-cond-row group"
       :class="{
         'opacity-60': disabled,
-        'ring-2 ring-primary/30': drag,
+        'dragging': drag,
       }"
     >
       <span
@@ -267,7 +268,7 @@ zh-CN:
         <!-- Main select for OP type -->
         <div
           :class=" {
-            'w-full flex items-center gap-2': cond.type === OP.AND || cond.type === OP.OR || cond.type === OP.NOT || cond.type === OP.Remark,
+            'w-full flex items-center gap-2': cond.type === OP.AND || cond.type === OP.OR || cond.type === OP.NOT,
           }"
         >
           <select
@@ -276,7 +277,7 @@ zh-CN:
             name="cond"
             class="select select-sm bg-base-200"
             :class=" {
-              grow: cond.type === OP.AND || cond.type === OP.OR || cond.type === OP.NOT || cond.type === OP.Remark,
+              grow: cond.type === OP.AND || cond.type === OP.OR || cond.type === OP.NOT,
             }"
             @change="selectCond"
           >
@@ -291,11 +292,7 @@ zh-CN:
               }}
             </option>
           </select>
-          <button
-            v-if="cond.type === OP.AND || cond.type === OP.OR"
-            class="btn btn-sm btn-circle btn-success btn-outline"
-            @click="(cond.cond as any)?.push(undefined)"
-          >
+          <button v-if="cond.type === OP.AND || cond.type === OP.OR" class="btn btn-sm btn-circle btn-success btn-outline" @click="(cond.cond as any).push(undefined)">
             <icon name="material-symbols:add-rounded" />
           </button>
         </div>
@@ -454,22 +451,11 @@ zh-CN:
         <!-- Compound/nested: AND, OR, NOT, Remark -->
         <template v-else-if="cond.type === OP.AND || cond.type === OP.OR || cond.type === OP.NOT || cond.type === OP.Remark">
           <div class="flex-1">
-            <div v-if="cond.type === OP.Remark || cond.type === OP.NOT">
-              <div
-                v-if="cond.type === OP.Remark"
-                class="form-control py-1"
-              >
-                <label class="label-text pb-1"> {{ t(`dan.cond.${OP.Remark}`) }} </label>
-                <textarea
-                  v-model="cond.remark"
-                  name="remark"
-                  class="textarea textarea-sm"
-                />
-              </div>
+            <div v-if="cond.type === OP.Remark || cond.type === OP.NOT" class="">
               <app-dan-cond
                 v-model.lazy="cond.cond"
                 :requirements="requirements"
-                :current="current"
+                :current-idx="currentIdx"
                 :parent="cond"
                 @delete="cond = undefined"
               />
@@ -478,12 +464,10 @@ zh-CN:
               v-else-if="cond.type === OP.AND || cond.type === OP.OR"
               v-model.lazy="cond.cond as unknown[]"
               class="flex flex-col gap-1"
-              v-bind="{
-                animation: 200,
-                group: 'description',
-                disabled: false,
-                ghostClass: 'ghost',
-              }"
+              animation="200"
+              group="description"
+              ghost-class="ghost"
+              handle=".drag-handle"
               :item-key="(i?: WrappedCond<OP, Cond>) => i?.cond || 'n'"
               @start="drag = true"
               @end="drag = false"
@@ -494,7 +478,7 @@ zh-CN:
                     v-model.lazy="cond.cond[index]"
                     :list-mode="true"
                     :requirements="requirements"
-                    :current="current"
+                    :current-idx="currentIdx"
                     :parent="cond"
                     @delete="(cond.cond as Cond[]).splice(index, 1)"
                   />
@@ -568,21 +552,18 @@ zh-CN:
 
 <style scoped lang="postcss">
 .dan-cond-row {
-  @apply transition-shadow duration-150;
+  @apply transition rounded ease-in;
 }
 .drag-handle {
   @apply text-base-content/40 hover:text-primary cursor-grab active:cursor-grabbing;
 }
 .dan-cond-row.dragging {
-  @apply ring-2 ring-primary/30 shadow-lg bg-base-100;
+  @apply ring-2 ring-primary/50 ring-offset-4 ring-offset-base-200 shadow-lg;
 }
 .mod-grid {
   @apply grid gap-1 grid-cols-5;
 }
 .mod-item {
   @apply flex flex-col items-center justify-center p-2 rounded cursor-pointer border transition;
-}
-.mod-item.bg-primary\/20 {
-  @apply border-primary;
 }
 </style>
