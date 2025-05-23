@@ -27,25 +27,33 @@ export class RealtimeDanProcessor extends CacheSyncedDanProcessor implements Cac
   }
 
   async onScoreSubmitted(row: InsertEvent<InferSelectModel<typeof schema.scores>>) {
-    await wait(2000) // PRAY for patcher meta saved, since bpy submitModular is NOT USING A TRANSACTION !!!
     const scores = row.affectedRows.map(item => item.after)
 
-    const beatmaps = await this.dp.drizzle.query.beatmaps.findMany({
-      where: inArray(schema.beatmaps.md5, scores.map(item => item.mapMd5)),
-      with: {
-        source: true,
-      },
-    })
-    const users = await this.dp.drizzle.query.users.findMany({
-      where: inArray(schema.users.id, scores.map(item => item.userId)),
-    })
-    const patcherScoresMeta = await this.dp.drizzle.query.patcherScoresMeta.findMany({
-      where: inArray(schema.patcherScoresMeta.id, scores.map(item => item.id)),
-      columns: {
-        id: true,
-        noPause: true,
-      },
-    })
+    const [beatmaps, users, patcherScoresMeta] = await Promise.all([
+      this.dp.drizzle.query.beatmaps.findMany({
+        where: inArray(schema.beatmaps.md5, scores.map(item => item.mapMd5)),
+        with: {
+          source: true,
+        },
+      }),
+      this.dp.drizzle.query.users.findMany({
+        where: inArray(schema.users.id, scores.map(item => item.userId)),
+        columns: {
+          id: true,
+          name: true,
+          safeName: true,
+        },
+      }),
+      this.dp.drizzle.query.patcherScoresMeta.findMany({
+        where: inArray(schema.patcherScoresMeta.id, scores.map(item => item.id)),
+        columns: {
+          id: true,
+          noPause: true,
+        },
+      }),
+      // PRAY for patcher meta saved, since bpy submitModular is NOT USING A TRANSACTION !!!
+      await wait(2000),
+    ])
 
     const inserting: {
       scoreId: bigint
@@ -70,6 +78,18 @@ export class RealtimeDanProcessor extends CacheSyncedDanProcessor implements Cac
           continue
         }
         const beatmap = _beatmap as NormalBeatmapWithMeta<Exclude<RankingStatus, AbnormalStatus>, Id, Id>
+        // id keeps being string (weired)
+        // eslint-disable-next-line eqeqeq
+        const user = users.find(item => item.id == score.userId)
+
+        if (!user) {
+          this.logger.warn({
+            message: 'score submitted with user not found',
+            scoreId: ScoreProvider.scoreIdToString(score.id),
+            userId: score.userId,
+          })
+          continue
+        }
 
         const result = pipeline({
           ...tScore,
@@ -80,7 +100,7 @@ export class RealtimeDanProcessor extends CacheSyncedDanProcessor implements Cac
             foreignId: 'foreignId' in beatmap ? MapProvider.idToString(beatmap.foreignId) : undefined,
           } as unknown as NormalBeatmapWithMeta<Exclude<RankingStatus, AbnormalStatus>, string, string>,
           noPause: meta?.noPause ?? false,
-          player: mapId(users.find(item => item.id === score.userId)!, UserProvider.idToString),
+          player: mapId(user, UserProvider.idToString),
         })
 
         const passed = result.map((item, idx) => [item, dan.requirements[idx]] as const).filter(([item]) => item.result)
