@@ -17,6 +17,7 @@ withDefaults(defineProps<{
   disabled?: boolean
   requirements: readonly RequirementCondBinding<Requirement, Cond>[]
   current: RequirementCondBinding<Requirement, Cond>
+  parent: Cond | null
 }>(), { listMode: false, disabled: false })
 
 const emit = defineEmits<{
@@ -49,6 +50,7 @@ const cond = defineModel<Cond>()
 interface Translation {
   dan: {
     cond: Record<OP, string>
+    not?: Partial<Record<OP, string>>
     cmp: Record<CompareOP, string>
     requirement: Record<Requirement, string>
     key: {
@@ -73,7 +75,7 @@ interface Translation {
 
 // TODO fr-FR
 // TODO de-DE
-const { t } = useI18n({
+const { t, te } = useI18n({
   messages: {
     'en-GB': {
       dan: {
@@ -151,10 +153,14 @@ const { t } = useI18n({
           [OP.Extends]: '符合另一判定的所有条件',
           [OP.OR]: '满足其中一项',
           [OP.AND]: '满足所有条件',
-          [OP.NOT]: '不是',
+          [OP.NOT]: '不可',
           [OP.Remark]: '备注',
           [OP.NoPause]: '无暂停',
           [OP.Expect]: '判断',
+        },
+        not: {
+          [OP.StableModIncludeAny]: '加列表中的任何 Mod',
+          [OP.StableModIncludeAll]: '加特定 Mod 组合',
         },
         key: {
           mode: '@:global.mode',
@@ -194,7 +200,7 @@ function onSelectKey() {
   // }
 }
 
-function selectCond() {
+async function selectCond() {
   if (!cond.value) {
     return
   }
@@ -261,7 +267,7 @@ zh-CN:
         <!-- Main select for OP type -->
         <div
           :class=" {
-            'w-full flex items-center gap-2': cond.type === OP.AND || cond.type === OP.OR || cond.type === OP.NOT,
+            'w-full flex items-center gap-2': cond.type === OP.AND || cond.type === OP.OR || cond.type === OP.NOT || cond.type === OP.Remark,
           }"
         >
           <select
@@ -270,7 +276,7 @@ zh-CN:
             name="cond"
             class="select select-sm bg-base-200"
             :class=" {
-              grow: cond.type === OP.AND || cond.type === OP.OR || cond.type === OP.NOT,
+              grow: cond.type === OP.AND || cond.type === OP.OR || cond.type === OP.NOT || cond.type === OP.Remark,
             }"
             @change="selectCond"
           >
@@ -278,10 +284,18 @@ zh-CN:
               {{ t('select') }}
             </option>
             <option v-for="op in ops" :key="op" :value="op">
-              {{ t(`dan.cond.${op}`) }}
+              {{
+                parent?.type === OP.NOT && te(`dan.not.${op}`)
+                  ? t(`dan.not.${op}`)
+                  : t(`dan.cond.${op}`)
+              }}
             </option>
           </select>
-          <button v-if="cond.type === OP.AND || cond.type === OP.OR" class="btn btn-sm btn-circle btn-success btn-outline" @click="(cond.cond as any).push(undefined)">
+          <button
+            v-if="cond.type === OP.AND || cond.type === OP.OR"
+            class="btn btn-sm btn-circle btn-success btn-outline"
+            @click="(cond.cond as any)?.push(undefined)"
+          >
             <icon name="material-symbols:add-rounded" />
           </button>
         </div>
@@ -440,11 +454,23 @@ zh-CN:
         <!-- Compound/nested: AND, OR, NOT, Remark -->
         <template v-else-if="cond.type === OP.AND || cond.type === OP.OR || cond.type === OP.NOT || cond.type === OP.Remark">
           <div class="flex-1">
-            <div v-if="cond.type === OP.Remark || cond.type === OP.NOT" class="">
+            <div v-if="cond.type === OP.Remark || cond.type === OP.NOT">
+              <div
+                v-if="cond.type === OP.Remark"
+                class="form-control py-1"
+              >
+                <label class="label-text pb-1"> {{ t(`dan.cond.${OP.Remark}`) }} </label>
+                <textarea
+                  v-model="cond.remark"
+                  name="remark"
+                  class="textarea textarea-sm"
+                />
+              </div>
               <app-dan-cond
                 v-model.lazy="cond.cond"
                 :requirements="requirements"
                 :current="current"
+                :parent="cond"
                 @delete="cond = undefined"
               />
             </div>
@@ -469,6 +495,7 @@ zh-CN:
                     :list-mode="true"
                     :requirements="requirements"
                     :current="current"
+                    :parent="cond"
                     @delete="(cond.cond as Cond[]).splice(index, 1)"
                   />
                 </div>

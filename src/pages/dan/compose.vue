@@ -254,6 +254,7 @@ zh-CN:
           :list-mode="false"
           :requirements="compose.requirements"
           :current="selectedRequirement"
+          :parent="null"
         />
         <div v-else class="flex items-center justify-center h-full text-base-content/60">
           Select a requirement to edit
