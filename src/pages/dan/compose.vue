@@ -183,15 +183,18 @@ zh-CN:
             </option>
           </select>
         </div>
-        <div class="grid grid-cols-12 col-span-12">
-          <span class="label">Cond</span>
-          <app-dan-cond
-            v-model="ach.cond"
-            :list-mode="true"
-            :requirements="compose.requirements"
-            :current="ach"
-            @delete="(compose.requirements as any[]).splice(i, 1)"
-          />
+        <!-- Requirement Editor (Right) -->
+        <app-dan-cond
+          v-if="selectedRequirement"
+          v-model="selectedRequirement.cond"
+          class="md:w-4/5"
+          :list-mode="false"
+          :requirements="compose.requirements"
+          :current="selectedRequirement"
+          :parent="null"
+        />
+        <div v-else class="flex items-center justify-center h-full text-base-content/60">
+          Select a requirement to edit
         </div>
       </div>
       <button
