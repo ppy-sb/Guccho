@@ -32,10 +32,10 @@ const icons: Record<typeof StableMod[keyof typeof StableMod], string> = {
   [StableMod['8K']]: 'ic:round-8k',
   [StableMod['9K']]: 'ic:round-9k',
   [StableMod.FadeIn]: 'ic:outline-gradient',
-  [StableMod.Random]: 'ic:outline-gradient',
+  [StableMod.Random]: 'fe:random',
   [StableMod.Cinema]: 'mdi:cinema',
   [StableMod.Target]: 'ph:target-bold',
-  [StableMod.KeyCoop]: '',
+  [StableMod.KeyCoop]: 'flowbite:split-cells-outline',
   [StableMod.ScoreV2]: 'material-symbols:filter-2-outline',
   [StableMod.Mirror]: 'mdi:mirror-rectangle',
 }

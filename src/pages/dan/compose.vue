@@ -31,10 +31,17 @@ const { data: compose } = await useAsyncData('compose', async () => {
 
 const data = ref<RouterOutput['dan']['userRule']>()
 const loading = ref(false)
+const selectedIdx = ref(compose.value?.requirements.length ? 0 : null)
 
-watch(compose, () => {
-  localStorage.setItem('dan-compose', JSON.stringify(compose.value))
-}, { deep: true })
+const selectedRequirement = computed(() =>
+  compose.value && selectedIdx.value !== null && compose.value.requirements[selectedIdx.value]
+    ? compose.value.requirements[selectedIdx.value]
+    : null
+)
+
+// watch(compose, () => {
+//   localStorage.setItem('dan-compose', JSON.stringify(compose.value))
+// }, { deep: true })
 
 const fmtScore = createNumberFormatter()
 
@@ -107,6 +114,7 @@ async function saveDB() {
     }),
     _db: true,
   }
+  localStorage.setItem('dan-compose', JSON.stringify(compose.value))
   loading.value = false
 }
 async function deleteDB() {
@@ -145,188 +153,162 @@ zh-CN:
 
 <template>
   <section class="container max-w-screen-lg mx-auto">
-    <h1 class="text-2xl">
-      Compose requirements
-    </h1>
-    <div v-if="compose" class="grid grid-flow-row grid-cols-12 gap-4">
-      <div class="col-span-12 md:col-span-9 form-control">
-        <label for="name" class="label">Name</label>
-        <input id="name" v-model="compose.name" class="input" type="text" name="name">
-      </div>
-      <div class="col-span-12 sm:col-span-6 md:col-span-3 form-control">
-        <label for="name" class="label">ID</label>
-        <input id="name" v-model="compose.id" disabled class="input" type="text" name="name" @change="getDB">
-      </div>
-      <div class="col-span-12 form-control">
-        <label for="description" class="label">Description</label>
-        <textarea id="description" v-model="compose.description" class="textarea" />
-      </div>
-      <div
-        v-for="ach, i in compose.requirements"
-        :key="i"
-        class="grid grid-cols-12 col-span-12 gap-0 p-2 border border-base-300 rounded-xl bg-base-100 "
-      >
-        <div class="col-span-12 md:col-span-6 form-control">
-          <label for="ach-type" class="label">requirement</label>
-          <select id="ach-type" v-model="ach.type" class="select select-sm">
-            <option value="">
-              select
-            </option>
-            <option
-              v-for="ac in typeAC"
-              :key="ac"
-              :value="ac"
-              :selected="ac === ach.type"
-              :disabled="!!compose.requirements.find(i => i.type === ac)"
-            >
-              {{ t(tRequirement[ac].__path__) }}
-            </option>
-          </select>
-        </div>
-        <div class="grid grid-cols-12 col-span-12">
-          <span class="label">Cond</span>
-          <app-dan-cond
-            v-model="ach.cond"
-            :list-mode="true"
-            :requirements="compose.requirements"
-            :current="ach"
-            @delete="(compose.requirements as any[]).splice(i, 1)"
-          />
-        </div>
-      </div>
-      <button
-        class="col-span-12 btn"
-        :disabled="requirements.every(ach => !!compose!.requirements.find(i => i.type === ach)) || compose.requirements.length >= requirements.length"
-        @click="
-          (compose.requirements as unknown as RequirementCondBinding<any, any>[])
-            .push({
-              type: undefined,
-              cond: undefined,
-            })
-        "
-      >
-        add requirement
+    <!-- Flat Header Bar -->
+    <div class="sticky z-10 flex flex-wrap items-center gap-2 py-3 top-14">
+      <h1 class="flex-1 text-2xl font-bold">
+        Compose
+      </h1>
+      <span v-if="compose?._db" class="badge badge-info">DB</span>
+      <span v-else class="badge badge-neutral">Unsaved</span>
+      <span class="text-xs text-base-content/60">ID: {{ compose?.id || '-' }}</span>
+      <button class="btn btn-primary btn-sm" :disabled="!session.role.beatmapNominator" @click="saveDB">
+        <i v-if="loading" class="loading" />Save
       </button>
-      <button
-        class="col-span-12 sm:col-span-6 md:col-span-3 btn" @click="reset"
-      >
-        reset
+      <button class="btn btn-warning btn-sm" :disabled="!compose?._db || !session.role.beatmapNominator" @click="confirm(t('delete-confirm')) && deleteDB()">
+        <i v-if="loading" class="loading" />Delete
       </button>
-      <button
-        class="col-span-12 sm:col-span-6 md:col-span-3 btn" @click="loadLast"
-      >
-        recover last closed
+      <button class="btn btn-info btn-sm" :disabled="!compose?._db" @click="duplicate">
+        Duplicate
       </button>
-      <button
-        class="col-span-12 sm:col-span-6 md:col-span-3 btn" @click="copy"
-      >
-        copy to clipboard
+      <button class="btn btn-accent btn-sm" @click="runDB">
+        Dry Run
       </button>
-      <button
-        class="col-span-12 sm:col-span-6 md:col-span-3 btn" @click="readClipboard"
-      >
-        read from clipboard
+      <button class="btn btn-outline btn-sm" @click="reset">
+        Reset
       </button>
-      <button
-        class="col-span-12 sm:col-span-6 md:col-span-3 btn btn-info" :disabled="!compose._db" @click="duplicate"
-      >
-        copy as new
-        <i v-if="loading" class="loading" />
+      <button class="btn btn-outline btn-sm" @click="loadLast">
+        Recover
       </button>
-      <div class="hidden md:block md:col-span-9" />
-      <button
-        class="col-span-12 sm:col-span-6 md:col-span-3 btn btn-accent" @click="runDB"
-      >
-        dry run on all scores
-        <i v-if="loading" class="loading" />
+      <button class="btn btn-outline btn-sm" @click="copy">
+        Copy
       </button>
-      <div class="hidden md:block md:col-span-3" />
-      <button
-        class="col-span-12 sm:col-span-6 md:col-span-3 btn btn-primary"
-        :disabled="!session.role.beatmapNominator"
-        @click="saveDB"
-      >
-        save to db
-        <i v-if="loading" class="loading" />
-      </button>
-      <button
-        class="col-span-12 sm:col-span-6 md:col-span-3 btn btn-warning"
-        :disabled="!compose._db || !session.role.beatmapNominator"
-        @click="confirm(t('delete-confirm')) && deleteDB()"
-      >
-        delete
-        <i v-if="loading" class="loading" />
+      <button class="btn btn-outline btn-sm" @click="readClipboard">
+        Paste
       </button>
     </div>
-    <div v-if="data" class="py-4 space-y-4">
-      <table
-        v-for="ach, i in data" :key="i"
-        class="table table-zebra caption-top"
-      >
-        <thead>
-          <tr>
-            <th scope="col">
-              User
-            </th>
-            <th scope="col">
-              Beatmap
-            </th>
-            <th scope="col" class="text-right">
-              Score ID
-            </th>
-            <th scope="col" class="text-right">
-              Score
-            </th>
-            <th scope="col" class="text-right">
-              Accuracy
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="result in ach.scores" :key="result.score.id">
-            <th scope="row">
-              <nuxt-link-locale
-                class="link text-sky-500"
-                :to="{
-                  name: 'user-handle',
-                  params: {
-                    handle: result.player.id,
-                  },
-                }"
+    <template v-if="compose">
+      <!-- Name and Description Fields (above requirements columns) -->
+      <div class="flex flex-col items-stretch gap-2 mb-2 md:flex-row">
+        <div class="flex flex-1 gap-2">
+          <label class="w-1/5 font-semibold">Name</label>
+          <input v-model="compose.name" class="flex-1 input" type="text" name="name" placeholder="Requirement name...">
+        </div>
+      </div>
+      <div class="flex gap-2 mb-2">
+        <label class="w-1/5 font-semibold">Description</label>
+        <textarea v-model="compose.description" class="flex-1 textarea" name="description" placeholder="Description..." />
+      </div>
+      <div class="divider">
+        <span class="font-semibold">Requirements</span>
+      </div>
+      <!-- Requirements and Editor Columns -->
+      <div class="flex flex-col w-full gap-2 md:flex-row grow">
+        <!-- Requirements List (Left) -->
+        <div class="flex flex-col gap-2 md:w-1/5">
+          <div class="flex flex-col gap-1">
+            <div
+              v-for="(ach, i) in compose.requirements"
+              :key="i"
+              class="flex items-center gap-2 px-2 py-1 transition rounded cursor-pointer hover:bg-base-300"
+              :class="{ 'bg-base-200': selectedIdx === i }"
+              @click="selectedIdx = i"
+            >
+              <select
+                v-model="ach.type"
+                class="select select-sm"
+                :disabled="selectedIdx !== i"
               >
-                {{ result.player.name }}
-              </nuxt-link-locale>
-            </th>
-            <td>
-              <a
-                :href="`/b/${result.beatmap.id}`"
-                class="link text-sky-500"
+                <option value="">
+                  select
+                </option>
+                <option
+                  v-for="ac in typeAC"
+                  :key="ac"
+                  :value="ac"
+                  :disabled="!!requirements.find((i, idx) => i === ac && idx !== selectedIdx)"
+                >
+                  {{ t(tRequirement[ac].__path__) }}
+                </option>
+              </select>
+              <button
+                class="ml-auto btn btn-xs btn-error btn-circle"
+                @click.stop="compose && (compose.requirements as RequirementCondBinding<Requirement, any>[]).splice(i, 1)"
               >
-                {{ result.beatmap.artist }} - {{ result.beatmap.title }} [{{ result.beatmap.version }}]
-              </a>
-            </td>
-            <td class="font-mono text-right">
-              <nuxt-link-locale
-                class="link text-sky-500"
-                :to="{
-                  name: 'score-id',
-                  params: {
-                    id: result.score.id,
-                  },
-                }"
-              >
-                {{ result.score.id }}
-              </nuxt-link-locale>
-            </td>
-            <td class="font-mono text-right">
-              {{ fmtScore(result.score.score) }}
-            </td>
-            <td class="font-mono text-right">
-              {{ result.score.accuracy.toFixed(3) }}%
-            </td>
-          </tr>
-        </tbody>
-      </table>
+                <icon name="material-symbols:delete" />
+              </button>
+            </div>
+          </div>
+          <button
+            class="btn btn-xs btn-success"
+            :disabled="compose!.requirements.length >= 2"
+            @click="compose && (compose.requirements as RequirementCondBinding<Requirement, any>[]).push({ type: typeAC.find(ac => !compose!.requirements.find(i => i.type === ac)) || typeAC[0], cond: undefined })"
+          >
+            + Add
+          </button>
+        </div>
+        <!-- Requirement Editor (Right) -->
+        <app-dan-cond
+          v-if="selectedRequirement"
+          v-model="selectedRequirement.cond"
+          class="md:w-4/5"
+          :list-mode="false"
+          :requirements="compose.requirements"
+          :current="selectedRequirement"
+        />
+        <div v-else class="flex items-center justify-center h-full text-base-content/60">
+          Select a requirement to edit
+        </div>
+      </div>
+    </template>
+    <!-- Collapsible Results Table -->
+    <div v-if="data" class="py-4">
+      <details open class="border collapse bg-base-100 border-base-300">
+        <summary class="font-bold cursor-pointer collapse-title">
+          Dry Run Results
+        </summary>
+        <div class="collapse-content">
+          <table v-for="ach, i in data" :key="i" class="table mb-4 table-zebra caption-top">
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Beatmap</th>
+                <th class="text-right">
+                  Score ID
+                </th>
+                <th class="text-right">
+                  Score
+                </th>
+                <th class="text-right">
+                  Accuracy
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="result in ach.scores" :key="result.score.id">
+                <th scope="row">
+                  <nuxt-link-locale class="link text-sky-500" :to="{ name: 'user-handle', params: { handle: result.player.id } }">
+                    {{ result.player.name }}
+                  </nuxt-link-locale>
+                </th>
+                <td>
+                  <a :href="`/b/${result.beatmap.id}`" class="link text-sky-500">{{ result.beatmap.artist }} - {{ result.beatmap.title }} [{{ result.beatmap.version }}]</a>
+                </td>
+                <td class="font-mono text-right">
+                  <nuxt-link-locale class="link text-sky-500" :to="{ name: 'score-id', params: { id: result.score.id } }">
+                    {{ result.score.id }}
+                  </nuxt-link-locale>
+                </td>
+                <td class="font-mono text-right">
+                  {{ fmtScore(result.score.score) }}
+                </td>
+                <td class="font-mono text-right">
+                  {{ result.score.accuracy.toFixed(3) }}%
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
     </div>
   </section>
 </template>
