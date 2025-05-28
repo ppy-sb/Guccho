@@ -150,6 +150,8 @@ export const patcherScoresMeta = mysqlTable('sb_patcher_scores_meta', {
   id: bigint('id', { mode: 'bigint', unsigned: true }).references(() => scores.id, { onDelete: 'cascade', onUpdate: 'cascade' }).primaryKey(),
   noPause: boolean('no_pause').notNull().default(false),
   strictNoPause: boolean('strict_no_pause').notNull().default(false),
+  hash: varchar('hash', { length: 64 }),
+  v: varchar('v', { length: 16 }),
   raw: json('raw').$defaultFn(() => ({})),
 })
 
