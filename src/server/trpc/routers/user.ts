@@ -66,7 +66,7 @@ export const router = _router({
   best: optionalUserProcedure
     .input(
       object({
-        handle: zodHandle,
+        id: string(),
         mode: zodMode,
         ruleset: zodRuleset,
         rankingSystem: zodLeaderboardRankingSystem,
@@ -85,7 +85,7 @@ export const router = _router({
           message: 'ranking system not supported',
         })
       }
-      const user = await users.getCompact({ handle: input.handle, scope: Scope.Self })
+      const user = await users.getCompactById(UserProvider.stringToId(input.id))
 
       if (!userIsVisible(user, ctx.user)) {
         throw userNotFoundError
@@ -121,7 +121,7 @@ export const router = _router({
   tops: optionalUserProcedure
     .input(
       object({
-        handle: zodHandle,
+        id: string(),
         mode: zodMode,
         ruleset: zodRuleset,
         rankingSystem: zodLeaderboardRankingSystem,
@@ -141,7 +141,7 @@ export const router = _router({
         })
       }
 
-      const user = await users.getCompact({ handle: input.handle, scope: Scope.Self })
+      const user = await users.getCompactById(UserProvider.stringToId(input.id))
 
       if (!userIsVisible(user, ctx.user)) {
         throw userNotFoundError
@@ -190,12 +190,12 @@ export const router = _router({
   countRelations: optionalUserProcedure
     .input(
       object({
-        handle: zodHandle,
+        id: string(),
         type: zodRelationType,
       }),
     )
-    .query(async ({ input: { handle, type }, ctx }) => {
-      const user = await users.getCompact({ handle, scope: Scope.Self })
+    .query(async ({ input: { id, type }, ctx }) => {
+      const user = await users.getCompactById(UserProvider.stringToId(id))
 
       if (!userIsVisible(user, ctx.user)) {
         raiseError(userNotFoundError)

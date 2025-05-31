@@ -1,6 +1,6 @@
 import { IdTransformable } from '../@extends'
 import { type Mode } from '~/def'
-import { type BeatmapSource, type BeatmapWithMeta, type Beatmapset, type RankingStatus } from '~/def/beatmap'
+import { type BeatmapSource, type Beatmapset, type RankingStatus } from '~/def/beatmap'
 import { type PaginatedResult } from '~/def/pagination'
 
 export namespace AdminMapProvider {

@@ -19,11 +19,11 @@ const { data, refresh } = await useAsyncData(async () => {
   const relationWithMe
     = session.loggedIn
       ? app$.$client.me.relation.query({
-        target: page.user.id,
+        id: page.user.id,
       })
       : undefined
   const friendCount = app$.$client.user.countRelations.query({
-    handle: page.user.id,
+    id: page.user.id,
     type: Relationship.Friend,
   })
   return {
@@ -71,7 +71,7 @@ async function toggleFriend() {
   if (!page.user) {
     return
   }
-  const input = { type: Relationship.Friend, target: page.user.id } as const
+  const input = { type: Relationship.Friend, id: page.user.id } as const
   if (isFriend.value) {
     await app$.$client.me.removeOneRelation.mutate(input)
   }

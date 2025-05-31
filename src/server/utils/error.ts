@@ -24,6 +24,7 @@ export function createGucchoError(code: GucchoError): TRPCError {
     }
 
     case GucchoError.MissingServerAvatarConfig:
+    case GucchoError.FeatureNotSupported:
     {
       return new TRPCError(merge({ code: 'NOT_IMPLEMENTED' }))
     }

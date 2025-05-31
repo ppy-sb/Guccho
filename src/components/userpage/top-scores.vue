@@ -64,7 +64,7 @@ const {
     }
   }
   const val = await app.$client.user.tops.query({
-    handle: page.user.id,
+    id: page.user.id,
     mode: page.switcher.mode,
     ruleset: page.switcher.ruleset,
     rankingSystem: page.switcher.rankingSystem as PPRankingSystem,
@@ -77,7 +77,7 @@ const {
     ...val,
 
     page: topPage.value,
-    handle: page.user.id,
+    id: page.user.id,
     lastSwitcherStatus: {
       ...page.switcher,
     },

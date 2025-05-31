@@ -152,6 +152,7 @@ export default {
     [GucchoError.FileSystemArticlePathOutsideArticleRoot]: 'Prohibited Saving article outside articles path.',
     [GucchoError.TryingToDeleteFallbackContents]: 'Trying to delete fallback contents.',
     [GucchoError.ArticleNotFound]: 'Article not found.',
+    [GucchoError.FeatureNotSupported]: 'This feature is not supported.',
   },
   country: {
     [CountryCode.Unknown]: 'Unknown',

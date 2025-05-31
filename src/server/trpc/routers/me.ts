@@ -1,5 +1,5 @@
 import { type ZodSchema, instanceof as instanceof_, nativeEnum, object, string } from 'zod'
-import { zodEmailValidation, zodHandle, zodRelationType, zodTipTapJSONContent } from '../shapes'
+import { zodEmailValidation, zodRelationType, zodTipTapJSONContent } from '../shapes'
 import { router as _router } from '../trpc'
 import { GucchoError } from '~/def/messages'
 import { settings } from '$active/dynamic-settings'
@@ -169,12 +169,12 @@ export const router = _router({
   relation: pUser
     .input(
       object({
-        target: zodHandle,
+        id: string(),
       }),
     )
-    .query(async ({ input: { target }, ctx }) => {
+    .query(async ({ input: { id }, ctx }) => {
       const fromUser = ctx.user
-      const targetUser = await users.getCompact({ handle: target, scope: Scope.Self })
+      const targetUser = await users.getCompactById(UserProvider.stringToId(id))
 
       if (!fromUser || targetUser == null) {
         return
@@ -208,13 +208,13 @@ export const router = _router({
   removeOneRelation: pUser
     .input(
       object({
-        target: zodHandle,
+        id: string(),
         type: zodRelationType,
       }),
     )
     .mutation(async ({ input, ctx }) => {
       const fromUser = ctx.user
-      const targetUser = await users.getCompact({ handle: input.target, scope: Scope.Self })
+      const targetUser = await users.getCompactById(UserProvider.stringToId(input.id))
 
       if (!fromUser || targetUser == null) {
         throwGucchoError(GucchoError.AtLeastOneUserNotExists)
@@ -225,7 +225,7 @@ export const router = _router({
           targetUser,
           type: input.type,
         })
-        logger.info(`user ${ctx.user.safeName}<${ctx.user.id}> removed relationship [${Relationship[input.type]}] with ${input.target}.`, { user: pick(ctx.user, ['id', 'name']) })
+        logger.info(`user ${ctx.user.safeName}<${ctx.user.id}> removed relationship [${Relationship[input.type]}] with ${input.id}.`, { user: pick(ctx.user, ['id', 'name']) })
         return true
       }
       catch (err: any) {
@@ -239,13 +239,13 @@ export const router = _router({
   addOneRelation: pUser
     .input(
       object({
-        target: zodHandle,
+        id: string(),
         type: zodRelationType,
       }),
     )
     .mutation(async ({ input, ctx }) => {
       const fromUser = ctx.user
-      const targetUser = await users.getCompact({ handle: input.target, scope: Scope.Self })
+      const targetUser = await users.getCompactById(UserProvider.stringToId(input.id))
       if (!fromUser || targetUser == null) {
         throwGucchoError(GucchoError.AtLeastOneUserNotExists)
       }
@@ -255,7 +255,7 @@ export const router = _router({
           targetUser,
           type: input.type,
         })
-        logger.info(`user ${ctx.user.safeName}<${ctx.user.id}> added relationship [${Relationship[input.type]}] with ${input.target}.`, { user: pick(ctx.user, ['id', 'name']) })
+        logger.info(`user ${ctx.user.safeName}<${ctx.user.id}> added relationship [${Relationship[input.type]}] with ${input.id}.`, { user: pick(ctx.user, ['id', 'name']) })
         return true
       }
       catch (err: any) {

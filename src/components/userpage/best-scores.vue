@@ -62,14 +62,14 @@ const {
   }
   return {
     scores: await app.$client.user.best.query({
-      handle: page.user.id,
+      id: page.user.id,
       mode: page.switcher.mode,
       ruleset: page.switcher.ruleset,
       rankingSystem: page.switcher.rankingSystem,
       page: bpPage.value,
     }) as RankingSystemScore<string, string, Mode, LeaderboardRankingSystem, RankingStatus>[],
     page: bpPage.value,
-    handle: page.user.id,
+    id: page.user.id,
     lastSwitcherStatus: {
       ...page.switcher,
     },

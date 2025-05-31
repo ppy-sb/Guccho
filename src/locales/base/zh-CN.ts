@@ -146,6 +146,7 @@ export default {
     [GucchoError.FileSystemArticlePathOutsideArticleRoot]: '保存路径在文章目录以外。',
     [GucchoError.TryingToDeleteFallbackContents]: '正在尝试删除缺省的内容。',
     [GucchoError.ArticleNotFound]: '找不到文章。',
+    [GucchoError.FeatureNotSupported]: '不支持此功能。',
   },
 
   country: {

@@ -67,10 +67,10 @@ async function toggleRelation(type: Relationship, user: UserCompact<string> & Us
 }
 
 async function addOneAs(type: Relationship, user: { id: string }) {
-  await app$.$client.me.addOneRelation.mutate({ type, target: user.id })
+  await app$.$client.me.addOneRelation.mutate({ type, id: user.id })
 }
 async function removeOneAs(type: Relationship, user: { id: string }) {
-  await app$.$client.me.removeOneRelation.mutate({ type, target: user.id })
+  await app$.$client.me.removeOneRelation.mutate({ type, id: user.id })
 }
 
 async function addAsMutual(type: Relationship, user: { id: string }) {
