@@ -130,13 +130,11 @@ class DBUserProvider extends Base<Id, ScoreId> implements Base<Id, ScoreId> {
         eq(schema.users.name, handle),
         eq(schema.users.safeName, handle),
 
-        Number.isNaN(handleNum)
-          ? undefined
-          : eq(schema.users.id, handleNum),
+        eq(schema.users.id, handleNum)
+          ?.if(!Number.isNaN(handleNum)),
 
-        handle.startsWith('@')
-          ? eq(schema.users.safeName, handle.slice(1))
-          : undefined
+        eq(schema.users.safeName, handle.slice(1))
+          ?.if(handle.startsWith('@') && handle.length > 1),
       ),
     })
 
@@ -164,28 +162,42 @@ class DBUserProvider extends Base<Id, ScoreId> implements Base<Id, ScoreId> {
       handleNum = -1
     }
     const user = await this.drizzle.query.users.findFirst({
-      where: and(
-        or(
-          keys.includes('id') && !Number.isNaN(handleNum)
-            ? eq(schema.users.id, handleNum)
-            : undefined,
+      where(tbl, op) {
+        if (handle.startsWith('@')) {
+          const _handle = handle.slice(1)
+          return op.and(
+            op.eq(tbl.safeName, _handle),
 
-          keys.includes('name')
-            ? eq(schema.users.name, handle)
-            : undefined,
+            userPriv(schema.users)
+              ?.if(scope !== Scope.Self)
+          )
+        }
+        else if (handleNum >= 0) {
+          return op.and(
+            op.eq(tbl.id, handleNum),
 
-          keys.includes('safeName')
-            ? eq(schema.users.safeName, handle)
-            : undefined,
+            userPriv(schema.users)
+              ?.if(scope !== Scope.Self)
+          )
+        }
+        else {
+          return op.and(
+            op.or(
+              eq(schema.users.name, handle)
+                ?.if(keys.includes('name')),
 
-          keys.includes('email')
-            ? eq(schema.users.email, handle)
-            : undefined
-        ),
-        scope === Scope.Self
-          ? undefined
-          : userPriv(schema.users)
-      ),
+              eq(schema.users.safeName, handle)
+                ?.if(keys.includes('safeName')),
+
+              eq(schema.users.email, handle)
+                ?.if(keys.includes('email')),
+            ),
+
+            userPriv(schema.users)
+              ?.if(scope !== Scope.Self)
+          )
+        }
+      },
       columns: {
         ...userCompactFields,
       },
@@ -195,6 +207,7 @@ class DBUserProvider extends Base<Id, ScoreId> implements Base<Id, ScoreId> {
   }
 
   async testPassword(opt: Base.OptType, password: string): Promise<[boolean, UserCompact<Id>]> {
+    const { handle, keys = ['id', 'name', 'safeName', 'email'] } = opt
     const handleNum = +opt.handle
 
     const user = await this.drizzle.query.users.findFirst({
@@ -207,19 +220,27 @@ class DBUserProvider extends Base<Id, ScoreId> implements Base<Id, ScoreId> {
         pwBcrypt: true,
       },
 
-      where: or(
-        eq(schema.users.email, opt.handle),
-        eq(schema.users.name, opt.handle),
-        eq(schema.users.safeName, opt.handle),
+      where(tbl, op) {
+        if (handle.startsWith('@')) {
+          const _handle = handle.slice(1)
+          return op.eq(tbl.safeName, _handle)
+        }
+        else if (handleNum >= 0) {
+          return op.eq(tbl.id, handleNum)
+        }
+        else {
+          return op.or(
+            eq(schema.users.name, handle)
+              ?.if(keys.includes('name')),
 
-        Number.isNaN(handleNum)
-          ? undefined
-          : eq(schema.users.id, handleNum),
+            eq(schema.users.safeName, handle)
+              ?.if(keys.includes('safeName')),
 
-        opt.handle.startsWith('@')
-          ? eq(schema.users.safeName, opt.handle.slice(1))
-          : undefined
-      ),
+            eq(schema.users.email, handle)
+              ?.if(keys.includes('email')),
+          )
+        }
+      },
     }) ?? throwGucchoError(GucchoError.UserNotFound)
 
     return [await compareBanchoPassword(password, user.pwBcrypt), toUserCompact(user, this.config)]
@@ -449,22 +470,32 @@ class DBUserProvider extends Base<Id, ScoreId> implements Base<Id, ScoreId> {
   }) {
     const userId = +handle
     const isNumber = !Number.isNaN(userId)
-    const [{ user, clan } = throwGucchoError(GucchoError.UserNotFound)] = await this.drizzle.select({
+    const isSafeName = handle.startsWith('@')
+
+    let q = this.drizzle.select({
       user: schema.users,
       clan: schema.clans,
     }).from(schema.users)
       .leftJoin(schema.clans, eq(schema.users.clanId, schema.clans.id))
-      .where(
-        and(
-          or(
-            isNumber ? eq(schema.users.id, userId) : undefined,
-            eq(schema.users.name, handle),
-            eq(schema.users.safeName, handle),
-            handle.startsWith('@') ? eq(schema.users.safeName, handle.slice(1)) : undefined,
-          ),
-          (includeHidden || scope === Scope.Self) ? undefined : userPriv(schema.users)
+      .$dynamic()
+
+    if (isSafeName) {
+      q = q.where(eq(schema.users.safeName, handle.slice(1)))
+    }
+    else if (isNumber) {
+      q = q.where(eq(schema.users.id, userId))
+    }
+    else {
+      q = q.where(
+        or(
+          eq(schema.users.name, handle),
+          eq(schema.users.safeName, handle),
         )
       )
+    }
+
+    const [{ user, clan } = throwGucchoError(GucchoError.UserNotFound)] = await q
+      .where((includeHidden || scope === Scope.Self) ? undefined : userPriv(schema.users))
       .limit(1)
 
     const returnValue = toFullUser(user, this.config) as NonNullable<Awaited<ReturnType<Base<Id, ScoreId>['getFull']>>>

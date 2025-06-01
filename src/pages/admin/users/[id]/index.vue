@@ -41,11 +41,10 @@ const opts = computed(() =>
   createOptions(UserRole, (_, v) => t(localeKey.role(v)))
     .map((item) => {
       const attrs: HTMLAttributes & InputHTMLAttributes = {}
-      if (
-        (session.user?.id === detail.value.id && DISALLOW_USER_EDIT_ITSELF_ROLE.includes(item.value)) // prevent self from removing its priv
-        || !isRoleEditable(session.role, item.value)
-      ) {
-        attrs.disabled = true
+      attrs.disabled = !isRoleEditable(item.value, session.role)
+
+      if (route.params.id === session.userId) {
+        attrs.disabled = DISALLOW_USER_EDIT_ITSELF_ROLE.includes(item.value)
       }
 
       return { ...item, attrs }
