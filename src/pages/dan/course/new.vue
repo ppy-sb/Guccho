@@ -10,7 +10,7 @@ const router = useRouter()
 const { t } = useI18n()
 
 useHead({
-  title: app.$i18n.t(localeKey.title.dan.dans.__path__),
+  title: app.$i18n.t(localeKey.title.dan['create-course'].__path__),
   titleTemplate: title => `${title} - ${app.$i18n.t(localeKey.server.name.__path__)}`,
 })
 
