@@ -7,6 +7,20 @@ import type { UserClan, UserCompact, UserOptional, UserSecrets } from '~/def/use
 import { type ModeRulesetScoreStatistic } from '~/def/statistics'
 import { type Ruleset } from '~/def'
 
+export namespace AdminUserProvider {
+  export interface MetricsParam {
+    active: 'daily' | 'weekly' | 'monthly'
+  }
+  export interface Metrics {
+    count: {
+      total: number
+      active: number
+      restricted: number
+      new: number
+    }
+  }
+}
+
 export abstract class AdminUserProvider<Id> extends IdTransformable {
   abstract userList(
     query: Partial<UserCompact<Id> & Pick<UserOptional, 'email' | 'status'>> &
@@ -37,6 +51,7 @@ export abstract class AdminUserProvider<Id> extends IdTransformable {
   abstract calcUserStatistics(query: { id: Id; mode: Mode; ruleset: Ruleset }): Promise<ModeRulesetScoreStatistic>
   abstract getStoredUserStatistics(query: { id: Id; mode: Mode; ruleset: Ruleset }): Promise<ModeRulesetScoreStatistic>
   abstract updateUserStatistics(query: { id: Id; mode: Mode; ruleset: Ruleset }, update: Partial<ModeRulesetScoreStatistic>): Promise<ModeRulesetScoreStatistic>
+  abstract metrics(input: AdminUserProvider.MetricsParam): Promise<AdminUserProvider.Metrics>
 
   abstract temp_userUpdateStatGenSQL(query: { id: Id; mode: Mode; ruleset: Ruleset }, update: Partial<ModeRulesetScoreStatistic>): Promise<Query>
 }

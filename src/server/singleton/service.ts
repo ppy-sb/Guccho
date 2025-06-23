@@ -1,5 +1,6 @@
 import {
   AdminMapProvider,
+  AdminScoreProvider,
   AdminUserProvider,
   ArticleProvider,
   ClanProvider,
@@ -34,9 +35,12 @@ import {
   type UserRelationProvider as BaseUserRelationProvider,
 } from '$base/server'
 
+import { type AdminScoreProvider as BaseAdminScoreProvider } from '$base/server/admin/score'
+
 export const articles: BaseArticleProvider = new ArticleProvider()
 export const adminMap: BaseAdminMapProvider<Id, any> = new AdminMapProvider()
 export const adminUser: BaseAdminUserProvider<Id> = new AdminUserProvider()
+export const adminScore: BaseAdminScoreProvider<Id> = new AdminScoreProvider()
 export const files: BaseFileProvider<Id, ScoreId> = new FileProvider()
 export const logs = new LogProvider()
 export const maps: BaseMapProvider<Id, Id> = new MapProvider()

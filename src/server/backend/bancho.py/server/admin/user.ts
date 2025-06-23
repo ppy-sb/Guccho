@@ -350,6 +350,26 @@ export class AdminUserProvider extends Base<Id> implements Base<Id> {
     throw new Error('Method not implemented.')
   }
 
+  metrics(input: Base.MetricsParam): Promise<Base.Metrics> {
+    const now = Math.floor(Date.now() / 1000)
+    const active = input.active === 'daily' ? 24 * 60 * 60 : input.active === 'weekly' ? 7 * 24 * 60 * 60 : 30 * 24 * 60 * 60
+    return this.drizzle.select({
+      count: sql`count(*)`.mapWith(Number),
+      active: sql`count(if(${schema.users.lastActivity} > ${now - active}, 1, null))`.mapWith(Number),
+      restricted: sql`count(if(${schema.users.priv} & ${BanchoPyPrivilege.Verified | BanchoPyPrivilege.Registered} = 0, 1, null))`.mapWith(Number),
+      new: sql`count(if(${schema.users.creationTime} > ${now - active}, 1, null))`.mapWith(Number),
+    })
+      .from(schema.users)
+      .then(res => ({
+        count: {
+          total: res[0].count,
+          active: res[0].active,
+          restricted: res[0].restricted,
+          new: res[0].new,
+        },
+      }))
+  }
+
   async temp_userUpdateStatGenSQL(query: { id: number; mode: Mode; ruleset: Ruleset }, update: Partial<ModeRulesetScoreStatistic>): Promise<Query> {
     return this.drizzle.update(schema.stats)
       .set({

@@ -27,9 +27,21 @@ export namespace AdminMapProvider {
     id: LocalId
   }
 
+  export interface MetricsParam {
+    active: 'daily' | 'weekly' | 'monthly'
+  }
+  export interface Metrics {
+    count: {
+      total: number
+      new: number
+      ranked: number
+      loved: number
+    }
+  }
 }
 
 export abstract class AdminMapProvider<Id, ForeignId> extends IdTransformable {
   abstract search(opt: AdminMapProvider.SearchOpt): Promise<PaginatedResult<AdminMapProvider.SearchResultData<Id, ForeignId>>>
   abstract update(map: AdminMapProvider.UpdateParam<Id, ForeignId>): Promise<AdminMapProvider.VeryCompactBeatmap<Id, ForeignId>>
+  abstract metrics(input: AdminMapProvider.MetricsParam): Promise<AdminMapProvider.Metrics>
 }

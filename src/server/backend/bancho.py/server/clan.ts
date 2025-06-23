@@ -6,7 +6,7 @@ import * as schema from '../drizzle/schema'
 import { config } from '../env'
 import { Logger } from '../log'
 import { type DatabaseUserCompactFields, assertIsBanchoPyMode, fromBanchoPyMode, idToString, stringToId, toBanchoPyMode, toRankingSystemScore, toUserAvatarSrc, toUserCompact } from '../transforms'
-import { BanchoPyScoreStatus, ClanPrivilege as BanchopyClanPrivilege } from './../enums'
+import { BanchoPyRankedStatus, BanchoPyScoreStatus, ClanPrivilege as BanchopyClanPrivilege } from './../enums'
 import { useDrizzle, userPriv } from './source/drizzle'
 import { GucchoError } from '~/def/messages'
 import { type AbnormalStatus, type NormalBeatmapWithMeta, type RankingStatus } from '~/def/beatmap'
@@ -341,7 +341,7 @@ export class ClanProvider extends Base<Id> {
         eq(schema.scores.mode, toBanchoPyMode(opt.mode, opt.ruleset)),
         userPriv(schema.users),
         eq(schema.scores.status, BanchoPyScoreStatus.Pick),
-        inArray(schema.beatmaps.status, [2, 3])
+        inArray(schema.beatmaps.status, [BanchoPyRankedStatus.Ranked, BanchoPyRankedStatus.Approved])
       ))
       .orderBy(
         ...[

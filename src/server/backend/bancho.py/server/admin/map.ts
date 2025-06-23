@@ -3,7 +3,7 @@ import { type Id } from '../..'
 import { fromRankingStatus, idToString, stringToId, toBanchoMode, toBeatmapSource, toBeatmapset, toRankingStatus } from '../../transforms'
 import { useDrizzle } from '../source/drizzle'
 import * as schema from '../../drizzle/schema'
-import { type BanchoPyRankedStatus } from '../../enums'
+import { BanchoPyRankedStatus } from '../../enums'
 import { AdminMapProvider as Base } from '$base/server'
 import { type PaginatedResult } from '~/def/pagination'
 
@@ -122,6 +122,26 @@ export class AdminMapProvider extends Base<Id, Id> implements Base<Id, Id> {
       version: bm.version,
       md5: bm.md5,
       status: toRankingStatus(bm.status),
+    }
+  }
+
+  async metrics(input: Base.MetricsParam): Promise<Base.Metrics> {
+    const now = Date.now()
+    const period = input.active === 'daily' ? 24 * 60 * 60 * 1000 : input.active === 'weekly' ? 7 * 24 * 60 * 60 * 1000 : 30 * 24 * 60 * 60 * 1000
+    const since = new Date(now - period)
+    const res = await this.drizzle.select({
+      total: sql`count(*)`.mapWith(Number),
+      new: sql`count(if(${schema.beatmaps.lastUpdate} > ${since}, 1, null))`.mapWith(Number),
+      ranked: sql`count(if(${schema.beatmaps.status} = ${BanchoPyRankedStatus.Ranked}, 1, null))`.mapWith(Number),
+      loved: sql`count(if(${schema.beatmaps.status} = ${BanchoPyRankedStatus.Loved}, 1, null))`.mapWith(Number),
+    }).from(schema.beatmaps)
+    return {
+      count: {
+        total: res[0].total,
+        new: res[0].new,
+        ranked: res[0].ranked,
+        loved: res[0].loved,
+      },
     }
   }
 }

@@ -1,9 +1,9 @@
-import { any, array, nativeEnum, number, object, string, tuple } from 'zod'
+import { any, array, literal, nativeEnum, number, object, string, tuple } from 'zod'
 import { zodHandle, zodMode, zodRuleset } from '../../shapes'
 import { type AdminMapProvider as BaseAdminMapProvider } from '../../../backend/$base/server'
 import { router as log } from './log'
 import { Logger } from '$base/logger'
-import { AdminMapProvider, UserProvider, adminMap, adminUser } from '~/server/singleton/service'
+import { AdminMapProvider, UserProvider, adminMap, adminScore, adminUser } from '~/server/singleton/service'
 import { bNProcedure, staffProcedure } from '~/server/trpc/middleware/role'
 import { router as _router } from '~/server/trpc/trpc'
 import { UserRole } from '~/def/user'
@@ -33,6 +33,8 @@ const searchUserParam = object({
       page: number().default(0),
     })
   )
+
+const zodActive = literal('daily').or(literal('weekly')).or(literal('monthly')).default('monthly')
 
 export const router = _router({
   log,
@@ -119,6 +121,17 @@ export const router = _router({
         return adminUser.temp_userUpdateStatGenSQL({ id: UserProvider.stringToId(input.id), mode: input.mode, ruleset: input.ruleset }, input.stat)
       }),
 
+    metrics: staffProcedure
+      .input(
+        object({
+          active: zodActive,
+        })
+      )
+      .query(async ({ input }) => {
+        const metrics = await adminUser.metrics(input)
+        return metrics
+      }),
+
   }),
   map: _router({
     search: bNProcedure
@@ -149,6 +162,15 @@ export const router = _router({
           total: result.total,
         }
       }),
+    metrics: bNProcedure
+      .input(
+        object({
+          active: zodActive,
+        })
+      )
+      .query(async ({ input }) => {
+        return adminMap.metrics(input)
+      }),
     updateBeatmap: bNProcedure
       .input(
         object({
@@ -178,6 +200,17 @@ export const router = _router({
           id: AdminMapProvider.idToString(res.id),
           foreignId: 'foreignId' in res ? AdminMapProvider.idToString(res.foreignId) : undefined,
         }
+      }),
+  }),
+  score: _router({
+    metrics: bNProcedure
+      .input(
+        object({
+          active: zodActive,
+        })
+      )
+      .query(async ({ input }) => {
+        return adminScore.metrics(input)
       }),
   }),
 })

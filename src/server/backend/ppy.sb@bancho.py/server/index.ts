@@ -1,5 +1,6 @@
 import {
   AdminMapProvider as BAdminMapProvider,
+  AdminScoreProvider as BAdminScoreProvider,
   AdminUserProvider as BAdminUserProvider,
   ArticleProvider as BArticleProvider,
   ClanProvider as BClanProvider,
@@ -19,6 +20,7 @@ export { UserProvider } from './user'
 
 export class AdminUserProvider extends BAdminUserProvider {}
 export class AdminMapProvider extends BAdminMapProvider {}
+export class AdminScoreProvider extends BAdminScoreProvider {}
 export class ArticleProvider extends BArticleProvider {}
 export class ClanProvider extends BClanProvider {}
 export class FileProvider extends BFileProvider {}
