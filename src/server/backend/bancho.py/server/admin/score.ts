@@ -1,7 +1,6 @@
-import { and, eq, inArray, sql } from 'drizzle-orm'
+import { sql } from 'drizzle-orm'
 import { useDrizzle } from '../source/drizzle'
 import * as schema from '../../drizzle/schema'
-import { BanchoPyRankedStatus } from '../../enums'
 import { AdminScoreProvider as Base } from '$base/server/admin/score'
 
 export class AdminScoreProvider extends Base<number> implements Base<number> {

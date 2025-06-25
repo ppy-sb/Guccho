@@ -1,11 +1,10 @@
 import { type Mode } from 'node:fs'
-import { type Query } from 'drizzle-orm'
-import { IdTransformable } from '../@extends'
 import type { Composition } from '../@common'
-import { type ComputedUserRole } from '~/utils/common'
-import type { UserClan, UserCompact, UserOptional, UserSecrets } from '~/def/user'
-import { type ModeRulesetScoreStatistic } from '~/def/statistics'
+import { IdTransformable } from '../@extends'
 import { type Ruleset } from '~/def'
+import { type ModeRulesetScoreStatistic } from '~/def/statistics'
+import type { UserClan, UserCompact, UserOptional, UserSecrets } from '~/def/user'
+import { type ComputedUserRole } from '~/utils/common'
 
 export namespace AdminUserProvider {
   export interface MetricsParam {
@@ -47,11 +46,10 @@ export abstract class AdminUserProvider<Id> extends IdTransformable {
     query: { id: Id },
     updateFields: Partial<UserCompact<Id> & UserOptional>
   ): Promise<UserCompact<Id> & UserOptional>
-
-  abstract calcUserStatistics(query: { id: Id; mode: Mode; ruleset: Ruleset }): Promise<ModeRulesetScoreStatistic>
-  abstract getStoredUserStatistics(query: { id: Id; mode: Mode; ruleset: Ruleset }): Promise<ModeRulesetScoreStatistic>
-  abstract updateUserStatistics(query: { id: Id; mode: Mode; ruleset: Ruleset }, update: Partial<ModeRulesetScoreStatistic>): Promise<ModeRulesetScoreStatistic>
+  abstract getUserModeRulesetStatistics(query: { id: Id; mode: Mode; ruleset: Ruleset }): Promise<ModeRulesetScoreStatistic>
+  abstract recalcUserModeRulesetStatistics(query: { id: Id; mode: Mode; ruleset: Ruleset }): Promise<ModeRulesetScoreStatistic>
+  abstract clearUserModeRulesetStatistics(query: { id: Id; mode: Mode; ruleset: Ruleset }): Promise<ModeRulesetScoreStatistic>
+  abstract recalcUserAllStatistics(query: { id: Id }): Promise<void>
+  abstract clearUserAllStatistics(query: { id: Id }): Promise<void>
   abstract metrics(input: AdminUserProvider.MetricsParam): Promise<AdminUserProvider.Metrics>
-
-  abstract temp_userUpdateStatGenSQL(query: { id: Id; mode: Mode; ruleset: Ruleset }, update: Partial<ModeRulesetScoreStatistic>): Promise<Query>
 }

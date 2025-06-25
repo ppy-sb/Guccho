@@ -1,14 +1,13 @@
-import { any, array, literal, nativeEnum, number, object, string, tuple } from 'zod'
+import { array, literal, nativeEnum, number, object, string, tuple } from 'zod'
 import { zodHandle, zodMode, zodRuleset } from '../../shapes'
 import { type AdminMapProvider as BaseAdminMapProvider } from '../../../backend/$base/server'
 import { router as log } from './log'
 import { Logger } from '$base/logger'
 import { AdminMapProvider, UserProvider, adminMap, adminScore, adminUser } from '~/server/singleton/service'
-import { bNProcedure, staffProcedure } from '~/server/trpc/middleware/role'
+import { adminProcedure, bNProcedure } from '~/server/trpc/middleware/role'
 import { router as _router } from '~/server/trpc/trpc'
 import { UserRole } from '~/def/user'
 import { CountryCode } from '~/def/country-code'
-import { type ModeRulesetScoreStatistic } from '~/def/statistics'
 import { isUserFieldEditable } from '~/common/utils/admin'
 import { BeatmapSource, RankingStatus } from '~/def/beatmap'
 
@@ -39,7 +38,7 @@ const zodActive = literal('daily').or(literal('weekly')).or(literal('monthly')).
 export const router = _router({
   log,
   userManagement: _router({
-    search: staffProcedure
+    search: adminProcedure
       .input(searchUserParam)
       .query(({ input }) => {
         return adminUser.userList({
@@ -48,10 +47,10 @@ export const router = _router({
           id: input.id ? UserProvider.stringToId(input.id) : undefined,
         })
       }),
-    detail: staffProcedure.input(string()).query(({ input }) => {
+    detail: adminProcedure.input(string()).query(({ input }) => {
       return adminUser.userDetail({ id: UserProvider.stringToId(input) }).then(detail => mapId(detail, UserProvider.idToString))
     }),
-    saveDetail: staffProcedure
+    saveDetail: adminProcedure
       .input(
         tuple([
           string(),
@@ -90,38 +89,53 @@ export const router = _router({
         return mapId(res, UserProvider.idToString)
       }),
 
-    computeUserStat: staffProcedure
+    recalcUserStat: adminProcedure
+      .input(object({
+        id: string(),
+        mode: zodMode,
+        ruleset: zodRuleset,
+      }))
+      .mutation(async ({ input }) => {
+        return adminUser.recalcUserModeRulesetStatistics({ id: UserProvider.stringToId(input.id), mode: input.mode, ruleset: input.ruleset })
+      }),
+
+    clearUserStat: adminProcedure
+      .input(object({
+        id: string(),
+        mode: zodMode,
+        ruleset: zodRuleset,
+      }))
+      .mutation(async ({ input }) => {
+        return adminUser.clearUserModeRulesetStatistics({ id: UserProvider.stringToId(input.id), mode: input.mode, ruleset: input.ruleset })
+      }),
+
+    getUserStats: adminProcedure
       .input(object({
         id: string(),
         mode: zodMode,
         ruleset: zodRuleset,
       }))
       .query(async ({ input }) => {
-        return adminUser.calcUserStatistics({ id: UserProvider.stringToId(input.id), mode: input.mode, ruleset: input.ruleset })
+        return adminUser.getUserModeRulesetStatistics({ id: UserProvider.stringToId(input.id), mode: input.mode, ruleset: input.ruleset })
       }),
 
-    userModeStat: staffProcedure
+    clearUserAllStats: adminProcedure
       .input(object({
         id: string(),
-        mode: zodMode,
-        ruleset: zodRuleset,
       }))
-      .query(async ({ input }) => {
-        return adminUser.getStoredUserStatistics({ id: UserProvider.stringToId(input.id), mode: input.mode, ruleset: input.ruleset })
+      .mutation(async ({ input }) => {
+        return adminUser.clearUserAllStatistics({ id: UserProvider.stringToId(input.id) })
       }),
 
-    temp_userUpdateStatGenSQL: staffProcedure
+    recalcUserAllStats: adminProcedure
       .input(object({
         id: string(),
-        mode: zodMode,
-        ruleset: zodRuleset,
-        stat: any().refine((e): e is ModeRulesetScoreStatistic => !!e),
       }))
-      .query(async ({ input }) => {
-        return adminUser.temp_userUpdateStatGenSQL({ id: UserProvider.stringToId(input.id), mode: input.mode, ruleset: input.ruleset }, input.stat)
+      .mutation(async ({ input }) => {
+        return adminUser.recalcUserAllStatistics({ id: UserProvider.stringToId(input.id) })
       }),
 
-    metrics: staffProcedure
+    metrics: adminProcedure
       .input(
         object({
           active: zodActive,

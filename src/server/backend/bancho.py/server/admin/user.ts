@@ -1,20 +1,20 @@
-import { type Query, and, count, desc, eq, max, sql, sum } from 'drizzle-orm'
+import { and, count, desc, eq, max, sql, sum } from 'drizzle-orm'
 import type { Id } from '../..'
 import { encryptBanchoPassword } from '../../crypto'
 import * as schema from '../../drizzle/schema'
+import { type BanchoPyMode, BanchoPyPrivilege, BanchoPyScoreStatus } from '../../enums'
 import { config } from '../../env'
 import { Logger } from '../../log'
 import { type DatabaseUserCompactFields, type DatabaseUserOptionalFields, fromCountryCode, toBanchoPyMode, toBanchoPyPriv, toRoles, toSafeName, toUserCompact, toUserOptional } from '../../transforms'
-import { BanchoPyPrivilege, BanchoPyScoreStatus } from '../../enums'
 import { useDrizzle } from '../source/drizzle'
-import { GucchoError } from '~/def/messages'
-import { type UserClan, type UserCompact, type UserOptional, UserRole, type UserSecrets } from '~/def/user'
-import { AdminUserProvider as Base } from '$base/server'
 import { type ComputedUserRole } from '~/utils/common'
-import { type Mode, type Ruleset } from '~/def'
-import { Grade } from '~/def/score'
+import { type UserClan, type UserCompact, type UserOptional, UserRole, type UserSecrets } from '~/def/user'
 import { type ModeRulesetScoreStatistic } from '~/def/statistics'
+import { Grade } from '~/def/score'
+import { GucchoError } from '~/def/messages'
+import { type Mode, type Ruleset } from '~/def'
 import { isRoleEditable } from '~/common/utils/admin'
+import { AdminUserProvider as Base } from '$base/server'
 
 const logger = Logger.child({ label: 'user' })
 
@@ -243,77 +243,109 @@ export class AdminUserProvider extends Base<Id> implements Base<Id> {
     .where(eq(schema.scores.status, BanchoPyScoreStatus.Pick))
     .as('crs')
 
-  async calcUserStatistics(q: { id: Id; mode: Mode; ruleset: Ruleset }): Promise<ModeRulesetScoreStatistic> {
+  /**
+   * Calculates and updates user statistics using Drizzle query builder and CTEs, matching the provided SQL logic.
+   * Returns the updated stats as ModeRulesetScoreStatistic.
+   */
+  async recalcUserModeRulesetStatistics(q: { id: Id; mode: Mode; ruleset: Ruleset }): Promise<ModeRulesetScoreStatistic> {
     const { id, mode, ruleset } = q
-    const result = await this.drizzle
-      .with(
-        this.computeScoreStatus,
-        this.computeRankedScoreStatus,
-      )
-      .select({
-        totalScore: this.computeScoreStatus.totalScore,
-        totalHits: this.computeScoreStatus.totalHit,
-        playTime: this.computeScoreStatus.playTime,
-        playCount: this.computeScoreStatus.playCount,
-        rankedScore: this.computeRankedScoreStatus.rankedScore,
-        maxCombo: this.computeRankedScoreStatus.maxCombo,
-        scoreRankComposition: {
-          [Grade.A]: this.computeRankedScoreStatus.count.A,
-          [Grade.B]: this.computeRankedScoreStatus.count.B,
-          [Grade.C]: this.computeRankedScoreStatus.count.C,
-          [Grade.D]: this.computeRankedScoreStatus.count.D,
-          [Grade.F]: this.computeRankedScoreStatus.count.F,
-          [Grade.S]: this.computeRankedScoreStatus.count.S,
-          [Grade.SH]: this.computeRankedScoreStatus.count.SH,
-          [Grade.SS]: this.computeRankedScoreStatus.count.SS,
-          [Grade.SSH]: this.computeRankedScoreStatus.count.SSH,
-        },
-      })
-      .from(this.computeScoreStatus)
-      .innerJoin(this.computeRankedScoreStatus, and(
-        eq(this.computeScoreStatus.id, this.computeRankedScoreStatus.id),
-        eq(this.computeScoreStatus.mode, this.computeRankedScoreStatus.mode),
-      ))
-      .where(
-        and(
-          eq(this.computeScoreStatus.id, id),
-          eq(this.computeScoreStatus.mode, toBanchoPyMode(mode, ruleset))
-        )
-      )
-      .limit(1)
-      .then(res => res[0])
+    const dbMode = toBanchoPyMode(mode, ruleset)
 
-    if (!result) {
-      return {
-        playCount: 0,
-        playTime: 0,
-        totalHits: 0n,
-        level: 0,
-        maxCombo: 0,
-        scoreRankComposition: {
-          [Grade.F]: 0,
-          [Grade.D]: 0,
-          [Grade.C]: 0,
-          [Grade.B]: 0,
-          [Grade.A]: 0,
-          [Grade.SH]: 0,
-          [Grade.SS]: 0,
-          [Grade.SSH]: 0,
-          [Grade.S]: 0,
-        },
-        rankedScore: 0n,
-        totalScore: 0n,
+    const query = sql`
+      WITH
+          ordered_pp AS (
+              SELECT
+                  s1.id scoreId,
+                  s1.userid,
+                  s1.mode,
+                  s1.pp,
+                  s1.acc
+              FROM
+                  ${schema.scores} s1
+              INNER JOIN ${schema.beatmaps} m ON s1.map_md5 = m.md5
+              WHERE
+                  s1.status = 2
+                  AND m.status IN (2, 3)
+                  AND s1.pp > 0
+                  AND s1.mode = ${dbMode}
+                  AND s1.userid = ${id}
+              ORDER BY
+                  s1.pp DESC,
+                  s1.acc DESC,
+                  s1.id DESC
+          ),
+          bests AS (
+              SELECT
+                  scoreId,
+                  pp,
+                  acc,
+                  ROW_NUMBER() OVER (
+                      ORDER BY
+                          pp DESC
+                  ) AS global_rank
+              FROM
+                  ordered_pp
+          ),
+          user_calc AS (
+              SELECT
+                  SUM(POW (0.95, global_rank - 1) * pp) AS weightedPP,
+                  (1 - POW (0.9994, COUNT(*))) * 416.6667 AS bnsPP,
+                  SUM(POW (0.95, global_rank - 1) * acc) / SUM(POW (0.95, global_rank - 1)) AS acc
+              FROM
+                  bests
+          ),
+          calculated AS (
+              SELECT
+                  *,
+                  weightedPP + bnsPP AS pp
+              FROM
+                  user_calc
+          ),
+          concrete_stats AS (
+              SELECT
+                  COUNT(*) AS count,
+                  SUM(s2.score) AS total_score,
+                  SUM(IF(m2.status IN (2, 3) AND s2.status = 2, s2.score, 0)) AS ranked_score,
+                  SUM(s2.n300 + s2.n100 + s2.n50 + (IF(s2.mode IN (1, 3, 5), s2.ngeki + s2.nkatu, 0))) AS total_hits,
+                  SUM(s2.time_elapsed) / 1000 AS play_time,
+                  MAX(s2.max_combo) AS max_combo,
+                  SUM(s2.grade = "XH") AS xh_count,
+                  SUM(s2.grade = "X") AS x_count,
+                  SUM(s2.grade = "SH") AS sh_count,
+                  SUM(s2.grade = "S") AS s_count,
+                  SUM(s2.grade = "A") AS a_count
+              FROM
+                  ${schema.scores} s2
+              LEFT JOIN ${schema.beatmaps} m2 ON s2.map_md5 = m2.md5
+              WHERE s2.mode = ${dbMode}
+              AND s2.userid = ${id}
+          )
+      UPDATE ${schema.stats} s
+      INNER JOIN concrete_stats cs ON 1
+      INNER JOIN calculated c ON 1
+      SET
+          s.tscore = COALESCE(cs.total_score,0),
+          s.plays = COALESCE(cs.count,0),
+          s.playtime = COALESCE(cs.play_time,0),
+          s.max_combo = COALESCE(cs.max_combo,0),
+          s.total_hits = COALESCE(cs.total_hits,0),
+          s.xh_count = COALESCE(cs.xh_count,0),
+          s.x_count = COALESCE(cs.x_count,0),
+          s.sh_count = COALESCE(cs.sh_count,0),
+          s.s_count = COALESCE(cs.s_count,0),
+          s.a_count = COALESCE(cs.a_count,0),
+          s.pp = COALESCE(c.pp,0),
+          s.acc = COALESCE(c.acc,0),
+          s.rscore = COALESCE(cs.ranked_score,0)
+      WHERE s.id = ${id} AND s.mode = ${dbMode}`
 
-      } satisfies ModeRulesetScoreStatistic
-    }
+    await this.drizzle.execute(query)
 
-    return {
-      ...result,
-      level: getLevel(result.totalScore),
-    }
+    // Return the updated stats using the existing method
+    return this.getUserModeRulesetStatistics({ id, mode, ruleset })
   }
 
-  async getStoredUserStatistics(query: { id: number; mode: Mode; ruleset: Ruleset }): Promise<ModeRulesetScoreStatistic> {
+  async getUserModeRulesetStatistics(query: { id: Id; mode: Mode; ruleset: Ruleset }): Promise<ModeRulesetScoreStatistic> {
     const res = await this.drizzle.query.stats.findFirst({
       where: (tbl, op) => op.and(op.eq(tbl.id, query.id), op.eq(tbl.mode, toBanchoPyMode(query.mode, query.ruleset))),
     }) ?? throwGucchoError(GucchoError.UserNotFound)
@@ -334,20 +366,69 @@ export class AdminUserProvider extends Base<Id> implements Base<Id> {
         [Grade.SSH]: res.xhCount,
         [Grade.S]: res.sCount,
       },
-      // replayWatchedByOthers: res.replayViews,
-      // ppv1: {
-      //   performance: 0,
-      // },
-      // ppv2: {
-      //   performance: res.pp,
-      // },
       rankedScore: res.rankedScore,
       totalScore: res.totalScore,
     }
   }
 
-  updateUserStatistics(query: { id: number; mode: Mode; ruleset: Ruleset }, update: Partial<ModeRulesetScoreStatistic>): Promise<ModeRulesetScoreStatistic> {
-    throw new Error('Method not implemented.')
+  async clearUserModeRulesetStatistics(query: { id: Id; mode: Mode; ruleset: Ruleset }): Promise<ModeRulesetScoreStatistic> {
+    await this.drizzle.update(schema.stats)
+      .set({
+        totalScore: 0n,
+        rankedScore: 0n,
+        plays: 0,
+        playTime: 0,
+        maxCombo: 0,
+        totalHits: 0,
+        xhCount: 0,
+        xCount: 0,
+        shCount: 0,
+        sCount: 0,
+        aCount: 0,
+        pp: 0,
+        accuracy: 0,
+      })
+      .where(
+        and(
+          eq(schema.stats.id, query.id),
+          eq(schema.stats.mode, toBanchoPyMode(query.mode, query.ruleset))
+        )
+      )
+
+    return await this.getUserModeRulesetStatistics(query)
+  }
+
+  async recalcUserAllStatistics(query: { id: Id }): Promise<void> {
+    return await this._recalcStats({
+      calcPP: true,
+      slowStatistics: true,
+      verySlowStatistics: true,
+      userIds: [query.id],
+    })
+  }
+
+  async clearUserAllStatistics(query: { id: Id }): Promise<void> {
+    await this.drizzle.update(schema.stats)
+      .set({
+        totalScore: 0n,
+        rankedScore: 0n,
+        plays: 0,
+        playTime: 0,
+        maxCombo: 0,
+        totalHits: 0,
+        xhCount: 0,
+        xCount: 0,
+        shCount: 0,
+        sCount: 0,
+        aCount: 0,
+        pp: 0,
+        accuracy: 0,
+      })
+      .where(
+        and(
+          eq(schema.stats.id, query.id)
+        )
+      )
   }
 
   metrics(input: Base.MetricsParam): Promise<Base.Metrics> {
@@ -370,26 +451,163 @@ export class AdminUserProvider extends Base<Id> implements Base<Id> {
       }))
   }
 
-  async temp_userUpdateStatGenSQL(query: { id: number; mode: Mode; ruleset: Ruleset }, update: Partial<ModeRulesetScoreStatistic>): Promise<Query> {
-    return this.drizzle.update(schema.stats)
-      .set({
-        totalHits: update.totalHits ? sql`${schema.stats.totalHits} + ${Number(update.totalHits)}` : undefined,
-        playTime: update.playTime ? sql`${schema.stats.playTime} + ${update.playTime}` : undefined,
-        plays: update.playCount ? sql`${schema.stats.plays} + ${update.playCount}` : undefined,
-        rankedScore: update.rankedScore ? sql`${schema.stats.rankedScore} + ${update.rankedScore}` : undefined,
-        totalScore: update.totalScore ? sql`${schema.stats.totalScore} + ${update.totalScore}` : undefined,
-        maxCombo: update.maxCombo ? sql`${schema.stats.maxCombo} + ${update.maxCombo}` : undefined,
-        aCount: update.scoreRankComposition?.[Grade.A] ? sql`${schema.stats.aCount} + ${update.scoreRankComposition[Grade.A]}` : undefined,
-        shCount: update.scoreRankComposition?.[Grade.SH] ? sql`${schema.stats.shCount} + ${update.scoreRankComposition[Grade.SH]}` : undefined,
-        xCount: update.scoreRankComposition?.[Grade.SS] ? sql`${schema.stats.xCount} + ${update.scoreRankComposition[Grade.SS]}` : undefined,
-        xhCount: update.scoreRankComposition?.[Grade.SSH] ? sql`${schema.stats.xhCount} + ${update.scoreRankComposition[Grade.SSH]}` : undefined,
-        sCount: update.scoreRankComposition?.[Grade.S] ? sql`${schema.stats.sCount} + ${update.scoreRankComposition[Grade.S]}` : undefined,
-      })
-      .where(
-        and(
-          eq(schema.stats.id, query.id),
-          eq(schema.stats.mode, toBanchoPyMode(query.mode, query.ruleset))
-        )
-      ).toSQL()
+  /**
+   * github:nyamatrix <https://github.com/ppy-sb/nyamatrix>
+   */
+  async _recalcStats(options: {
+    calcPP?: boolean
+    slowStatistics?: boolean
+    verySlowStatistics?: boolean
+    modes?: BanchoPyMode[]
+    userIds?: Id[]
+  }) {
+    const CALC_PP_CTES = /* sql */ `
+    ordered_pp AS (
+        SELECT
+            s.id scoreId,
+            s.userid,
+            s.mode,
+            s.pp,
+            s.acc
+        FROM
+            scores s
+        INNER JOIN maps m ON s.map_md5 = m.md5
+        WHERE
+            s.status = 2
+            AND m.status IN (2, 3)
+            AND s.pp > 0
+        ORDER BY
+            s.pp DESC,
+            s.acc DESC,
+            s.id DESC
+    ),
+    bests AS (
+        SELECT
+            scoreId,
+            userid,
+            mode,
+            pp,
+            acc,
+            ROW_NUMBER() OVER (
+                PARTITION BY
+                    userid,
+                    mode
+                ORDER BY
+                    pp DESC
+            ) AS global_rank
+        FROM
+            ordered_pp
+    ),
+    user_calc AS (
+        SELECT
+            userid,
+            mode,
+            COUNT(*) AS count,
+            SUM(POW (0.95, global_rank - 1) * pp) AS weightedPP,
+            (1 - POW (0.9994, COUNT(*))) * 416.6667 AS bnsPP,
+            SUM(POW (0.95, global_rank - 1) * acc) / SUM(POW (0.95, global_rank - 1)) AS acc
+        FROM
+            bests
+        GROUP BY
+            userid,
+            mode
+    ),
+    calculated AS (
+        SELECT
+            *,
+            weightedPP + bnsPP AS pp
+        FROM
+            user_calc
+    )`
+
+    const CONCRETE_STATS_CTES = /* sql */`
+      concrete_stats AS (
+        SELECT
+            s.userid,
+            s.mode,
+            count(*) AS count,
+            SUM(s.score) AS total_score,
+            SUM(s.n300 + s.n100 + s.n50 + (IF(s.mode IN (1, 3, 5), s.ngeki + s.nkatu, 0))) AS total_hits,
+            SUM(s.time_elapsed) / 1000 AS play_time,
+            MAX(s.max_combo) AS max_combo,
+            SUM(s.grade = "XH") AS xh_count,
+            SUM(s.grade = "X") AS x_count,
+            SUM(s.grade = "SH") AS sh_count,
+            SUM(s.grade = "S") AS s_count,
+            SUM(s.grade = "A") AS a_count
+        FROM
+            scores s
+        GROUP BY
+            s.userid,
+            s.mode
+    )`
+
+    const RANKED_STATS_CTES = /* sql */ `
+    ranked_stats AS (
+        SELECT
+            s.userid,
+            s.mode,
+            SUM(s.score) AS ranked_score
+        FROM
+            scores s
+            LEFT JOIN maps m ON s.map_md5 = m.md5
+        WHERE
+            m.status IN (2, 3)
+            AND s.status = 2
+        GROUP BY
+            s.userid,
+            s.mode
+    )`
+
+    const ctes: string[] = [
+      'dummy AS (SELECT 1)',
+      options.calcPP ? CALC_PP_CTES : undefined,
+      options.slowStatistics ? CONCRETE_STATS_CTES : undefined,
+      options.verySlowStatistics ? RANKED_STATS_CTES : undefined,
+    ].filter(TSFilter)
+
+    const joinTables: string[] = [
+      options.calcPP ? 'LEFT JOIN calculated c ON s.id = c.userId AND s.mode = c.mode' : undefined,
+      options.slowStatistics ? 'LEFT JOIN concrete_stats cs ON s.id = cs.userId AND s.mode = cs.mode' : undefined,
+      options.verySlowStatistics ? 'LEFT JOIN ranked_stats rs ON s.id = rs.userId AND s.mode = rs.mode' : undefined,
+    ].filter(TSFilter)
+
+    const updates: string[] = [
+      options.calcPP ? 's.pp = COALESCE(c.pp,0), s.acc = COALESCE(c.acc,0)' : undefined,
+      options.slowStatistics
+        ? [
+            's.tscore = COALESCE(cs.total_score,0)',
+            's.plays = COALESCE(cs.count,0)',
+            's.playtime = COALESCE(cs.play_time,0)',
+            's.max_combo = COALESCE(cs.max_combo,0)',
+            's.total_hits = COALESCE(cs.total_hits,0)',
+            's.xh_count = COALESCE(cs.xh_count,0)',
+            's.x_count = COALESCE(cs.x_count,0)',
+            's.sh_count = COALESCE(cs.sh_count,0)',
+            's.s_count = COALESCE(cs.s_count,0)',
+            's.a_count = COALESCE(cs.a_count,0)',
+          ]
+        : undefined,
+      options.verySlowStatistics ? 's.rscore = COALESCE(rs.ranked_score,0)' : undefined,
+    ].filter(TSFilter).flat()
+
+    let query = /* sql */ `
+      WITH ${ctes.join(',\n')}
+      UPDATE stats s
+      ${joinTables.length ? joinTables.join('\n') : ''}
+      SET
+        ${updates.join(',\n')}
+      WHERE 1=1
+    `
+    if (options.modes && options.modes.length) {
+      const modeList = options.modes.map(String).join(', ')
+      query += `\nAND s.mode IN (${modeList})`
+    }
+    if (options.userIds && options.userIds.length) {
+      const userIdList = options.userIds.map(String).join(', ')
+      query += `\nAND s.id IN (${userIdList})`
+    }
+
+    await this.drizzle.execute(sql.raw(query))
   }
 }

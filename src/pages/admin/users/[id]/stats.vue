@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { RankingSystem } from '~/def/common'
-import { type Mode, type Ruleset } from '~/def'
 import type { ModeRulesetScoreStatistic } from '~/def/statistics'
 import { Grade } from '~/def/score'
 
@@ -11,11 +9,11 @@ const fmt = createNumberFormatter()
 
 const id = route.params.id
 const user = await app.$client.user.uniqueIdent.query(id)
-const pending = ref(false)
 if (!user) {
   await navigateTo('/admin/users')
 }
-const [sw, setSw] = useSwitcher()
+const [sw, setSw] = useLeaderboardSwitcher()
+const recalcingAll = ref(false)
 
 const defStat: ModeRulesetScoreStatistic = {
   totalScore: 0n,
@@ -26,314 +24,137 @@ const defStat: ModeRulesetScoreStatistic = {
   maxCombo: 0,
   rankedScore: 0n,
   scoreRankComposition: {
-    [Grade.F]: 0,
-    [Grade.D]: 0,
-    [Grade.C]: 0,
-    [Grade.B]: 0,
-    [Grade.A]: 0,
-    [Grade.S]: 0,
-    [Grade.SH]: 0,
-    [Grade.SS]: 0,
     [Grade.SSH]: 0,
+    [Grade.SS]: 0,
+    [Grade.SH]: 0,
+    [Grade.S]: 0,
+    [Grade.A]: 0,
+    [Grade.B]: 0,
+    [Grade.C]: 0,
+    [Grade.D]: 0,
+    [Grade.F]: 0,
   },
 }
-const modal = ref<{
-  showModal: () => void
-}>()
 
-const current = ref<ModeRulesetScoreStatistic>(structuredClone(defStat))
-const db = ref<ModeRulesetScoreStatistic>(structuredClone(defStat))
-const calculated = ref<ModeRulesetScoreStatistic>()
+const { data: current, refresh } = await app.$client.admin.userManagement.getUserStats.useQuery(() => ({ id, mode: sw.mode, ruleset: sw.ruleset }))
 
-const sql = ref<{ params: unknown[]; sql: string }>()
-const error = ref<Error>()
-const injectSql = computed(() => sql.value ? sql.value.sql.split('?').map((i, idx) => `${i}${sql.value!.params[idx] ?? ''}`).join('') : '')
-
-const failSafe_anyStateLoaded = ref(false)
-
-async function switchMode(v: Partial<{ mode: Mode; ruleset: Ruleset; rankingSystem: RankingSystem }>) {
-  setSw(v)
-  transaction(() => Promise.allSettled([
-    loadStored(),
-    loadIntegrity(),
-  ]))
+async function recalc() {
+  current.value = await app.$client.admin.userManagement.recalcUserStat.mutate({ id, mode: sw.mode, ruleset: sw.ruleset })
 }
 
-async function loadStored() {
-  failSafe_anyStateLoaded.value = true
-  const { mode, ruleset } = sw
-  const res = await app.$client.admin.userManagement.userModeStat.query({ id, mode, ruleset })
-  current.value = structuredClone(res)
-  db.value = structuredClone(res)
+async function clear() {
+  current.value = await app.$client.admin.userManagement.clearUserStat.mutate({ id, mode: sw.mode, ruleset: sw.ruleset })
 }
-
-async function loadIntegrity() {
-  failSafe_anyStateLoaded.value = true
-  const { mode, ruleset } = sw
-  calculated.value = await app.$client.admin.userManagement.computeUserStat.query({ id, mode, ruleset })
-}
-
-function overwrite() {
-  if (!calculated.value) {
-    return
-  }
-  current.value = {
-    ...current.value,
-    ...calculated.value,
-  }
-}
-
-async function transaction(cb: () => Promise<any>, flag = pending) {
-  flag.value = true
-  await cb()
-  flag.value = false
-}
-
-function compareReturnClass(key: (v: ModeRulesetScoreStatistic) => unknown) {
-  return {
-    'input-warning': current.value && calculated.value && key(current.value) !== key(calculated.value),
-    'input-info': current.value && db.value && key(current.value) !== key(db.value),
-    // 'input-neutral': current.value && computed.value && db.value && key(current.value) === key(computed.value) && key(current.value) === key(db.value),
-  }
-}
-
-async function save() {
-  error.value = undefined
-  const stat = structuredClone({
-    ...current.value,
-    scoreRankComposition: {
-      ...current.value.scoreRankComposition,
-    },
-  })
-  for (const [i, value] of Object.entries(stat).filter((v): v is [Exclude<keyof typeof db.value, 'scoreRankComposition'>, number | bigint] => v[0] !== 'scoreRankComposition')) {
-    if (value === db.value[i]) {
-      delete stat[i]
-    }
-
-    const newVal: any = (value as number) - (db.value[i] as number)
-
-    if (newVal === 0 || newVal === 0n) {
-      delete stat[i]
-    }
-    else {
-      // @ts-expect-error wtf
-      stat[i] = newVal
-    }
-  }
-  for (const [i, value] of Object.entries(stat.scoreRankComposition)) {
-    const _i = i as keyof typeof stat.scoreRankComposition
-    if (value === db.value.scoreRankComposition[_i]) {
-      delete stat.scoreRankComposition[_i]
-    }
-    const newVal = value - db.value.scoreRankComposition[_i]
-    if (newVal !== 0) {
-      stat.scoreRankComposition[_i] = newVal
-    }
-    else {
-      delete stat.scoreRankComposition[_i]
-    }
-  }
-
+async function clearAll() {
   try {
-    sql.value = await app.$client.admin.userManagement.temp_userUpdateStatGenSQL.query({ id, mode: sw.mode, ruleset: sw.ruleset, stat })
-    modal.value?.showModal()
+    await app.$client.admin.userManagement.clearUserAllStats.mutate({ id })
   }
-  catch (e) {
-    if (e instanceof Error) {
-      error.value = e
-    }
+  finally {
+    await refresh()
+  }
+}
+async function recalcAll() {
+  recalcingAll.value = true
+  try {
+    await app.$client.admin.userManagement.recalcUserAllStats.mutate({ id })
+    // Re-fetch the current stats after recalculating all
+    await refresh()
+  }
+  finally {
+    recalcingAll.value = false
   }
 }
 </script>
 
 <template>
-  <div class="flex flex-col">
-    <app-mode-switcher
-      class="mx-auto"
-      :model-value="sw as any"
-      @update:model-value="switchMode as any"
-    />
-    <div class="relative mx-auto">
-      <div v-if="error" class="my-2 alert alert-error">
-        <span>{{ error.message }}</span>
-        <button class="btn btn-sm btn-ghost ms-auto" @click="error = undefined">
-          x
+  <div class="flex flex-col max-w-screen-sm mx-auto">
+    <h1 class="mb-4 text-2xl font-bold">
+      User Stats
+    </h1>
+    <div class="mb-4">
+      <span>Quick actions</span>
+      <div class="flex gap-2">
+        <button class="btn btn-sm btn-shadow" :disabled="recalcingAll" @click="recalcAll">
+          recalculate all stats
+          <i v-if="recalcingAll" :class="{ loading: recalcingAll }" />
         </button>
-      </div>
-      <div
-        class="flex gap-4 transition-[filter] transition-opacity"
-        :class="{
-          'opacity-30 saturate-50 blur': pending,
-        }"
-      >
-        <div>
-          <button class="w-full btn btn-sm btn-info" @click="transaction(loadIntegrity)">
-            compute
-          </button>
-          <div v-if="calculated" class="mt-2">
-            <dl>
-              <dt>ranked score</dt>
-              <dd>
-                <div class="input input-sm input-disabled text-end">
-                  {{ fmt(calculated.rankedScore) }}
-                </div>
-              </dd>
-              <dt>total score</dt>
-              <dd>
-                <div class="input input-sm input-disabled text-end">
-                  {{ fmt(calculated.totalScore) }}
-                </div>
-              </dd>
-              <dt>total hits</dt>
-              <dd>
-                <div class="input input-sm input-disabled text-end">
-                  {{ fmt(calculated.totalHits) }}
-                </div>
-              </dd>
-              <dt>play time</dt>
-              <dd>
-                <div class="input input-sm input-disabled text-end">
-                  {{ fmt(calculated.playTime) }}
-                </div>
-              </dd>
-              <dt>play count</dt>
-              <dd>
-                <div class="input input-sm input-disabled text-end">
-                  {{ fmt(calculated.playCount) }}
-                </div>
-              </dd>
-              <dt>max combo</dt>
-              <dd>
-                <div class="input input-sm input-disabled text-end">
-                  {{ fmt(calculated.maxCombo) }}
-                </div>
-              </dd>
-              <!-- <dt>level</dt>
-              <dd>
-                <div class="input input-sm input-disabled text-end">
-                  {{ fmt(computed.level) }}
-                </div>
-              </dd> -->
-              <template v-for="_, key in defStat.scoreRankComposition" :key="key">
-                <dt>rank.{{ key }}</dt>
-                <dd>
-                  <div class="input input-sm input-disabled text-end">
-                    {{ fmt(calculated.scoreRankComposition[key]) }}
-                  </div>
-                </dd>
-              </template>
-            </dl>
-          </div>
-        </div>
-        <div>
-          <button class="btn btn-sm btn-success" :disabled="!calculated" @click="overwrite">
-            ->
-          </button>
-        </div>
-        <div>
-          <button class="w-full btn btn-sm btn-info" @click="transaction(loadStored)">
-            load db
-          </button>
-          <div class="mt-2">
-            <dl>
-              <dt>ranked score</dt>
-              <dd class="masked">
-                <t-masked-input
-                  v-model="current.rankedScore" :formatter="fmt" class="input input-sm"
-                  :class="compareReturnClass(v => v.rankedScore)"
-                />
-              </dd>
-              <dt>total score</dt>
-              <dd class="masked">
-                <t-masked-input
-                  v-model="current.totalScore" :formatter="fmt"
-                  :class="compareReturnClass(v => v.totalScore)" class="input input-sm"
-                />
-              </dd>
-              <dt>total hits</dt>
-              <dd class="masked">
-                <t-masked-input
-                  v-model="current.totalHits" :formatter="fmt"
-                  :class="compareReturnClass(v => v.totalHits)" class="input input-sm"
-                />
-              </dd>
-              <dt>play time</dt>
-              <dd class="masked">
-                <t-masked-input
-                  v-model="current.playTime" :formatter="fmt" :class="compareReturnClass(v => v.playTime)"
-                  class="input input-sm"
-                />
-              </dd>
-              <dt>play count</dt>
-              <dd class="masked">
-                <t-masked-input
-                  v-model="current.playCount" :formatter="fmt"
-                  :class="compareReturnClass(v => v.playCount)" class="input input-sm"
-                />
-              </dd>
-              <dt>max combo</dt>
-              <dd class="masked">
-                <t-masked-input
-                  v-model="current.maxCombo" :formatter="fmt" :class="compareReturnClass(v => v.maxCombo)"
-                  class="input input-sm"
-                />
-              </dd>
-              <!-- <dt>level</dt>
-              <dd class="masked">
-                <t-masked-input
-                  v-model="current.level" :formatter="fmt"
-                  :class="compareReturnClass(v => v.level)" class="input input-sm"
-                />
-              </dd> -->
-              <template v-for="_, key in defStat.scoreRankComposition" :key="key">
-                <dt>rank.{{ key }}</dt>
-                <dd class="masked">
-                  <t-masked-input
-                    v-model="current.scoreRankComposition[key]" :formatter="fmt"
-                    :class="compareReturnClass(v => v.scoreRankComposition[key])" class="input input-sm"
-                  />
-                </dd>
-              </template>
-            </dl>
-          </div>
-        </div>
-        <button class="btn btn-sm btn-danger" :disabled="!failSafe_anyStateLoaded" @click="save">
-          save
+        <button class="btn btn-sm btn-shadow btn-error" @click="clearAll">
+          clear all stats
         </button>
-      </div>
-      <div class="divider" />
-      <div
-        class="absolute inset-0 flex transition-opacity opacity-0 pointer-events-none transition-filter blur-sm"
-        :class="{
-          'opacity-100 !blur-none': pending,
-        }"
-      >
-        <div class="m-auto loading loading-lg" />
       </div>
     </div>
-    <t-modal v-slot="{ closeModal }" ref="modal" class="m-auto">
-      <div class="p-2 card bg-base-200">
-        <span class="card-title">save</span>
-        <div class="card-body">
-          <span>Under evaluation. Execute the following SQL:</span>
-          <pre>
-        <code class="whitespace-pre-wrap">
-{{ injectSql }}
-        </code>
-      </pre>
-        </div>
-        <div class="grid grid-cols-2 p-4 card-actions">
-          <button class="btn btn-success" @click="() => closeModal()">
-            ok
-          </button>
-          <button class="btn btn-success" @click="() => closeModal()">
-            confirm
-          </button>
-        </div>
-      </div>
-    </t-modal>
+    <div class="p-2 my-2 border rounded-lg bg-base-100 w-full max-w-md">
+      <app-mode-switcher
+        :model-value="sw"
+        class="max-w-min"
+        @update:model-value="setSw"
+      />
+      <dl v-if="current" class="stats_dl mt-4">
+        <dt>ranked score</dt>
+        <dd>
+          <div class="text-end">
+            {{ fmt(current.rankedScore) }}
+          </div>
+        </dd>
+        <dt>total score</dt>
+        <dd>
+          <div class="text-end">
+            {{ fmt(current.totalScore) }}
+          </div>
+        </dd>
+        <dt>total hits</dt>
+        <dd>
+          <div class="text-end">
+            {{ fmt(current.totalHits) }}
+          </div>
+        </dd>
+        <dt>play time</dt>
+        <dd>
+          <div class="text-end">
+            {{ fmt(current.playTime) }}
+          </div>
+        </dd>
+        <dt>play count</dt>
+        <dd>
+          <div class="text-end">
+            {{ fmt(current.playCount) }}
+          </div>
+        </dd>
+        <dt>max combo</dt>
+        <dd>
+          <div class="text-end">
+            {{ fmt(current.maxCombo) }}
+          </div>
+        </dd>
+        <template v-for="_, key in defStat.scoreRankComposition" :key="key">
+          <dt>rank.{{ key }}</dt>
+          <dd>
+            <div class="text-end">
+              {{ fmt(current.scoreRankComposition[key]) }}
+            </div>
+          </dd>
+        </template>
+      </dl>
+    </div>
+    <div class="flex justify-between w-full max-w-sm">
+      <button class="btn btn-shadow btn-sm btn-error" @click="clear">
+        clear
+      </button>
+      <button class="btn btn-shadow btn-sm btn-accent" @click="recalc">
+        recalc
+      </button>
+    </div>
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="postcss">
+.stats_dl {
+  @apply grid grid-cols-2 gap-x-4 gap-y-2 items-baseline;
+  dt {
+    @apply text-sm font-medium text-gray-500 dark:text-gray-400 text-left;
+  }
+  dd {
+    @apply text-base font-semibold text-gray-900 dark:text-gray-100 mb-2;
+  }
+}
 </style>
