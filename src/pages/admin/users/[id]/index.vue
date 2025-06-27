@@ -41,7 +41,7 @@ const opts = computed(() =>
   createOptions(UserRole, (_, v) => t(localeKey.role(v)))
     .map((item) => {
       const attrs: HTMLAttributes & InputHTMLAttributes = {}
-      attrs.disabled = !isRoleEditable(item.value, session.role)
+      attrs.disabled = !isRoleEditable(session.role, item.value)
 
       if (route.params.id === session.userId) {
         attrs.disabled = DISALLOW_USER_EDIT_ITSELF_ROLE.includes(item.value)
@@ -90,6 +90,7 @@ en-GB:
   flag: Flag
   roles: Roles
   save-btn: Save
+  edit-statistics: Edit Statistics
 zh-CN:
   id: ID
   stable-client-id: Stable Client ID
@@ -100,6 +101,7 @@ zh-CN:
   flag: 国家或地区
   roles: 角色
   save-btn: 保存
+  edit-statistics: 修改用户游戏数据
 fr-FR:
   id: Identifiant
   stable-client-id: Identifiant Stable Client
@@ -110,6 +112,7 @@ fr-FR:
   flag: Drapeau
   roles: Rôles
   save-btn: Enregistrer
+  edit-statistics: Modifier les statistiques
 de-DE:
   id: ID
   stable-client-id: Stabile Client-ID
@@ -120,6 +123,7 @@ de-DE:
   flag: Flagge
   roles: Rollen
   save-btn: Speichern
+  edit-statistics: Statistiken bearbeiten
 </i18n>
 
 <template>
@@ -272,7 +276,7 @@ de-DE:
         </dt>
         <dd class="striped-text">
           <t-nuxt-link-button variant="secondary" size="sm" :to="{ name: 'admin-users-id-stats', params: { id: route.params.id } }">
-            ({{ t(localeKey.root.global.wip.__path__) }}) Edit Statistics
+            Edit Statistics
           </t-nuxt-link-button>
         </dd>
       </div>
