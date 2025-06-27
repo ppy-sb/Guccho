@@ -102,6 +102,7 @@ export class AdminMapProvider extends Base<Id, Id> implements Base<Id, Id> {
       .update(schema.beatmaps)
       .set({
         status: map.status && Number.isInteger(map.status) ? fromRankingStatus(map.status) : undefined,
+        frozen: true,
       })
       .where(eq(schema.beatmaps.id, map.id))
 
