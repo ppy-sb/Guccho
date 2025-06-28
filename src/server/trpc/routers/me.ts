@@ -306,7 +306,7 @@ export const router = _router({
         }))
       .query(async ({ ctx, input }) => {
         const to = { id: UserProvider.stringToId(input.userId) }
-        const messages = await chats.getMessagesBetween(ctx.user, to, { page: input.page, perPage: 50 })
+        const messages = await chats.getMessagesBetween(mapId(ctx.user, UserProvider.stringToId), to, { page: input.page, perPage: 50 })
         return messages.map<BChat.IPrivateMessage<string>>(i => chats.serialize(i))
       }),
     send: chatUser
@@ -322,7 +322,7 @@ export const router = _router({
           throwGucchoError(GucchoError.UserNotFound)
         }
         await chats.send({
-          from: ctx.user,
+          from: mapId(ctx.user, UserProvider.stringToId),
           to: target,
           content: input.message,
         })
