@@ -1,4 +1,3 @@
-import { BeatmapRequiredFields } from '../../bancho.py/transforms'
 import { IdTransformable } from './@extends'
 import type { Tag } from '~/def/search'
 import type { BeatmapWithMeta, Beatmapset, LocalBeatmapCompact, LocalBeatmapset, RankingStatus, ReferencedBeatmapCompact, ReferencedBeatmapset } from '~/def/beatmap'

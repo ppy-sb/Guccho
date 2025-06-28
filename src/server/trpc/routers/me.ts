@@ -20,7 +20,7 @@ const logger = Logger.child({ label: 'me' })
 export const router = _router({
   settings: pUser.query(async ({ ctx }) => {
     const result = await users.getSettings({
-      handle: UserProvider.idToString(ctx.user.id),
+      handle: ctx.user.id,
       includeHidden: true,
       excludes: { statistics: true, relationships: true, secrets: false },
       scope: Scope.Self,
@@ -31,14 +31,14 @@ export const router = _router({
 
   dynamicSettings: _router({
     get: pUser.query(({ ctx }) => {
-      return users.getDynamicSettings(ctx.user)
+      return users.getDynamicSettings(mapId(ctx.user, UserProvider.stringToId))
     }),
     update: pUser.input(
       extractSettingValidators(
         extractLocationSettings(DynamicSettingStore.Server, settings)
       )
     ).mutation(async ({ ctx, input }) => {
-      const result = await users.setDynamicSettings(ctx.user, input)
+      const result = await users.setDynamicSettings(mapId(ctx.user, UserProvider.stringToId), input)
       logger.info(`user ${ctx.user.safeName}<${ctx.user.id}> updated dynamic settings.`, { user: pick(ctx.user, ['id', 'name']), input })
       return result
     }),
@@ -51,7 +51,7 @@ export const router = _router({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const result = await users.changeUserpage?.(ctx.user, {
+      const result = await users.changeUserpage?.(mapId(ctx.user, UserProvider.stringToId), {
         profile: input.profile,
       })
       logger.info(`user ${ctx.user.safeName}<${ctx.user.id}> updated user page.`, { user: pick(ctx.user, ['id', 'name']) })
@@ -64,7 +64,7 @@ export const router = _router({
       .mutation(async ({ ctx, input: email }): Promise<'otp' | 'succeed'> => {
         const mailUser = await users.getByEmail(email, { scope: Scope.Self }).catch(noop)
 
-        if (mailUser?.id === ctx.user.id) {
+        if (mailUser?.id === UserProvider.stringToId(ctx.user.id)) {
           return 'succeed'
         }
 
@@ -109,7 +109,7 @@ export const router = _router({
       .input(zodEmailValidation)
       .mutation(async ({ ctx, input }) => {
         const rec = await mailToken.get(input) ?? throwGucchoError(GucchoError.EmailTokenNotFound)
-        const result = await users.changeEmail(ctx.user, rec.email)
+        const result = await users.changeEmail(mapId(ctx.user, UserProvider.stringToId), rec.email)
         logger.info(`user ${ctx.user.safeName}<${ctx.user.id}> changed email to ${rec.email}.`, { user: pick(ctx.user, ['id', 'name']) })
         mailToken.deleteAll(rec.email).catch(e => logger.error(e))
         return result
@@ -129,12 +129,12 @@ export const router = _router({
       }).partial(),
     )
     .mutation(async ({ ctx, input }) => {
-      const result = await users.changeSettings(ctx.user, input) ?? throwGucchoError(GucchoError.UpdateUserSettingsFailed)
+      const result = await users.changeSettings(mapId(ctx.user, UserProvider.stringToId), input) ?? throwGucchoError(GucchoError.UpdateUserSettingsFailed)
 
       logger.info(`user ${ctx.user.safeName}<${ctx.user.id}> updated settings.`, { user: pick(ctx.user, ['id', 'name']) })
 
-      ctx.user = result
-      return mapId(ctx.user, UserProvider.idToString)
+      ctx.user = mapId(result, UserProvider.idToString)
+      return ctx.user
     }),
 
   changeAvatar: pUser
@@ -142,7 +142,7 @@ export const router = _router({
       avatar: instanceof_(Uint8Array),
     }))
     .mutation(async ({ ctx, input }) => {
-      const r = await users.changeAvatar(ctx.user, input.avatar)
+      const r = await users.changeAvatar(mapId(ctx.user, UserProvider.stringToId), input.avatar)
       logger.info(`user ${ctx.user.safeName}<${ctx.user.id}> changed avatar.`, { user: pick(ctx.user, ['id', 'name']) })
       return r
     }),
@@ -156,7 +156,7 @@ export const router = _router({
     )
     .mutation(async ({ ctx, input }) => {
       const result = await users.changePassword(
-        ctx.user,
+        mapId(ctx.user, UserProvider.stringToId),
         input.oldPassword,
         input.newPassword,
       )
@@ -173,7 +173,7 @@ export const router = _router({
       }),
     )
     .query(async ({ input: { id }, ctx }) => {
-      const fromUser = ctx.user
+      const fromUser = mapId(ctx.user, UserProvider.stringToId)
       const targetUser = await users.getCompactById(UserProvider.stringToId(id))
 
       if (!fromUser || targetUser == null) {
@@ -198,11 +198,11 @@ export const router = _router({
     }),
 
   relations: pUser.query(async ({ ctx }) => {
-    return (await userRelations.get({ user: ctx.user })).map(f => mapId(f, UserRelationProvider.idToString))
+    return (await userRelations.get({ user: mapId(ctx.user, UserProvider.stringToId) })).map(f => mapId(f, UserRelationProvider.idToString))
   }),
 
   notMutual: pUser.query(async ({ ctx }) => {
-    return (await userRelations.notMutual(ctx.user)).map(u => mapId(u, UserRelationProvider.idToString))
+    return (await userRelations.notMutual(mapId(ctx.user, UserProvider.stringToId))).map(u => mapId(u, UserRelationProvider.idToString))
   }),
 
   removeOneRelation: pUser
@@ -213,7 +213,7 @@ export const router = _router({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      const fromUser = ctx.user
+      const fromUser = mapId(ctx.user, UserProvider.stringToId)
       const targetUser = await users.getCompactById(UserProvider.stringToId(input.id))
 
       if (!fromUser || targetUser == null) {
@@ -244,7 +244,7 @@ export const router = _router({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      const fromUser = ctx.user
+      const fromUser = mapId(ctx.user, UserProvider.stringToId)
       const targetUser = await users.getCompactById(UserProvider.stringToId(input.id))
       if (!fromUser || targetUser == null) {
         throwGucchoError(GucchoError.AtLeastOneUserNotExists)
@@ -266,7 +266,7 @@ export const router = _router({
     }),
 
   sessions: pUser.query(async ({ ctx }) => {
-    const search = { userId: UserProvider.idToString(ctx.user.id) }
+    const search = { userId: ctx.user.id }
     const results = await sessions.store.findAll(search)
 
     type TRes = typeof results

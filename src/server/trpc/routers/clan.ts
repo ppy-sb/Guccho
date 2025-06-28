@@ -88,19 +88,19 @@ export const router = _router({
   relation: userProcedure.input(object({
     id: string(),
   })).query(({ input, ctx }) => {
-    return clanProvider.getClanRelation({ userId: ctx.user.id, clanId: ClanProvider.stringToId(input.id) })
+    return clanProvider.getClanRelation({ userId: UserProvider.stringToId(ctx.user.id), clanId: ClanProvider.stringToId(input.id) })
   }),
   join: userProcedure.input(object({
     id: string(),
   })).mutation(async ({ input, ctx }) => {
-    const r = await clanProvider.joinRequest({ userId: ctx.user.id, clanId: ClanProvider.stringToId(input.id) })
+    const r = await clanProvider.joinRequest({ userId: UserProvider.stringToId(ctx.user.id), clanId: ClanProvider.stringToId(input.id) })
     logger.info(`user ${ctx.user.safeName}<${ctx.user.id}> requested to join clan`, { id: input.id, user: pick(ctx.user, ['id', 'name']), status: r })
     return r
   }),
   leave: userProcedure.input(object({
     id: string(),
   })).mutation(async ({ input, ctx }) => {
-    const r = await clanProvider.leaveRequest({ userId: ctx.user.id, clanId: ClanProvider.stringToId(input.id) })
+    const r = await clanProvider.leaveRequest({ userId: UserProvider.stringToId(ctx.user.id), clanId: ClanProvider.stringToId(input.id) })
     logger.info(`user ${ctx.user.safeName}<${ctx.user.id}> requested to leave clan`, { id: input.id, user: pick(ctx.user, ['id', 'name']), status: r })
     return r
   }),
