@@ -28,13 +28,15 @@ export class AdminMapProvider extends Base<Id, Id> implements Base<Id, Id> {
         id: Id
         server: 'osu!' | 'private'
         status: BanchoPyRankedStatus
+        lastUpdate: Date
       }[]>`JSON_ARRAYAGG(
         JSON_OBJECT(
           'id', ${schema.beatmaps.id},
           'md5', ${schema.beatmaps.md5},
           'version', ${schema.beatmaps.version},
           'server', ${schema.beatmaps.server},
-          'status', ${schema.beatmaps.status}
+          'status', ${schema.beatmaps.status},
+          'lastUpdate', ${schema.beatmaps.lastUpdate}
         )
       )`,
     })
@@ -89,7 +91,7 @@ export class AdminMapProvider extends Base<Id, Id> implements Base<Id, Id> {
             md5: m.md5,
             version: m.version,
             source: toBeatmapSource(m.server),
-            status: toRankingStatus(m.status),
+            status: toRankingStatus(m.status, m.lastUpdate),
           })),
         }
       }).filter(TSFilter),
@@ -111,18 +113,19 @@ export class AdminMapProvider extends Base<Id, Id> implements Base<Id, Id> {
       version: schema.beatmaps.version,
       md5: schema.beatmaps.md5,
       status: schema.beatmaps.status,
+      lastUpdate: schema.beatmaps.lastUpdate,
     })
       .from(schema.beatmaps)
       .where(eq(schema.beatmaps.id, map.id))
       .then(res => this.toVeryCompatBeatmap(res[0]))
   }
 
-  toVeryCompatBeatmap(bm: Pick<typeof schema.beatmaps.$inferSelect, 'id' | 'md5' | 'version' | 'status'>) {
+  toVeryCompatBeatmap(bm: Pick<typeof schema.beatmaps.$inferSelect, 'id' | 'md5' | 'version' | 'status' | 'lastUpdate'>) {
     return {
       id: bm.id as Id,
       version: bm.version,
       md5: bm.md5,
-      status: toRankingStatus(bm.status),
+      status: toRankingStatus(bm.status, bm.lastUpdate),
     }
   }
 

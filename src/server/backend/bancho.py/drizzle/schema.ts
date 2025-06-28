@@ -134,20 +134,6 @@ export const mail = mysqlTable('mail', {
     mailId: primaryKey({ columns: [table.id], name: 'mail_id' }),
   }
 })
-
-export const mapRequests = mysqlTable('map_requests', {
-  id: int('id').autoincrement().notNull(),
-  mapId: int('map_id').notNull(),
-  playerId: int('player_id').notNull(),
-  datetime: datetime('datetime', { mode: 'date' }).notNull(),
-  active: boolean('active').notNull(),
-},
-(table) => {
-  return {
-    mapRequestsId: primaryKey({ columns: [table.id], name: 'map_requests_id' }),
-  }
-})
-
 export const beatmaps = mysqlTable('maps', {
   id: int('id').notNull(),
   server: bpyServerEnum.default('osu!').notNull(),
@@ -409,6 +395,19 @@ export const users = mysqlTable('users', {
   }
 })
 
+export const mapRequests = mysqlTable('map_requests', {
+  id: int('id').autoincrement().notNull(),
+  mapId: int('map_id').notNull().references(() => beatmaps.id, { onDelete: 'cascade' }),
+  playerId: int('player_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  datetime: datetime('datetime', { mode: 'date' }).notNull(),
+  active: boolean('active').notNull(),
+},
+(table) => {
+  return {
+    mapRequestsId: primaryKey({ columns: [table.id], name: 'map_requests_id' }),
+  }
+})
+
 export const clientHashesRelations = relations(clientHashes, ({ one }) => ({
   user: one(users, { fields: [clientHashes.userId], references: [users.id] }),
 }))
@@ -426,11 +425,16 @@ export const mailRelations = relations(mail, ({ one }) => ({
   from: one(users, { fields: [mail.fromId], references: [users.id] }),
   to: one(users, { fields: [mail.toId], references: [users.id] }),
 }))
-export const mapsRelations = relations(beatmaps, ({ one }) => ({
+export const mapsRelations = relations(beatmaps, ({ one, many }) => ({
   source: one(sources, { fields: [beatmaps.setId, beatmaps.server], references: [sources.id, sources.server] }),
+  requested: many(mapRequests, { relationName: 'requested' }),
 }))
 export const sourcesRelations = relations(sources, ({ many }) => ({
   beatmaps: many(beatmaps),
+}))
+export const mapRequestsRelations = relations(mapRequests, ({ one }) => ({
+  map: one(beatmaps, { fields: [mapRequests.mapId], references: [beatmaps.id], relationName: 'requested' }),
+  player: one(users, { fields: [mapRequests.playerId], references: [users.id] }),
 }))
 export const statsRelations = relations(stats, ({ one }) => ({
   user: one(users, { fields: [stats.id], references: [users.id] }),

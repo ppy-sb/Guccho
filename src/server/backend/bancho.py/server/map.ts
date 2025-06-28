@@ -1,4 +1,4 @@
-import { and, desc, eq, like, or } from 'drizzle-orm'
+import { and, count, desc, eq, inArray, like, or, sql, sum } from 'drizzle-orm'
 import * as operators from 'drizzle-orm'
 import type { Id } from '..'
 import {
@@ -9,6 +9,7 @@ import {
   toBeatmapWithBeatmapset, toBeatmapset, toRankingStatus,
 } from '../transforms'
 import * as schema from '../drizzle/schema'
+import { BanchoPyRankedStatus } from '../enums'
 import { useDrizzle } from './source/drizzle'
 import { toBanchoMode } from '~/server/backend/bancho.py/transforms'
 import type { Tag } from '~/def/search'
@@ -41,7 +42,7 @@ export class MapProvider implements Base<Id, Id> {
     return toBeatmapWithBeatmapset(beatmap, beatmap.source)
   }
 
-  async getBeatmapset(query: { id: Id }) {
+  async getBeatmapset(query: { id: Id }, user?: { id: Id }) {
     const { id } = query
 
     const source = await this.drizzle.query.sources.findFirst({
@@ -52,18 +53,93 @@ export class MapProvider implements Base<Id, Id> {
             operators.asc(fields.diff),
             operators.asc(fields.id),
           ],
+
         },
       },
     }) ?? raise(Error, 'beatmap not found')
 
+    const countRequests = await this.drizzle.select({
+      mapId: schema.mapRequests.mapId,
+      count: count(schema.mapRequests.id),
+      voted: (user && sum(eq(schema.mapRequests.playerId, user.id))) ?? sql.raw('0').as('voted'),
+    }).from(schema.mapRequests)
+      .innerJoin(schema.beatmaps, and(
+        eq(schema.beatmaps.id, schema.mapRequests.mapId),
+      ))
+      .groupBy(schema.mapRequests.mapId)
+      .where(and(
+        eq(schema.beatmaps.setId, id),
+        eq(schema.mapRequests.active, sql.raw('1')),
+      ))
+
     const beatmapset = toBeatmapset(source, source.beatmaps[0])
 
     return Object.assign(beatmapset, {
-      beatmaps: source.beatmaps.map(bm => ({
-        ...toBeatmapCompact(bm, toBeatmapSource(source.server)),
-        status: toRankingStatus(bm.status) || RankingStatus.NotFound,
-      })) as Base.BeatmapsetWithMaps<Id, Id>['beatmaps'],
+      beatmaps: source.beatmaps.map((bm) => {
+        const statusOk = bm.status === BanchoPyRankedStatus.Pending || bm.status === BanchoPyRankedStatus.Loved || bm.status === BanchoPyRankedStatus.Qualified
+        const r = countRequests.find(r => r.mapId === bm.id) ?? { count: 0, voted: false }
+        return {
+          ...toBeatmapCompact(bm, toBeatmapSource(source.server)),
+          status: toRankingStatus(bm.status, bm.lastUpdate) ?? RankingStatus.NotFound,
+          request: user?.id
+            ? {
+                status: user?.id ? statusOk ? (r.voted ? 'voted' : 'allowed') : undefined : undefined,
+                voteCount: r.count,
+              }
+            : undefined,
+        }
+      }) as Base.BeatmapsetWithMaps<Id, Id>['beatmaps'],
     }) as Base.BeatmapsetWithMaps<Id, Id>
+  }
+
+  async getMapRankRequest(id: Id, user?: { id: Id }, tx: typeof drizzle = this.drizzle) {
+    const [countRequests] = await tx.select({
+      count: count(schema.mapRequests.id),
+      voted: (user && sum(eq(schema.mapRequests.playerId, user.id))) ?? sql.raw('0').as('voted'),
+    }).from(schema.mapRequests)
+      .innerJoin(schema.beatmaps, and(
+        eq(schema.beatmaps.id, schema.mapRequests.mapId),
+      ))
+      .where(and(
+        inArray(schema.beatmaps.status, [BanchoPyRankedStatus.Pending, BanchoPyRankedStatus.Loved, BanchoPyRankedStatus.Qualified]),
+        eq(schema.beatmaps.id, id),
+        eq(schema.mapRequests.active, sql.raw('1')),
+      ))
+
+    return countRequests && user?.id !== undefined
+      ? {
+          status: countRequests.voted ? 'voted' : 'allowed',
+          voteCount: countRequests.count,
+        } as const
+      : undefined
+  }
+
+  async voteMap(id: Id, user: { id: Id }): Promise<Base.BeatmapRequest | undefined> {
+    return await this.drizzle.transaction(async (tx) => {
+      const [_delete] = await tx.delete(schema.mapRequests)
+        .where(and(
+          eq(schema.mapRequests.playerId, user.id),
+          eq(schema.mapRequests.mapId, id),
+        ))
+
+      if (_delete.affectedRows === 0) {
+        await tx.insert(schema.mapRequests)
+          .values({
+            playerId: user.id,
+            mapId: id,
+            active: true,
+            datetime: new Date(),
+          })
+          .onDuplicateKeyUpdate({
+            set: {
+              active: true,
+              datetime: new Date(),
+            },
+          })
+      }
+
+      return this.getMapRankRequest(id, user, tx)
+    })
   }
 
   private MAP = {

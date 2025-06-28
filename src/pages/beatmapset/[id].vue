@@ -16,9 +16,8 @@ const [switcher, setSwitcher] = useSwitcher()
 const lazyBgCover = shallowRef('')
 const { t } = useI18n()
 
-const { data: beatmapset, error } = await useAsyncData(() =>
-  app.$client.map.beatmapset.query({ id: route.params.id.toString() })
-)
+const { data: beatmapset, error } = await app.$client.map.beatmapset.useQuery({ id: route.params.id.toString() })
+const votePending = shallowRef(false)
 
 const queryBeatmap = route.query.beatmap?.toString()
 
@@ -146,6 +145,29 @@ function updateSwitcher() {
   }
   if (selectedMap.value.mode !== Mode.Osu) {
     switcher.mode = selectedMap.value.mode
+  }
+}
+
+async function vote() {
+  if (!selectedMap.value?.request) {
+    return
+  }
+
+  votePending.value = true
+  try {
+    const res = await app.$client.map.voteBeatmap.mutate({
+      id: selectedMap.value.id,
+    })
+
+    if (res) {
+      selectedMap.value.request = res
+    }
+  }
+  catch (e) {
+    error.value = e as any
+  }
+  finally {
+    votePending.value = false
   }
 }
 
@@ -388,8 +410,8 @@ de-DE:
                 <dt class="text-sm font-medium text-gbase-500">
                   {{ t("beatmapset.status") }}
                 </dt>
-                <dd class="flex gap-1 striped-text">
-                  {{ RankingStatus[selectedMap.status as any] }}
+                <dd class="flex gap-1 striped-text\">
+                  <span>{{ RankingStatus[selectedMap.status as any] }}</span>
                 </dd>
               </div>
               <div class="striped">
@@ -546,6 +568,38 @@ de-DE:
                 </dd>
               </div>
             </dl>
+          </div>
+        </div>
+        <div
+          class="collapse pointer-events-none transition-all will-change-transform duration-300 ease-out"
+          :class="{
+            'collapse-open mt-2 delay-300': selectedMap?.request?.status,
+          }"
+        >
+          <div class="collapse-content p-0 !pb-0 pointer-events-auto">
+            <div class="divider m-0" />
+            <div v-if="selectedMap" class="p-4">
+              <div class="text-xl">
+                Rank Request
+              </div>
+              <div class="flex">
+                <div>
+                  <span class="text-2xl font-bold font-mono">{{ selectedMap.request?.voteCount }}</span>
+                  Votes
+                </div>
+                <button
+                  class="ms-auto btn btn-sm btn-shadow btn-secondary"
+                  @click="vote"
+                >
+                  <template v-if="selectedMap.request?.status === 'allowed'">
+                    Vote <i v-if="votePending" class="loading" /><Icon v-else name="material-symbols:how-to-vote" class="w-5 h-5" />
+                  </template>
+                  <template v-if="selectedMap.request?.status === 'voted'">
+                    Unvote <i v-if="votePending" class="loading" /><Icon v-else name="material-symbols:how-to-vote" class="w-5 h-5" />
+                  </template>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>

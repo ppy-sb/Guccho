@@ -20,7 +20,7 @@ export const userProcedure = sessionProcedure.use(async ({ ctx, next }) => {
   return await next({
     ctx: {
       ...ctx,
-      user,
+      user: mapId(user, UserProvider.idToString),
     },
   })
 })

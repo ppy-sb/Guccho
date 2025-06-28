@@ -4,7 +4,7 @@ import { UserProvider } from '~/server/singleton/service'
 
 const userProvider = new UserProvider()
 export const optionalUserProcedure = sessionProcedure.use(async ({ ctx, next }) => {
-  type ReturnCTX = typeof ctx & { user?: UserCompact<unknown> }
+  type ReturnCTX = typeof ctx & { user?: UserCompact<string> }
   const session = await ctx.session.getBinding()
   if (!session) {
     return await next<ReturnCTX>(undefined as any)
@@ -16,6 +16,6 @@ export const optionalUserProcedure = sessionProcedure.use(async ({ ctx, next }) 
     .getCompactById(UserProvider.stringToId(session.userId))
     .catch(noop<undefined>)
 
-  ;(ctx as ReturnCTX).user = user
+  ;(ctx as ReturnCTX).user = user ? mapId(user, UserProvider.idToString) : undefined
   return await next<ReturnCTX>({ ctx })
 })

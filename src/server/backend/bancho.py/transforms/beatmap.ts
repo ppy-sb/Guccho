@@ -124,7 +124,7 @@ export function toBeatmapWithBeatmapset(
   beatmap: Pick<typeof schema.beatmaps.$inferSelect, BeatmapRequiredFields>,
   source: typeof schema.sources.$inferSelect
 ): BeatmapWithMeta<RankingStatus, typeof schema.beatmaps.$inferSelect.id, typeof schema.beatmaps.$inferSelect.id> {
-  const status = toRankingStatus(beatmap.status) || RankingStatus.WIP
+  const status = toRankingStatus(beatmap.status, beatmap.lastUpdate) || RankingStatus.WIP
   if (status === RankingStatus.Deleted || status === RankingStatus.NotFound) {
     return {
       status,
@@ -162,7 +162,10 @@ const rankingStatusMap = {
   [BanchoPyRankedStatus.Qualified]: RankingStatus.Qualified,
   [BanchoPyRankedStatus.Loved]: RankingStatus.Loved,
 } as const
-export function toRankingStatus(input: BanchoPyRankedStatus): RankingStatus {
+export function toRankingStatus(input: BanchoPyRankedStatus, lastUpdate: Date): RankingStatus {
+  if (input === BanchoPyRankedStatus.Pending && lastUpdate.getTime() < Date.now() - /* 4 weeks */(1000 * 60 * 60 * 24 * 7 * 4)) {
+    return RankingStatus.Graveyard
+  }
   return rankingStatusMap[input] ?? RankingStatus.Unknown
 }
 
