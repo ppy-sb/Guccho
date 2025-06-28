@@ -74,7 +74,7 @@ export const router = _router({
         ...input,
         id: input.id ? DanProvider.stringToId(input.id) : undefined,
         requirements: input.requirements,
-      }, ctx.user)
+      }, mapId(ctx.user, UserProvider.stringToId))
       return {
         ...i,
         id: DanProvider.idToString(i.id),
@@ -286,7 +286,7 @@ export const router = _router({
         const course = await dans.createCourse({
           name: input.name,
           description: input.description,
-        }, ctx.user)
+        }, mapId(ctx.user, UserProvider.stringToId))
         return DanProvider.idToString(course)
       }),
 
@@ -306,7 +306,7 @@ export const router = _router({
           name: input.name,
           description: input.description,
           dans: input.dans.map(d => ({ id: DanProvider.stringToId(d.id), shortName: d.shortName })),
-        }, ctx.user)
+        }, mapId(ctx.user, UserProvider.stringToId))
         return {
           ...course,
           id: DanProvider.idToString(course.id),
