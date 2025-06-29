@@ -15,6 +15,20 @@
       "when": 1746902186546,
       "tag": "0001_rainy_shriek",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1751225620041,
+      "tag": "0002_easy_mystique",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1751225632549,
+      "tag": "0003_nosy_deathbird",
+      "breakpoints": true
     }
   ]
 }

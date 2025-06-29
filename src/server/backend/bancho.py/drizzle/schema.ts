@@ -282,9 +282,9 @@ export const scores = mysqlTable('scores', {
 },
 (table) => {
   return {
-    mapMd5: index('map_md5').on(table.mapMd5),
-    userId: index('userid').on(table.userId),
-    md5ModeStatus: index('md5-mode-status').on(table.mapMd5, table.mode, table.status, table.userId),
+    leaderboard: index('map-leaderboard').on(table.mapMd5, table.mode, table.status),
+    userBest: index('user-best').on(table.userId, table.mode, table.status, table.pp),
+    checksum: index('scores_checksum').on(table.onlineChecksum),
   }
 })
 

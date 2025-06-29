@@ -1,0 +1,2 @@
+ALTER TABLE `map_requests` ADD CONSTRAINT `map_requests_map_id_maps_id_fk` FOREIGN KEY (`map_id`) REFERENCES `maps`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE `map_requests` ADD CONSTRAINT `map_requests_player_id_users_id_fk` FOREIGN KEY (`player_id`) REFERENCES `users`(`id`) ON DELETE cascade ON UPDATE no action;
