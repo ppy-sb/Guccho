@@ -163,7 +163,7 @@ const rankingStatusMap = {
   [BanchoPyRankedStatus.Loved]: RankingStatus.Loved,
 } as const
 export function toRankingStatus(input: BanchoPyRankedStatus, lastUpdate: Date): RankingStatus {
-  if (input === BanchoPyRankedStatus.Pending && lastUpdate.getTime() < Date.now() - /* 4 weeks */(1000 * 60 * 60 * 24 * 7 * 4)) {
+  if ((input === BanchoPyRankedStatus.Pending) && lastUpdate.getTime() < (Date.now() - /* 4 weeks */1000 * 60 * 60 * 24 * 7 * 4)) {
     return RankingStatus.Graveyard
   }
   return rankingStatusMap[input] ?? RankingStatus.Unknown

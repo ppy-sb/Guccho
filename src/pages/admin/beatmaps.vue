@@ -13,6 +13,7 @@ const search = ref<AdminMapProvider.SearchOpt>({
   keyword: '',
   mode: undefined,
   page: 0,
+  requested: false,
   perPage: 10,
 })
 
@@ -36,11 +37,23 @@ function batchAdd(bm: AdminMapProvider.VeryCompactBeatmap<string, string>) {
 //   return app.$client.admin.map.updateBeatmap.mutate({ id: bm.id, status: bm.status })
 // }
 async function update() {
-  await Promise.all([...batch.value.entries()].map(async ([id, bm]) => [id, await app.$client.admin.map.updateBeatmap.mutate(bm)] as const))
+  const result = await Promise.all([...batch.value.entries()].map(async ([id, bm]) => [id, await app.$client.admin.map.updateBeatmap.mutate(bm)] as const))
 
   batch.value = new Map()
 
-  await refresh()
+  // update data
+  for (const [bid, bm] of result) {
+    for (const [sIdx, d] of data.value!.data.entries()) {
+      const index = d.maps.findIndex(v => v.id === bid)
+      if (index !== undefined && index >= 0) {
+        const v = data.value!.data[index]
+        data.value!.data[sIdx].maps[index] = {
+          ...v,
+          ...bm,
+        }
+      }
+    }
+  }
 }
 </script>
 
@@ -56,6 +69,20 @@ en-GB:
   version: Version
   md5: Hash
   status: Status
+  requested-by-player: Requested by player
+
+zh-CN:
+  mode: 模式
+  search-text: 设置 ID、谱面 ID、艺术家、标题、版本、哈希
+  search: 搜索
+  sid: 集合 ID
+  artist: 艺术家
+  song: 标题
+  bid: 谱面 ID
+  version: 版本
+  md5: 哈希
+  status: 状态
+  requested-by-player: 玩家投票数
 </i18n>
 
 <template>
@@ -142,6 +169,9 @@ en-GB:
                 {{ t('md5') }}
               </th>
               <th class="">
+                {{ t('requested-by-player') }}
+              </th>
+              <th class="">
                 {{ t('status') }}
               </th>
             </tr>
@@ -179,6 +209,9 @@ en-GB:
                     >
                   </div>
                 </td>
+                <th class="w-0 text-end">
+                  {{ beatmapset.maps[0].vote }}
+                </th>
                 <td class="align-baseline">
                   <div class="form-control">
                     <select
@@ -216,6 +249,9 @@ en-GB:
                       >
                     </div>
                   </td>
+                  <th class="text-end">
+                    {{ bm.vote }}
+                  </th>
                   <td class="align-baseline">
                     <div>
                       <div class="form-control">

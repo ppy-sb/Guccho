@@ -7,6 +7,7 @@ export namespace AdminMapProvider {
   export interface SearchOpt {
     keyword: string
     mode?: Mode
+    requested: boolean
     page: number
     perPage: number
   }
@@ -21,6 +22,7 @@ export namespace AdminMapProvider {
     status: RankingStatus
     source?: BeatmapSource
     foreignId?: ForeignId
+    vote?: number
   }
 
   export interface UpdateParam<LocalId, ForeignId> extends Partial<AdminMapProvider.VeryCompactBeatmap<LocalId, ForeignId>> {

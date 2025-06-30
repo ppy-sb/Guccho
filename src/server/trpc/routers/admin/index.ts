@@ -1,4 +1,4 @@
-import { array, literal, nativeEnum, number, object, string, tuple } from 'zod'
+import { array, boolean, literal, nativeEnum, number, object, string, tuple } from 'zod'
 import { zodHandle, zodMode, zodRuleset } from '../../shapes'
 import { type AdminMapProvider as BaseAdminMapProvider } from '../../../backend/$base/server'
 import { router as log } from './log'
@@ -153,6 +153,7 @@ export const router = _router({
         object({
           keyword: string(),
           mode: zodMode.optional(),
+          requested: boolean().default(false),
           page: number().min(0).default(0),
           perPage: number().min(1).default(10),
         })
