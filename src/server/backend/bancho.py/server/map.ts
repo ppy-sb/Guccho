@@ -61,7 +61,11 @@ export class MapProvider implements Base<Id, Id> {
     const countRequests = await this.drizzle.select({
       mapId: schema.mapRequests.mapId,
       count: count(schema.mapRequests.id),
-      voted: (user && sum(eq(schema.mapRequests.playerId, user.id))) ?? sql.raw('0').as('voted'),
+      voted: (
+        user
+          ? sum(eq(schema.mapRequests.playerId, user.id)).mapWith(Number)
+          : sql.raw('0')
+      ).as('voted'),
     }).from(schema.mapRequests)
       .innerJoin(schema.beatmaps, and(
         eq(schema.beatmaps.id, schema.mapRequests.mapId),
@@ -95,7 +99,11 @@ export class MapProvider implements Base<Id, Id> {
   async getMapRankRequest(id: Id, user?: { id: Id }, tx: typeof drizzle = this.drizzle) {
     const [countRequests] = await tx.select({
       count: count(schema.mapRequests.id),
-      voted: (user && sum(eq(schema.mapRequests.playerId, user.id))) ?? sql.raw('0').as('voted'),
+      voted: (
+        user
+          ? sum(eq(schema.mapRequests.playerId, user.id)).mapWith(Number)
+          : sql.raw('0')
+      ).as('voted'),
     }).from(schema.mapRequests)
       .innerJoin(schema.beatmaps, and(
         eq(schema.beatmaps.id, schema.mapRequests.mapId),

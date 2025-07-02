@@ -80,6 +80,12 @@ export class AdminMapProvider extends Base<Id, Id> implements Base<Id, Id> {
           gt(votes.vote, 0).if(opt.requested || keyword === ''),
         )
       )
+      .orderBy(
+        ...[
+          desc(schema.beatmaps.setId),
+          desc(sql`max(${votes.vote})`).if(opt.requested || keyword === ''),
+        ].filter(TSFilter),
+      )
       .groupBy(schema.sources.id, schema.sources.server, schema.beatmaps.title, schema.beatmaps.artist, votes.vote)
 
     const total = await this.drizzle.select({ count: sql<number>`count(1)` }).from(_sql.as('sq')).then(res => res[0].count)
