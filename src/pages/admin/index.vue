@@ -1,6 +1,8 @@
 <script lang="ts" setup>
-const app = useNuxtApp()
+import { useSession } from '~/store/session'
 
+const app = useNuxtApp()
+const session = useSession()
 useHead({
   title: () => app.$i18n.t(localeKey.title['admin-panel'].__path__),
   titleTemplate: title => `${title} - ${app.$i18n.t(localeKey.server.name.__path__)}`,
@@ -23,7 +25,11 @@ const sliderIndex = computed({
   },
 })
 
-const { data: metrics, status: metricsStatus } = await app.$client.admin.userManagement.metrics.useLazyQuery(() => ({ active: q.active }), { trpc: { context: { skipBatch: true } } })
+const { data: metrics, status: metricsStatus } = await useAsyncData(
+  'admin-metrics',
+  async () => session.role.admin ? await app.$client.admin.userManagement.metrics.query({ active: q.active }, { context: { skipBatch: true } }) : raiseError('Unauthorized'),
+  { lazy: true, watch: [() => q.active] },
+)
 const { data: mapMetrics, status: mapMetricsStatus } = await app.$client.admin.map.metrics.useLazyQuery(() => ({ active: q.active }), { trpc: { context: { skipBatch: true } } })
 const { data: scoreMetrics, status: scoreMetricsStatus } = await app.$client.admin.score.metrics.useLazyQuery(() => ({ active: q.active }), { trpc: { context: { skipBatch: true } } })
 </script>

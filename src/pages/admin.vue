@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { UserRole } from '../def/user'
 import { useSession } from '../store/session'
 import { showAdminPanel } from '~/common/utils/admin'
 
@@ -24,7 +25,16 @@ const session = useSession()
     <ul class="sticky lg:top-[4em] overflow-x-auto lg:overflow-visible menu lg:ps-0 menu-horizontal lg:menu-vertical bg-base-100 lg:rounded-r-xl">
       <li>
         <nuxt-link-locale
-          v-if="session.role.admin || session.role.owner || session.role.staff"
+          class="whitespace-nowrap"
+          :to="{
+            name: 'admin',
+          }"
+        >
+          {{ $t(localeKey.title['admin-panel'].__path__) }}
+        </nuxt-link-locale>
+      </li>
+      <li v-if="session.role.admin || session.role.owner || session.role.staff">
+        <nuxt-link-locale
           class="whitespace-nowrap"
           :to="{
             name: 'article-edit',
@@ -33,9 +43,8 @@ const session = useSession()
           {{ $t(localeKey.title.articles.__path__) }}
         </nuxt-link-locale>
       </li>
-      <li>
+      <li v-if="session.role.admin">
         <nuxt-link-locale
-          v-if="session.role.admin"
           class="whitespace-nowrap"
           :to="{
             name: 'admin-logs',
@@ -44,9 +53,8 @@ const session = useSession()
           {{ $t(localeKey.title.logs.__path__) }}
         </nuxt-link-locale>
       </li>
-      <li>
+      <li v-if="session.role.admin || session.role.owner">
         <nuxt-link-locale
-          v-if="session.role.admin || session.role.owner"
           class="whitespace-nowrap"
           :to="{
             name: 'admin-users',
@@ -55,9 +63,8 @@ const session = useSession()
           {{ $t(localeKey.title['user-management'].__path__) }}
         </nuxt-link-locale>
       </li>
-      <li>
+      <li v-if="session.user?.roles.includes(UserRole.BeatmapNominator)">
         <nuxt-link-locale
-          v-if="session.role.admin || session.role.owner"
           class="whitespace-nowrap"
           :to="{
             name: 'admin-beatmaps',
