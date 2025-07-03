@@ -1,4 +1,4 @@
-import { and, count, desc, eq, gt, like, or, sql } from 'drizzle-orm'
+import { and, count, desc, eq, gt, like, or, sql, sum } from 'drizzle-orm'
 import { match, unit } from 'switch-pattern'
 import { type Id } from '../..'
 import { fromRankingStatus, idToString, stringToId, toBanchoMode, toBeatmapSource, toBeatmapset, toRankingStatus } from '../../transforms'
@@ -18,23 +18,38 @@ export class AdminMapProvider extends Base<Id, Id> implements Base<Id, Id> {
     const votes = this.drizzle.$with('votes')
       .as(
         this.drizzle.select({
+          setId: schema.beatmaps.setId,
           mapId: schema.mapRequests.mapId,
-          vote: count().as('vote'),
+          votes: count().as('mapVotes'),
         })
           .from(schema.mapRequests)
+          .innerJoin(schema.beatmaps, eq(schema.mapRequests.mapId, schema.beatmaps.id))
           .where(
             eq(schema.mapRequests.active, true),
           )
-          .groupBy(schema.mapRequests.mapId)
+          .groupBy(schema.beatmaps.setId, schema.mapRequests.mapId)
+      )
+
+    const setVotes = this.drizzle.$with('setVotes')
+      .as(
+        this.drizzle.select({
+          setId: votes.setId,
+          votes: sum(votes.votes).mapWith(Number).as('setVotes'),
+        })
+          .from(votes)
+          .groupBy(votes.setId)
       )
 
     const { keyword } = opt
     const idKw = stringToId(keyword)
+
+    const shouldOrderByVotes = opt.requested || keyword === ''
+
     const _sql = this.drizzle
-      .with(votes)
+      .with(votes, setVotes)
       .select({
-        id: schema.sources.id,
-        server: schema.sources.server,
+        id: schema.beatmaps.setId,
+        server: schema.beatmaps.server,
         meta: {
           title: schema.beatmaps.title,
           artist: schema.beatmaps.artist,
@@ -55,15 +70,12 @@ export class AdminMapProvider extends Base<Id, Id> implements Base<Id, Id> {
           'server', ${schema.beatmaps.server},
           'status', ${schema.beatmaps.status},
           'lastUpdate', unix_timestamp(${schema.beatmaps.lastUpdate}),
-          'vote', ${votes.vote}
+          'vote', ${votes.votes}
         )
       )`,
       })
-      .from(schema.sources)
-      .innerJoin(schema.beatmaps, and(
-        eq(schema.beatmaps.setId, schema.sources.id),
-        eq(schema.beatmaps.server, schema.sources.server),
-      ))
+      .from(schema.beatmaps)
+      .leftJoin(setVotes, eq(setVotes.setId, schema.beatmaps.setId))
       .leftJoin(votes, eq(votes.mapId, schema.beatmaps.id))
       .where(
         and(
@@ -77,16 +89,10 @@ export class AdminMapProvider extends Base<Id, Id> implements Base<Id, Id> {
           )?.if(keyword),
 
           opt.mode === undefined ? undefined : eq(schema.beatmaps.mode, toBanchoMode(opt.mode)),
-          gt(votes.vote, 0).if(opt.requested || keyword === ''),
+          gt(setVotes.votes, 0).if(shouldOrderByVotes),
         )
       )
-      .orderBy(
-        ...[
-          desc(schema.beatmaps.setId),
-          desc(sql`max(${votes.vote})`).if(opt.requested || keyword === ''),
-        ].filter(TSFilter),
-      )
-      .groupBy(schema.sources.id, schema.sources.server, schema.beatmaps.title, schema.beatmaps.artist, votes.vote)
+      .groupBy(schema.beatmaps.setId, schema.beatmaps.server, schema.beatmaps.title, schema.beatmaps.artist, setVotes.votes)
 
     const total = await this.drizzle.select({ count: sql<number>`count(1)` }).from(_sql.as('sq')).then(res => res[0].count)
 
@@ -97,12 +103,11 @@ export class AdminMapProvider extends Base<Id, Id> implements Base<Id, Id> {
     const res = await _sql
       .orderBy(
         ...[
+          desc(setVotes.votes).if(shouldOrderByVotes),
           desc(eq(schema.beatmaps.title, keyword))?.if(keyword),
           desc(eq(schema.beatmaps.artist, keyword))?.if(keyword),
           desc(like(schema.beatmaps.title, `${keyword}%`))?.if(keyword),
           desc(like(schema.beatmaps.artist, `${keyword}%`))?.if(keyword),
-          desc(schema.sources.id),
-          desc(votes.vote).if(opt.requested || keyword === ''),
         ]
           .filter(TSFilter),
       )
@@ -111,6 +116,9 @@ export class AdminMapProvider extends Base<Id, Id> implements Base<Id, Id> {
 
     return {
       data: res.map((bs) => {
+        if (shouldOrderByVotes) {
+          bs.beatmaps.sort((a, b) => (b.vote ?? 0) - (a.vote ?? 0))
+        }
         return {
           ...toBeatmapset(bs, bs.meta),
           maps: bs.beatmaps.map(m => ({
