@@ -1,6 +1,8 @@
 import { resolve } from 'node:path'
 import { access, rename, writeFile } from 'node:fs/promises'
 import fs from 'node:fs'
+
+// @ts-expect-error no declaration file
 import fsR from 'fs-reverse'
 import winston from 'winston'
 import { type Id } from '..'

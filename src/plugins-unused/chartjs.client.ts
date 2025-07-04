@@ -1,3 +1,4 @@
+// @ts-expect-error not used
 import ChartJs from 'chart.js'
 
 // Workaround because chart.js doesn't provide an default export
