@@ -1,5 +1,5 @@
-import { array, boolean, literal, nativeEnum, number, object, string, tuple } from 'zod'
-import { zodHandle, zodMode, zodRuleset } from '../../shapes'
+import { array, boolean, nativeEnum, number, object, string, tuple } from 'zod'
+import { zodHandle, zodMetricsPeriod, zodMode, zodRuleset } from '../../shapes'
 import { type AdminMapProvider as BaseAdminMapProvider } from '../../../backend/$base/server'
 import { router as log } from './log'
 import { Logger } from '$base/logger'
@@ -32,8 +32,6 @@ const searchUserParam = object({
       page: number().default(0),
     })
   )
-
-const zodActive = literal('daily').or(literal('weekly')).or(literal('monthly')).default('monthly')
 
 export const router = _router({
   log,
@@ -138,7 +136,7 @@ export const router = _router({
     metrics: adminProcedure
       .input(
         object({
-          active: zodActive,
+          active: zodMetricsPeriod,
         })
       )
       .query(async ({ input }) => {
@@ -180,7 +178,7 @@ export const router = _router({
     metrics: bNProcedure
       .input(
         object({
-          active: zodActive,
+          active: zodMetricsPeriod,
         })
       )
       .query(async ({ input }) => {
@@ -221,7 +219,7 @@ export const router = _router({
     metrics: bNProcedure
       .input(
         object({
-          active: zodActive,
+          active: zodMetricsPeriod,
         })
       )
       .query(async ({ input }) => {
