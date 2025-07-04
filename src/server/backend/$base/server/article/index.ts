@@ -237,7 +237,7 @@ export abstract class ArticleProvider {
       }
     }
 
-    const content = ArticleProvider.deserialize(await fs.readFile(file))
+    const content = ArticleProvider.deserialize(Uint8Array.from(await fs.readFile(file)))
     return ArticleProvider.validate(content, { file, tryUpdate: true, writeBack: true })
   }
 }

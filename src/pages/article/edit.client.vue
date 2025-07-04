@@ -37,7 +37,7 @@ const { data: content, refresh: refreshContent } = await useAsyncData(async () =
   return undefined
 })
 
-const { data: articles, refresh: refreshTree } = app.$client.article.localSlugs.useQuery()
+const { data: articles, refresh: refreshTree } = await app.$client.article.localSlugs.useQuery()
 
 const privileges: Record<ArticleProvider.TWriteAccess, string> = {
   staff: app.$i18n.t(localeKey.role(UserRole.Staff)),
@@ -202,10 +202,10 @@ de-DE:
 </i18n>
 
 <template>
-  <section v-if="articles" class="container pb-8 mx-auto custom-container">
+  <section class="container pb-8 mx-auto custom-container">
     <input ref="importArticleFile" type="file" hidden @change="importArticle">
     <div class="flex flex-col lg:flex-row">
-      <ul class="rounded-lg menu menu-xs bg-base-100 min-w-max">
+      <ul v-if="articles" class="rounded-lg menu menu-xs bg-base-100 min-w-max">
         <tree
           v-bind="articles" @select="(entry) => {
             article.slug = entry.path

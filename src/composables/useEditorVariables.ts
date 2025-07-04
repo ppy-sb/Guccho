@@ -6,13 +6,11 @@ interface VariableBase {
   description: string | number
 }
 
-type VariableTemplate = VariableBase & ({
-  t: true
-} | {
+type VariableTemplate = VariableBase & {
   fallback?: string | number
   value?: string | number
-  t?: false
-})
+  t?: boolean
+}
 
 const variables = new Map<string, VariableTemplate>()
 
@@ -29,7 +27,7 @@ export default function useEditorVariables(i: { i18n: { t: (str: string) => stri
   }
 }
 
-function addAppConfigVariables(i: { i18n: { t: (str: string) => string } }) {
+function addAppConfigVariables(_i: { i18n: { t: (str: string) => string } }) {
   const config = useRuntimeConfig()
 
   setVariable('domain', {

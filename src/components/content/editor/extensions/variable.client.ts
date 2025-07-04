@@ -95,18 +95,22 @@ export default function (config: { i18n: { t: (str: string) => string } }) {
         return ['span', attributes, `${node.attrs.name}`]
       }
 
-      if (_entry.t) {
-        attributes['data-tip'] = config.i18n.t(node.attrs.name)
-        return ['span', attributes, node.attrs.name]
-      }
-      else {
-        if (this.editor?.isEditable) {
-          attributes['data-tip'] = `${_entry.value}${attributes.fallback ? ` |  ${attributes.fallback}` : ''} | ${_entry.fallback}`
-          return ['span', attributes, `${node.attrs.name}`]
-        }
+      if (this.editor?.isEditable) {
+        let tip = _entry.t ? config.i18n.t(node.attrs.name) : _entry.value || node.attrs.name
 
-        return ['span', attributes, _entry?.value || node.attrs.fallback || _entry?.fallback || node.attrs.name]
+        if (node.attrs.fallback) {
+          tip += ` | ${node.attrs.fallback}`
+        }
+        if (_entry.fallback) {
+          tip += ` | ${_entry.fallback}`
+        }
+        attributes['data-tip'] = tip
+        return ['span', attributes, `${node.attrs.name}`]
       }
+
+      const _in = _entry.t ? config.i18n.t(node.attrs.name) : _entry.value || node.attrs.fallback || _entry.fallback || node.attrs.name
+
+      return ['span', attributes, _in]
     },
 
     renderText({ node }) {
@@ -214,8 +218,8 @@ export default function (config: { i18n: { t: (str: string) => string } }) {
 
                 popup = tippy(document.body, {
                   getReferenceClientRect: props.clientRect as any,
-                  appendTo: () => document.body,
-                  content: component.element,
+                  appendTo: () => document.body as Element,
+                  content: component.element as Element,
                   showOnCreate: props.editor.isFocused,
                   interactive: true,
                   trigger: 'manual',
@@ -282,9 +286,9 @@ export default function (config: { i18n: { t: (str: string) => string } }) {
                 },
               })
 
-              popup = tippy(event.target as HTMLElement, {
+              popup = tippy(event.target as Element, {
                 appendTo: () => document.body,
-                content: component.element,
+                content: component.element as Element,
                 showOnCreate: true,
                 interactive: true,
                 trigger: 'manual',

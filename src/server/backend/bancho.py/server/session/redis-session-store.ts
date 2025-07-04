@@ -1,4 +1,4 @@
-import type { Buffer } from 'node:buffer'
+import { Buffer } from 'node:buffer'
 import type { Document } from 'bson'
 import * as BSON from 'bson'
 import { commandOptions, type createClient } from 'redis'
@@ -25,7 +25,7 @@ export class RedisSessionStore<TDoc extends Document & Session<any>> extends Ses
   }
 
   #parseSession<TDoc>(_session: Buffer): TDoc | undefined {
-    const session = BSON.deserialize(_session)
+    const session = BSON.deserialize(Uint8Array.from(_session))
     return session as TDoc
   }
 
@@ -52,7 +52,7 @@ export class RedisSessionStore<TDoc extends Document & Session<any>> extends Ses
   async #set(key: KeyOf<TDoc>, value: TDoc) {
     const stream = BSON.serialize(value, { ignoreUndefined: true })
 
-    await this.#redis.set(key, stream as Buffer, { EX: sessionConfig.expire / 1000 })
+    await this.#redis.set(key, Buffer.from(stream), { EX: sessionConfig.expire / 1000 })
     return key
   }
 
