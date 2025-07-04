@@ -63,7 +63,7 @@ export async function useSearchResult() {
     if (!keyword.value) {
       return []
     }
-    return await app.$client.search.searchUser.query({
+    return await app.$client.user.search.query({
       keyword: keyword.value,
       limit: autoResultSize(),
     }, {
@@ -82,7 +82,7 @@ export async function useSearchResult() {
     if (!keyword.value && !tags.value.length) {
       return []
     }
-    return await app.$client.search.searchBeatmap.query({
+    return await app.$client.map.searchBeatmap.query({
       keyword: keyword.value,
       filters: tags.value,
       limit: autoResultSize(),
@@ -102,7 +102,7 @@ export async function useSearchResult() {
     if (!keyword.value && !tags.value.length) {
       return []
     }
-    return await app.$client.search.searchBeatmapset.query({
+    return await app.$client.map.searchBeatmapset.query({
       keyword: keyword.value,
       filters: tags.value,
       limit: autoResultSize(),

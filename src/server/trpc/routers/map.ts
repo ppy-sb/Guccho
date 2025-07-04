@@ -1,7 +1,8 @@
-import { object, string } from 'zod'
-import { router as _router, publicProcedure as p } from '../trpc'
+import { array, number, object, string } from 'zod'
 import { optionalUserProcedure } from '../middleware/optional-user'
 import { userProcedure } from '../middleware/user'
+import { zodSearchBeatmap } from '../shapes'
+import { router as _router, publicProcedure as p } from '../trpc'
 import { MapProvider, UserProvider, maps } from '~/server/singleton/service'
 import { RankingStatus } from '~/def/beatmap'
 
@@ -56,5 +57,40 @@ export const router = _router({
       return maps.voteMap(MapProvider.stringToId(input.id), {
         id: UserProvider.stringToId(ctx.user.id),
       })
+    }),
+
+  searchBeatmap: p
+    .input(
+      object({
+        keyword: string(),
+        limit: number().optional().default(5),
+        filters: array(zodSearchBeatmap).optional(),
+      }),
+    )
+    .query(async ({ input: { keyword, limit, filters } }) => {
+      const beatmaps = await maps.searchBeatmap({
+        keyword,
+        limit,
+        filters,
+      })
+
+      return beatmaps.map(b => mapId(b, MapProvider.idToString))
+    }),
+  searchBeatmapset: p
+    .input(
+      object({
+        keyword: string(),
+        limit: number().optional().default(5),
+        filters: array(zodSearchBeatmap).optional(),
+      }),
+    )
+    .query(async ({ input: { keyword, limit, filters } }) => {
+      const beatmapsets = await maps.searchBeatmapset({
+        keyword,
+        limit,
+        filters,
+      })
+
+      return beatmapsets.map(bs => mapId(bs, MapProvider.idToString))
     }),
 })

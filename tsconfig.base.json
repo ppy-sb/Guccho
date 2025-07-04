@@ -13,6 +13,7 @@
     "allowJs": true,
     "strictNullChecks": true,
     "strictFunctionTypes": true,
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "noImplicitOverride": false
   }
 }

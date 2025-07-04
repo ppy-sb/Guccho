@@ -211,6 +211,22 @@ export const router = _router({
       return await users.status({ id: UserProvider.stringToId(id) })
     }),
 
+  search: p
+    .input(
+      object({
+        keyword: string(),
+        limit: number().optional().default(10),
+      }),
+    )
+    .query(async ({ input: { keyword, limit } }) => {
+      const results = await users.search({
+        keyword,
+        limit,
+      })
+
+      return results.map(u => mapId(u, UserProvider.idToString))
+    }),
+
   register: _router({
     sendEmailCode: sessionProcedure
       .input(string().email())
