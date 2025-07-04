@@ -1,4 +1,4 @@
-import { and, count, desc, eq, gt, like, or, sql, sum } from 'drizzle-orm'
+import { and, count, desc, eq, gt, inArray, like, or, sql, sum } from 'drizzle-orm'
 import { match, unit } from 'switch-pattern'
 import { type Id } from '../..'
 import { fromRankingStatus, idToString, stringToId, toBanchoMode, toBeatmapSource, toBeatmapset, toRankingStatus } from '../../transforms'
@@ -218,14 +218,17 @@ export class AdminMapProvider extends Base<Id, Id> implements Base<Id, Id> {
       total: sql`count(*)`.mapWith(Number),
       new: sql`count(if(${schema.beatmaps.lastUpdate} > ${since}, 1, null))`.mapWith(Number),
       ranked: sql`count(if(${schema.beatmaps.status} = ${BanchoPyRankedStatus.Ranked}, 1, null))`.mapWith(Number),
-      loved: sql`count(if(${schema.beatmaps.status} = ${BanchoPyRankedStatus.Loved}, 1, null))`.mapWith(Number),
+      custom: sum(and(
+        inArray(schema.beatmaps.status, [BanchoPyRankedStatus.Loved, BanchoPyRankedStatus.Approved, BanchoPyRankedStatus.Qualified, BanchoPyRankedStatus.Ranked]),
+        eq(schema.beatmaps.frozen, sql.raw('1')),
+      )!).mapWith(Number),
     }).from(schema.beatmaps)
     return {
       count: {
         total: res[0].total,
         new: res[0].new,
         ranked: res[0].ranked,
-        loved: res[0].loved,
+        custom: res[0].custom,
       },
     }
   }

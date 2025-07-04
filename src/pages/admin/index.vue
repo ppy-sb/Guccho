@@ -96,7 +96,7 @@ const { data: scoreMetrics, status: scoreMetricsStatus } = await app.$client.adm
         </div>
         <!-- Active Users -->
         <div class="stat" :class="{ 'opacity-30 saturate-50 blur-sm pointer-events-none transition duration-300': metricsStatus === 'pending' }">
-          <div class="stat-figure text-success">
+          <div class="stat-figure text-primary">
             <icon name="mdi:account-check" class="h-8 w-8" />
           </div>
           <div class="stat-title">
@@ -160,37 +160,41 @@ const { data: scoreMetrics, status: scoreMetricsStatus } = await app.$client.adm
             <span>{{ mapMetrics?.count.total?.toLocaleString?.() ?? '-' }}</span>
           </div>
           <div class="stat-desc">
-            All maps in database
-          </div>
-        </div>
-        <!-- New Maps -->
-        <div class="stat" :class="{ 'opacity-30 saturate-50 blur-sm pointer-events-none transition duration-300': mapMetricsStatus === 'pending' }">
-          <div class="stat-figure text-success">
-            <icon name="mdi:music-note-plus" class="h-8 w-8" />
-          </div>
-          <div class="stat-title">
-            Active
-          </div>
-          <div class="stat-value text-success">
-            <span>{{ mapMetrics?.count.new?.toLocaleString?.() ?? '-' }}</span>
-          </div>
-          <div class="stat-desc">
-            Newly added maps or ranked
+            <template v-if="mapMetrics.count.new">
+              <span v-if="mapMetrics.count.new > 0" class="text-xs text-success">+ {{ mapMetrics.count.new.toLocaleString() }} new users</span>
+              <span v-else-if="mapMetrics.count.new < 0" class="text-xs text-warning">- {{ Math.abs(mapMetrics.count.new).toLocaleString() }} users</span>
+            </template>
+            <span v-else class="text-xs opacity-60">All maps in database</span>
           </div>
         </div>
         <!-- Ranked Maps -->
         <div class="stat" :class="{ 'opacity-30 saturate-50 blur-sm pointer-events-none transition duration-300': mapMetricsStatus === 'pending' }">
-          <div class="stat-figure text-primary">
+          <div class="stat-figure text-success">
             <icon name="line-md:chevron-small-triple-up" class="h-8 w-8" />
           </div>
           <div class="stat-title">
             Ranked
           </div>
-          <div class="stat-value text-primary">
+          <div class="stat-value text-success">
             <span>{{ mapMetrics?.count.ranked?.toLocaleString?.() ?? '-' }}</span>
           </div>
           <div class="stat-desc">
             Which counts pp!!
+          </div>
+        </div>
+        <!-- Custom Maps -->
+        <div class="stat" :class="{ 'opacity-30 saturate-50 blur-sm pointer-events-none transition duration-300': mapMetricsStatus === 'pending' }">
+          <div class="stat-figure text-info">
+            <icon name="material-symbols:add-row-below-outline-rounded" class="h-8 w-8" />
+          </div>
+          <div class="stat-title">
+            Custom
+          </div>
+          <div class="stat-value text-info">
+            <span>{{ mapMetrics?.count.custom?.toLocaleString?.() ?? '-' }}</span>
+          </div>
+          <div class="stat-desc">
+            Custom maps
           </div>
         </div>
       </div>

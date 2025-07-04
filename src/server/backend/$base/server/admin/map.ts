@@ -37,7 +37,7 @@ export namespace AdminMapProvider {
       total: number
       new: number
       ranked: number
-      loved: number
+      custom: number
     }
   }
 }
