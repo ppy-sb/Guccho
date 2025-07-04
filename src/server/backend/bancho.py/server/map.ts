@@ -1,5 +1,6 @@
 import { and, count, desc, eq, inArray, like, or, sql, sum } from 'drizzle-orm'
 import * as operators from 'drizzle-orm'
+import { type MySql2Database } from 'drizzle-orm/mysql2'
 import type { Id } from '..'
 import {
   idToString,
@@ -96,7 +97,7 @@ export class MapProvider implements Base<Id, Id> {
     }) as Base.BeatmapsetWithMaps<Id, Id>
   }
 
-  async getMapRankRequest(id: Id, user?: { id: Id }, tx: typeof drizzle = this.drizzle) {
+  async getMapRankRequest(id: Id, user?: { id: Id }, tx: MySql2Database<typeof schema> = this.drizzle) {
     const [countRequests] = await tx.select({
       count: count(schema.mapRequests.id),
       voted: (
