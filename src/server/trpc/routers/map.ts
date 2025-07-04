@@ -44,6 +44,10 @@ export const router = _router({
     }
   }),
 
+  metrics: p.query(async () => {
+    return maps.metrics()
+  }),
+
   voteBeatmap: userProcedure
     .input(
       object({

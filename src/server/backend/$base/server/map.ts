@@ -7,6 +7,12 @@ export namespace MapProvider {
     id: Id
   }
 
+  export interface Metrics {
+    total: number
+    ranked: number
+    custom: number
+  }
+
   export interface BeatmapRequest {
     status: 'allowed' | 'voted'
     voteCount: number
@@ -42,6 +48,8 @@ export abstract class MapProvider<Id, ForeignId> extends IdTransformable {
     Id,
     ForeignId
   >>
+
+  abstract metrics(): Promise<MapProvider.Metrics>
 
   abstract getMapRankRequest(id: Id, user?: { id: Id }): Promise<MapProvider.BeatmapRequest | undefined>
   abstract voteMap(id: Id, user: { id: Id }): Promise<MapProvider.BeatmapRequest | undefined>

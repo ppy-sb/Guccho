@@ -47,6 +47,10 @@ export namespace UserProvider {
   }
 
   export type UserCompact<Id> = UserCompact$2<Id>
+
+  export interface Metrics {
+    total: number
+  }
 }
 
 export abstract class UserProvider<Id, ScoreId> extends IdTransformable {
@@ -200,6 +204,7 @@ export abstract class UserProvider<Id, ScoreId> extends IdTransformable {
     }
   } | null>
 
+  abstract metrics(): Promise<UserProvider.Metrics>
   abstract register(opt: {
     name: string
     safeName?: string

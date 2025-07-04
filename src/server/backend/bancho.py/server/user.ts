@@ -4,7 +4,7 @@ import { isAbsolute, join, resolve, sep } from 'node:path'
 import { type QueryError } from 'mysql2'
 import imageType from 'image-type'
 import { glob } from 'glob'
-import { aliasedTable, and, desc, eq, gt, inArray, like, or, sql } from 'drizzle-orm'
+import { aliasedTable, and, count, desc, eq, gt, inArray, like, or, sql } from 'drizzle-orm'
 import { TRPCError } from '@trpc/server'
 import type { Id, ScoreId } from '..'
 import { getLiveUserStatus } from '../api-client'
@@ -816,8 +816,14 @@ class DBUserProvider extends Base<Id, ScoreId> implements Base<Id, ScoreId> {
   async count() {
     /* optimized */
     return await this.drizzle.select({
-      count: sql`COUNT(*)`.mapWith(Number),
+      count: count(),
     }).from(schema.users).where(userPriv(schema.users)).then(res => res[0].count)
+  }
+
+  async metrics(): Promise<Base.Metrics> {
+    return {
+      total: await this.count(),
+    }
   }
 
   async changeVisibility(user: UserCompact<Id>) {

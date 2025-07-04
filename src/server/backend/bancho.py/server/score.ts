@@ -1,4 +1,4 @@
-import { and, eq } from 'drizzle-orm'
+import { and, eq, sql } from 'drizzle-orm'
 import type { Id } from '..'
 import * as schema from '../drizzle/schema'
 import { config as _config } from '../env'
@@ -115,5 +115,15 @@ export class ScoreProvider implements Base<bigint, Id> {
     const scores = await this.#getQuery(opt).limit(20)
 
     return scores.map(this.#transformScore).filter(TSFilter)
+  }
+
+  async metrics(): Promise<Base.Metrics> {
+    const [res] = await this.drizzle.select({
+      total: sql`count(*)`.mapWith(Number),
+    })
+      .from(schema.scores)
+    return {
+      total: res.total,
+    }
   }
 }

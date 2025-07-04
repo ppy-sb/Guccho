@@ -97,6 +97,23 @@ export class MapProvider implements Base<Id, Id> {
     }) as Base.BeatmapsetWithMaps<Id, Id>
   }
 
+  async metrics(): Promise<Base.Metrics> {
+    const [res] = await this.drizzle.select({
+      total: sql`count(*)`.mapWith(Number),
+      ranked: sql`count(if(${schema.beatmaps.status} = ${BanchoPyRankedStatus.Ranked}, 1, null))`.mapWith(Number),
+      custom: sum(and(
+        inArray(schema.beatmaps.status, [BanchoPyRankedStatus.Loved, BanchoPyRankedStatus.Approved, BanchoPyRankedStatus.Qualified, BanchoPyRankedStatus.Ranked]),
+        eq(schema.beatmaps.frozen, sql.raw('1')),
+      )!).mapWith(Number),
+    }).from(schema.beatmaps)
+
+    return {
+      total: res.total,
+      ranked: res.ranked,
+      custom: res.custom,
+    }
+  }
+
   async getMapRankRequest(id: Id, user?: { id: Id }, tx: MySql2Database<typeof schema> = this.drizzle) {
     const [countRequests] = await tx.select({
       count: count(schema.mapRequests.id),

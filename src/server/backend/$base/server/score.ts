@@ -27,6 +27,10 @@ export namespace ScoreProvider {
     id: TScroreId
   }
 
+  export interface Metrics {
+    total: number
+  }
+
   // export interface RecentScoresParam<Id, M extends ActiveMode, R extends AvailableRuleset<M>, RS extends LeaderboardRankingSystem> extends Composition.Pagination {
   //   mode: M
   //   ruleset: R
@@ -53,6 +57,8 @@ export abstract class ScoreProvider<TScoreId, TId> extends Mixin(IdTransformable
   >
   abstract findOne(opt: ScoreProvider.SearchQuery<TId>): Promise<ScoreProvider.ScoreWithUser<TScoreId, TId>>
   abstract findMany(opt: ScoreProvider.SearchQuery<TId>): Promise<ScoreProvider.ScoreWithUser<TScoreId, TId>[]>
+
+  abstract metrics(): Promise<ScoreProvider.Metrics>
 
   // abstract recents(opt: ClanProvider.RecentScoresParam<Id, M extends Mode, R extends AvailableRuleset<M>, RS extends LeaderboardRankingSystem>): Promise<ScoreP<Id, Mode, R, RS>[]>
   // abstract tops(opt: ClanProvider.TopScoresParam<Id, M extends Mode, R extends AvailableRuleset<M>, RS extends LeaderboardRankingSystem>): Promise<ScoreP<Id, Mode, R, RS>[]>

@@ -211,6 +211,10 @@ export const router = _router({
       return await users.status({ id: UserProvider.stringToId(id) })
     }),
 
+  metrics: p.query(async () => {
+    return users.metrics()
+  }),
+
   search: p
     .input(
       object({
