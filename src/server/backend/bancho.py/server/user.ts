@@ -318,63 +318,96 @@ class DBUserProvider extends Base<Id, ScoreId> implements Base<Id, ScoreId> {
     const start = page * perPage
 
     const banchoPyRankingStatus = rankingStatus?.map(i => fromRankingStatus(i))
+    const bpyMode = toBanchoPyMode(mode, ruleset)
 
-    // derived tables
-    const s = aliasedTable(schema.scores, 's')
-    const s2 = aliasedTable(schema.scores, 's2')
-    const s3 = aliasedTable(schema.scores, 's3')
-    const u = aliasedTable(schema.users, 'u')
-    const u2 = aliasedTable(schema.users, 'u2')
-    const bm = aliasedTable(schema.beatmaps, 'm')
-    const bms = aliasedTable(schema.sources, 'ms')
+    const userHaveScores = this.drizzle
+      .$with('ssq')
+      .as(
+        this.drizzle.selectDistinct({ md5: schema.scores.mapMd5 })
+          .from(schema.scores)
+          .where(
+            and(
+              eq(schema.scores.mode, bpyMode),
+              eq(schema.scores.userId, id)
+            )
+          )
+      )
 
-    const userHaveScores = this.drizzle.selectDistinct({ md5: s3.mapMd5 })
-      .from(s3)
-      .where(and(
-        eq(s3.mode, toBanchoPyMode(mode, ruleset)),
-        eq(s3.userId, id)
-      )).as('ssq')
+    const maxScores = this.drizzle
+      .$with('sq')
+      .as(
+        this.drizzle
+          .select({
+            mapMd5: schema.scores.mapMd5,
+            v: sql`MAX(${rankingSystem === Rank.PPv2 ? schema.scores.pp : schema.scores.score})`.as('v'),
+            countScores: sql`COUNT(*)`.as('countScores'),
+          })
+          .from(schema.scores)
+          .innerJoin(schema.users, eq(schema.scores.userId, schema.users.id))
+          .innerJoin(userHaveScores, eq(userHaveScores.md5, schema.scores.mapMd5))
+          .where(
+            and(
+              userPriv(schema.users),
+              eq(schema.scores.mode, bpyMode),
+              inArray(schema.scores.status, [BanchoPyScoreStatus.Pick, BanchoPyScoreStatus.Normal]),
+            )
+          )
+          .groupBy(schema.scores.mapMd5)
+      )
 
-    const maxScores = this.drizzle.select({
-      mapMd5: s2.mapMd5,
-      v: sql`MAX(${rankingSystem === Rank.PPv2 ? s2.pp : s2.score})`.as('v'),
-      countScores: sql`COUNT(*)`.mapWith(Number).as('countScores'),
-      lowestId: sql`MIN(${s2.id})`.as('lowestId'),
-    }).from(s2)
-      .innerJoin(u2, eq(s2.userId, u2.id))
-      .innerJoin(userHaveScores, eq(userHaveScores.md5, s2.mapMd5))
-      .where(and(
-        userPriv(u2),
-        eq(s2.mode, toBanchoPyMode(mode, ruleset)),
-        gt(s2.status, BanchoPyScoreStatus.DNF),
-      ))
-      .groupBy(s2.mapMd5)
-      .as('sq')
+    // For each map, get the user's own highest score id where their score matches the top value
+    const userTopScoreIds = this.drizzle
+      .$with('user_top_score_ids')
+      .as(
+        this.drizzle
+          .select({
+            mapMd5: schema.scores.mapMd5,
+            topScoreId: sql`MAX(${schema.scores.id})`.as('topScoreId'),
+          })
+          .from(schema.scores)
+          .innerJoin(maxScores, and(
+            eq(maxScores.mapMd5, schema.scores.mapMd5),
+            eq(rankingSystem === Rank.PPv2 ? schema.scores.pp : schema.scores.score, maxScores.v)
+          ))
+          .where(
+            and(
+              eq(schema.scores.userId, id),
+              eq(schema.scores.mode, bpyMode),
+              inArray(schema.scores.status, [BanchoPyScoreStatus.Pick, BanchoPyScoreStatus.Normal]),
+            )
+          )
+          .groupBy(schema.scores.mapMd5)
+      )
 
-    const q2 = this.drizzle.select({
-      score: pick(s, scoreRequiredFields),
-      beatmap: pick(bm, beatmapRequiredFields),
-      source: bms,
-      fullCount: sql`COUNT(*) OVER()`.mapWith(Number).as('full_count'),
-    }).from(s)
+    const q2 = this.drizzle
+      .with(userHaveScores, maxScores, userTopScoreIds)
+      .select({
+        score: pick(schema.scores, scoreRequiredFields),
+        beatmap: pick(schema.beatmaps, beatmapRequiredFields),
+        source: schema.sources,
+        fullCount: sql`COUNT(*) OVER()`.mapWith(Number).as('full_count'),
+      }).from(schema.scores)
       .innerJoin(maxScores, and(
-        eq(maxScores.mapMd5, s.mapMd5),
-        eq(rankingSystem === Rank.PPv2 ? s.pp : s.score, maxScores.v),
-        eq(s.id, maxScores.lowestId)
+        eq(maxScores.mapMd5, schema.scores.mapMd5),
+        eq(rankingSystem === Rank.PPv2 ? schema.scores.pp : schema.scores.score, maxScores.v)
       ))
-      .innerJoin(bm, and(
-        eq(bm.md5, s.mapMd5),
-        inArray(bm.status, banchoPyRankingStatus),
+      .innerJoin(userTopScoreIds, and(
+        eq(userTopScoreIds.mapMd5, schema.scores.mapMd5),
+        eq(userTopScoreIds.topScoreId, schema.scores.id)
       ))
-      .innerJoin(bms, and(
-        eq(bm.setId, bms.id),
-        eq(bm.server, bms.server)
+      .innerJoin(schema.beatmaps, and(
+        eq(schema.beatmaps.md5, schema.scores.mapMd5),
+        inArray(schema.beatmaps.status, banchoPyRankingStatus),
       ))
-      .innerJoin(u, eq(u.id, s.userId))
-      .where(eq(s.userId, id))
+      .innerJoin(schema.sources, and(
+        eq(schema.beatmaps.setId, schema.sources.id),
+        eq(schema.beatmaps.server, schema.sources.server)
+      ))
+      .innerJoin(schema.users, eq(schema.users.id, schema.scores.userId))
+      .where(eq(schema.scores.userId, id))
       .orderBy(
         desc(maxScores.countScores),
-        desc(s.id)
+        desc(schema.scores.id)
       )
       .offset(start)
       .limit(perPage)
