@@ -8,7 +8,7 @@ if (!id) {
 }
 
 const app$ = useNuxtApp()
-const content = await app$.$client.article.getStaticOrDynamic.query(id)
+const content = await app$.$client.article.get.query(id)
 </script>
 
 <i18n lang="yaml">

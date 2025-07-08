@@ -32,7 +32,7 @@ const access = shallowRef<Record<'write' | 'read', boolean>>()
 
 const { data: content, refresh: refreshContent } = await useAsyncData(async () => {
   if (article.value.slug) {
-    return app.$client.article.get.query(article.value.slug)
+    return app.$client.article.editor.get.query(article.value.slug)
   }
   return undefined
 })
@@ -127,7 +127,7 @@ async function save() {
     return
   }
 
-  await app.$client.article.save.mutate(article.value as Required<typeof article['value']>)
+  await app.$client.article.editor.save.mutate(article.value as Required<typeof article['value']>)
 }
 
 // Delete article from server
@@ -142,7 +142,7 @@ async function del() {
     return
   }
 
-  await app.$client.article.delete.mutate({
+  await app.$client.article.editor.delete.mutate({
     slug: article.value.slug,
   })
 }
