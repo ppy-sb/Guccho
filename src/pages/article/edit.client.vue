@@ -25,7 +25,7 @@ const article = ref<{
 
   json: undefined,
   dynamic: false,
-  slug: '',
+  slug: app._route.query?.slug?.toString() || '',
 })
 
 const access = shallowRef<Record<'write' | 'read', boolean>>()
@@ -53,6 +53,10 @@ useHead({
   title: () => t(localeKey.title.articles.__path__),
   titleTemplate: title => `${title} - ${t(localeKey.server.name.__path__)}`,
 })
+
+if (article.value.slug) {
+  await update()
+}
 
 // Helper function to convert privilege object to select options
 function options(priv: typeof privileges | typeof readPrivileges) {
