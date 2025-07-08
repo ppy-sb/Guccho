@@ -16,7 +16,7 @@ const article = ref<{
   json?: ArticleProvider.Content['json']
   owner?: ArticleProvider.Meta['owner']
   dynamic: boolean
-  slug: string
+  slug: ArticleProvider.Slug
 }>({
   privilege: {
     read: [Scope.Public],
@@ -25,7 +25,7 @@ const article = ref<{
 
   json: undefined,
   dynamic: false,
-  slug: app._route.query?.slug?.toString() || '',
+  slug: (app._route.query?.slug?.toString() || '') as ArticleProvider.Slug,
 })
 
 const access = shallowRef<Record<'write' | 'read', boolean>>()
@@ -128,6 +128,8 @@ async function save() {
   }
 
   await app.$client.article.editor.save.mutate(article.value as Required<typeof article['value']>)
+
+  await refreshTree()
 }
 
 // Delete article from server
@@ -212,7 +214,7 @@ de-DE:
       <ul v-if="articles" class="rounded-lg menu menu-xs bg-base-100 min-w-max">
         <tree
           v-bind="articles" @select="(entry) => {
-            article.slug = entry.path
+            article.slug = entry.path as ArticleProvider.Slug
             update()
             postFetch()
           }"

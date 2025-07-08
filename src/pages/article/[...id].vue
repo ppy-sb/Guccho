@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const route = useRoute('article-id')
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 const id = route.params.id
 if (!id) {
@@ -8,7 +8,13 @@ if (!id) {
 }
 
 const app$ = useNuxtApp()
-const content = await app$.$client.article.get.query(id)
+const { data: content, refresh, error } = await app$.$client.article.get.useQuery(id)
+
+if (error.value) {
+  throw error.value
+}
+
+watch([locale], () => refresh())
 </script>
 
 <i18n lang="yaml">
@@ -38,7 +44,7 @@ de-DE:
 <template>
   <section class="container mx-auto with-editor relative">
     <content-render v-bind="content" />
-    <button v-if="content.access.write" class="btn btn-shadow btn-neutral flex gap-1 absolute top-0 right-0" @click="() => { navigateTo({ name: 'article-edit', query: { slug: id } }) }">
+    <button v-if="content?.access.write" class="btn btn-shadow btn-neutral flex gap-1 absolute top-0 right-0" @click="() => { navigateTo({ name: 'article-edit', query: { slug: id } }) }">
       {{ t('edit') }} <icon name="ic:round-edit-note" class="w-5 h-5" />
     </button>
   </section>

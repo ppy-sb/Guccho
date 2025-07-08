@@ -1,6 +1,6 @@
 import type { PathLike } from 'node:fs'
 import fs from 'node:fs/promises'
-import { isAbsolute, join, relative, resolve } from 'node:path'
+import { dirname, isAbsolute, join, relative, resolve } from 'node:path'
 import type { JSONContent as TipTapJSONContent } from '@tiptap/core'
 import { generateHTML } from '@tiptap/html'
 import type { DeepPartial } from '@trpc/server'
@@ -10,70 +10,103 @@ import { compileGraph, createPipeline, hops } from 'schema-evolution'
 import { config as getConfig } from '../../env'
 import { latest, paths, v0, versions } from './v'
 import useEditorExtensions from '~/composables/useEditorExtensionsServer'
+import { Lang } from '~/def'
+import { GucchoError } from '~/def/messages'
 import type { UserCompact, UserRole } from '~/def/user'
 import { Logger } from '$base/logger'
-import { GucchoError } from '~/def/messages'
 
 const logger = Logger.child({ label: 'article' })
 
 async function access(file: PathLike, constant?: typeof fs['constants'][keyof typeof fs['constants']]) {
   return fs.access(file, constant).then(() => true).catch(() => false)
 }
+async function ensureFolder(path: PathLike) {
+  await fs.mkdir(path, { recursive: true })
+}
 
 const config = getConfig()
 
 export abstract class ArticleProvider {
   static articles = resolve(config.article.location)
-  static fallbacks = new Map<string, ArticleProvider.Content & ArticleProvider.Meta & ArticleProvider.Version>()
   static ReadAccess = latest.ReadAccess
   static WriteAccess = latest.WriteAccess
 
   abstract get(opt: {
-    slug: string
+    slug: ArticleProvider.Slug
     fallback: boolean
     user?: UserCompact<any>
-  }): Promise<(ArticleProvider.Content & ArticleProvider.Meta & ArticleProvider.Version & ArticleProvider.AccessControl) | undefined>
+    lang: Lang
+  }): Promise<ArticleProvider.Full | undefined>
+
+  abstract editorGet(opt: {
+    slug: ArticleProvider.Slug
+    user?: UserCompact<any>
+  }): Promise<ArticleProvider.Full | undefined>
+
+  async getFallbackContent(opt: { slug: ArticleProvider.Slug; lang: Lang }) {
+    const { slug, lang } = opt
+    return (
+      false
+      || await this.getLocal({ slug: `fallbacks/${slug}` as ArticleProvider.Slug, fallback: false, lang })
+      || await this.getLocal({ slug: '404' as ArticleProvider.Slug, fallback: true, lang })
+      || throwGucchoError(GucchoError.ArticleNotFound)
+    )
+  }
 
   abstract save(opt: {
-    slug: string
+    slug: ArticleProvider.Slug
     json: ArticleProvider.JSONContent
     privilege: ArticleProvider.Meta['privilege']
     user: UserCompact<any>
   }): Promise<void>
 
-  async delete(opt: { slug: string; user: UserCompact<any> }) {
+  async delete(opt: { slug: ArticleProvider.Slug; user: UserCompact<any> }) {
     return ArticleProvider.deleteLocal(opt)
   }
 
-  static initFallbacks() {
-    (['404', '403'] as const).forEach(async (code) => {
-      const fb = await ArticleProvider.getLocalArticleData({ slug: code, fallback: true })
-      if (!fb) {
-        return
-      }
-
-      this.fallbacks.set(code, fb)
-    })
-  }
-
-  static inside(path: string) {
+  static inside(path: ArticleProvider.Path) {
     const r = relative(ArticleProvider.articles, path)
     return r && !r.startsWith('..') && !isAbsolute(r)
   }
 
-  async getLocal(opt: {
-    slug: string
-    fallback?: boolean
-    user?: UserCompact<any>
-  }): Promise<(ArticleProvider.Meta & ArticleProvider.Content & ArticleProvider.Version) | undefined> {
-    const content = await ArticleProvider.getLocalArticleData(opt)
-    if (!content) {
-      return undefined
-    }
-    return content
+  createTrySlugs(slug: ArticleProvider.Slug, locale: Lang) {
+    return [
+      `${slug}/${locale}`,
+      `${slug}/${Lang.enGB}`,
+      slug,
+    ] as ArticleProvider.Slug[]
   }
 
-  static serialize(content: ArticleProvider.Content & ArticleProvider.Meta & ArticleProvider.Version) {
+  static mapLangSlugs(slug: ArticleProvider.Slug) {
+    return [
+      ...Object.values(Lang).map(lang => `${slug}/${lang}`),
+      slug,
+    ] as ArticleProvider.Slug[]
+  }
+
+  async getLocal(opt: {
+    slug: ArticleProvider.Slug
+    fallback?: boolean
+    user?: UserCompact<any>
+    lang: Lang
+  }): Promise<ArticleProvider.Core | undefined> {
+    try {
+      for (const subPath of this.createTrySlugs(opt.slug, opt.lang)) {
+        const content = await this.getLocalArticle({ subPath, lang: opt.lang })
+        if (content) {
+          return content
+        }
+      }
+      if (opt.fallback) {
+        return await this.getFallbackContent({ slug: opt.slug, lang: opt.lang })
+      }
+    }
+    catch (e) {
+      console.error(e)
+    }
+  }
+
+  static serialize(content: ArticleProvider.Core) {
     return BSON.serialize(content)
   }
 
@@ -81,7 +114,7 @@ export abstract class ArticleProvider {
     return BSON.deserialize(data)
   }
 
-  static validate(content: { v?: keyof typeof versions }, opt: ArticleProvider.ValidateOpt): (ArticleProvider.Meta & ArticleProvider.Content & ArticleProvider.Version) | undefined {
+  static validate(content: { v?: keyof typeof versions }, opt: ArticleProvider.ValidateOpt): ArticleProvider.Core | undefined {
     // let flagDiff = false
 
     if (content.v === undefined) {
@@ -110,7 +143,7 @@ export abstract class ArticleProvider {
   }
 
   async saveLocal(opt: {
-    slug: string
+    slug: ArticleProvider.Slug
     json: ArticleProvider.JSONContent
     privilege: ArticleProvider.Meta['privilege']
     user: UserCompact<any>
@@ -122,10 +155,11 @@ export abstract class ArticleProvider {
     const pContent = ArticleProvider.createContent(opt)
     let meta: ArticleProvider.Meta
 
-    const loc = join(ArticleProvider.articles, opt.slug)
-    const exists = await access(loc)
+    const exactPath = this.toPath(opt.slug)
+    const exists = await access(exactPath)
 
-    const oldContent = exists && await this.getLocal({ slug: opt.slug, fallback: false, user: opt.user })
+    // update exact file
+    const oldContent = exists && await ArticleProvider.getLocalArticleData(exactPath)
     if (oldContent) {
       const oldMeta: ArticleProvider.Meta = pick(oldContent, ['created', 'lastUpdated', 'owner', 'privilege'])
       meta = ArticleProvider.createMeta({
@@ -141,24 +175,72 @@ export abstract class ArticleProvider {
         lastUpdated: [opt.user.id, new Date()],
       })
     }
-    await fs.writeFile(loc, ArticleProvider.serialize({
+    await ensureFolder(dirname(exactPath))
+    await fs.writeFile(exactPath, ArticleProvider.serialize({
       ...await pContent,
       ...meta,
       v: latest.v,
     }))
+
+    // try update related files
+    const relatedFiles = await this.getRelatedFiles(opt.slug)
+    for (const file of relatedFiles) {
+      const oldContent = await ArticleProvider.getLocalArticleData(file)
+      if (oldContent) {
+        const oldMeta: ArticleProvider.Meta = pick(oldContent, ['created', 'lastUpdated', 'owner', 'privilege'])
+        const meta = ArticleProvider.createMeta({
+          ...oldMeta,
+          privilege: oldMeta.privilege ?? opt.privilege,
+        })
+        await fs.writeFile(file, ArticleProvider.serialize({
+          ...await pContent,
+          ...meta,
+          v: latest.v,
+        }))
+      }
+    }
   }
 
-  static async deleteLocal(opt: { slug: string; user: UserCompact<any> }) {
+  async getRelatedFiles(slug: ArticleProvider.Slug) {
+    const maybeFiles = await Promise.all(
+      this
+        .suggestRelatedFilePaths(slug)
+        .map(path => [path, access(path)] as const)
+    )
+
+    return maybeFiles
+      .filter(([_, exists]) => exists)
+      .map(([path]) => path)
+  }
+
+  suggestRelatedFilePaths(slug: ArticleProvider.Slug) {
+    const parts = slug.split('/')
+    // ${slug}/${locale}
+    if (parts.at(-1) && Lang[parts.at(-1) as keyof typeof Lang]) {
+      parts.pop()
+    }
+    return ArticleProvider
+      .mapLangSlugs(parts.join('/') as ArticleProvider.Slug)
+      .filter(_slug => _slug !== slug)
+      .map(s => ArticleProvider.toPath(s))
+      .filter(ArticleProvider.inside)
+  }
+
+  static async deleteLocal(opt: { slug: ArticleProvider.Slug; user: UserCompact<any> }) {
     const { user, slug } = opt
     if (!user.roles.find(role => ['admin', 'owner'].includes(role))) {
       throwGucchoError(GucchoError.InsufficientPrivilegeToEditArticle)
     }
-    const loc = join(ArticleProvider.articles, slug)
+    const loc = ArticleProvider.toPath(slug)
     if (!ArticleProvider.inside(loc)) {
       throwGucchoError(GucchoError.FileSystemArticlePathOutsideArticleRoot)
     }
     if (!relative(join(ArticleProvider.articles, './fallbacks'), loc).startsWith('..')) {
       throwGucchoError(GucchoError.TryingToDeleteFallbackContents)
+    }
+    const fData = await fs.lstat(loc)
+    if (fData.isDirectory()) {
+      return await fs.rmdir(loc, { recursive: true })
     }
     return await fs.rm(loc)
   }
@@ -216,29 +298,37 @@ export abstract class ArticleProvider {
     }), ['path', 'name', 'children'])
   }
 
-  protected static async getLocalArticleData(opt: {
-    slug: string
-    fallback?: boolean
-  }) {
-    const { slug, fallback } = opt
-    let file = join(ArticleProvider.articles, slug)
+  protected async getLocalArticle(opt: {
+    subPath: ArticleProvider.Slug
+    lang: Lang
+  }): Promise<ArticleProvider.Core | undefined> {
+    const file = this.toPath(opt.subPath)
     if (!ArticleProvider.inside(file)) {
-      return ArticleProvider.fallbacks.get('403')
+      return this.getFallbackContent({ slug: '403' as ArticleProvider.Slug, lang: opt.lang })
     }
+    const data = await ArticleProvider.getLocalArticleData(file)
+    if (!data) {
+      return undefined
+    }
+    return ArticleProvider.validate(data, { file, tryUpdate: true, writeBack: true })
+  }
 
-    const canAccessOriginalFile = await access(file, fs.constants.R_OK)
+  protected static async getLocalArticleData(path: ArticleProvider.Path) {
+    const canAccessOriginalFile = await access(path, fs.constants.R_OK)
     if (!canAccessOriginalFile) {
-      if (!fallback) {
-        return undefined
-      }
-      file = join(ArticleProvider.articles, './fallbacks', slug)
-      if (!await access(file, fs.constants.R_OK)) {
-        return undefined
-      }
+      return undefined
     }
 
-    const content = ArticleProvider.deserialize(Uint8Array.from(await fs.readFile(file)))
-    return ArticleProvider.validate(content, { file, tryUpdate: true, writeBack: true })
+    const content = ArticleProvider.deserialize(Uint8Array.from(await fs.readFile(path)))
+    return content
+  }
+
+  toPath(slug: ArticleProvider.Slug): ArticleProvider.Path {
+    return ArticleProvider.toPath(slug)
+  }
+
+  static toPath(slug: ArticleProvider.Slug): ArticleProvider.Path {
+    return join(ArticleProvider.articles, slug) as ArticleProvider.Path
   }
 }
 
@@ -295,4 +385,14 @@ export namespace ArticleProvider {
   } | {
     id: unknown
   })
+
+  export type Path = string & {
+    __brand: 'Path'
+  }
+
+  export type Slug = string & {
+    __brand: 'Slug'
+  }
+  export type Core = (Content & Meta & Version)
+  export type Full = (Core & AccessControl)
 }
