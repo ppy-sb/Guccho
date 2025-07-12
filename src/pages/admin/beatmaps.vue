@@ -1,8 +1,9 @@
 <script setup lang="tsx">
 import { $enum } from 'ts-enum-util'
+import { OsuDirect } from '../../common/utils'
 import type { AdminMapProvider } from '$base/server/admin/map'
 import { Mode } from '~/def'
-import { RankingStatus } from '~/def/beatmap'
+import { BeatmapSource, RankingStatus } from '~/def/beatmap'
 import { mode as modeIcon } from '~/common/icon'
 
 const rankStatus = $enum(RankingStatus)
@@ -146,7 +147,7 @@ zh-CN:
           Save
         </button>
       </div>
-      <div class="overflow-x-auto border rounded-lg border-base-300 bg-base-100">
+      <div class="overflow-x-auto border rounded-lg border-base-300/50 bg-base-100">
         <table class="table table-xs table-zebra">
           <thead>
             <tr>
@@ -159,12 +160,13 @@ zh-CN:
               <th class="">
                 {{ t('song') }}
               </th>
-              <th class="border-l border-base-300">
-                {{ t('bid') }}
-              </th>
-              <th class="">
+              <th class="border-l border-base-300/50">
                 {{ t('version') }}
               </th>
+              <th class="">
+                {{ t('bid') }}
+              </th>
+
               <th class="">
                 {{ t('md5') }}
               </th>
@@ -185,31 +187,44 @@ zh-CN:
             <template v-for="beatmapset in data.data" :key="beatmapset.id">
               <tr>
                 <th :rowspan="beatmapset.maps.length" role="rowheader" class="w-0 font-mono align-baseline text-end">
-                  {{ beatmapset.id }}
+                  <a
+                    v-if="beatmapset.source === BeatmapSource.Bancho"
+                    class="text-green-600 link visited:text-violet-500" :href="OsuDirect.link(OsuDirect.Type.Beatmapset, beatmapset.foreignId)"
+                  >
+                    {{ beatmapset.id }}
+                  </a>
+                  <span v-else>{{ beatmapset.id }}</span>
                 </th>
                 <th :rowspan="beatmapset.maps.length" role="rowheader" class="w-0 whitespace-pre align-baseline">
                   {{ beatmapset.meta.intl.artist }}
                 </th>
                 <th :rowspan="beatmapset.maps.length" role="rowheader" class="w-0 whitespace-pre align-baseline">
-                  {{ beatmapset.meta.intl.title }}
+                  <nuxt-link-locale
+                    class="text-sky-600 link visited:text-purple-500"
+                    :to="{ name: 'beatmapset-id', params: { id: beatmapset.id }, query: { mode: query.mode } }"
+                  >
+                    {{ beatmapset.meta.intl.title }}
+                  </nuxt-link-locale>
                 </th>
-                <th class="w-0 font-mono border-l text-end border-base-300">
-                  {{ beatmapset.maps[0].id }}
-                </th>
-                <th class="w-0">
+                <th class="w-0 border-l border-base-300/50">
                   {{ beatmapset.maps[0].version }}
                 </th>
-                <td class="align-baseline">
-                  <div class="col-span-2 form-control">
-                    <input
-                      v-model="beatmapset.maps[0].md5"
-                      class="input input-sm"
-                      type="text"
-                      @change="batchAdd(beatmapset.maps[0])"
-                    >
-                  </div>
+                <th class="w-0 font-mono text-end">
+                  <a
+                    v-if="beatmapset.maps[0].foreignId"
+                    class="text-green-600 link visited:text-violet-500" :href="OsuDirect.link(OsuDirect.Type.Beatmap, beatmapset.maps[0].foreignId)"
+                  >{{ beatmapset.maps[0].id }}</a>
+                  <span v-else>{{ beatmapset.maps[0].id }}</span>
+                </th>
+                <td class="font-mono align-baseline">
+                  <nuxt-link-locale
+                    class="link text-sky-600 visited:text-purple-500"
+                    :to="{ name: 'beatmapset-id', params: { id: beatmapset.id }, query: { mode: query.mode, beatmap: beatmapset.maps[0].md5 } }"
+                  >
+                    {{ beatmapset.maps[0].md5 }}
+                  </nuxt-link-locale>
                 </td>
-                <th class="w-0 text-end">
+                <th class="w-0 font-mono text-end">
                   {{ beatmapset.maps[0].vote }}
                 </th>
                 <td class="align-baseline">
@@ -233,24 +248,27 @@ zh-CN:
               </tr>
               <template v-for="bm in beatmapset.maps.slice(1)" :key="bm.md5">
                 <tr>
-                  <th class="font-mono border-l text-end border-base-300">
-                    {{ bm.id }}
-                  </th>
-                  <th class="whitespace-pre">
+                  <th class="border-l border-base-300/50">
                     {{ bm.version }}
                   </th>
-                  <td class="align-baseline">
-                    <div class="col-span-2 form-control">
-                      <input
-                        v-model="bm.md5"
-                        class="input input-sm"
-                        type="text"
-                        @change="batchAdd(bm)"
-                      >
-                    </div>
+                  <th class="font-mono text-end">
+                    <a
+                      v-if="bm.foreignId"
+                      class="text-green-600 link visited:text-violet-500" :href="OsuDirect.link(OsuDirect.Type.Beatmap, bm.foreignId)"
+                    >{{ bm.id }}</a>
+                    <span v-else>{{ bm.id }}</span>
+                  </th>
+
+                  <td class="font-mono align-baseline">
+                    <nuxt-link-locale
+                      class="link text-sky-600 visitedd:text-purple-500"
+                      :to="{ name: 'beatmapset-id', params: { id: beatmapset.id }, query: { mode: query.mode, beatmap: bm.md5 } }"
+                    >
+                      {{ bm.md5 }}
+                    </nuxt-link-locale>
                   </td>
-                  <th class="text-end">
-                    {{ bm.vote }}
+                  <th class="font-mono text-end">
+                    {{ bm.vote ?? '-' }}
                   </th>
                   <td class="align-baseline">
                     <div>
