@@ -1,4 +1,4 @@
-import { and, count, desc, eq, gt, inArray, like, or, sql, sum } from 'drizzle-orm'
+import { and, count, desc, eq, gt, inArray, like, max, or, sql, sum } from 'drizzle-orm'
 import { match, unit } from 'switch-pattern'
 import { type Id } from '../..'
 import { fromRankingStatus, idToString, stringToId, toBanchoMode, toBeatmapSource, toBeatmapset, toRankingStatus } from '../../transforms'
@@ -35,6 +35,7 @@ export class AdminMapProvider extends Base<Id, Id> implements Base<Id, Id> {
         this.drizzle.select({
           setId: votes.setId,
           votes: sum(votes.votes).mapWith(Number).as('setVotes'),
+          maxVotes: max(votes.votes).mapWith(Number).as('maxVotes'),
         })
           .from(votes)
           .groupBy(votes.setId)
@@ -103,11 +104,14 @@ export class AdminMapProvider extends Base<Id, Id> implements Base<Id, Id> {
     const res = await _sql
       .orderBy(
         ...[
+          desc(setVotes.maxVotes).if(shouldOrderByVotes),
           desc(setVotes.votes).if(shouldOrderByVotes),
           desc(eq(schema.beatmaps.title, keyword))?.if(keyword),
           desc(eq(schema.beatmaps.artist, keyword))?.if(keyword),
           desc(like(schema.beatmaps.title, `${keyword}%`))?.if(keyword),
           desc(like(schema.beatmaps.artist, `${keyword}%`))?.if(keyword),
+          desc(like(schema.beatmaps.title, `%${keyword}%`))?.if(keyword),
+          desc(like(schema.beatmaps.artist, `%${keyword}%`))?.if(keyword),
         ]
           .filter(TSFilter),
       )
