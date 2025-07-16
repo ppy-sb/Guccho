@@ -15,7 +15,7 @@ const server = useAdapterConfig()
 const route = useRoute()
 
 const kw = ref(route.query.id?.toString() ?? '')
-const qUser = await app.$client.search.searchUser.useQuery(() => ({ keyword: kw.value }), { lazy: true, default: () => ref([]) as any })
+const qUser = await app.$client.user.search.useQuery(() => ({ keyword: kw.value }), { lazy: true, default: () => ref([]) as any })
 const query = ref({
   // page: 0,
   // perPage: 10,
