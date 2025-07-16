@@ -19,6 +19,33 @@ async function importAll() {
     await app.$client.dan.save.mutate(dan)
   }
 }
+const recalcingAll = ref(false)
+const current = ref(0)
+const total = ref(0)
+const calcAllError = ref<Error>()
+async function recalcAll() {
+  if (recalcingAll.value) {
+    return
+  }
+  recalcingAll.value = true
+  try {
+    const _v = await fetch('/api/admin/dan/export').then(res => res.text())
+    // eslint-disable-next-line no-eval
+    const dans = eval(_v)
+    total.value = dans.length
+    current.value = 0
+    for (const dan of dans) {
+      current.value++
+      await app.$client.dan.userClearedScores.recalc.mutate({ dan: { id: dan.id } })
+    }
+  }
+  catch (e) {
+    calcAllError.value = e as Error
+  }
+  finally {
+    recalcingAll.value = false
+  }
+}
 
 function parse() {
   const _file = file.value?.files?.[0]
@@ -28,21 +55,22 @@ function parse() {
   const reader = new FileReader()
   reader.readAsText(_file, 'utf-8')
   reader.addEventListener('load', (e) => {
-    dans.value = JSON.parse(reader.result!.toString())
+    // eslint-disable-next-line no-eval
+    dans.value = eval(reader.result!.toString())
   })
 }
 </script>
 
 <template>
   <div class="container mx-auto custom-container">
-    <h2 class="text-lg divider">
+    <h2 class="divider">
       Export
     </h2>
     <a class="btn" href="/api/admin/dan/export">
       Export all
     </a>
 
-    <h2 class="text-lg divider">
+    <h2 class="divider">
       Import
     </h2>
     <form action="#" @submit.prevent="importAll">
@@ -63,5 +91,17 @@ function parse() {
     </form>
 
     <json-viewer class="mt-4" :value="dans" />
+
+    <h2 class="divider">
+      Maintenance
+    </h2>
+    <div>
+      <button class="btn btn-warning" @click="recalcAll">
+        Full Recalc
+      </button>
+    </div>
+    <progress v-if="recalcingAll" class="progress" :value="current" :max="total">
+      {{ current }} / {{ total }}
+    </progress>
   </div>
 </template>
