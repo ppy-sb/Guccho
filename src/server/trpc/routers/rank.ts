@@ -8,8 +8,7 @@ import {
 import { router as _router, publicProcedure } from '../trpc'
 import { RankProvider, ranks } from '~/server/singleton/service'
 import type { RankProvider as Base } from '$base/server/rank'
-import { hasRuleset } from '$active'
-import type { ActiveMode } from '~/def/common'
+import { type ActiveMode, hasRuleset } from '$active'
 
 export const router = _router({
   countLeaderboard: publicProcedure

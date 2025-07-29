@@ -5,7 +5,7 @@ import type {
   AvailableRuleset,
   LeaderboardRankingSystem,
   RankingSystem,
-} from '~/def/common'
+} from '$active'
 import type {
   BeatmapLeaderboard,
   ComponentLeaderboard,

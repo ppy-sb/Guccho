@@ -1,7 +1,26 @@
 import type { Feature } from '~/def/features'
 import { UserRole } from '~/def/user'
 
-export { modes, rulesets, rankingSystems, leaderboardRankingSystems } from '~/def'
+export {
+  modes,
+  rulesets,
+  rankingSystems,
+  leaderboardRankingSystems,
+} from '$base'
+
+export {
+  ActiveMode,
+  ActiveRuleset,
+  AvailableRuleset,
+  AvailableRankingSystem,
+  RankingSystemDef,
+  PPRankingSystem,
+  ScoreRankingSystem,
+  RankingSystem,
+  LeaderboardPPRankingSystem,
+  LeaderboardScoreRankingSystem,
+  LeaderboardRankingSystem,
+} from '$base'
 
 export const userRoles = [
   UserRole.Restricted,

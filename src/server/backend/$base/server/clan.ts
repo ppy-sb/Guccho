@@ -5,7 +5,7 @@ import type { UserProvider } from './user'
 import type { Mode, Rank, Ruleset } from '~/def'
 import type { AbnormalStatus, NormalBeatmapWithMeta, RankingStatus } from '~/def/beatmap'
 import type { ClanRelation } from '~/def/clan'
-import type { LeaderboardRankingSystem } from '~/def/common'
+import type { LeaderboardRankingSystem } from '$active'
 import type { PaginatedResultTuple } from '~/def/pagination'
 import type { RankingSystemScore } from '~/def/score'
 

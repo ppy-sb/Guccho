@@ -13,7 +13,7 @@ import { type AbnormalStatus, type NormalBeatmapWithMeta, type RankingStatus } f
 import { ClanProvider as Base } from '$base/server'
 import { type Mode, Rank } from '~/def'
 import { ClanRelation } from '~/def/clan'
-import type { LeaderboardRankingSystem } from '~/def/common'
+import type { LeaderboardRankingSystem } from '$active'
 import type { RankingSystemScore } from '~/def/score'
 
 const logger = Logger.child({ label: 'clan' })

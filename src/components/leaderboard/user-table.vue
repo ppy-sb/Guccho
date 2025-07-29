@@ -2,7 +2,7 @@
 import type { inferRouterOutputs } from '@trpc/server'
 import type { SwitcherState } from '../app/mode-switcher.vue'
 import { Rank } from '~/def'
-import type { LeaderboardRankingSystem } from '~/def/common'
+import type { LeaderboardRankingSystem } from '$active'
 import { CountryCode } from '~/def/country-code'
 import type { ComponentLeaderboard } from '~/def/leaderboard'
 import type { AppRouter } from '~/server/trpc/routers'

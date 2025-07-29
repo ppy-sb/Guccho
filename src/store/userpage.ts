@@ -1,7 +1,7 @@
 import type { inferRouterError, inferRouterOutputs } from '@trpc/server'
 import { defineStore } from 'pinia'
 import type { WatchStopHandle } from 'vue'
-import type { LeaderboardRankingSystem } from '../def/common'
+import type { LeaderboardRankingSystem } from '$active'
 import type { RouteLocationRaw } from '#vue-router'
 import { type SwitcherPropType } from '~/composables/useSwitcher'
 import { Mode, Ruleset } from '~/def'

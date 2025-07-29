@@ -13,7 +13,7 @@ import type {
   ActiveRuleset,
   LeaderboardRankingSystem,
   PPRankingSystem,
-} from '~/def/common'
+} from '$active'
 import type { Grade, RankingSystemScore, RulesetScore } from '~/def/score'
 
 export function toScore<M extends ActiveMode, RS extends PPRankingSystem>({

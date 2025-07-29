@@ -2,7 +2,7 @@
 /* eslint-disable no-irregular-whitespace */
 import type { inferRouterOutputs } from '@trpc/server'
 import { Mode, Rank } from '~/def'
-import type { RankingSystem } from '~/def/common'
+import type { RankingSystem } from '$active'
 import { type ManiaHitCount, StableMod, type StandardHitCount } from '~/def/score'
 import type { AppRouter } from '~/server/trpc/routers'
 

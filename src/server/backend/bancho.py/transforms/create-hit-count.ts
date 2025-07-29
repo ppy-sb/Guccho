@@ -1,6 +1,6 @@
 import type * as schema from '../drizzle/schema'
 import { Mode } from '~/def'
-import type { ActiveMode } from '~/def/common'
+import type { ActiveMode } from '$active'
 import type { ManiaHitCount, StandardHitCount } from '~/def/score'
 
 type DBScore = typeof schema.scores.$inferSelect

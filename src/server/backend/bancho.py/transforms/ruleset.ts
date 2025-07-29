@@ -1,5 +1,5 @@
 import type * as schema from '../drizzle/schema'
-import type { LeaderboardRankingSystem } from '~/def/common'
+import type { LeaderboardRankingSystem } from '$active'
 import type { UserModeRulesetStatistics } from '~/def/statistics'
 import { Rank } from '~/def'
 

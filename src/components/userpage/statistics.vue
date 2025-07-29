@@ -3,7 +3,7 @@ import { storeToRefs } from 'pinia'
 import { ppRankingSystems } from '~/def'
 import type {
   LeaderboardRankingSystem, PPRankingSystem,
-} from '~/def/common'
+} from '$active'
 import type { PPRank, ScoreRank } from '~/def/statistics'
 import userpageStore from '~/store/userpage'
 

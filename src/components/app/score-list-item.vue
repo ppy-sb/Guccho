@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import {
   Rank,
-  leaderboardScoreRankingSystems,
-  ppRankingSystems,
 } from '~/def'
 import { BeatmapSource, RankingStatus } from '~/def/beatmap'
-import type { ActiveMode, ActiveRuleset, LeaderboardPPRankingSystem, LeaderboardRankingSystem, LeaderboardScoreRankingSystem } from '~/def/common'
+import type { ActiveMode, ActiveRuleset, LeaderboardPPRankingSystem, LeaderboardRankingSystem, LeaderboardScoreRankingSystem } from '$active'
 import { type RankingSystemScore, StableMod } from '~/def/score'
 
 const props = withDefaults(
@@ -65,6 +63,10 @@ const meta = computed(
 )
 
 const { t, locale } = useI18n()
+const {
+  supportedLeaderboardPPRankingSystems: ppRankingSystems,
+  supportedLeaderboardScoreRankingSystems: leaderboardScoreRankingSystems,
+} = useAdapterConfig()
 
 const mods = computed(() => {
   if (!props.score) {

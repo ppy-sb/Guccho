@@ -5,7 +5,7 @@ import type {
   ActiveRuleset,
   LeaderboardRankingSystem,
   RankingSystem,
-} from '~/def/common'
+} from '$active'
 
 export interface SwitcherPropType<TRS> {
   mode?: ActiveMode

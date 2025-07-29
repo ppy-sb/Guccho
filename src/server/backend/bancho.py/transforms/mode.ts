@@ -1,7 +1,7 @@
 import { match } from 'switch-pattern'
 import { BanchoMode, BanchoPyMode } from '../enums'
 import { Mode, Ruleset } from '~/def'
-import type { ActiveMode, ActiveRuleset } from '~/def/common'
+import type { ActiveMode, ActiveRuleset } from '$active'
 import { GucchoError } from '~/def/messages'
 
 export const BPyMode = {

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { StableMod } from '~/def/score'
-import type { RankingSystem } from '~/def/common'
+import type { RankingSystem } from '$active'
 import { Rank } from '~/def'
 import type { BeatmapLeaderboard } from '~/def/leaderboard'
 

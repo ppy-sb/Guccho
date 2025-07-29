@@ -1,7 +1,7 @@
 import { Mixin } from 'ts-mixer'
 import type { ClanProvider } from './clan'
 import { IdTransformable, ScoreIdTransformable } from './@extends'
-import type { ActiveMode, ActiveRuleset, LeaderboardRankingSystem, PPRankingSystem } from '~/def/common'
+import type { ActiveMode, ActiveRuleset, LeaderboardRankingSystem, PPRankingSystem } from '$active'
 import type { RulesetScore } from '~/def/score'
 import type { UserCompact } from '~/def/user'
 

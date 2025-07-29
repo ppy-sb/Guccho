@@ -3,7 +3,7 @@ import type {
   ActiveMode,
   ActiveRuleset,
   LeaderboardRankingSystem,
-} from '~/def/common'
+} from '$active'
 import type { SwitcherState } from '~/components/app/mode-switcher.vue'
 import type { SwitcherPropType } from '~/composables/useSwitcher'
 import type { RouteLocationRaw } from '#vue-router'

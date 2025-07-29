@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { ActiveMode, ActiveRuleset, LeaderboardRankingSystem } from '~/def/common'
+import type { ActiveMode, ActiveRuleset, LeaderboardRankingSystem } from '$active'
 import { Rank } from '~/def'
 import { Paginated } from '~/def/pagination'
 

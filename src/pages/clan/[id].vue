@@ -1,7 +1,7 @@
 <script lang="ts" async setup>
 import { useSession } from '~/store/session'
 import { CountryCode } from '~/def/country-code'
-import type { ActiveMode, ActiveRuleset, LeaderboardRankingSystem } from '~/def/common'
+import type { ActiveMode, ActiveRuleset, LeaderboardRankingSystem } from '$active'
 import { ClanRelation } from '~/def/clan'
 import { GucchoError } from '~/def/messages'
 

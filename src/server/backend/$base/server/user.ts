@@ -10,7 +10,7 @@ import type {
   ActiveMode,
   ActiveRuleset,
   LeaderboardRankingSystem,
-} from '~/def/common'
+} from '$active'
 import type { CountryCode } from '~/def/country-code'
 import type { RankingSystemScore } from '~/def/score'
 import {

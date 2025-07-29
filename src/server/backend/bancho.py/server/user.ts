@@ -46,7 +46,7 @@ import { type DynamicSettingStore, Scope, type UserCompact, type UserOptional, U
 import { type RankingSystemScore } from '~/def/score'
 import { GucchoError } from '~/def/messages'
 import type { CountryCode } from '~/def/country-code'
-import type { ActiveMode, ActiveRuleset, AvailableRuleset, LeaderboardRankingSystem } from '~/def/common'
+import type { ActiveMode, ActiveRuleset, AvailableRuleset, LeaderboardRankingSystem } from '$active'
 import { Mode, Rank, Ruleset } from '~/def'
 import { RankingStatus } from '~/def/beatmap'
 import { UserProvider as Base, type MailTokenProvider } from '$base/server'

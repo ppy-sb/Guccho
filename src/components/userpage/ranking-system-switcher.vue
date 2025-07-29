@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { LeaderboardRankingSystem } from '~/def/common'
+import type { LeaderboardRankingSystem } from '$active'
 import userpageStore from '~/store/userpage'
 
 const { hasRuleset, hasLeaderboardRankingSystem } = await useAdapterConfig()

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ActiveMode, ActiveRuleset, RankingSystem } from '~/def/common'
+import type { ActiveMode, ActiveRuleset, RankingSystem } from '$active'
 
 const props = defineProps<{
   modelValue: RankingSystem

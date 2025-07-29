@@ -4,7 +4,7 @@ import { UserRole } from '~/def/user'
 import userpageStore from '~/store/userpage'
 import { useSession } from '~/store/session'
 import type { Mode, Ruleset } from '~/def'
-import type { LeaderboardRankingSystem } from '~/def/common'
+import type { LeaderboardRankingSystem } from '$active'
 
 definePageMeta({
   alias: [

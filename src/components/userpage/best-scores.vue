@@ -13,7 +13,7 @@ import type {
   LeaderboardScoreRankingSystem,
   PPRankingSystem,
   ScoreRankingSystem,
-} from '~/def/common'
+} from '$active'
 import type { RankingSystemScore } from '~/def/score'
 import userpageStore from '~/store/userpage'
 

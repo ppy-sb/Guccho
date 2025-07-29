@@ -5,7 +5,7 @@ import type {
   LeaderboardRankingSystem,
   PPRankingSystem,
   RankingSystem,
-} from '~/def/common'
+} from '$active'
 import type {
   HasLeaderboardRankingSystem,
   HasRankingSystem,

@@ -6,7 +6,7 @@ import type { Mail } from '~/def/mail'
 import type { RankingStatus } from '~/def/beatmap'
 import type { Scope, UserRole } from '~/def/user'
 import { Lang, type Rank } from '~/def'
-import type { ActiveMode, ActiveRuleset } from '~/def/common'
+import type { ActiveMode, ActiveRuleset } from '$active'
 
 type Title =
 | 'leaderboard'

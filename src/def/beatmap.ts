@@ -1,4 +1,4 @@
-import type { ActiveMode } from './common'
+import type { Mode } from '.'
 
 export enum BeatmapSource {
   Unknown = -1,
@@ -90,7 +90,7 @@ export interface BaseBeatmapCompact {
     maxCombo: number
     starRate: number
   }
-  mode: ActiveMode
+  mode: Mode
   md5: string
   version: string
   creator: string

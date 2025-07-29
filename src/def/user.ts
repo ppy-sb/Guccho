@@ -1,10 +1,4 @@
 import type { ZodType } from 'zod'
-import type {
-  ActiveMode,
-  ActiveRuleset,
-  AvailableRuleset,
-  LeaderboardRankingSystem,
-} from './common'
 import type { UserModeRulesetStatistics } from './statistics'
 import type { UserRelationship } from './user-relationship'
 import type { CountryCode } from './country-code'

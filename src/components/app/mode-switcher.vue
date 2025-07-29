@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ActiveMode, ActiveRuleset, LeaderboardRankingSystem } from '~/def/common'
+import type { ActiveMode, ActiveRuleset, LeaderboardRankingSystem } from '$active'
 import * as icon from '~/common/icon'
 import type { RouteLocationRaw } from '#vue-router'
 
