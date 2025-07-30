@@ -53,11 +53,11 @@ const relation = ref(
 )
 
 const usersQuery = reactive<{ page: number; perPage: number }>({ page: 0, perPage: 20 })
-const { data: players, pending: pendingUsers, refresh: refreshUsers } = app.$client.clan.joinedUsers.useQuery(computed(() => ({ ...usersQuery, id })))
+const { data: players, pending: pendingUsers, refresh: refreshUsers } = await app.$client.clan.joinedUsers.useQuery(computed(() => ({ ...usersQuery, id })))
 
 const bestsQuery = reactive<{ page: number; perPage: number }>({ page: 0, perPage: 10 })
 const _v = computed(() => ({ ...bestsQuery, ...selected.value, id }))
-const { data: bests, pending: pendingBests, refresh: refreshBP } = useAsyncData('best', async () => {
+const { data: bests, pending: pendingBests, refresh: refreshBP } = await useAsyncData('best', async () => {
   return {
     res: await app.$client.clan.bests.query(_v.value),
     ...selected.value,
@@ -153,7 +153,7 @@ de-DE:
           </div>
           <div class="flex flex-col w-full md:self-end md:flex-row grow">
             <span class="self-center text-3xl md:text-4xl md:self-end">{{ clan.name }}</span>
-            <div class="md:ms-auto flex gap-2 items-end">
+            <div class="flex items-end gap-2 md:ms-auto">
               <template v-if="session.loggedIn">
                 <button v-if="includes(relation, allowToJoin)" class="mx-auto md:ms-auto md:me-0 btn btn-primary btn-circle" @click="requestJoin">
                   <icon name="material-symbols:group-add-outline-rounded" class="w-5 h-5" />
