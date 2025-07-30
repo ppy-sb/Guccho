@@ -145,14 +145,6 @@ export class UserProvider extends BanchoPyUser {
       },
       status: UserStatus.Offline as const,
 
-      // oldNames: excludes?.oldNames === true
-      //   ? (undefined as never)
-      //   : <UserOldName[]>[],
-
-      statistics: excludes?.statistics === true
-        ? (undefined as never)
-        : await this.getStatistics(fullUser),
-
       relationships: excludes?.relationships === true
         ? (undefined as never)
         : await this.relationships.get({ user }),

@@ -22,9 +22,9 @@ import {
   type UserExtra,
   type UserOptional,
   UserRole,
-  type UserStatistic,
   type UserStatus,
 } from '~/def/user'
+import { type UserModeRulesetStatistics } from '~/def/statistics'
 
 export namespace UserProvider {
   export type ComposableProperties<Id> = UserExtra<Id> & UserOptional & { clan: UserClan<Id> | null }
@@ -65,10 +65,13 @@ export abstract class UserProvider<Id, ScoreId> extends IdTransformable {
 
   abstract getByEmail(email: MailTokenProvider.Email, opt?: { scope: Scope }): Promise<UserCompact<Id>>
 
-  abstract getStatistics(query: {
+  abstract getStatistic(query: {
     id: Id
-    flag: CountryCode
-  }): Promise<UserStatistic>
+    mode: Mode
+    ruleset: Ruleset
+  },
+    visitor?: { id: Id }
+  ): Promise<UserModeRulesetStatistics<LeaderboardRankingSystem>>
 
   abstract getFull<
     Excludes extends Partial<

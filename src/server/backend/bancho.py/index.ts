@@ -8,7 +8,7 @@ export {
   leaderboardRankingSystems,
 } from '$base'
 
-export {
+export type {
   ActiveMode,
   ActiveRuleset,
   AvailableRuleset,

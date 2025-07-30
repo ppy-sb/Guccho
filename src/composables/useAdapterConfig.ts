@@ -13,9 +13,9 @@ import {
 } from '~/server/trpc/config'
 import { LeaderboardScoreRank, PPRank, type Rank, ScoreRank } from '~/def'
 
-const ppRanks = Object.keys(PPRank) as Rank[]
-const scoreRanks = Object.keys(ScoreRank) as Rank[]
-const leaderboardScoreRankingSystems = Object.keys(LeaderboardScoreRank) as Rank[]
+const ppRanks = Object.values(PPRank) as Rank[]
+const scoreRanks = Object.values(ScoreRank) as Rank[]
+const leaderboardScoreRankingSystems = Object.values(LeaderboardScoreRank) as Rank[]
 
 const supportedPPRankingSystems = Object.freeze(supportedRankingSystems.filter(
   rs => ppRanks.includes(rs),

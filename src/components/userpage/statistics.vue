@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
-import { ppRankingSystems } from '~/def'
+
 import type {
   LeaderboardRankingSystem, PPRankingSystem,
 } from '$active'
@@ -12,6 +12,7 @@ import userpageStore from '~/store/userpage'
 // const percent = [...numbers, ',', '.', '%']
 
 const page = userpageStore()
+const { supportedLeaderboardPPRankingSystems: ppRankingSystems } = useAdapterConfig()
 const {
   currentStatistic: data,
   user,
@@ -57,13 +58,13 @@ const ScoreToNextLevel = computed(
 
 <template>
   <div v-if="user" class="card">
-    <div class="card-body p-0 md:p-4 xl:p-3">
-      <div class="stats bg-transparent stats-vertical md:stats-horizontal">
+    <div class="p-0 card-body md:p-4 xl:p-3">
+      <div class="bg-transparent stats stats-vertical md:stats-horizontal">
         <div v-if="currentRankingSystem" class="stat">
           <div class="stat-title">
             Rank
           </div>
-          <div class="stat-value font-mono">
+          <div class="font-mono stat-value">
             #{{ Intl.NumberFormat().format(currentRankingSystem.rank || 0) }}
             <!-- <Roller
               :char-set="chars"
@@ -72,10 +73,10 @@ const ScoreToNextLevel = computed(
               )}`"
             /> -->
           </div>
-          <div class="stat-desc flex gap-2 items-center">
+          <div class="flex items-center gap-2 stat-desc">
             <template v-if="currentRankingSystem.countryRank">
               <img :src="getFlagURL(user.flag)" class="w-5">
-              <div class="font-mono flex items-center">
+              <div class="flex items-center font-mono">
                 #{{ Intl.NumberFormat().format(currentRankingSystem.countryRank) }}
                 <!-- <Roller
                   :char-set="chars"
@@ -85,7 +86,7 @@ const ScoreToNextLevel = computed(
                 /> -->
               </div>
             </template>
-            <div v-else class="stat-desc invisible">
+            <div v-else class="invisible stat-desc">
               1
             </div>
           </div>
@@ -98,7 +99,7 @@ const ScoreToNextLevel = computed(
                 : "Score"
             }}
           </div>
-          <div class="stat-value font-mono">
+          <div class="font-mono stat-value">
             <!-- <Roller
               :char-set="chars"
               class="font-mono"
@@ -108,7 +109,7 @@ const ScoreToNextLevel = computed(
             /> -->
             {{ ppRankingSystems.includes(selectedRankingSystem as PPRankingSystem) ? `${scoreFmt((currentRankingSystem as PPRank)?.performance)}` : scoreFmtCompact((deferredRender[selectedRankingSystem as LeaderboardRankingSystem] as ScoreRank).score as bigint) }}
           </div>
-          <div class="stat-desc flex gap-1 items-center font-mono">
+          <div class="flex items-center gap-1 font-mono stat-desc">
             <!-- <Roller
               :char-set="chars"
               class="font-mono"
@@ -118,11 +119,11 @@ const ScoreToNextLevel = computed(
             {{ scoreFmt(deferredRender.totalHits || 0) }} total hits
           </div>
         </div>
-        <div class="stat relative gap-0">
+        <div class="relative gap-0 stat">
           <div class="stat-title">
             Level
           </div>
-          <div class="stat-value font-mono">
+          <div class="font-mono stat-value">
             <!-- <Roller
               class="font-mono"
               :char-set="chars"
@@ -130,12 +131,12 @@ const ScoreToNextLevel = computed(
             /> -->
             {{ userLevelInt.toString() }}{{ userLevelPercent.slice(1) }}
             <!-- <Roller
-              class="font-mono text-lg self-end pb-1"
+              class="self-end pb-1 font-mono text-lg"
               :char-set="percent"
               :value="`${userLevelPercent.slice(1)}`"
             /> -->
           </div>
-          <div class="stat-desc flex gap-1 items-center font-mono">
+          <div class="flex items-center gap-1 font-mono stat-desc">
             <!-- <Roller
               class="font-mono"
               :char-set="chars"
@@ -148,7 +149,7 @@ const ScoreToNextLevel = computed(
           <div class="stat-title">
             Play Count
           </div>
-          <div class="stat-value flex font-mono">
+          <div class="flex font-mono stat-value">
             <!-- <Roller
               class="font-mono"
               :char-set="chars"
@@ -156,7 +157,7 @@ const ScoreToNextLevel = computed(
             /> -->
             {{ scoreFmt(deferredRender.playCount || 0) }}
           </div>
-          <div class="stat-desc flex gap-2">
+          <div class="flex gap-2 stat-desc">
             {{ playTime.hours }} H, {{ playTime.minutes }} M,
             {{ playTime.seconds }} S
           </div>
@@ -165,7 +166,7 @@ const ScoreToNextLevel = computed(
           <div class="stat-title">
             Max Combo
           </div>
-          <div class="stat-value flex gap-1 items-center font-mono">
+          <div class="flex items-center gap-1 font-mono stat-value">
             <!-- <Roller
               class="font-mono"
               :char-set="chars"
@@ -174,7 +175,7 @@ const ScoreToNextLevel = computed(
             {{ scoreFmt(deferredRender.maxCombo || 0) }}
             <span class="font-light">x</span>
           </div>
-          <div class="stat-desc invisible">
+          <div class="invisible stat-desc">
             1
           </div>
         </div>

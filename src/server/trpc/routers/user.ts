@@ -63,6 +63,28 @@ export const router = _router({
       }
       return mapId(user, UserProvider.idToString)
     }),
+  statistic: optionalUserProcedure
+    .input(
+      object({
+        id: string(),
+        mode: zodMode,
+        ruleset: zodRuleset,
+        rankingSystem: zodLeaderboardRankingSystem,
+      }),
+    )
+    .query(async ({ input, ctx }) => {
+      const { mode, ruleset } = input
+      try {
+        return await users.getStatistic(
+          { id: UserProvider.stringToId(input.id), mode, ruleset },
+          ctx.user ? { id: UserProvider.stringToId(ctx.user.id) } : undefined
+        )
+      }
+      catch (e) {
+        console.error(e)
+        throw e
+      }
+    }),
   best: optionalUserProcedure
     .input(
       object({

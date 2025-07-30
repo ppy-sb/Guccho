@@ -1,4 +1,4 @@
-import { Rank, modes, rulesets } from '~/def'
+import { Rank } from '~/def'
 
 const ranks = [Rank.PPv1, Rank.PPv2, Rank.Score, Rank.RankedScore, Rank.TotalScore]
 
@@ -29,6 +29,7 @@ export default function useEditorVariables(i: { i18n: { t: (str: string) => stri
 
 function addAppConfigVariables(_i: { i18n: { t: (str: string) => string } }) {
   const config = useRuntimeConfig()
+  const { supportedModes: modes, supportedRulesets: rulesets } = useAdapterConfig()
 
   setVariable('domain', {
     description: 'domain',

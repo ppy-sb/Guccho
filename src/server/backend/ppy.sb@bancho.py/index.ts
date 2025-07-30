@@ -12,9 +12,6 @@ export {
   userRoles,
 } from '../bancho.py'
 
-export {
-
-} from '../bancho.py'
 export type {
   Id,
   ScoreId,

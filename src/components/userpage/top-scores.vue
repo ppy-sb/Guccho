@@ -2,10 +2,6 @@
 import type { Ref } from 'vue'
 import {
   type Mode,
-  leaderboardRankingSystems,
-  leaderboardScoreRankingSystems,
-  modes,
-  rulesets,
 } from '~/def'
 import type { RankingStatus } from '~/def/beatmap'
 import type {
@@ -20,6 +16,12 @@ import userpageStore from '~/store/userpage'
 const app = useNuxtApp()
 const { t } = useI18n()
 const page = userpageStore()
+const {
+  supportedLeaderboardRankingSystems: leaderboardRankingSystems,
+  supportedLeaderboardScoreRankingSystems: leaderboardScoreRankingSystems,
+  supportedModes: modes,
+  supportedRulesets: rulesets,
+} = useAdapterConfig()
 
 let prevSwitcherState = {
   ...page.switcher as UnwrapShallowReactive<typeof page['switcher']>,

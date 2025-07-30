@@ -51,6 +51,7 @@ import { Mode, Rank, Ruleset } from '~/def'
 import { RankingStatus } from '~/def/beatmap'
 import { UserProvider as Base, type MailTokenProvider } from '$base/server'
 import type { ExtractLocationSettings, ExtractSettingType } from '$base/@define-setting'
+import { type UserModeRulesetStatistics } from '~/def/statistics'
 
 type ServerSetting = ExtractSettingType<ExtractLocationSettings<DynamicSettingStore.Server, typeof settings>>
 
@@ -423,66 +424,81 @@ class DBUserProvider extends Base<Id, ScoreId> implements Base<Id, ScoreId> {
     }
   }
 
-  async _getStatistics(opt: { id: Id; flag?: CountryCode }) {
-    const { id } = opt
-    const sq = this.drizzle.select({
-      id: schema.stats.id,
-      mode: schema.stats.mode,
-
-      ppv2Rank: sql`RANK() OVER(PARTITION BY ${schema.stats.mode} ORDER BY ${schema.stats.pp} DESC)`
-        .mapWith(Number)
-        .as('ppRank'),
-      ppv2CountryRank: sql`RANK() OVER(PARTITION BY ${schema.stats.mode}, ${schema.users.country} ORDER BY ${schema.stats.pp} DESC)`
-        .mapWith(Number)
-        .as('ppCountryRank'),
-
-      totalScoreRank: sql`RANK() OVER(PARTITION BY ${schema.stats.mode} ORDER BY ${schema.stats.totalScore} DESC)`
-        .mapWith(Number)
-        .as('tscoreRank'),
-      totalScoreCountryRank: sql`RANK() OVER(PARTITION BY ${schema.stats.mode}, ${schema.users.country} ORDER BY ${schema.stats.totalScore} DESC)`
-        .mapWith(Number)
-        .as('tscoreCountryRank'),
-
-      rankedScoreRank: sql`RANK() OVER(PARTITION BY ${schema.stats.mode} ORDER BY ${schema.stats.rankedScore} DESC)`
-        .mapWith(Number)
-        .as('rscoreRank'),
-      rankedScoreCountryRank: sql`RANK() OVER(PARTITION BY ${schema.stats.mode}, ${schema.users.country} ORDER BY ${schema.stats.rankedScore} DESC)`
-        .mapWith(Number)
-        .as('rscoreCountryRank'),
+  async getStatistic(query: { id: Id; mode: ActiveMode; ruleset: ActiveRuleset }, visitor?: { id: Id }): Promise<UserModeRulesetStatistics<LeaderboardRankingSystem>> {
+    const r = await this._getStatisticFromDB(query, visitor)
+    return createRulesetData({
+      databaseResult: r.at(0),
     })
-      .from(schema.stats)
-      .innerJoin(schema.users, and(
-        eq(schema.users.id, schema.stats.id),
-        userPriv(schema.users)
-      )).as('sq')
-
-    const s2 = aliasedTable(schema.stats, 's2')
-    const mq = this.drizzle.select({
-      ppv2Rank: sq.ppv2Rank,
-      ppv2CountryRank: sq.ppv2CountryRank,
-
-      totalScoreRank: sq.totalScoreRank,
-      totalScoreCountryRank: sq.totalScoreCountryRank,
-
-      rankedScoreRank: sq.rankedScoreRank,
-      rankedScoreCountryRank: sq.rankedScoreCountryRank,
-      stat: s2,
-    }).from(sq)
-      .innerJoin(s2,
-        and(
-          eq(sq.id, s2.id),
-          eq(sq.mode, s2.mode),
-        )
-      )
-      .where(eq(s2.id, id))
-
-    return await mq
   }
 
-  async getStatistics(opt: { id: Id; flag?: CountryCode }) {
-    const query = await this._getStatistics(opt)
+  async _getStatisticFromDB(query: { id: Id; mode: ActiveMode; ruleset: ActiveRuleset }, visitor?: { id: Id }) {
+    const { id, mode, ruleset } = query
+    const sq = this.drizzle.$with('sq').as(
+      this.drizzle.select({
+        id: schema.stats.id,
+        mode: schema.stats.mode,
 
-    return this._toStatistics(query)
+        ppv2Rank: sql`RANK() OVER(ORDER BY ${schema.stats.pp} DESC)`
+          .mapWith(Number)
+          .as('ppRank'),
+        ppv2CountryRank: sql`RANK() OVER(PARTITION BY ${schema.users.country} ORDER BY ${schema.stats.pp} DESC)`
+          .mapWith(Number)
+          .as('ppCountryRank'),
+
+        totalScoreRank: sql`RANK() OVER(ORDER BY ${schema.stats.totalScore} DESC)`
+          .mapWith(Number)
+          .as('tscoreRank'),
+        totalScoreCountryRank: sql`RANK() OVER(PARTITION BY ${schema.users.country} ORDER BY ${schema.stats.totalScore} DESC)`
+          .mapWith(Number)
+          .as('tscoreCountryRank'),
+
+        rankedScoreRank: sql`RANK() OVER(ORDER BY ${schema.stats.rankedScore} DESC)`
+          .mapWith(Number)
+          .as('rscoreRank'),
+        rankedScoreCountryRank: sql`RANK() OVER(PARTITION BY ${schema.users.country} ORDER BY ${schema.stats.rankedScore} DESC)`
+          .mapWith(Number)
+          .as('rscoreCountryRank'),
+      })
+        .from(schema.stats)
+        .innerJoin(schema.users, eq(schema.users.id, schema.stats.id))
+    )
+
+    const s2 = aliasedTable(schema.stats, 's2')
+    const mq = this.drizzle
+      .with(sq)
+      .select({
+        ppv2Rank: sq.ppv2Rank,
+        ppv2CountryRank: sq.ppv2CountryRank,
+
+        totalScoreRank: sq.totalScoreRank,
+        totalScoreCountryRank: sq.totalScoreCountryRank,
+
+        rankedScoreRank: sq.rankedScoreRank,
+        rankedScoreCountryRank: sq.rankedScoreCountryRank,
+        stat: s2,
+        user: {
+          flag: schema.users.country,
+        },
+      }).from(sq)
+      .innerJoin(s2, and(
+        eq(sq.id, s2.id),
+        eq(sq.mode, s2.mode),
+      )
+      )
+      .innerJoin(schema.users, and(
+        eq(sq.id, schema.users.id),
+        userPriv(schema.users)?.if(visitor?.id !== query.id)
+      ))
+      .where(
+        and(
+          eq(s2.id, id),
+          eq(s2.mode, toBanchoPyMode(mode, ruleset)),
+        )
+      )
+
+    const r = await mq
+
+    return r
   }
 
   async getFull<
@@ -541,13 +557,6 @@ class DBUserProvider extends Base<Id, ScoreId> implements Base<Id, ScoreId> {
 
     returnValue.status = UserStatus.Offline
 
-    if (excludes.statistics !== true) {
-      parallels.push(
-        this.getStatistics(returnValue).then((res) => {
-          returnValue.statistics = res
-        }),
-      )
-    }
     if (excludes.relationships !== true) {
       parallels.push(
         this.relationships.get({ user }).then((res) => {
@@ -942,94 +951,6 @@ class DBUserProvider extends Base<Id, ScoreId> implements Base<Id, ScoreId> {
     }
   }
 
-  async _toStatistics(
-    results: ({
-      stat: typeof schema.stats.$inferSelect
-
-      ppv2Rank: number
-      ppv2CountryRank: number
-
-      totalScoreCountryRank: number
-      totalScoreRank: number
-
-      rankedScoreCountryRank: number
-      rankedScoreRank: number
-    })[],
-    livePPRank?: Awaited<ReturnType<RedisUserProvider['getRedisRanks']>>,
-  ) {
-    const statistics: UserStatistic<
-      ActiveMode,
-      ActiveRuleset,
-      LeaderboardRankingSystem
-    > = await this._mapModeRulesets((mode, ruleset) => {
-      const bpyMode = toBanchoPyMode(mode, ruleset)
-
-      return createRulesetData({
-        databaseResult: results.find(
-          i => i.stat.mode === bpyMode,
-        ),
-        livePPRank: livePPRank?.[mode]?.[ruleset],
-      })
-    })
-    // {
-    //   [Mode.Osu]: {
-    //     [Ruleset.Standard]: createRulesetData({
-    //       databaseResult: results.find(
-    //         i => i.stat.mode === BanchoPyMode.OsuStandard,
-    //       ),
-    //       livePPRank: livePPRank?.[Mode.Osu][Ruleset.Standard],
-    //     }),
-    //     [Ruleset.Relax]: createRulesetData({
-    //       databaseResult: results.find(i => i.stat.mode === BanchoPyMode.OsuRelax),
-    //       livePPRank: livePPRank?.[Mode.Osu][Ruleset.Relax],
-    //     }),
-    //     [Ruleset.Autopilot]: createRulesetData({
-    //       databaseResult: results.find(
-    //         i => i.stat.mode === BanchoPyMode.OsuAutopilot,
-    //       ),
-    //       livePPRank: livePPRank?.[Mode.Osu][Ruleset.Autopilot],
-    //     }),
-    //   },
-    //   [Mode.Taiko]: {
-    //     [Ruleset.Standard]: createRulesetData({
-    //       databaseResult: results.find(
-    //         i => i.stat.mode === BanchoPyMode.TaikoStandard,
-    //       ),
-    //       livePPRank: livePPRank?.[Mode.Taiko][Ruleset.Standard],
-    //     }),
-    //     [Ruleset.Relax]: createRulesetData({
-    //       databaseResult: results.find(
-    //         i => i.stat.mode === BanchoPyMode.TaikoRelax,
-    //       ),
-    //       livePPRank: livePPRank?.[Mode.Taiko][Ruleset.Relax],
-    //     }),
-    //   },
-    //   [Mode.Fruits]: {
-    //     [Ruleset.Standard]: createRulesetData({
-    //       databaseResult: results.find(
-    //         i => i.stat.mode === BanchoPyMode.FruitsStandard,
-    //       ),
-    //       livePPRank: livePPRank?.[Mode.Fruits][Ruleset.Standard],
-    //     }),
-    //     [Ruleset.Relax]: createRulesetData({
-    //       databaseResult: results.find(
-    //         i => i.stat.mode === BanchoPyMode.FruitsRelax,
-    //       ),
-    //       livePPRank: livePPRank?.[Mode.Fruits][Ruleset.Relax],
-    //     }),
-    //   },
-    //   [Mode.Mania]: {
-    //     [Ruleset.Standard]: createRulesetData({
-    //       databaseResult: results.find(
-    //         i => i.stat.mode === BanchoPyMode.ManiaStandard,
-    //       ),
-    //       livePPRank: livePPRank?.[Mode.Mania][Ruleset.Standard],
-    //     }),
-    //   },
-    // }
-    return statistics
-  }
-
   async getDynamicSettings({ id }: { id: Id }) {
     const user = await this.drizzle.query.users
       .findFirst({
@@ -1076,6 +997,17 @@ class DBUserProvider extends Base<Id, ScoreId> implements Base<Id, ScoreId> {
 }
 
 export class RedisUserProvider extends DBUserProvider {
+  async getStatistic(query: { id: Id; mode: ActiveMode; ruleset: ActiveRuleset }, visitor?: { id: Id }): Promise<UserModeRulesetStatistics<LeaderboardRankingSystem>> {
+    const { id, mode, ruleset } = query
+    const dbR = (await this._getStatisticFromDB(query, visitor)).at(0)!
+    const redisR = await this.getLiveRank(id, toBanchoPyMode(mode, ruleset), dbR.user.flag)
+
+    return createRulesetData({
+      databaseResult: dbR,
+      livePPRank: redisR,
+    })
+  }
+
   redisClient: ReturnType<typeof redisClient>
   constructor() {
     super()
@@ -1106,31 +1038,6 @@ export class RedisUserProvider extends DBUserProvider {
     }
 
     return this._mapModeRulesets(async (mode, ruleset) => await this.getLiveRank(id, toBanchoPyMode(mode, ruleset), country))
-    // return {
-    //   [Mode.Osu]: {
-    //     [Ruleset.Standard]: await this.getLiveRank(id, BanchoPyMode.OsuStandard, country),
-    //     [Ruleset.Relax]: await this.getLiveRank(id, BanchoPyMode.OsuRelax, country),
-    //     [Ruleset.Autopilot]: await this.getLiveRank(id, BanchoPyMode.OsuAutopilot, country),
-    //   },
-    //   [Mode.Taiko]: {
-    //     [Ruleset.Standard]: await this.getLiveRank(id, BanchoPyMode.TaikoStandard, country),
-    //     [Ruleset.Relax]: await this.getLiveRank(id, BanchoPyMode.TaikoRelax, country),
-    //   },
-    //   [Mode.Fruits]: {
-    //     [Ruleset.Standard]: await this.getLiveRank(id, BanchoPyMode.FruitsStandard, country),
-    //     [Ruleset.Relax]: await this.getLiveRank(id, BanchoPyMode.FruitsRelax, country),
-    //   },
-    //   [Mode.Mania]: {
-    //     [Ruleset.Standard]: await this.getLiveRank(id, BanchoPyMode.ManiaStandard, country),
-    //   },
-    // }
-  }
-
-  async getStatistics(opt: { id: Id; flag: CountryCode }) {
-    const res = await this._getStatistics(opt)
-    const livePPRank = await this.getRedisRanks(opt)
-
-    return this._toStatistics(res, livePPRank)
   }
 }
 

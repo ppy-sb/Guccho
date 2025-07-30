@@ -132,12 +132,7 @@ export type UserStatistic<
 
 export interface UserExtra<
   Id,
-  IncludeMode extends ActiveMode = ActiveMode,
-  IncludeRuleset extends ActiveRuleset = ActiveRuleset,
-  Ranking extends LeaderboardRankingSystem = LeaderboardRankingSystem,
 > {
-  statistics: UserStatistic<IncludeMode, IncludeRuleset, Ranking>
-
   profile?: {
     html: string
     raw?: ArticleProvider.JSONContent
