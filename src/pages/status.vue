@@ -6,9 +6,11 @@ const session = useSession()
 const app = useNuxtApp()
 const { t } = useI18n()
 
-const serverConfig = session.role.owner
-  ? await app.$client.status.config.query()
-  : undefined
+const { data: serverConfig } = await useAsyncData(async () =>
+  session.role.owner
+    ? await app.$client.status.config.query()
+    : undefined
+)
 
 const { data: adminData, refresh: refreshAdmin } = await useAsyncData(async () =>
   session.role.admin

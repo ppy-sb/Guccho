@@ -21,12 +21,13 @@ const session = useSession()
 const page = userpageStore()
 const router = useRouter()
 
-await page.init({
-  mode: h.searchParams.has('mode') ? h.searchParams.get('mode') as Mode : undefined,
-  ruleset: h.searchParams.has('ruleset') ? h.searchParams.get('ruleset') as Ruleset : undefined,
-  rankingSystem: h.searchParams.has('rank') ? h.searchParams.get('rank') as LeaderboardRankingSystem : undefined,
+onServerPrefetch(async () => {
+  await page.init({
+    mode: h.searchParams.has('mode') ? h.searchParams.get('mode') as Mode : undefined,
+    ruleset: h.searchParams.has('ruleset') ? h.searchParams.get('ruleset') as Ruleset : undefined,
+    rankingSystem: h.searchParams.has('rank') ? h.searchParams.get('rank') as LeaderboardRankingSystem : undefined,
+  })
 })
-
 const switcherState = computed(() => `${page.switcher.mode} - ${page.switcher.ruleset} - ${page.switcher.rankingSystem}`)
 const userWithAppName = computed(() => `${page.user?.name} - ${app.$i18n.t('server.name')}`)
 const description = computed(() => switcherState.value)
