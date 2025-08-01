@@ -1,11 +1,9 @@
 import type { BeatmapWithMeta, RankingStatus } from './beatmap'
 import type {
-  ActiveMode,
-  ActiveRuleset,
   LeaderboardRankingSystem,
   PPRankingSystem,
 } from './common'
-import type { Mode } from '.'
+import type { Mode, Ruleset } from '.'
 
 export enum Grade {
   F = 'f',
@@ -66,7 +64,7 @@ export enum StableMod {
 // future(lazer) proof
 export type Mod = StableMod
 
-export interface ScoreCompact<ScoreId, M extends ActiveMode> {
+export interface ScoreCompact<ScoreId, M extends Mode> {
   id: ScoreId
   playedAt: Date
   mods: Mod[]
@@ -80,13 +78,13 @@ export interface ScoreCompact<ScoreId, M extends ActiveMode> {
 export type RulesetScore<
   ScoreId,
   BeatmapId,
-  M extends ActiveMode,
-  Ruleset extends ActiveRuleset,
+  M extends Mode,
+  R extends Ruleset,
   PPRank extends PPRankingSystem = never,
   Status extends RankingStatus = RankingStatus,
 > = ScoreCompact<ScoreId, M> & {
   mode: M
-  ruleset: Ruleset
+  ruleset: R
   beatmap: BeatmapWithMeta<Status, BeatmapId, unknown>
   scoreRank?: number
 } & Record<
@@ -100,7 +98,7 @@ export type RulesetScore<
 export interface RankingSystemScore<
   ScoreId,
   Id,
- M extends ActiveMode,
+ M extends Mode,
   PPRank extends LeaderboardRankingSystem = never,
   BMStatus extends RankingStatus = RankingStatus,
 > extends ScoreCompact<ScoreId, M> {

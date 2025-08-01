@@ -1,10 +1,5 @@
-import type { U2I } from '~/def/internal-utils'
+import type { Brand, U2I } from '~/def/internal-utils'
 import type { Feature } from '~/def/features'
-import type {
-  HasLeaderboardRankingSystem,
-  HasRankingSystem,
-  HasRuleset,
-} from '~/def/server'
 
 import { LeaderboardScoreRank, Mode, Rank, Ruleset } from '~/def'
 
@@ -155,22 +150,31 @@ export function stringToScoreId(id: string): ScoreId {
   return id
 }
 
-export const hasRankingSystem: HasRankingSystem = (
-  _1,
-  _2,
-  rankingSystem,
-): rankingSystem is RankingSystem => false
+export function hasRuleset<M extends ActiveMode>(mode: M, ruleset: ActiveRuleset): ruleset is ActiveRuleset & AvailableRuleset<M> {
+  return false
+}
 
-export const hasLeaderboardRankingSystem: HasLeaderboardRankingSystem = (
-  _1,
-  _2,
-  rankingSystem,
-): rankingSystem is LeaderboardRankingSystem => false
-
-export const hasRuleset: HasRuleset = <M extends ActiveMode>(
+export function hasRankingSystem<
+  M extends ActiveMode,
+  R extends AvailableRuleset<M>,
+>(
   mode: M,
-  ruleset: ActiveRuleset,
-): ruleset is AvailableRuleset<M> => false
+  ruleset: R,
+  rankingSystem: Brand<string> | RankingSystem
+): rankingSystem is RankingSystem {
+  return false
+}
+
+export function hasLeaderboardRankingSystem<
+  M extends ActiveMode,
+  R extends AvailableRuleset<M>,
+>(
+  mode: M,
+  ruleset: R,
+  rankingSystem: Brand<string> | LeaderboardRankingSystem
+): rankingSystem is LeaderboardRankingSystem {
+  return false
+}
 
 export { userRoles } from '~/def/user'
 

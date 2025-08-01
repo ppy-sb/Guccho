@@ -3,16 +3,11 @@ import type {
   ActiveRuleset,
   AvailableRuleset,
   LeaderboardRankingSystem,
-  PPRankingSystem,
   RankingSystem,
-} from '$active'
-import type {
-  HasLeaderboardRankingSystem,
-  HasRankingSystem,
-  HasRuleset,
-  ServerRankingSystemDef,
-} from '~/def/server'
+} from '../'
 import { Mode, Rank, Ruleset } from '~/def'
+
+import { type Brand } from '~/def/internal-utils'
 
 const ppRankingSystems = [Rank.PPv2, Rank.Score] as const
 const leaderboardRankingSystems = [Rank.PPv2, Rank.RankedScore, Rank.TotalScore] as const
@@ -22,7 +17,7 @@ const defaultConf = {
   rankingSystem: ppRankingSystems,
 }
 
-const havingRankingSystem: ServerRankingSystemDef = {
+const havingRankingSystem = {
   [Mode.Osu]: {
     [Ruleset.Standard]: defaultConf,
     [Ruleset.Relax]: defaultConf,
@@ -39,26 +34,31 @@ const havingRankingSystem: ServerRankingSystemDef = {
   [Mode.Mania]: {
     [Ruleset.Standard]: defaultConf,
   },
+} as const
+
+export function hasRuleset<M extends ActiveMode>(mode: M, ruleset: ActiveRuleset): ruleset is ActiveRuleset & AvailableRuleset<M> {
+  return ruleset in havingRankingSystem[mode]
 }
 
-export const hasRuleset: HasRuleset = <M extends ActiveMode>(
+export function hasRankingSystem<
+  M extends ActiveMode,
+  R extends AvailableRuleset<M>,
+>(
   mode: M,
-  ruleset: ActiveRuleset,
-): ruleset is ActiveRuleset & AvailableRuleset<M> => {
-  const mDef = havingRankingSystem[mode]
-  return ruleset in mDef
+  ruleset: R,
+  rankingSystem: Brand<string> | RankingSystem
+): rankingSystem is RankingSystem {
+  const modeConfig = havingRankingSystem[mode] as typeof havingRankingSystem[Mode.Osu] // TS type narrowed too much
+  return modeConfig[ruleset].rankingSystem.includes(rankingSystem as any)
 }
 
-export const hasRankingSystem: HasRankingSystem = (
-  mode,
-  ruleset,
-  rankingSystem,
-): rankingSystem is RankingSystem =>
-  havingRankingSystem[mode][ruleset].rankingSystem.includes(rankingSystem as PPRankingSystem)
-
-export const hasLeaderboardRankingSystem: HasLeaderboardRankingSystem = (
-  mode,
-  ruleset,
-  rankingSystem,
-): rankingSystem is LeaderboardRankingSystem =>
-  havingRankingSystem[mode][ruleset].leaderboardRankingSystem.includes(rankingSystem as LeaderboardRankingSystem)
+export function hasLeaderboardRankingSystem<
+  M extends ActiveMode,
+  R extends AvailableRuleset<M>,
+>(
+  mode: M,
+  ruleset: R,
+  rankingSystem: Brand<string> | LeaderboardRankingSystem
+): rankingSystem is LeaderboardRankingSystem {
+  return (havingRankingSystem[mode] as typeof havingRankingSystem[Mode.Osu])[ruleset].leaderboardRankingSystem.includes(rankingSystem as any)
+}

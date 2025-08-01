@@ -1,5 +1,4 @@
 import type { ZodType } from 'zod'
-import type { UserModeRulesetStatistics } from './statistics'
 import type { UserRelationship } from './user-relationship'
 import type { CountryCode } from './country-code'
 import type { Lang, Mode, Ruleset } from '.'
@@ -119,17 +118,6 @@ export type DynamicUserSetting<T, TLoc extends DynamicSettingStore, TLang> = {
   options: { value: T; label: string; disabled?: boolean }[]
 })
 
-export type UserStatistic<
-  IncludeMode extends ActiveMode = ActiveMode,
-  IncludeRuleset extends ActiveRuleset = ActiveRuleset,
-  Ranking extends LeaderboardRankingSystem = LeaderboardRankingSystem,
-> = {
-  [M in IncludeMode]: Record<
-      AvailableRuleset<M, IncludeRuleset>,
-      UserModeRulesetStatistics<Ranking>
-    >
-}
-
 export interface UserExtra<
   Id,
 > {
@@ -140,9 +128,4 @@ export interface UserExtra<
   relationships: Array<UserCompact<Id> & UserRelationship>
 }
 
-export type UserFull<
-  Id,
-  IncludeMode extends ActiveMode = ActiveMode,
-  IncludeRuleset extends ActiveRuleset = ActiveRuleset,
-  Ranking extends LeaderboardRankingSystem = LeaderboardRankingSystem,
-> = UserCompact<Id> & Partial<UserOptional & UserExtra<Id, IncludeMode, IncludeRuleset, Ranking>>
+export type UserFull<Id> = UserCompact<Id> & Partial<UserOptional & UserExtra<Id>>
