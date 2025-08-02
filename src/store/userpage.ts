@@ -22,21 +22,12 @@ export default defineStore('userpage', () => {
   const switcherCtx = useLeaderboardSwitcher()
   const [switcher, setSwitcher] = switcherCtx
 
-  const _computeStatistic = () => hasRuleset(switcher.mode, switcher.ruleset)
-    ? user.value?.statistics?.[switcher.mode][switcher.ruleset]
-    : user.value?.statistics?.[Mode.Osu][Ruleset.Standard]
-
-  const currentStatistic = shallowRef<ReturnType<typeof _computeStatistic> | null>(null)
-
-  const _computeRankingSystem = () => currentStatistic.value?.[switcher.rankingSystem]
-
-  const currentRankingSystem = shallowRef<ReturnType<typeof _computeRankingSystem> | null>(null)
+  const currentStatistic = shallowRef<ReturnType<typeof computeStatistic> | null>(null)
+  const currentRankingSystem = shallowRef<ReturnType<typeof computeRankingSystem> | null>(null)
 
   let dispose: WatchStopHandle[] = []
 
-  async function init(_initSwitcher: SwitcherPropType<LeaderboardRankingSystem>) {
-    dispose.forEach(cb => cb())
-
+  async function initServer(initSwitcher?: SwitcherPropType<LeaderboardRankingSystem>) {
     const route = useRoute('user-handle')
     try {
       const u = await app.$client.user.userpage.query({
@@ -44,21 +35,32 @@ export default defineStore('userpage', () => {
       })
       user.value = u
 
-      setSwitcher(_initSwitcher || u.preferredMode)
-      currentStatistic.value = _computeStatistic()
-      currentRankingSystem.value = _computeRankingSystem()
+      setSwitcher(initSwitcher || u.preferredMode)
+      currentStatistic.value = computeStatistic()
+      currentRankingSystem.value = computeRankingSystem()
       error.value = null
-
+    }
+    catch (e) {
+      console.error(e)
+      error.value = {
+        message: (e as RouterError).message,
+      }
+    }
+  }
+  async function initClient() {
+    const route = useRoute('user-handle')
+    dispose.forEach(cb => cb())
+    try {
       dispose = [
         watch([
           () => switcher.mode,
           () => switcher.ruleset,
         ], () => {
-          currentStatistic.value = _computeStatistic()
-          currentRankingSystem.value = _computeRankingSystem()
+          currentStatistic.value = computeStatistic()
+          currentRankingSystem.value = computeRankingSystem()
         }),
         watch(() => switcher.rankingSystem, () => {
-          currentRankingSystem.value = _computeRankingSystem()
+          currentRankingSystem.value = computeRankingSystem()
         }),
 
         watch(switcher, () => {
@@ -85,8 +87,8 @@ export default defineStore('userpage', () => {
         handle: `${route.params.handle}`,
       })
       user.value = u
-      currentStatistic.value = _computeStatistic()
-      currentRankingSystem.value = _computeRankingSystem()
+      currentStatistic.value = computeStatistic()
+      currentRankingSystem.value = computeRankingSystem()
       error.value = null
     }
     catch (e) {
@@ -97,10 +99,20 @@ export default defineStore('userpage', () => {
     }
   }
 
+  function computeStatistic() {
+    return hasRuleset(switcher.mode, switcher.ruleset)
+      ? user.value?.statistics?.[switcher.mode][switcher.ruleset]
+      : user.value?.statistics?.[Mode.Osu][Ruleset.Standard]
+  }
+  function computeRankingSystem() {
+    return currentStatistic.value?.[switcher.rankingSystem]
+  }
+
   return {
     refresh,
     dispose,
-    init,
+    initServer,
+    initClient,
     error,
     user,
     switcher,
