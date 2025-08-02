@@ -14,14 +14,14 @@
     /* compatibility is not great, following is old code */
     /* no fallback */
     @apply tooltip inline tooltip-warning;
-    @apply text-warning-content/60;
+    @apply text-warning;
 
     &[missing-key] {
       @apply text-error tooltip inline tooltip-error;
     }
 
     &[fallback] {
-      @apply text-base-content/40 tooltip inline;
+      @apply tooltip inline opacity-40;
     }
   }
 }
