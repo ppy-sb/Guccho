@@ -97,6 +97,7 @@ function createStyleObject(count: number) {
   @apply overflow-hidden h-4 mb-4 text-xs flex rounded-xl;
   .multi-progress-bar {
     @apply shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center;
+    @apply transition-[width] ease-out duration-300;
   }
 }
 </style>
