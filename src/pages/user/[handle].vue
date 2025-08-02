@@ -175,7 +175,7 @@ de-DE:
     <userpage-profile />
 
     <template v-if="page.currentStatistic?.level === 0">
-      <div class="container py-20 mx-auto custom-container">
+      <div class="container py-20 mx-auto custom-container transition" :class="{ 'opacity-75': page.statisticLoadingState }">
         <h1 class="text-3xl text-center text-gbase-400 dark:text-gbase-600">
           {{ t('mode-no-data') }}
         </h1>
@@ -183,7 +183,7 @@ de-DE:
     </template>
     <template v-else>
       <userpage-ranking-system-switcher class="z-10" />
-      <div class="container max-w-screen-lg mx-auto">
+      <div class="container max-w-screen-lg mx-auto transition" :class="{ 'opacity-75': page.statisticLoadingState }">
         <userpage-statistics id="statistics" ref="statistics" />
         <userpage-score-rank-composition />
       </div>

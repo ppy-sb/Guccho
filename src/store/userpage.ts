@@ -23,6 +23,7 @@ export default defineStore('userpage', () => {
   const [switcher, setSwitcher] = switcherCtx
 
   const currentStatistic = shallowRef<RouterOutput['user']['statistic']>()
+  const statisticLoadingState = shallowRef(false)
   const currentRankingSystem = shallowRef<ReturnType<typeof computeRankingSystem>>()
 
   let dispose: WatchStopHandle[] = []
@@ -31,10 +32,22 @@ export default defineStore('userpage', () => {
     if (!user.value) {
       return
     }
-    if (!hasRuleset(switcher.mode, switcher.ruleset)) {
-      return await app.$client.user.statistic.query({ id: user.value!.id, mode: Mode.Osu, ruleset: Ruleset.Standard, rankingSystem: switcher.rankingSystem })
+    statisticLoadingState.value = true
+    try {
+      if (!hasRuleset(switcher.mode, switcher.ruleset)) {
+        return await app.$client.user.statistic.query({ id: user.value!.id, mode: Mode.Osu, ruleset: Ruleset.Standard, rankingSystem: switcher.rankingSystem })
+      }
+      return await app.$client.user.statistic.query({ id: user.value!.id, mode: switcher.mode, ruleset: switcher.ruleset, rankingSystem: switcher.rankingSystem })
     }
-    return await app.$client.user.statistic.query({ id: user.value!.id, mode: switcher.mode, ruleset: switcher.ruleset, rankingSystem: switcher.rankingSystem })
+    catch (e) {
+      console.error(e)
+      error.value = {
+        message: (e as RouterError).message,
+      }
+    }
+    finally {
+      statisticLoadingState.value = false
+    }
   }
 
   async function initServer(initSwitcher?: SwitcherPropType<LeaderboardRankingSystem>) {
@@ -132,6 +145,7 @@ export default defineStore('userpage', () => {
     switcher,
     setSwitcher,
     currentStatistic,
+    statisticLoadingState,
     currentRankingSystem,
   }
 })
