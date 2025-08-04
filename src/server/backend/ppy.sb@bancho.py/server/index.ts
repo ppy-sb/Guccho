@@ -1,5 +1,4 @@
 import {
-  AdminMapProvider as BAdminMapProvider,
   AdminScoreProvider as BAdminScoreProvider,
   AdminUserProvider as BAdminUserProvider,
   ArticleProvider as BArticleProvider,
@@ -17,9 +16,9 @@ import {
 } from '~/server/backend/bancho.py/server'
 
 export { UserProvider } from './user'
+export { AdminMapProvider } from './admin/map'
 
 export class AdminUserProvider extends BAdminUserProvider {}
-export class AdminMapProvider extends BAdminMapProvider {}
 export class AdminScoreProvider extends BAdminScoreProvider {}
 export class ArticleProvider extends BArticleProvider {}
 export class ClanProvider extends BClanProvider {}

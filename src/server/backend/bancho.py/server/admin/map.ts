@@ -7,6 +7,7 @@ import * as schema from '../../drizzle/schema'
 import { BanchoPyRankedStatus } from '../../enums'
 import { AdminMapProvider as Base } from '$base/server'
 import { type PaginatedResult } from '~/def/pagination'
+import { GucchoError } from '~/def/messages'
 
 export class AdminMapProvider extends Base<Id, Id> implements Base<Id, Id> {
   static readonly idToString = idToString
@@ -141,7 +142,32 @@ export class AdminMapProvider extends Base<Id, Id> implements Base<Id, Id> {
   }
 
   async update(map: Base.UpdateParam<Id, Id>): Promise<Base.VeryCompactBeatmap<Id, Id>> {
-    const old = (await this.drizzle.select({ status: schema.beatmaps.status, lastUpdate: schema.beatmaps.lastUpdate }).from(schema.beatmaps).where(eq(schema.beatmaps.id, map.id))).at(0)
+    const gen = this.updateReturnOldThenNew(map)
+    await gen.next() // skip the first value, which is the old map
+    const v = await gen.next()
+    if (!v.done) {
+      throw new Error('Expected the generator to finish after yielding the new map')
+    }
+    return v.value
+  }
+
+  async *updateReturnOldThenNew(map: Base.UpdateParam<Id, Id>) {
+    const old = (await this.drizzle
+      .select({
+        status: schema.beatmaps.status,
+        lastUpdate: schema.beatmaps.lastUpdate,
+        md5: schema.beatmaps.md5,
+      })
+      .from(schema.beatmaps)
+      .where(eq(schema.beatmaps.id, map.id))
+    ).at(0)
+
+    if (!old) {
+      throwGucchoError(GucchoError.BeatmapNotFound)
+    }
+
+    yield old as Pick<typeof schema.beatmaps.$inferSelect, 'status' | 'lastUpdate' | 'md5'>
+
     const newStatus = map.status !== undefined && Number.isInteger(map.status) ? fromRankingStatus(map.status) : undefined
     const oldStatus = old?.status as BanchoPyRankedStatus | undefined
 
@@ -193,7 +219,7 @@ export class AdminMapProvider extends Base<Id, Id> implements Base<Id, Id> {
         .where(eq(schema.mapRequests.mapId, map.id))
     }
 
-    return await this.drizzle.select({
+    const v = await this.drizzle.select({
       id: schema.beatmaps.id,
       version: schema.beatmaps.version,
       md5: schema.beatmaps.md5,
@@ -203,6 +229,8 @@ export class AdminMapProvider extends Base<Id, Id> implements Base<Id, Id> {
       .from(schema.beatmaps)
       .where(eq(schema.beatmaps.id, map.id))
       .then(res => this.toVeryCompatBeatmap(res[0]))
+
+    return v as Base.VeryCompactBeatmap<Id, Id>
   }
 
   toVeryCompatBeatmap(bm: Pick<typeof schema.beatmaps.$inferSelect, 'id' | 'md5' | 'version' | 'status' | 'lastUpdate'>) {
