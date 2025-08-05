@@ -27,7 +27,7 @@ await callOnce('init', async () => {
     ruleset: h.searchParams.has('ruleset') ? h.searchParams.get('ruleset') as Ruleset : undefined,
     rankingSystem: h.searchParams.has('rank') ? h.searchParams.get('rank') as LeaderboardRankingSystem : undefined,
   })
-})
+}, { mode: 'navigation' })
 
 onBeforeMount(async () => {
   await page.initClient()
