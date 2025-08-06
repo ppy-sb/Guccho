@@ -13,10 +13,16 @@ export function useExternalBeatmapsetLinks(beatmapset: AnyBeatmapset) {
     directDownload: [] as Label[],
   }
   if (isBanchoBeatmapset(beatmapset)) {
-    returnValue.external.push({
-      label: 'Bancho',
-      link: `https://osu.ppy.sh/s/${beatmapset.foreignId}`,
-    })
+    returnValue.external.push(
+      {
+        label: 'Bancho',
+        link: `https://osu.ppy.sh/s/${beatmapset.foreignId}`,
+      },
+      {
+        label: 'osu!direct',
+        link: OsuDirect.link(OsuDirect.Type.Beatmapset, beatmapset.foreignId.toString()),
+      },
+    )
 
     returnValue.directDownload.push(
       {
@@ -26,6 +32,14 @@ export function useExternalBeatmapsetLinks(beatmapset: AnyBeatmapset) {
       {
         label: 'osu.direct (previously known as Kitsu.moe)',
         link: `https://osu.direct/api/d/${beatmapset.foreignId}`,
+      },
+      {
+        label: 'Sayobot (Full)',
+        link: `https://dl.sayobot.cn/beatmaps/download/full/${beatmapset.foreignId}`,
+      },
+      {
+        label: 'Sayobot (No Video)',
+        link: `https://dl.sayobot.cn/beatmaps/download/novideo/${beatmapset.foreignId}`,
       },
     )
   }
