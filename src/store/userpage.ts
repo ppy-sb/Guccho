@@ -35,7 +35,16 @@ export default defineStore('userpage', () => {
       })
       user.value = u
 
-      setSwitcher(initSwitcher || u.preferredMode)
+      if (initSwitcher?.mode || initSwitcher?.ruleset || initSwitcher?.rankingSystem) {
+        setSwitcher(initSwitcher)
+      }
+      else {
+        setSwitcher({
+          rankingSystem: initSwitcher?.rankingSystem,
+          ...u.preferredMode,
+        })
+      }
+
       currentStatistic.value = computeStatistic()
       currentRankingSystem.value = computeRankingSystem()
       error.value = null
