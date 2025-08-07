@@ -37,7 +37,9 @@ declare module '@rodrigogs/mysql-events' {
     constructor(connection: ConstructorParameters<typeof ZongJi>[0], options?: StartOptions): this
     static get EVENTS(): typeof EVENTS
     static get STATEMENTS(): typeof STATEMENTS
-    start(): void
+    async start(): Promise<void>
+    async stop(): Promise<void>
+    resume(): void
     addTrigger($: {
       name: string,
       expression: string,

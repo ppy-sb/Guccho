@@ -35,6 +35,7 @@ class Watcher {
     }
     this.instance.on(MySQLEvents.EVENTS.CONNECTION_ERROR, this.onConnectionError.bind(this))
     this.instance.on(MySQLEvents.EVENTS.ZONGJI_ERROR, this.logger.error)
+    this.instance.on(MySQLEvents.EVENTS.STARTED, () => this.logger.info('started watching binlog'))
   }
 
   watch<T extends Table, E extends keyof typeof MySQLEvents.STATEMENTS>(table: T, statement: E, cb: (event: RowEventType<T, E>) => void) {
@@ -93,6 +94,7 @@ class Watcher {
     for (const trigger of this.triggers) {
       this.instance.removeTrigger(trigger)
     }
+    await this.instance.stop()
 
     this.instance = new MySQLEvents(this.gucchoBackendConfig.replica, {
       position: this.position,
@@ -101,6 +103,10 @@ class Watcher {
         mysql: true,
       },
     })
+    for (const trigger of this.triggers) {
+      this.instance.addTrigger(trigger)
+    }
+    await this.init()
   }
 }
 
