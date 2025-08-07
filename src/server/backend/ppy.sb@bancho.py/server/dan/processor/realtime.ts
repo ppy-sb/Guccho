@@ -31,6 +31,10 @@ export class RealtimeDanProcessor extends CacheSyncedDanProcessor implements Cac
       .map(item => item.after)
       .filter(item => item.grade !== 'F')
 
+    this.logger.debug({
+      message: `received full scores: ${scores.map(item => item.id).join(', ')}`,
+    })
+
     const [beatmaps, users, patcherScoresMeta] = await Promise.all([
       this.dp.drizzle.query.beatmaps.findMany({
         where: inArray(schema.beatmaps.md5, scores.map(item => item.mapMd5)),
