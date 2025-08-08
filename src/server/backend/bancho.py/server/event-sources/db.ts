@@ -119,10 +119,9 @@ type RowEventType<T extends Table, E extends keyof typeof MySQLEvents.STATEMENTS
         ? DeleteEvent<InferSelectModel<T>>
         : RowEvent<InferSelectModel<T>>
 
-let watcher: Watcher
+const watcher = new Watcher()
 async function ensureWatcher() {
-  if (!watcher) {
-    watcher = new Watcher()
+  if (!watcher.instance.isStarted) {
     await watcher.init()
   }
 }
