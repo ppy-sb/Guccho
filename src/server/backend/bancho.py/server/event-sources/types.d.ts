@@ -34,6 +34,8 @@ declare module '@rodrigogs/mysql-events' {
 
   declare export default class MySQLEvents {
     connection: Connection
+    isStarted: boolean
+    isPaused: boolean
     constructor(connection: ConstructorParameters<typeof ZongJi>[0], options?: StartOptions): this
     static get EVENTS(): typeof EVENTS
     static get STATEMENTS(): typeof STATEMENTS
