@@ -67,7 +67,7 @@ async function onIdxSelected(id: string) {
 }
 
 async function searchUser(keyword?: string) {
-  return keyword ? await app.$client.search.searchUser.query({ keyword }) : await app.$client.me.relations.query()
+  return keyword ? await app.$client.user.search.query({ keyword }) : await app.$client.me.relations.query()
 }
 
 defineExpose({
