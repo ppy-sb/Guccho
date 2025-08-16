@@ -67,7 +67,7 @@ zh-CN:
   mode: 模式
   ruleset: 玩法
   unset: 未指定
-  treat-no-ruleset-cond-as-standard: 将无玩法要求的段位视为std端位
+  treat-no-ruleset-cond-as-standard: 将无玩法要求的段位视为std段位
   key: 键数
 
 # TODO fr, DE
