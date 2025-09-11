@@ -79,8 +79,8 @@ const {
 const {
   data: sessions,
   refresh: refreshSession,
-  pending: pendingSession,
-} = await app$.$client.me.sessions.useQuery()
+  status: statusSession,
+} = app$.$client.me.sessions.useQuery(undefined, { server: false })
 
 if (!user.value) {
   await navigateTo({
@@ -935,7 +935,7 @@ de-DE:
                 <tbody
                   class="transition-opacity origin-center transition-filter"
                   :class="{
-                    'opacity-30 saturate-50 blur-md': pendingSession,
+                    'opacity-30 saturate-50 blur-md': statusSession === 'pending',
                   }"
                 >
                   <!-- eslint-disable-next-line vue/no-template-shadow -->
@@ -1009,7 +1009,7 @@ de-DE:
                     <th scope="row">
                       <button
                         class="inline btn btn-ghost btn-xs whitespace-nowrap"
-                        :disabled="pendingSession || session.current"
+                        :disabled="statusSession === 'pending' || session.current"
                         @click="kickSession(id)"
                       >
                         {{ t("session.kick") }}
@@ -1026,7 +1026,7 @@ de-DE:
               <div
                 class="absolute inset-0 flex transition-opacity opacity-0 pointer-events-none transition-filter blur-sm"
                 :class="{
-                  'opacity-100 !blur-none': pendingSession,
+                  'opacity-100 !blur-none': statusSession === 'pending',
                 }"
               >
                 <div class="m-auto loading loading-lg" />
