@@ -19,7 +19,7 @@ const logger = Logger.child({ label: 'user' })
 
 const drizzle = useDrizzle(schema)
 
-export class UserProvider extends BanchoPyUser implements Base<Id, ScoreId> {
+export class UserProvider extends BanchoPyUser {
   private sbDrizzle = drizzle
   logger = logger
   usernamePatterns = [
@@ -163,11 +163,8 @@ export class UserProvider extends BanchoPyUser implements Base<Id, ScoreId> {
     return returnValue
   }
 
-  async getSettings<
-    Excludes extends Partial<Record<keyof Base.ComposableProperties<Id>, boolean>>,
-    _Scope extends Scope = Scope.Public,
-  >(query: { handle: string; excludes?: Excludes; includeHidden?: boolean; scope: _Scope }) {
-    const fullUser = await this.getFull(query)
+  async getSettings(id: Id) {
+    const fullUser = await super.getSettings(id)
     return {
       ...fullUser,
       changeable: {

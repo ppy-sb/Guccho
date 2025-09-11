@@ -577,6 +577,44 @@ class DBUserProvider extends Base<Id, ScoreId> implements Base<Id, ScoreId> {
     return returnValue
   }
 
+  async getSettings(id: Id) {
+    const u = await this.drizzle.query.users.findFirst({
+      where: eq(schema.users.id, id),
+      columns: {
+        ...userCompactFields,
+        email: true,
+        preferredMode: true,
+        userpageContent: true,
+      },
+    }) ?? throwGucchoError(GucchoError.UserNotFound)
+
+    const uu = toUserCompact(u, this.config)
+
+    const isSupporter = uu.roles.includes(UserRole.Supporter)
+    const [mode, ruleset] = fromBanchoPyMode(u.preferredMode)
+    return {
+      id: uu.id,
+      roles: uu.roles,
+      stableClientId: uu.stableClientId,
+      name: uu.name,
+      safeName: uu.safeName,
+      email: u.email,
+      avatarSrc: uu.avatarSrc,
+      flag: uu.flag,
+      preferredMode: {
+        mode, ruleset,
+      },
+      profile: {
+        html: u.userpageContent ?? '',
+      },
+      changeable: {
+        email: true,
+        name: isSupporter,
+        flag: isSupporter,
+      },
+    }
+  }
+
   async changeEmail(user: { id: Id }, newEmail: MailTokenProvider.Email): Promise<Pick<UserOptional, 'email'>> {
     return await this.drizzle.transaction(async (tx) => {
       await tx.update(schema.users)

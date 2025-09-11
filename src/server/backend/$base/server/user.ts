@@ -88,36 +88,22 @@ export abstract class UserProvider<Id, ScoreId> extends IdTransformable {
       ]: UserProvider.ComposableProperties<Id>[K];
     }
   >
-  async getSettings<
-    Excludes extends Partial<
-      Record<keyof UserProvider.ComposableProperties<Id>, boolean>
-    >,
-    _Scope extends Scope = Scope.Public,
-  >(query: {
-    handle: string
-    excludes?: Excludes
-    includeHidden?: boolean
-    scope: _Scope
-  }) {
-    const result = await this.getFull(query) as unknown as UserCompact<Id> & {
-      [K in keyof UserProvider.ComposableProperties<Id> as Excludes[K] extends true
-        ? never
-        : K
-      ]: UserProvider.ComposableProperties<Id>[K];
+  abstract getSettings(id: Id): Promise<{
+    changeable: {
+      email: boolean
+      name: boolean
+      flag: boolean
     }
-    const isSupporter = result.roles.includes(UserRole.Supporter)
-
-    const changeable = {
-      email: true,
-      name: isSupporter,
-      flag: isSupporter,
+    email: string
+    profile: {
+      html: string
+      raw?: ArticleProvider.JSONContent
     }
-
-    return {
-      ...result,
-      changeable,
+    preferredMode: {
+      mode: Mode
+      ruleset: Ruleset
     }
-  }
+  } & UserCompact<Id>>
 
   abstract changeEmail(user: { id: Id }, newEmail: MailTokenProvider.Email): Promise<Pick<UserOptional, 'email'>>
 

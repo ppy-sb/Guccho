@@ -19,12 +19,7 @@ const logger = Logger.child({ label: 'me' })
 
 export const router = _router({
   settings: pUser.query(async ({ ctx }) => {
-    const result = await users.getSettings({
-      handle: ctx.user.id,
-      includeHidden: true,
-      excludes: { statistics: true, relationships: true, secrets: false },
-      scope: Scope.Self,
-    })
+    const result = await users.getSettings(UserProvider.stringToId(ctx.user.id))
 
     return mapId(result, UserProvider.idToString)
   }),
