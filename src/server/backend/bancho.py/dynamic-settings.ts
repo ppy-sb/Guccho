@@ -4,6 +4,9 @@ import * as base from '$base/dynamic-settings'
 import { DynamicSettingStore } from '~/def/user'
 import { Lang } from '~/def'
 
+const baseSettingsExcludeUnicode = Object.fromEntries(
+  Object.entries(base.settings).filter(([key]) => key !== 'intlName')
+) as Omit<typeof base.settings, 'intlName'>
 export const settings = {
   apiKey: defineDynamicUserSetting({
     store: DynamicSettingStore.Server,
@@ -17,5 +20,5 @@ export const settings = {
       },
     },
   }),
-  ...base.settings,
+  ...baseSettingsExcludeUnicode,
 }
