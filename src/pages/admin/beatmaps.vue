@@ -206,45 +206,47 @@ zh-CN:
                     {{ beatmapset.meta.intl.title }}
                   </nuxt-link-locale>
                 </th>
-                <th class="w-0 border-l border-base-300/50 text-nowrap">
-                  {{ beatmapset.maps[0].version }}
-                </th>
-                <th class="w-0 font-mono text-end">
-                  <a
-                    v-if="beatmapset.maps[0].foreignId"
-                    class="text-green-600 link visited:text-violet-500" :href="OsuDirect.link(OsuDirect.Type.Beatmap, beatmapset.maps[0].foreignId)"
-                  >{{ beatmapset.maps[0].id }}</a>
-                  <span v-else>{{ beatmapset.maps[0].id }}</span>
-                </th>
-                <td class="font-mono align-baseline">
-                  <nuxt-link-locale
-                    class="link text-sky-600 visited:text-purple-500"
-                    :to="{ name: 'beatmapset-id', params: { id: beatmapset.id }, query: { mode: query.mode, beatmap: beatmapset.maps[0].md5 } }"
-                  >
-                    {{ beatmapset.maps[0].md5 }}
-                  </nuxt-link-locale>
-                </td>
-                <th class="w-0 font-mono text-end">
-                  {{ beatmapset.maps[0].vote }}
-                </th>
-                <td class="align-baseline">
-                  <div class="form-control">
-                    <select
-                      v-model="beatmapset.maps[0].status"
-                      class="select select-sm"
-                      @change="batchAdd(beatmapset.maps[0])"
+                <app-var v-slot="{ value: firstMap }" :value="beatmapset.maps[0]">
+                  <th class="w-0 border-l border-base-300/50 text-nowrap">
+                    {{ firstMap.version }}
+                  </th>
+                  <th class="w-0 font-mono text-end">
+                    <a
+                      v-if="firstMap.foreignId"
+                      class="text-green-600 link visited:text-violet-500" :href="OsuDirect.link(OsuDirect.Type.Beatmap, firstMap.foreignId)"
+                    >{{ firstMap.id }}</a>
+                    <span v-else>{{ firstMap.id }}</span>
+                  </th>
+                  <td class="font-mono align-baseline">
+                    <nuxt-link-locale
+                      class="link text-sky-600 visited:text-purple-500"
+                      :to="{ name: 'beatmapset-id', params: { id: beatmapset.id }, query: { mode: query.mode, beatmap: firstMap.md5 } }"
                     >
-                      <option
-                        v-for="([key, status]) in rankStatus.entries()"
-                        :key="key"
-                        :selected="status === beatmapset.maps[0].status"
-                        :value="status"
+                      {{ firstMap.md5 }}
+                    </nuxt-link-locale>
+                  </td>
+                  <th class="w-0 font-mono text-end">
+                    {{ firstMap.vote }}
+                  </th>
+                  <td class="align-baseline">
+                    <div class="form-control">
+                      <select
+                        v-model="firstMap.status"
+                        class="select select-sm"
+                        @change="batchAdd(firstMap)"
                       >
-                        {{ key }}
-                      </option>
-                    </select>
-                  </div>
-                </td>
+                        <option
+                          v-for="([key, status]) in rankStatus.entries()"
+                          :key="key"
+                          :selected="status === firstMap.status"
+                          :value="status"
+                        >
+                          {{ key }}
+                        </option>
+                      </select>
+                    </div>
+                  </td>
+                </app-var>
               </tr>
               <template v-for="bm in beatmapset.maps.slice(1)" :key="bm.md5">
                 <tr>

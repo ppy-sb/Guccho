@@ -30,10 +30,6 @@ function haveManiaHitCounts(input: Score): input is typeof input & { hit: ManiaH
 }
 
 const { locale } = useI18n()
-
-const mods = computed(() => {
-  return modControl(props.score.mods)
-})
 </script>
 
 <i18n lang="yaml">
@@ -63,41 +59,47 @@ de-DE:
 </i18n>
 
 <template>
-  <div v-if="beatmapIsVisible(score.beatmap)" class="flex flex-col items-stretch gap-4 md:flex-row">
-    <div class="w-full md:max-w-32 grow">
-      <img :src="score.beatmap.beatmapset.assets.list" class="mx-auto rounded-lg w- 48 md:w-auto">
+  <app-var
+    v-if="beatmapIsVisible(score.beatmap)"
+    v-slot="{ value: { beatmapset, creator, mode, md5, version, properties } }"
+    :value="score.beatmap"
+  >
+    <div class="flex flex-col items-stretch gap-4 md:flex-row">
+      <div class="w-full md:max-w-32 grow">
+        <img :src="beatmapset.assets.list" class="mx-auto rounded-lg w- 48 md:w-auto">
+      </div>
+      <div class="whitespace-pre-wrap">
+        <i18n-t keypath="title" tag="p" class="font-light">
+          <template #title>
+            <nuxt-link-locale
+              :to="{ name: 'beatmapset-id', params: { id: beatmapset.id }, query: { mode } }"
+              class="text-2xl font-semibold g-link-style"
+            >
+              {{ autoLocale(beatmapset.meta).title }}
+            </nuxt-link-locale>
+          </template>
+          <template #artist>
+            <span class="text-xl font-normal">
+              {{ autoLocale(beatmapset.meta).artist }}
+            </span>
+          </template>
+        </i18n-t>
+        <i18n-t keypath="map" tag="p" class="mt-2 font-light">
+          <template #version>
+            <nuxt-link-locale
+              class="text-xl font-semibold g-link-style"
+              :to="{ name: 'beatmapset-id', params: { id: beatmapset.id }, query: { beatmap: md5, mode } }"
+            >
+              {{ version }} (<img src="~/assets/icons/overall-difficulty.png" alt="" class="inline w-6 align-middle color-theme-light-invert">{{ properties.starRate }})
+            </nuxt-link-locale>
+          </template>
+          <template #creator>
+            <span class="text-lg font-semibold">{{ creator }}</span>
+          </template>
+        </i18n-t>
+      </div>
     </div>
-    <div class="whitespace-pre-wrap">
-      <i18n-t keypath="title" tag="p" class="font-light">
-        <template #title>
-          <nuxt-link-locale
-            :to="{ name: 'beatmapset-id', params: { id: score.beatmap.beatmapset.id }, query: { mode: score.mode } }"
-            class="text-2xl font-semibold g-link-style"
-          >
-            {{ autoLocale(score.beatmap.beatmapset.meta).title }}
-          </nuxt-link-locale>
-        </template>
-        <template #artist>
-          <span class="text-xl font-normal">
-            {{ autoLocale(score.beatmap.beatmapset.meta).artist }}
-          </span>
-        </template>
-      </i18n-t>
-      <i18n-t keypath="map" tag="p" class="mt-2 font-light">
-        <template #version>
-          <nuxt-link-locale
-            class="text-xl font-semibold g-link-style"
-            :to="{ name: 'beatmapset-id', params: { id: score.beatmap.beatmapset.id }, query: { beatmap: score.beatmap.md5, mode: score.mode } }"
-          >
-            {{ score.beatmap.version }} (<img src="~/assets/icons/overall-difficulty.png" alt="" class="inline w-6 align-middle color-theme-light-invert">{{ score.beatmap.properties.starRate }})
-          </nuxt-link-locale>
-        </template>
-        <template #creator>
-          <span class="text-lg font-semibold">{{ score.beatmap.creator }}</span>
-        </template>
-      </i18n-t>
-    </div>
-  </div>
+  </app-var>
   <i18n-t keypath="play" tag="div" class="items-center inline font-light gap-x-1">
     <template #player>
       <nuxt-link-locale
@@ -138,9 +140,18 @@ de-DE:
         <div class="mx-auto text-8xl">
           {{ score.grade }}
         </div>
-        <span v-if="score.mods.length" class="block mt-2 space-x-4 lg:mt-8 tooltip tooltip-primary" :data-tip="mods.map(m => StableMod[m]).join(', ')">
-          <app-mod v-for="mod in mods" :key="mod" :mod="mod" class="w-8 h-8 opacity-80" />
-        </span>
+        <app-var
+          v-if="score.mods.length"
+          v-slot="{ value: mods }"
+          :value="modControl(score.mods)"
+        >
+          <span
+            class="block mt-2 space-x-4 lg:mt-8 tooltip tooltip-primary"
+            :data-tip="mods.map(m => StableMod[m]).join(', ')"
+          >
+            <app-mod v-for="mod in mods" :key="mod" :mod="mod" class="w-8 h-8 opacity-80" />
+          </span>
+        </app-var>
         <div class="mb-auto" />
       </div>
     </div>
