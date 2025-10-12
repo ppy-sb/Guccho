@@ -1,7 +1,7 @@
 // keep relative imports for drizzle-kit
 import { relations } from 'drizzle-orm'
 import { bigint, boolean, date, datetime, foreignKey, index, int, json, mysqlEnum, mysqlTable, primaryKey, text, timestamp, varchar } from 'drizzle-orm/mysql-core'
-import { clans, scores, users } from '../../bancho.py/drizzle/schema'
+import { scoresRelations as _scoreRelation, beatmaps, clans, scores, users } from '../../bancho.py/drizzle/schema'
 import { Requirement } from '../../../../def/dan'
 import { type ObjValueTuple } from '../../../../def/good-to-have'
 
@@ -14,7 +14,7 @@ export {
   logs,
   mail, mailRelations, mapRequests, mapsRelations, performanceReports,
   ratings, relationships,
-  scores, scoresRelations, sources, sourcesRelations, startups,
+  scores, sources, sourcesRelations, startups,
   stats, statsRelations, tourneyPoolMaps, tourneyPools, userAchievements,
   users, usersAchievementsRelations,
 } from '../../bancho.py/drizzle/schema'
@@ -154,6 +154,12 @@ export const patcherScoresMeta = mysqlTable('sb_patcher_scores_meta', {
   v: varchar('v', { length: 16 }),
   raw: json('raw').$defaultFn(() => ({})),
 })
+
+export const scoresRelations = relations(scores, ({ one }) => ({
+  user: one(users, { fields: [scores.userId], references: [users.id] }),
+  beatmap: one(beatmaps, { fields: [scores.mapMd5], references: [beatmaps.md5] }),
+  patcherMeta: one(patcherScoresMeta, { fields: [scores.id], references: [patcherScoresMeta.id] }),
+}))
 
 export const userpagesRelations = relations(userpages, ({ one }) => ({
   user: one(users, { fields: [userpages.userId], references: [users.id] }),
