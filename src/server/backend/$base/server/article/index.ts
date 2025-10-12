@@ -71,15 +71,15 @@ export abstract class ArticleProvider {
 
   createTrySlugs(slug: ArticleProvider.Slug, locale: Lang) {
     return [
-      `${slug}/${locale}`,
-      `${slug}/${Lang.enGB}`,
+      `${ArticleProvider.packPath(slug)}/${locale}` as ArticleProvider.Slug,
+      `${ArticleProvider.packPath(slug)}/${Lang.enGB}` as ArticleProvider.Slug,
       slug,
     ] as ArticleProvider.Slug[]
   }
 
   static mapLangSlugs(slug: ArticleProvider.Slug) {
     return [
-      ...Object.values(Lang).map(lang => `${slug}/${lang}`),
+      ...Object.values(Lang).map(lang => `${ArticleProvider.packPath(slug)}/${lang}` as ArticleProvider.Slug),
       slug,
     ] as ArticleProvider.Slug[]
   }
@@ -92,6 +92,7 @@ export abstract class ArticleProvider {
   }): Promise<ArticleProvider.Core | undefined> {
     try {
       for (const subPath of this.createTrySlugs(opt.slug, opt.lang)) {
+        console.warn('try', subPath)
         const content = await this.getLocalArticle({ subPath, lang: opt.lang })
         if (content) {
           return content
@@ -329,6 +330,11 @@ export abstract class ArticleProvider {
 
   static toPath(slug: ArticleProvider.Slug): ArticleProvider.Path {
     return join(ArticleProvider.articles, slug) as ArticleProvider.Path
+  }
+
+  static packPath(slug: ArticleProvider.Slug) {
+    return `${slug}.gal` as ArticleProvider.Path
+    // gal = Guccho Article Localized
   }
 }
 
