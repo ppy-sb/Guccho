@@ -891,6 +891,10 @@ export class DanProvider extends Base<Id, ScoreId> {
       // 5. Return the updated dan object
       const newDan = await this.get(id, tx)
 
+      if (this.processor instanceof CacheSyncedDanProcessor) {
+        this.processor.onDanUpdated(newDan)
+      }
+
       // 5.1 run cond and save scores
       if (this.processor instanceof CacheSyncedDanProcessor) {
         await this.processor.recalcProvidedDan({ dan: newDan }, tx)

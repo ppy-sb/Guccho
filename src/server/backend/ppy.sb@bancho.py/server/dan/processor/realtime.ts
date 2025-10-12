@@ -1,24 +1,26 @@
 import MySQLEvents, { type DeleteEvent, type InsertEvent, type UpdateEvent } from '@rodrigogs/mysql-events'
-import { type InferSelectModel, inArray } from 'drizzle-orm'
-import { UserProvider } from '../../user'
+import { type InferSelectModel, eq, inArray } from 'drizzle-orm'
 import { MapProvider, ScoreProvider } from '../..'
-import { CacheSyncedDanProcessor } from './$sync'
-import { type TransformedUsecase, transformUsecase as compileDan } from '~/common/utils/dan'
+import { UserProvider } from '../../user'
+import { CacheSyncedDanProcessor, wait } from './$sync'
+import { transformUsecase as compileDan } from '~/common/utils/dan'
 import { type AbnormalStatus, type NormalBeatmapWithMeta, RankingStatus } from '~/def/beatmap'
-import { type Cond, type Dan, type Requirement, type RequirementCondBinding } from '~/def/dan'
+import { type Requirement } from '~/def/dan'
 import { watchTable } from '~/server/backend/bancho.py/server/event-sources/db'
 import { fromBanchoPyMode, toScore } from '~/server/backend/bancho.py/transforms'
 import { type Id } from '~/server/backend/ppy.sb@bancho.py'
 import * as schema from '~/server/backend/ppy.sb@bancho.py/drizzle/schema'
 
 export class RealtimeDanProcessor extends CacheSyncedDanProcessor implements CacheSyncedDanProcessor {
+  watchBindingsDeletion = watchTable(schema.requirementCondBindings, MySQLEvents.STATEMENTS.DELETE, this.onCondBindingDeleted.bind(this))
+  watchBindingsInserted = watchTable(schema.requirementCondBindings, MySQLEvents.STATEMENTS.INSERT, this.onCondBindingUpserted.bind(this))
+  watchBindingsUpdated = watchTable(schema.requirementCondBindings, MySQLEvents.STATEMENTS.UPDATE, this.onCondBindingUpserted.bind(this))
+  watchDanCondChanges = watchTable(schema.danConds, MySQLEvents.STATEMENTS.UPDATE, this.onCondUpdated.bind(this))
   watchers: Array<ReturnType<typeof watchTable>> = []
 
-  pipelines = new Map<Dan, TransformedUsecase<RequirementCondBinding<Requirement, Cond>>>()
-
   async init() {
+    this.logger.warn('Realtime Dan processor is EXPERIMENTAL and may have bugs! Use at your own risk.')
     await super.init()
-    this.rebuildDanPipelines()
 
     this.watchers = [
       watchTable(schema.scores, MySQLEvents.STATEMENTS.INSERT, this.onScoreSubmitted.bind(this)),
@@ -31,9 +33,8 @@ export class RealtimeDanProcessor extends CacheSyncedDanProcessor implements Cac
       .map(item => item.after)
       .filter(item => item.grade !== 'F')
 
-    this.logger.debug({
-      message: `received full scores: ${scores.map(item => item.id).join(', ')}`,
-    })
+    // PRAY for patcher meta saved, since bpy submitModular is NOT USING A TRANSACTION !!!
+    await wait(2000)
 
     const [beatmaps, users, patcherScoresMeta] = await Promise.all([
       this.dp.drizzle.query.beatmaps.findMany({
@@ -57,8 +58,6 @@ export class RealtimeDanProcessor extends CacheSyncedDanProcessor implements Cac
           noPause: true,
         },
       }),
-      // PRAY for patcher meta saved, since bpy submitModular is NOT USING A TRANSACTION !!!
-      await wait(2000),
     ])
 
     const inserting: {
@@ -129,39 +128,77 @@ export class RealtimeDanProcessor extends CacheSyncedDanProcessor implements Cac
   }
 
   async onCondUpdated(row: UpdateEvent<InferSelectModel<typeof schema.danConds>>) {
-    await super.onCondUpdated(row)
+    this.logger.debug('detected dan cond update, syncing')
+    await this.dp.drizzle.transaction(async (tx) => {
+      const condsRoot = this.virtualTableDanTreeSimpleAlias('r')
+      const condsAfter = row.affectedRows.map(item => item.after)
+
+      const newDanIds = await tx.selectDistinct({
+        id: schema.dans.id,
+      })
+        .from(schema.dans)
+        .innerJoin(schema.requirementCondBindings, eq(schema.requirementCondBindings.danId, schema.dans.id))
+        .innerJoin(condsRoot.aliasedTable, eq(condsRoot.column.root, schema.requirementCondBindings.condId))
+        .where(inArray(condsRoot.column.id, condsAfter.map(item => item.id)))
+
+      const q = this.dp._internal_queryDan()
+      const { sql, table } = q
+
+      const dans = await sql.where(inArray(table.dans.id, newDanIds.map(item => item.id)))
+
+      for (const dan of dans) {
+        this.dans.set(dan.id, this.dp._internal_fromRowToDan(dan))
+      }
+      this.logger.debug(`synced dans: ${dans.map(item => item.id).join(', ')}`)
+    })
     this.rebuildDanPipelines()
   }
 
   onCondBindingDeleted(row: DeleteEvent<InferSelectModel<typeof schema.requirementCondBindings>>) {
-    super.onCondBindingDeleted(row)
+    this.logger.debug('detected dan cond delete, removing from cache')
+    const deleted = row.affectedRows.map(item => item.before.danId)
+
+    for (const danId of deleted) {
+      this.dans.delete(danId)
+    }
+
+    this.logger.debug(`removed from cache: ${deleted.join(', ')}`)
+
     this.rebuildDanPipelines()
   }
 
   async onCondBindingUpserted(row: InsertEvent<InferSelectModel<typeof schema.requirementCondBindings>> | UpdateEvent<InferSelectModel<typeof schema.requirementCondBindings>>) {
-    await super.onCondBindingUpserted(row)
-    this.rebuildDanPipelines()
-  }
+    this.logger.debug('detected dan cond binding upserted, syncing')
+    await this.dp.drizzle.transaction(async (tx) => {
+      const ids = row.affectedRows.map(item => item.after.danId)
+      const dan = await tx.query.dans.findMany({
+        where: inArray(schema.dans.id, ids),
+        with: {
+          requirements: {
+            columns: {
+              type: true,
+              condId: true,
+            },
+          },
+        },
+      })
 
-  rebuildDanPipelines() {
-    this.logger.debug({
-      message: 'compiling dan pipelines...',
-    })
-    for (const [_, dan] of this.dans) {
-      if (this.pipelines.has(dan)) {
-        continue
+      for (const d of dan) {
+        this.dans.set(d.id, await this.dp.getDanWithRequirements(d, tx))
       }
-      this.pipelines.set(dan, compileDan(dan))
-    }
+
+      this.logger.debug(`synced dans: ${dan.map(item => item.id).join(', ')}`)
+    })
+
+    this.rebuildDanPipelines()
   }
 
   async dispose() {
     this.watchers.forEach(item => item.dispose())
+    this.watchBindingsDeletion.dispose()
+    this.watchDanCondChanges.dispose()
     super.dispose()
   }
-}
-function wait(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms))
 }
 function zipById<A extends { id: any }, B extends { id: any }>(lA: A[], lB: B[]): [A, B | undefined][] {
   return lA.map((a) => {
