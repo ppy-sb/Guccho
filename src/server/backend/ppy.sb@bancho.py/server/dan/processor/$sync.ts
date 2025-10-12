@@ -1,23 +1,21 @@
-import MySQLEvents, { type DeleteEvent, type InsertEvent, type UpdateEvent } from '@rodrigogs/mysql-events'
-import { type InferSelectModel, and, eq, getTableName, gt, inArray, isNull, sql } from 'drizzle-orm'
-import { type MySql2Database } from 'drizzle-orm/mysql2'
-import { type DanProvider } from '../../../../$base/server'
+import { type ExtractTablesWithRelations, and, eq, getTableName, gt, isNull, sql } from 'drizzle-orm'
+import { type MySql2Database, type MySql2PreparedQueryHKT, type MySql2QueryResultHKT } from 'drizzle-orm/mysql2'
+import { type MySqlTransaction } from 'drizzle-orm/mysql-core'
 import { danSQLChunks } from '../../../utils/sql-dan'
 import { BaseDanProcessor } from './$base'
-import { type Cond, type DatabaseDan, type DatabaseRequirementCondBinding, type Requirement } from '~/def/dan'
+import { type DanProvider } from '$base/server'
+import { type TransformedUsecase, transformUsecase as compileDan } from '~/common/utils/dan'
+import { type Cond, type Dan, type DatabaseDan, type DatabaseRequirementCondBinding, type Requirement, type RequirementCondBinding } from '~/def/dan'
 import { type Id, type ScoreId } from '~/server/backend/bancho.py'
 import { BanchoPyScoreStatus } from '~/server/backend/bancho.py/enums'
-import { watchTable } from '~/server/backend/bancho.py/server/event-sources/db'
 import * as schema from '~/server/backend/ppy.sb@bancho.py/drizzle/schema'
 
 type Database = MySql2Database<typeof schema>
 
 export class CacheSyncedDanProcessor extends BaseDanProcessor<Id, ScoreId> {
-  watchBindingsDeletion = watchTable(schema.requirementCondBindings, MySQLEvents.STATEMENTS.DELETE, this.onCondBindingDeleted.bind(this))
-  watchBindingsInserted = watchTable(schema.requirementCondBindings, MySQLEvents.STATEMENTS.INSERT, this.onCondBindingUpserted.bind(this))
-  watchBindingsUpdated = watchTable(schema.requirementCondBindings, MySQLEvents.STATEMENTS.UPDATE, this.onCondBindingUpserted.bind(this))
-  watchDanCondChanges = watchTable(schema.danConds, MySQLEvents.STATEMENTS.UPDATE, this.onCondUpdated.bind(this))
   dans = new Map<Id, DatabaseDan<Id, DatabaseRequirementCondBinding<Id, Requirement, Cond>>>()
+
+  pipelines = new Map<Dan, TransformedUsecase<RequirementCondBinding<Requirement, Cond>>>()
 
   async init() {
     const dans = await this.dp.exportAll()
@@ -26,6 +24,7 @@ export class CacheSyncedDanProcessor extends BaseDanProcessor<Id, ScoreId> {
     }
 
     this.logger.debug(`initialized ${this.dans.size} dan cache(s)`)
+    this.rebuildDanPipelines()
   }
 
   #danTreeFullSimple = /* sql */`
@@ -73,65 +72,16 @@ FROM
     } as const
   }
 
-  async onCondUpdated(row: UpdateEvent<InferSelectModel<typeof schema.danConds>>) {
-    this.logger.debug('detected dan cond update, syncing')
-    await this.dp.drizzle.transaction(async (tx) => {
-      const condsRoot = this.virtualTableDanTreeSimpleAlias('r')
-      const condsAfter = row.affectedRows.map(item => item.after)
-
-      const newDanIds = await tx.selectDistinct({
-        id: schema.dans.id,
-      })
-        .from(schema.dans)
-        .innerJoin(schema.requirementCondBindings, eq(schema.requirementCondBindings.danId, schema.dans.id))
-        .innerJoin(condsRoot.aliasedTable, eq(condsRoot.column.root, schema.requirementCondBindings.condId))
-        .where(inArray(condsRoot.column.id, condsAfter.map(item => item.id)))
-
-      const q = this.dp._internal_queryDan()
-      const { sql, table } = q
-
-      const dans = await sql.where(inArray(table.dans.id, newDanIds.map(item => item.id)))
-
-      for (const dan of dans) {
-        this.dans.set(dan.id, this.dp._internal_fromRowToDan(dan))
-      }
-      this.logger.debug(`synced dans: ${dans.map(item => item.id).join(', ')}`)
+  rebuildDanPipelines() {
+    this.logger.debug({
+      message: 'compiling dan pipelines...',
     })
-  }
-
-  onCondBindingDeleted(row: DeleteEvent<InferSelectModel<typeof schema.requirementCondBindings>>) {
-    this.logger.debug('detected dan cond delete, removing from cache')
-    const deleted = row.affectedRows.map(item => item.before.danId)
-
-    for (const danId of deleted) {
-      this.dans.delete(danId)
+    for (const [_, dan] of this.dans) {
+      if (this.pipelines.has(dan)) {
+        continue
+      }
+      this.pipelines.set(dan, compileDan(dan))
     }
-
-    this.logger.debug(`removed from cache: ${deleted.join(', ')}`)
-  }
-
-  async onCondBindingUpserted(row: InsertEvent<InferSelectModel<typeof schema.requirementCondBindings>> | UpdateEvent<InferSelectModel<typeof schema.requirementCondBindings>>) {
-    this.logger.debug('detected dan cond binding upserted, syncing')
-    await this.dp.drizzle.transaction(async (tx) => {
-      const ids = row.affectedRows.map(item => item.after.danId)
-      const dan = await tx.query.dans.findMany({
-        where: inArray(schema.dans.id, ids),
-        with: {
-          requirements: {
-            columns: {
-              type: true,
-              condId: true,
-            },
-          },
-        },
-      })
-
-      for (const d of dan) {
-        this.dans.set(d.id, await this.dp.getDanWithRequirements(d, tx))
-      }
-
-      this.logger.debug(`synced dans: ${dan.map(item => item.id).join(', ')}`)
-    })
   }
 
   async dbRunAll() {
@@ -237,13 +187,25 @@ FROM
   }
 
   async dispose() {
-    this.watchBindingsDeletion.dispose()
-    this.watchDanCondChanges.dispose()
   }
 
-  getTx(db: typeof this.dp.drizzle) {
-    return new Promise<Database>(resolve => db.transaction(async tx => resolve(tx)))
+  getTx(db: typeof this.dp.drizzle): Promise<CacheSyncedDanProcessor.TX> {
+    return new Promise(resolve => db.transaction(async tx => resolve(tx)))
   }
+
+  onDanUpdated(dan: DatabaseDan<Id, DatabaseRequirementCondBinding<Id, Requirement, Cond>>) {
+    this.logger.debug('dan updated, updating cache and pipeline')
+    this.dans.set(dan.id, dan)
+    this.pipelines.set(dan, compileDan(dan))
+  }
+}
+
+export namespace CacheSyncedDanProcessor {
+  export type TX = MySqlTransaction<MySql2QueryResultHKT, MySql2PreparedQueryHKT, typeof schema, ExtractTablesWithRelations<typeof schema>>
+}
+
+export function wait(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms))
 }
 
 type QB = ReturnType<InstanceType<typeof CacheSyncedDanProcessor>['recalcQB']>
