@@ -161,8 +161,8 @@ const { data: scoreMetrics, status: scoreMetricsStatus } = await app.$client.adm
           </div>
           <div class="stat-desc">
             <template v-if="mapMetrics.count.new">
-              <span v-if="mapMetrics.count.new > 0" class="text-xs text-success">+ {{ mapMetrics.count.new.toLocaleString() }} new users</span>
-              <span v-else-if="mapMetrics.count.new < 0" class="text-xs text-warning">- {{ Math.abs(mapMetrics.count.new).toLocaleString() }} users</span>
+              <span v-if="mapMetrics.count.new > 0" class="text-xs text-success">+ {{ mapMetrics.count.new.toLocaleString() }} new maps</span>
+              <span v-else-if="mapMetrics.count.new < 0" class="text-xs text-warning">- {{ Math.abs(mapMetrics.count.new).toLocaleString() }} maps</span>
             </template>
             <span v-else class="text-xs opacity-60">All maps in database</span>
           </div>

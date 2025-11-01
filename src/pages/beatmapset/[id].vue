@@ -205,9 +205,9 @@ zh-CN:
     placement: "曲名:{title} \n 艺术家:{artist}"
     external-links: 其它链接
     direct-downloads: 直接下载
-    creator: 铺师
+    creator: 谱师
     status: 状态
-    beatmap-id: 铺面 ID
+    beatmap-id: 谱面 ID
     source-id: 来源 | ID
     last-update: 上次更新时间
     star-rating: 难度星级
