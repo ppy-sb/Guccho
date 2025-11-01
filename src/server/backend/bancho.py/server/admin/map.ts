@@ -188,6 +188,11 @@ export class AdminMapProvider extends Base<Id, Id> implements Base<Id, Id> {
           break
         }
         case (exact([BanchoPyRankedStatus.Qualified, BanchoPyRankedStatus.Approved])):
+        {
+          update.status = newStatus
+          shouldClearRequests = true
+          break
+        }
         case (exact([BanchoPyRankedStatus.Qualified, BanchoPyRankedStatus.Loved])):
         case (exact([BanchoPyRankedStatus.Ranked, BanchoPyRankedStatus.Pending])):
         case (exact([BanchoPyRankedStatus.Approved, BanchoPyRankedStatus.Pending])):
