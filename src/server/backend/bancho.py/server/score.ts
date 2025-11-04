@@ -99,7 +99,7 @@ export class ScoreProvider implements Base<bigint, Id> {
 
           eq(schema.scores.mode, toBanchoPyMode(mode, ruleset)),
         )
-      ).$dynamic()
+      )
   }
 
   async findOne(opt: Omit<Base.SearchQuery<Id>, 'rankingSystem'>) {

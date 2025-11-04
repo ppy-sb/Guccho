@@ -1,5 +1,5 @@
 import { TRPCError } from '@trpc/server'
-import { and, eq, or } from 'drizzle-orm'
+import { type SQL, and, eq, or } from 'drizzle-orm'
 import type { Id, ScoreId } from '../..'
 import { useDrizzle, userPriv } from '../../../bancho.py/server/source/drizzle'
 import { FilterType } from '../../../bancho.py/server/user'
@@ -104,8 +104,24 @@ export class UserProvider extends BanchoPyUser {
   async getFull<Excludes extends Partial<Record<keyof Base.ComposableProperties<Id>, boolean>>>({ handle, excludes, includeHidden, scope }: { handle: string; excludes?: Excludes; includeHidden?: boolean; scope?: Scope }) {
     const userId = +handle
     const isNumber = !Number.isNaN(userId)
+    const isSafeName = handle.startsWith('@')
 
-    const [_res] = await this.sbDrizzle.select({
+    const qW: Array<SQL | undefined> = []
+
+    if (isSafeName) {
+      qW.push(eq(schema.users.safeName, handle.slice(1)))
+    }
+    else if (isNumber) {
+      qW.push(eq(schema.users.id, userId))
+    }
+    else {
+      qW.push(or(
+        eq(schema.users.name, handle),
+        eq(schema.users.safeName, handle),
+      ))
+    }
+
+    const [{ user, clan, profile } = throwGucchoError(GucchoError.UserNotFound)] = await this.sbDrizzle.select({
       user: schema.users,
       clan: schema.clans,
       profile: schema.userpages,
@@ -114,17 +130,10 @@ export class UserProvider extends BanchoPyUser {
       .leftJoin(schema.userpages, eq(schema.users.id, schema.userpages.userId))
       .where(
         and(
-          or(
-            isNumber ? eq(schema.users.id, userId) : undefined,
-            eq(schema.users.name, handle),
-            eq(schema.users.safeName, handle),
-            handle.startsWith('@') ? eq(schema.users.safeName, handle.slice(1)) : undefined,
-          ),
+          ...qW,
           (includeHidden || scope === Scope.Self) ? undefined : userPriv(schema.users)
         )
       ).limit(1)
-
-    const { user, clan, profile } = _res ?? throwGucchoError(GucchoError.UserNotFound)
 
     const fullUser = toFullUser(user, this.config)
     const [mode, ruleset] = fromBanchoPyMode(user.preferredMode)

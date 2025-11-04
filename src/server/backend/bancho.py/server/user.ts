@@ -4,7 +4,7 @@ import { isAbsolute, join, resolve, sep } from 'node:path'
 import { type QueryError } from 'mysql2'
 import imageType from 'image-type'
 import { glob } from 'glob'
-import { aliasedTable, and, desc, eq, inArray, like, or, sql } from 'drizzle-orm'
+import { type SQL, aliasedTable, and, desc, eq, inArray, like, or, sql } from 'drizzle-orm'
 import { TRPCError } from '@trpc/server'
 import type { Id, ScoreId } from '..'
 import { getLiveUserStatus } from '../api-client'
@@ -505,31 +505,32 @@ class DBUserProvider extends Base<Id, ScoreId> implements Base<Id, ScoreId> {
     const isNumber = !Number.isNaN(userId)
     const isSafeName = handle.startsWith('@')
 
-    let q = this.drizzle.select({
+    const qwc: Array<SQL | undefined> = []
+
+    if (isSafeName) {
+      qwc.push(eq(schema.users.safeName, handle.slice(1)))
+    }
+    else if (isNumber) {
+      qwc.push(eq(schema.users.id, userId))
+    }
+    else {
+      qwc.push(or(
+        eq(schema.users.name, handle),
+        eq(schema.users.safeName, handle),
+      ))
+    }
+
+    const [{ user, clan } = throwGucchoError(GucchoError.UserNotFound)] = await this.drizzle.select({
       user: schema.users,
       clan: schema.clans,
     }).from(schema.users)
       .leftJoin(schema.clans, eq(schema.users.clanId, schema.clans.id))
-      .$dynamic()
-
-    if (isSafeName) {
-      q = q.where(eq(schema.users.safeName, handle.slice(1)))
-    }
-    else if (isNumber) {
-      q = q.where(eq(schema.users.id, userId))
-    }
-    else {
-      q = q.where(
-        or(
-          eq(schema.users.name, handle),
-          eq(schema.users.safeName, handle),
+      .where(
+        and(
+          ...qwc,
+          (includeHidden || scope === Scope.Self) ? undefined : userPriv(schema.users)
         )
-      )
-    }
-
-    const [{ user, clan } = throwGucchoError(GucchoError.UserNotFound)] = await q
-      .where((includeHidden || scope === Scope.Self) ? undefined : userPriv(schema.users))
-      .limit(1)
+      ).limit(1)
 
     const returnValue = toFullUser(user, this.config) as NonNullable<Awaited<ReturnType<Base<Id, ScoreId>['getFull']>>>
     const [mode, ruleset] = fromBanchoPyMode(user.preferredMode)
