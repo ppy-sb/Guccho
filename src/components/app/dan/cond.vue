@@ -8,7 +8,6 @@ import {
   Requirement,
   type WrappedCond,
 } from '~/def/dan'
-import { modes, rulesets } from '~/def'
 
 withDefaults(defineProps<{
   listMode?: boolean
@@ -18,6 +17,9 @@ withDefaults(defineProps<{
 const emit = defineEmits<{
   (e: 'delete'): void
 }>()
+
+const { supportedRulesets: rulesets, supportedModes: modes } = useAdapterConfig()
+
 const cond = defineModel<Cond>()
 
 interface Translation {
