@@ -1,3 +1,4 @@
+import useAdapterConfig from './useAdapterConfig' // do no remove, server side will not auto import it
 import { Rank } from '~/def'
 
 const ranks = [Rank.PPv1, Rank.PPv2, Rank.Score, Rank.RankedScore, Rank.TotalScore]

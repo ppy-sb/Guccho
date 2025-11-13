@@ -166,8 +166,19 @@ export class UserProvider extends BanchoPyUser {
 
   async getSettings(id: Id) {
     const fullUser = await super.getSettings(id)
+    const userpage = await this.sbDrizzle.query.userpages.findFirst({
+      where: eq(schema.userpages.userId, id),
+      columns: {
+        html: true,
+        raw: true,
+      },
+    })
     return {
       ...fullUser,
+      profile: {
+        html: userpage?.html || '',
+        raw: JSON.parse(userpage?.raw || '{}'),
+      },
       changeable: {
         email: true,
         name: true,

@@ -46,7 +46,7 @@ export const router = _router({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const result = await users.changeUserpage?.(mapId(ctx.user, UserProvider.stringToId), {
+      const result = await users.changeUserpage(mapId(ctx.user, UserProvider.stringToId), {
         profile: input.profile,
       })
       logger.info(`user ${ctx.user.safeName}<${ctx.user.id}> updated user page.`, { user: pick(ctx.user, ['id', 'name']) })
