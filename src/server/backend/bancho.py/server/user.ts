@@ -288,8 +288,8 @@ class DBUserProvider extends Base<Id, ScoreId> implements Base<Id, ScoreId> {
       .orderBy(({ score }) => rankingSystem === Rank.PPv2
         ? desc(score.pp)
         : (rankingSystem === Rank.RankedScore || rankingSystem === Rank.TotalScore)
-            ? desc(score.score)
-            : raiseError('unknown ranking system')
+          ? desc(score.score)
+          : raiseError('unknown ranking system')
       )
       .offset(start)
       .limit(perPage)
@@ -461,6 +461,12 @@ class DBUserProvider extends Base<Id, ScoreId> implements Base<Id, ScoreId> {
       })
         .from(schema.stats)
         .innerJoin(schema.users, eq(schema.users.id, schema.stats.id))
+        .where(
+          and(
+            userPriv(schema.users),
+            eq(schema.stats.mode, toBanchoPyMode(mode, ruleset)),
+          )
+        )
     )
 
     const s2 = aliasedTable(schema.stats, 's2')
