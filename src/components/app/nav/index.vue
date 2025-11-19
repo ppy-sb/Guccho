@@ -37,9 +37,10 @@ function clearFocus() {
     :class="[detached && 'detached']"
   >
     <div
-      class="navbar snow transition-[border-radius]" :class="[
+      class="navbar transition-[border-radius] snow snow-left snow-right" :class="[
         shownMenu.left && 'navbar-tint',
         shownMenu.user && 'navbar-tint',
+        detached && 'snow-show',
       ]"
     >
       <div class="self-start -navbar-start me-auto">

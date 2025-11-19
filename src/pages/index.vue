@@ -50,7 +50,7 @@ de-DE:
       <div class="grid grid-cols-2 gap-2 justify-center">
         <template v-if="session.$state.loggedIn">
           <t-nuxt-link-button
-            class="btn-shadow"
+            class="btn-shadow relative snow snow-show snow-left"
             :to="{
               name: 'user-handle',
               params: { handle: session.$state.userId! },
@@ -59,15 +59,15 @@ de-DE:
           >
             {{ t('to-userpage') }}
           </t-nuxt-link-button>
-          <t-nuxt-link-button class="btn-shadow" :to="{ name: 'me-settings' }" variant="secondary">
+          <t-nuxt-link-button class="btn-shadow relative snow snow-show snow-right" :to="{ name: 'me-settings' }" variant="secondary">
             {{ $t('title.settings').toLocaleLowerCase() }}
           </t-nuxt-link-button>
         </template>
         <template v-else>
-          <t-nuxt-link-button class="btn-shadow" :to="{ name: 'auth-login' }" variant="primary">
+          <t-nuxt-link-button class="btn-shadow relative snow snow-show snow-left" :to="{ name: 'auth-login' }" variant="primary">
             {{ $t('global.login') }}
           </t-nuxt-link-button>
-          <t-nuxt-link-button class="btn-shadow" :to="{ name: 'auth-register' }" variant="secondary">
+          <t-nuxt-link-button class="btn-shadow relative snow snow-show snow-right" :to="{ name: 'auth-register' }" variant="secondary">
             {{ $t('global.register') }}
           </t-nuxt-link-button>
         </template>
@@ -75,9 +75,11 @@ de-DE:
     </div>
 
     <div class="hidden mascot lg:block">
-      <nuxt-picture defer format="webp,avif" src="/mascot/IMG_0471.png" :img-attrs="{
-        style: 'max-height: 70vmin',
-      }" alt="riru Mascot" />
+      <nuxt-picture
+        defer format="webp,avif" src="/mascot/IMG_0471.png" :img-attrs="{
+          style: 'max-height: 70vmin',
+        }" alt="riru Mascot"
+      />
     </div>
   </div>
 </template>

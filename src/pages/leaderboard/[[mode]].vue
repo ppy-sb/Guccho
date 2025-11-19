@@ -241,7 +241,7 @@ de-DE:
           {{ t("no-score-alt") }}
         </h2>
       </div>
-      <div v-if="totalPages > 1" class="mx-auto mt-4 join outline outline-2">
+      <div v-if="totalPages > 1" class="mx-auto mt-4 join outline outline-2 relative snow snow-show snow-middle">
         <a
           v-for="i in totalPages"
           :key="`pagination-${i}`"
