@@ -288,8 +288,8 @@ class DBUserProvider extends Base<Id, ScoreId> implements Base<Id, ScoreId> {
       .orderBy(({ score }) => rankingSystem === Rank.PPv2
         ? desc(score.pp)
         : (rankingSystem === Rank.RankedScore || rankingSystem === Rank.TotalScore)
-          ? desc(score.score)
-          : raiseError('unknown ranking system')
+            ? desc(score.score)
+            : raiseError('unknown ranking system')
       )
       .offset(start)
       .limit(perPage)
@@ -298,11 +298,7 @@ class DBUserProvider extends Base<Id, ScoreId> implements Base<Id, ScoreId> {
       scores: result,
       rankingSystem,
       mode,
-    }).map(score =>
-      Object.assign(score, {
-        id: score.id.toString(),
-      }),
-    )
+    })
   }
 
   async getTops<M extends ActiveMode, RS extends LeaderboardRankingSystem>(opt: Base.BaseQuery<Id, M, ActiveRuleset, RS>) {
