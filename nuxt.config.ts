@@ -167,9 +167,7 @@ export default defineNuxtConfig({
   },
 
   devtools: {
-    timeline: {
-      enabled: true,
-    },
+    enabled: false,
   },
 
   nitro: {
