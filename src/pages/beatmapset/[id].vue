@@ -697,7 +697,7 @@ de-DE:
     }
 
     100% {
-      filter: opacity(1) contrast(0.5) brightness(0.5) blur(3em);
+      filter: opacity(0.2) contrast(0.5) brightness(0.5) blur(3em);
     }
   }
 }

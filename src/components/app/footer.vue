@@ -18,7 +18,7 @@ const { iconLinks, footerLink, brand } = runtime.public as unknown as { iconLink
             </span>
           </nuxt-link-locale>
         </div>
-        <div v-if="footerLink" class="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
+        <div v-if="footerLink" class="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-auto">
           <template v-for="(col, nm) in footerLink" :key="nm">
             <div v-if="col?.length">
               <h2 class="mb-6 text-sm font-semibold uppercase text-gbase-900 dark:text-white">

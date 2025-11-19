@@ -35,7 +35,7 @@ function getScrollPercent() {
 
 <template>
   <nuxt-loading-indicator />
-  <div id="app-drawer" class="drawer flex flex-col min-h-[100dvh] relative">
+  <div id="app-drawer" class="drawer flex flex-col min-h-[100dvh] relative" data-theme="guccho-dark">
     <app-nav />
     <input id="app-drawer-toggle" type="checkbox" class="drawer-toggle">
     <!-- Page content here -->
@@ -79,11 +79,11 @@ function getScrollPercent() {
       <div class="parallax__layer parallax__layer__0">
         <img src="~/assets/images/Sky.png">
       </div>
-      <!-- <div class="parallax__layer parallax__layer__1">
+      <div class="parallax__layer parallax__layer__1">
         <img
-          src="https://github.com/samdbeckham/blog/blob/master/dev/_assets/images/articles/firewatch/layer_1.png?raw=true"
+          src="~/assets/images/BG.png"
         >
-      </div> -->
+      </div>
       <div class="parallax__layer parallax__layer__2">
         <img src="~/assets/images/Middle.png">
       </div>
@@ -187,38 +187,40 @@ $scale2: scale(0.96);
   position: absolute;
   bottom: 0;
 
-  height: 100vh;
+  /* height: 100vh; */
   min-width: 100%;
   object-fit: cover;
+  @apply brightness-75 contrast-75
 }
 
 .parallax__layer__0 {
-  transform: translateY(calc(-5em * (var(--scroll))));
-  @apply opacity-80;
+  transform: translate3d(0, calc(-5em * (var(--scroll))), 0);
+  /* @apply brightness-75 */
+  /* @apply opacity-80 */
 }
 
-/* .parallax__layer__1 {
-  transform: translateY(calc(-5em * (var(--scroll) - 1)));
-} */
+.parallax__layer__1 {
+  transform: translate3d(0, calc(-11em * (var(--scroll) - 1)), 0);
+}
 
 .parallax__layer__2 {
-  transform: translateY(calc(-12em * (var(--scroll) - 1)));
-  @apply blur-sm;
+  transform: translate3d(0, calc(-20em * (var(--scroll) - 1)), 0);
+  /* @apply blur; */
 }
 
 .parallax__layer__3 {
-  transform: translateY(calc(-18em * (var(--scroll) - 1)));
-@apply blur-[1px];
+  transform: translate3d(0, calc(-28em * (var(--scroll) - 1)), 0);
+  /* @apply blur-sm brightness-90; */
 }
 
 .parallax__layer__4 {
-  transform: translateY(calc(-24em * (var(--scroll) - 1)));
-  @apply blur-[3px];
+  transform: translate3d(0, calc(-32em * (var(--scroll) - 1)), 0);
+  /* @apply blur-sm; */
 }
 
 .parallax__layer__5 {
-  transform: translateY(calc(-30em * (var(--scroll) - 1)));
-  @apply blur-sm;
+  transform: translate3d(0, calc(-40em * (var(--scroll) - 1)), 0);
+  /* @apply blur-sm; */
 }
 /* .parallax__layer__6 {
   transform: translateY(calc(-3em * (var(--scroll) - 1)));
