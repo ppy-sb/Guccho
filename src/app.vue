@@ -187,7 +187,7 @@ $scale2: scale(0.96);
   position: absolute;
   bottom: 0;
 
-  /* height: 100vh; */
+  min-height: 100vh;
   min-width: 100%;
   object-fit: cover;
   @apply brightness-75 contrast-75
@@ -200,26 +200,26 @@ $scale2: scale(0.96);
 }
 
 .parallax__layer__1 {
-  transform: translate3d(0, calc(-11em * (var(--scroll) - 1)), 0);
+  transform: translate3d(0, calc(-7em * (var(--scroll) - 1)), 0);
 }
 
 .parallax__layer__2 {
-  transform: translate3d(0, calc(-20em * (var(--scroll) - 1)), 0);
+  transform: translate3d(0, calc(-11em * (var(--scroll) - 1)), 0);
   /* @apply blur; */
 }
 
 .parallax__layer__3 {
-  transform: translate3d(0, calc(-28em * (var(--scroll) - 1)), 0);
+  transform: translate3d(0, calc(-15em * (var(--scroll) - 1)), 0);
   /* @apply blur-sm brightness-90; */
 }
 
 .parallax__layer__4 {
-  transform: translate3d(0, calc(-32em * (var(--scroll) - 1)), 0);
+  transform: translate3d(0, calc(-18em * (var(--scroll) - 1)), 0);
   /* @apply blur-sm; */
 }
 
 .parallax__layer__5 {
-  transform: translate3d(0, calc(-40em * (var(--scroll) - 1)), 0);
+  transform: translate3d(0, calc(-30em * (var(--scroll) - 1)), 0);
   /* @apply blur-sm; */
 }
 /* .parallax__layer__6 {
