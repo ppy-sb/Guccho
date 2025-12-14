@@ -74,13 +74,13 @@ de-DE:
       </div>
     </div>
 
-    <div class="hidden mascot lg:block">
+    <!-- <div class="hidden mascot lg:block">
       <nuxt-picture
         defer format="webp,avif" src="/mascot/IMG_0471.png" :img-attrs="{
           style: 'max-height: 70vmin',
         }" alt="riru Mascot"
       />
-    </div>
+    </div> -->
   </div>
 </template>
 
