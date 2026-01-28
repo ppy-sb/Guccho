@@ -68,8 +68,10 @@ zh-CN:
   search: 搜索
   avg: 平均
 
-# TODO fr translation
-# fr-FR:
+fr-FR:
+  search-text: Recherche par badges, noms...
+  search: Rechercher
+  avg: Moyenne
 
 de-DE:
   search-text: Badges, Namen suchen ...

@@ -24,11 +24,10 @@ zh-CN:
   create-account: 创建账号
   login-with-client: 登录游戏
 
-# TODO fr translation
 fr-FR:
-  verify-email: Verify email
-  create-account: Create account
-  login-with-client: Login
+  verify-email: Vérifier l'email
+  create-account: Créer un compte
+  login-with-client: Connexion
 
 de-DE:
   verify-email: Email Verifizieren

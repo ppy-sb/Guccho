@@ -484,7 +484,7 @@ fr-FR:
   username: Nom d'utilisateur
   safe-name: Lien
   email: Email
-  flag: Drapeau
+  flag: Pays
   profile: Profil
   default-mode: Mode par défaut
 
@@ -496,9 +496,9 @@ fr-FR:
     change: Modifier
     size-too-big: Fichier trop volumineux
     upload:
-      click-to-upload: Cliquer pour téléverser
-      placement: '{bold} ou glisser-déposer'
-      bold: Cliquer pour téléverser
+      click-to-upload: Téléverser
+      placement: '{bold} ou Déposer'
+      bold: Téléverser
     status:
       ready: Sauvegarder
       uploading: Téléversement

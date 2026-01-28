@@ -36,7 +36,7 @@ zh-CN:
 fr-FR:
   no-score: Aucun score trouvé.
   actions: Actions
-  detail: Detail
+  detail: Détail
   replay: Replay
 
 de-DE:

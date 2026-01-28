@@ -168,7 +168,7 @@ zh-CN:
 fr-FR:
   key-required: '{key} ne peut pas être vide.'
   key-taken: '{key} n''est pas disponible.'
-  name: Pseudo (vous pourrez le changer plus tard)
+  name: Pseudo (possibilité de changer plus tard)
   name-pattern: Ne doit pas contenir de lettre majuscule, ni commencer ou se terminer par _, doit contenir uniquement des chiffres, a-z et _
   link: Nom d'utilisateur
   password-pattern: Doit contenir au moins un chiffre et une lettre majuscule et minuscule, et au moins 8 caractères.

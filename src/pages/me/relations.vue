@@ -111,12 +111,13 @@ zh-CN:
 fr-FR:
   loading: Chargement...
   err-message: Une erreur est survenue.
-  user-not-found: Utilisateur inexistant.
-  remove-friend: Retirer l'ami
-  regret: Regret
-  you-may-also-wonder: Vous pourriez également vous demander...
-  not-mutual-friends: Ces personnes vous ont ajouté en tant qu'ami.
-  mutual: Mutuel
+  user-not-found: Utilisateur introuvable.
+  mutual-friends: Amis en commun
+  remove-friend: Retirer cet ami
+  regret: Annuler
+  you-may-also-wonder: Vous vous demandez peut-être...
+  not-mutual-friends: Ces personnes vous ont ajouté.
+  mutual: Amis en commun
 
 de-DE:
   loading: Lade...

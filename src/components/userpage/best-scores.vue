@@ -169,7 +169,7 @@ zh-CN:
   bp: 最好成绩
 
 fr-FR:
-  bp: Meilleures Performances
+  bp: Meilleurs Scores
 
 de-DE:
   bp: Beste Ergebnisse

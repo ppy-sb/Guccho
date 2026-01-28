@@ -87,7 +87,7 @@ zh-CN:
 
 fr-FR:
   unknown-beatmap: Beatmap Inconnue
-  detail: Detail
+  detail: Détail
 
 de-DE:
   unknown-beatmap: Unbekannte Beatmap

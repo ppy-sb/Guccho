@@ -79,9 +79,8 @@ zh-CN:
   forgot-password: 密码忘了？
   persist-login: 保持登录状态
 
-# TODO fr translation
 fr-FR:
-  have-no-account: Vous n'avez pas de compte?
+  have-no-account: Pas de compte?
   user-or-email: Utilisateur / Email
   user-id-email: Utilisateur / ID / Email
   password: Mot de passe
