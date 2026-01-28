@@ -91,9 +91,9 @@ zh-CN:
   invalid-otp: 验证码不正确
 
 fr-FR:
-  have-account: Vous avez déjà un compte?
-  lgtm: LGTM!
-  invalid-otp: Invalid OTP
+  have-account: Déjà un compte ?
+  lgtm: C'est bon !
+  invalid-otp: OTP Invalide
 
 de-DE:
   have-account: Haben Sie bereits ein Konto?

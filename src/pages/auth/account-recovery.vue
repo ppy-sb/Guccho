@@ -151,9 +151,12 @@ zh-CN:
   done: 完成
   succeed-message: 密码重置成功！
 
-# TODO fr translation
 fr-FR:
-  invalid-otp: Invalid OTP
+  next: Suivant
+  invalid-otp: OTP Invalide
+  repeat-password: Confirmer le mot de passe
+  done: Terminé
+  succeed-message: Terminé !
 
 de-DE:
   next: Weiter

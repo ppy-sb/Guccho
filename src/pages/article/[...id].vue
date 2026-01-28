@@ -30,9 +30,8 @@ zh-CN:
 
 fr-FR:
   edit: Modifier
-  # TODO fr translation
   error:
-    no-id: No article Id provided.
+    no-id: Aucun ID d'article fourni.
 
 de-DE:
   edit: Bearbeiten

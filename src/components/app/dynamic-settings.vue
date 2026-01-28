@@ -27,7 +27,7 @@ zh-CN:
 fr-FR:
   stored-at:
     0: Sauvegardé localement
-    1: Sauvegardé sur serveur
+    1: Sauvegardé en ligne
 
 de-DE:
   stored-at:

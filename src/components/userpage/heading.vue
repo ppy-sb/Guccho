@@ -110,7 +110,7 @@ fr-FR:
     offline: Déconnecté, dernière connection le {lastSeen}
     idle: Connecté.
     afk: AFK
-  edit: Changer
+  edit: Modifier
   add-as-friend: Ajouter en ami(e)
   supporter: A généreusement supporté {server}!
   staff: 'Veille sur {server}'

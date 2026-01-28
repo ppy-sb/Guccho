@@ -103,13 +103,13 @@ zh-CN:
   save-btn: 保存
   edit-statistics: 修改用户游戏数据
 fr-FR:
-  id: Identifiant
-  stable-client-id: Identifiant Stable Client
+  id: ID
+  stable-client-id: ID client stable
   name: Nom
-  link-name: Lien (Nom sécurisé)
+  link-name: Nom du lien
   password: Mot de passe
   email: Email
-  flag: Drapeau
+  flag: Pays
   roles: Rôles
   save-btn: Enregistrer
   edit-statistics: Modifier les statistiques

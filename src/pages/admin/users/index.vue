@@ -92,19 +92,19 @@ zh-CN:
   details: 详情
   search-btn: 搜索
 fr-FR:
-  user: User
-  search-parameters: Search Parameters
-  page: page
-  page-size: Page size
-  user-id: User ID
-  username: Username
-  link-name: Link (Safe name)
+  user: Utilisateur
+  search-parameters: Paramètres de recherche
+  page: Page
+  page-size: Résultats par page
+  user-id: ID Utilisateur
+  username: Nom d'utilisateur
+  link-name: Nom du lien
   email: Email
-  flag: Flag
-  roles: Roles
-  registered-at: Registered at
-  last-activity: Last activity record
-  search-btn: Search
+  flag: Pays
+  roles: Rôles
+  registered-at: Date d'inscription
+  last-activity: Dernière activité
+  search-btn: Rechercher
 de-DE:
   user: Nutzer
   search-parameters: Such-Parameter
