@@ -42,12 +42,18 @@ function switchBetweenScoreRanks() {
     === stabilizeScoreRank(page.switcher.rankingSystem)
 }
 const topPage = shallowRef(0)
+const outStatus = ref<'idle' | 'pending' | 'error' | 'success'>('pending')
+
+defineExpose({
+  status: outStatus,
+})
 
 const {
   data: top,
   error: errorTop,
   refresh: refreshTop,
   pending: pendingTop,
+  status,
 } = await useAsyncData(async () => {
   if (
     !page.user
@@ -91,6 +97,12 @@ watch([() => page.user, topPage], async () => {
   }
   await refreshTop()
 })
+
+watch(status, (val) => {
+  outStatus.value = val
+})
+outStatus.value = status.value
+
 const transition = shallowRef<'left' | 'right'>('left')
 onMounted(() => {
   const animationDirection = <T extends readonly any[]>(

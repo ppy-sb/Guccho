@@ -14,7 +14,7 @@ import {
 } from '../shapes'
 import { router as _router, publicProcedure as p } from '../trpc'
 import { Logger } from '$base/logger'
-import { type MailTokenProvider as MBase, type MailTokenProvider } from '$base/server'
+import { type MailTokenProvider as MBase, type MailTokenProvider, type UserProvider as TU } from '$base/server'
 import { type Mode } from '~/def'
 import { type RankingStatus } from '~/def/beatmap'
 import { type LeaderboardRankingSystem } from '$active'
@@ -197,6 +197,83 @@ export const router = _router({
             : v.beatmap,
         })) as RankingSystemScore<string, string, Mode, LeaderboardRankingSystem, RankingStatus>[],
       }
+    }),
+  recent: optionalUserProcedure
+    .input(
+      object({
+        id: string(),
+        mode: zodMode,
+        ruleset: zodRuleset,
+        rankingSystem: zodLeaderboardRankingSystem,
+        page: number().gte(0).lt(10),
+      }),
+    )
+    .query(async ({ input, ctx }) => {
+      const { mode, ruleset, rankingSystem } = input
+      if (
+        !hasRuleset(mode, ruleset)
+      || !hasLeaderboardRankingSystem(mode, ruleset, rankingSystem)
+      ) {
+        throw new TRPCError({
+          code: 'PRECONDITION_FAILED',
+          message: 'ranking system not supported',
+        })
+      }
+
+      const user = await users.getCompactById(UserProvider.stringToId(input.id))
+
+      if (!userIsVisible(user, ctx.user)) {
+        throw userNotFoundError
+      }
+
+      const returnValue = await users.getRecentScores({
+        id: user.id,
+        mode: input.mode,
+        ruleset: input.ruleset,
+        rankingSystem: input.rankingSystem,
+        page: input.page,
+        perPage: 10,
+      })
+      if (!returnValue) {
+        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' })
+      }
+
+      return returnValue.map((v) => {
+        if (v.type === 'single') {
+        // RulesetScore
+          return {
+            ...mapId(v, ScoreProvider.scoreIdToString),
+            beatmap: beatmapIsVisible(v.beatmap)
+              ? {
+                  ...isLocalMapOrMapset(v.beatmap)
+                    ? mapId(v.beatmap, MapProvider.idToString)
+                    : mapId(v.beatmap, MapProvider.idToString, ['id', 'foreignId']),
+                  beatmapset: isLocalMapOrMapset(v.beatmap.beatmapset)
+                    ? mapId(v.beatmap.beatmapset, MapProvider.idToString)
+                    : mapId(v.beatmap.beatmapset, MapProvider.idToString, ['id', 'foreignId']),
+                }
+              : v.beatmap,
+          }
+        }
+        else {
+          // ModeRulesetRecentScoreGroup
+          return {
+            type: v.type,
+            pinned: ScoreProvider.scoreIdToString(v.pinned),
+            scores: v.scores.map(s => mapId(s, ScoreProvider.scoreIdToString)),
+            beatmap: beatmapIsVisible(v.beatmap)
+              ? {
+                  ...isLocalMapOrMapset(v.beatmap)
+                    ? mapId(v.beatmap, MapProvider.idToString)
+                    : mapId(v.beatmap, MapProvider.idToString, ['id', 'foreignId']),
+                  beatmapset: isLocalMapOrMapset(v.beatmap.beatmapset)
+                    ? mapId(v.beatmap.beatmapset, MapProvider.idToString)
+                    : mapId(v.beatmap.beatmapset, MapProvider.idToString, ['id', 'foreignId']),
+                }
+              : v.beatmap,
+          }
+        }
+      }) as TU.RecentScoresResult<string, string>[]
     }),
   essential: p
     .input(

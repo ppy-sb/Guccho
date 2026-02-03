@@ -5,14 +5,14 @@ import type { MailTokenProvider } from './mail-token'
 import { type ArticleProvider } from '.'
 import type { settings } from '$active/dynamic-settings'
 import type { Mode, Ruleset } from '~/def'
-import type { BeatmapSource, RankingStatus } from '~/def/beatmap'
+import type { BeatmapSource, BeatmapWithMeta, RankingStatus } from '~/def/beatmap'
 import type {
   ActiveMode,
   ActiveRuleset,
   LeaderboardRankingSystem,
 } from '$active'
 import type { CountryCode } from '~/def/country-code'
-import type { RankingSystemScore } from '~/def/score'
+import type { RankingSystemScore, ScoreCompact } from '~/def/score'
 import {
   type DynamicSettingStore,
   type Scope,
@@ -21,7 +21,6 @@ import {
   type UserCompact as UserCompact$2,
   type UserExtra,
   type UserOptional,
-  UserRole,
   type UserStatus,
 } from '~/def/user'
 import { type UserModeRulesetStatistics } from '~/def/statistics'
@@ -47,6 +46,21 @@ export namespace UserProvider {
   }
 
   export type UserCompact<Id> = UserCompact$2<Id>
+
+  export interface ModeRulesetRecentScoreGroup<Id, ScoreId> {
+    pinned: ScoreId
+    scores: (ScoreCompact<ScoreId, Mode> & { pp: number })[]
+    beatmap: BeatmapWithMeta<RankingStatus, Id, Id>
+  }
+
+  export type RecentScoresResult<Id, ScoreId> =
+  | RulesetScoreWithBeatmap<Id, ScoreId> & { type: 'single' }
+  | ModeRulesetRecentScoreGroup<Id, ScoreId> & { type: 'group' }
+
+  export interface RulesetScoreWithBeatmap<Id, ScoreId> extends ScoreCompact<ScoreId, ActiveMode> {
+    beatmap: BeatmapWithMeta<RankingStatus, Id, Id>
+    pp: number
+  }
 }
 
 export abstract class UserProvider<Id, ScoreId> extends IdTransformable {
@@ -214,4 +228,10 @@ export abstract class UserProvider<Id, ScoreId> extends IdTransformable {
     count: number
     scores: RankingSystemScore<ScoreId, Id, Mode, RankingSystem>[]
   }>
+
+  abstract getRecentScores<
+    Mode extends ActiveMode,
+    Ruleset extends ActiveRuleset,
+    RankingSystem extends LeaderboardRankingSystem,
+  >(query: UserProvider.BaseQuery<Id, Mode, Ruleset, RankingSystem> & { limit?: number }): Promise<UserProvider.RecentScoresResult<Id, ScoreId>[]>
 }

@@ -122,7 +122,7 @@ export function toBeatmapCompact<Source extends BeatmapSource>(beatmap: {
 
 export function toBeatmapWithBeatmapset(
   beatmap: Pick<typeof schema.beatmaps.$inferSelect, BeatmapRequiredFields>,
-  source: typeof schema.sources.$inferSelect
+  source: Pick<typeof schema.sources.$inferSelect, 'id' | 'server'>
 ): BeatmapWithMeta<RankingStatus, typeof schema.beatmaps.$inferSelect.id, typeof schema.beatmaps.$inferSelect.id> {
   const status = toRankingStatus(beatmap.status, beatmap.lastUpdate) || RankingStatus.WIP
   if (status === RankingStatus.Deleted || status === RankingStatus.NotFound) {
@@ -149,7 +149,7 @@ export const beatmapRequiredFields = ['artist', 'title', 'status', 'id', 'md5', 
 export interface AbleToTransformToScores {
   score: Pick<InferSelectModel<typeof schema.scores>, ScoreRequiredFields>
   beatmap: Pick<InferSelectModel<typeof schema.beatmaps>, BeatmapRequiredFields>
-  source: InferSelectModel<typeof schema.sources>
+  source: Pick<InferSelectModel<typeof schema.sources>, 'id' | 'server'>
 
 }
 

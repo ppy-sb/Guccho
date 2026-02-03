@@ -6,6 +6,7 @@ import imageType from 'image-type'
 import { glob } from 'glob'
 import { type SQL, aliasedTable, and, desc, eq, inArray, like, or, sql } from 'drizzle-orm'
 import { TRPCError } from '@trpc/server'
+import { omit } from 'lodash-es'
 import type { Id, ScoreId } from '..'
 import { getLiveUserStatus } from '../api-client'
 import { compareBanchoPassword, encryptBanchoPassword } from '../crypto'
@@ -23,6 +24,7 @@ import {
   type DatabaseUserOptionalFields,
 
   beatmapRequiredFields,
+  createHitCount,
   createRulesetData,
   fromBanchoPyMode,
   fromCountryCode,
@@ -31,19 +33,23 @@ import {
   scoreRequiredFields,
   stringToId,
   toBanchoPyMode,
+  toBeatmapWithBeatmapset,
   toFullUser,
+  toMods,
+  toRankingSystemScore,
   toRankingSystemScores,
   toSafeName,
   toUserClan,
   toUserCompact,
   toUserOptional,
 } from '../transforms'
+import { jsonArrayAgg, jsonObject } from '../../../common/sql'
 import { ArticleProvider } from './article'
 import { useDrizzle, userPriv } from './source/drizzle'
 import { client as redisClient } from './source/redis'
 import { UserRelationProvider } from './user-relations'
 import { type DynamicSettingStore, Scope, type UserCompact, type UserOptional, UserRole, UserStatus } from '~/def/user'
-import { type RankingSystemScore } from '~/def/score'
+import { type Grade, type RankingSystemScore } from '~/def/score'
 import { GucchoError } from '~/def/messages'
 import type { CountryCode } from '~/def/country-code'
 import type { ActiveMode, ActiveRuleset, AvailableRuleset, LeaderboardRankingSystem } from '$active'
@@ -52,6 +58,7 @@ import { RankingStatus } from '~/def/beatmap'
 import { UserProvider as Base, type MailTokenProvider } from '$base/server'
 import type { ExtractLocationSettings, ExtractSettingType } from '$base/@define-setting'
 import { type UserModeRulesetStatistics } from '~/def/statistics'
+import { mode } from '~/common/icon'
 
 type ServerSetting = ExtractSettingType<ExtractLocationSettings<DynamicSettingStore.Server, typeof settings>>
 
@@ -417,6 +424,104 @@ class DBUserProvider extends Base<Id, ScoreId> implements Base<Id, ScoreId> {
     return {
       count,
       scores: toRankingSystemScores({ scores, rankingSystem, mode }),
+    }
+  }
+
+  async getRecentScores<Mode extends ActiveMode, Ruleset extends ActiveRuleset, RankingSystem extends LeaderboardRankingSystem>(query: Base.BaseQuery<number, Mode, Ruleset, RankingSystem> & { limit?: number }): Promise<Base.RecentScoresResult<number, bigint>[]> {
+    const recentScores = this.drizzle.$with('recent_scores').as(
+      this.drizzle
+        .select({
+          beatmap: {
+            ...pick(schema.beatmaps, beatmapRequiredFields.filter(v => v !== 'mode' && v !== 'id' && v !== 'maxCombo')),
+            mode: sql<number>`${schema.beatmaps.mode}`.as('bMode'),
+            id: sql<number>`${schema.beatmaps.id}`.as('bid'),
+            maxCombo: sql<number>`${schema.beatmaps.maxCombo}`.as('bMaxCb'),
+            setId: schema.beatmaps.setId,
+            server: schema.beatmaps.server,
+          },
+          score: {
+            ...pick(schema.scores, scoreRequiredFields),
+          },
+        })
+        .from(schema.scores)
+        .innerJoin(schema.beatmaps, eq(schema.scores.mapMd5, schema.beatmaps.md5))
+        .where(
+          and(
+            eq(schema.scores.userId, query.id),
+            eq(schema.scores.mode, toBanchoPyMode(query.mode, query.ruleset)),
+          )
+        )
+        .orderBy(
+          desc(schema.scores.id)
+        )
+        .limit(100)
+    )
+
+    try {
+      const r = await this.drizzle
+        .with(recentScores)
+        .select({
+          beatmap: recentScores.beatmap,
+          scores: jsonArrayAgg(
+            jsonObject(recentScores.score)
+          ),
+        })
+        .from(recentScores)
+        .groupBy(
+          sql`DATE_FORMAT(${recentScores.score.playTime}, '%Y-%m-%d')`,
+          recentScores.beatmap.md5,
+        )
+        .orderBy(
+          sql`DATE_FORMAT(${recentScores.score.playTime}, '%Y-%m-%d') DESC`
+        )
+        .limit(query.limit ?? 10)
+
+      return r.map((i) => {
+        const source = {
+          id: i.beatmap.setId,
+          server: i.beatmap.server,
+        }
+        if (i.scores.length === 1) {
+          const first = i.scores[0]
+          return {
+            type: 'single' as const,
+            ...toRankingSystemScore({
+              score: first,
+              beatmap: i.beatmap,
+              source,
+              rank: 0,
+              rankingSystem: Rank.PPv2,
+              mode: query.mode,
+            }),
+          }
+        }
+        else {
+          const pinned = i.scores.toSorted((a, b) => {
+            return b.pp - a.pp
+          })[0]
+
+          return {
+            type: 'group' as const,
+            pinned: pinned.id,
+            beatmap: toBeatmapWithBeatmapset(i.beatmap, source),
+            scores: i.scores.map((s: any) => ({
+              score: BigInt(s.score),
+              grade: (s.grade === 'N' ? 'F' : s.grade) as Grade,
+              mods: toMods(s.mods),
+              maxCombo: s.maxCombo,
+              accuracy: s.accuracy,
+              id: s.id,
+              pp: s.pp,
+              playedAt: s.playTime,
+              hit: createHitCount(query.mode, s),
+            })),
+          } satisfies Base.RecentScoresResult<Id, ScoreId>
+        }
+      })
+    }
+    catch (e) {
+      console.error(e)
+      throw e
     }
   }
 

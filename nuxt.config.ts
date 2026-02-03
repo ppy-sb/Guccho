@@ -166,10 +166,13 @@ export default defineNuxtConfig({
     typedPages: true,
   },
 
+  // devtools: {
+  //   timeline: {
+  //     enabled: true,
+  //   },
+  // },
   devtools: {
-    timeline: {
-      enabled: true,
-    },
+    enabled: false,
   },
 
   nitro: {

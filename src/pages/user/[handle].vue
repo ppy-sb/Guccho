@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { useIntersectionObserver } from '@vueuse/core'
+import type { ShallowRef } from 'vue'
 import { UserRole } from '~/def/user'
 import userpageStore from '~/store/userpage'
 import { useSession } from '~/store/session'
 import type { Mode, Ruleset } from '~/def'
 import type { LeaderboardRankingSystem } from '$active'
+import { UserpageBestScores, UserpageRecentScores, UserpageTopScores } from '#components'
 
 definePageMeta({
   alias: [
@@ -64,14 +66,18 @@ const visible = reactive({
   statistics: false,
   bestScores: false,
   topScores: false,
+  recentScores: false,
 })
+
 const icons: Record<keyof typeof visible, string> = {
-  topScores: 'pajamas:first-contribution',
+  topScores: 'lucide:crown',
   bestScores: 'fa6-brands:pied-piper-pp',
   statistics: 'tabler:clipboard-data',
   heading: 'material-symbols:home-health-rounded',
+  recentScores: 'mdi:history',
 }
-const [handle, heading, statistics, bestScores, topScores] = [
+const [handle, heading, statistics, bestScores, topScores, recentScores] = [
+  shallowRef<HTMLElement | null>(null),
   shallowRef<HTMLElement | null>(null),
   shallowRef<HTMLElement | null>(null),
   shallowRef<HTMLElement | null>(null),
@@ -79,12 +85,29 @@ const [handle, heading, statistics, bestScores, topScores] = [
   shallowRef<HTMLElement | null>(null),
 ]
 
+const [
+  best,
+  top,
+  recent,
+] = [
+  shallowRef<InstanceType<typeof UserpageBestScores> | null>(null),
+  shallowRef<InstanceType<typeof UserpageTopScores> | null>(null),
+  shallowRef<InstanceType<typeof UserpageRecentScores> | null>(null),
+]
+
+const component: Partial<Record<keyof typeof visible, ShallowRef<{ status: 'idle' | 'pending' | 'success' | 'error' } | null>>> = {
+  topScores: top,
+  bestScores: best,
+  recentScores: recent,
+}
+
 onMounted(() => {
   const stop = Object.entries({
     heading,
     statistics,
     bestScores,
     topScores,
+    recentScores,
   }).map(([k, v]) => {
     if (!v.value) {
       return undefined
@@ -189,23 +212,45 @@ de-DE:
       </div>
       <template v-if="page.currentRankingSystem">
         <div id="bestScores" ref="bestScores" class="container max-w-screen-lg py-2 mx-auto">
-          <userpage-best-scores />
+          <UserpageBestScores ref="best" />
         </div>
         <div id="topScores" ref="topScores" class="container max-w-screen-lg py-4 mx-auto">
-          <userpage-top-scores />
+          <UserpageTopScores ref="top" />
+        </div>
+        <div id="recentScores" ref="recentScores" class="container max-w-screen-lg py-2 mx-auto">
+          <UserpageRecentScores ref="recent" />
         </div>
       </template>
       <client-only>
         <teleport to="body">
           <div class="sticky btm-nav up-nav-item">
             <template v-for="(isVisible, el) of visible" :key="el">
-              <a
-                v-if="icons[el]" :class="{
-                  active: isVisible,
-                }" :href="`#${el}`"
+              <template
+                v-if="icons[el]"
               >
-                <icon :name="icons[el]" size="2em" />
-              </a>
+                <a
+                  :class="{
+                    'active': isVisible,
+                    'bg-base-200': el in component && (component[el]?.value?.status === 'pending'),
+                  }"
+                  :href="`#${el}`"
+                >
+                  <icon
+                    :name="icons[el]"
+                    size="2em"
+                    class="transition-opacity"
+                    :class="{
+                      'opacity-20': el in component && (component[el]?.value?.status === 'pending'),
+                    }"
+                  />
+                  <i
+                    class="absolute w-6 loading transition-opacity opacity-0"
+                    :class="{
+                      'opacity-100': el in component && (component[el]?.value?.status === 'pending'),
+                    }"
+                  />
+                </a>
+              </template>
               <a
                 v-else :class="{
                   active: isVisible,
