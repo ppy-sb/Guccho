@@ -118,74 +118,72 @@ zh-CN:
                       :ruleset="recent.lastSwitcherStatus.ruleset" :ranking-system="recent.lastSwitcherStatus.rankingSystem"
                     />
                     <table />
-                    <div tabindex="0" class="collapse">
+                    <div tabindex="0" class="collapse w-full rounded-none">
                       <div class="link">
                         <icon name="tabler:layers-selected" /> {{ t('folded', { i: i.scores.length - 1 }) }}
                       </div>
-                      <div class="collapse-content !p-0">
-                        <div class="scroll-x-auto">
-                          <table class="table table-sm table-zebra">
-                            <thead>
-                              <tr>
-                                <th class="text-end">
-                                  Link
-                                </th>
-                                <th class="text-start">
-                                  Rank
-                                </th>
-                                <th class="text-end">
-                                  PP
-                                </th>
-                                <th class="text-end">
-                                  Score
-                                </th>
-                                <th class="text-end">
-                                  Accuracy
-                                </th>
-                                <th class="text-center">
-                                  Mods
-                                </th>
-                                <th class="text-start">
-                                  Date
-                                </th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr
-                                v-for="s in i.scores"
-                                :key="`recent-folded-${s.id}`"
-                              >
-                                <th class="text-end font-mono">
-                                  <nuxt-link-locale
-                                    class="link"
-                                    :to="{
-                                      name: 'score-id',
-                                      params: { id: s.id },
-                                    }"
-                                  >
-                                    <icon v-if="i.pinned === s.id" name="material-symbols:star-outline-rounded" />{{ s.id }}
-                                  </nuxt-link-locale>
-                                </th>
-                                <td>{{ s.grade }}</td>
-                                <td class="text-end font-mono">
-                                  {{ s.pp.toFixed(2) }}
-                                </td>
-                                <td class="text-end font-mono">
-                                  {{ s.score.toLocaleString() }}
-                                </td>
-                                <td class="text-end font-mono">
-                                  {{ s.accuracy.toFixed(2) }}%
-                                </td>
-                                <td>
-                                  <span v-if="s.mods.length" class="block px-2 mt-auto space-x-1 tooltip tooltip-primary" :data-tip="s.mods.map(m => StableMod[m]).join(', ')">
-                                    <app-mod v-for="mod in s.mods" :key="mod" :mod="mod" class="w-5 h-5" />
-                                  </span>
-                                </td>
-                                <td>{{ new Date(s.playedAt).toLocaleTimeString() }}</td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </div>
+                      <div class="collapse-content overflow-x-auto !p-0">
+                        <table class="table min-w-max table-sm table-zebra">
+                          <thead>
+                            <tr>
+                              <th class="text-end">
+                                Link
+                              </th>
+                              <th class="text-start">
+                                Rank
+                              </th>
+                              <th class="text-end">
+                                PP
+                              </th>
+                              <th class="text-end">
+                                Score
+                              </th>
+                              <th class="text-end">
+                                Accuracy
+                              </th>
+                              <th class="text-center">
+                                Mods
+                              </th>
+                              <th class="text-start">
+                                Date
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr
+                              v-for="s in i.scores"
+                              :key="`recent-folded-${s.id}`"
+                            >
+                              <th class="text-end font-mono">
+                                <nuxt-link-locale
+                                  class="link"
+                                  :to="{
+                                    name: 'score-id',
+                                    params: { id: s.id },
+                                  }"
+                                >
+                                  <icon v-if="i.pinned === s.id" name="material-symbols:star-outline-rounded" />{{ s.id }}
+                                </nuxt-link-locale>
+                              </th>
+                              <td>{{ s.grade }}</td>
+                              <td class="text-end font-mono">
+                                {{ s.pp.toFixed(2) }}
+                              </td>
+                              <td class="text-end font-mono">
+                                {{ s.score.toLocaleString() }}
+                              </td>
+                              <td class="text-end font-mono">
+                                {{ s.accuracy.toFixed(2) }}%
+                              </td>
+                              <td>
+                                <span v-if="s.mods.length" class="block px-2 mt-auto space-x-1 tooltip tooltip-primary" :data-tip="s.mods.map(m => StableMod[m]).join(', ')">
+                                  <app-mod v-for="mod in s.mods" :key="mod" :mod="mod" class="w-5 h-5" />
+                                </span>
+                              </td>
+                              <td>{{ new Date(s.playedAt).toLocaleTimeString() }}</td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                     </div>
                   </div>
