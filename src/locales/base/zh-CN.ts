@@ -60,6 +60,7 @@ export default {
     'otp': '验证码',
     'verify': '验证',
     'max-combo': '最大连击',
+    'filter': '筛选',
   },
 
   role: {

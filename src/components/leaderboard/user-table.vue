@@ -18,6 +18,10 @@ const props = defineProps<{
   switcherState: SwitcherState
 }>()
 
+const emit = defineEmits<{
+  (e: 'selectCountry', country: CountryCode): void
+}>()
+
 const { t } = useI18n()
 const addCommas = createNumberFormatter()
 const scoreFormat = createScoreFormatter()
@@ -28,6 +32,12 @@ const option: Intl.NumberFormatOptions = {
   maximumFractionDigits: 2,
 }
 const formatter = new Intl.NumberFormat(undefined, option)
+
+function onFlagClick() {
+  if (props.user.flag && props.user.flag !== CountryCode.Unknown) {
+    emit('selectCountry', props.user.flag)
+  }
+}
 </script>
 
 <template>
@@ -39,12 +49,13 @@ const formatter = new Intl.NumberFormat(undefined, option)
     </th>
     <th scope="row">
       <div class="flex items-center justify-center w-full">
-        <div class="flex-shrink-0">
-          <img
-            :alt="t(localeKey.country(props.user.flag || CountryCode.Unknown))" class="w-6"
-            :src="getFlagURL(props.user.flag)"
-          >
-        </div>
+        <img
+          :alt="t(localeKey.country(props.user.flag || CountryCode.Unknown))"
+          class="w-6 cursor-pointer hover:opacity-70 transition-opacity"
+          :src="getFlagURL(props.user.flag)"
+          :title="user.flag && user.flag !== CountryCode.Unknown ? `${t('global.filter')} ${t(localeKey.country(user.flag))}` : t(localeKey.country(user.flag || CountryCode.Unknown))"
+          @click="onFlagClick"
+        >
       </div>
     </th>
     <th scope="row">

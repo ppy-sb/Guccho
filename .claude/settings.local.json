@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx tsc:*)",
+      "Bash(npx vue-tsc:*)",
+      "Bash(npx nuxi prepare:*)",
+      "Bash(npx nuxi typecheck:*)"
+    ]
+  }
+}

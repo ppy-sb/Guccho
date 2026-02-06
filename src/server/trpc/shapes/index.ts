@@ -20,6 +20,7 @@ import type { ArticleProvider } from '$base/server/article'
 import { LeaderboardScoreRank, Mode, PPRank, Relationship, Ruleset, ScoreRank } from '~/def'
 import { RankingStatus } from '~/def/beatmap'
 import type { ActiveMode, ActiveRuleset } from '$active'
+import { CountryCode } from '~/def/country-code'
 
 export * from './metrics'
 
@@ -28,6 +29,7 @@ export const zodRelationType = nativeEnum(Relationship)
 
 export const zodMode = nativeEnum(Mode)
 export const zodRuleset = nativeEnum(Ruleset)
+export const zodCountryCode = nativeEnum(CountryCode)
 
 export const zodPPRankingSystem = nativeEnum(PPRank)
 export const zodScoreRankingSystem = nativeEnum(LeaderboardScoreRank)

@@ -41,12 +41,14 @@ export class DatabaseRankProvider implements Base<Id> {
     rankingSystem,
     page,
     pageSize,
+    country,
   }: {
     mode: M
     ruleset: AvailableRuleset<M>
     rankingSystem: RS
     page: number
     pageSize: number
+    country?: string
   }): Promise<ComponentLeaderboard<Id>[]> {
     const start = page * pageSize
 
@@ -64,6 +66,7 @@ export class DatabaseRankProvider implements Base<Id> {
           rankingSystem === Rank.RankedScore ? gt(schema.stats.rankedScore, 0n) : undefined,
           rankingSystem === Rank.TotalScore ? gt(schema.stats.totalScore, 0n) : undefined,
           eq(schema.stats.mode, toBanchoPyMode(mode, ruleset)),
+          country ? eq(schema.users.country, country) : undefined,
         )
       )
       .orderBy(
@@ -92,7 +95,7 @@ export class DatabaseRankProvider implements Base<Id> {
   }
 
   async countLeaderboard(query: Base.BaseQuery<Mode> & { rankingSystem: LeaderboardRankingSystem }) {
-    const { mode, ruleset, rankingSystem } = query
+    const { mode, ruleset, rankingSystem, country } = query
     const c = await this.drizzle.select({
       count: sql`COUNT(*)`.mapWith(Number),
     }).from(schema.stats)
@@ -105,6 +108,7 @@ export class DatabaseRankProvider implements Base<Id> {
             rankingSystem === Rank.TotalScore ? gt(schema.stats.totalScore, 0n) : undefined,
             eq(schema.stats.mode, toBanchoPyMode(mode, ruleset)),
             userPriv(schema.users),
+            country ? eq(schema.users.country, country) : undefined,
           ].filter(TSFilter)
         )
       )
@@ -128,7 +132,7 @@ export class DatabaseRankProvider implements Base<Id> {
       md5: string
     },
   ) {
-    const { ruleset, rankingSystem, md5 } = query
+    const { ruleset, rankingSystem, md5, country } = query
     let { mode } = query
     if (!mode) {
       mode = await this.determineBeatmapMode(md5)
@@ -148,7 +152,8 @@ export class DatabaseRankProvider implements Base<Id> {
         eq(s.mapMd5, md5),
         userPriv(u),
         eq(s.mode, toBanchoPyMode(mode, ruleset)),
-        eq(s.status, BanchoPyScoreStatus.Pick)
+        eq(s.status, BanchoPyScoreStatus.Pick),
+        country ? eq(u.country, country) : undefined,
       ))
 
     let q
@@ -179,7 +184,7 @@ export class DatabaseRankProvider implements Base<Id> {
   }
 
   async countBeatmap(query: Base.BaseQueryOptionalMode<Mode> & { rankingSystem: RankingSystem; md5: string }): Promise<number> {
-    const { ruleset, rankingSystem, md5 } = query
+    const { ruleset, rankingSystem, md5, country } = query
     let { mode } = query
     if (!mode) {
       mode = await this.determineBeatmapMode(md5)
@@ -202,6 +207,7 @@ export class DatabaseRankProvider implements Base<Id> {
           userPriv(schema.users),
           eq(schema.scores.mode, toBanchoPyMode(mode, ruleset)),
           eq(schema.scores.status, BanchoPyScoreStatus.Pick),
+          country ? eq(schema.users.country, country) : undefined,
         ].filter(TSFilter)
       ))
 
@@ -243,7 +249,7 @@ export class RedisRankProvider extends DatabaseRankProvider implements Monitored
   }
 
   async countLeaderboard(query: Base.BaseQuery<Mode> & { rankingSystem: LeaderboardRankingSystem }): Promise<number> {
-    const { mode, ruleset, rankingSystem } = query
+    const { mode, ruleset, rankingSystem, country } = query
 
     if (!this.redisClient.isReady || rankingSystem !== Rank.PPv2) {
       return super.countLeaderboard(query)
@@ -259,6 +265,7 @@ export class RedisRankProvider extends DatabaseRankProvider implements Monitored
         bPyMode,
         0,
         500,
+        country,
       ).then(res => res.map(Number))
 
       if (!rank.length) {
@@ -301,15 +308,17 @@ export class RedisRankProvider extends DatabaseRankProvider implements Monitored
     rankingSystem,
     page,
     pageSize,
+    country,
   }: {
     mode: M
     ruleset: AvailableRuleset<M>
     rankingSystem: RS
     page: number
     pageSize: number
+    country?: string
   }): Promise<ComponentLeaderboard<Id>[]> {
     if (!this.redisClient.isReady || rankingSystem !== Rank.PPv2) {
-      return super.leaderboard({ mode, ruleset, rankingSystem, page, pageSize })
+      return super.leaderboard({ mode, ruleset, rankingSystem, page, pageSize, country })
     }
 
     try {
@@ -317,10 +326,10 @@ export class RedisRankProvider extends DatabaseRankProvider implements Monitored
       const bPyMode = toBanchoPyMode(mode, ruleset)
 
       // user.id[]
-      const rank = await this.getPPv2LiveLeaderboard(bPyMode, 0, start + pageSize * 2).then(res => res.map(Number))
+      const rank = await this.getPPv2LiveLeaderboard(bPyMode, 0, start + pageSize * 2, country).then(res => res.map(Number))
 
       if (!rank.length) {
-        return super.leaderboard({ mode, ruleset, rankingSystem, page, pageSize })
+        return super.leaderboard({ mode, ruleset, rankingSystem, page, pageSize, country })
       }
 
       const uStats = await this.drizzle.select({
@@ -369,14 +378,14 @@ export class RedisRankProvider extends DatabaseRankProvider implements Monitored
       }))
 
       if (!result.length) {
-        return super.leaderboard({ mode, ruleset, rankingSystem, page, pageSize })
+        return super.leaderboard({ mode, ruleset, rankingSystem, page, pageSize, country })
       }
 
       return result
     }
     catch (e) {
       logger.error(e)
-      return super.leaderboard({ mode, ruleset, rankingSystem, page, pageSize })
+      return super.leaderboard({ mode, ruleset, rankingSystem, page, pageSize, country })
     }
   }
 }

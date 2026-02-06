@@ -20,10 +20,12 @@ export namespace RankProvider {
   export interface BaseQueryOptionalMode<M extends Mode = Mode> {
     mode?: M
     ruleset: Ruleset
+    country?: string
   }
   export interface BaseQuery<M extends Mode = Mode> {
     mode: M
     ruleset: AvailableRuleset<M>
+    country?: string
   }
 }
 

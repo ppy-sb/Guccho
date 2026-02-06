@@ -7,6 +7,8 @@ import type {
 import type { SwitcherState } from '~/components/app/mode-switcher.vue'
 import type { SwitcherPropType } from '~/composables/useSwitcher'
 import type { RouteLocationRaw } from '#vue-router'
+import { CountryCode } from '~/def/country-code'
+import { getFlagURL } from '~/utils/flag'
 
 const config = useRuntimeConfig()
 
@@ -17,7 +19,7 @@ const { supportedModes, supportedRulesets } = useAdapterConfig()
 const { t } = useI18n()
 
 const { mode: pMode } = route.params
-const { ruleset: pRuleset, ranking: pRankingSystem, page: pPage } = route.query
+const { ruleset: pRuleset, ranking: pRankingSystem, page: pPage, country: pCountry } = route.query
 
 const availableRankingSystems = Object.keys(
   config.public.leaderboardRankingSystem
@@ -42,13 +44,22 @@ const page = shallowRef((isString(pPage) && Number.parseInt(pPage)) || 1)
 
 const perPage = 20
 
+const selectedCountry = ref<CountryCode | undefined>(
+  (isString(pCountry) && Object.values(CountryCode).includes(pCountry as CountryCode))
+    ? pCountry as CountryCode
+    : undefined
+)
+
 const selected = ref<Required<SwitcherPropType<LeaderboardRankingSystem>>>({
   mode,
   ruleset,
   rankingSystem,
 })
 const { data: total } = await app.$client.rank.countLeaderboard.useQuery(
-  selected
+  computed(() => ({
+    ...selected.value,
+    country: selectedCountry.value,
+  }))
 )
 
 const totalPages = computed(() =>
@@ -62,6 +73,7 @@ const queryLeaderboardValue = computed(() => ({
   rankingSystem: selected.value.rankingSystem,
   page: Math.max(page.value - 1, 0),
   pageSize: perPage,
+  country: selectedCountry.value,
 }))
 
 const { pending, data: table } = await app.$client.rank.leaderboard.useQuery(
@@ -102,6 +114,17 @@ function reloadPage(i?: number) {
   rewriteHistory()
 }
 
+function toggleCountry(country?: CountryCode) {
+  if (selectedCountry.value === country) {
+    selectedCountry.value = undefined
+  }
+  else {
+    selectedCountry.value = country
+  }
+  page.value = 1
+  rewriteHistory()
+}
+
 function createRoute(i: SwitcherState) {
   return {
     name: 'leaderboard-mode',
@@ -113,9 +136,24 @@ function createRoute(i: SwitcherState) {
       ranking: i.rankingSystem,
       ruleset: i.ruleset,
       page: page.value,
+      ...(selectedCountry.value && { country: selectedCountry.value }),
     },
   } as RouteLocationRaw
 }
+
+const allCountries = computed(() => Object.values(CountryCode).filter(cc => cc !== CountryCode.Unknown))
+const countrySearch = ref('')
+
+const filteredCountries = computed(() => {
+  if (!countrySearch.value) {
+    return allCountries.value
+  }
+  const search = countrySearch.value.toLowerCase()
+  return allCountries.value.filter((cc) => {
+    const name = t(localeKey.country(cc)).toLowerCase()
+    return name.includes(search) || cc.toLowerCase().includes(search)
+  })
+})
 </script>
 
 <i18n lang="yaml">
@@ -123,19 +161,36 @@ en-GB:
   no-score: No one played this mode yet.
   no-score-alt: Wanna be the first one? Go for it.
   total: '{total} rows'
+  country: Country
+  all-countries: All countries
+  search-country: Search country...
+  clear: Clear
 
 zh-CN:
   no-score: 该模式目前还没有人玩过。
   no-score-alt: 想要成为第一名吗? 冲吧!
+  total: '{total} 行'
+  country: 地区
+  all-countries: 所有地区
+  search-country: 搜索地区...
+  clear: 清除
 
 fr-FR:
   no-score: Personne n'a joué ce mode encore.
   no-score-alt: Vous voulez être le premier? Allez-y.
+  country: Pays
+  all-countries: Tous les pays
+  search-country: Rechercher un pays...
+  clear: Effacer
 
 de-DE:
   no-score: Noch niemand hat diesen Modus gespielt.
   no-score-alt: Möchtest du der Erste sein? Los geht's.
   total: '{total} Zeilen'
+  country: Land
+  all-countries: Alle Länder
+  search-country: Land suchen...
+  clear: Löschen
 </i18n>
 
 <template>
@@ -144,14 +199,14 @@ de-DE:
   >
     <header-simple-title-with-sub
       id="desc"
-      :title="$t('title.leaderboard')"
+      :title="t('title.leaderboard')"
       :subtitle="
         selected.mode
           && selected.ruleset
           && selected.rankingSystem
-          && `${$t(localeKey.mode(selected.mode))} - ${$t(
+          && `${t(localeKey.mode(selected.mode))} - ${t(
             localeKey.ruleset(selected.ruleset),
-          )} | ${$t(localeKey.rankingSystem(selected.rankingSystem))}`
+          )} | ${t(localeKey.rankingSystem(selected.rankingSystem))}`
       "
     >
       <app-mode-switcher
@@ -161,11 +216,105 @@ de-DE:
         @update:model-value="reloadPage()"
       />
       <template #after-title>
-        <i18n-t keypath="total" tag="p" class="text-xs opacity-40">
-          <template #total>
-            <span class="font-mono">{{ total }}</span>
-          </template>
-        </i18n-t>
+        <div class="space-y-2 w-full relative">
+          <i18n-t keypath="total" tag="p" class="text-xs opacity-40">
+            <template #total>
+              <span class="font-mono">{{ total }}</span>
+            </template>
+          </i18n-t>
+          <div class="flex gap-2 w-full">
+            <div class="dropdown">
+              <label
+                tabindex="0"
+                class="flex items-center gap-2"
+                :class="selectedCountry ? '' : 'btn btn-ghost btn-sm'"
+              >
+                <template v-if="selectedCountry">
+                  <img
+                    :alt="t(localeKey.country(selectedCountry))"
+                    class="w-6 rounded"
+                    :src="getFlagURL(selectedCountry)"
+                  >
+                  <span class="font-semibold">{{ t(localeKey.country(selectedCountry)) }}</span>
+                  <span class="text-xs opacity-50">{{ selectedCountry }}</span>
+                </template>
+                <template v-else>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-4 h-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
+                    />
+                  </svg>
+                  <span class="ml-1">{{ t('country') }}</span>
+                </template>
+              </label>
+              <div
+                tabindex="0"
+                class="dropdown-content z-[1] rounded-box shadow-xl bg-base-100 p-2 w-80"
+              >
+                <input
+                  v-model="countrySearch"
+                  type="text"
+                  :placeholder="t('search-country')"
+                  class="input input-bordered input-sm w-full mb-2"
+                >
+                <ul class="menu menu-sm max-h-80 overflow-auto">
+                  <li
+                    v-for="country in filteredCountries"
+                    :key="country"
+                  >
+                    <a class="flex justify-between" @click="toggleCountry(country)">
+                      <span class="flex items-center gap-2">
+                        <img
+                          :alt="t(localeKey.country(country))"
+                          class="w-5"
+                          :src="getFlagURL(country)"
+                        >
+                        {{ t(localeKey.country(country)) }}
+                      </span>
+                      <span class="flex items-center gap-2">
+                        <span class="text-xs opacity-50">{{ country }}</span>
+                        <span
+                          v-if="selectedCountry === country"
+                          class="text-primary"
+                        >✓</span>
+                      </span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <button
+              v-if="selectedCountry"
+              class="btn btn-ghost btn-xs btn-circle"
+              :title="t('clear')"
+              @click="toggleCountry()"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-4 h-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
       </template>
     </header-simple-title-with-sub>
     <div
@@ -188,20 +337,33 @@ de-DE:
               <th class="">
                 Rank
               </th>
-              <th class="text-center">
-                Flag
+              <th
+                class="text-center"
+                :class="{
+                  link: selectedCountry,
+                }"
+                @click="toggleCountry()"
+              >
+                <template
+                  v-if="selectedCountry"
+                >
+                  {{ t('clear') }}
+                </template>
+                <template v-else>
+                  Flag
+                </template>
               </th>
               <th class="">
                 Player
               </th>
               <th class="px-4 font-semibold text-end">
-                {{ $t(localeKey.rankingSystem(selected.rankingSystem)) }}
+                {{ t(localeKey.rankingSystem(selected.rankingSystem)) }}
               </th>
               <th class="px-4 font-medium text-end">
-                {{ $t("global.accuracy") }}
+                {{ t("global.accuracy") }}
               </th>
               <th class="px-4 font-medium text-end">
-                {{ $t("global.play-count") }}
+                {{ t("global.play-count") }}
               </th>
             </tr>
           </thead>
@@ -218,6 +380,7 @@ de-DE:
               :in-this-leaderboard="item.inThisLeaderboard"
               :sort="selected.rankingSystem"
               :switcher-state="selected"
+              @select-country="toggleCountry"
             />
           </tbody>
         </table>

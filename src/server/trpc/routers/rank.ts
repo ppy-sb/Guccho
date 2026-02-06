@@ -1,5 +1,6 @@
 import { number, object, string } from 'zod'
 import {
+  zodCountryCode,
   zodLeaderboardRankingSystem,
   zodMode,
   zodRankingSystem,
@@ -17,6 +18,7 @@ export const router = _router({
         mode: zodMode,
         ruleset: zodRuleset,
         rankingSystem: zodLeaderboardRankingSystem,
+        country: zodCountryCode.optional(),
       }),
     )
     .query(({ input }) => {
@@ -30,11 +32,12 @@ export const router = _router({
         rankingSystem: zodLeaderboardRankingSystem,
         page: number().gte(0).lt(10),
         pageSize: number().gte(20).lt(51),
+        country: zodCountryCode.optional(),
       }),
     )
     .query(
       async ({ input }) => {
-        const { mode, ruleset, rankingSystem, page, pageSize } = input
+        const { mode, ruleset, rankingSystem, page, pageSize, country } = input
         if (!hasRuleset(mode, ruleset)) {
           return []
         }
@@ -44,6 +47,7 @@ export const router = _router({
           rankingSystem,
           page,
           pageSize,
+          country,
         })
         return result.map(item => ({
           ...item,
@@ -60,11 +64,12 @@ export const router = _router({
         page: number().gte(0).lt(10),
         pageSize: number().gte(20).lt(51),
         md5: string(),
+        country: zodCountryCode.optional(),
       }),
     )
     .query(
       async ({
-        input: { mode, ruleset, rankingSystem, page, pageSize, md5 },
+        input: { mode, ruleset, rankingSystem, page, pageSize, md5, country },
       }) => {
         const result = await ranks.beatmap({
           mode,
@@ -73,6 +78,7 @@ export const router = _router({
           page,
           pageSize,
           md5,
+          country,
         })
         return result.map(item => ({
           ...item,
@@ -87,17 +93,19 @@ export const router = _router({
         ruleset: zodRuleset,
         rankingSystem: zodRankingSystem,
         md5: string(),
+        country: zodCountryCode.optional(),
       }),
     )
     .query(
       async ({
-        input: { mode, ruleset, rankingSystem, md5 },
+        input: { mode, ruleset, rankingSystem, md5, country },
       }) => {
         const result = await ranks.countBeatmap({
           mode,
           ruleset,
           rankingSystem,
           md5,
+          country,
         })
         return result
       },

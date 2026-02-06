@@ -70,6 +70,7 @@ export default {
     'otp': 'One time code',
     'verify': 'Verify',
     'max-combo': 'Max combo',
+    'filter': 'Filter',
   },
   role: {
     [UserRole.Disabled]: 'Disabled',
