@@ -55,4 +55,10 @@ export abstract class RankProvider<Id> extends IdTransformable {
       md5: string
     }
   ): Promise<number>
+
+  abstract getCountries(
+    query: RankProvider.BaseQuery & {
+      rankingSystem: LeaderboardRankingSystem
+    }
+  ): Promise<string[]>
 }

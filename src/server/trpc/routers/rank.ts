@@ -24,6 +24,17 @@ export const router = _router({
     .query(({ input }) => {
       return ranks.countLeaderboard(input as typeof input & Base.BaseQuery<ActiveMode>)
     }),
+  getCountries: publicProcedure
+    .input(
+      object({
+        mode: zodMode,
+        ruleset: zodRuleset,
+        rankingSystem: zodLeaderboardRankingSystem,
+      }),
+    )
+    .query(({ input }) => {
+      return ranks.getCountries(input as typeof input & Base.BaseQuery<ActiveMode>)
+    }),
   leaderboard: publicProcedure
     .input(
       object({

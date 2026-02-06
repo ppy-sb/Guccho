@@ -76,9 +76,11 @@ const queryLeaderboardValue = computed(() => ({
   country: selectedCountry.value,
 }))
 
-const { pending, data: table } = await app.$client.rank.leaderboard.useQuery(
+const { status: leaderboardStatus, data: table } = await app.$client.rank.leaderboard.useQuery(
   queryLeaderboardValue
 )
+
+const pending = computed(() => leaderboardStatus.value === 'pending')
 
 useHead({
   titleTemplate(title) {
@@ -144,12 +146,33 @@ function createRoute(i: SwitcherState) {
 const allCountries = computed(() => Object.values(CountryCode).filter(cc => cc !== CountryCode.Unknown))
 const countrySearch = ref('')
 
+const { data: availableCountries, status: countriesStatus, execute: executeCountriesQuery } = await app.$client.rank.getCountries.useQuery(
+  computed(() => ({
+    mode: selected.value.mode,
+    ruleset: selected.value.ruleset,
+    rankingSystem: selected.value.rankingSystem,
+  })),
+  {
+    immediate: false,
+  }
+)
+
+function openCountryDropdown() {
+  if (availableCountries.value === null) {
+    executeCountriesQuery()
+  }
+}
+
 const filteredCountries = computed(() => {
+  const countries = (availableCountries.value || countriesStatus.value === 'error')
+    ? allCountries.value.filter(cc => availableCountries.value?.includes(cc) ?? true)
+    : []
+
   if (!countrySearch.value) {
-    return allCountries.value
+    return countries
   }
   const search = countrySearch.value.toLowerCase()
-  return allCountries.value.filter((cc) => {
+  return countries.filter((cc) => {
     const name = t(localeKey.country(cc)).toLowerCase()
     return name.includes(search) || cc.toLowerCase().includes(search)
   })
@@ -227,7 +250,8 @@ de-DE:
               <label
                 tabindex="0"
                 class="flex items-center gap-2"
-                :class="selectedCountry ? '' : 'btn btn-ghost btn-sm'"
+                :class="selectedCountry ? '' : '-ms-3 btn btn-ghost btn-sm'"
+                @click="openCountryDropdown"
               >
                 <template v-if="selectedCountry">
                   <img
@@ -253,7 +277,7 @@ de-DE:
                       d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
                     />
                   </svg>
-                  <span class="ml-1">{{ t('country') }}</span>
+                  <span>{{ t('country') }}</span>
                 </template>
               </label>
               <div
@@ -266,7 +290,10 @@ de-DE:
                   :placeholder="t('search-country')"
                   class="input input-bordered input-sm w-full mb-2"
                 >
-                <ul class="menu menu-sm max-h-80 overflow-auto">
+                <div v-if="countriesStatus === 'pending'" class="flex justify-center py-4">
+                  <div class="loading loading-sm" />
+                </div>
+                <ul v-else class="menu menu-sm max-h-80 overflow-auto">
                   <li
                     v-for="country in filteredCountries"
                     :key="country"

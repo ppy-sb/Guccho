@@ -213,6 +213,28 @@ export class DatabaseRankProvider implements Base<Id> {
 
     return s[0].count
   }
+
+  async getCountries(query: Base.BaseQuery<Mode> & { rankingSystem: LeaderboardRankingSystem }): Promise<string[]> {
+    const { mode, ruleset, rankingSystem } = query
+
+    const countries = await this.drizzle
+      .selectDistinct({
+        country: schema.users.country,
+      })
+      .from(schema.stats)
+      .innerJoin(schema.users, eq(schema.stats.id, schema.users.id))
+      .where(
+        and(
+          userPriv(schema.users),
+          eq(schema.stats.mode, toBanchoPyMode(mode, ruleset)),
+          gt(schema.stats.pp, 0)?.if(rankingSystem === Rank.PPv2),
+          gt(schema.stats.rankedScore, 0n)?.if(rankingSystem === Rank.RankedScore),
+          gt(schema.stats.totalScore, 0n)?.if(rankingSystem === Rank.TotalScore),
+        )
+      )
+
+    return countries.map(c => c.country.toUpperCase()).filter(Boolean)
+  }
 }
 
 export class RedisRankProvider extends DatabaseRankProvider implements Monitored {
