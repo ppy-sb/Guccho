@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { inferRouterOutputs } from '@trpc/server'
+import { parse, stringify } from 'superjson'
 import { validateUsecase } from '~/common/utils/dan'
 import { type DatabaseDan, Requirement, type RequirementCondBinding } from '~/def/dan'
 import type { AppRouter } from '~/server/trpc/routers'
@@ -40,7 +41,7 @@ const selectedRequirement = computed(() =>
 )
 
 // watch(compose, () => {
-//   localStorage.setItem('dan-compose', JSON.stringify(compose.value))
+//   localStorage.setItem('dan-compose', stringify(compose.value))
 // }, { deep: true })
 
 const fmtScore = createNumberFormatter()
@@ -50,11 +51,11 @@ function loadLast() {
   if (!save) {
     return
   }
-  compose.value = JSON.parse(save)
+  compose.value = parse(save)
 }
 
 function copy() {
-  navigator?.clipboard.writeText(JSON.stringify(compose.value))
+  navigator?.clipboard.writeText(stringify(compose.value))
 }
 
 async function readClipboard() {
@@ -62,7 +63,7 @@ async function readClipboard() {
   if (!text) {
     return
   }
-  compose.value = unDB(JSON.parse(text))
+  compose.value = unDB(parse(text))
 }
 
 async function getDB() {
@@ -114,7 +115,7 @@ async function saveDB() {
     }),
     _db: true,
   }
-  localStorage.setItem('dan-compose', JSON.stringify(compose.value))
+  localStorage.setItem('dan-compose', stringify(compose.value))
   loading.value = false
 }
 async function deleteDB() {
