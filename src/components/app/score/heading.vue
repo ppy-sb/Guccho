@@ -10,7 +10,7 @@ type RouterOutput = inferRouterOutputs<AppRouter>
 
 type Score = NonNullable<RouterOutput['score']['id']>
 
-const props = defineProps<{
+defineProps<{
   score: Score
   rankingSystem: RankingSystem
 }>()
