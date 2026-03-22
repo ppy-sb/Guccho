@@ -19,8 +19,8 @@ import { type MailTokenProvider } from '$base/server'
 import type { ArticleProvider } from '$base/server/article'
 import { LeaderboardScoreRank, Mode, PPRank, Relationship, Ruleset, ScoreRank } from '~/def'
 import { RankingStatus } from '~/def/beatmap'
-import type { ActiveMode, ActiveRuleset } from '$active'
 import { CountryCode } from '~/def/country-code'
+import { type UnionModeRuleset } from '~/def/server'
 
 export * from './metrics'
 

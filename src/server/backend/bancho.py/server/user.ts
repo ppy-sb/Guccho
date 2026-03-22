@@ -6,7 +6,6 @@ import imageType from 'image-type'
 import { glob } from 'glob'
 import { type SQL, aliasedTable, and, desc, eq, inArray, like, or, sql } from 'drizzle-orm'
 import { TRPCError } from '@trpc/server'
-import { omit } from 'lodash-es'
 import type { Id, ScoreId } from '..'
 import { getLiveUserStatus } from '../api-client'
 import { compareBanchoPassword, encryptBanchoPassword } from '../crypto'
@@ -58,7 +57,6 @@ import { RankingStatus } from '~/def/beatmap'
 import { UserProvider as Base, type MailTokenProvider } from '$base/server'
 import type { ExtractLocationSettings, ExtractSettingType } from '$base/@define-setting'
 import { type UserModeRulesetStatistics } from '~/def/statistics'
-import { mode } from '~/common/icon'
 
 type ServerSetting = ExtractSettingType<ExtractLocationSettings<DynamicSettingStore.Server, typeof settings>>
 
@@ -418,7 +416,7 @@ class DBUserProvider extends Base<Id, ScoreId> implements Base<Id, ScoreId> {
 
     const scoresData = await q2
 
-    const count = scoresData.length > 0 ? scoresData[0].fullCount : 0
+    const count = scoresData.length > 0 ? scoresData[0]!.fullCount : 0
     const scores = scoresData
 
     return {
@@ -482,7 +480,7 @@ class DBUserProvider extends Base<Id, ScoreId> implements Base<Id, ScoreId> {
           server: i.beatmap.server,
         }
         if (i.scores.length === 1) {
-          const first = i.scores[0]
+          const first = i.scores[0]!
           return {
             type: 'single' as const,
             ...toRankingSystemScore({
@@ -498,7 +496,7 @@ class DBUserProvider extends Base<Id, ScoreId> implements Base<Id, ScoreId> {
         else {
           const pinned = i.scores.toSorted((a, b) => {
             return b.pp - a.pp
-          })[0]
+          })[0]!
 
           return {
             type: 'group' as const,
@@ -972,7 +970,7 @@ class DBUserProvider extends Base<Id, ScoreId> implements Base<Id, ScoreId> {
     /* optimized */
     return await this.drizzle.select({
       count: sql`COUNT(*)`.mapWith(Number),
-    }).from(schema.users).where(userPriv(schema.users)).then(res => res[0].count)
+    }).from(schema.users).where(userPriv(schema.users)).then(res => res[0]!.count)
   }
 
   async changeVisibility(user: UserCompact<Id>) {

@@ -1,6 +1,6 @@
 import { TRPCError } from '@trpc/server'
 import { type SQL, and, eq, or } from 'drizzle-orm'
-import type { Id, ScoreId } from '../..'
+import type { Id } from '../..'
 import { useDrizzle, userPriv } from '../../../bancho.py/server/source/drizzle'
 import { FilterType } from '../../../bancho.py/server/user'
 import * as schema from '../../drizzle/schema'

@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { array, coerce, nativeEnum, object, string } from 'zod'
+import { createOptions } from '~/common/utils'
+import { getFlagURL } from '~/utils/flag'
 import { CountryCode } from '~/def/country-code'
 import { type UserCompact, type UserOptional, UserRole } from '~/def/user'
+import * as localeKey from '~/common/utils/locales'
 
 const { t, locale } = useI18n()
 const route = useRoute('admin-users')
@@ -178,7 +181,7 @@ de-DE:
                   v-for="countryCode in CountryCode" :key="countryCode" :disabled="countryCode === search.flag"
                   :selected="countryCode === search.flag" :value="countryCode"
                 >
-                  {{ $t(localeKey.country(countryCode)) }}
+                  {{ t(localeKey.country(countryCode)) }}
                 </option>
               </select>
             </div>
@@ -190,7 +193,7 @@ de-DE:
             </label>
             <t-multi-select
               v-model="search.roles" size="sm"
-              :options="createOptions(UserRole, (_, value) => $t(localeKey.role(value)))"
+              :options="createOptions(UserRole, (_, value) => t(localeKey.role(value)))"
             />
           </div>
           <div class="col-span-2 form-control disbaled">
@@ -309,14 +312,14 @@ de-DE:
                     {{ user.name }}
                   </nuxt-link-locale>
                   <div class="text-sm opacity-50 whitespace-nowrap">
-                    {{ $t(localeKey.country(user.flag || CountryCode.Unknown)) }}
+                    {{ t(localeKey.country(user.flag || CountryCode.Unknown)) }}
                   </div>
                 </div>
               </div>
             </td>
             <td>
               <span v-for="role in user.roles" :key="user.id + role" class="badge badge-sm whitespace-nowrap">
-                {{ $t(localeKey.role(role)) }}
+                {{ t(localeKey.role(role)) }}
               </span>
             </td>
             <td><a class="link g-link-style" :href="`mailto:${user.email}`">{{ user.email }}</a></td>
