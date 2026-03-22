@@ -1,7 +1,7 @@
 import { match } from 'switch-pattern'
 import { BanchoMode, BanchoPyMode } from '../enums'
 import { Mode, Ruleset } from '~/def'
-import type { ActiveMode, ActiveRuleset } from '$active'
+import type { ActiveMode, ActiveRuleset, AvailableRuleset, ModeRulesetRankingSystemDef as ServerRankingSystemDef } from '$active'
 import { GucchoError } from '~/def/messages'
 
 export const BPyMode = {
@@ -14,6 +14,16 @@ export const BPyMode = {
   [BanchoPyMode.FruitsRelax]: [Mode.Fruits, Ruleset.Relax],
   [BanchoPyMode.OsuAutopilot]: [Mode.Osu, Ruleset.Autopilot],
 } as const
+
+const ModeAvailableRulesets = Object.values(BPyMode).reduce((acc, cur) => {
+  acc[cur[0]].push(cur[1])
+  return acc
+}, {
+  [Mode.Osu]: [],
+  [Mode.Taiko]: [],
+  [Mode.Fruits]: [],
+  [Mode.Mania]: [],
+} as Record<ActiveMode, ActiveRuleset[]>)
 
 // const BPyModeEntries = strictEntries(BPyMode)
 const BPyModeEntries = Object.entries(BPyMode)
@@ -30,7 +40,10 @@ export function toBanchoPyMode(
   }
   return Number.parseInt(str)
 }
-export function fromBanchoPyMode<BMode extends BanchoPyMode>(input: BMode): readonly [Mode, Ruleset] {
+type UnionModeRulesetTuple = {
+  [M in keyof ServerRankingSystemDef]: readonly [M, AvailableRuleset<M>]
+}[keyof ServerRankingSystemDef]
+export function fromBanchoPyMode<BMode extends BanchoPyMode>(input: BMode): UnionModeRulesetTuple {
   return BPyMode[input]
 }
 
@@ -38,6 +51,10 @@ export function assertIsBanchoPyMode(val: number): asserts val is BanchoPyMode {
   if (!(val in BPyMode)) {
     throw new Error('unknown bancho.py mode')
   }
+}
+
+export function getModeAvailableRulesets(mode: Mode) {
+  return ModeAvailableRulesets[mode]
 }
 
 export function toBanchoMode(mode: Mode) {

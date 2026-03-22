@@ -70,7 +70,6 @@ export default {
     'otp': 'Einmaliger Code',
     'verify': 'Verifizieren',
     'max-combo': 'Max combo',
-    'filter': 'Filtern',
   },
   role: {
     [UserRole.Disabled]: 'Deaktiviert',
@@ -156,6 +155,8 @@ export default {
     // [GucchoError.TryingToDeleteFallbackContents]: ''
     // [GucchoError.ArticleNotFound]: '',
   },
+  // TODO DE translation
+  // dan: {},
   country: {
     [CountryCode.Unknown]: 'Unbekannt',
     [CountryCode.Afghanistan]: 'Afghanistan',

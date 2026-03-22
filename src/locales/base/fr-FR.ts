@@ -55,7 +55,6 @@ export default {
     'verify': 'Verify',
     'wip': 'WIP',
     'max-combo': 'Max combo',
-    'filter': 'Filtrer',
   },
   role: {
     [UserRole.Disabled]: 'Désactivé',
