@@ -44,7 +44,7 @@ type UnionModeRulesetTuple = {
   [M in keyof ServerRankingSystemDef]: readonly [M, AvailableRuleset<M>]
 }[keyof ServerRankingSystemDef]
 export function fromBanchoPyMode<BMode extends BanchoPyMode>(input: BMode): UnionModeRulesetTuple {
-  return BPyMode[input]
+  return BPyMode[input] ?? throwGucchoError(GucchoError.ModeOrRulesetNotSupported)
 }
 
 export function assertIsBanchoPyMode(val: number): asserts val is BanchoPyMode {

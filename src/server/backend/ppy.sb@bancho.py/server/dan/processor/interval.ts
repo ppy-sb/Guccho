@@ -140,51 +140,57 @@ export class IntervalDanProcessor extends CacheSyncedDanProcessor implements Cac
         user,
         ...score
       } of scores) {
-        const [mode, ruleset] = fromBanchoPyMode(score.mode)
+        try {
+          const [mode, ruleset] = fromBanchoPyMode(score.mode)
 
-        if (!bm) {
-          continue
-        }
+          if (!bm) {
+            continue
+          }
 
-        const tScore = toScore({ score, beatmap: bm, mode, ruleset, source: bm.source })
-        const _beatmap = tScore.beatmap
+          const tScore = toScore({ score, beatmap: bm, mode, ruleset, source: bm.source })
+          const _beatmap = tScore.beatmap
 
-        if (_beatmap.status === RankingStatus.Deleted || _beatmap.status === RankingStatus.NotFound) {
-          continue
-        }
-        const beatmap = _beatmap as NormalBeatmapWithMeta<Exclude<RankingStatus, AbnormalStatus>, Id, Id>
+          if (_beatmap.status === RankingStatus.Deleted || _beatmap.status === RankingStatus.NotFound) {
+            continue
+          }
+          const beatmap = _beatmap as NormalBeatmapWithMeta<Exclude<RankingStatus, AbnormalStatus>, Id, Id>
 
-        if (!user) {
-          this.logger.warn({
-            message: 'score submitted with user not found',
-            scoreId: ScoreProvider.scoreIdToString(score.id),
-            userId: score.userId,
+          if (!user) {
+            this.logger.warn({
+              message: 'score submitted with user not found',
+              scoreId: ScoreProvider.scoreIdToString(score.id),
+              userId: score.userId,
+            })
+            continue
+          }
+
+          const result = pipeline({
+            ...tScore,
+            id: ScoreProvider.scoreIdToString(score.id),
+            beatmap: {
+              ...beatmap,
+              id: MapProvider.idToString(beatmap.id),
+              foreignId: 'foreignId' in beatmap ? MapProvider.idToString(beatmap.foreignId) : undefined,
+            } as unknown as NormalBeatmapWithMeta<Exclude<RankingStatus, AbnormalStatus>, string, string>,
+            noPause: meta?.noPause ?? false,
+            player: mapId(user, UserProvider.idToString),
           })
+
+          const passed = result.map((item, idx) => [item, dan.requirements[idx]] as const).filter(([item]) => item.result)
+          if (!passed.length) {
+            continue
+          }
+
+          inserting.push(...passed.map(([_item, requirement]) => ({
+            scoreId: score.id,
+            dan: dan.id,
+            requirement: requirement!.type,
+          })))
+        }
+        catch (e) {
+          this.logger.error(e)
           continue
         }
-
-        const result = pipeline({
-          ...tScore,
-          id: ScoreProvider.scoreIdToString(score.id),
-          beatmap: {
-            ...beatmap,
-            id: MapProvider.idToString(beatmap.id),
-            foreignId: 'foreignId' in beatmap ? MapProvider.idToString(beatmap.foreignId) : undefined,
-          } as unknown as NormalBeatmapWithMeta<Exclude<RankingStatus, AbnormalStatus>, string, string>,
-          noPause: meta?.noPause ?? false,
-          player: mapId(user, UserProvider.idToString),
-        })
-
-        const passed = result.map((item, idx) => [item, dan.requirements[idx]] as const).filter(([item]) => item.result)
-        if (!passed.length) {
-          continue
-        }
-
-        inserting.push(...passed.map(([_item, requirement]) => ({
-          scoreId: score.id,
-          dan: dan.id,
-          requirement: requirement!.type,
-        })))
       }
     }
 
