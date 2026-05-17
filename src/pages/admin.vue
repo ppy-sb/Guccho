@@ -53,7 +53,7 @@ const session = useSession()
           {{ $t(localeKey.title.logs.__path__) }}
         </nuxt-link-locale>
       </li>
-      <li v-if="session.role.admin || session.role.owner">
+      <li v-if="session.role.admin || session.role.owner || session.user?.roles.includes(UserRole.Moderator)">
         <nuxt-link-locale
           class="whitespace-nowrap"
           :to="{

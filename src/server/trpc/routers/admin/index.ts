@@ -4,14 +4,22 @@ import { type AdminMapProvider as BaseAdminMapProvider } from '../../../backend/
 import { router as log } from './log'
 import { Logger } from '$base/logger'
 import { AdminMapProvider, UserProvider, adminMap, adminScore, adminUser } from '~/server/singleton/service'
-import { adminProcedure, bNProcedure } from '~/server/trpc/middleware/role'
+import { bNProcedure, roleProcedure } from '~/server/trpc/middleware/role'
 import { router as _router } from '~/server/trpc/trpc'
 import { UserRole } from '~/def/user'
 import { CountryCode } from '~/def/country-code'
 import { isUserFieldEditable } from '~/common/utils/admin'
 import { BeatmapSource, RankingStatus } from '~/def/beatmap'
+import { GucchoError } from '~/def/messages'
 
 const logger = Logger.child({ label: 'admin' })
+
+const moderatorProcedure = roleProcedure.use(({ ctx, next }) => {
+  if (!ctx.user.role.staff && !ctx.user.role.admin && !ctx.user.role.owner) {
+    throwGucchoError(GucchoError.RequireAdminPrivilege)
+  }
+  return next()
+})
 
 const searchUserParam = object({
   id: string().trim(),
@@ -36,7 +44,7 @@ const searchUserParam = object({
 export const router = _router({
   log,
   userManagement: _router({
-    search: adminProcedure
+    search: moderatorProcedure
       .input(searchUserParam)
       .query(({ input }) => {
         return adminUser.userList({
@@ -45,10 +53,10 @@ export const router = _router({
           id: input.id ? UserProvider.stringToId(input.id) : undefined,
         })
       }),
-    detail: adminProcedure.input(string()).query(({ input }) => {
+    detail: moderatorProcedure.input(string()).query(({ input }) => {
       return adminUser.userDetail({ id: UserProvider.stringToId(input) }).then(detail => mapId(detail, UserProvider.idToString))
     }),
-    saveDetail: adminProcedure
+    saveDetail: moderatorProcedure
       .input(
         tuple([
           string(),
@@ -87,7 +95,7 @@ export const router = _router({
         return mapId(res, UserProvider.idToString)
       }),
 
-    recalcUserStat: adminProcedure
+    recalcUserStat: moderatorProcedure
       .input(object({
         id: string(),
         mode: zodMode,
@@ -97,7 +105,7 @@ export const router = _router({
         return adminUser.recalcUserModeRulesetStatistics({ id: UserProvider.stringToId(input.id), mode: input.mode, ruleset: input.ruleset })
       }),
 
-    clearUserStat: adminProcedure
+    clearUserStat: moderatorProcedure
       .input(object({
         id: string(),
         mode: zodMode,
@@ -107,7 +115,7 @@ export const router = _router({
         return adminUser.clearUserModeRulesetStatistics({ id: UserProvider.stringToId(input.id), mode: input.mode, ruleset: input.ruleset })
       }),
 
-    getUserStats: adminProcedure
+    getUserStats: moderatorProcedure
       .input(object({
         id: string(),
         mode: zodMode,
@@ -117,7 +125,7 @@ export const router = _router({
         return adminUser.getUserModeRulesetStatistics({ id: UserProvider.stringToId(input.id), mode: input.mode, ruleset: input.ruleset })
       }),
 
-    clearUserAllStats: adminProcedure
+    clearUserAllStats: moderatorProcedure
       .input(object({
         id: string(),
       }))
@@ -125,7 +133,7 @@ export const router = _router({
         return adminUser.clearUserAllStatistics({ id: UserProvider.stringToId(input.id) })
       }),
 
-    recalcUserAllStats: adminProcedure
+    recalcUserAllStats: moderatorProcedure
       .input(object({
         id: string(),
       }))
@@ -133,7 +141,7 @@ export const router = _router({
         return adminUser.recalcUserAllStatistics({ id: UserProvider.stringToId(input.id) })
       }),
 
-    metrics: adminProcedure
+    metrics: moderatorProcedure
       .input(
         object({
           active: zodMetricsPeriod,
