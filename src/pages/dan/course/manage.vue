@@ -104,7 +104,24 @@ zh-CN:
   created-at: 创建时间
   updated-at: 更新时间
   actions: 操作
-# TODO fr, DE
+
+fr-FR:
+  search-text: Rechercher des cours...
+  search: Rechercher
+  collection: Cours
+  dan-count: Nombre de Dans
+  edit: Modifier
+  mode: '@:global.mode'
+  ruleset: '@:global.ruleset'
+  key: Touches
+  treat-no-ruleset-cond-as-standard: Traiter l'absence de règle comme standard
+  unset: Non défini
+  create: Créer
+  creator: Créateur
+  updater: Éditeur
+  created-at: Créé le
+  updated-at: Mis à jour le
+  actions: Actions
 </i18n>
 
 <template>

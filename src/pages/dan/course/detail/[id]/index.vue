@@ -45,7 +45,18 @@ zh-CN:
   updater: 更新者
   back-to-courses: 返回段位池列表
 
-# TODO fr, DE
+fr-FR:
+  collection: Cours
+  full-name: Nom complet (FQDN)
+  description: Description
+  requirements: Conditions
+  dan: Dan
+  edit: Modifier
+  created-at: Créé le
+  updated-at: Mis à jour le
+  creator: Créateur
+  updater: Éditeur
+  back-to-courses: Retour aux cours
 </i18n>
 
 <template>

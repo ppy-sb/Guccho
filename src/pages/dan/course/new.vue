@@ -58,6 +58,10 @@ en-GB:
 zh-CN:
   create-course: 创建段位池
   back: 返回
+
+fr-FR:
+  create-course: Créer un cours
+  back: Retour
 </i18n>
 
 <template>

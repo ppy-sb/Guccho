@@ -149,7 +149,29 @@ zh-CN:
   dangling-only: 仅显示未入池
   delete-dans: 删除池中的段位
 
-# TODO fr, DE
+fr-FR:
+  search-text: Rechercher des dans...
+  search: Rechercher
+  dan: Dan
+  delete: Supprimer
+  confirm-delete: Voulez-vous vraiment supprimer ce cours ?
+  cancel: Annuler
+  save: Enregistrer
+  name: Nom
+  add-dan: Ajouter un Dan
+  remove-dan: Retirer le Dan
+  no-dans: Aucun Dan trouvé
+  actions: Actions
+  description: Description
+  requirements: Conditions
+  full-name: Nom complet (FQDN)
+  create: Créer un cours
+  back: Retour
+  mode: Mode
+  unset: Non défini
+  treat-no-ruleset-cond-as-standard: Traiter l'absence de règle comme standard
+  dangling-only: Non assignés uniquement
+  delete-dans: Supprimer les Dans du cours
 </i18n>
 
 <template>

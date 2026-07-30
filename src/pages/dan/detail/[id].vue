@@ -134,7 +134,20 @@ zh-CN:
     accuracy: 最高ACC
     pp: 最高PP
 
-# TODO fr, DE
+fr-FR:
+  qf-scores: Scores qualifiés
+  load-qualified-scores: Charger les scores qualifiés
+  mode: Mode...
+  ruleset: Règle...
+  unset: Non défini
+  treat-no-ruleset-cond-as-standard: traiter les Dans sans exigence de règle comme standard
+  dedupe-with: Dédupliquer par
+  dedupe:
+    no: Aucune
+    id: Premier qualifié
+    score: Meilleur score
+    accuracy: Meilleure précision
+    pp: Meilleur pp
 </i18n>
 
 <template>

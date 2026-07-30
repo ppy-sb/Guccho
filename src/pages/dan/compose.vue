@@ -150,6 +150,9 @@ en-GB:
 
 zh-CN:
   delete-confirm: 确定删除? 本操作无法撤销。
+
+fr-FR:
+  delete-confirm: Êtes-vous sûr ? Cette action est irréversible.
 </i18n>
 
 <template>
