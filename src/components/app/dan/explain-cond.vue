@@ -127,6 +127,52 @@ const messages = Object.freeze({
       },
     },
   },
+  'fr-FR': {
+    dan: {
+      cond: {
+        [OP.AccGte]: 'Précision ≥ {val}',
+        [OP.ScoreGte]: 'Score ≥ {val}',
+        [OP.ModeEq]: 'Mode = {val}',
+        [OP.RulesetEq]: 'Règle = {val}',
+        [OP.BanchoBeatmapIdEq]: 'ID de la beatmap = {val} sur Bancho',
+        [OP.BeatmapMd5Eq]: 'MD5 de la beatmap = {val}',
+        [OP.StableModIncludeAny]: 'Joué avec au moins un mod parmi {val}',
+        [OP.StableModIncludeAll]: 'Joué avec les mods {val}',
+        [OP.Extends]: 'Remplit toutes les conditions de {val}',
+        [OP.OR]: 'Ou',
+        [OP.AND]: 'Et',
+        [OP.NOT]: 'Non',
+        [OP.Remark]: 'Remarque : {remark} {val}',
+        [OP.NoPause]: 'Sans Pause',
+        [OP.Expect]: 'Doit',
+      },
+      cmp: {
+        [CompareOP.Gt]: '>',
+        [CompareOP.Gte]: '≥',
+        [CompareOP.Lt]: '<',
+        [CompareOP.Lte]: '≤',
+        [CompareOP.Eq]: '=',
+        [CompareOP.Ne]: '≠',
+      },
+      key: {
+        mode: '@:global.mode',
+        ruleset: '@:global.ruleset',
+        accuracy: '@:global.accuracy',
+        maxCombo: '@:global.max-combo',
+        score: 'Score',
+        count: {
+          miss: 'Miss',
+          50: '50',
+          100: '100',
+          300: '300',
+          geki: 'Geki',
+          katu: 'Katu',
+          200: '200',
+          max: 'Max',
+        },
+      },
+    },
+  },
 
 } satisfies Record<string, Loc>)
 
