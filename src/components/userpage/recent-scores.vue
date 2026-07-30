@@ -74,7 +74,10 @@ zh-CN:
   recent: 最近成绩
   folded: '{i} 个折叠的成绩'
 
-# TODO FR
+fr-FR:
+  recent: Scores récents
+  folded: '{i} scores repliés'
+
 # TODO DE
 </i18n>
 

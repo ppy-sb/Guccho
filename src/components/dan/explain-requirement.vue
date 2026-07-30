@@ -18,6 +18,9 @@ en-GB:
 
 zh-CN:
   requirement: '判定: '
+
+fr-FR:
+  requirement: 'Condition : '
 </i18n>
 
 <template>

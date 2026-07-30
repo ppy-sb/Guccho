@@ -29,7 +29,11 @@ zh-CN:
   delete-dans: 删除池中的段位
   cancel: 取消
 
-  # TODO fr, DE
+fr-FR:
+  delete: Supprimer
+  confirm-delete: Voulez-vous vraiment supprimer ce cours ?
+  delete-dans: Supprimer les dans du cours
+  cancel: Annuler
   </i18n>
 
 <template>
