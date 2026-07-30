@@ -2,8 +2,8 @@ import type { ServerLocale } from './@types'
 
 export default {
   landing: {
-    // TODO update fr tranlsate
-    content: `Bienvenue sur {title} ，un serveur privé osu! complet. Nous disposons d'algorithmes Relax et Autopilot avancés, tout en calculant les pp pour tous les modes.
-Nous avons un classement général et vous pouvez également changer de pseudo comme bon vous semble.`,
+    content: `Bienvenue sur {title}, un serveur privé osu! pour tous les modes, avec algorithmes RX/AP et calcul des pp.
+Rejoignez notre groupe QQ ou Discord (lien en bas à droite) pour échanger avec les autres joueurs.
+Classement général et changements de pseudo illimités.`,
   },
 } satisfies ServerLocale
