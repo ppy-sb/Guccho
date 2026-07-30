@@ -84,6 +84,19 @@ zh-CN:
   md5: 哈希
   status: 状态
   requested-by-player: 玩家投票数
+
+fr-FR:
+  mode: Mode
+  search-text: ID de set, ID de beatmap, artiste, titre, version, hash
+  search: Rechercher
+  sid: ID du set
+  artist: Artiste
+  song: Titre
+  bid: ID de la beatmap
+  version: Version
+  md5: Hash
+  status: Statut
+  requested-by-player: Votes des joueurs
 </i18n>
 
 <template>

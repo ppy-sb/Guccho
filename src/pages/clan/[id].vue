@@ -120,6 +120,13 @@ de-DE:
   member: Mitglied
   members: Mitglieder
   clan-best-scores: Beste Ergebnisse
+
+fr-FR:
+  owner: Chef
+  created-at: Fondé le
+  member: Membre
+  members: Membres
+  clan-best-scores: Meilleurs scores
 </i18n>
 
 <template>
