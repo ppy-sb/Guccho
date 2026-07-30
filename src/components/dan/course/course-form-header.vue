@@ -117,4 +117,12 @@ zh-CN:
   creator: 创建者
   updated-at: 更新时间
   updater: 更新者
+
+fr-FR:
+  name: Nom
+  description: Description
+  created-at: Créé le
+  creator: Créateur
+  updated-at: Mis à jour le
+  updater: Éditeur
 </i18n>
