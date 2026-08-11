@@ -207,7 +207,7 @@ export const router = _router({
             .partial()
         )
       )
-      .mutation(async ({ input }) => {
+      .mutation(async ({ input, ctx }) => {
         const res = await adminMap.update({
           id: AdminMapProvider.stringToId(input.id),
           version: input.version,
@@ -216,6 +216,14 @@ export const router = _router({
           // source: input.source,
           // foreignId: input.foreignId ? AdminMapProvider.stringToId(input.foreignId) : undefined,
         })
+
+        logger.info(`BN ${ctx.user.safeName}<${ctx.user.id}> updated beatmap ${input.id}.`, {
+          user: pick(ctx.user, ['id', 'name']),
+          beatmap: { id: input.id, version: input.version, md5: input.md5 },
+          requestedStatus: input.status,
+          resultStatus: res.status,
+        })
+
         return {
           ...res,
           id: AdminMapProvider.idToString(res.id),
