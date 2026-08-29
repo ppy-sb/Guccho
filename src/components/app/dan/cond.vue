@@ -181,6 +181,56 @@ const { t, te } = useI18n({
         },
       },
     },
+    'fr-FR': {
+      dan: {
+        requirement: {
+          [Requirement.Pass]: 'Pass',
+          [Requirement.NoPause]: 'Sans Pause',
+        },
+        cond: {
+          [OP.AccGte]: 'Précision ≥',
+          [OP.ScoreGte]: 'Score ≥',
+          [OP.ModeEq]: 'Mode =',
+          [OP.RulesetEq]: 'Règle =',
+          [OP.BanchoBeatmapIdEq]: 'Bancho bid =',
+          [OP.BeatmapMd5Eq]: 'Beatmap MD5 =',
+          [OP.StableModIncludeAny]: 'Au moins un mod',
+          [OP.StableModIncludeAll]: 'Tous les mods',
+          [OP.Extends]: 'Remplit les conditions de',
+          [OP.OR]: 'ou',
+          [OP.AND]: 'et',
+          [OP.NOT]: 'non',
+          [OP.Remark]: 'Remarque',
+          [OP.NoPause]: 'Sans Pause',
+          [OP.Expect]: 'Doit',
+        },
+        cmp: {
+          [CompareOP.Gt]: '>',
+          [CompareOP.Gte]: '≥',
+          [CompareOP.Lt]: '<',
+          [CompareOP.Lte]: '≤',
+          [CompareOP.Eq]: '=',
+          [CompareOP.Ne]: '≠',
+        },
+        key: {
+          mode: '@:global.mode',
+          ruleset: '@:global.ruleset',
+          accuracy: '@:global.accuracy',
+          maxCombo: '@:global.max-combo',
+          score: 'Score',
+          count: {
+            miss: 'Miss',
+            50: '50',
+            100: '100',
+            300: '300',
+            geki: 'Geki',
+            katu: 'Katu',
+            200: '200',
+            max: 'Max',
+          },
+        },
+      },
+    },
   } satisfies Record<string, Translation>,
 })
 
@@ -246,6 +296,12 @@ zh-CN:
   delete: 删除
   select: 选择
   add: 添加
+
+fr-FR:
+  reset: Réinitialiser
+  delete: Supprimer
+  select: Sélectionner
+  add: Ajouter
 </i18n>
 
 <template>

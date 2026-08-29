@@ -97,6 +97,14 @@ zh-CN:
   unset: 未指定
   treat-no-ruleset-cond-as-standard: 将无玩法要求的段位视为std端位
   key: 键数
+
+fr-FR:
+  qf-scores: Scores qualifiés (Top 10)
+  load-qualified-scores: Charger les scores qualifiés
+  mode: Mode...
+  ruleset: Règle...
+  unset: Non défini
+  key: Touches
 </i18n>
 
 <template>

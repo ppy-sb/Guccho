@@ -1,15 +1,32 @@
 import type { GlobalI18n } from '../@types'
+import { Requirement } from '../../def/dan'
+import { RankingStatus } from '~/def/beatmap'
 import { CountryCode } from '~/def/country-code'
-import { Rank } from '~/def'
+import { Mode, Rank, Ruleset } from '~/def'
+import { Mail } from '~/def/mail'
+import { GucchoError } from '~/def/messages'
 import { Scope, UserRole } from '~/def/user'
 
 export default {
-  // reuse en-GB
-  server: {} as any,
-  footer: {} as any,
+  server: {
+    name: 'Guccho',
+  },
+  footer: {
+    about: 'À propos',
+    resources: 'Ressources',
+  },
 
-  mode: {} as any,
-  ruleset: {} as any,
+  mode: {
+    [Mode.Osu]: 'Osu',
+    [Mode.Taiko]: 'Taiko',
+    [Mode.Fruits]: 'CTB',
+    [Mode.Mania]: 'Mania',
+  },
+  ruleset: {
+    [Ruleset.Standard]: 'Standard',
+    [Ruleset.Relax]: 'Relax',
+    [Ruleset.Autopilot]: 'Autopilot',
+  },
   rank: {
     [Rank.PPv2]: 'Performance(v2)',
     [Rank.PPv1]: 'Performance(v1)',
@@ -27,9 +44,16 @@ export default {
     'logs': 'Logs',
     'articles': 'Articles',
     'clans': 'Clans',
-    'user-management': 'Gestion d\'utilisateur',
-    // TODO refine fr translation
-    'account-recovery': 'Account Recovery',
+    'user-management': 'Gestion des utilisateurs',
+    'account-recovery': 'Récupération de compte',
+    'dan': {
+      'dan': 'Dan',
+      'dans': 'Dans',
+      'courses': 'Cours',
+      'compose': 'Composer',
+      'manage': 'Gérer le cours',
+      'create-course': 'Créer un cours',
+    },
   },
 
   global: {
@@ -40,19 +64,18 @@ export default {
     'player': 'Joueur',
     'rank': 'Rang',
     'mods': 'Mods',
-    'played-at': 'Temps de jeu',
+    'played-at': 'Joué le',
     'acc': 'Acc',
     'accuracy': 'Précision',
     'play-count': 'Nombre de parties',
     'beatmapsets': 'Beatmapsets',
     'beatmaps': 'Beatmaps',
-    'users': 'Utilisateur',
+    'users': 'Utilisateurs',
     'session': 'Session',
     'password': 'Mot de passe',
-    // TODO refine fr translation
     'email': 'Email',
-    'otp': 'One time code',
-    'verify': 'Verify',
+    'otp': 'Code à usage unique',
+    'verify': 'Vérifier',
     'wip': 'WIP',
     'max-combo': 'Max combo',
   },
@@ -86,9 +109,72 @@ export default {
     sessions: 'Connexion Web',
   },
 
-  beatmap: {} as any,
+  beatmap: {
+    status: {
+      [RankingStatus.Graveyard]: 'Cimetière',
+      [RankingStatus.WIP]: 'WIP',
+      [RankingStatus.Pending]: 'En attente',
+      [RankingStatus.Ranked]: 'Classée',
+      [RankingStatus.Approved]: 'Approuvée',
+      [RankingStatus.Qualified]: 'Qualifiée',
+      // official osu! uses "Loved" untranslated
+      [RankingStatus.Loved]: 'Loved',
+      [RankingStatus.Deleted]: 'Supprimée',
+      [RankingStatus.NotFound]: 'Introuvable',
+      [RankingStatus.Unknown]: 'Inconnue',
+    },
+  },
 
-  error: {} as any,
+  error: {
+    [GucchoError.UnknownError]: 'Une erreur inconnue est survenue.',
+    [GucchoError.UserNotFound]: 'Utilisateur introuvable.',
+    [GucchoError.UserExists]: 'Cet utilisateur existe déjà.',
+    [GucchoError.ConflictEmail]: 'Cette adresse email est déjà utilisée.',
+    [GucchoError.IncorrectPassword]: 'Mot de passe incorrect.',
+    [GucchoError.PasswordNotMatch]: 'Les mots de passe ne correspondent pas.',
+    [GucchoError.OldPasswordMismatch]: 'L\'ancien mot de passe fourni est incorrect.',
+    [GucchoError.RelationNotFound]: 'Relation introuvable.',
+    [GucchoError.AtLeastOneUserNotExists]: 'Au moins un utilisateur n\'existe pas.',
+    [GucchoError.UnableToRetrieveSession]: 'Impossible de récupérer la session.',
+    [GucchoError.UnableToRefreshSession]: 'Impossible de mettre à jour votre session.',
+    [GucchoError.YouNeedToLogin]: 'Vous devez vous connecter.',
+    [GucchoError.SessionNotFound]: 'Session introuvable.',
+    [GucchoError.UpdateUserSettingsFailed]: 'Échec de la mise à jour des paramètres utilisateur.',
+    [GucchoError.ConflictRelation]: 'Vous avez déjà une relation avec ce joueur.',
+    [GucchoError.MissingServerAvatarConfig]: 'Le serveur est mal configuré : l\'emplacement des avatars est manquant.',
+    [GucchoError.ModeNotSupported]: 'Mode non pris en charge.',
+    [GucchoError.ModeOrRulesetNotSupported]: 'Mode ou ruleset non pris en charge.',
+    [GucchoError.UpdateUserpageFailed]: 'Échec de la mise à jour de la page utilisateur.',
+    [GucchoError.MimeNotImage]: 'Le fichier fourni n\'est pas une image.',
+    [GucchoError.HackerTryingToDeleteAllAvatars]: 'QUELQU\'UN ESSAIE DE SUPPRIMER TOUS LES AVATARS.',
+    [GucchoError.DeletingMoreThanOneAvatars]: 'Tentative de suppression de plus de 2 fichiers. Veuillez contacter le support.',
+    [GucchoError.RequireAdminPrivilege]: 'Nécessite un rôle du staff.',
+    [GucchoError.EmailTokenNotFound]: 'Le jeton de vérification de l\'email a expiré.',
+    [GucchoError.InvalidId]: 'ID invalide',
+    [GucchoError.BeatmapNotFound]: 'Beatmap introuvable.',
+    [GucchoError.EmptyPassword]: 'Le mot de passe ne peut pas être vide.',
+    [GucchoError.ProhibitedRelationWithSelf]: 'Vous ne pouvez pas avoir de relation avec vous-même.',
+    [GucchoError.RegistrationFailed]: 'Échec de l\'inscription.',
+    [GucchoError.ScoreNotFound]: 'Score introuvable.',
+    [GucchoError.UnableToUpdateSession]: 'Impossible de mettre à jour la session.',
+    [GucchoError.ClanNotFound]: 'Clan introuvable.',
+    [GucchoError.AssertionError]: 'Erreur d\'assertion : cet état ne devrait jamais se produire !',
+    [GucchoError.InsufficientPrivilegeToEditArticle]: 'Vous n\'avez pas les privilèges pour modifier cet article.',
+    [GucchoError.FileSystemArticlePathOutsideArticleRoot]: 'Le chemin d\'enregistrement est en dehors du dossier des articles.',
+    [GucchoError.TryingToDeleteFallbackContents]: 'Tentative de suppression du contenu de secours.',
+    [GucchoError.ArticleNotFound]: 'Article introuvable.',
+    [GucchoError.FeatureNotSupported]: 'Cette fonctionnalité n\'est pas prise en charge.',
+    [GucchoError.DanNotFound]: 'Dan introuvable.',
+    [GucchoError.CannotSaveDan]: 'Impossible d\'enregistrer le Dan',
+    [GucchoError.DanCourseNotFound]: 'Cours de Dan introuvable.',
+    [GucchoError.CannotSaveDanCourse]: 'Impossible d\'enregistrer le cours de Dan',
+  },
+  dan: {
+    requirement: {
+      [Requirement.Pass]: 'Pass',
+      [Requirement.NoPause]: 'Sans Pause',
+    },
+  },
   country: {
     [CountryCode.Unknown]: 'Inconnu',
     [CountryCode.Afghanistan]: 'Afghanistan',
@@ -341,5 +427,50 @@ export default {
     [CountryCode.Zambia]: 'Zambie',
     [CountryCode.Zimbabwe]: 'Zimbabwe',
   },
-  mail: {} as any,
+  mail: {
+    [Mail.Variant.Registration]: {
+      subject: '{serverName} - Inscription',
+      content: `
+Bonjour,
+
+Pour vérifier votre adresse email pour {serverName}, veuillez cliquer sur le lien suivant :
+{link}
+
+Vous pouvez également utiliser le code suivant : {otp}
+
+Ce lien et ce code sont valables {ttl} minutes.
+N'hésitez pas à nous contacter pour toute question.
+
+{serverName}
+`,
+    },
+    [Mail.Variant.AccountRecovery]: {
+      subject: '{serverName} - Récupération de compte',
+      content: `
+Bonjour {name},
+
+Pour réinitialiser votre mot de passe sur {serverName}, veuillez cliquer sur le lien suivant :
+{link}
+
+Vous pouvez également utiliser le code suivant : {otp}
+
+Ce lien et ce code sont valables {ttl} minutes.
+
+{serverName}
+`,
+    },
+    [Mail.Variant.ChangeMail]: {
+      subject: '{serverName} - Changement d\'adresse email',
+      content: `
+Bonjour {name},
+
+Pour changer votre adresse email sur {serverName}, veuillez utiliser le code suivant :
+{otp}
+
+Ce code est valable {ttl} minutes.
+
+{serverName}
+`,
+    },
+  },
 } satisfies GlobalI18n

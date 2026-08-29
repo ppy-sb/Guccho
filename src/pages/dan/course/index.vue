@@ -80,6 +80,21 @@ zh-CN:
   requirements: 要求
   dan: 段位
 
+fr-FR:
+  search-text: Rechercher des cours...
+  search: Rechercher
+  detail: Détail
+  mode: Mode
+  ruleset: Règle
+  unset: Non défini
+  treat-no-ruleset-cond-as-standard: traiter les Dans sans exigence de règle comme standard
+  key: Nombre de touches
+  collection: Cours
+  full-name: Nom complet (FQDN)
+  description: Description
+  requirements: Conditions
+  dan: Dan
+
 # TODO fr, DE
 </i18n>
 

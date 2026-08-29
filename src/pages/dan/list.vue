@@ -70,6 +70,16 @@ zh-CN:
   treat-no-ruleset-cond-as-standard: 将无玩法要求的段位视为std段位
   key: 键数
 
+fr-FR:
+  search-text: Rechercher des Dans...
+  search: Rechercher
+  detail: Détail
+  mode: Mode...
+  ruleset: Règle...
+  unset: Non défini
+  treat-no-ruleset-cond-as-standard: traiter les Dans sans exigence de règle comme standard
+  key: Nombre de touches
+
 # TODO fr, DE
 </i18n>
 
