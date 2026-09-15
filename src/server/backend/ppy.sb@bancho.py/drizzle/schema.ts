@@ -1,7 +1,7 @@
 // keep relative imports for drizzle-kit
 import { relations } from 'drizzle-orm'
 import { bigint, boolean, date, datetime, foreignKey, index, int, json, mysqlEnum, mysqlTable, primaryKey, text, timestamp, varchar } from 'drizzle-orm/mysql-core'
-import { scoresRelations as _scoreRelation, beatmaps, clans, scores, users } from '../../bancho.py/drizzle/schema'
+import { beatmaps, clans, scores, users } from '../../bancho.py/drizzle/schema'
 import { Requirement } from '../../../../def/dan'
 import { type ObjValueTuple } from '../../../../def/good-to-have'
 

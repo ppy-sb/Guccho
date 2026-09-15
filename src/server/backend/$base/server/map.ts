@@ -45,7 +45,7 @@ export abstract class MapProvider<Id, ForeignId> extends IdTransformable {
 
   abstract getMapRankRequest(id: Id, user?: { id: Id }): Promise<MapProvider.BeatmapRequest | undefined>
   abstract voteMap(id: Id, user: { id: Id }): Promise<MapProvider.BeatmapRequest | undefined>
-  abstract searchBeatmap(opt: { keyword: string; limit: number; filters?: Tag[] }): Promise<
+  abstract searchBeatmap(opt: { keyword: string; page?: number; perPage: number; filters?: Tag[] }): Promise<
     MapProvider.BeatmapWithBeamapset<Id, ForeignId>[]
   >
   abstract searchBeatmapset(opt: {

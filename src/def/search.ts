@@ -6,3 +6,4 @@ export type ModeOp = 'eq' | 'ne'
 export type Tag =
 | ['mode', ModeOp, Mode]
 | ['bpm' | 'starRating' | 'accuracy' | 'circleSize' | 'approachRate' | 'hpDrain' | 'length', OP, number]
+| ['frozen', ModeOp, boolean]

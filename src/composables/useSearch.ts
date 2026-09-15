@@ -25,6 +25,7 @@ const compareOperators = {
 } as const satisfies Record<OP, string>
 
 const queryable = {
+  frozen: ['frozen', 'maps.frozen'],
   bpm: ['bpm'],
   starRating: ['star', 'sr', 'starRating'],
   circleSize: ['cs', 'circleSize'],
@@ -37,6 +38,9 @@ const queryable = {
 const keyword = shallowRef('')
 const lastKw = shallowRef('')
 const tags = ref<Tag[]>([])
+const beatmapPage = shallowRef(0)
+const beatmapPerPage = 10
+const hasMoreBeatmaps = shallowRef(false)
 const includes = shallowReactive({
   beatmaps: true,
   beatmapsets: true,
@@ -84,16 +88,19 @@ export async function useSearchResult() {
     if (!keyword.value && !tags.value.length) {
       return []
     }
-    return await app.$client.map.searchBeatmap.query({
+    const result = await app.$client.map.searchBeatmap.query({
       keyword: keyword.value,
       filters: tags.value,
-      limit: autoResultSize(),
+      page: beatmapPage.value,
+      perPage: beatmapPerPage + 1,
     }, {
       context: {
         skipBatch: true,
       },
       signal: cancel.signal,
     })
+    hasMoreBeatmaps.value = result.length > beatmapPerPage
+    return result.slice(0, beatmapPerPage)
   })
 
   const {
@@ -116,8 +123,28 @@ export async function useSearchResult() {
     })
   })
 
+  async function loadMoreBeatmaps() {
+    if (!hasMoreBeatmaps.value) {
+      return
+    }
+    const nextPage = beatmapPage.value + 1
+    const result = await app.$client.map.searchBeatmap.query({
+      keyword: keyword.value,
+      filters: tags.value,
+      page: nextPage,
+      perPage: beatmapPerPage + 1,
+    }, {
+      context: { skipBatch: true },
+      signal: cancel.signal,
+    })
+    beatmapPage.value = nextPage
+    hasMoreBeatmaps.value = result.length > beatmapPerPage
+    beatmaps.value = [...(beatmaps.value ?? []), ...result.slice(0, beatmapPerPage)]
+  }
+
   function raw(_extract = false) {
     _extract && extract(true)
+    beatmapPage.value = 0
 
     if (tags.value.length < 1) {
       if (!keyword.value) {
@@ -140,8 +167,6 @@ export async function useSearchResult() {
   }
 
   const search = useDebounceFn(raw, 500)
-
-  watch(tags, raw.bind(null, undefined), { deep: true })
 
   const searchablePages = useSearchablePages()
 
@@ -177,6 +202,8 @@ export async function useSearchResult() {
       search(false)
     },
     raw,
+    loadMoreBeatmaps,
+    hasMoreBeatmaps,
     mode: searchMode,
     keyword,
     tags,
@@ -231,7 +258,7 @@ function extractTags(force: boolean) {
     return true
   }).join(' ')
 }
-function extractQueries(force: boolean) {
+function extractQueries(force: boolean, frozenOnly = false) {
   // user input space to confirm tag
   if (!force && !keyword.value.endsWith(' ')) {
     return
@@ -252,9 +279,20 @@ function extractQueries(force: boolean) {
 
       let field: keyof typeof queryable
       for (field in queryable) {
+        if (frozenOnly && field !== 'frozen') {
+          continue
+        }
         const keywords: readonly string[] = queryable[field]
         if (!keywords.includes(left)) {
           continue
+        }
+
+        if (field === 'frozen') {
+          if (right !== '0' && right !== '1') {
+            continue
+          }
+          tags.value.push(['frozen', op as 'eq' | 'ne', right === '1'])
+          return false
         }
 
         const nRight = +right
@@ -271,9 +309,9 @@ function extractQueries(force: boolean) {
 }
 
 function extract(force = false) {
+  extractQueries(force, searchMode.value !== 'beatmap')
   if (searchMode.value === 'beatmap') {
     extractTags(force)
-    extractQueries(force)
   }
 }
 function autoResultSize() {

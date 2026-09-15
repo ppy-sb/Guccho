@@ -63,14 +63,16 @@ export const router = _router({
     .input(
       object({
         keyword: string(),
-        limit: number().optional().default(5),
+        page: number().int().min(0).optional().default(0),
+        perPage: number().int().min(1).max(50).optional().default(10),
         filters: array(zodSearchBeatmap).optional(),
       }),
     )
-    .query(async ({ input: { keyword, limit, filters } }) => {
+    .query(async ({ input: { keyword, page, perPage, filters } }) => {
       const beatmaps = await maps.searchBeatmap({
         keyword,
-        limit,
+        page,
+        perPage,
         filters,
       })
 

@@ -159,6 +159,7 @@ export class MapProvider implements Base<Id, Id> {
     approachRate: 'ar',
     hpDrain: 'hp',
     length: 'totalLength',
+    frozen: 'frozen',
   } as const satisfies Record<Exclude<Tag[0], 'mode'>, keyof typeof schema.beatmaps>
 
   createFiltersFromTags(fields: Pick<typeof schema.beatmaps, typeof this.MAP [keyof typeof this.MAP] | 'mode'>, filters: Tag[] = []) {
@@ -178,8 +179,8 @@ export class MapProvider implements Base<Id, Id> {
     return ops
   }
 
-  async searchBeatmap(opt: { keyword: string; limit: number; filters?: Tag[] }) {
-    const { keyword, limit, filters } = opt
+  async searchBeatmap(opt: { keyword: string; page?: number; perPage: number; filters?: Tag[] }) {
+    const { keyword, page = 0, perPage, filters } = opt
     const idKw = stringToId(keyword)
 
     const sql = this.drizzle.query.beatmaps.findMany({
@@ -206,7 +207,8 @@ export class MapProvider implements Base<Id, Id> {
         desc(like(schema.beatmaps.artist, `${keyword}%`)),
         desc(schema.beatmaps.setId),
       ],
-      limit,
+      limit: perPage,
+      offset: page * perPage,
     })
 
     const result = (await sql)

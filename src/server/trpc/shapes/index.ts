@@ -78,6 +78,17 @@ export const zodSearchBeatmap = union([
     ]),
     zodMode,
   ]),
+  tuple([
+    literal('frozen'),
+    union([
+      literal('ne'),
+      literal('eq'),
+    ]),
+    union([
+      literal(true),
+      literal(false),
+    ]),
+  ]),
 ])
 
 export const zodFQDN = string().trim().refine((input) => {

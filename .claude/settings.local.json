@@ -4,7 +4,12 @@
       "Bash(npx tsc:*)",
       "Bash(npx vue-tsc:*)",
       "Bash(npx nuxi prepare:*)",
-      "Bash(npx nuxi typecheck:*)"
+      "Bash(npx nuxi typecheck:*)",
+      "Bash(timeout 300 npx eslint --ext '.ts' src/server/trpc/routers/admin/index.ts)",
+      "Bash(timeout 500 pnpm run typecheck)",
+      "Bash(pnpm run *)",
+      "Bash(git add *)",
+      "Bash(git commit -m 'add log for BN beatmap status change *)"
     ]
   }
 }

@@ -1,4 +1,4 @@
-import type { LocaleMessageValue, LocaleMessages, VueMessageType } from '@nuxtjs/i18n/dist/runtime/composables'
+import type { LocaleMessages } from '@nuxtjs/i18n/dist/runtime/composables'
 import type { DeepPartial } from '@trpc/server'
 import type { CountryCode } from '~/def/country-code'
 import type { GucchoError } from '~/def/messages'
@@ -7,7 +7,7 @@ import type { RankingStatus } from '~/def/beatmap'
 import type { Scope, UserRole } from '~/def/user'
 import { Lang, type Rank } from '~/def'
 import type { ActiveMode, ActiveRuleset } from '$active'
-import type { OP, Requirement } from '~/def/dan'
+import type { Requirement } from '~/def/dan'
 
 type Title =
   | 'leaderboard'

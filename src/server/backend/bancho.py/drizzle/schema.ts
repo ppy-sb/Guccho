@@ -175,6 +175,7 @@ export const beatmaps = mysqlTable('maps', {
   return {
     filename: index('filename').on(table.filename),
     setIdServerIdx: index('maps_set_id_server_IDX').on(table.setId, table.server),
+    maniaKeySearch: index('mania_key_search').on(table.mode, table.cs),
     mapsServerId: primaryKey({ columns: [table.server, table.id], name: 'maps_server_id' }),
     mapsIdUindex: unique('maps_id_uindex').on(table.id),
     mapsMd5Uindex: unique('maps_md5_uindex').on(table.md5),
