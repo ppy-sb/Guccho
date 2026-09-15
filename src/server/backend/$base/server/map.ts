@@ -32,6 +32,10 @@ export namespace MapProvider {
   export type BeatmapWithBeamapset<Id, ForeignId> =
     | ReferencedBeatmapCompact<Id, ForeignId> & { beatmapset: ReferencedBeatmapset<Id, ForeignId> }
     | LocalBeatmapCompact<Id> & { beatmapset: LocalBeatmapset<Id> }
+
+  export type GroupedBeatmapsetSearchResult<Id, ForeignId> = Beatmapset<Id, ForeignId> & {
+    beatmaps: Array<(ReferencedBeatmapCompact<Id, ForeignId> | LocalBeatmapCompact<Id>) & BeatmapMeta>
+  }
 }
 export abstract class MapProvider<Id, ForeignId> extends IdTransformable {
   abstract getBeatmapset(query: MapProvider.IdQuery<Id>, user?: { id: Id }): Promise<MapProvider.BeatmapsetWithMaps<Id, ForeignId>>
@@ -51,6 +55,13 @@ export abstract class MapProvider<Id, ForeignId> extends IdTransformable {
   abstract searchBeatmapset(opt: {
     keyword: string
     limit: number
+    offset?: number
     filters?: Tag[]
   }): Promise<Beatmapset<Id, ForeignId>[]>
+  abstract searchBeatmapsetGrouped(opt: {
+    keyword: string
+    limit: number
+    offset?: number
+    filters?: Tag[]
+  }): Promise<MapProvider.GroupedBeatmapsetSearchResult<Id, ForeignId>[]>
 }

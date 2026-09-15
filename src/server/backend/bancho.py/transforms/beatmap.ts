@@ -59,6 +59,12 @@ export function toBeatmapset<T>(beatmapset: { id: T; server: 'osu!' | 'private' 
 function isForeign(source: BeatmapSource): source is Foreign {
   return (source === BeatmapSource.PrivateServer || source === BeatmapSource.Bancho)
 }
+
+function rounded(value: number, decimals: number) {
+  const factor = 10 ** decimals
+  return Math.round(Number(value) * factor) / factor
+}
+
 export function toBeatmapCompact<Source extends BeatmapSource>(beatmap: {
   id: number
   // setId: number
@@ -90,15 +96,15 @@ export function toBeatmapCompact<Source extends BeatmapSource>(beatmap: {
     lastUpdate: beatmap.lastUpdate,
     mode: fromBanchoMode(beatmap.mode),
     properties: {
-      circleSize: beatmap.cs,
-      approachRate: beatmap.ar,
-      accuracy: beatmap.od,
-      hpDrain: beatmap.hp,
-      starRate: beatmap.diff,
-      bpm: beatmap.bpm,
+      circleSize: rounded(beatmap.cs, 2),
+      approachRate: rounded(beatmap.ar, 2),
+      accuracy: rounded(beatmap.od, 2),
+      hpDrain: rounded(beatmap.hp, 2),
+      starRate: rounded(beatmap.diff, 3),
+      bpm: rounded(beatmap.bpm, 2),
       // int
-      totalLength: beatmap.totalLength,
-      maxCombo: beatmap.maxCombo,
+      totalLength: Number(beatmap.totalLength),
+      maxCombo: Number(beatmap.maxCombo),
       // TODO: count data not available?
       count: {
         circles: 0,

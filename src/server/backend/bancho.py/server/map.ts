@@ -223,10 +223,12 @@ export class MapProvider implements Base<Id, Id> {
   async searchBeatmapset({
     keyword,
     limit,
+    offset = 0,
     filters,
   }: {
     keyword: string
     limit: number
+    offset?: number
     filters?: Tag[]
   }): Promise<Beatmapset<Id, Id>[]> {
     const idKw = stringToId(keyword)
@@ -262,7 +264,78 @@ export class MapProvider implements Base<Id, Id> {
         desc(schema.sources.id)
       )
       .limit(limit)
+      .offset(offset)
 
     return (await sql).map(bs => toBeatmapset(bs, bs.meta)).filter(TSFilter)
+  }
+
+  async searchBeatmapsetGrouped({
+    keyword,
+    limit,
+    offset = 0,
+    filters,
+  }: {
+    keyword: string
+    limit: number
+    offset?: number
+    filters?: Tag[]
+  }): Promise<Base.GroupedBeatmapsetSearchResult<Id, Id>[]> {
+    const idKw = stringToId(keyword)
+    const mapFields = schema.beatmaps
+    const sqlResult = this.drizzle.select({
+      id: schema.sources.id,
+      server: schema.sources.server,
+      meta: {
+        title: sql<string>`MIN(${mapFields.title})`,
+        artist: sql<string>`MIN(${mapFields.artist})`,
+      },
+      beatmaps: sql<unknown[]>`JSON_ARRAYAGG(JSON_OBJECT(
+            'id', ${mapFields.id}, 'md5', ${mapFields.md5}, 'version', ${mapFields.version},
+        'creator', ${mapFields.creator}, 'lastUpdate', ${mapFields.lastUpdate}, 'status', ${mapFields.status},
+            'totalLength', ${mapFields.totalLength}, 'maxCombo', ${mapFields.maxCombo},
+            'plays', ${mapFields.plays}, 'passes', ${mapFields.passes}, 'mode', ${mapFields.mode},
+            'bpm', ${mapFields.bpm}, 'cs', ${mapFields.cs}, 'ar', ${mapFields.ar},
+            'od', ${mapFields.od}, 'hp', ${mapFields.hp}, 'diff', ${mapFields.diff}
+          ))`,
+    })
+      .from(schema.sources)
+      .innerJoin(schema.beatmaps, and(
+        eq(mapFields.setId, schema.sources.id),
+        eq(mapFields.server, schema.sources.server),
+      ))
+      .where(and(
+        or(
+          like(mapFields.version, `%${keyword}%`),
+          like(mapFields.title, `%${keyword}%`),
+          like(mapFields.artist, `%${keyword}%`),
+          like(mapFields.creator, `%${keyword}%`),
+          Number.isNaN(idKw) ? undefined : eq(mapFields.setId, idKw),
+        ),
+        ...this.createFiltersFromTags(mapFields, filters),
+      ))
+      .groupBy(schema.sources.id, schema.sources.server)
+      .orderBy(
+        desc(sql<number>`MAX(${mapFields.title} = ${keyword})`),
+        desc(sql<number>`MAX(${mapFields.artist} = ${keyword})`),
+        desc(sql<number>`MAX(${mapFields.title} LIKE ${`${keyword}%`})`),
+        desc(sql<number>`MAX(${mapFields.artist} LIKE ${`${keyword}%`})`),
+        desc(schema.sources.id),
+      )
+      .limit(limit)
+      .offset(offset)
+
+    return (await sqlResult).map((result) => {
+      const beatmapset = toBeatmapset(result, result.meta)
+      const maps = Number(result.id) === idKw
+        ? []
+        : (result.beatmaps as Array<Record<string, unknown>>).map(map => ({
+            ...toBeatmapCompact({
+              ...map,
+              lastUpdate: new Date(String(map.lastUpdate)),
+            } as never, toBeatmapSource(result.server)),
+            status: toRankingStatus(Number(map.status), new Date(String(map.lastUpdate))),
+          }))
+      return { ...beatmapset, beatmaps: maps }
+    }).filter(TSFilter)
   }
 }

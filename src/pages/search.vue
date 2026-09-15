@@ -24,6 +24,7 @@ en-GB:
   search-action: Search
   load-more: Load more
   advanced: Advanced search
+  advanced-locked: Supporter feature
   key: Key
   nothing: No results found.
   searching: Searching...
@@ -53,6 +54,7 @@ zh-CN:
   search-action: 搜索
   load-more: 加载更多
   advanced: 高级搜索
+  advanced-locked: 支持者专属功能
   key: 键数
   nothing: 没有找到结果。
   searching: 搜索中...
@@ -82,6 +84,7 @@ fr-FR:
   search-action: Rechercher
   load-more: Charger plus
   advanced: Avancé
+  advanced-locked: Fonction réservée aux supporters
   key: Touches
   nothing: Aucun résultat.
   searching: Recherche...
@@ -111,6 +114,7 @@ de-DE:
   search-action: Suchen
   load-more: Mehr laden
   advanced: Erweitert
+  advanced-locked: Unterstützer-Funktion
   key: Tasten
   nothing: Keine Ergebnisse gefunden.
   searching: Suche...
@@ -124,6 +128,7 @@ import type { Tag } from '~/def/search'
 const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
+const app = useNuxtApp()
 
 useHead({
   title: () => t('title'),
@@ -132,14 +137,13 @@ useHead({
 const {
   includes,
   raw,
-  loadMoreBeatmaps,
-  hasMoreBeatmaps,
   keyword,
   tags,
-  results: { beatmaps, beatmapsets, users },
+  results: { users },
   loading,
   nothing,
 } = await useSearchResult()
+const { data: advancedSearchAllowed } = await app.$client.map.canUseAdvancedSearch.useQuery()
 
 const searchTarget = ref<'beatmaps' | 'users'>(route.query.target === 'users' ? 'users' : 'beatmaps')
 const hasSearched = ref(Boolean(route.query.q))
@@ -172,6 +176,59 @@ const mapFilters = reactive({
   advanced: false,
 })
 const customRanked = ref(false)
+const groupedBeatmapsets = ref<any[]>([])
+const groupedLoading = ref(false)
+const groupedPage = ref(0)
+const groupedPageSize = 5
+const groupedHasMore = ref(false)
+const groupedNothing = computed(() => Boolean(
+  (keyword.value || tags.value.length)
+  && !groupedLoading.value
+  && !groupedBeatmapsets.value.length,
+))
+
+async function searchGroupedBeatmapsets() {
+  if (!keyword.value && !tags.value.length) {
+    groupedBeatmapsets.value = []
+    return
+  }
+  groupedLoading.value = true
+  groupedPage.value = 0
+  try {
+    const result = await app.$client.map.searchBeatmapsetGrouped.query({
+      keyword: keyword.value,
+      filters: tags.value,
+      limit: groupedPageSize + 1,
+      offset: 0,
+    })
+    groupedHasMore.value = result.length > groupedPageSize
+    groupedBeatmapsets.value = result.slice(0, groupedPageSize)
+  }
+  finally {
+    groupedLoading.value = false
+  }
+}
+
+async function loadMoreGroupedBeatmapsets() {
+  if (groupedLoading.value || !groupedHasMore.value) {
+    return
+  }
+  groupedLoading.value = true
+  try {
+    const result = await app.$client.map.searchBeatmapsetGrouped.query({
+      keyword: keyword.value,
+      filters: tags.value,
+      limit: groupedPageSize + 1,
+      offset: (groupedPage.value + 1) * groupedPageSize,
+    })
+    groupedPage.value++
+    groupedHasMore.value = result.length > groupedPageSize
+    groupedBeatmapsets.value.push(...result.slice(0, groupedPageSize))
+  }
+  finally {
+    groupedLoading.value = false
+  }
+}
 
 function setTarget(target: typeof searchTarget.value) {
   if (target !== searchTarget.value) {
@@ -184,10 +241,27 @@ function setTarget(target: typeof searchTarget.value) {
   includes.pages = false
 }
 
+function formatLength(seconds: number) {
+  const minutes = Math.floor(seconds / 60)
+  return `${minutes}:${String(Math.floor(seconds % 60)).padStart(2, '0')}`
+}
+
+function statusName(beatmap: { status?: RankingStatus }) {
+  if (beatmap.status === undefined) {
+    return RankingStatus.Unknown
+  }
+  return typeof beatmap.status === 'number' ? RankingStatus[beatmap.status] : beatmap.status
+}
+
 function submit() {
   syncMapFilters()
   hasSearched.value = true
-  raw(true)
+  if (searchTarget.value === 'beatmaps') {
+    searchGroupedBeatmapsets()
+  }
+  else {
+    raw(true)
+  }
   router.replace({
     query: {
       ...(keyword.value ? { q: keyword.value } : {}),
@@ -262,11 +336,6 @@ watch(() => route.query.target, (target) => {
   }
 }, { immediate: true })
 
-function formatLength(seconds: number) {
-  const minutes = Math.floor(seconds / 60)
-  return `${minutes}:${String(Math.floor(seconds % 60)).padStart(2, '0')}`
-}
-
 // const lengthMinPercent = computed(() => `${(mapFilters.lengthMin / 600) * 100}%`)
 // const lengthMaxPercent = computed(() => `${(mapFilters.lengthMax / 600) * 100}%`)
 
@@ -278,36 +347,17 @@ function formatLength(seconds: number) {
 //   mapFilters.lengthMax = Math.max(mapFilters.lengthMax, mapFilters.lengthMin)
 // }
 
-function statusName(beatmap: unknown) {
-  if (!beatmap || typeof beatmap !== 'object' || !('status' in beatmap)) {
-    return RankingStatus.Unknown
-  }
-  const status = (beatmap as { status: RankingStatus }).status
-  return typeof status === 'number' ? RankingStatus[status] : status
-}
-
 setTarget(searchTarget.value)
+if (hasSearched.value && searchTarget.value === 'beatmaps') {
+  searchGroupedBeatmapsets()
+}
 </script>
 
 <template>
   <main class="container mx-auto custom-container search-page">
     <section class="search-intro">
-      <form class="mt-6" @submit.prevent="submit">
+      <form @submit.prevent="submit">
         <label class="sr-only" for="search-keyword">{{ t('title') }}</label>
-        <label class="input input-bordered search-field">
-          <icon name="ion:search-outline" class="w-6 h-6 shrink-0" />
-          <input
-            id="search-keyword" v-model="keyword" type="text" :placeholder="t('placeholder')" autocomplete="off"
-            autofocus
-            @input="hasSearched = false"
-          >
-          <button
-            v-if="keyword" type="button" class="icon-button" aria-label="Clear search"
-            @click="keyword = ''; hasSearched = false"
-          >
-            <icon name="ion:close-outline" class="w-5 h-5" />
-          </button>
-        </label>
         <div class="search-target" role="tablist">
           <button
             type="button" class="target-option" :class="{ 'target-option-active': searchTarget === 'beatmaps' }"
@@ -324,6 +374,20 @@ setTarget(searchTarget.value)
             {{ t('user-search') }}
           </button>
         </div>
+        <label class="input input-bordered search-field mt-4">
+          <icon name="ion:search-outline" class="w-6 h-6 shrink-0" />
+          <input
+            id="search-keyword" v-model="keyword" type="text" :placeholder="t('placeholder')" autocomplete="off"
+            autofocus
+            @input="hasSearched = false"
+          >
+          <button
+            v-if="keyword" type="button" class="icon-button" aria-label="Clear search"
+            @click="keyword = ''; hasSearched = false"
+          >
+            <icon name="ion:close-outline" class="w-5 h-5" />
+          </button>
+        </label>
         <div v-if="searchTarget === 'beatmaps'" class="search-filters" aria-label="Map filters">
           <span class="filter-heading">{{ t('map-filters') }}</span>
           <div class="preset-row">
@@ -357,15 +421,28 @@ setTarget(searchTarget.value)
             </button>
           </div>
           <label class="filter-option filter-option-accent">
-            <input :checked="customRanked" type="checkbox" class="checkbox checkbox-sm" @change="toggleCustomRanked">
+            <input
+              :checked="customRanked" type="checkbox" class="checkbox checkbox-sm"
+              @change="toggleCustomRanked"
+            >
             <span>{{ t('custom-ranked') }}</span>
           </label>
           <div class="collapse collapse-arrow rounded-none">
-            <input id="advanced" v-model="mapFilters.advanced" class="hidden" type="checkbox">
-            <label for="advanced" class="collapse-title px-0 pt-1 min-h-0">
+            <input
+              id="advanced" v-model="mapFilters.advanced" class="hidden" type="checkbox"
+              :disabled="advancedSearchAllowed === false"
+            >
+            <label
+              for="advanced" class="collapse-title px-0 pt-1 min-h-0 align-middle"
+              :class="{ 'filter-disabled': advancedSearchAllowed === false }"
+            >
               {{ t('advanced') }}
+              <div v-if="advancedSearchAllowed === false" class="advanced-locked align-middle">
+                <icon name="ion:lock-closed-outline" class="h-4 w-4" />
+                {{ t('advanced-locked') }}
+              </div>
             </label>
-            <div class="collapse-content p-0 rounded-none bg-transparent space-y-3">
+            <fieldset v-if="advancedSearchAllowed !== false" class="collapse-content p-0 rounded-none bg-transparent space-y-3">
               <div
                 v-for="[key, val] in [['cs', mapFilters.mode === Mode.Mania ? t('key') : t('cs')], ['ar', t('ar')], ['od', t('od')], ['star', t('star')]]"
                 :key="key" class="advanced-row"
@@ -453,7 +530,7 @@ setTarget(searchTarget.value)
                   >
                 </div>
               </div> -->
-            </div>
+            </fieldset>
           </div>
         </div>
         <div class="search-actions">
@@ -466,67 +543,57 @@ setTarget(searchTarget.value)
     </section>
 
     <section class="search-results" aria-live="polite">
-      <div v-if="loading.beatmapsets || loading.beatmaps || loading.users" class="search-status">
+      <div v-if="groupedLoading || loading.users" class="search-status">
         <span class="loading loading-spinner loading-sm" /> {{ t('searching') }}
       </div>
-      <div v-else-if="hasSearched && nothing" class="search-status">
+      <div v-else-if="hasSearched && (searchTarget === 'beatmaps' ? groupedNothing : nothing)" class="search-status">
         {{ t('nothing') }}
       </div>
 
       <template v-if="searchTarget === 'beatmaps'">
-        <div v-if="beatmaps?.length" class="result-group-title">
-          {{ t('beatmaps') }}
+        <div v-if="groupedBeatmapsets?.length" class="result-group-title">
+          {{ t('beatmapsets') }}
         </div>
-        <ul v-if="beatmaps?.length" class="result-list">
-          <li v-for="bm in beatmaps" :key="`bm-${bm.id}`" class="result-row">
-            <nuxt-link-locale
-              :to="{ name: 'beatmapset-id', params: { id: bm.beatmapset.id } }"
-              class="result-link beatmap-link"
-            >
-              <img
-                v-if="isBanchoBeatmapset(bm.beatmapset)"
-                :src="`https://b.ppy.sh/thumb/${bm.beatmapset.foreignId}.jpg`" :onerror="onLazyImageError"
-                class="result-cover"
+        <ul v-if="groupedBeatmapsets?.length" class="result-list">
+          <template v-for="bs in groupedBeatmapsets" :key="`bs-${bs.id}`">
+            <li class="result-row">
+              <nuxt-link-locale :to="{ name: 'beatmapset-id', params: { id: bs.id } }" class="result-link">
+                <img
+                  v-if="isBanchoBeatmapset(bs)" :src="`https://b.ppy.sh/thumb/${bs.foreignId}.jpg`"
+                  :onerror="onLazyImageError" class="result-cover"
+                >
+                <span class="result-copy"><strong>{{ bs.meta.intl.artist }}</strong><span>{{ bs.meta.intl.title
+                }}</span></span>
+                <icon name="ion:arrow-forward-outline" class="result-arrow" />
+              </nuxt-link-locale>
+            </li>
+            <li v-for="bm in bs.beatmaps" :key="`bm-${bm.id}`" class="result-row result-row-child">
+              <nuxt-link-locale
+                :to="{ name: 'beatmapset-id', params: { id: bs.id }, query: { beatmap: bm.md5, mode: bm.mode } }"
+                class="result-link beatmap-link"
               >
-              <span class="result-copy">
-                <strong>{{ bm.beatmapset.meta.intl.artist }} - {{ bm.beatmapset.meta.intl.title }} [{{ bm.version
-                }}]</strong>
-                <span>{{ t('mapper') }}: {{ bm.creator }}</span>
-                <span class="beatmap-stats">
-                  <b class="status-label">{{ statusName(bm) }}</b>
-                  <span>{{ t('star') }} {{ bm.properties.starRate.toFixed(2) }}</span>
-                  <span>{{ bm.mode === Mode.Mania ? t('key') : t('cs') }} {{ bm.properties.circleSize }}</span>
-                  <span>{{ t('ar') }} {{ bm.properties.approachRate }}</span>
-                  <span>{{ t('od') }} {{ bm.properties.accuracy }}</span>
-                  <span>{{ formatLength(bm.properties.totalLength) }}</span>
+                <span class="result-copy">
+                  <strong class="beatmap-diff">{{ bm.version }}</strong>
+                  <span class="beatmap-stats">
+                    <b class="status-label">{{ statusName(bm) }}</b>
+                    <span>{{ t('star') }} {{ bm.properties.starRate.toFixed(2) }}</span>
+                    <span>{{ bm.mode === Mode.Mania ? t('key') : t('cs') }} {{ bm.properties.circleSize }}</span>
+                    <span>{{ t('ar') }} {{ bm.properties.approachRate }}</span>
+                    <span>{{ t('od') }} {{ bm.properties.accuracy }}</span>
+                    <span>{{ formatLength(bm.properties.totalLength) }}</span>
+                  </span>
                 </span>
-              </span>
-              <icon name="ion:arrow-forward-outline" class="result-arrow" />
-            </nuxt-link-locale>
-          </li>
+                <icon name="ion:arrow-forward-outline" class="result-arrow" />
+              </nuxt-link-locale>
+            </li>
+          </template>
         </ul>
-        <div v-if="hasMoreBeatmaps" class="load-more">
-          <button type="button" class="btn btn-ghost" :disabled="loading.beatmaps" @click="loadMoreBeatmaps">
-            <span v-if="loading.beatmaps" class="loading loading-spinner loading-sm" />
+        <div v-if="groupedHasMore" class="load-more">
+          <button type="button" class="btn btn-ghost" :disabled="groupedLoading" @click="loadMoreGroupedBeatmapsets">
+            <span v-if="groupedLoading" class="loading loading-spinner loading-sm" />
             {{ t('load-more') }}
           </button>
         </div>
-        <div v-if="beatmapsets?.length" class="result-group-title">
-          {{ t('beatmapsets') }}
-        </div>
-        <ul v-if="beatmapsets?.length" class="result-list">
-          <li v-for="bs in beatmapsets" :key="`bs-${bs.id}`" class="result-row">
-            <nuxt-link-locale :to="{ name: 'beatmapset-id', params: { id: bs.id } }" class="result-link">
-              <img
-                v-if="isBanchoBeatmapset(bs)" :src="`https://b.ppy.sh/thumb/${bs.foreignId}.jpg`"
-                :onerror="onLazyImageError" class="result-cover"
-              >
-              <span class="result-copy"><strong>{{ bs.meta.intl.artist }}</strong><span>{{ bs.meta.intl.title
-              }}</span></span>
-              <icon name="ion:arrow-forward-outline" class="result-arrow" />
-            </nuxt-link-locale>
-          </li>
-        </ul>
       </template>
 
       <template v-if="searchTarget === 'users'">
@@ -584,6 +651,10 @@ setTarget(searchTarget.value)
   @apply text-base-content;
 }
 
+.filter-disabled {
+  @apply cursor-not-allowed opacity-45;
+}
+
 .search-target {
   @apply mt-5 flex w-fit border-b border-base-content/20;
 }
@@ -599,7 +670,7 @@ setTarget(searchTarget.value)
 }
 
 .search-filters {
-  @apply mt-4 flex flex-wrap items-end gap-x-4 gap-y-3 border-t border-base-content/15 pt-4;
+  @apply mt-4 flex flex-wrap items-end gap-x-4 gap-y-3;
 }
 
 .filter-heading {
@@ -646,6 +717,10 @@ setTarget(searchTarget.value)
 
 .advanced-row {
   @apply flex w-full flex-wrap items-center gap-3;
+}
+
+.advanced-locked {
+  @apply ps-5 inline-flex gap-1 text-sm text-base-content/45;
 }
 
 .advanced-label {
@@ -788,6 +863,15 @@ setTarget(searchTarget.value)
 
 .result-row {
   @apply transition-colors hover:bg-base-content/5;
+  @apply bg-base-200/20;
+}
+
+.result-row-child {
+  @apply bg-base-100/20 border-t-base-content/20;
+}
+
+.result-row-child .result-link {
+  @apply min-h-5 py-0 pl-14 sm:pl-20;
 }
 
 .result-link {
@@ -800,7 +884,7 @@ setTarget(searchTarget.value)
 }
 
 .result-arrow {
-  @apply ml-auto;
+  @apply ml-auto self-center;
 }
 
 .result-cover,
@@ -834,11 +918,15 @@ setTarget(searchTarget.value)
 }
 
 .beatmap-link {
-  @apply items-start;
+  @apply items-start !py-0.5;
 }
 
 .beatmap-stats {
-  @apply flex flex-wrap items-center gap-x-3 gap-y-1 !text-xs;
+  @apply flex items-center gap-x-2 overflow-hidden !text-xs whitespace-nowrap text-base-content/55;
+}
+
+.beatmap-diff {
+  @apply text-sm font-medium text-base-content/80;
 }
 
 .status-label {
