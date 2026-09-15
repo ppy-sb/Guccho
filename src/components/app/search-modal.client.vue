@@ -11,7 +11,7 @@ en-GB:
 zh-CN:
   include:
     beatmapsets: 歌曲
-    beatmaps: 铺面
+    beatmaps: 谱面
     users: 用户
     pages: 导航
   search: 搜索

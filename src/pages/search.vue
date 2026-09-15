@@ -33,7 +33,7 @@ zh-CN:
   placeholder: 搜索谱面和用户
   all: 全部
   beatmapsets: 图组
-  beatmaps: 铺面
+  beatmaps: 谱面
   users: 用户
   custom-ranked: 仅显示自定义 Ranked 谱面
   map-filters: 谱面筛选

@@ -82,7 +82,7 @@ en-GB:
   detail: Detail
 
 zh-CN:
-  unknown-beatmap: 未知铺面
+  unknown-beatmap: 未知谱面
   detail: 详情
 
 fr-FR:
