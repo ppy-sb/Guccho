@@ -82,11 +82,31 @@ export class IntervalDanProcessor extends CacheSyncedDanProcessor implements Cac
         return
       }
 
-      this.logger.debug(`processing requirement cleared scores where score id between ${this.lastProcessed} and ${latest}.`)
+      let processed = this.lastProcessed
+      let firstBatch = true
+      while (processed < latest) {
+        if (firstBatch) {
+          await wait(2000) // PRAY for patcher meta saved, since bpy submitModular is NOT USING A TRANSACTION !!!
+          firstBatch = false
+        }
 
-      await wait(2000) // PRAY for patcher meta saved, since bpy submitModular is NOT USING A TRANSACTION !!!
-      await this.processScores(this.lastProcessed, latest, tx)
-      await this.updateLastProcessed(tx)
+        this.logger.debug(`processing requirement cleared scores where score id between ${processed} and ${latest}.`)
+        const batchLatest = await this.processScores(processed, latest, tx)
+
+        // There are no eligible scores left in this range. Mark the observed
+        // latest score as processed so that the next interval does not retry it.
+        if (undefined === batchLatest) {
+          processed = latest
+          break
+        }
+
+        processed = batchLatest
+        this.lastProcessed = processed
+      }
+
+      if (processed !== this.lastProcessed) {
+        this.lastProcessed = processed
+      }
     })
   }
 
@@ -194,17 +214,11 @@ export class IntervalDanProcessor extends CacheSyncedDanProcessor implements Cac
       }
     }
 
-    if (!inserting.length) {
-      return
+    if (inserting.length) {
+      await tx.insert(schema.requirementClearedScores).values(inserting)
     }
-    await this.dp.drizzle.insert(schema.requirementClearedScores).values(inserting)
-  }
 
-  async updateLastProcessed(tx: Omit<typeof this.dp.drizzle, '$client'>) {
-    const id = await this.getLatestScoreId(tx)
-    if (id) {
-      this.lastProcessed = id
-    }
+    return scores.at(-1)!.id
   }
 
   async getLatestScoreId(tx: Omit<typeof this.dp.drizzle, '$client'>) {

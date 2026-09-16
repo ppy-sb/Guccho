@@ -556,8 +556,7 @@ setTarget(searchTarget.value)
 }
 
 .search-intro {
-  @apply px-4 py-8 sm:px-8;
-  background: color-mix(in srgb, hsl(var(--b2)) 82%, transparent);
+  @apply px-2 md:px-6;
 }
 
 .search-field {
@@ -764,7 +763,7 @@ setTarget(searchTarget.value)
 }
 
 .search-results {
-  @apply px-2 pb-10 sm:px-6;
+  @apply px-2 pb-10 md:px-6;
 }
 
 .search-status {
