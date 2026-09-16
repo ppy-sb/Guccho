@@ -188,7 +188,7 @@ export class MapProvider implements Base<Id, Id> {
       where: (fields) => {
         return and(
           or(
-            like(fields.version, `%${keyword}%`),
+            like(fields.version, `%${keyword}%`)?.if(keyword !== ''),
             Number.isNaN(idKw) ? undefined : eq(fields.setId, idKw),
           ),
           ...this.createFiltersFromTags(fields, filters)
@@ -199,14 +199,14 @@ export class MapProvider implements Base<Id, Id> {
       },
 
       orderBy: [
-        desc(eq(schema.beatmaps.version, keyword)),
-        desc(like(schema.beatmaps.version, `${keyword}%`)),
-        desc(eq(schema.beatmaps.title, keyword)),
-        desc(like(schema.beatmaps.title, `${keyword}%`)),
-        desc(eq(schema.beatmaps.artist, keyword)),
-        desc(like(schema.beatmaps.artist, `${keyword}%`)),
+        keyword !== '' ? desc(eq(schema.beatmaps.version, keyword)) : undefined,
+        keyword !== '' ? desc(like(schema.beatmaps.version, `${keyword}%`)) : undefined,
+        keyword !== '' ? desc(eq(schema.beatmaps.title, keyword)) : undefined,
+        keyword !== '' ? desc(like(schema.beatmaps.title, `${keyword}%`)) : undefined,
+        keyword !== '' ? desc(eq(schema.beatmaps.artist, keyword)) : undefined,
+        keyword !== '' ? desc(like(schema.beatmaps.artist, `${keyword}%`)) : undefined,
         desc(schema.beatmaps.setId),
-      ],
+      ].filter(TSFilter),
       limit: perPage,
       offset: page * perPage,
     })
@@ -247,22 +247,22 @@ export class MapProvider implements Base<Id, Id> {
       ))
       .where(and(
         or(
-          like(schema.beatmaps.version, `%${keyword}%`),
-          like(schema.beatmaps.title, `%${keyword}%`),
-          like(schema.beatmaps.artist, `%${keyword}%`),
-          like(schema.beatmaps.creator, `%${keyword}%`),
+          like(schema.beatmaps.version, `%${keyword}%`)?.if(keyword !== ''),
+          like(schema.beatmaps.title, `%${keyword}%`)?.if(keyword !== ''),
+          like(schema.beatmaps.artist, `%${keyword}%`)?.if(keyword !== ''),
+          like(schema.beatmaps.creator, `%${keyword}%`)?.if(keyword !== ''),
           Number.isNaN(idKw) ? undefined : eq(schema.beatmaps.setId, idKw),
         ),
         ...this.createFiltersFromTags(schema.beatmaps, filters)
       ))
       .groupBy(schema.sources.id, schema.sources.server, schema.beatmaps.title, schema.beatmaps.artist)
-      .orderBy(
-        desc(eq(schema.beatmaps.title, keyword)),
-        desc(eq(schema.beatmaps.artist, keyword)),
-        desc(like(schema.beatmaps.title, `${keyword}%`)),
-        desc(like(schema.beatmaps.artist, `${keyword}%`)),
-        desc(schema.sources.id)
-      )
+      .orderBy(...[
+        keyword !== '' ? desc(eq(schema.beatmaps.title, keyword)) : undefined,
+        keyword !== '' ? desc(eq(schema.beatmaps.artist, keyword)) : undefined,
+        keyword !== '' ? desc(like(schema.beatmaps.title, `${keyword}%`)) : undefined,
+        keyword !== '' ? desc(like(schema.beatmaps.artist, `${keyword}%`)) : undefined,
+        desc(schema.sources.id),
+      ].filter(TSFilter))
       .limit(limit)
       .offset(offset)
 
@@ -274,11 +274,13 @@ export class MapProvider implements Base<Id, Id> {
     limit,
     offset = 0,
     filters,
+    mapsetOnly = false,
   }: {
     keyword: string
     limit: number
     offset?: number
     filters?: Tag[]
+    mapsetOnly?: boolean
   }): Promise<Base.GroupedBeatmapsetSearchResult<Id, Id>[]> {
     const idKw = stringToId(keyword)
     const mapFields = schema.beatmaps
@@ -289,9 +291,11 @@ export class MapProvider implements Base<Id, Id> {
         title: sql<string>`MIN(${mapFields.title})`,
         artist: sql<string>`MIN(${mapFields.artist})`,
       },
-      beatmaps: sql<unknown[]>`JSON_ARRAYAGG(JSON_OBJECT(
+      beatmaps: mapsetOnly
+        ? sql<unknown[]>`JSON_ARRAY()`
+        : sql<unknown[]>`JSON_ARRAYAGG(JSON_OBJECT(
             'id', ${mapFields.id}, 'md5', ${mapFields.md5}, 'version', ${mapFields.version},
-        'creator', ${mapFields.creator}, 'lastUpdate', ${mapFields.lastUpdate}, 'status', ${mapFields.status},
+            'creator', ${mapFields.creator}, 'lastUpdate', ${mapFields.lastUpdate}, 'status', ${mapFields.status},
             'totalLength', ${mapFields.totalLength}, 'maxCombo', ${mapFields.maxCombo},
             'plays', ${mapFields.plays}, 'passes', ${mapFields.passes}, 'mode', ${mapFields.mode},
             'bpm', ${mapFields.bpm}, 'cs', ${mapFields.cs}, 'ar', ${mapFields.ar},
@@ -304,29 +308,33 @@ export class MapProvider implements Base<Id, Id> {
         eq(mapFields.server, schema.sources.server),
       ))
       .where(and(
-        or(
-          like(mapFields.version, `%${keyword}%`),
-          like(mapFields.title, `%${keyword}%`),
-          like(mapFields.artist, `%${keyword}%`),
-          like(mapFields.creator, `%${keyword}%`),
-          Number.isNaN(idKw) ? undefined : eq(mapFields.setId, idKw),
-        ),
+        keyword !== ''
+          ? or(
+            like(mapFields.version, `%${keyword}%`),
+            like(mapFields.title, `%${keyword}%`),
+            like(mapFields.artist, `%${keyword}%`),
+            like(mapFields.creator, `%${keyword}%`),
+            Number.isNaN(idKw) ? undefined : eq(mapFields.setId, idKw),
+          )
+          : undefined,
         ...this.createFiltersFromTags(mapFields, filters),
       ))
       .groupBy(schema.sources.id, schema.sources.server)
       .orderBy(
-        desc(sql<number>`MAX(${mapFields.title} = ${keyword})`),
-        desc(sql<number>`MAX(${mapFields.artist} = ${keyword})`),
-        desc(sql<number>`MAX(${mapFields.title} LIKE ${`${keyword}%`})`),
-        desc(sql<number>`MAX(${mapFields.artist} LIKE ${`${keyword}%`})`),
-        desc(schema.sources.id),
+        ...[
+          keyword !== '' ? desc(sql<number>`MAX(${mapFields.title} = ${keyword})`) : undefined,
+          keyword !== '' ? desc(sql<number>`MAX(${mapFields.artist} = ${keyword})`) : undefined,
+          keyword !== '' ? desc(sql<number>`MAX(${mapFields.title} LIKE ${`${keyword}%`})`) : undefined,
+          keyword !== '' ? desc(sql<number>`MAX(${mapFields.artist} LIKE ${`${keyword}%`})`) : undefined,
+          desc(schema.sources.id),
+        ].filter(TSFilter)
       )
       .limit(limit)
       .offset(offset)
 
     return (await sqlResult).map((result) => {
       const beatmapset = toBeatmapset(result, result.meta)
-      const maps = Number(result.id) === idKw
+      const maps = mapsetOnly || Number(result.id) === idKw
         ? []
         : (result.beatmaps as Array<Record<string, unknown>>).map(map => ({
             ...toBeatmapCompact({

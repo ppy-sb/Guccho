@@ -1,8 +1,9 @@
 <i18n lang="yaml">
 en-GB:
   title: Search
-  placeholder: Search beatmaps and users
+  placeholder: Search
   all: All
+  mapset-only: Mapsets only
   beatmapsets: Beatmapsets
   beatmaps: Beatmaps
   users: Users
@@ -31,8 +32,9 @@ en-GB:
 
 zh-CN:
   title: 搜索
-  placeholder: 搜索谱面和用户
+  placeholder: 搜索
   all: 全部
+  mapset-only: 仅图组
   beatmapsets: 图组
   beatmaps: 谱面
   users: 用户
@@ -61,8 +63,9 @@ zh-CN:
 
 fr-FR:
   title: Rechercher
-  placeholder: Rechercher des beatmaps et des utilisateurs
+  placeholder: Rechercher
   all: Tout
+  mapset-only: Beatmapsets uniquement
   beatmapsets: Beatmapsets
   beatmaps: Beatmaps
   users: Utilisateurs
@@ -91,8 +94,9 @@ fr-FR:
 
 de-DE:
   title: Suche
-  placeholder: Beatmaps und Benutzer suchen
+  placeholder: Suchen
   all: Alle
+  mapset-only: Nur Beatmapsets
   beatmapsets: Beatmapsets
   beatmaps: Beatmaps
   users: Benutzer
@@ -176,36 +180,60 @@ const mapFilters = reactive({
   advanced: false,
 })
 const customRanked = ref(false)
+const mapsetOnly = ref(true)
 const groupedBeatmapsets = ref<any[]>([])
 const groupedLoading = ref(false)
 const groupedPage = ref(0)
-const groupedPageSize = 5
 const groupedHasMore = ref(false)
+let groupedSearchAbort = new AbortController()
+let groupedSearchRequest = 0
 const groupedNothing = computed(() => Boolean(
-  (keyword.value || tags.value.length)
+  hasSearched.value
   && !groupedLoading.value
   && !groupedBeatmapsets.value.length,
 ))
 
+function cancelGroupedSearch() {
+  groupedSearchRequest++
+  groupedSearchAbort.abort()
+  groupedSearchAbort = new AbortController()
+  groupedLoading.value = false
+}
+
 async function searchGroupedBeatmapsets() {
-  if (!keyword.value && !tags.value.length) {
-    groupedBeatmapsets.value = []
-    return
-  }
+  cancelGroupedSearch()
+  const request = groupedSearchRequest
+  const signal = groupedSearchAbort.signal
+  const mapsetOnlySearch = mapsetOnly.value
+  const pageSize = mapsetOnlySearch ? 50 : 20
   groupedLoading.value = true
   groupedPage.value = 0
   try {
     const result = await app.$client.map.searchBeatmapsetGrouped.query({
       keyword: keyword.value,
       filters: tags.value,
-      limit: groupedPageSize + 1,
+      mapsetOnly: mapsetOnlySearch,
+      limit: pageSize + 1,
       offset: 0,
+    }, {
+      context: { skipBatch: true },
+      signal,
     })
-    groupedHasMore.value = result.length > groupedPageSize
-    groupedBeatmapsets.value = result.slice(0, groupedPageSize)
+    if (request !== groupedSearchRequest) {
+      return
+    }
+    groupedHasMore.value = result.length > pageSize
+    groupedBeatmapsets.value = result.slice(0, pageSize)
+  }
+  catch (error) {
+    if (!signal.aborted) {
+      throw error
+    }
   }
   finally {
-    groupedLoading.value = false
+    if (request === groupedSearchRequest) {
+      groupedLoading.value = false
+    }
   }
 }
 
@@ -213,32 +241,57 @@ async function loadMoreGroupedBeatmapsets() {
   if (groupedLoading.value || !groupedHasMore.value) {
     return
   }
+  const request = groupedSearchRequest
+  const signal = groupedSearchAbort.signal
+  const mapsetOnlySearch = mapsetOnly.value
+  const pageSize = mapsetOnlySearch ? 50 : 20
   groupedLoading.value = true
   try {
     const result = await app.$client.map.searchBeatmapsetGrouped.query({
       keyword: keyword.value,
       filters: tags.value,
-      limit: groupedPageSize + 1,
-      offset: (groupedPage.value + 1) * groupedPageSize,
+      mapsetOnly: mapsetOnlySearch,
+      limit: pageSize + 1,
+      offset: (groupedPage.value + 1) * pageSize,
+    }, {
+      context: { skipBatch: true },
+      signal,
     })
+    if (request !== groupedSearchRequest) {
+      return
+    }
     groupedPage.value++
-    groupedHasMore.value = result.length > groupedPageSize
-    groupedBeatmapsets.value.push(...result.slice(0, groupedPageSize))
+    groupedHasMore.value = result.length > pageSize
+    groupedBeatmapsets.value.push(...result.slice(0, pageSize))
+  }
+  catch (error) {
+    if (!signal.aborted) {
+      throw error
+    }
   }
   finally {
-    groupedLoading.value = false
+    if (request === groupedSearchRequest) {
+      groupedLoading.value = false
+    }
   }
 }
 
 function setTarget(target: typeof searchTarget.value) {
   if (target !== searchTarget.value) {
     hasSearched.value = false
+    cancelGroupedSearch()
   }
   searchTarget.value = target
   includes.beatmapsets = target === 'beatmaps'
   includes.beatmaps = target === 'beatmaps'
   includes.users = target === 'users'
   includes.pages = false
+}
+
+function updateMapsetOnly() {
+  if (hasSearched.value) {
+    searchGroupedBeatmapsets()
+  }
 }
 
 function formatLength(seconds: number) {
@@ -326,7 +379,9 @@ watch(() => route.query.q, (query) => {
     return
   }
   keyword.value = next
-  hasSearched.value = Boolean(next)
+  if (next) {
+    hasSearched.value = true
+  }
 }, { immediate: true })
 
 watch(() => route.query.target, (target) => {
@@ -335,6 +390,8 @@ watch(() => route.query.target, (target) => {
     hasSearched.value = true
   }
 }, { immediate: true })
+
+onBeforeUnmount(cancelGroupedSearch)
 
 // const lengthMinPercent = computed(() => `${(mapFilters.lengthMin / 600) * 100}%`)
 // const lengthMaxPercent = computed(() => `${(mapFilters.lengthMax / 600) * 100}%`)
@@ -426,6 +483,10 @@ if (hasSearched.value && searchTarget.value === 'beatmaps') {
               @change="toggleCustomRanked"
             >
             <span>{{ t('custom-ranked') }}</span>
+          </label>
+          <label class="filter-option">
+            <input v-model="mapsetOnly" type="checkbox" class="checkbox checkbox-sm" @change="updateMapsetOnly">
+            <span>{{ t('mapset-only') }}</span>
           </label>
           <div class="collapse collapse-arrow rounded-none">
             <input

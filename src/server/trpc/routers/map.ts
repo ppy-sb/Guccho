@@ -1,4 +1,4 @@
-import { array, number, object, string } from 'zod'
+import { array, boolean, number, object, string } from 'zod'
 import { optionalUserProcedure } from '../middleware/optional-user'
 import { userProcedure } from '../middleware/user'
 import { zodSearchBeatmap } from '../shapes'
@@ -22,11 +22,11 @@ function searchFiltersForUser(filters: Tag[] | undefined, user?: { roles: UserRo
     return filters
   }
 
-  const mania = filters?.some(filter => filter[0] === 'mode' && filter[2] === 'mania')
-  return filters?.filter(filter =>
-    filter[0] === 'mode'
-    || filter[0] === 'frozen'
-    || (mania && filter[0] === 'circleSize')
+  const mania = filters?.some(([key, op, value]) =>key === 'mode' && value === 'mania')
+  return filters?.filter(([key, op, value]) =>
+   key === 'mode'
+   ||key === 'frozen'
+   || (mania &&key === 'circleSize')
   )
 }
 
@@ -88,7 +88,7 @@ export const router = _router({
       object({
         keyword: string(),
         page: number().int().min(0).optional().default(0),
-        perPage: number().int().min(1).max(50).optional().default(10),
+        perPage: number().int().min(1).max(100).optional().default(20),
         filters: array(zodSearchBeatmap).optional(),
       }),
     )
@@ -106,7 +106,7 @@ export const router = _router({
     .input(
       object({
         keyword: string(),
-        limit: number().optional().default(5),
+        limit: number().int().min(1).max(100).optional().default(20),
         offset: number().int().min(0).optional().default(0),
         filters: array(zodSearchBeatmap).optional(),
       }),
@@ -125,21 +125,23 @@ export const router = _router({
     .input(
       object({
         keyword: string(),
-        limit: number().optional().default(10),
+        limit: number().int().min(1).max(100).optional().default(20),
         offset: number().int().min(0).optional().default(0),
         filters: array(zodSearchBeatmap).optional(),
+        mapsetOnly: boolean().optional().default(false),
       }),
     )
-    .query(async ({ input: { keyword, limit, offset, filters }, ctx }) => {
+    .query(async ({ input: { keyword, limit, offset, filters, mapsetOnly }, ctx }) => {
       const results = await maps.searchBeatmapsetGrouped({
         keyword,
         limit,
         offset,
         filters: searchFiltersForUser(filters, ctx.user),
+        mapsetOnly,
       })
       return results.map(result => ({
         ...mapId(result, MapProvider.idToString),
-        beatmaps: result.beatmaps.map(beatmap => mapId(beatmap, MapProvider.idToString)),
+        beatmaps: mapsetOnly ? [] : result.beatmaps.map(beatmap => mapId(beatmap, MapProvider.idToString)),
       }))
     }),
   canUseAdvancedSearch: optionalUserProcedure.query(({ ctx }) => canUseAdvancedSearch(ctx.user)),

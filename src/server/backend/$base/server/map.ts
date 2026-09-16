@@ -63,5 +63,6 @@ export abstract class MapProvider<Id, ForeignId> extends IdTransformable {
     limit: number
     offset?: number
     filters?: Tag[]
+    mapsetOnly?: boolean
   }): Promise<MapProvider.GroupedBeatmapsetSearchResult<Id, ForeignId>[]>
 }
