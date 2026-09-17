@@ -49,7 +49,8 @@ function clearFocus() {
           </svg>
         </label>
         <app-nav-brand class="hidden lg:flex" />
-        <button
+        <nuxt-link-locale
+          :to="{ name: 'search' }"
           class="btn btn-ghost btn-circle lg:hidden"
           @click.prevent="() => searchModalWrapper?.searchModal?.showModal()"
         >
@@ -62,13 +63,14 @@ function clearFocus() {
               d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
             />
           </svg>
-        </button>
+        </nuxt-link-locale>
       </div>
       <div class="-navbar-end self-end items-baseline !gap-2">
         <ul class="hidden menu nav-menu menu-horizontal lg:inline-flex flex-nowrap">
           <app-nav-items />
         </ul>
-        <button
+        <nuxt-link-locale
+          :to="{ name: 'search' }"
           class="invisible btn btn-ghost btn-circle flex lg:visible"
           @click.prevent="() => searchModalWrapper?.searchModal?.showModal()"
         >
@@ -81,7 +83,7 @@ function clearFocus() {
               d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
             />
           </svg>
-        </button>
+        </nuxt-link-locale>
         <div class="self-center dropdown dropdown-end">
           <label tabindex="0" class="flex pr-1 transition-transform cursor-pointer active:scale-90">
             <img v-if="session.loggedIn" :src="session.$state.user?.avatarSrc" class="avatar-img">

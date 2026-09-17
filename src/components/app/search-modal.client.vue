@@ -7,6 +7,7 @@ en-GB:
     pages: Pages
   search: Search...
   nothing: Found nothing.
+  more: More results...
 
 zh-CN:
   include:
@@ -16,6 +17,7 @@ zh-CN:
     pages: 导航
   search: 搜索
   nothing: 什么都没找到。
+  more: 更多结果...
 
 fr-FR:
   include:
@@ -25,6 +27,7 @@ fr-FR:
     pages: Pages
   search: Cherche...
   nothing: Aucun résultat.
+  more: Plus de résultats...
 
 de-DE:
   include:
@@ -34,6 +37,7 @@ de-DE:
     pages: Seiten
   search: Suche...
   nothing: Nichts gefunden.
+  more: Mehr Ergebnisse...
 </i18n>
 
 <script setup lang="ts">
@@ -269,6 +273,21 @@ const {
           <div class="divider" />
           <div class="p-5 pt-0">
             {{ t('nothing') }}
+          </div>
+        </template>
+        <template v-else-if="keyword">
+          <div class="divider" />
+          <div class="p-5 pt-0">
+            <nuxt-link-locale
+              :to="{
+                name: 'search',
+                query: { q: keyword },
+              }"
+              class="btn btn-primary btn-block"
+              @click="closeModal()"
+            >
+              {{ t('more') }}
+            </nuxt-link-locale>
           </div>
         </template>
       </div>
