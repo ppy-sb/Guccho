@@ -60,7 +60,7 @@ const {
   },
   loading,
   nothing,
-} = await useSearchResult()
+} = await useSearchModal()
 </script>
 
 <template>

@@ -143,10 +143,11 @@ const {
   raw,
   keyword,
   tags,
+  extract,
   results: { users },
   loading,
   nothing,
-} = await useSearchResult()
+} = await useSearchPage()
 const { data: advancedSearchAllowed } = await app.$client.map.canUseAdvancedSearch.useQuery()
 
 const searchTarget = ref<'beatmaps' | 'users'>(route.query.target === 'users' ? 'users' : 'beatmaps')
