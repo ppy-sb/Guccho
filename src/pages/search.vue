@@ -143,7 +143,6 @@ const {
   raw,
   keyword,
   tags,
-  extract,
   results: { users },
   loading,
   nothing,
@@ -347,12 +346,6 @@ function setTarget(target: typeof searchTarget.value) {
   includes.beatmaps = target === 'beatmaps'
   includes.users = target === 'users'
   includes.pages = false
-}
-
-function updateMapsetOnly() {
-  if (hasSearched.value) {
-    searchGroupedBeatmapsets()
-  }
 }
 
 function formatLength(seconds: number) {
@@ -596,7 +589,7 @@ if (hasSearched.value) {
             <span>{{ t('custom-ranked') }}</span>
           </label>
           <label class="filter-option">
-            <input v-model="mapsetOnly" type="checkbox" class="checkbox checkbox-sm" @change="updateMapsetOnly">
+            <input v-model="mapsetOnly" type="checkbox" class="checkbox checkbox-sm">
             <span>{{ t('mapset-only') }}</span>
           </label>
           <div class="collapse collapse-arrow rounded-none">
