@@ -39,7 +39,7 @@ const keyword = shallowRef('')
 const lastKw = shallowRef('')
 const tags = ref<Tag[]>([])
 const beatmapPage = shallowRef(0)
-const beatmapPerPage = 20
+const beatmapPerPage = 10
 const hasMoreBeatmaps = shallowRef(false)
 const includes = shallowReactive({
   beatmaps: true,
@@ -315,5 +315,5 @@ function extract(force = false) {
   }
 }
 function autoResultSize() {
-  return searchMode.value === 'all' ? 10 : 20
+  return searchMode.value === 'all' ? 5 : 10
 }
