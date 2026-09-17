@@ -182,6 +182,66 @@ const mapFilters = reactive({
 })
 const customRanked = ref(false)
 const mapsetOnly = ref(true)
+
+// Restore state from URL
+function restoreFromUrl() {
+  if (route.query.rank === 'custom') {
+    customRanked.value = true
+  }
+  if (route.query.maps === 'set-only') {
+    mapsetOnly.value = true
+  }
+  else if (route.query.maps === 'grouped') {
+    mapsetOnly.value = false
+  }
+
+  if (typeof route.query.mode === 'string' && route.query.mode in Mode) {
+    mapFilters.mode = route.query.mode as Mode
+  }
+
+  const numericFilters: Array<['cs' | 'ar' | 'od' | 'star', string]> = [
+    ['cs', 'cs'], ['ar', 'ar'], ['od', 'od'], ['star', 'star'],
+  ]
+  for (const [key, paramKey] of numericFilters) {
+    if (route.query[`${paramKey}-eq`]) {
+      (mapFilters as any)[`${key}Eq`] = route.query[`${paramKey}-eq`]
+    }
+    if (route.query[`${paramKey}-min`]) {
+      (mapFilters as any)[`${key}Min`] = route.query[`${paramKey}-min`]
+    }
+    if (route.query[`${paramKey}-min-op`] && (route.query[`${paramKey}-min-op`] === 'gte' || route.query[`${paramKey}-min-op`] === 'gt')) {
+      (mapFilters as any)[`${key}MinOp`] = route.query[`${paramKey}-min-op`]
+    }
+    if (route.query[`${paramKey}-max`]) {
+      (mapFilters as any)[`${key}Max`] = route.query[`${paramKey}-max`]
+    }
+    if (route.query[`${paramKey}-max-op`] && (route.query[`${paramKey}-max-op`] === 'lte' || route.query[`${paramKey}-max-op`] === 'lt')) {
+      (mapFilters as any)[`${key}MaxOp`] = route.query[`${paramKey}-max-op`]
+    }
+  }
+
+  if (route.query['length-enabled'] === '1') {
+    mapFilters.lengthEnabled = true
+    if (route.query['length-min']) {
+      mapFilters.lengthMin = Number(route.query['length-min'])
+    }
+    if (route.query['length-max']) {
+      mapFilters.lengthMax = Number(route.query['length-max'])
+    }
+  }
+
+  // Set advanced to true if any advanced filters are present
+  const hasAdvancedFilters = numericFilters.some(([key]) =>
+    mapFilters[`${key}Eq` as keyof typeof mapFilters]
+    || mapFilters[`${key}Min` as keyof typeof mapFilters]
+    || mapFilters[`${key}Max` as keyof typeof mapFilters],
+  ) || mapFilters.lengthEnabled
+  if (hasAdvancedFilters) {
+    mapFilters.advanced = true
+  }
+}
+
+restoreFromUrl()
 const groupedBeatmapsets = ref<any[]>([])
 const groupedLoading = ref(false)
 const groupedPage = ref(0)
@@ -281,8 +341,8 @@ function setTarget(target: typeof searchTarget.value) {
   if (target !== searchTarget.value) {
     hasSearched.value = false
     cancelGroupedSearch()
+    searchTarget.value = target
   }
-  searchTarget.value = target
   includes.beatmapsets = target === 'beatmaps'
   includes.beatmaps = target === 'beatmaps'
   includes.users = target === 'users'
@@ -316,12 +376,56 @@ function submit() {
   else {
     raw(true)
   }
-  router.replace({
-    query: {
-      ...(keyword.value ? { q: keyword.value } : {}),
-      target: searchTarget.value,
-    },
-  })
+
+  // Build query params from all state
+  const query: Record<string, string> = {
+    target: searchTarget.value,
+  }
+
+  if (keyword.value) {
+    query.q = keyword.value
+  }
+
+  if (searchTarget.value === 'beatmaps') {
+    if (customRanked.value) {
+      query.rank = 'custom'
+    }
+    if (mapsetOnly.value) {
+      query.maps = 'set-only'
+    }
+    else {
+      query.maps = 'grouped'
+    }
+    if (mapFilters.mode) {
+      query.mode = mapFilters.mode
+    }
+
+    // Numeric filters
+    const numericFilters: Array<['cs' | 'ar' | 'od' | 'star', string]> = [
+      ['cs', 'cs'], ['ar', 'ar'], ['od', 'od'], ['star', 'star'],
+    ]
+    for (const [key, paramKey] of numericFilters) {
+      if (mapFilters[`${key}Eq` as keyof typeof mapFilters]) {
+        query[`${paramKey}-eq`] = String(mapFilters[`${key}Eq` as keyof typeof mapFilters])
+      }
+      if (mapFilters[`${key}Min` as keyof typeof mapFilters]) {
+        query[`${paramKey}-min`] = String(mapFilters[`${key}Min` as keyof typeof mapFilters])
+        query[`${paramKey}-min-op`] = mapFilters[`${key}MinOp` as keyof typeof mapFilters] as string
+      }
+      if (mapFilters[`${key}Max` as keyof typeof mapFilters]) {
+        query[`${paramKey}-max`] = String(mapFilters[`${key}Max` as keyof typeof mapFilters])
+        query[`${paramKey}-max-op`] = mapFilters[`${key}MaxOp` as keyof typeof mapFilters] as string
+      }
+    }
+
+    if (mapFilters.lengthEnabled) {
+      query['length-enabled'] = '1'
+      query['length-min'] = String(mapFilters.lengthMin)
+      query['length-max'] = String(mapFilters.lengthMax)
+    }
+  }
+
+  router.replace({ query })
 }
 
 function toggleCustomRanked() {
@@ -406,8 +510,14 @@ onBeforeUnmount(cancelGroupedSearch)
 // }
 
 setTarget(searchTarget.value)
-if (hasSearched.value && searchTarget.value === 'beatmaps') {
-  searchGroupedBeatmapsets()
+if (hasSearched.value) {
+  syncMapFilters()
+  if (searchTarget.value === 'beatmaps') {
+    searchGroupedBeatmapsets()
+  }
+  else {
+    raw(true)
+  }
 }
 </script>
 
