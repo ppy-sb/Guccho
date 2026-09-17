@@ -1,6 +1,5 @@
 <i18n lang="yaml">
 en-GB:
-  title: Search
   placeholder: Search
   all: All
   mapset-only: Mapsets only
@@ -135,7 +134,7 @@ const { t } = useI18n()
 const app = useNuxtApp()
 
 useHead({
-  title: () => t('title'),
+  title: () => app.$i18n.t('title.search'),
 })
 
 const {

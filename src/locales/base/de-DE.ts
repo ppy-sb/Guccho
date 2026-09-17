@@ -47,6 +47,7 @@ export default {
     'clans': 'Clans',
     'account-recovery': 'Konto Wiederherstellung',
     'user-management': 'Benutzerverwaltung',
+    'search': 'Suche',
   },
   global: {
     'logout': 'Ausloggen',
@@ -70,6 +71,7 @@ export default {
     'otp': 'Einmaliger Code',
     'verify': 'Verifizieren',
     'max-combo': 'Max combo',
+    'find': 'Erweiterte Suche',
   },
   role: {
     [UserRole.Disabled]: 'Deaktiviert',

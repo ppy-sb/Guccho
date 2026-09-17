@@ -5,7 +5,7 @@ en-GB:
     beatmaps: Beatmaps
     users: Users
     pages: Pages
-  search: Search...
+  search: Quick search...
   nothing: Found nothing.
   more: More results...
 
@@ -15,7 +15,7 @@ zh-CN:
     beatmaps: 谱面
     users: 用户
     pages: 导航
-  search: 搜索
+  search: 快速搜索
   nothing: 什么都没找到。
   more: 更多结果...
 
@@ -25,7 +25,7 @@ fr-FR:
     beatmaps: Beatmaps
     users: Utilisateurs
     pages: Pages
-  search: Cherche...
+  search: Recherche rapide...
   nothing: Aucun résultat.
   more: Plus de résultats...
 
@@ -35,7 +35,7 @@ de-DE:
     beatmaps: Beatmaps
     users: Benutzer
     pages: Seiten
-  search: Suche...
+  search: Schnellsuche...
   nothing: Nichts gefunden.
   more: Mehr Ergebnisse...
 </i18n>
@@ -164,7 +164,7 @@ const {
               :key="`searchResult-page-${index}`"
             >
               <nuxt-link-locale
-                :to="(page.route() as typeof page.route | undefined)"
+                :to="page.route()"
                 @click="closeModal()"
               >
                 <div class="flex items-center gap-2">

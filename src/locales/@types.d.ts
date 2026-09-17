@@ -21,6 +21,7 @@ type Title =
   | 'articles'
   | 'clans'
   | 'account-recovery'
+  | 'search'
 
 type KGlobal =
   | 'logout'
@@ -44,6 +45,7 @@ type KGlobal =
   | 'email'
   | 'otp'
   | 'verify'
+  | 'find'
 type KFooter =
   | 'about'
   | 'resources'

@@ -28,6 +28,7 @@ export default {
     'articles': 'Articles',
     'clans': 'Clans',
     'user-management': 'Gestion d\'utilisateur',
+    'search': 'Rechercher',
     // TODO refine fr translation
     'account-recovery': 'Account Recovery',
   },
@@ -55,6 +56,7 @@ export default {
     'verify': 'Verify',
     'wip': 'WIP',
     'max-combo': 'Max combo',
+    'find': 'Recherche avancée',
   },
   role: {
     [UserRole.Disabled]: 'Désactivé',

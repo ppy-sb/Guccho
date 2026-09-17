@@ -56,6 +56,22 @@ export const pages: {
     render: () => (
       <>
         <icon
+          name="ion:search-outline"
+          class="w-5 h-5"
+          size="100%"
+        />
+        {useI18n({ useScope: 'global' }).t('global.find')}
+      </>
+    ),
+    route: () => ({
+      name: 'search',
+    }),
+    keyword: ['search', 'map', 'user'],
+  },
+  {
+    render: () => (
+      <>
+        <icon
           name="material-symbols:admin-panel-settings-rounded"
           class="w-5 h-5"
           size="100%"
@@ -133,7 +149,7 @@ export default function () {
       return pages.filter((item) => {
         const kwResult
           = item.keyword?.some(kw => kw.includes(keyword)) ?? true
-        const showResult = item.show?.(keyword)
+        const showResult = item.show?.(keyword) ?? true
         return kwResult && showResult
       })
     },

@@ -37,6 +37,7 @@ export default {
     'clans': '家人们',
     'account-recovery': '找回账号',
     'user-management': '用户管理',
+    'search': '搜索',
     'dan': {
       'dan': '段位',
       'dans': '段位',
@@ -58,6 +59,7 @@ export default {
     'played-at': '游玩时间',
     'acc': '准确度',
     'beatmapsets': '图组',
+    'find': '高级搜索',
     'beatmaps': '图',
     'users': '用户',
     'session': '会话',

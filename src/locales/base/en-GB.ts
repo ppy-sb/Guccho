@@ -48,6 +48,7 @@ export default {
     'clans': 'Clans',
     'account-recovery': 'Account Recovery',
     'user-management': 'User Management',
+    'search': 'Search',
     'dan': {
       'dan': 'Dan',
       'dans': 'Dans',
@@ -77,6 +78,7 @@ export default {
     'password': 'Password',
     'email': 'Email',
     'otp': 'One time code',
+    'find': 'Advanced search',
     'verify': 'Verify',
     'max-combo': 'Max combo',
   },
