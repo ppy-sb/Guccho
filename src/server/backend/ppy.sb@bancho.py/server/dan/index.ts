@@ -61,6 +61,18 @@ export class DanProvider extends Base<Id, ScoreId> {
     ? new IntervalDanProcessor(this as DanProvider & { config: { dan: { interval: number } } } as DanProvider)
     : new NoopDanProcessor(this)
 
+  private createBeatmapKeywordSearch(keyword: string, beatmapTable: typeof schema.beatmaps) {
+    // Boolean full-text mode gives users word and prefix search while treating
+    // punctuation such as `-` and `[]` as separators. Do not pass the
+    // raw input through as a boolean query: operators in user input have a
+    // different meaning in MySQL.
+    const terms = keyword.normalize('NFKC').match(/[\p{L}\p{N}_]+/gu) ?? []
+    const query = terms.map(term => `${term}*`).join(' ')
+    return query
+      ? sql<boolean>`MATCH(${beatmapTable.artist}, ${beatmapTable.title}, ${beatmapTable.version}) AGAINST(${query} IN BOOLEAN MODE)`
+      : undefined
+  }
+
   readonly tbl = {
     users: schema.users,
     scores: schema.scores,
@@ -291,18 +303,10 @@ export class DanProvider extends Base<Id, ScoreId> {
                     eq(condTree.column.value, a.keyword),
                   ),
 
-                  // further search matched beatmaps
+                  // further search matched beatmaps using FULLTEXT search
                   or(
-                    like(bmId.artist, `%${a.keyword}%`),
-                    like(bmId.title, `%${a.keyword}%`),
-                    like(bmId.creator, `%${a.keyword}%`),
-                    like(bmId.diff, `%${a.keyword}%`),
-                    like(bmId.filename, `%${a.keyword}%`),
-                    like(bmMd5.artist, `%${a.keyword}%`),
-                    like(bmMd5.title, `%${a.keyword}%`),
-                    like(bmMd5.creator, `%${a.keyword}%`),
-                    like(bmMd5.diff, `%${a.keyword}%`),
-                    like(bmMd5.filename, `%${a.keyword}%`),
+                    this.createBeatmapKeywordSearch(a.keyword, bmId),
+                    this.createBeatmapKeywordSearch(a.keyword, bmMd5),
                   ),
                 )
               ),
@@ -1323,18 +1327,10 @@ FROM
                     eq(condTree.column.value, a.keyword),
                   ),
 
-                  // further search matched beatmaps
+                  // further search matched beatmaps using FULLTEXT search
                   or(
-                    like(bmId.artist, `%${a.keyword}%`),
-                    like(bmId.title, `%${a.keyword}%`),
-                    like(bmId.creator, `%${a.keyword}%`),
-                    like(bmId.diff, `%${a.keyword}%`),
-                    like(bmId.filename, `%${a.keyword}%`),
-                    like(bmMd5.artist, `%${a.keyword}%`),
-                    like(bmMd5.title, `%${a.keyword}%`),
-                    like(bmMd5.creator, `%${a.keyword}%`),
-                    like(bmMd5.diff, `%${a.keyword}%`),
-                    like(bmMd5.filename, `%${a.keyword}%`),
+                    this.createBeatmapKeywordSearch(a.keyword, bmId),
+                    this.createBeatmapKeywordSearch(a.keyword, bmMd5),
                   ),
                 )
               ),

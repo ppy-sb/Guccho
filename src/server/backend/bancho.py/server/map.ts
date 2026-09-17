@@ -1,4 +1,4 @@
-import { and, count, desc, eq, inArray, like, or, sql, sum } from 'drizzle-orm'
+import { and, count, desc, eq, inArray, or, sql, sum } from 'drizzle-orm'
 import * as operators from 'drizzle-orm'
 import { type MySql2Database } from 'drizzle-orm/mysql2'
 import type { Id } from '..'
@@ -162,6 +162,21 @@ export class MapProvider implements Base<Id, Id> {
     frozen: 'frozen',
   } as const satisfies Record<Exclude<Tag[0], 'mode'>, keyof typeof schema.beatmaps>
 
+  private createKeywordSearch(keyword: string, mapsetOnly = false) {
+    // Boolean full-text mode gives users word and prefix search while treating
+    // filename punctuation such as `-` and `[]` as separators. Do not pass the
+    // raw input through as a boolean query: operators in user input have a
+    // different meaning in MySQL.
+    const terms = keyword.normalize('NFKC').match(/[\p{L}\p{N}_]+/gu) ?? []
+    const query = terms.map(term => `${term}*`).join(' ')
+    if (!query) return undefined
+
+    // For mapset-only searches, exclude version (difficulty name) from the search
+    return mapsetOnly
+      ? sql<boolean>`MATCH(${schema.beatmaps.artist}, ${schema.beatmaps.title}) AGAINST(${query} IN BOOLEAN MODE)`
+      : sql<boolean>`MATCH(${schema.beatmaps.artist}, ${schema.beatmaps.title}, ${schema.beatmaps.version}) AGAINST(${query} IN BOOLEAN MODE)`
+  }
+
   createFiltersFromTags(fields: Pick<typeof schema.beatmaps, typeof this.MAP [keyof typeof this.MAP] | 'mode'>, filters: Tag[] = []) {
     const ops: operators.SQL[] = []
     for (const tag of filters ?? []) {
@@ -182,13 +197,14 @@ export class MapProvider implements Base<Id, Id> {
   async searchBeatmap(opt: { keyword: string; page?: number; perPage: number; filters?: Tag[] }) {
     const { keyword, page = 0, perPage, filters } = opt
     const idKw = stringToId(keyword)
+    const keywordSearch = this.createKeywordSearch(keyword)
 
-    const sql = this.drizzle.query.beatmaps.findMany({
+    const query = this.drizzle.query.beatmaps.findMany({
 
       where: (fields) => {
         return and(
           or(
-            like(fields.version, `%${keyword}%`)?.if(keyword !== ''),
+            keywordSearch,
             Number.isNaN(idKw) ? undefined : eq(fields.setId, idKw),
           ),
           ...this.createFiltersFromTags(fields, filters)
@@ -199,19 +215,14 @@ export class MapProvider implements Base<Id, Id> {
       },
 
       orderBy: [
-        keyword !== '' ? desc(eq(schema.beatmaps.version, keyword)) : undefined,
-        keyword !== '' ? desc(like(schema.beatmaps.version, `${keyword}%`)) : undefined,
-        keyword !== '' ? desc(eq(schema.beatmaps.title, keyword)) : undefined,
-        keyword !== '' ? desc(like(schema.beatmaps.title, `${keyword}%`)) : undefined,
-        keyword !== '' ? desc(eq(schema.beatmaps.artist, keyword)) : undefined,
-        keyword !== '' ? desc(like(schema.beatmaps.artist, `${keyword}%`)) : undefined,
+        keywordSearch ? desc(keywordSearch) : undefined,
         desc(schema.beatmaps.setId),
       ].filter(TSFilter),
       limit: perPage,
       offset: page * perPage,
     })
 
-    const result = (await sql)
+    const result = (await query)
       .map(i => toBeatmapWithBeatmapset(i, i.source))
       .filter(
         (item): item is typeof item & { status: Exclude<RankingStatus, AbnormalStatus> } =>
@@ -232,7 +243,8 @@ export class MapProvider implements Base<Id, Id> {
     filters?: Tag[]
   }): Promise<Beatmapset<Id, Id>[]> {
     const idKw = stringToId(keyword)
-    const sql = this.drizzle.select({
+    const keywordSearch = this.createKeywordSearch(keyword, true)
+    const query = this.drizzle.select({
       id: schema.sources.id,
       server: schema.sources.server,
       meta: {
@@ -247,26 +259,20 @@ export class MapProvider implements Base<Id, Id> {
       ))
       .where(and(
         or(
-          like(schema.beatmaps.version, `%${keyword}%`)?.if(keyword !== ''),
-          like(schema.beatmaps.title, `%${keyword}%`)?.if(keyword !== ''),
-          like(schema.beatmaps.artist, `%${keyword}%`)?.if(keyword !== ''),
-          like(schema.beatmaps.creator, `%${keyword}%`)?.if(keyword !== ''),
+          keywordSearch,
           Number.isNaN(idKw) ? undefined : eq(schema.beatmaps.setId, idKw),
         ),
         ...this.createFiltersFromTags(schema.beatmaps, filters)
       ))
       .groupBy(schema.sources.id, schema.sources.server, schema.beatmaps.title, schema.beatmaps.artist)
       .orderBy(...[
-        keyword !== '' ? desc(eq(schema.beatmaps.title, keyword)) : undefined,
-        keyword !== '' ? desc(eq(schema.beatmaps.artist, keyword)) : undefined,
-        keyword !== '' ? desc(like(schema.beatmaps.title, `${keyword}%`)) : undefined,
-        keyword !== '' ? desc(like(schema.beatmaps.artist, `${keyword}%`)) : undefined,
+        keywordSearch ? desc(keywordSearch) : undefined,
         desc(schema.sources.id),
       ].filter(TSFilter))
       .limit(limit)
       .offset(offset)
 
-    return (await sql).map(bs => toBeatmapset(bs, bs.meta)).filter(TSFilter)
+    return (await query).map(bs => toBeatmapset(bs, bs.meta)).filter(TSFilter)
   }
 
   async searchBeatmapsetGrouped({
@@ -283,6 +289,7 @@ export class MapProvider implements Base<Id, Id> {
     mapsetOnly?: boolean
   }): Promise<Base.GroupedBeatmapsetSearchResult<Id, Id>[]> {
     const idKw = stringToId(keyword)
+    const keywordSearch = this.createKeywordSearch(keyword, mapsetOnly)
     const mapFields = schema.beatmaps
     const sqlResult = this.drizzle.select({
       id: schema.sources.id,
@@ -308,24 +315,18 @@ export class MapProvider implements Base<Id, Id> {
         eq(mapFields.server, schema.sources.server),
       ))
       .where(and(
-        keyword !== ''
-          ? or(
-            like(mapFields.version, `%${keyword}%`),
-            like(mapFields.title, `%${keyword}%`),
-            like(mapFields.artist, `%${keyword}%`),
-            like(mapFields.creator, `%${keyword}%`),
-            Number.isNaN(idKw) ? undefined : eq(mapFields.setId, idKw),
-          )
-          : undefined,
+        or(
+          keywordSearch,
+          Number.isNaN(idKw) ? undefined : eq(mapFields.setId, idKw),
+        ),
         ...this.createFiltersFromTags(mapFields, filters),
       ))
       .groupBy(schema.sources.id, schema.sources.server)
       .orderBy(
         ...[
-          keyword !== '' ? desc(sql<number>`MAX(${mapFields.title} = ${keyword})`) : undefined,
-          keyword !== '' ? desc(sql<number>`MAX(${mapFields.artist} = ${keyword})`) : undefined,
-          keyword !== '' ? desc(sql<number>`MAX(${mapFields.title} LIKE ${`${keyword}%`})`) : undefined,
-          keyword !== '' ? desc(sql<number>`MAX(${mapFields.artist} LIKE ${`${keyword}%`})`) : undefined,
+          keywordSearch ? desc(sql<number>`MAX(${keywordSearch})`) : undefined,
+          // keyword !== '' ? desc(sql<number>`MAX(${mapFields.title} = ${keyword})`) : undefined,
+          // keyword !== '' ? desc(sql<number>`MAX(${mapFields.artist} = ${keyword})`) : undefined,
           desc(schema.sources.id),
         ].filter(TSFilter)
       )
