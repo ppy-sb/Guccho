@@ -1,12 +1,14 @@
 import { IdTransformable } from '../@extends'
-import { type Mode } from '~/def'
-import { type BeatmapSource, type Beatmapset, type RankingStatus } from '~/def/beatmap'
+import type { Mode } from '~/def'
+import type { BeatmapSource, Beatmapset, RankingStatus } from '~/def/beatmap'
 import { type PaginatedResult } from '~/def/pagination'
 
 export namespace AdminMapProvider {
   export interface SearchOpt {
     keyword: string
     mode?: Mode
+    keyCount?: number
+    rankingStatus?: RankingStatus[]
     requested: boolean
     page: number
     perPage: number

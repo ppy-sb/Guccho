@@ -7,12 +7,21 @@ import { BeatmapSource, RankingStatus } from '~/def/beatmap'
 import { mode as modeIcon } from '~/common/icon'
 
 const rankStatus = $enum(RankingStatus)
+const filterableRankStatuses = [
+  [RankingStatus.Pending, 'Pending / Graveyard'],
+  [RankingStatus.Ranked, 'Ranked'],
+  [RankingStatus.Approved, 'Approved'],
+  [RankingStatus.Qualified, 'Qualified'],
+  [RankingStatus.Loved, 'Loved'],
+] as const
 
 const app = useNuxtApp()
 const { t } = useI18n()
 const search = ref<AdminMapProvider.SearchOpt>({
   keyword: '',
   mode: undefined,
+  keyCount: undefined,
+  rankingStatus: [],
   page: 0,
   requested: false,
   perPage: 10,
@@ -23,6 +32,12 @@ const { data, refresh, status } = await app.$client.admin.map.search.useQuery(qu
 const pages = computed(() => Math.ceil((data.value?.total || 0) / (query.value.perPage ?? 10)))
 
 const batch = ref(new Map<string, AdminMapProvider.VeryCompactBeatmap<string, string>>())
+
+watch(() => search.value.mode, (mode) => {
+  if (mode !== Mode.Mania) {
+    search.value.keyCount = undefined
+  }
+})
 
 async function doSearch() {
   batch.value = new Map()
@@ -61,6 +76,9 @@ async function update() {
 <i18n lang="yaml">
 en-GB:
   mode: Mode
+  key-count: Key count
+  ranking-status: Ranking status
+  search-parameters: Search Parameters
   search-text: set id, beatmap id, artist, title, version, hash
   search: Search
   sid: Set ID
@@ -74,7 +92,10 @@ en-GB:
 
 zh-CN:
   mode: 模式
-  search-text: 设置 ID、谱面 ID、艺术家、标题、版本、哈希
+  key-count: 键数
+  ranking-status: 谱面状态
+  search-parameters: 高级搜索
+  search-text: 集合 ID、谱面 ID、艺术家、标题、版本、哈希
   search: 搜索
   sid: 集合 ID
   artist: 艺术家
@@ -87,6 +108,9 @@ zh-CN:
 
 fr-FR:
   mode: Mode
+  key-count: Nombre de touches
+  ranking-status: Statut de classement
+  search-parameters: Paramètres de recherche
   search-text: ID de set, ID de beatmap, artiste, titre, version, hash
   search: Rechercher
   sid: ID du set
@@ -101,53 +125,76 @@ fr-FR:
 
 <template>
   <div class="space-y-4 max-w-screen-2xl">
-    <form :action="useRequestURL().href" method="get" class="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-4" @submit.prevent="doSearch">
-      <div class="form-control">
-        <label class="label">
-          <span class="label-text">{{ t('mode') }}</span>
-        </label>
-        <div class="flex gap-2">
-          <img
-            v-if="search.mode"
-            :src="`/icons/mode/${modeIcon[search.mode].icon}.svg`"
-            class="w-6 color-theme-light-invert"
-          >
-          <select v-model="search.mode" class="w-full select select-sm">
-            <option :value="undefined" disabled>
-              {{ t('select') }}
-            </option>
-            <option
-              v-for="mode in Mode" :key="mode"
-              :selected="mode === search.mode" :value="mode"
-            >
-              {{ $t(localeKey.mode(mode)) }}
-            </option>
-          </select>
-        </div>
+    <div class="border rounded-lg collapse collapse-arrow border-base-300 bg-base-200">
+      <input type="checkbox" class="peer">
+      <div class="font-medium collapse-title text-md">
+        <span class="align-middle">{{ t('search-parameters') }}</span>
+        <icon name="ion:search-outline" class="w-6 h-6 align-middle" />
       </div>
-      <div class="sm:col-span-2 md:col-span-4">
-        <label for="keyword" class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">{{ t('search') }}</label>
-        <div class="relative">
-          <div class="absolute inset-y-0 flex items-center pointer-events-none start-0 ps-3">
-            <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
-            </svg>
+      <form :action="useRequestURL().href" method="get" class="space-y-6 collapse-content" @submit.prevent="doSearch">
+        <div class="gap-2 sm:grid sm:grid-cols-2 md:grid-cols-4">
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">{{ t('mode') }}</span>
+            </label>
+            <div class="flex gap-2">
+              <img
+                v-if="search.mode"
+                :src="`/icons/mode/${modeIcon[search.mode].icon}.svg`"
+                class="w-6 color-theme-light-invert"
+              >
+              <select v-model="search.mode" class="w-full select select-sm">
+                <option :value="undefined" disabled>
+                  {{ t('select') }}
+                </option>
+                <option
+                  v-for="mode in Mode" :key="mode"
+                  :selected="mode === search.mode" :value="mode"
+                >
+                  {{ $t(localeKey.mode(mode)) }}
+                </option>
+              </select>
+            </div>
           </div>
-          <input
-            id="keyword"
-            v-model="search.keyword"
-            name="keyword"
-            type="search"
-            class="block w-full p-4 text-sm text-gray-900 border border-gray-300 rounded-lg ps-10 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            :placeholder="t('search-text')"
-          >
-          <button type="submit" class="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+          <div v-if="search.mode === Mode.Mania" class="form-control">
+            <label class="label">
+              <span class="label-text">{{ t('key-count') }}</span>
+            </label>
+            <input v-model.number="search.keyCount" type="number" min="1" max="18" class="input input-sm w-full" placeholder="Any">
+          </div>
+          <fieldset class="form-control">
+            <legend class="label">
+              <span class="label-text">{{ t('ranking-status') }}</span>
+            </legend>
+            <label v-for="[value, label] in filterableRankStatuses" :key="value" class="label cursor-pointer justify-start gap-2 py-1">
+              <input v-model="search.rankingStatus" type="checkbox" class="checkbox checkbox-sm" :value="value">
+              <span class="label-text">{{ label }}</span>
+            </label>
+          </fieldset>
+          <div class="relative col-span-12">
+            <input
+              id="keyword"
+              v-model="search.keyword"
+              name="keyword"
+              type="search"
+              class="block w-full p-4 text-sm text-gray-900 border border-gray-300 rounded-lg ps-10 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              :placeholder="t('search-text')"
+            >
+            <button type="submit" class="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" >
+              {{ t('search') }}
+              <icon name="ion:search-outline" class="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+        <!-- <div class="flex">
+          <div class="ml-auto" />
+          <button type="submit" class="btn btn-primary btn-sm">
             {{ t('search') }}
             <icon name="ion:search-outline" class="w-4 h-4" />
           </button>
-        </div>
-      </div>
-    </form>
+        </div> -->
+      </form>
+    </div>
 
     <div class="space-y-4">
       <div class="flex justify-between">

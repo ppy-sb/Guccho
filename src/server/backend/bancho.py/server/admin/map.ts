@@ -1,12 +1,15 @@
-import { and, count, desc, eq, gt, inArray, like, max, or, sql, sum } from 'drizzle-orm'
+import { and, count, desc, eq, gt, inArray, like, lt, max, or, sql, sum } from 'drizzle-orm'
 import { match, unit } from 'switch-pattern'
 import { type Id } from '../..'
 import { fromRankingStatus, idToString, stringToId, toBanchoMode, toBeatmapSource, toBeatmapset, toRankingStatus } from '../../transforms'
 import { useDrizzle } from '../source/drizzle'
 import * as schema from '../../drizzle/schema'
 import { BanchoPyRankedStatus } from '../../enums'
+import { createBeatmapKeywordSearch } from '../map-search'
+import { jsonArrayAggObjectNoCoalesceWrap } from '~/server/backend/bancho.py/drizzle/utils'
 import { AdminMapProvider as Base } from '$base/server'
 import { type PaginatedResult } from '~/def/pagination'
+import { Mode } from '~/def'
 import { GucchoError } from '~/def/messages'
 
 export class AdminMapProvider extends Base<Id, Id> implements Base<Id, Id> {
@@ -15,7 +18,6 @@ export class AdminMapProvider extends Base<Id, Id> implements Base<Id, Id> {
 
   drizzle = useDrizzle(schema)
   async search(opt: Base.SearchOpt): Promise<PaginatedResult<Base.SearchResultData<Id, Id>>> {
-    opt.requested = false
     const votes = this.drizzle.$with('votes')
       .as(
         this.drizzle.select({
@@ -42,10 +44,39 @@ export class AdminMapProvider extends Base<Id, Id> implements Base<Id, Id> {
           .groupBy(votes.setId)
       )
 
-    const { keyword } = opt
-    const idKw = stringToId(keyword)
+    const {
+      keyword,
+      rankingStatus = [],
+      keyCount,
+      requested,
+      mode,
 
-    const shouldOrderByVotes = opt.requested || keyword === ''
+      page,
+      perPage,
+    } = opt
+    const idKw = stringToId(keyword)
+    const keywordSearch = createBeatmapKeywordSearch(keyword)
+    const statusFilter = rankingStatus.length
+      ? or(
+        ...(
+          new Set(rankingStatus.map(status => fromRankingStatus(status)))
+            .values()
+            .map(s => eq(schema.beatmaps.status, s))
+        )
+      )
+      : undefined
+    const keyCountFilter = keyCount === undefined
+      ? undefined
+      : and(
+        eq(schema.beatmaps.mode, toBanchoMode(Mode.Mania)),
+        keyCount === 3
+          ? lt(schema.beatmaps.cs, 4)
+          : keyCount === 8
+            ? gt(schema.beatmaps.cs, 7)
+            : eq(schema.beatmaps.cs, keyCount),
+      )
+
+    const shouldOrderByVotes = requested || keyword === ''
 
     const _sql = this.drizzle
       .with(votes, setVotes)
@@ -53,28 +84,19 @@ export class AdminMapProvider extends Base<Id, Id> implements Base<Id, Id> {
         id: schema.beatmaps.setId,
         server: schema.beatmaps.server,
         meta: {
-          title: schema.beatmaps.title,
-          artist: schema.beatmaps.artist,
+          title: sql<string>`MIN(${schema.beatmaps.title})`,
+          artist: sql<string>`MIN(${schema.beatmaps.artist})`,
         },
-        beatmaps: sql<{
-          version: string
-          md5: string
-          id: Id
-          server: 'osu!' | 'private'
-          status: BanchoPyRankedStatus
-          lastUpdate: number
-          vote: number | null
-        }[]>`JSON_ARRAYAGG(
-        JSON_OBJECT(
-          'id', ${schema.beatmaps.id},
-          'md5', ${schema.beatmaps.md5},
-          'version', ${schema.beatmaps.version},
-          'server', ${schema.beatmaps.server},
-          'status', ${schema.beatmaps.status},
-          'lastUpdate', unix_timestamp(${schema.beatmaps.lastUpdate}),
-          'vote', ${votes.votes}
-        )
-      )`,
+        beatmaps:
+          jsonArrayAggObjectNoCoalesceWrap({
+            id: schema.beatmaps.id,
+            md5: schema.beatmaps.md5,
+            version: schema.beatmaps.version,
+            server: schema.beatmaps.server,
+            status: schema.beatmaps.status,
+            lastUpdate: sql<number>`unix_timestamp(${schema.beatmaps.lastUpdate})`,
+            vote: votes.votes,
+          }),
       })
       .from(schema.beatmaps)
       .leftJoin(setVotes, eq(setVotes.setId, schema.beatmaps.setId))
@@ -82,19 +104,19 @@ export class AdminMapProvider extends Base<Id, Id> implements Base<Id, Id> {
       .where(
         and(
           or(
-            like(schema.beatmaps.version, `%${keyword}%`),
-            like(schema.beatmaps.title, `%${keyword}%`),
-            like(schema.beatmaps.artist, `%${keyword}%`),
+            keywordSearch,
             like(schema.beatmaps.creator, `%${keyword}%`),
             eq(schema.beatmaps.setId, idKw)?.if(!Number.isNaN(idKw)),
             eq(schema.beatmaps.id, idKw)?.if(!Number.isNaN(idKw)),
           )?.if(keyword),
 
-          opt.mode === undefined ? undefined : eq(schema.beatmaps.mode, toBanchoMode(opt.mode)),
+          mode === undefined ? undefined : eq(schema.beatmaps.mode, toBanchoMode(mode)),
+          keyCountFilter,
+          statusFilter,
           gt(setVotes.votes, 0).if(shouldOrderByVotes),
         )
       )
-      .groupBy(schema.beatmaps.setId, schema.beatmaps.server, schema.beatmaps.title, schema.beatmaps.artist, setVotes.votes)
+      .groupBy(schema.beatmaps.setId, schema.beatmaps.server, setVotes.votes)
 
     const total = await this.drizzle.select({ count: sql<number>`count(1)` }).from(_sql.as('sq')).then(res => res[0].count)
 
@@ -105,19 +127,16 @@ export class AdminMapProvider extends Base<Id, Id> implements Base<Id, Id> {
     const res = await _sql
       .orderBy(
         ...[
+          desc(eq(schema.beatmaps.setId, idKw))?.if(!Number.isNaN(idKw)),
+          keywordSearch ? desc(sql<number>`MAX(${keywordSearch})`) : undefined,
           desc(setVotes.maxVotes).if(shouldOrderByVotes),
           desc(setVotes.votes).if(shouldOrderByVotes),
-          desc(eq(schema.beatmaps.title, keyword))?.if(keyword),
-          desc(eq(schema.beatmaps.artist, keyword))?.if(keyword),
-          desc(like(schema.beatmaps.title, `${keyword}%`))?.if(keyword),
-          desc(like(schema.beatmaps.artist, `${keyword}%`))?.if(keyword),
-          desc(like(schema.beatmaps.title, `%${keyword}%`))?.if(keyword),
-          desc(like(schema.beatmaps.artist, `%${keyword}%`))?.if(keyword),
+          desc(schema.beatmaps.setId),
         ]
           .filter(TSFilter),
       )
-      .limit(opt.perPage)
-      .offset(opt.page * opt.perPage)
+      .limit(perPage)
+      .offset(page * perPage)
 
     return {
       data: res.map((bs) => {

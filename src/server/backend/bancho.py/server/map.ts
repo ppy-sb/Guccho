@@ -11,7 +11,9 @@ import {
 } from '../transforms'
 import * as schema from '../drizzle/schema'
 import { BanchoPyRankedStatus } from '../enums'
+import { jsonArrayAggObjectNoCoalesceWrap } from '../drizzle/utils'
 import { useDrizzle } from './source/drizzle'
+import { createBeatmapKeywordSearch } from './map-search'
 import { toBanchoMode } from '~/server/backend/bancho.py/transforms'
 import type { Tag } from '~/def/search'
 import { type AbnormalStatus, type Beatmapset, RankingStatus } from '~/def/beatmap'
@@ -162,21 +164,6 @@ export class MapProvider implements Base<Id, Id> {
     frozen: 'frozen',
   } as const satisfies Record<Exclude<Tag[0], 'mode'>, keyof typeof schema.beatmaps>
 
-  private createKeywordSearch(keyword: string, mapsetOnly = false) {
-    // Boolean full-text mode gives users word and prefix search while treating
-    // filename punctuation such as `-` and `[]` as separators. Do not pass the
-    // raw input through as a boolean query: operators in user input have a
-    // different meaning in MySQL.
-    const terms = keyword.normalize('NFKC').match(/[\p{L}\p{N}_]+/gu) ?? []
-    const query = terms.map(term => `${term}*`).join(' ')
-    if (!query) return undefined
-
-    // For mapset-only searches, exclude version (difficulty name) from the search
-    return mapsetOnly
-      ? sql<boolean>`MATCH(${schema.beatmaps.artist}, ${schema.beatmaps.title}) AGAINST(${query} IN BOOLEAN MODE)`
-      : sql<boolean>`MATCH(${schema.beatmaps.artist}, ${schema.beatmaps.title}, ${schema.beatmaps.version}) AGAINST(${query} IN BOOLEAN MODE)`
-  }
-
   createFiltersFromTags(fields: Pick<typeof schema.beatmaps, typeof this.MAP [keyof typeof this.MAP] | 'mode'>, filters: Tag[] = []) {
     const ops: operators.SQL[] = []
     for (const tag of filters ?? []) {
@@ -197,7 +184,7 @@ export class MapProvider implements Base<Id, Id> {
   async searchBeatmap(opt: { keyword: string; page?: number; perPage: number; filters?: Tag[] }) {
     const { keyword, page = 0, perPage, filters } = opt
     const idKw = stringToId(keyword)
-    const keywordSearch = this.createKeywordSearch(keyword)
+    const keywordSearch = createBeatmapKeywordSearch(keyword)
 
     const query = this.drizzle.query.beatmaps.findMany({
 
@@ -243,7 +230,7 @@ export class MapProvider implements Base<Id, Id> {
     filters?: Tag[]
   }): Promise<Beatmapset<Id, Id>[]> {
     const idKw = stringToId(keyword)
-    const keywordSearch = this.createKeywordSearch(keyword, true)
+    const keywordSearch = createBeatmapKeywordSearch(keyword, true)
     const query = this.drizzle.select({
       id: schema.sources.id,
       server: schema.sources.server,
@@ -289,7 +276,7 @@ export class MapProvider implements Base<Id, Id> {
     mapsetOnly?: boolean
   }): Promise<Base.GroupedBeatmapsetSearchResult<Id, Id>[]> {
     const idKw = stringToId(keyword)
-    const keywordSearch = this.createKeywordSearch(keyword, mapsetOnly)
+    const keywordSearch = createBeatmapKeywordSearch(keyword, mapsetOnly)
     const mapFields = schema.beatmaps
     const sqlResult = this.drizzle.select({
       id: schema.sources.id,
@@ -299,15 +286,26 @@ export class MapProvider implements Base<Id, Id> {
         artist: sql<string>`MIN(${mapFields.artist})`,
       },
       beatmaps: mapsetOnly
-        ? sql<unknown[]>`JSON_ARRAY()`
-        : sql<unknown[]>`JSON_ARRAYAGG(JSON_OBJECT(
-            'id', ${mapFields.id}, 'md5', ${mapFields.md5}, 'version', ${mapFields.version},
-            'creator', ${mapFields.creator}, 'lastUpdate', ${mapFields.lastUpdate}, 'status', ${mapFields.status},
-            'totalLength', ${mapFields.totalLength}, 'maxCombo', ${mapFields.maxCombo},
-            'plays', ${mapFields.plays}, 'passes', ${mapFields.passes}, 'mode', ${mapFields.mode},
-            'bpm', ${mapFields.bpm}, 'cs', ${mapFields.cs}, 'ar', ${mapFields.ar},
-            'od', ${mapFields.od}, 'hp', ${mapFields.hp}, 'diff', ${mapFields.diff}
-          ))`,
+        ? sql<never[]>`JSON_ARRAY()`
+        : jsonArrayAggObjectNoCoalesceWrap({
+          id: mapFields.id,
+          md5: mapFields.md5,
+          version: mapFields.version,
+          creator: mapFields.creator,
+          lastUpdate: mapFields.lastUpdate,
+          status: mapFields.status,
+          totalLength: mapFields.totalLength,
+          maxCombo: mapFields.maxCombo,
+          plays: mapFields.plays,
+          passes: mapFields.passes,
+          mode: mapFields.mode,
+          bpm: mapFields.bpm,
+          cs: mapFields.cs,
+          ar: mapFields.ar,
+          od: mapFields.od,
+          hp: mapFields.hp,
+          diff: mapFields.diff,
+        }),
     })
       .from(schema.sources)
       .innerJoin(schema.beatmaps, and(
@@ -325,8 +323,6 @@ export class MapProvider implements Base<Id, Id> {
       .orderBy(
         ...[
           keywordSearch ? desc(sql<number>`MAX(${keywordSearch})`) : undefined,
-          // keyword !== '' ? desc(sql<number>`MAX(${mapFields.title} = ${keyword})`) : undefined,
-          // keyword !== '' ? desc(sql<number>`MAX(${mapFields.artist} = ${keyword})`) : undefined,
           desc(schema.sources.id),
         ].filter(TSFilter)
       )

@@ -7,6 +7,10 @@ import { type AnyColumn, type SQL, and, sql } from 'drizzle-orm'
 import { type SelectedFields } from 'drizzle-orm/mysql-core'
 import { type SelectResultFields } from 'drizzle-orm/query-builders/select.types'
 
+interface JSONOptions<Column> {
+  orderBy?: { colName: Column; direction: 'ASC' | 'DESC' }
+}
+
 export function jsonObject<T extends SelectedFields>(shape: T) {
   const chunks: SQL[] = []
 
@@ -35,7 +39,7 @@ export function jsonArrayAggObject<
   Column extends AnyColumn,
 >(
   shape: T,
-  options?: { orderBy?: { colName: Column; direction: 'ASC' | 'DESC' } },
+  options?: JSONOptions<Column>,
 ) {
   return sql<SelectResultFields<T>[]>`coalesce(
     JSON_ARRAYAGG(${jsonObject(shape)}
@@ -52,4 +56,20 @@ export function jsonArrayAggObject<
       ),
     )})
     ,'${sql`[]`}')`
+}
+
+export function jsonArrayAggObjectNoCoalesceWrap<
+  T extends SelectedFields,
+  Column extends AnyColumn,
+>(
+  shape: T,
+  options?: JSONOptions<Column>,
+) {
+  return sql<SelectResultFields<T>[]>`JSON_ARRAYAGG(${jsonObject(shape)}
+  ${options?.orderBy
+    ? sql`ORDER BY ${options.orderBy.colName} ${sql.raw(
+      options.orderBy.direction,
+    )}`
+    : undefined
+  })`
 }

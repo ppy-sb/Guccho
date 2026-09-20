@@ -159,6 +159,8 @@ export const router = _router({
         object({
           keyword: string(),
           mode: zodMode.optional(),
+          keyCount: number().int().min(1).max(18).optional(),
+          rankingStatus: array(nativeEnum(RankingStatus)).optional(),
           requested: boolean().default(false),
           page: number().min(0).default(0),
           perPage: number().min(1).default(10),

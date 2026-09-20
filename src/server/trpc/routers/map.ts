@@ -22,11 +22,11 @@ function searchFiltersForUser(filters: Tag[] | undefined, user?: { roles: UserRo
     return filters
   }
 
-  const mania = filters?.some(([key, op, value]) =>key === 'mode' && value === 'mania')
+  const mania = filters?.some(([key, op, value]) => key === 'mode' && value === 'mania')
   return filters?.filter(([key, op, value]) =>
-   key === 'mode'
-   ||key === 'frozen'
-   || (mania &&key === 'circleSize')
+    key === 'mode'
+   || key === 'frozen'
+   || (mania && key === 'circleSize')
   )
 }
 
