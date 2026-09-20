@@ -17,18 +17,25 @@ const filterableRankStatuses = [
 
 const app = useNuxtApp()
 const { t } = useI18n()
+const route = useRoute()
+const router = useRouter()
 const search = ref<AdminMapProvider.SearchOpt>({
-  keyword: '',
-  mode: undefined,
-  keyCount: undefined,
-  rankingStatus: [],
-  page: 0,
-  requested: false,
+  keyword: typeof route.query.keyword === 'string' ? route.query.keyword : '',
+  mode: Object.values(Mode).includes(route.query.mode as Mode) ? route.query.mode as Mode : undefined,
+  keyCount: typeof route.query.keyCount === 'string' ? Number(route.query.keyCount) : undefined,
+  rankingStatus: typeof route.query.rankingStatus === 'string'
+    ? route.query.rankingStatus.split(',').map(Number).filter(status => filterableRankStatuses.some(([value]) => value === status)) as RankingStatus[]
+    : [],
+  page: typeof route.query.page === 'string' ? Number(route.query.page) || 0 : 0,
+  frozen: route.query.frozen === 'true' ? true : undefined,
+  orderBy: route.query.orderBy === 'natural' || route.query.orderBy === 'desc' || route.query.orderBy === 'votes'
+    ? route.query.orderBy
+    : 'votes',
   perPage: 10,
 })
 
 const query = ref({ ...search.value })
-const { data, refresh, status } = await app.$client.admin.map.search.useQuery(query, { immediate: false })
+const { data, refresh, status } = await app.$client.admin.map.search.useQuery(query, { immediate: false, dedupe: 'cancel' })
 const pages = computed(() => Math.ceil((data.value?.total || 0) / (query.value.perPage ?? 10)))
 
 const batch = ref(new Map<string, AdminMapProvider.VeryCompactBeatmap<string, string>>())
@@ -39,10 +46,83 @@ watch(() => search.value.mode, (mode) => {
   }
 })
 
+function searchQuery(overrides: Partial<AdminMapProvider.SearchOpt> = {}) {
+  const params = { ...search.value, ...overrides }
+  return {
+    keyword: params.keyword || undefined,
+    mode: params.mode?.toString(),
+    keyCount: params.keyCount?.toString(),
+    rankingStatus: params.rankingStatus?.join(',') || undefined,
+    frozen: params.frozen ? 'true' : undefined,
+    orderBy: params.orderBy,
+    page: params.page ? params.page.toString() : undefined,
+  }
+}
+
+function paramsForCheckingVotesClicked() {
+  return searchQuery({ rankingStatus: [], frozen: undefined, orderBy: 'votes', page: 0 })
+}
+
+function paramsForCustomClicked() {
+  return searchQuery({ frozen: true, orderBy: 'desc', page: 0 })
+}
+
+function paramsForAllClicked() {
+  return searchQuery({ frozen: undefined, orderBy: 'desc', page: 0 })
+}
+
+function updateUrl() {
+  router.replace({ query: searchQuery() })
+}
+
 async function doSearch() {
   batch.value = new Map()
   query.value = { ...search.value }
+  updateUrl()
   await refresh()
+}
+
+async function onCheckingVotesSelected() {
+  Object.assign(search.value, {
+    rankingStatus: [],
+    frozen: undefined,
+    orderBy: 'votes',
+    page: 0,
+  })
+  await doSearch()
+}
+
+async function onCustomSelected() {
+  Object.assign(search.value, {
+    frozen: true,
+    orderBy: 'desc',
+    page: 0,
+  })
+  await doSearch()
+}
+
+async function onAllSelected() {
+  Object.assign(search.value, {
+    frozen: undefined,
+    orderBy: 'desc',
+    page: 0,
+  })
+  await doSearch()
+}
+
+function resetSearch() {
+  Object.assign(search.value, {
+    keyword: '',
+    mode: undefined,
+    keyCount: undefined,
+    rankingStatus: [],
+    frozen: undefined,
+    orderBy: 'votes',
+    page: 0,
+  })
+  data.value = null
+  batch.value = new Map()
+  updateUrl()
 }
 
 function batchAdd(bm: AdminMapProvider.VeryCompactBeatmap<string, string>) {
@@ -79,6 +159,16 @@ en-GB:
   key-count: Key count
   ranking-status: Ranking status
   search-parameters: Search Parameters
+  preset: Preset
+  checking-votes: Checking votes
+  custom: Custom (BN adjusted)
+  all: All maps
+  reset: Reset
+  order-by: Order by
+  natural: Natural order
+  desc: Descending (latest first)
+  votes: Votes
+  frozen: BN-adjusted maps only
   search-text: set id, beatmap id, artist, title, version, hash
   search: Search
   sid: Set ID
@@ -95,6 +185,16 @@ zh-CN:
   key-count: 键数
   ranking-status: 谱面状态
   search-parameters: 高级搜索
+  preset: 预设
+  checking-votes: 检查投票
+  custom: 自定义（BN 调整）
+  all: 所有谱面
+  reset: 重置
+  order-by: 排序
+  natural: 自然顺序
+  desc: 顺序（最新优先）
+  votes: 投票数
+  frozen: 仅显示 BN 调整的谱面
   search-text: 集合 ID、谱面 ID、艺术家、标题、版本、哈希
   search: 搜索
   sid: 集合 ID
@@ -111,6 +211,16 @@ fr-FR:
   key-count: Nombre de touches
   ranking-status: Statut de classement
   search-parameters: Paramètres de recherche
+  preset: Préréglage
+  checking-votes: Vérification des votes
+  custom: Personnalisé (ajusté par BN)
+  all: Toutes les maps
+  reset: Réinitialiser
+  order-by: Trier par
+  natural: Ordre naturel
+  desc: Décroissant (plus récentes)
+  votes: Votes
+  frozen: Maps ajustées par BN uniquement
   search-text: ID de set, ID de beatmap, artiste, titre, version, hash
   search: Rechercher
   sid: ID du set
@@ -132,8 +242,8 @@ fr-FR:
         <icon name="ion:search-outline" class="w-6 h-6 align-middle" />
       </div>
       <form :action="useRequestURL().href" method="get" class="space-y-6 collapse-content" @submit.prevent="doSearch">
-        <div class="gap-2 sm:grid sm:grid-cols-2 md:grid-cols-4">
-          <div class="form-control">
+        <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
+          <div class="form-control col-span-1">
             <label class="label">
               <span class="label-text">{{ t('mode') }}</span>
             </label>
@@ -156,11 +266,34 @@ fr-FR:
               </select>
             </div>
           </div>
-          <div v-if="search.mode === Mode.Mania" class="form-control">
+          <div v-if="search.mode === Mode.Mania" class="form-control col-span-1">
             <label class="label">
               <span class="label-text">{{ t('key-count') }}</span>
             </label>
             <input v-model.number="search.keyCount" type="number" min="1" max="18" class="input input-sm w-full" placeholder="Any">
+          </div>
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">{{ t('order-by') }}</span>
+            </label>
+            <select v-model="search.orderBy" class="select select-sm w-full">
+              <option value="natural">
+                {{ t('natural') }}
+              </option>
+              <option value="desc">
+                {{ t('desc') }}
+              </option>
+              <option value="votes">
+                {{ t('votes') }}
+              </option>
+            </select>
+          </div>
+          <div class="form-control">
+            <label class="label"><span class="label-text">&nbsp;</span></label>
+            <label class="label cursor-pointer justify-start gap-2 items-start">
+              <input v-model="search.frozen" type="checkbox" class="checkbox checkbox-sm">
+              <span class="label-text">{{ t('frozen') }}</span>
+            </label>
           </div>
           <fieldset class="form-control">
             <legend class="label">
@@ -171,29 +304,51 @@ fr-FR:
               <span class="label-text">{{ label }}</span>
             </label>
           </fieldset>
-          <div class="relative col-span-12">
+          <div class="relative sm:col-span-2 lg:col-span-4">
             <input
               id="keyword"
               v-model="search.keyword"
               name="keyword"
               type="search"
-              class="block w-full p-4 text-sm text-gray-900 border border-gray-300 rounded-lg ps-10 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              class="block w-full p-4 pe-44 text-sm text-gray-900 border border-gray-300 rounded-lg ps-10 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               :placeholder="t('search-text')"
             >
-            <button type="submit" class="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" >
-              {{ t('search') }}
-              <icon name="ion:search-outline" class="w-4 h-4" />
-            </button>
+            <div class="absolute end-2.5 bottom-2.5 join">
+              <button type="button" class="text-white bg-gray-500 hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium text-sm px-3 py-2 dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-800 join-item" @click="resetSearch">
+                <icon name="ion:refresh-outline" class="w-4 h-4" />
+                {{ t('reset') }}
+              </button>
+              <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-800 dark:focus:ring-blue-800 join-item">
+                {{ t('search') }}
+                <icon name="ion:search-outline" class="w-4 h-4" />
+              </button>
+            </div>
           </div>
         </div>
-        <!-- <div class="flex">
-          <div class="ml-auto" />
-          <button type="submit" class="btn btn-primary btn-sm">
-            {{ t('search') }}
-            <icon name="ion:search-outline" class="w-4 h-4" />
-          </button>
-        </div> -->
       </form>
+    </div>
+    <div class="flex flex-wrap gap-2">
+      <nuxt-link-locale
+        :to="{ name: 'admin-beatmaps', query: paramsForCheckingVotesClicked() }"
+        class="btn btn-sm btn-link"
+        @click.prevent="onCheckingVotesSelected"
+      >
+        {{ t('checking-votes') }}
+      </nuxt-link-locale>
+      <nuxt-link-locale
+        :to="{ name: 'admin-beatmaps', query: paramsForCustomClicked() }"
+        class="btn btn-sm btn-link"
+        @click.prevent="onCustomSelected"
+      >
+        {{ t('custom') }}
+      </nuxt-link-locale>
+      <nuxt-link-locale
+        :to="{ name: 'admin-beatmaps', query: paramsForAllClicked() }"
+        class="btn btn-sm btn-link"
+        @click.prevent="onAllSelected"
+      >
+        {{ t('all') }}
+      </nuxt-link-locale>
     </div>
 
     <div class="space-y-4">

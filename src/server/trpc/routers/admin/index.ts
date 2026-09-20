@@ -1,4 +1,4 @@
-import { array, boolean, nativeEnum, number, object, string, tuple } from 'zod'
+import { array, boolean, nativeEnum, number, object, string, tuple, z } from 'zod'
 import { zodHandle, zodMetricsPeriod, zodMode, zodRuleset } from '../../shapes'
 import { type AdminMapProvider as BaseAdminMapProvider } from '../../../backend/$base/server'
 import { router as log } from './log'
@@ -161,7 +161,8 @@ export const router = _router({
           mode: zodMode.optional(),
           keyCount: number().int().min(1).max(18).optional(),
           rankingStatus: array(nativeEnum(RankingStatus)).optional(),
-          requested: boolean().default(false),
+          frozen: boolean().optional(),
+          orderBy: z.enum(['natural', 'desc', 'votes']).default('natural'),
           page: number().min(0).default(0),
           perPage: number().min(1).default(10),
         })

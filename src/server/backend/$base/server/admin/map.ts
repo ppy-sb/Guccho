@@ -4,12 +4,15 @@ import type { BeatmapSource, Beatmapset, RankingStatus } from '~/def/beatmap'
 import { type PaginatedResult } from '~/def/pagination'
 
 export namespace AdminMapProvider {
+  export type SearchOrder = 'natural' | 'desc' | 'votes'
+
   export interface SearchOpt {
     keyword: string
     mode?: Mode
     keyCount?: number
     rankingStatus?: RankingStatus[]
-    requested: boolean
+    frozen?: boolean
+    orderBy: SearchOrder
     page: number
     perPage: number
   }

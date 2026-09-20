@@ -1,4 +1,4 @@
-import { and, count, desc, eq, gt, inArray, like, lt, max, or, sql, sum } from 'drizzle-orm'
+import { and, asc, count, desc, eq, gt, inArray, like, max, or, sql, sum } from 'drizzle-orm'
 import { match, unit } from 'switch-pattern'
 import { type Id } from '../..'
 import { fromRankingStatus, idToString, stringToId, toBanchoMode, toBeatmapSource, toBeatmapset, toRankingStatus } from '../../transforms'
@@ -48,7 +48,8 @@ export class AdminMapProvider extends Base<Id, Id> implements Base<Id, Id> {
       keyword,
       rankingStatus = [],
       keyCount,
-      requested,
+      frozen,
+      orderBy = 'natural',
       mode,
 
       page,
@@ -69,14 +70,11 @@ export class AdminMapProvider extends Base<Id, Id> implements Base<Id, Id> {
       ? undefined
       : and(
         eq(schema.beatmaps.mode, toBanchoMode(Mode.Mania)),
-        keyCount === 3
-          ? lt(schema.beatmaps.cs, 4)
-          : keyCount === 8
-            ? gt(schema.beatmaps.cs, 7)
-            : eq(schema.beatmaps.cs, keyCount),
+        eq(schema.beatmaps.cs, keyCount)
       )
 
-    const shouldOrderByVotes = requested || keyword === ''
+    const checkingVotes = orderBy === 'votes'
+    const custom = frozen === true
 
     const _sql = this.drizzle
       .with(votes, setVotes)
@@ -113,7 +111,8 @@ export class AdminMapProvider extends Base<Id, Id> implements Base<Id, Id> {
           mode === undefined ? undefined : eq(schema.beatmaps.mode, toBanchoMode(mode)),
           keyCountFilter,
           statusFilter,
-          gt(setVotes.votes, 0).if(shouldOrderByVotes),
+          eq(schema.beatmaps.frozen, true).if(custom),
+          gt(setVotes.votes, 0).if(checkingVotes),
         )
       )
       .groupBy(schema.beatmaps.setId, schema.beatmaps.server, setVotes.votes)
@@ -129,9 +128,11 @@ export class AdminMapProvider extends Base<Id, Id> implements Base<Id, Id> {
         ...[
           desc(eq(schema.beatmaps.setId, idKw))?.if(!Number.isNaN(idKw)),
           keywordSearch ? desc(sql<number>`MAX(${keywordSearch})`) : undefined,
-          desc(setVotes.maxVotes).if(shouldOrderByVotes),
-          desc(setVotes.votes).if(shouldOrderByVotes),
-          desc(schema.beatmaps.setId),
+          orderBy === 'votes' ? desc(setVotes.maxVotes) : undefined,
+          orderBy === 'votes' ? desc(setVotes.votes) : undefined,
+          orderBy === 'desc' ? desc(sql<number>`MAX(${schema.beatmaps.lastUpdate})`) : undefined,
+          orderBy === 'natural' ? asc(schema.beatmaps.setId) : undefined,
+          orderBy === 'votes' ? desc(schema.beatmaps.setId) : undefined,
         ]
           .filter(TSFilter),
       )
@@ -140,7 +141,7 @@ export class AdminMapProvider extends Base<Id, Id> implements Base<Id, Id> {
 
     return {
       data: res.map((bs) => {
-        if (shouldOrderByVotes) {
+        if (orderBy === 'votes') {
           bs.beatmaps.sort((a, b) => (b.vote ?? 0) - (a.vote ?? 0))
         }
         return {
