@@ -21,7 +21,7 @@ const session = useSession()
 </script>
 
 <template>
-  <div class="relative flex flex-col items-start gap-2 ps-2 lg:ps-0 pe-2 lg:flex-row ">
+  <div class="relative flex flex-col items-start gap-2 ps-2 lg:ps-0 pe-2 lg:flex-row">
     <ul class="sticky lg:top-[4em] overflow-x-auto lg:overflow-visible menu lg:ps-0 menu-horizontal lg:menu-vertical bg-base-100 lg:rounded-r-xl">
       <li>
         <nuxt-link-locale
@@ -74,7 +74,7 @@ const session = useSession()
         </nuxt-link-locale>
       </li>
     </ul>
-    <div class="w-full">
+    <div class="grow w-full lg:w-min overflow-auto">
       <nuxt-page />
     </div>
   </div>

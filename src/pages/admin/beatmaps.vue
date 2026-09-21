@@ -234,15 +234,15 @@ fr-FR:
 </i18n>
 
 <template>
-  <div class="space-y-4 max-w-screen-2xl">
-    <div class="border rounded-lg collapse collapse-arrow border-base-300 bg-base-200">
+  <div class="space-y-4">
+    <div class="border rounded-lg collapse collapse-arrow border-base-300 bg-base-200 max-w-screen-2xl">
       <input type="checkbox" class="peer">
       <div class="font-medium collapse-title text-md">
         <span class="align-middle">{{ t('search-parameters') }}</span>
         <icon name="ion:search-outline" class="w-6 h-6 align-middle" />
       </div>
       <form :action="useRequestURL().href" method="get" class="space-y-6 collapse-content" @submit.prevent="doSearch">
-        <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
+        <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-5">
           <div class="form-control col-span-1">
             <label class="label">
               <span class="label-text">{{ t('mode') }}</span>
@@ -304,7 +304,7 @@ fr-FR:
               <span class="label-text">{{ label }}</span>
             </label>
           </fieldset>
-          <div class="relative sm:col-span-2 lg:col-span-4">
+          <div class="relative sm:col-span-2 lg:col-span-4 2xl:col-span-5">
             <input
               id="keyword"
               v-model="search.keyword"
@@ -352,8 +352,8 @@ fr-FR:
     </div>
 
     <div class="space-y-4">
-      <div class="flex justify-between">
-        <span v-if="data" class="p-0 pointer-events-none btn btn-ghost btn-sm">{{ data.total }} results.</span>
+      <div v-if="data" class="flex justify-between">
+        <span class="p-0 pointer-events-none btn btn-ghost btn-sm">{{ data.total }} results.</span>
         <button
           v-if="batch.size > 0"
           class="btn btn-primary btn-sm ms-4"
@@ -362,8 +362,8 @@ fr-FR:
           Save
         </button>
       </div>
-      <div class="overflow-x-auto border rounded-lg border-base-300/50 bg-base-100">
-        <table class="table table-xs table-zebra">
+      <div class="overflow-x-auto 2xl:max-w-max border rounded-lg border-base-300/50 bg-base-100">
+        <table class="table table-xs table-zebra 2xl:w-max">
           <thead>
             <tr>
               <th>
