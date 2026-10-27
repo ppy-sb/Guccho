@@ -406,26 +406,45 @@ export const router = _router({
       .input(string().email())
       .mutation(async ({ ctx, input }) => {
         const variant = Mail.Variant.AccountRecovery
+        const ip = getRequestIP(ctx.h3Event, { xForwardedFor: true }) ?? '0.0.0.0'
+        const UA = getHeader(ctx.h3Event, 'User-Agent')
 
-        const user = await users.getByEmail(input as MailTokenProvider.Email, { scope: Scope.Self })
+        const user = await users
+          .getByEmail(input as MailTokenProvider.Email, { scope: Scope.Self })
+          .catch((e) => {
+            // An unknown address must be indistinguishable from a registered one,
+            // otherwise this endpoint can be used to test whether an email exists.
+            if (e instanceof TRPCError && e.message === fromGucchoErrorCode(GucchoError.UserNotFound)) {
+              return undefined
+            }
+            throw e
+          })
+
+        if (!user) {
+          // Keep probes visible in the operator log without answering them.
+          logger.info(`password reset requested for an unregistered email ${input} from ${ip}, UA: ${UA}.`, { email: input, ip, UA })
+          return
+        }
 
         const { otp, token } = await mailToken.getOrCreate(input as MailTokenProvider.Email)
         const t = await useTranslation(ctx.h3Event)
         const serverName = t(localeKey.root.server.name.__path__)
         const mailVariant = localeKey.root.mail[variant]
 
-       type Param = Mail.Param[typeof variant]
+        type Param = Mail.Param[typeof variant]
 
-       await mail.send({
-         to: input,
+        // Deliberately not awaited: an SMTP round-trip is slow enough that awaiting
+        // it would make the response measurably slower for registered addresses.
+        mail.send({
+          to: input,
 
-         subject: t(
-           mailVariant.subject.__path__,
+          subject: t(
+            mailVariant.subject.__path__,
             { serverName } satisfies Param['subject']
-         ),
+          ),
 
-         content: t(
-           mailVariant.content.__path__,
+          content: t(
+            mailVariant.content.__path__,
             {
               serverName,
               name: user.name,
@@ -433,10 +452,10 @@ export const router = _router({
               link: host(`/mail/verify?t=${token}&a=${variant}`, ctx.h3Event, { fallbackURL: `osu.${ui.baseUrl}` }),
               ttl: Constant.EmailTokenTTLInMinutes as number,
             } satisfies Param['content']
-         ),
-       })
+          ),
+        }).catch(e => logger.error({ message: `failed to send account recovery mail to ${input}: ${e.message}`, email: input, ip, UA }))
 
-       logger.info(`user ${user.safeName}<${user.id}> requested to change password. OTP sent to ${input}.`, { user: pick(user, ['id', 'name']), email: input })
+        logger.info(`user ${user.safeName}<${user.id}> requested to change password. OTP sent to ${input} from ${ip}, UA: ${UA}.`, { user: pick(user, ['id', 'name']), email: input, ip, UA })
       }),
 
     changePassword: sessionProcedure

@@ -143,6 +143,7 @@ en-GB:
   repeat-password: Repeat password
   done: Done
   succeed-message: Done!
+  otp-sent-hint: If your email is correct, we've sent you the OTP.
 
 zh-CN:
   next: 下一步
@@ -150,6 +151,7 @@ zh-CN:
   repeat-password: 确认密码
   done: 完成
   succeed-message: 密码重置成功！
+  otp-sent-hint: 如果你的邮箱正确，我们已将验证码发送至该邮箱。
 
 fr-FR:
   next: Suivant
@@ -157,12 +159,14 @@ fr-FR:
   repeat-password: Confirmer le mot de passe
   done: Terminé
   succeed-message: Terminé !
+  otp-sent-hint: Si votre adresse e-mail est correcte, nous vous avons envoyé le code.
 
 de-DE:
   next: Weiter
   invalid-otp: Falsches OTP
   repeat-password: Passwort wiederholen
   done: Fertig
+  otp-sent-hint: Wenn deine E-Mail-Adresse korrekt ist, haben wir dir den Code gesendet.
 </i18n>
 
 <template>
@@ -212,6 +216,9 @@ de-DE:
         <span>{{ t(gLocale.otp.__path__) }}</span>
         <input v-model="otp" class="grow">
       </div>
+      <p class="text-sm opacity-70">
+        {{ t('otp-sent-hint') }}
+      </p>
       <span v-if="error" class="m-2 text-error">{{ formatGucchoErrorWithT(t, error) }}</span>
       <button class="mt-4 min-w-32 ms-auto btn btn-primary">
         {{ t("next") }}
