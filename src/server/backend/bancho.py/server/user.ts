@@ -6,6 +6,7 @@ import imageType from 'image-type'
 import { glob } from 'glob'
 import { type SQL, aliasedTable, and, desc, eq, inArray, like, or, sql } from 'drizzle-orm'
 import { TRPCError } from '@trpc/server'
+import { string } from 'zod'
 import type { Id, ScoreId } from '..'
 import { getLiveUserStatus } from '../api-client'
 import { compareBanchoPassword, encryptBanchoPassword } from '../crypto'
@@ -61,6 +62,10 @@ import { type UserModeRulesetStatistics } from '~/def/statistics'
 type ServerSetting = ExtractSettingType<ExtractLocationSettings<DynamicSettingStore.Server, typeof settings>>
 
 const logger = Logger.child({ label: 'user' })
+
+// Keep this identical to the validator used for registration / email changes,
+// so any address the app accepts as an email is also rejected as a username.
+const emailSchema = string().email()
 
 function ensureDirectorySync(targetDir: string, { isRelativeToScript = false } = {}) {
   const initDir = isAbsolute(targetDir) ? sep : ''
@@ -132,7 +137,10 @@ class DBUserProvider extends Base<Id, ScoreId> implements Base<Id, ScoreId> {
       columns: { id: true },
 
       where: or(
-        eq(schema.users.email, handle),
+        // Email is deliberately not matchable here: this is a public existence
+        // check, so allowing it would let anyone test harvested email addresses.
+        // Usernames may not be email addresses (see ensureUsernameIsAllowed),
+        // so they can never collide with an email and matching is unnecessary.
         eq(schema.users.name, handle),
         eq(schema.users.safeName, handle),
 
@@ -161,7 +169,9 @@ class DBUserProvider extends Base<Id, ScoreId> implements Base<Id, ScoreId> {
   }
 
   async getCompact(opt: Base.OptType & { scope: Scope }) {
-    const { handle, scope, keys = ['id', 'name', 'safeName', 'email'] } = opt
+    // Email is only matched when a caller explicitly opts in (getByEmail), so a
+    // public handle lookup cannot be used to map an email to an account.
+    const { handle, scope, keys = ['id', 'name', 'safeName'] } = opt
 
     let handleNum = +handle
     if (Number.isNaN(handleNum)) {
@@ -213,6 +223,8 @@ class DBUserProvider extends Base<Id, ScoreId> implements Base<Id, ScoreId> {
   }
 
   async testPassword(opt: Base.OptType, password: string): Promise<[boolean, UserCompact<Id>]> {
+    // `email` must stay in this default list: users can log in with their email.
+    // This is separate from getCompact, where email matching is opt-in only.
     const { handle, keys = ['id', 'name', 'safeName', 'email'] } = opt
     const handleNum = +opt.handle
 
@@ -1084,6 +1096,22 @@ class DBUserProvider extends Base<Id, ScoreId> implements Base<Id, ScoreId> {
   }
 
   ensureUsernameIsAllowed(input: string) {
+    // Emails are also valid login handles. Allowing an email address as a
+    // username would make the same handle match two accounts, and
+    // `testPassword` would silently pick one of them. Use the same validator
+    // the email fields use, so the two namespaces cannot overlap.
+    // The derived safe name is a login handle too (`toSafeName` replaces spaces
+    // with `_`), so it needs the same check.
+    if (
+      emailSchema.safeParse(input).success
+      || emailSchema.safeParse(toSafeName(input)).success
+    ) {
+      throw new TRPCError({
+        code: 'BAD_REQUEST',
+        message: 'Username may not be an email address (or normalize to one); emails are reserved for login.',
+      })
+    }
+
     // eslint-disable-next-line array-callback-return
     const failedPattern = this.usernamePatterns.find((pattern) => {
       switch (pattern.type) {
