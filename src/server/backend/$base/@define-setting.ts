@@ -1,4 +1,5 @@
 import { type ZodType, object } from 'zod'
+import type { LocaleMessageValue } from 'vue-i18n'
 import { Lang } from '~/def'
 import type { DynamicSettingStore, DynamicUserSetting } from '~/def/user'
 
@@ -42,26 +43,34 @@ export function extractLocationSettings<TLoc extends DynamicSettingStore, TSetti
   return returnValue as unknown as T
 }
 
-export function extractSettingLocales<TSetting extends SettingObject>(settings: TSetting) {
-  type TRet = {
-    [L in Lang]?: {
-      [K in keyof TSetting]?: NonNullable<TSetting[K]['locale']>[L]
-    }
-  }
-
-  const returnValue: TRet = {
+/**
+ * Collect the per-language message bundles declared by dynamic settings.
+ *
+ * Every supported language is always present (possibly empty), so the result can be passed
+ * straight to `useI18n({ messages })` without the caller narrowing it first.
+ */
+export function extractSettingLocales<TSetting extends SettingObject>(
+  settings: TSetting,
+): Record<Lang, Record<string, LocaleMessageValue>> {
+  const returnValue: Record<Lang, Record<string, LocaleMessageValue>> = {
     [Lang.enGB]: {},
     [Lang.zhCN]: {},
+    [Lang.frFR]: {},
+    [Lang.deDE]: {},
   }
+
   for (const setting in settings) {
-    const _setting = settings[setting]
-    for (const lang in _setting.locale) {
-      const cur = returnValue[lang as Lang]
-      if (!cur) {
-        continue
+    const locale = settings[setting].locale
+    if (!locale) {
+      continue
+    }
+    for (const lang in locale) {
+      const messages = locale[lang as Lang]
+      const bundle = returnValue[lang as Lang]
+      if (messages && bundle) {
+        Object.assign(bundle, messages)
       }
-      returnValue[lang as Lang] = Object.assign(cur, settings[setting].locale?.[lang as Lang])
     }
   }
-  return returnValue as TRet
+  return returnValue
 }
