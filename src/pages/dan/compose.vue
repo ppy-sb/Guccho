@@ -66,19 +66,6 @@ async function readClipboard() {
   compose.value = unDB(parse(text))
 }
 
-async function getDB() {
-  if (!compose.value) {
-    return
-  }
-  loading.value = true
-  try {
-    compose.value = await _getDB(compose.value.id)
-  }
-  finally {
-    loading.value = false
-  }
-}
-
 async function _getDB(id: string) {
   return {
     ...await app.$client.dan.get.query(id),
