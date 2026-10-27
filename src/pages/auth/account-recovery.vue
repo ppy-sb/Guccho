@@ -116,11 +116,9 @@ async function step3() {
     await app.$client.user.accountRecovery.changePassword.mutate({
       password: password.value,
       repeatPassword: repeatPassword.value,
-      token: {
-        email: email.value,
-        otp: otp.value,
-        token: token.value,
-      },
+      // step2 already exchanged the OTP for this uuid; the OTP itself is not
+      // accepted here any more.
+      token: token.value,
     })
     state.value = State.Idle
     step.value = Step.Succeed

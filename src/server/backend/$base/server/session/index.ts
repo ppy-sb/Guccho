@@ -76,6 +76,17 @@ export abstract class SessionProvider<TSession extends Session<string>> {
   }
 
   /**
+   * Destroy every session bound to a user, so a stolen cookie cannot outlive the
+   * credential it was obtained with. `except` keeps the caller's own session.
+   */
+  async destroyAllForUser(userId: string, { except }: { except?: string } = {}) {
+    const found = await this.store.findAll({ userId })
+    const ids = Object.keys(found).filter(id => id !== except) as SessionIdType<TSession>[]
+    await Promise.all(ids.map(id => this.store.destroy(id)))
+    return ids.length
+  }
+
+  /**
    * @deprecated this is internal method, use session binding when possible. Will update immediately.
    * @internal
    * @private

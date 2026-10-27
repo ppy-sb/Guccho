@@ -4,7 +4,6 @@ import { hasLeaderboardRankingSystem, hasRuleset } from '../config'
 import { optionalUserProcedure } from '../middleware/optional-user'
 import { sessionProcedure } from '../middleware/session'
 import {
-  zodEmailValidation,
   zodHandle,
   zodLeaderboardRankingSystem,
   zodMode,
@@ -23,7 +22,7 @@ import { GucchoError } from '~/def/messages'
 import { type RankingSystemScore } from '~/def/score'
 import { Scope, type UserCompact, UserRole } from '~/def/user'
 import { Constant } from '~/server/common/constants'
-import { MapProvider, ScoreProvider, UserProvider, mail, mailToken, userRelations, users } from '~/server/singleton/service'
+import { MapProvider, ScoreProvider, UserProvider, mail, mailToken, sessions, userRelations, users } from '~/server/singleton/service'
 import ui from '~~/guccho.ui.config'
 
 const logger = Logger.child({ label: 'user' })
@@ -458,13 +457,18 @@ export const router = _router({
         logger.info(`user ${user.safeName}<${user.id}> requested to change password. OTP sent to ${input} from ${ip}, UA: ${UA}.`, { user: pick(user, ['id', 'name']), email: input, ip, UA })
       }),
 
-    changePassword: sessionProcedure
+    // No session is needed or useful here: the uuid token is the credential.
+    // `sessionProcedure` would mint a throwaway session for every prober.
+    changePassword: p
       .input(object({
         password: string(),
         repeatPassword: string(),
-        token: zodEmailValidation,
+        // Only the uuid token from the recovery mail. The 6-digit code is
+        // exchanged for it by `mail.getToken`, which is throttled; accepting
+        // { email, otp } here would be a second, unthrottled oracle.
+        token: string().uuid(),
       }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ input, ctx }) => {
         if (!input.password) {
           // TODO refine error message
           throwGucchoError(GucchoError.EmptyPassword)
@@ -473,9 +477,12 @@ export const router = _router({
           throwGucchoError(GucchoError.PasswordNotMatch)
         }
 
-        const rec = await mailToken.get(input.token)
+        const ip = getRequestIP(ctx.h3Event, { xForwardedFor: true }) ?? '0.0.0.0'
+        const UA = getHeader(ctx.h3Event, 'User-Agent')
+        const rec = await mailToken.get({ token: input.token as MBase.Token })
 
         if (!rec) {
+          logger.info(`invalid password reset token from ${ip}, UA: ${UA}.`, { ip })
           throwGucchoError(GucchoError.EmailTokenNotFound)
         }
 
@@ -483,22 +490,14 @@ export const router = _router({
 
         await users.changePasswordNoCheck(user, input.password)
 
-        logger.info(`user ${user.safeName}<${user.id}> changed password.`, { user: pick(user, ['id', 'name']) })
+        // A session obtained with the old password must not outlive it. Nothing
+        // else revokes sessions on a credential change.
+        const revoked = await sessions.destroyAllForUser(UserProvider.idToString(user.id))
+
+        logger.info(`user ${user.safeName}<${user.id}> changed password from ${ip}, UA: ${UA}, revoked ${revoked} session(s).`, { user: pick(user, ['id', 'name']), ip })
 
         // background jobs
         mailToken.deleteAll(rec.email).catch(e => logger.error({ message: `failed to delete mail token: ${e.message}` }))
-
-        // const refreshed = await ctx.session.update({ user })
-        // const opts = {
-        //   httpOnly: true,
-        //   maxAge: ctx.session.persist ? Constant.PersistDuration as number : undefined,
-        // }
-        // if (refreshed) {
-        //   setCookie(ctx.h3Event, Constant.SessionLabel, refreshed, opts)
-        // }
-        // if (ctx.session.persist) {
-        //   setCookie(ctx.h3Event, Constant.Persist, 'yes', opts)
-        // }
       }),
   }),
 

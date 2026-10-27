@@ -105,7 +105,10 @@ export const router = _router({
       .mutation(async ({ ctx, input }) => {
         const rec = await mailToken.get(input) ?? throwGucchoError(GucchoError.EmailTokenNotFound)
         const result = await users.changeEmail(mapId(ctx.user, UserProvider.stringToId), rec.email)
-        logger.info(`user ${ctx.user.safeName}<${ctx.user.id}> changed email to ${rec.email}.`, { user: pick(ctx.user, ['id', 'name']) })
+        // The address is a recovery factor: sessions that predate the change
+        // must not keep working. Keep only the one making the change.
+        const revoked = await sessions.destroyAllForUser(ctx.user.id, { except: ctx.session.id })
+        logger.info(`user ${ctx.user.safeName}<${ctx.user.id}> changed email to ${rec.email}, revoked ${revoked} session(s).`, { user: pick(ctx.user, ['id', 'name']) })
         mailToken.deleteAll(rec.email).catch(e => logger.error(e))
         return result
       }),
@@ -156,7 +159,10 @@ export const router = _router({
         input.newPassword,
       )
 
-      logger.info(`user ${ctx.user.safeName}<${ctx.user.id}> updated password.`, { user: pick(ctx.user, ['id', 'name']) })
+      // Every other session was authenticated with the old password.
+      const revoked = await sessions.destroyAllForUser(ctx.user.id, { except: ctx.session.id })
+
+      logger.info(`user ${ctx.user.safeName}<${ctx.user.id}> updated password, revoked ${revoked} session(s).`, { user: pick(ctx.user, ['id', 'name']) })
 
       return mapId(result, UserProvider.idToString)
     }),

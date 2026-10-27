@@ -1,8 +1,11 @@
 import { and, eq, gte, lte, or } from 'drizzle-orm'
 import * as schema from '../drizzle/schema'
 import { useDrizzle } from './source/drizzle'
-import { MailTokenProvider as MBase } from '$base/server/mail-token'
+import { client as getRedis } from './source/redis'
+import { type AttemptWindow, MailTokenProvider as MBase } from '$base/server/mail-token'
 import { Constant } from '~/server/common/constants'
+
+const ATTEMPT_PREFIX = 'guccho:attempt:'
 
 export class MailTokenProvider extends MBase {
   drizzle = useDrizzle(schema)
@@ -13,13 +16,23 @@ export class MailTokenProvider extends MBase {
       return await this.create(email)
     }
 
-    // extend ttl
-    await this.drizzle.update(schema.emailTokens).set({
-      invalidAfter: this.offsetByMinutes(Constant.EmailTokenTTLInMinutes),
-    })
-      .where(eq(schema.emailTokens.token, saved.token))
-
+    // Deliberately no ttl extension: a token is valid for a fixed window from
+    // creation. Extending it on every request lets an attacker keep the same
+    // 6-digit code alive for as long as it takes to enumerate it.
     return saved
+  }
+
+  async countAttempt(key: string, window: AttemptWindow): Promise<number> {
+    const redisKey = ATTEMPT_PREFIX + key
+    const count = await getRedis().incr(redisKey)
+    if (count === 1) {
+      await getRedis().expire(redisKey, window.windowSeconds)
+    }
+    return count
+  }
+
+  async clearAttempts(key: string): Promise<void> {
+    await getRedis().del(ATTEMPT_PREFIX + key)
   }
 
   async get(input: MBase.Validation): Promise<{ email: MBase.Email; otp: MBase.OTP; token: MBase.Token } | undefined> {
