@@ -12,6 +12,19 @@ const logger = Logger.child({ label: 'mail' })
 const OTP_EMAIL_WINDOW = { max: 5, windowSeconds: 15 * 60 }
 const OTP_IP_WINDOW = { max: 50, windowSeconds: 15 * 60 }
 
+// The blocked path answers exactly like a wrong code, so this log line is the
+// only trace of a flood — which made it a liability: one line per retry, and
+// 200k retries ≈ 60 MB rotated the audit trail out of `.logs/` on 2026-10-27.
+// Log the crossing of the limit and then one line per thousand attempts, so the
+// volume stays bounded no matter how hard the caller hammers. The counters are
+// per window (`countAttempt` INCRs a key that expires with the window), so this
+// is one line per key per window plus a heartbeat.
+const OTP_FLOOD_LOG_EVERY = 1_000
+
+function worthLoggingThrottle(attempts: number, max: number): boolean {
+  return attempts === max + 1 || (attempts > max && attempts % OTP_FLOOD_LOG_EVERY === 0)
+}
+
 export const router = _router({
   getToken: publicProcedure
     .input(zodEmailValidation)
@@ -32,7 +45,12 @@ export const router = _router({
       ])
 
       if (byEmail > OTP_EMAIL_WINDOW.max || byIp > OTP_IP_WINDOW.max) {
-        logger.warn(`otp exchange throttled for ${email} from ${ip}, UA: ${UA}.`, { email, ip, attempts: byEmail, ipAttempts: byIp })
+        if (
+          worthLoggingThrottle(byEmail, OTP_EMAIL_WINDOW.max)
+          || worthLoggingThrottle(byIp, OTP_IP_WINDOW.max)
+        ) {
+          logger.warn(`otp exchange throttled for ${email} from ${ip}, UA: ${UA}.`, { email, ip, attempts: byEmail, ipAttempts: byIp })
+        }
         // Same shape as a wrong code: do not tell a prober that it was the limiter.
         return
       }
